@@ -533,10 +533,23 @@ class BarcodePOReceive(BarcodeView):
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
+        plugin_slug = None
+
         plugin_response = None
+
+        plugin_error = None
+
+        no_supplier_plugin_error = []
+
+        supplier_purchase_order = None
+
+        plugin_supplier = None
+
+        supplier_part = None
 
         for current_plugin in plugins:
             try:
+                # Will either Output Debugresponse if No_Match is True or return the regular response if No_Match is False
                 result = current_plugin.scan_receive_item(
                     barcode,
                     request.user,
@@ -546,12 +559,58 @@ class BarcodePOReceive(BarcodeView):
                     line_item=line_item,
                     auto_allocate=auto_allocate,
                 )
+
             except Exception:
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
 
-            if result is None:
-                continue
+            no_match = result.get('no_match', True)
+
+            # No_Match Determines if it found a exact match for all the required fields from scan_recieve_item
+            if no_match is True:
+                supplier_found = False
+
+                try:
+                    plugin_slug = current_plugin.slug
+                    supplier_purchase_order = result.get('PO')
+                    plugin_supplier = result.get('supplier')
+                    supplier_part = result.get('supplier_part')
+                except KeyError as e:
+                    log_error(
+                        f'BarcodePOReceive.handle_barcode debugresponse: KeyError {e}'
+                    )
+                    continue
+
+                # Supplier does not have associated Supplier ID
+                if plugin_supplier is None:
+                    no_supplier_plugin_error.append(plugin_slug)
+                    continue
+
+                # No Purchase Order or Supplier Part Found
+                if supplier_purchase_order is None and supplier_part is None:
+                    continue
+
+                # Purchase Order exists and is found but Supplier part does not exist
+                if supplier_purchase_order != None and supplier_part is None:
+                    # Supplier was Found
+                    supplier_found = True
+                    plugin_error = _('Purchase order Found\rNo supplier Part Match')
+
+                # Supplier Part is Found but Purchase Order does not exist
+                elif supplier_purchase_order is None and supplier_part != None:
+                    # Supplier was Found
+                    supplier_found = True
+                    plugin_error = _('Supplier Part Found\rNo Purchase Order Match')
+
+                # Supplier for PO or Supplier part in barcode was found
+                if supplier_found is True:
+                    # Adds info on for what was found in the barcode
+                    response['supplier_matches'] = {
+                        'purchase_order': supplier_purchase_order,
+                        'no_match': no_match,
+                        'supplier': plugin_supplier,
+                        'supplier_part': supplier_part,
+                    }
 
             if 'error' in result:
                 logger.info(
@@ -569,12 +628,19 @@ class BarcodePOReceive(BarcodeView):
 
         response['plugin'] = plugin.name if plugin else None
 
-        if plugin_response:
+        # If there is a plugin response, and there is a match (no_match = false), combine the dictionaries
+        if plugin_response and plugin_response.get('no_match') is False:
             response = {**response, **plugin_response}
+        elif no_supplier_plugin_error:
+            response['no_supplier_plugin_error'] = no_supplier_plugin_error
 
         # A plugin has not been found!
         if plugin is None:
             response['error'] = _('No plugin match for supplier barcode')
+
+        # A plugin was found, with a Error
+        elif plugin_error:
+            response['error'] = plugin_error
 
         self.log_scan(request, response, 'success' in response)
 

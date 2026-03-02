@@ -320,7 +320,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         location=None,
         auto_allocate: bool = True,
         **kwargs,
-    ) -> dict | None:
+    ) -> dict:
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
@@ -344,32 +344,50 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract supplier information
         supplier = supplier or self.get_supplier(cache=True)
 
-        if not supplier:
+        """Construct Debug Response
+        This is returned if a perfect match is not found with the info provided from the barcode
+
+        Response Info:
+            'supplier': get supplier ID
+            'PO': Represented for "Purchase Order", find PO number to supplier
+            'supplier_part': find supplier part info to supplier
+            'no_match': Boolean, did we find a perfect match with info given? False is Yes, True is No
+        """
+        debug_response = {}
+
+        if supplier is None:
             # No supplier information available
-            return None
+            debug_response['supplier'] = None
+        else:
+            debug_response['supplier'] = supplier.name
 
         # Extract purchase order information
         purchase_order = purchase_order or self.get_purchase_order()
 
-        if not purchase_order or purchase_order.supplier != supplier:
+        if purchase_order is None or purchase_order.supplier != supplier:
             # Purchase order does not match supplier
-            return None
+            debug_response['PO'] = None
+        else:
+            debug_response['PO'] = purchase_order.reference
 
         supplier_part = self.get_supplier_part()
 
-        if not supplier_part:
+        if supplier_part is None:
             # No supplier part information available
-            return None
+            debug_response['supplier_part'] = None
+        else:
+            debug_response['supplier_part'] = supplier_part.part
 
         # Attempt to find matching line item
-        if not line_item:
+        if not line_item and purchase_order != None:
             line_items = purchase_order.lines.filter(part=supplier_part)
             if line_items.count() == 1:
                 line_item = line_items.first()
 
-        if not line_item:
-            # No line item information available
-            return None
+        # If Purchase Order or Supplier Part does not exist, throw debug response
+        if debug_response['PO'] is None or debug_response['supplier_part'] is None:
+            debug_response['no_match'] = True
+            return debug_response
 
         if line_item.part != supplier_part:
             return {'error': _('Supplier part does not match line item')}
@@ -406,7 +424,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 'supplier_part': supplier_part.pk,
                 'purchase_order': purchase_order.pk,
                 'location': location.pk if location else None,
-            }
+            },
+            'no_match': False,
         }
 
         if action_required:
