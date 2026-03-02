@@ -24,9 +24,7 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER,
-    ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
     NumberOrNullFilter,
@@ -302,7 +300,7 @@ class CategoryTree(ListAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    filter_backends = ORDER_FILTER_ALIAS
+    filter_backends = ORDER_FILTER
 
     ordering_fields = ['level', 'name', 'subcategories']
 
@@ -1080,7 +1078,7 @@ class PartList(
     filterset_class = PartFilter
     is_create = True
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'name',
@@ -1442,7 +1440,7 @@ class BomList(
 
     output_options = BomOutputOptions
     filterset_class = BomFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'reference',
