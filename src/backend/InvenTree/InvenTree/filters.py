@@ -115,7 +115,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
         aliases = getattr(view, 'ordering_field_aliases', None)
         lookup_field = getattr(view, 'lookup_field', 'pk')
-        lookup_reversed = any(field.startswith('-') for field in ordering)
+        lookup_reversed = len(ordering) > 0 and ordering[-1].startswith('-')
 
         # Attempt to map ordering fields based on provided aliases
         if ordering is not None and aliases is not None:
