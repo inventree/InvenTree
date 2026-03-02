@@ -111,9 +111,11 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
     def get_ordering(self, request, queryset, view):
         """Override ordering for supporting aliases."""
-        ordering = super().get_ordering(request, queryset, view)
+        ordering = super().get_ordering(request, queryset, view) or []
 
         aliases = getattr(view, 'ordering_field_aliases', None)
+        lookup_field = getattr(view, 'lookup_field', 'pk')
+        lookup_reversed = any(field.startswith('-') for field in ordering)
 
         # Attempt to map ordering fields based on provided aliases
         if ordering is not None and aliases is not None:
@@ -123,9 +125,8 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
             ordering = []
 
             for field in ordering_initial:
-                reverse = field.startswith('-')
-
-                if reverse:
+                field_reversed = field.startswith('-')
+                if field_reversed:
                     field = field[1:]
 
                 # Are aliases defined for this field?
@@ -153,10 +154,18 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
                     continue
 
                 for a in alias:
-                    if reverse:
+                    if field_reversed:
                         a = '-' + a
 
                     ordering.append(a)
+
+        if lookup_field and not any(
+            field in ordering for field in [lookup_field, f'-{lookup_field}']
+        ):
+            if lookup_reversed:
+                ordering.append(f'-{lookup_field}')
+            else:
+                ordering.append(lookup_field)
 
         return ordering
 
