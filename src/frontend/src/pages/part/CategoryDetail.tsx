@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Group,
+  HoverCard,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
@@ -316,6 +325,24 @@ export default function CategoryDetail() {
         label: t`Part Tests`,
         icon: <IconTestPipe />,
         hidden: !id,
+        controls: (
+          <HoverCard position='bottom-end'>
+            <HoverCard.Target>
+              <ActionIcon variant='transparent' aria-label='test-info'>
+                <IconInfoCircle />
+              </ActionIcon>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Alert
+                color='blue'
+                icon={<IconInfoCircle />}
+                title={t`Part Tests`}
+              >
+                <Text>{t`Tests associated with this category. These tests may be inherited from a parent category.`}</Text>
+              </Alert>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        ),
         content: category?.pk ? (
           <PartTestTable categoryId={category.pk} />
         ) : (

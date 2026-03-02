@@ -15,6 +15,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 
 import type { TableColumn } from '@lib/types/Tables';
+import { Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import {
   useCreateApiFormModal,
@@ -27,6 +28,7 @@ import {
   PartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 export function PartTestTable({
   partId,
@@ -41,21 +43,50 @@ export function PartTestTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        accessor: 'part_detail'
+        accessor: 'part_detail',
+        switchable: true
       }),
       CategoryColumn({
-        accessor: 'category_detail'
+        accessor: 'category_detail',
+        switchable: true
       }),
       {
         accessor: 'template_detail.test_name',
         title: t`Template`,
-        switchable: false
+        switchable: false,
+        render: (record: any) => {
+          const extra = [];
+
+          if (record.part && partId && record.part != partId) {
+            extra.push(t`Test defined for a higher level part`);
+          }
+
+          if (record.category && categoryId && record.category != categoryId) {
+            extra.push(t`Test defined for a higher level category`);
+          }
+
+          return (
+            <Group gap='xs' wrap='nowrap' justify='space-between'>
+              {record.template_detail.test_name}
+              {extra && (
+                <TableHoverCard
+                  value=''
+                  position='bottom-end'
+                  icon='info'
+                  title={t`Details`}
+                  extra={extra}
+                />
+              )}
+            </Group>
+          );
+        }
       },
       DescriptionColumn({
-        accessor: 'template_detail.description'
+        accessor: 'template_detail.description',
+        switchable: true
       })
     ];
-  }, []);
+  }, [partId, categoryId]);
 
   const partTestFields: ApiFormFieldSet = useMemo(() => {
     return {
