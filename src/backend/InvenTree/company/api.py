@@ -11,7 +11,7 @@ import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
@@ -197,7 +197,7 @@ class ManufacturerPartList(
     """
 
     filterset_class = ManufacturerPartFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = ManufacturerOutputOptions
 
     ordering_fields = ['part', 'IPN', 'MPN', 'manufacturer']
@@ -358,7 +358,7 @@ class SupplierPartList(
     """
 
     filterset_class = SupplierPartFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SupplierPartOutputOptions
 
     ordering_fields = [
@@ -472,7 +472,7 @@ class SupplierPriceBreakList(
     output_options = SupplierPriceBreakOutputOptions
 
     filterset_class = SupplierPriceBreakFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
     search_fields = ['part__SKU', 'part__supplier__name']

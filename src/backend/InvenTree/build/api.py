@@ -27,7 +27,7 @@ from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    SEARCH_ORDER_FILTER_ALIAS,
+    SEARCH_ORDER_FILTER,
     InvenTreeDateFilter,
     NumberOrNullFilter,
 )
@@ -343,7 +343,7 @@ class BuildList(
 
     output_options = BuildListOutputOptions
     filterset_class = BuildFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = [
         'reference',
         'part',
@@ -594,7 +594,7 @@ class BuildLineList(
     """API endpoint for accessing a list of BuildLine objects."""
 
     filterset_class = BuildLineFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
@@ -951,7 +951,7 @@ class BuildItemList(
 
     output_options = BuildItemOutputOptions
     filterset_class = BuildItemFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     def get_queryset(self):
         """Override the queryset method, to perform custom prefetch."""

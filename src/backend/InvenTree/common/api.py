@@ -48,11 +48,7 @@ from InvenTree.api import (
     meta_path,
 )
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import (
-    ORDER_FILTER,
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-)
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
@@ -918,7 +914,7 @@ class ParameterList(
     """List API endpoint for Parameter objects."""
 
     filterset_class = ParameterFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
 
