@@ -575,6 +575,79 @@ class StockItemListTest(StockAPITestCase):
         for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
             self.run_ordering_test(self.list_url, ordering)
 
+    def test_pagination(self):
+        """Test that pagination boundaries are observed correctly.
+
+        Ref: https://github.com/inventree/InvenTree/issues/11442
+        """
+        location = StockLocation.objects.first()
+        part = Part.objects.first()
+
+        items = []
+
+        StockItem.objects.all().delete()
+
+        for idx in range(1000):
+            items.append(
+                StockItem(
+                    part=part,
+                    location=location,
+                    quantity=idx % 10,
+                    level=0,
+                    lft=0,
+                    rght=0,
+                    tree_id=0,
+                )
+            )
+
+            if len(items) >= 100:
+                StockItem.objects.bulk_create(items)
+                items = []
+
+        self.assertEqual(StockItem.objects.count(), 1000)
+
+        url = reverse('api-stock-list')
+
+        # Keep track of the unique PKs we have seen in the results
+        unique_pks = set()
+
+        for idx in range(0, 100, 10):
+            data = self.get(url, {'limit': 10, 'offset': idx}).data
+            self.assertEqual(data['count'], 1000)
+            self.assertEqual(len(data['results']), 10)
+
+            for item in data['results']:
+                self.assertNotIn(
+                    item['pk'],
+                    unique_pks,
+                    f'Duplicate PK {item["pk"]} found in paginated results @ page {idx // 10}',
+                )
+                unique_pks.add(item['pk'])
+
+        self.assertEqual(
+            len(unique_pks), 100, 'Expected to see 100 unique PKs in paginated results'
+        )
+
+        # Run same test again, with reverse ordering on part IPN
+        unique_pks = set()
+
+        for idx in range(0, 100, 10):
+            data = self.get(url, {'limit': 10, 'offset': idx, 'ordering': '-IPN'}).data
+            self.assertEqual(data['count'], 1000)
+            self.assertEqual(len(data['results']), 10)
+
+            for item in data['results']:
+                self.assertNotIn(
+                    item['pk'],
+                    unique_pks,
+                    f'Duplicate PK {item["pk"]} found in paginated results @ page {idx // 10} with reverse ordering',
+                )
+                unique_pks.add(item['pk'])
+
+        self.assertEqual(
+            len(unique_pks), 100, 'Expected to see 100 unique PKs in paginated results'
+        )
+
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location."""
         # No filters, should return *all* items
