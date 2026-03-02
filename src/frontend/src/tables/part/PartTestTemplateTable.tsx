@@ -1,21 +1,17 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Badge, Stack, Text } from '@mantine/core';
+import { Alert, Badge, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -30,16 +26,9 @@ import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
-export function TestTemplateTable({
-  partId,
-  categoryId
-}: Readonly<{
-  partId?: number;
-  categoryId?: number;
-}>) {
+export function TestTemplateTable() {
   const table = useTable('part-test-template');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -49,13 +38,6 @@ export function TestTemplateTable({
         sortable: true,
         render: (record: any) => {
           const extra: ReactNode[] = [];
-
-          // TODO: Look into this again
-          // if (record.part != partId) {
-          //   extra.push(
-          //     <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
-          //   );
-          // }
 
           return (
             <TableHoverCard
@@ -100,7 +82,7 @@ export function TestTemplateTable({
         accessor: 'requires_attachment'
       })
     ];
-  }, [partId]);
+  }, []);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -156,9 +138,7 @@ export function TestTemplateTable({
       () => ({ ...partTestTemplateFields }),
       [partTestTemplateFields]
     ),
-    initialData: {
-      part: partId
-    },
+    initialData: {},
     table: table
   });
 
@@ -196,30 +176,6 @@ export function TestTemplateTable({
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
-      // This test is defined for a different part
-      if (partId && record.part != partId) {
-        return [
-          RowViewAction({
-            title: t`View Part`,
-            modelType: ModelType.part,
-            modelId: record.part,
-            navigate: navigate
-          })
-        ];
-      }
-
-      // This test is defined for a different category
-      if (categoryId && record.category != categoryId) {
-        return [
-          RowViewAction({
-            title: t`View Category`,
-            modelType: ModelType.partcategory,
-            modelId: record.category,
-            navigate: navigate
-          })
-        ];
-      }
-
       return [
         RowEditAction({
           hidden: !can_edit,
@@ -237,7 +193,7 @@ export function TestTemplateTable({
         })
       ];
     },
-    [user, partId]
+    [user]
   );
 
   const tableActions = useMemo(() => {
@@ -264,37 +220,15 @@ export function TestTemplateTable({
         columns={tableColumns}
         props={{
           params: {
-            part: partId,
-            category: categoryId,
             part_detail: true,
             category_detail: true
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
-          rowActions: rowActions,
-          onRowClick: (row) => {
-            if (row.part && row.part != partId) {
-              // This test is defined for a different part
-              navigate(getDetailUrl(ModelType.part, row.part));
-            }
-          }
+          rowActions: rowActions
         }}
       />
     </>
-  );
-}
-
-export function PartTestTemplateTable({
-  partId,
-  categoryId
-}: Readonly<{
-  partId?: number;
-  categoryId?: number;
-}>) {
-  return (
-    <Stack gap='xs'>
-      <TestTemplateTable partId={partId} categoryId={categoryId} />
-    </Stack>
   );
 }

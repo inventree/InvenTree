@@ -904,8 +904,8 @@ export default function PartDetail() {
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
       {
-        name: 'test_templates',
-        label: t`Test Templates`,
+        name: 'tests',
+        label: t`Tests`,
         icon: <IconTestPipe />,
         hidden: !part.testable,
         content: part?.pk ? <PartTestTable partId={part?.pk} /> : <Skeleton />
