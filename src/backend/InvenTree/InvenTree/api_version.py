@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 460
+INVENTREE_API_VERSION = 461
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v461 -> 2026-03-01 : https://github.com/inventree/InvenTree/pull/9928
+    - Refactor of "PartTestTemplate" models and API endpoints
+    - Add "PartTest" API endpoint
 
 v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
     - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints

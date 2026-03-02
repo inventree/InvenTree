@@ -55,6 +55,7 @@ from .models import (
     PartSellPriceBreak,
     PartStar,
     PartStocktake,
+    PartTest,
     PartTestTemplate,
 )
 
@@ -187,7 +188,6 @@ class PartTestTemplateSerializer(
         fields = [
             'pk',
             'key',
-            'part',
             'test_name',
             'description',
             'enabled',
@@ -1185,6 +1185,32 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     def get_allocated_to_sales_orders(self, part) -> float:
         """Return the allocated sales order quantity."""
         return part.sales_order_allocation_count(include_variants=True, pending=True)
+
+
+class PartTestSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for the PartTest class."""
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = PartTest
+        fields = [
+            'pk',
+            'template',
+            'template_detail',
+            'part',
+            'part_detail',
+            'category',
+            'category_detail',
+        ]
+
+    template_detail = PartTestTemplateSerializer(
+        source='template', many=False, read_only=True
+    )
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
 
 class PartStocktakeSerializer(
