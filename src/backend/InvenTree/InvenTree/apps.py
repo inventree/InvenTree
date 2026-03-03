@@ -65,10 +65,12 @@ class InvenTreeConfig(AppConfig):
             self.start_background_tasks()
 
             if not InvenTree.ready.isInTestMode():  # pragma: no cover
-                # Update exchange rates
-                InvenTree.tasks.offload_task(InvenTree.tasks.update_exchange_rates)
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                # Update exchange rates
+                InvenTree.tasks.offload_task(
+                    InvenTree.tasks.update_exchange_rates, force_async=True
+                )
 
         self.update_site_url()
         self.load_unit_registry()
