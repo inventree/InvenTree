@@ -199,7 +199,7 @@ export function PartTestTable({
         columns={tableColumns}
         props={{
           params: {
-            part: partId,
+            for_part: partId,
             category: categoryId
           },
           rowActions: rowActions,

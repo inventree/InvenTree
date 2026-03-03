@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import cast
+from typing import Optional, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -2504,6 +2504,78 @@ class Part(
 
         if len(parameters) > 0:
             Parameter.objects.bulk_create(parameters)
+
+    def getPartTests(
+        self,
+        required: Optional[bool] = None,
+        enabled: Optional[bool] = None,
+        include_parent: bool = True,
+        include_category: bool = True,
+        queryset: Optional[QuerySet[PartTestTemplate]] = None,
+    ) -> QuerySet[PartTestTemplate]:
+        """Return a queryset of all PartTest instances associated with this Part.
+
+        Arguments:
+            required: If set, filter by whether the test is required
+            enabled: If set, filter by whether the test is enabled
+            include_parent: If True, include tests from parent parts
+            include_category: If True, include tests from the part category
+            queryset: If set, use this queryset as the basis for filtering (instead of all tests for this part)
+
+        Returns:
+            QuerySet: A queryset of matching PartTest instances
+
+        Notes:
+            - Each PartTest instance maps this part to a PartTestTemplate, which defines the test to be performed.
+            - If include_parent is True, tests from parent parts will be included
+            - If include_category is True, tests from the part category will be included
+            - At most, one test will be return for each PartTestTemplate
+            - The most "specific" PartTest will be returned:
+                - If a test exists for this part, it will be returned
+                - Else if a test exists for a parent part, the closest parent's test will be returned
+                - Else if a test exists for the category, it will be returned
+        """
+        if queryset is None:
+            queryset = PartTest.objects.all()
+
+        test_ids = []
+        template_ids = set()
+
+        if include_parent:
+            # Get all parent parts, starting with the closest
+            parts = self.get_ancestors(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=self.pk)
+
+        # Iterate through all PartTest instances which are related to this part (or parent part)
+        # The part level closest to this part will be returned first, as the queryset is ordered by part level (descending)
+        for test in PartTest.objects.filter(part__in=parts).order_by('-part__level'):
+            if test.template.key not in template_ids:
+                # This test template has not been added yet, so add it to the list
+                template_ids.add(test.template.key)
+                test_ids.append(test.pk)
+
+        if include_category and self.category:
+            categories = self.category.get_ancestors(include_self=True)
+
+            for test in PartTest.objects.filter(category__in=categories).order_by(
+                '-category__level'
+            ):
+                if test.template.key not in template_ids:
+                    # This test template has not been added yet, so add it to the list
+                    template_ids.add(test.template.key)
+                    test_ids.append(test.pk)
+
+        # Filter only by the matching PartTest ID values
+        queryset = queryset.filter(pk__in=test_ids)
+
+        if required is not None:
+            queryset = queryset.filter(template__required=required)
+
+        if enabled is not None:
+            queryset = queryset.filter(template__enabled=enabled)
+
+        return queryset
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None

@@ -471,7 +471,23 @@ class PartTestFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTest
-        fields = ['part', 'template', 'category']
+        fields = ['template']
+
+    for_part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), label=_('For Part'), method='filter_for_part'
+    )
+
+    def filter_for_part(self, queryset, name, part):
+        """Filter 'PartTest' instances which associate with the provided 'Part'.
+
+        This is functionally different from the 'part' filter,
+        as it returns any PartTest instances which are associated with the provided part,
+        either directly or indirectly via the part's ancestors or categories.
+
+        Additionally, the results return at most one PartTest instance per PartTestTemplate,
+        with the most specific match being returned.
+        """
+        return part.getPartTests(queryset=queryset)
 
     enabled = rest_filters.BooleanFilter(
         label=_('Enabled'), field_name='template__enabled'
