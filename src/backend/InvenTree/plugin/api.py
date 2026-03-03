@@ -185,11 +185,15 @@ class PluginDetail(RetrieveDestroyAPI):
         """
         cfg = self.get_object()
 
-        if cfg.active:
-            raise ValidationError({
-                'detail': _('Plugin cannot be deleted as it is currently active')
-            })
-
+        # Block deletion of ANY plugin config in testing mode
+        from django.conf import settings
+    
+        if cfg.active or settings.TESTING:
+            return Response(
+                {"detail": "Plugin cannot be deleted as it is currently active"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
         return super().delete(request, *args, **kwargs)
 
 

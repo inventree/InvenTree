@@ -181,9 +181,11 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         super().setUp()
 
         from tenant.models import Tenant
-        self.tenant, _ = Tenant.objects.get_or_create(
-            name="Test Tenant"
-        )
+        self.tenant = Tenant.objects.first()
+
+        if not self.tenant:
+            self.tenant = Tenant.objects.create(name="Test Tenant")
+            
         registry.set_plugin_state('digikeyplugin', True)
         registry.set_plugin_state('mouserplugin', True)
         registry.set_plugin_state('lcscplugin', True)

@@ -315,12 +315,12 @@ class PluginsRegistry:
 
         configs = InvenTree.cache.get_session_cache(cache_key)
 
-        if not configs:
+        if configs is None:
             try:
                 # Pre-fetch the PluginConfig objects to avoid multiple database queries
                 from plugin.models import PluginConfig
 
-                plugin_configs = PluginConfig.objects.all()
+                plugin_configs = list(PluginConfig.objects.all())
                 configs = {config.key: config for config in plugin_configs}
                 InvenTree.cache.set_session_cache(cache_key, configs)
             except (ProgrammingError, OperationalError):
@@ -339,7 +339,7 @@ class PluginsRegistry:
             except MixinNotImplementedError:
                 continue
 
-            config = configs.get(plugin.slug) or plugin.plugin_config()
+            config = configs.get(plugin.slug)
 
             # No config - cannot use this plugin
             if not config:
