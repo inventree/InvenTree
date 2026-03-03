@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Group,
+  HoverCard,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
@@ -7,7 +16,8 @@ import {
   IconListDetails,
   IconPackages,
   IconSitemap,
-  IconTable
+  IconTable,
+  IconTestPipe
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,6 +57,7 @@ import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import PartCategoryTemplateTable from '../../tables/part/PartCategoryTemplateTable';
 import { PartListTable } from '../../tables/part/PartTable';
+import { PartTestTable } from '../../tables/part/PartTestTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -309,6 +320,35 @@ export default function CategoryDetail() {
           }
         ]
       }),
+      {
+        name: 'tests',
+        label: t`Part Tests`,
+        icon: <IconTestPipe />,
+        hidden: !id,
+        controls: (
+          <HoverCard position='bottom-end'>
+            <HoverCard.Target>
+              <ActionIcon variant='transparent' aria-label='test-info'>
+                <IconInfoCircle />
+              </ActionIcon>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Alert
+                color='blue'
+                icon={<IconInfoCircle />}
+                title={t`Part Tests`}
+              >
+                <Text>{t`Tests associated with this category. These tests may be inherited from a parent category.`}</Text>
+              </Alert>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        ),
+        content: category?.pk ? (
+          <PartTestTable categoryId={category.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
       {
         name: 'stockitem',
         label: t`Stock Items`,

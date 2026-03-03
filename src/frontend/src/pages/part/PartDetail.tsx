@@ -100,7 +100,7 @@ import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
-import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
+import { PartTestTable } from '../../tables/part/PartTestTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
@@ -904,15 +904,29 @@ export default function PartDetail() {
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
       {
-        name: 'test_templates',
-        label: t`Test Templates`,
+        name: 'tests',
+        label: t`Tests`,
         icon: <IconTestPipe />,
         hidden: !part.testable,
-        content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
-        ) : (
-          <Skeleton />
-        )
+        controls: (
+          <HoverCard position='bottom-end'>
+            <HoverCard.Target>
+              <ActionIcon variant='transparent' aria-label='test-info'>
+                <IconInfoCircle />
+              </ActionIcon>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Alert
+                color='blue'
+                icon={<IconInfoCircle />}
+                title={t`Part Tests`}
+              >
+                <Text>{t`Tests associated with this part. These tests may be inherited from a parent part or part category.`}</Text>
+              </Alert>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        ),
+        content: part?.pk ? <PartTestTable partId={part?.pk} /> : <Skeleton />
       },
       {
         name: 'test_results',
