@@ -27,6 +27,7 @@ from order.status_codes import (
     ReturnOrderStatus,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
 )
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -46,9 +47,10 @@ class OrderTest(InvenTreeAPITestCase):
         'stock',
         'order',
         'sales_order',
+        'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change']
+    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -2751,3 +2753,127 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
         line = models.ReturnOrderLineItem.objects.get(pk=1)
         self.assertEqual(float(line.price.amount), 15.75)
+
+
+class TransferOrderTest(OrderTest):
+    """Tests for the TransferOrder API."""
+
+    LIST_URL = reverse('api-transfer-order-list')
+
+    def test_transfer_order_list(self):
+        """Test the TransferOrder list API endpoint."""
+        # all orders
+        self.filter({}, 5)
+
+        # filter by outstanding
+        self.filter({'outstanding': True}, 3)
+        self.filter({'outstanding': False}, 2)
+
+        # Filter by status
+        self.filter({'status': TransferOrderStatus.PENDING.value}, 1)
+        self.filter({'status': SalesOrderStatus.COMPLETE.value}, 1)
+        self.filter({'status': 99}, 0)  # Invalid
+
+        # Filter by "reference"
+        self.filter({'reference': 'TO-123'}, 1)
+        self.filter({'reference': 'TO-999'}, 0)
+
+        # Filter by "assigned_to_me"
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 5)
+
+    def test_overdue(self):
+        """Test "overdue" status."""
+        self.filter({'overdue': True}, 0)
+        self.filter({'overdue': False}, 5)
+
+        for pk in [1, 2]:
+            order = models.TransferOrder.objects.get(pk=pk)
+            order.target_date = datetime.now().date() - timedelta(days=10)
+            order.save()
+
+        self.filter({'overdue': True}, 2)
+        self.filter({'overdue': False}, 3)
+
+    def test_transfer_order_attachments(self):
+        """Test the list endpoint for the Transfer Order Attachments."""
+        url = reverse('api-attachment-list')
+
+        # Filter by 'transferorder'
+        self.get(
+            url, data={'model_type': 'transferorder', 'model_id': 1}, expected_code=200
+        )
+
+    def test_transfer_order_operations(self):
+        """Test that we can create / edit and delete a TransferOrder via the API."""
+        n = models.TransferOrder.objects.count()
+
+        url = reverse('api-transfer-order-list')
+
+        # Initially we do not have "add" permission for the TransferOrder model,
+        # so this POST request should return 403 (denied)
+        response = self.post(
+            url,
+            {'reference': 'TO-43245', 'description': 'Transfer order'},
+            expected_code=403,
+        )
+
+        self.assignRole('transfer_order.add')
+
+        # Now we should be able to create a TransferOrder via the API
+        response = self.post(
+            url,
+            {'reference': 'TO-12345', 'description': 'Transfer order'},
+            expected_code=201,
+        )
+
+        # Check that the new order has been created
+        self.assertEqual(models.TransferOrder.objects.count(), n + 1)
+
+        # Grab the PK for the newly created TransferOrder
+        pk = response.data['pk']
+
+        # Basic checks against the newly created TransferOrder
+        so = models.TransferOrder.objects.get(pk=pk)
+        self.assertEqual(so.reference, 'TO-12345')
+        self.assertEqual(so.created_by.username, 'testuser')
+
+        # Try to create a TO with identical reference (should fail)
+        response = self.post(
+            url,
+            {
+                'customer': 4,
+                'reference': 'TO-12345',
+                'description': 'Another transfer order',
+            },
+            expected_code=400,
+        )
+
+        url = reverse('api-transfer-order-detail', kwargs={'pk': pk})
+
+        # Extract detail info for the TransferOrder
+        response = self.get(url)
+        self.assertEqual(response.data['reference'], 'TO-12345')
+
+        # Try to alter (edit) the TransferOrder
+        # Initially try with an invalid reference field value
+        response = self.patch(url, {'reference': 'TO-12345-a'}, expected_code=400)
+
+        response = self.patch(url, {'reference': 'TO-12346'}, expected_code=200)
+
+        # Reference should have changed
+        self.assertEqual(response.data['reference'], 'TO-12346')
+
+        # Now, let's try to delete this TransferOrder
+        # Initially, we do not have the required permission
+        response = self.delete(url, expected_code=403)
+
+        self.assignRole('transfer_order.delete')
+
+        response = self.delete(url, expected_code=204)
+
+        # Check that the number of transfer orders has decreased
+        self.assertEqual(models.TransferOrder.objects.count(), n)
+
+        # And the resource should no longer be available
+        response = self.get(url, expected_code=404)

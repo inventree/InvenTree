@@ -1,0 +1,34 @@
+- model: order.transferorder
+  pk: 1
+  fields:
+    reference: 'TO-123'
+    description: "One transfer order, please"
+    status: 10  # Pending
+
+- model: order.transferorder
+  pk: 2
+  fields:
+    reference: 'TO-124'
+    description: "One transfer order, please"
+    status: 20  # Issued
+
+- model: order.transferorder
+  pk: 3
+  fields:
+    reference: 'TO-125'
+    description: "One transfer order, please"
+    status: 25  # On Hold
+
+- model: order.transferorder
+  pk: 4
+  fields:
+    reference: 'TO-126'
+    description: "One transfer order, please"
+    status: 30  # Complete
+
+- model: order.transferorder
+  pk: 5
+  fields:
+    reference: 'TO-127'
+    description: "One transfer order, please"
+    status: 40  # Cancelled
