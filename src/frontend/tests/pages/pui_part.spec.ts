@@ -4,10 +4,13 @@ import {
   clickOnParamFilter,
   clickOnRowMenu,
   deletePart,
+  expectTableColumnCount,
   getRowFromCell,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showParametricView,
+  showTableView
 } from '../helpers';
 import { doCachedLogin } from '../login';
 import { setPluginState, setSettingState } from '../settings';
@@ -63,14 +66,16 @@ test('Parts - Tabs', async ({ browser }) => {
 });
 
 test('Parts - Manufacturer Parts', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/84/suppliers' });
+  const page = await doCachedLogin(browser, { url: 'part/84/' });
 
+  // Load the "suppliers" tab
   await loadTab(page, 'Suppliers');
   await page.getByText('Hammond Manufacturing').click();
-  await loadTab(page, 'Parameters');
-  await loadTab(page, 'Suppliers');
-  await loadTab(page, 'Attachments');
+
+  // Wait for manufacturer part page to load
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Attachments');
 });
 
 test('Parts - Supplier Parts', async ({ browser }) => {
@@ -499,6 +504,58 @@ test('Parts - Attachments', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Parts - Parameters by Category', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  // Check for expected parameter columns
+  for (const col of [
+    'Total Stock',
+    'Capacitance [F]',
+    'Power [W]',
+    'Resistance [ohms]'
+  ]) {
+    await page.getByRole('button', { name: col }).waitFor();
+  }
+
+  await expectTableColumnCount(page, 9);
+
+  // Now let's go to the "resistors" category
+  await navigate(page, 'part/category/5/parts');
+  await showParametricView(page);
+
+  // Fewer parameter templates displayed here
+  await expectTableColumnCount(page, 7);
+
+  // Check for expected parameter columns
+  for (const col of [
+    'Total Stock',
+    'Tolerance [percent]',
+    'Power [W]',
+    'Resistance [ohms]'
+  ]) {
+    await page.getByRole('button', { name: col }).waitFor();
+  }
+
+  // Finally, let's go to the "capacitors" category, which has a different set of parameter templates
+  await navigate(page, 'part/category/6/parts');
+  await showParametricView(page);
+  await expectTableColumnCount(page, 7);
+
+  for (const col of [
+    'Total Stock',
+    'Tolerance [percent]',
+    'Polarized',
+    'Capacitance [F]'
+  ]) {
+    await page.getByRole('button', { name: col }).waitFor();
+  }
+
+  // Reset to the table view
+  await showTableView(page);
+});
+
 test('Parts - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
@@ -562,10 +619,8 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/' });
 
   await loadTab(page, 'Parts', true);
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
 
+  await showParametricView(page);
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)

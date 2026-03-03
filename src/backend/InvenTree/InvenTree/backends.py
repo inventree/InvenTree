@@ -84,10 +84,11 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
 
             r -= 1
 
-            if r == 0:
-                logger.warning(
-                    'Failed to set maintenance mode state after %s retries', retries
-                )
+            # Disable this warning message (for now) as it is confusing users with no upside
+            # if r == 0:
+            #     logger.warning(
+            #         'Failed to set maintenance mode state after %s retries', retries
+            #     )
 
 
 class InvenTreeMailLoggingBackend(BaseEmailBackend):

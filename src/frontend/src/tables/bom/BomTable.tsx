@@ -44,6 +44,7 @@ import {
   BooleanColumn,
   CategoryColumn,
   DescriptionColumn,
+  IPNColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
@@ -129,12 +130,9 @@ export function BomTable({
           );
         }
       },
-      {
-        accessor: 'sub_part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN'
-      },
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
+      }),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,

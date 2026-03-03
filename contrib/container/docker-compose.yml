@@ -76,12 +76,14 @@ services:
         container_name: inventree-server
         # Only change this port if you understand the stack.
         expose:
-            - 8000
+            - ${INVENTREE_WEB_PORT:-8000}
         depends_on:
             - inventree-db
             - inventree-cache
         env_file:
             - .env
+        environment:
+          INVENTREE_SERVER: http://inventree-server:${INVENTREE_WEB_PORT}
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z

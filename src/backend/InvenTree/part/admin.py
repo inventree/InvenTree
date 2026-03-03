@@ -25,7 +25,6 @@ class PartAdmin(admin.ModelAdmin):
         'variant_of',
         'category',
         'default_location',
-        'default_supplier',
         'bom_checked_by',
         'creation_user',
     ]

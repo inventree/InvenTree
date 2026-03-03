@@ -33,6 +33,7 @@ import { hashString } from '../functions/tables';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
+import { CopyableCell } from './CopyableCell';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -264,11 +265,40 @@ export function InvenTreeTable<T extends Record<string, any>>({
           ? false
           : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
+      // Wrap the render function with CopyableCell if copyable is enabled
+      const originalRender = col.render;
+      let wrappedRender = originalRender;
+
+      if (col.copyable) {
+        wrappedRender = (record: any, index?: number) => {
+          const content =
+            originalRender?.(record, index) ??
+            resolveItem(record, col.accessor);
+
+          // Determine the value to copy, ensuring it is always a string
+          let rawCopyValue: unknown;
+          if (typeof col.copyable === 'function') {
+            rawCopyValue = col.copyable(record);
+          } else {
+            const accessor = col.copyAccessor ?? col.accessor;
+            rawCopyValue = resolveItem(record, accessor);
+          }
+          const copyValue = rawCopyValue == null ? '' : String(rawCopyValue);
+
+          if (window.isSecureContext && !!copyValue) {
+            return <CopyableCell value={copyValue}>{content}</CopyableCell>;
+          } else {
+            return content;
+          }
+        };
+      }
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        render: wrappedRender,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -485,6 +515,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     (status: DataTableSortStatus<T>) => {
       tableState.setPage(1);
       setSortStatus(status);
+
+      if (!status.columnAccessor) {
+        console.error(`Invalid column accessor provided for table ${cacheKey}`);
+      }
 
       setTableSorting(cacheKey)(status);
     },

@@ -1,10 +1,36 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 453
+INVENTREE_API_VERSION = 460
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
+    - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints
+    - Adds "updated_before" and "updated_after" date filters to all three order list endpoints
+    - Adds "updated_at" ordering option to all three order list endpoints
+
+v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
+    - Changed PurchaseOrderLine "auto_pricing" default value from true to false
+
+v458 -> 2026-02-22 : https://github.com/inventree/InvenTree/pull/11401
+    - Switches token refresh endpoint to use POST instead of GET (upstream allauth change)
+
+v457 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/10887
+    - Extend the "auto allocate" wizard API to include tracked items
+
+v456 -> 2026-02-20 : https://github.com/inventree/InvenTree/pull/11303
+    - Adds "primary" field to the SupplierPart API
+    - Removes "default_supplier" field from the Part API
+
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
+
+v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
+    - Adds "purchase_price" ordering option to StockItem API endpoint
 
 v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session

@@ -15,6 +15,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  IPNColumn,
   PartColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
@@ -40,11 +41,9 @@ export function UsedInTable({
         title: t`Assembly`,
         part: 'part_detail'
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: false,
-        title: t`IPN`
-      },
+      IPNColumn({
+        sortable: false
+      }),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,

@@ -56,6 +56,8 @@ export default function ParametricPartTable({
   return (
     <ParametricDataTable
       modelType={ModelType.part}
+      relatedModel={'category'}
+      relatedModelId={categoryId}
       endpoint={ApiEndpoints.part_list}
       customColumns={customColumns}
       customFilters={customFilters}

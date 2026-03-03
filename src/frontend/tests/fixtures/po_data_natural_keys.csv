@@ -1,0 +1,3 @@
+Project Code,Quantity,Reference,Target Date,Project Code Label,Build Order,Overdue,Received,Purchase price,Currency,Auto Pricing,Destination,Total price,SKU,MPN,Internal Part Number,Internal Part,Internal Part Name
+5,123,,30/01/2026,PRO-ZEN,,TRUE,0,0.48,USD,TRUE,,59.04,FUT-43861-DDU,,,55,C_100nF_0603
+,9999,my-custom-reference,,,,FALSE,0,0.1179,USD,TRUE,9,1178.8821,FUT-82092-CQB,,,60,C_10uF_0805

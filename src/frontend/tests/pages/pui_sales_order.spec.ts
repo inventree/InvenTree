@@ -5,7 +5,10 @@ import {
   clickOnRowMenu,
   globalSearch,
   loadTab,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -18,15 +21,9 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
   // Pending Shipments panel
   await loadTab(page, 'Pending Shipments');
@@ -37,25 +34,15 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
   // Customers
   await loadTab(page, 'Customers');
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   await page.getByText('Customer A').click();
   await loadTab(page, 'Notes');

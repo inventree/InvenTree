@@ -47,6 +47,7 @@ import {
   DateColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   ProjectCodeColumn,
   RenderPartColumn
@@ -94,13 +95,7 @@ export default function SalesOrderLineItemTable({
           );
         }
       },
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true
-      },
+      IPNColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),

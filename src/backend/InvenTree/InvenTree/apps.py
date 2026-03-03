@@ -331,6 +331,11 @@ class InvenTreeConfig(AppConfig):
         if MIGRATIONS_CHECK_DONE:
             return
 
+        # Exit early if we are not in a state where we can access the database,
+        # otherwise we might end up in a deadlock situation
+        if not InvenTree.ready.canAppAccessDatabase():
+            return
+
         if not InvenTree.tasks.check_for_migrations():
             # Detect if this an empty database - if so, start with a fresh migration
             if (
