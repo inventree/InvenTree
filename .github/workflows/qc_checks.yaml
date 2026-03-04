@@ -84,6 +84,7 @@ jobs:
       - name: Which runner to use?
         env:
           GITHUB_REF = ${{ github.ref }}
+          PERFORMANCE = ${{ steps.performance.outputs.performance }}
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
         run: |
@@ -91,10 +92,7 @@ jobs:
           if [[ '${{ github.event_name }}' == 'push' && "$GITHUB_REF" == 'refs/heads/master' ]]; then
             is_main_push=true
           fi
-
-          is_perf_forced='${{ steps.performance.outputs.performance }}'
-
-          if [[ '${{ github.repository }}' == 'inventree/InvenTree' && ( "$is_main_push" == 'true' || "$is_perf_forced" == 'true' ) ]]; then
+          if [[ '${{ github.repository }}' == 'inventree/InvenTree' && ( "$is_main_push" == 'true' || "$PERFORMANCE" == 'true' ) ]]; then
             echo "runner=codspeed-macro" >> "$GITHUB_OUTPUT"
           else
             echo "runner=ubuntu-24.04" >> "$GITHUB_OUTPUT"
