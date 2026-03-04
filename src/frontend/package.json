@@ -134,6 +134,6 @@
         "vite-plugin-babel-macros": "^1.0.6",
         "vite-plugin-dts": "^4.5.3",
         "vite-plugin-externals": "^0.6.2",
-        "vite-plugin-istanbul": "^6.0.2"
+        "vite-plugin-istanbul": "^7.2.1"
     }
 }
