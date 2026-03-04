@@ -1887,10 +1887,15 @@ def rename_attachment(instance, filename: str):
 
     filename = os.path.basename(filename)
 
-    # Generate a new filename for the attachment
-    return os.path.join(
+    filepath = os.path.join(
         'attachments', str(instance.model_type), str(instance.model_id), filename
     )
+
+    # Remove existing file so Django doesn't append random string
+    if default_storage.exists(filepath):
+        default_storage.delete(filepath)
+
+    return filepath
 
 
 class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):

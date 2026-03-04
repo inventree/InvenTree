@@ -1769,6 +1769,18 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
 
+                moved_success = stock_item.move(
+                    location=location,
+                    quantity=quantity,
+                    user=request.user,
+                    notes=''
+                )
+                
+                if not moved_success:
+                    raise ValidationError(
+                        _('Stock transfer failed')
+                    )
+
 
 class StockReturnSerializer(StockAdjustmentSerializer):
     """Serializer class for returning stock item(s) into stock."""

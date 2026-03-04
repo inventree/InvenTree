@@ -2383,11 +2383,12 @@ class StockItem(
         if location is None:
             return False
 
-        # Validate tenant compatibility - prevent transferring stock between different tenants
-        if current_location and current_location.tenant_id != location.tenant_id:
-            raise ValidationError(
-                _('Cannot transfer stock between locations with different tenants')
-            )
+        # Prevent transferring stock between different tenants
+        if current_location and location:
+            if current_location.tenant_id and location.tenant_id and current_location.tenant_id != location.tenant_id:
+                raise ValidationError({
+                    'location': _('Cannot transfer stock between locations with different tenants')
+                })
 
         # Test for a partial movement
         if quantity < self.quantity:

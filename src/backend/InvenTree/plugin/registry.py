@@ -341,9 +341,10 @@ class PluginsRegistry:
 
             config = configs.get(plugin.slug)
 
-            # No config - cannot use this plugin
-            if not config:
-                continue
+            # If plugin has no config yet, treat it as inactive by default
+            if config is None:
+                from plugin.models import PluginConfig
+                config = PluginConfig(key=plugin.slug)
 
             if active is not None and active != config.is_active():
                 continue

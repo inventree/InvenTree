@@ -188,7 +188,7 @@ class MetadataMixin(models.Model):
         """Validate the metadata field."""
         # Ensure that the 'metadata' field is a valid dict object
         if self.metadata is None:
-            return
+            self.metadata = {} 
 
         if not isinstance(self.metadata, dict):
             raise ValidationError({
