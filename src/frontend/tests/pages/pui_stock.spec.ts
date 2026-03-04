@@ -5,7 +5,9 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showParametricView,
+  showTableView
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -36,6 +38,10 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
+
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Notes');
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
@@ -479,7 +485,15 @@ test('Stock - Location', async ({ browser }) => {
 
   await loadTab(page, 'Default Parts');
   await loadTab(page, 'Stock Items');
+
+  await showParametricView(page);
+  await showTableView(page);
+
   await loadTab(page, 'Sublocations');
+
+  await showParametricView(page);
+  await showTableView(page);
+
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('action-menu-barcode-actions').click();
