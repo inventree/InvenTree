@@ -61,6 +61,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -617,6 +618,11 @@ export default function StockDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk,
+        hidden: !stockitem.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.stockitem,
         model_id: stockitem.pk
