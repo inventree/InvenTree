@@ -75,10 +75,17 @@ jobs:
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
+      - name: Is performance testing being forced?
+        run: echo "performance=true" >> $GITHUB_OUTPUT
+        id: performance
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'performance-run')
       - name: Which runner to use?
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' && ( '${{ github.event_name }}' == 'push' && '${{ github.ref }}' == 'refs/heads/master' ) || contains(github.event.pull_request.labels.*.name, 'performance-run') ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
+        run: |
+          enviroment_ok='${{ github.event_name }}' == 'push' && '${{ github.ref }}' == 'refs/heads/master'
+          echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' &&  [[ $enviroment_ok | ${{ steps.performance.outputs.performance }} ]] ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
