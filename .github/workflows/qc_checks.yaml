@@ -83,8 +83,8 @@ jobs:
           contains(github.event.pull_request.labels.*.name, 'performance-run')
       - name: Which runner to use?
         env:
-          GITHUB_REF = ${{ github.ref }}
-          PERFORMANCE = ${{ steps.performance.outputs.performance }}
+          GITHUB_REF: ${{ github.ref }}
+          PERFORMANCE: ${{ steps.performance.outputs.performance }}
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
         run: |
