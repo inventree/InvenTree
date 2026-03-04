@@ -3079,7 +3079,61 @@ class TransferOrderTest(OrderTest):
         self.assertIn('Order is already complete', str(response.data))
 
         # Now, we make sure the affected stock was transferred to the correct location
-        StockItem.objects.get(part=part, quantity=10, batch='transfer-order-test')
+        StockItem.objects.get(
+            part=part, quantity=10, batch='transfer-order-test', location=destination
+        )
+
+    def test_transfer_order_consume(self):
+        """Tests for marking a TransferOrder consume the stock it 'transfers'."""
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+        # Let's create a TransferOrder
+        to = models.TransferOrder.objects.create(
+            reference='TO-12345',
+            description='Test TO',
+            consume=True,
+            destination=destination,
+        )
+
+        self.assertEqual(to.status, TransferOrderStatus.PENDING.value)
+
+        # Create a line item
+        part = Part.objects.filter(salable=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+
+        # issue the order
+        url = reverse('api-transfer-order-issue', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        # Allocate some stock
+        item = StockItem.objects.create(
+            part=part, quantity=100, location=None, batch='transfer-order-test'
+        )
+        models.TransferOrderAllocation.objects.create(quantity=10, line=line, item=item)
+
+        # Ok, now we should be able to "complete" the transfer via the API
+        url = reverse('api-transfer-order-complete', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.COMPLETE.value)
+        self.assertIsNotNone(to.complete_date)
+
+        # Now, we make sure the affected stock was 'consumed', reducing available quantity
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 90)
+
+        # and that it wasn't transferred to the destination
+        with self.assertRaises(StockItem.DoesNotExist):
+            StockItem.objects.get(
+                part=part,
+                quantity=10,
+                batch='transfer-order-test',
+                location=destination,
+            )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
