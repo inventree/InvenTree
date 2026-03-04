@@ -40,6 +40,7 @@ jobs:
       cicd: ${{ steps.filter.outputs.cicd }}
       requirements: ${{ steps.filter.outputs.requirements }}
       runner-perf: ${{ steps.runner-perf.outputs.runner }}
+      performance: ${{ steps.performance.outputs.performance }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
@@ -421,7 +422,7 @@ jobs:
 
     needs: ["pre-commit", "paths-filter"]
     # check if we are in inventree/inventree - reporting only works in that OIDC context
-    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree'
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true' || needs.paths-filter.outputs.performance == 'true') && github.repository == 'inventree/InvenTree'
     permissions:
       contents: read
       id-token: write
