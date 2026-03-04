@@ -400,6 +400,7 @@ class StockItemReportContext(report.mixins.BaseReportContext):
 
 class StockItem(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
