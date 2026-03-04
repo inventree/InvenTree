@@ -2729,7 +2729,11 @@ order_api_urls = [
                         TransferOrderCancel.as_view(),
                         name='api-transfer-order-cancel',
                     ),
-                    path('hold/', TransferOrderHold.as_view(), name='api-ro-hold'),
+                    path(
+                        'hold/',
+                        TransferOrderHold.as_view(),
+                        name='api-transfer-order-hold',
+                    ),
                     path(
                         'complete/',
                         TransferOrderComplete.as_view(),

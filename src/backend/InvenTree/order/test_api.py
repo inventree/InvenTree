@@ -2795,6 +2795,16 @@ class TransferOrderTest(OrderTest):
         self.filter({'overdue': True}, 2)
         self.filter({'overdue': False}, 3)
 
+    def test_transfer_order_detail(self):
+        """Test the TransferOrder detail endpoint."""
+        url = '/api/order/to/1/'
+
+        response = self.get(url)
+
+        data = response.data
+
+        self.assertEqual(data['pk'], 1)
+
     def test_transfer_order_attachments(self):
         """Test the list endpoint for the Transfer Order Attachments."""
         url = reverse('api-attachment-list')
@@ -2877,3 +2887,203 @@ class TransferOrderTest(OrderTest):
 
         # And the resource should no longer be available
         response = self.get(url, expected_code=404)
+
+    def test_transfer_order_create(self):
+        """Test that we can create a new TransferOrder via the API."""
+        self.assignRole('transfer_order.add')
+
+        url = reverse('api-transfer-order-list')
+
+        # Will fail due to invalid reference field
+        response = self.post(
+            url,
+            {'reference': '1234566778', 'description': 'A test transfer order'},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Reference must match required pattern', str(response.data['reference'])
+        )
+
+        self.post(
+            url,
+            {'reference': 'TO-12345', 'description': 'A better test transfer order'},
+            expected_code=201,
+        )
+
+    def test_transfer_order_cancel(self):
+        """Test API endpoint for cancelling a TransferOrder."""
+        to = models.TransferOrder.objects.get(pk=1)
+
+        self.assertEqual(to.status, TransferOrderStatus.PENDING)
+
+        url = reverse('api-transfer-order-cancel', kwargs={'pk': to.pk})
+
+        # Try to cancel, without permission
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('transfer_order.add')
+
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+    def test_transfer_order_hold(self):
+        """Test API endpoint for holdling a TransferOrder."""
+        to = models.TransferOrder.objects.get(pk=1)
+
+        self.assertEqual(to.status, TransferOrderStatus.PENDING)
+
+        url = reverse('api-transfer-order-hold', kwargs={'pk': to.pk})
+
+        # Try to hold, without permission
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('transfer_order.add')
+
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+
+        self.assertEqual(to.status, TransferOrderStatus.ON_HOLD)
+
+    def test_transfer_order_calendar(self):
+        """Test the calendar export endpoint."""
+        # Create required transfer orders
+        self.assignRole('transfer_order.add')
+
+        for i in range(1, 9):
+            self.post(
+                reverse('api-transfer-order-list'),
+                {
+                    'reference': f'TO-1100000{i}',
+                    'description': f'Calendar SO {i}',
+                    'target_date': f'2024-12-{i:02d}',
+                },
+                expected_code=201,
+            )
+
+        # Cancel a few orders - these will not show in incomplete view below
+        for to in models.TransferOrder.objects.filter(target_date__isnull=False):
+            if to.reference in [
+                'TO-11000006',
+                'TO-11000007',
+                'TO-11000008',
+                'TO-11000009',
+            ]:
+                self.post(
+                    reverse('api-transfer-order-cancel', kwargs={'pk': to.pk}),
+                    expected_code=201,
+                )
+
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'transfer-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+
+        number_orders = len(
+            models.TransferOrder.objects.filter(target_date__isnull=False).filter(
+                status__lt=TransferOrderStatus.COMPLETE.value
+            )
+        )
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders, n_events)
+
+        # Test with completed orders
+        response = self.get(
+            url, data={'include_completed': 'True'}, expected_code=200, format=None
+        )
+
+        number_orders_incl_complete = len(
+            models.TransferOrder.objects.filter(target_date__isnull=False)
+        )
+        self.assertGreater(number_orders_incl_complete, number_orders)
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_export(self):
+        """Test we can export the TransferOrder list."""
+        n = models.TransferOrder.objects.count()
+
+        # Check there are some sales orders
+        self.assertGreater(n, 0)
+
+        # Download file, check we get a 200 response
+        for fmt in ['csv', 'xlsx', 'tsv']:
+            self.export_data(
+                reverse('api-transfer-order-list'),
+                export_format=fmt,
+                decode=fmt == 'csv',
+                expected_code=200,
+                expected_fn=r'InvenTree_TransferOrder_.+',
+            )
+
+    def test_transfer_order_complete(self):
+        """Tests for marking a TransferOrder as complete."""
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+        # Let's create a TransferOrder
+        to = models.TransferOrder.objects.create(
+            reference='TO-12345', description='Test TO', destination=destination
+        )
+
+        self.assertEqual(to.status, TransferOrderStatus.PENDING.value)
+
+        # Create a line item
+        part = Part.objects.filter(salable=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+
+        # issue the order
+        url = reverse('api-transfer-order-issue', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        # Allocate some stock
+        item = StockItem.objects.create(
+            part=part, quantity=100, location=None, batch='transfer-order-test'
+        )
+        models.TransferOrderAllocation.objects.create(quantity=10, line=line, item=item)
+
+        # Ok, now we should be able to "complete" the transfer via the API
+        url = reverse('api-transfer-order-complete', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.COMPLETE.value)
+        self.assertIsNotNone(to.complete_date)
+
+        # Now, let's try *again* (it should fail as the order is already complete)
+        response = self.post(url, {}, expected_code=400)
+        self.assertIn('Order is already complete', str(response.data))
+
+        # Now, we make sure the affected stock was transferred to the correct location
+        StockItem.objects.get(part=part, quantity=10, batch='transfer-order-test')
+
+    def test_output_options(self):
+        """Test the output options for the TransferOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-transfer-order-detail', kwargs={'pk': 1}),
+            ['take_from_detail', 'destination_detail'],
+        )

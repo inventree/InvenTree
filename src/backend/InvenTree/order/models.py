@@ -3492,17 +3492,6 @@ class TransferOrderLineItem(OrderLineItem):
         validators=[MinValueValidator(0)],
     )
 
-    def fulfilled_quantity(self):
-        """Return the total stock quantity fulfilled against this line item."""
-        if not self.pk:
-            return 0
-
-        query = self.order.stock_items.filter(part=self.part).aggregate(
-            fulfilled=Coalesce(Sum('quantity'), Decimal(0))
-        )
-
-        return query['fulfilled']
-
     def allocated_quantity(self):
         """Return the total stock quantity allocated to this LineItem.
 
@@ -3522,9 +3511,6 @@ class TransferOrderLineItem(OrderLineItem):
         # If the linked part is "virtual", then we cannot allocate stock against it
         if self.part and self.part.virtual:
             return True
-
-        if self.order.status == TransferOrderStatus.COMPLETE:
-            return self.fulfilled_quantity() >= self.quantity
 
         return self.allocated_quantity() >= self.quantity
 
