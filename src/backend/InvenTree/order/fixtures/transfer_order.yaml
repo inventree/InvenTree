@@ -10,7 +10,7 @@
   fields:
     reference: 'TO-124'
     description: "One transfer order, please"
-    status: 20  # Issued
+    status: 40  # Cancelled
 
 - model: order.transferorder
   pk: 3
@@ -24,11 +24,45 @@
   fields:
     reference: 'TO-126'
     description: "One transfer order, please"
-    status: 30  # Complete
+    status: 20  # Issued
 
 - model: order.transferorder
   pk: 5
   fields:
     reference: 'TO-127'
     description: "One transfer order, please"
-    status: 40  # Cancelled
+    status: 30  # Complete
+
+
+# Line items for transfer orders
+- model: order.transferorderlineitem
+  pk: 1
+  fields:
+    order: 5 # the completed order
+    part: 10001 # blue chair
+    quantity: 1
+
+- model: order.transferorderlineitem
+  pk: 2
+  fields:
+    order: 4 # the issued order
+    part: 10001 # blue chair
+    quantity: 1
+    transferred: 1
+
+# Allocations for transfer orders
+# an 'allocated' allocation
+- model: order.transferorderallocation
+  pk: 1
+  fields:
+    line: 1 # the line item on the completed order
+    item: 1 # stock item
+    quantity: 1
+
+# a 'complete' allocation
+- model: order.transferorderallocation
+  pk: 2
+  fields:
+    line: 2 # the line item on the issued order
+    item: 500 # stock item for the blue chair
+    quantity: 1

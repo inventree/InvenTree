@@ -2787,7 +2787,8 @@ class TransferOrderTest(OrderTest):
         self.filter({'overdue': True}, 0)
         self.filter({'overdue': False}, 5)
 
-        for pk in [1, 2]:
+        # pick two orders that are still open (not cancelled or complete)
+        for pk in [1, 4]:
             order = models.TransferOrder.objects.get(pk=pk)
             order.target_date = datetime.now().date() - timedelta(days=10)
             order.save()
@@ -3064,6 +3065,12 @@ class TransferOrderTest(OrderTest):
         item = StockItem.objects.create(
             part=part, quantity=100, location=None, batch='transfer-order-test'
         )
+        models.TransferOrderAllocation.objects.create(quantity=5, line=line, item=item)
+
+        # attempt to complete the order, but fail because there are incomplete allocations
+        url = reverse('api-transfer-order-complete', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=400)
+        # allocate more stock
         models.TransferOrderAllocation.objects.create(quantity=10, line=line, item=item)
 
         # Ok, now we should be able to "complete" the transfer via the API
@@ -3141,3 +3148,168 @@ class TransferOrderTest(OrderTest):
             reverse('api-transfer-order-detail', kwargs={'pk': 1}),
             ['take_from_detail', 'destination_detail'],
         )
+
+
+class TransferOrderLineItemTest(OrderTest):
+    """Tests for the TransferOrderLineItem API."""
+
+    LIST_URL = reverse('api-to-line-list')
+
+    # adjust counts in asserts based on those created in setUpTestData
+    # plus those in fixtures
+    NUM_LINE_ITEMS_IN_FIXTURES = 2
+
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
+        # List of 'transferrable' parts
+        parts = Part.objects.exclude(virtual=True)
+
+        lines = []
+
+        # Create a bunch of TransferOrderLineItems for each order
+        for idx, to in enumerate(models.TransferOrder.objects.all()):
+            for part in parts:
+                lines.append(
+                    models.TransferOrderLineItem(
+                        order=to,
+                        part=part,
+                        quantity=(idx + 1) * 5,
+                        reference=f'Order {to.reference} - line {idx}',
+                    )
+                )
+
+        # Bulk create
+        models.TransferOrderLineItem.objects.bulk_create(lines)
+
+        cls.url = reverse('api-to-line-list')
+
+    def test_transfer_order_line_list(self):
+        """Test list endpoint."""
+        response = self.get(self.url, {}, expected_code=200)
+
+        n = models.TransferOrderLineItem.objects.count()
+
+        # We should have received *all* lines
+        self.assertEqual(len(response.data), n)
+
+        # List *all* lines, but paginate
+        response = self.get(self.url, {'limit': 5}, expected_code=200)
+
+        self.assertEqual(response.data['count'], n)
+        self.assertEqual(len(response.data['results']), 5)
+
+        n_orders = models.TransferOrder.objects.count()
+        n_parts = Part.objects.exclude(virtual=True).count()
+
+        # List by part
+        # fixures add line items, avoid those here with [:3] for predictable counts
+        for part in Part.objects.exclude(virtual=True)[:3]:
+            response = self.get(self.url, {'part': part.pk, 'limit': 10})
+            self.assertEqual(response.data['count'], n_orders)
+
+        # List by order
+        # fixures add line items, avoid those here with [:3] for predictable counts
+        for order in models.TransferOrder.objects.all()[:3]:
+            response = self.get(self.url, {'order': order.pk, 'limit': 10})
+            # count of line items equal to number of parts because
+            # we created a line item per part on each order in setUpTestData
+            self.assertEqual(response.data['count'], n_parts)
+
+        # Filter by 'completed' status
+        self.filter({'completed': 1}, 1)
+        self.filter({'completed': 0}, n - 1)
+
+        # Filter by 'allocated' status
+        self.filter({'allocated': 'true'}, 2)
+        self.filter({'allocated': 'false'}, n - 2)
+
+    def test_transfer_order_line_allocated_filters(self):
+        """Test filtering by allocation status for a TransferOrderLineItem."""
+        self.assignRole('transfer_order.add')
+
+        destination = StockLocation.objects.first()
+        assert destination
+
+        response = self.post(
+            reverse('api-transfer-order-list'),
+            {
+                'reference': 'TO-12345',
+                'description': 'Test Transfer Order',
+                'destination': destination.pk,
+            },
+        )
+
+        order_id = response.data['pk']
+        order = models.TransferOrder.objects.get(pk=order_id)
+
+        transfer_order_line_url = reverse('api-to-line-list')
+
+        # Initially, there should be no line items against this order
+        response = self.get(transfer_order_line_url, {'order': order_id})
+
+        self.assertEqual(len(response.data), 0)
+
+        parts = [25, 50, 100]
+
+        # Let's create some new line items
+        for part_id in parts:
+            self.post(
+                transfer_order_line_url,
+                {'order': order_id, 'part': part_id, 'quantity': 10},
+            )
+
+        # Should be three items now
+        response = self.get(transfer_order_line_url, {'order': order_id})
+
+        self.assertEqual(len(response.data), 3)
+
+        for item in response.data:
+            # Check that the line item has been created
+            self.assertEqual(item['order'], order_id)
+
+            # Check that the line quantities are correct
+            self.assertEqual(item['quantity'], 10)
+            self.assertEqual(item['allocated'], 0)
+            self.assertEqual(item['transferred'], 0)
+
+        # Initial API filters should return no results
+        self.filter({'order': order_id, 'allocated': 1}, 0)
+        self.filter({'order': order_id, 'completed': 1}, 0)
+
+        # issue the order
+        order_issue_url = reverse('api-transfer-order-issue', kwargs={'pk': order.pk})
+        self.post(order_issue_url, {}, expected_code=201)
+
+        # Next, allocate stock against 2 line items
+        for item in parts[:2]:
+            p = Part.objects.get(pk=item)
+            s = StockItem.objects.create(part=p, quantity=100)
+            l = models.TransferOrderLineItem.objects.filter(order=order, part=p).first()
+            assert l
+
+            # Allocate against the API
+            self.post(
+                reverse('api-to-allocate', kwargs={'pk': order.pk}),
+                {'items': [{'line_item': l.pk, 'stock_item': s.pk, 'quantity': 10}]},
+            )
+
+        # Filter by 'fully allocated' status
+        self.filter({'order': order_id, 'allocated': 1}, 2)
+        self.filter({'order': order_id, 'allocated': 0}, 1)
+
+        self.filter({'order': order_id, 'completed': 1}, 0)
+        self.filter({'order': order_id, 'completed': 0}, 3)
+
+        # Finally, attempt to transfer this line item
+        # we have incomplete allocations, so must specify arg
+        self.post(
+            reverse('api-transfer-order-complete', kwargs={'pk': order.pk}),
+            {'accept_incomplete_allocation': 'true'},
+        )
+
+        # Filter by 'completed' status
+        self.filter({'order': order_id, 'completed': 1}, 2)
+        self.filter({'order': order_id, 'completed': 0}, 1)
