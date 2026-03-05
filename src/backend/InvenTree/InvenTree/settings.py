@@ -27,7 +27,7 @@ from corsheaders.defaults import default_headers as default_cors_headers
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
-from InvenTree.ready import isInMainThread
+from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
@@ -258,11 +258,21 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
+DBBACKUP_BACKUP_METADATA_SETTER = InvenTree.backup.metadata_set
+DBBACKUP_RESTORE_METADATA_VALIDATOR = InvenTree.backup.validate_restore
+
 # Data storage options
 DBBACKUP_STORAGE_CONFIG = {
     'BACKEND': InvenTree.backup.get_backup_storage_backend(),
     'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
+
+# This can also be overridden with a command line flag --restore-allow-newer-version when running the restore command
+BACKUP_RESTORE_ALLOW_NEWER_VERSION = get_boolean_setting(
+    'INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION',
+    'backup_restore_allow_newer_version',
+    False,
+)
 
 # Enable django admin interface?
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
@@ -862,7 +872,7 @@ TRACING_ENABLED = get_boolean_setting(
 )
 TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED:  # pragma: no cover
+if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
 
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)

@@ -47,8 +47,10 @@ import {
   DateColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -94,21 +96,11 @@ export default function SalesOrderLineItemTable({
           );
         }
       },
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true
-      },
+      IPNColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
-      {
-        accessor: 'reference',
-        sortable: false,
-        switchable: true
-      },
+      ReferenceColumn({}),
       ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',

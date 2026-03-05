@@ -141,6 +141,7 @@ export default function SalesIndex() {
             icon: <IconTable />,
             content: (
               <CompanyTable
+                companyType='customer'
                 path='sales/customer'
                 params={{ is_customer: true }}
               />

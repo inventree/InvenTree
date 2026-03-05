@@ -142,7 +142,8 @@ export default function SalesOrderShipmentTable({
         accessor: 'order_detail.reference',
         title: t`Sales Order`,
         hidden: !showOrderInfo,
-        sortable: false
+        sortable: false,
+        copyable: true
       },
       StatusColumn({
         switchable: true,
@@ -155,7 +156,8 @@ export default function SalesOrderShipmentTable({
         accessor: 'reference',
         title: t`Shipment Reference`,
         switchable: false,
-        sortable: true
+        sortable: true,
+        copyable: true
       },
       {
         accessor: 'allocated_items',
@@ -193,14 +195,14 @@ export default function SalesOrderShipmentTable({
         title: t`Delivery Date`
       }),
       {
-        accessor: 'tracking_number'
+        accessor: 'tracking_number',
+        copyable: true
       },
       {
-        accessor: 'invoice_number'
+        accessor: 'invoice_number',
+        copyable: true
       },
-      LinkColumn({
-        accessor: 'link'
-      })
+      LinkColumn({})
     ];
   }, [showOrderInfo]);
 

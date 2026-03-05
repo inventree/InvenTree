@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { isTrue } from '@lib/functions/Conversion';
 import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
 import type {
   StatusCodeInterface,
@@ -13,6 +14,47 @@ import {
   useGlobalStatusState
 } from '../states/GlobalStatusState';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+
+// Determine the appropriate display label for a given filter, based on its name and the list of available filters
+export function filterDisplayLabel(
+  name: string,
+  filters?: TableFilter[]
+): string {
+  const filter = filters?.find((f) => f.name === name);
+  return filter?.label ?? name;
+}
+
+// Determine the appropriate display value for a filter, based on its type and value
+// This is useful for recreating a display value if we only have a name:value pair
+export function filterDisplayValue(
+  name: string,
+  value: any,
+  filters?: TableFilter[]
+) {
+  const filterDef = filters?.find((f) => f.name === name);
+
+  if (!filterDef) {
+    return value;
+  }
+
+  if (!filterDef.type || filterDef.type == 'boolean') {
+    return isTrue(value) ? t`Yes` : t`No`;
+  }
+
+  if (filterDef.type === 'choice' && filterDef.choices) {
+    const choice = filterDef.choices.find((c) => c.value === value);
+    return choice ? choice.label : value;
+  }
+
+  if (filterDef.type === 'choice' && filterDef.choiceFunction) {
+    const choices = filterDef.choiceFunction();
+    const choice = choices.find((c) => c.value === value);
+    return choice ? choice.label : value;
+  }
+
+  // No obvious match - return the raw value
+  return value;
+}
 
 /**
  * Return list of available filter options for a given filter
@@ -240,6 +282,24 @@ export function CompletedAfterFilter(): TableFilter {
     name: 'completed_after',
     label: t`Completed After`,
     description: t`Show items completed after this date`,
+    type: 'date'
+  };
+}
+
+export function UpdatedAfterFilter(): TableFilter {
+  return {
+    name: 'updated_after',
+    label: t`Updated After`,
+    description: t`Show orders updated after this date`,
+    type: 'date'
+  };
+}
+
+export function UpdatedBeforeFilter(): TableFilter {
+  return {
+    name: 'updated_before',
+    label: t`Updated Before`,
+    description: t`Show orders updated before this date`,
     type: 'date'
   };
 }

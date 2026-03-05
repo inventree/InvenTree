@@ -57,7 +57,7 @@ repos:
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, -c, src/backend/requirements.txt]
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.14, -c, src/backend/requirements.txt]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
