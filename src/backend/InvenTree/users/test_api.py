@@ -184,7 +184,10 @@ class UserAPITests(InvenTreeAPITestCase):
             expected_code=200,
         )
         self.assertIn('name', response.data)
+        self.assertIn('roles', response.data)
         self.assertIn('permissions', response.data)
+
+        self.assertGreater(len(response.data['roles']), 0)
 
     def test_login_redirect(self):
         """Test login redirect endpoint."""

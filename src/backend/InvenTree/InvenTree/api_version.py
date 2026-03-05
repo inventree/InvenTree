@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 460
+INVENTREE_API_VERSION = 461
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v461 -> 2026-03-05 : https://github.com/inventree/InvenTree/pull/11073
+    - Add OptionalField class for cleaner handling of optional fields in serializers
 
 v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
     - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints
@@ -32,9 +35,16 @@ v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
 v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
     - Adds "purchase_price" ordering option to StockItem API endpoint
 
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
+
+v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
+    - Adds "purchase_price" ordering option to StockItem API endpoint
+
 v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
-
 v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
     - Adds "install_into_detail" field to the BuildItem API endpoint
 
