@@ -202,7 +202,7 @@ This will display the data in a calendar format:
 
 ## Parametric Views
 
-Some [table views](#table-views) can be switched to a parametric view, which provides a visual representation of data based on specific parameters or attributes. The parametric view allows users to easily see and interact with data that is organized by certain characteristics, such as categories, types, or other relevant attributes.
+Some [table views](#table-views) can be switched to a parametric view, which provides a visual representation of data based on specific [parameters attributes](./parameters.md). The parametric view allows users to easily see and interact with data that is organized by certain characteristics, such as categories, types, or other relevant attributes.
 
 To switch to the "parametric view" (for a table which supports it), click on the "parametric view" button located above and to the right of the table view:
 

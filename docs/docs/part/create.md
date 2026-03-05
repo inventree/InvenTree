@@ -20,7 +20,7 @@ New parts can be created manually by selecting the *Create Part* option from the
 {{ image("part/part_create_form.png", "New part form") }}
 
 
-Fill out the required part parameters and then press *Submit* to create the new part. If there are any form errors, you must fix these before the form can be successfully submitted.
+Fill out the required part attributes and then press *Submit* to create the new part. If there are any form errors, you must fix these before the form can be successfully submitted.
 
 Once the form is completed, the browser window is redirected to the new part detail page.
 
