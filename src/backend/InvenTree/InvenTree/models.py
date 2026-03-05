@@ -190,11 +190,11 @@ class MetadataMixin(models.Model):
         if self.metadata is None:
             self.metadata = {} 
 
-        if not isinstance(self.metadata, dict):
+        if type(self.metadata) is not dict:
             raise ValidationError({
                 'metadata': _('Metadata must be a python dict object')
             })
-
+            
     metadata = models.JSONField(
         blank=True,
         null=True,

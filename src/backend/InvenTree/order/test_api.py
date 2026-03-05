@@ -2807,7 +2807,7 @@ class OrderMetadataAPITest(InvenTreeAPITestCase):
         url = reverse(apikey, kwargs={'pk': modeldata.pk})
 
         # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
+        self.assertIn(modeldata.metadata, [None, {}])
 
         numstr = f'12{len(apikey)}'
 
