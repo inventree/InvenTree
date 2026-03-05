@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
+import common.models
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -1656,8 +1657,20 @@ class BomItemSerializer(
 
     def validate_quantity(self, quantity):
         """Perform validation for the BomItem quantity field."""
-        if quantity <= 0:
-            raise serializers.ValidationError(_('Quantity must be greater than zero'))
+        allow_zero_qty = common.models.InvenTreeSetting.get_setting(
+            'PART_BOM_ALLOW_ZERO_QUANTITY', False
+        )
+
+        if allow_zero_qty:
+            if quantity < 0:
+                raise serializers.ValidationError(
+                    _('Quantity must be greater than or equal to zero')
+                )
+        else:
+            if quantity <= 0:
+                raise serializers.ValidationError(
+                    _('Quantity must be greater than zero')
+                )
 
         return quantity
 

@@ -552,6 +552,12 @@ class DataImportRow(models.Model):
         self.valid = self.validate()
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        """Update the session progress when a row is deleted."""
+        session = self.session
+        super().delete(*args, **kwargs)
+        session.check_complete()
+
     session = models.ForeignKey(
         DataImportSession,
         on_delete=models.CASCADE,
