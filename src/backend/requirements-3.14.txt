@@ -504,9 +504,9 @@ defusedxml==0.7.1 \
     # via
     #   -c src/backend/requirements.txt
     #   python3-openid
-django==5.2.11 \
-    --hash=sha256:7f2d292ad8b9ee35e405d965fbbad293758b858c34bbf7f3df551aeeac6f02d3 \
-    --hash=sha256:e7130df33ada9ab5e5e929bc19346a20fe383f5454acb2cc004508f242ee92c0
+django==5.2.12 \
+    --hash=sha256:4853482f395c3a151937f6991272540fcbf531464f254a347bf7c89f53c8cff7 \
+    --hash=sha256:6b809af7165c73eff5ce1c87fdae75d4da6520d6667f86401ecf55b681eb1eeb
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -1701,9 +1701,9 @@ pynacl==1.6.2 \
     # via
     #   -c src/backend/requirements.txt
     #   paramiko
-pypdf==6.7.3 \
-    --hash=sha256:cd25ac508f20b554a9fafd825186e3ba29591a69b78c156783c5d8a2d63a1c0a \
-    --hash=sha256:eca55c78d0ec7baa06f9288e2be5c4e8242d5cbb62c7a4b94f2716f8e50076d2
+pypdf==6.7.5 \
+    --hash=sha256:07ba7f1d6e6d9aa2a17f5452e320a84718d4ce863367f7ede2fd72280349ab13 \
+    --hash=sha256:40bb2e2e872078655f12b9b89e2f900888bb505e88a82150b64f9f34fa25651d
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
