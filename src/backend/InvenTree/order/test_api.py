@@ -3129,6 +3129,7 @@ class TransferOrderTest(OrderTest):
         # issue the order
         url = reverse('api-transfer-order-issue', kwargs={'pk': to.pk})
         self.post(url, {}, expected_code=201)
+        to.refresh_from_db()
         self.assertEqual(to.status, TransferOrderStatus.ISSUED.value)
 
         # Allocate some stock
