@@ -615,12 +615,7 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Toggle false to true
-  await page
-    .locator('label')
-    .filter({ hasText: 'DataParameter Value' })
-    .locator('div')
-    .first()
-    .click();
+  await page.getByRole('switch', { name: 'boolean-field-data' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Finally, delete the parameter
