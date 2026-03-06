@@ -17,6 +17,8 @@ class TenantTest(InvenTreeAPITestCase):
         """Set up test data."""
         super().setUp()
 
+        Tenant.objects.all().delete()
+        
         # Create test tenants
         self.tenant1 = Tenant.objects.create(
             name='Tenant 1', description='First test tenant', code='T1', is_active=True

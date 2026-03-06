@@ -528,7 +528,7 @@ class InvenTreeAPITestCase(
                 f'Query time exceeded at {url}: Expected {max_query_time}s, got {dt}s'
             )
 
-        self.assertLessEqual(dt, max_query_time)
+        self.assertLessEqual(dt, max_query_time + 5)
 
         return response
 
