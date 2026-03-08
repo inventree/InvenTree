@@ -7,6 +7,7 @@ import {
   LoadingOverlay,
   Paper,
   Stack,
+  Switch,
   Text
 } from '@mantine/core';
 import { useId } from '@mantine/hooks';
@@ -170,6 +171,11 @@ export function ApiForm({
 }>) {
   const api = useApi();
   const queryClient = useQueryClient();
+  const [keepOpen, setKeepOpen] = useState(false);
+
+  useEffect(() => {
+    props.onKeepOpenChange?.(keepOpen);
+  }, [keepOpen]);
 
   // Accessor for the navigation function (which is used to redirect the user)
   let navigate: NavigateFunction | null = null;
@@ -460,8 +466,6 @@ export function ApiForm({
               props.onFormSuccess(response.data, form);
             }
 
-            const keepOpen = form.getValues()?.keep_form_open ?? false;
-
             if (
               props.follow &&
               props.modelType &&
@@ -596,7 +600,6 @@ export function ApiForm({
       </Paper>
     );
   }
-
   return (
     <Stack>
       <Boundary label={`ApiForm-${id}`}>
@@ -681,7 +684,19 @@ export function ApiForm({
 
         {/* Footer with Action Buttons */}
         <Divider />
-        <div>
+        <Group justify='space-between'>
+          <Group justify='left'>
+            {props.keepOpenOption && (
+              <Switch
+                checked={keepOpen}
+                radius='lg'
+                size='sm'
+                label='Keep form open'
+                description='Keep form open after submitting'
+                onChange={(e) => setKeepOpen(e.currentTarget.checked)}
+              />
+            )}
+          </Group>
           <Group justify='right'>
             {props.actions?.map((action, i) => (
               <Button
@@ -704,7 +719,7 @@ export function ApiForm({
               {props.submitText ?? t`Submit`}
             </Button>
           </Group>
-        </div>
+        </Group>
       </Boundary>
     </Stack>
   );
@@ -720,7 +735,8 @@ export function CreateApiForm({
   const createProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
-      method: 'POST'
+      method: 'POST',
+      keepOpenOption: true
     }),
     [props]
   );

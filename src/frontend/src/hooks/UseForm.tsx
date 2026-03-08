@@ -24,9 +24,12 @@ export function useApiFormModal(props: ApiFormModalProps) {
     return props.modalId ?? id;
   }, [props.modalId, id]);
 
+  const [keepOpen, setKeepOpen] = useState<boolean>(false);
+
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
+      onKeepOpenChange: setKeepOpen,
       actions: [
         ...(props.actions || []),
         {
@@ -38,8 +41,6 @@ export function useApiFormModal(props: ApiFormModalProps) {
         }
       ],
       onFormSuccess: (data, form) => {
-        const keepOpen = form.getValues()?.keep_form_open ?? false;
-
         if (!keepOpen && (props.checkClose?.(data, form) ?? true)) {
           modalClose.current();
         }
@@ -49,7 +50,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
         props.onFormError?.(error, form);
       }
     }),
-    [props]
+    [props, keepOpen]
   );
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -96,7 +97,8 @@ export function useCreateApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Created`),
-      method: props.method ?? 'POST'
+      method: props.method ?? 'POST',
+      keepOpenOption: true
     }),
     [props]
   );
