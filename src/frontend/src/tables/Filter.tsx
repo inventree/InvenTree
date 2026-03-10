@@ -286,6 +286,24 @@ export function CompletedAfterFilter(): TableFilter {
   };
 }
 
+export function UpdatedAfterFilter(): TableFilter {
+  return {
+    name: 'updated_after',
+    label: t`Updated After`,
+    description: t`Show orders updated after this date`,
+    type: 'date'
+  };
+}
+
+export function UpdatedBeforeFilter(): TableFilter {
+  return {
+    name: 'updated_before',
+    label: t`Updated Before`,
+    description: t`Show orders updated before this date`,
+    type: 'date'
+  };
+}
+
 export function HasProjectCodeFilter(): TableFilter {
   const globalSettings = useGlobalSettingsState.getState();
   const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);

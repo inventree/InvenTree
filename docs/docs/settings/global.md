@@ -170,6 +170,7 @@ Configuration of label printing:
 {{ globalsetting("PART_SALABLE") }}
 {{ globalsetting("PART_VIRTUAL") }}
 {{ globalsetting("PART_COPY_BOM") }}
+{{ globalsetting("PART_BOM_ALLOW_ZERO_QUANTITY") }}
 {{ globalsetting("PART_COPY_PARAMETERS") }}
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}

@@ -35,11 +35,7 @@ from InvenTree.api import (
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import (
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-    InvenTreeDateFilter,
-)
+from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
@@ -230,6 +226,14 @@ class OrderFilter(FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    updated_before = InvenTreeDateFilter(
+        label=_('Updated Before'), field_name='updated_at', lookup_expr='lt'
+    )
+
+    updated_after = InvenTreeDateFilter(
+        label=_('Updated After'), field_name='updated_at', lookup_expr='gt'
+    )
+
     min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
 
     def filter_min_date(self, queryset, name, value):
@@ -393,7 +397,7 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
 
     ordering_field_aliases = {
@@ -422,6 +426,7 @@ class PurchaseOrderList(
         'responsible',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     ordering = '-reference'
@@ -702,7 +707,7 @@ class PurchaseOrderLineItemList(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
@@ -861,7 +866,7 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -884,6 +889,7 @@ class SalesOrderList(
         'shipment_date',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1045,7 +1051,7 @@ class SalesOrderLineItemList(
 
     filterset_class = SalesOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = SalesOrderLineItemOutputOptions
 
@@ -1291,7 +1297,7 @@ class SalesOrderAllocationList(
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
 
     ordering_fields = [
@@ -1401,7 +1407,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
     search_fields = [
@@ -1530,7 +1536,7 @@ class ReturnOrderList(
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderOutputOptions
 
@@ -1551,6 +1557,7 @@ class ReturnOrderList(
         'target_date',
         'complete_date',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1676,7 +1683,7 @@ class ReturnOrderLineItemList(
 
     filterset_class = ReturnOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderLineItemOutputOptions
 
@@ -1810,7 +1817,7 @@ class TransferOrderList(
     """API endpoint for accessing a list of TransferOrder objects."""
 
     filterset_class = TransferOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     # TODO:
     # output_options = TransferOrderOutputOptions
@@ -2032,7 +2039,7 @@ class TransferOrderAllocationList(
     """API endpoint for listing TransferOrderAllocation objects."""
 
     filterset_class = TransferOrderAllocationFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = TransferOrderAllocationOutputOptions
 
     ordering_fields = [
@@ -2212,7 +2219,7 @@ class TransferOrderLineItemList(
 
     filterset_class = TransferOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = TransferOrderLineItemOutputOptions
 

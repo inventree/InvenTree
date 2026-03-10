@@ -9,7 +9,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -338,6 +338,8 @@ class Order(
         if not self.creation_date:
             self.creation_date = InvenTree.helpers.current_date()
 
+        self.updated_at = InvenTree.helpers.current_time()
+
         super().save(*args, **kwargs)
 
     def check_locked(self, db: bool = False) -> bool:
@@ -513,6 +515,13 @@ class Order(
         null=True,
         verbose_name=_('Issue Date'),
         help_text=_('Date order was issued'),
+    )
+
+    updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Updated At'),
+        help_text=_('Timestamp of last update'),
     )
 
     responsible = models.ForeignKey(
@@ -3686,3 +3695,53 @@ class TransferOrderAllocation(models.Model):
         # Update the transferred qty
         self.line.transferred += self.quantity
         self.line.save()
+
+
+def _touch_order_updated_at(instance):
+    """Bump updated_at on the parent order without triggering a full save."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+    instance.order.__class__.objects.filter(pk=instance.order_id).update(
+        updated_at=InvenTree.helpers.current_time()
+    )
+
+
+@receiver(post_save, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_save')
+@receiver(
+    post_delete, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_delete'
+)
+@receiver(
+    post_save, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_save'
+)
+@receiver(
+    post_delete, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_delete'
+)
+@receiver(post_save, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_save')
+@receiver(
+    post_delete, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_delete'
+)
+@receiver(post_save, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_save')
+@receiver(
+    post_delete, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_delete'
+)
+@receiver(
+    post_save,
+    sender=TransferOrderLineItem,
+    dispatch_uid='transfer_order_lineitem_post_save',
+)
+@receiver(
+    post_delete,
+    sender=TransferOrderLineItem,
+    dispatch_uid='transfer_order_lineitem_post_delete',
+)
+def update_order_on_lineitem_change(sender, instance, **kwargs):
+    """Update parent order updated_at when any line item is saved or deleted."""
+    _touch_order_updated_at(instance)
