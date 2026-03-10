@@ -2799,7 +2799,7 @@ class TransferOrderTest(OrderTest):
 
     def test_transfer_order_detail(self):
         """Test the TransferOrder detail endpoint."""
-        url = '/api/order/to/1/'
+        url = '/api/order/transfer-order/1/'
 
         response = self.get(url)
 
@@ -3170,7 +3170,7 @@ class TransferOrderTest(OrderTest):
 class TransferOrderLineItemTest(OrderTest):
     """Tests for the TransferOrderLineItem API."""
 
-    LIST_URL = reverse('api-to-line-list')
+    LIST_URL = reverse('api-transfer-order-line-list')
 
     # adjust counts in asserts based on those created in setUpTestData
     # plus those in fixtures
@@ -3201,7 +3201,7 @@ class TransferOrderLineItemTest(OrderTest):
         # Bulk create
         models.TransferOrderLineItem.objects.bulk_create(lines)
 
-        cls.url = reverse('api-to-line-list')
+        cls.url = reverse('api-transfer-order-line-list')
 
     def test_transfer_order_line_list(self):
         """Test list endpoint."""
@@ -3262,7 +3262,7 @@ class TransferOrderLineItemTest(OrderTest):
         order_id = response.data['pk']
         order = models.TransferOrder.objects.get(pk=order_id)
 
-        transfer_order_line_url = reverse('api-to-line-list')
+        transfer_order_line_url = reverse('api-transfer-order-line-list')
 
         # Initially, there should be no line items against this order
         response = self.get(transfer_order_line_url, {'order': order_id})
@@ -3309,7 +3309,7 @@ class TransferOrderLineItemTest(OrderTest):
 
             # Allocate against the API
             self.post(
-                reverse('api-to-allocate', kwargs={'pk': order.pk}),
+                reverse('api-transfer-order-allocate', kwargs={'pk': order.pk}),
                 {'items': [{'line_item': l.pk, 'stock_item': s.pk, 'quantity': 10}]},
             )
 
@@ -3334,7 +3334,7 @@ class TransferOrderLineItemTest(OrderTest):
     def test_output_options(self):
         """Test the various output options for the TransferOrderLineItem detail endpoint."""
         self.run_output_test(
-            reverse('api-to-line-detail', kwargs={'pk': 1}),
+            reverse('api-transfer-order-line-detail', kwargs={'pk': 1}),
             ['part_detail', 'order_detail'],
         )
 
@@ -3419,7 +3419,7 @@ class TransferOrderAllocateTest(OrderTest):
 
         self.assignRole('transfer_order.add')
 
-        self.url = reverse('api-to-allocate', kwargs={'pk': 1})
+        self.url = reverse('api-transfer-order-allocate', kwargs={'pk': 1})
 
         self.order = models.TransferOrder.objects.get(pk=1)
 
@@ -3563,7 +3563,7 @@ class TransferOrderAllocateTest(OrderTest):
     def test_output_options(self):
         """Test the various output options for the SalesOrderAllocation detail endpoint."""
         self.run_output_test(
-            reverse('api-to-allocation-list'),
+            reverse('api-transfer-order-allocation-list'),
             ['part_detail', 'item_detail', 'order_detail', 'location_detail'],
             assert_subset=True,
         )

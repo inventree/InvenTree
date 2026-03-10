@@ -197,16 +197,16 @@ export enum ApiEndpoints {
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
 
-  transfer_order_list = 'order/to/',
-  transfer_order_issue = 'order/to/:id/issue/',
-  transfer_order_hold = 'order/to/:id/hold/',
-  transfer_order_cancel = 'order/to/:id/cancel/',
-  transfer_order_complete = 'order/to/:id/complete/',
-  transfer_order_allocate = 'order/to/:id/allocate/',
-  transfer_order_allocate_serials = 'order/to/:id/allocate-serials/',
+  transfer_order_list = 'order/transfer-order/',
+  transfer_order_issue = 'order/transfer-order/:id/issue/',
+  transfer_order_hold = 'order/transfer-order/:id/hold/',
+  transfer_order_cancel = 'order/transfer-order/:id/cancel/',
+  transfer_order_complete = 'order/transfer-order/:id/complete/',
+  transfer_order_allocate = 'order/transfer-order/:id/allocate/',
+  transfer_order_allocate_serials = 'order/transfer-order/:id/allocate-serials/',
 
-  transfer_order_line_list = 'order/to-line/',
-  transfer_order_allocation_list = 'order/to-allocation/',
+  transfer_order_line_list = 'order/transfer-order-line/',
+  transfer_order_allocation_list = 'order/transfer-order-allocation/',
 
   // Template API endpoints
   label_list = 'label/template/',

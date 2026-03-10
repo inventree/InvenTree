@@ -313,7 +313,7 @@ export default function TransferOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key='add-to-line-item'
+        key='add-transfer-order-line-item'
         tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({

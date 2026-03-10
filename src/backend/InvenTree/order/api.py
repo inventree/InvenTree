@@ -2708,7 +2708,7 @@ order_api_urls = [
     ),
     # API endpoints for transfer orders
     path(
-        'to/',
+        'transfer-order/',
         include([
             # Transfer Order detail endpoints
             path(
@@ -2717,12 +2717,12 @@ order_api_urls = [
                     path(
                         'allocate/',
                         TransferOrderAllocate.as_view(),
-                        name='api-to-allocate',
+                        name='api-transfer-order-allocate',
                     ),
                     path(
                         'allocate-serials/',
                         TransferOrderAllocateSerials.as_view(),
-                        name='api-to-allocate-serials',
+                        name='api-transfer-order-allocate-serials',
                     ),
                     path(
                         'cancel/',
@@ -2758,7 +2758,7 @@ order_api_urls = [
     ),
     # API endpoints for transfer order line items
     path(
-        'to-line/',
+        'transfer-order-line/',
         include([
             path(
                 '<int:pk>/',
@@ -2767,24 +2767,30 @@ order_api_urls = [
                     path(
                         '',
                         TransferOrderLineItemDetail.as_view(),
-                        name='api-to-line-detail',
+                        name='api-transfer-order-line-detail',
                     ),
                 ]),
             ),
-            path('', TransferOrderLineItemList.as_view(), name='api-to-line-list'),
+            path(
+                '',
+                TransferOrderLineItemList.as_view(),
+                name='api-transfer-order-line-list',
+            ),
         ]),
     ),
     # API endpoints for sales order allocations
     path(
-        'to-allocation/',
+        'transfer-order-allocation/',
         include([
             path(
                 '<int:pk>/',
                 TransferOrderAllocationDetail.as_view(),
-                name='api-to-allocation-detail',
+                name='api-transfer-order-allocation-detail',
             ),
             path(
-                '', TransferOrderAllocationList.as_view(), name='api-to-allocation-list'
+                '',
+                TransferOrderAllocationList.as_view(),
+                name='api-transfer-order-allocation-list',
             ),
         ]),
     ),

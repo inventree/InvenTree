@@ -3463,7 +3463,7 @@ class TransferOrderLineItem(OrderLineItem):
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the TransferOrderLineItem model."""
-        return reverse('api-to-line-list')
+        return reverse('api-transfer-order-line-list')
 
     order = models.ForeignKey(
         TransferOrder,
@@ -3544,7 +3544,7 @@ class TransferOrderAllocation(models.Model):
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the TransferOrderAllocation model."""
-        return reverse('api-to-allocation-list')
+        return reverse('api-transfer-order-allocation-list')
 
     def clean(self):
         """Validate the TransferOrderAllocation object.
