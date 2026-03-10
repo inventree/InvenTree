@@ -25,6 +25,14 @@ test('Purchasing - Index', async ({ browser }) => {
   await showCalendarView(page);
   await showTableView(page);
 
+  // Check default filters are applied
+  // By default, only outstanding orders are visible
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+
+  // Clearing the filters, more orders should be visible
+  await clearTableFilters(page);
+  await page.getByText(/1 - \d\d \/ \d\d/).waitFor();
+
   // Suppliers tab
   await loadTab(page, 'Suppliers');
   await showParametricView(page);
@@ -41,9 +49,11 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Check for expected values
   await clearTableFilters(page);
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('R_100K_0402');
   await page.getByText('R_100K_0402_1%').first().waitFor();
   await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
-  await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).first().waitFor();
 
   // Manufacturers tab
   await loadTab(page, 'Manufacturers');

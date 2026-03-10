@@ -723,6 +723,8 @@ test('Build Order - External', async ({ browser }) => {
   await navigate(page, 'manufacturing/build-order/26/details');
   await loadTab(page, 'External Orders');
 
+  await clearTableFilters(page);
+
   await page.getByRole('cell', { name: 'PO0017' }).waitFor();
   await page.getByRole('cell', { name: 'PO0018' }).waitFor();
 });

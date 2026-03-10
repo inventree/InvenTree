@@ -24,6 +24,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   StatusColumn,
@@ -59,12 +60,7 @@ function stockItemTableColumns({
       accessor: 'part',
       part: 'part_detail'
     }),
-    {
-      accessor: 'part_detail.IPN',
-      title: t`IPN`,
-      sortable: true,
-      ordering: 'IPN'
-    },
+    IPNColumn({}),
     {
       accessor: 'part_detail.revision',
       title: t`Revision`,
@@ -83,7 +79,8 @@ function stockItemTableColumns({
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
-      sortable: true
+      sortable: true,
+      copyable: true
     },
     LocationColumn({
       hidden: !showLocation,
@@ -101,13 +98,15 @@ function stockItemTableColumns({
       accessor: 'SKU',
       title: t`Supplier Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'MPN',
       title: t`Manufacturer Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'purchase_price',
@@ -315,6 +314,8 @@ export function StockItemTable({
   showLocation = true,
   showPricing = true,
   allowReturn = false,
+  initialFilters,
+  defaultInStock = true,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
@@ -322,9 +323,34 @@ export function StockItemTable({
   showLocation?: boolean;
   showPricing?: boolean;
   allowReturn?: boolean;
+  defaultInStock?: boolean | null;
+  initialFilters?: TableFilter[];
   tableName: string;
 }>) {
-  const table = useTable(tableName);
+  const initialStockFilters: TableFilter[] = useMemo(() => {
+    if (!!initialFilters) {
+      return initialFilters;
+    }
+
+    const filters: TableFilter[] = [];
+
+    // Optionally set the default "in_stock" filter
+    // Typically, we default to only displaying "in_stock" items,
+    // but this can be overridden by the caller if required
+    if (defaultInStock != undefined && defaultInStock != null) {
+      filters.push({
+        name: 'in_stock',
+        value: defaultInStock ? 'true' : 'false'
+      });
+    }
+
+    return filters;
+  }, [defaultInStock, initialFilters]);
+
+  const table = useTable(tableName, {
+    initialFilters: initialStockFilters
+  });
+
   const user = useUserState();
 
   const settings = useGlobalSettingsState();

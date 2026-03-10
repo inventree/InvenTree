@@ -22,6 +22,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DecimalColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -99,14 +100,9 @@ export default function BuildAllocatedStockTable({
         hidden: !showPartInfo,
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        ordering: 'IPN',
-        hidden: !showPartInfo,
-        title: t`IPN`,
-        sortable: true,
-        switchable: true
-      },
+      IPNColumn({
+        hidden: !showPartInfo
+      }),
       {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
@@ -119,7 +115,9 @@ export default function BuildAllocatedStockTable({
         title: t`Batch Code`,
         sortable: false,
         switchable: true,
-        render: (record: any) => record?.stock_item_detail?.batch
+        render: (record: any) => record?.stock_item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       DecimalColumn({
         accessor: 'stock_item_detail.quantity',

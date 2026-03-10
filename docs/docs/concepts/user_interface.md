@@ -291,3 +291,11 @@ Users may opt to disable the spotlight search functionality if they do not find 
 Many aspects of the user interface are controlled by user permissions, which determine what actions and features are available to each user based on their assigned roles and permissions within the system. This allows for a highly customizable user experience, where different users can have access to different features and functionality based on their specific needs and responsibilities within the organization.
 
 If a user does not have permission to access a particular feature or section of the system, that feature will be hidden from their view in the user interface. This helps to ensure that users only see the features and information that are relevant to their role, reducing clutter and improving usability.
+
+## Language Support
+
+The InvenTree user interface supports multiple languages, allowing users to interact with the system in their preferred language.
+
+The default system language can be configured by the system administrator in the [server configuration options](../start/config.md#basic-options).
+
+Additionally, users can select their preferred language in their [user settings](../settings/user.md), allowing them to override the system default language with their own choice. This provides a personalized experience for each user, ensuring that they can interact with the system in the language they are most comfortable with.

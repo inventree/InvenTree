@@ -65,9 +65,29 @@ export function LanguageContext({
   const [language] = useLocalState(useShallow((state) => [state.language]));
   const [server] = useServerApiState(useShallow((state) => [state.server]));
 
+  const [activeLocale, setActiveLocale] = useState<string | null>(null);
+
   useEffect(() => {
-    activateLocale(defaultLocale);
-  }, []);
+    // Update the locale based on prioritization:
+    // 1. Locally selected locale
+    // 2. Server default locale
+    // 3. English (fallback)
+
+    let locale: string | null = activeLocale;
+
+    if (!!language) {
+      locale = language;
+    } else if (!!server.default_locale) {
+      locale = server.default_locale;
+    } else {
+      locale = defaultLocale;
+    }
+
+    if (locale != activeLocale) {
+      setActiveLocale(locale);
+      activateLocale(locale);
+    }
+  }, [activeLocale, language, server.default_locale, defaultLocale]);
 
   const [loadedState, setLoadedState] = useState<
     'loading' | 'loaded' | 'error'
@@ -77,7 +97,7 @@ export function LanguageContext({
   useEffect(() => {
     isMounted.current = true;
 
-    let lang = language;
+    let lang: string = language || defaultLocale;
 
     // Ensure that the selected language is supported
     if (!Object.keys(getSupportedLanguages()).includes(lang)) {
@@ -96,7 +116,7 @@ export function LanguageContext({
          */
         const locales: (string | undefined)[] = [];
 
-        if (lang != 'pseudo-LOCALE') {
+        if (!!lang && lang != 'pseudo-LOCALE') {
           locales.push(lang);
         }
 
@@ -156,8 +176,26 @@ export function LanguageContext({
   return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
-export async function activateLocale(locale: string) {
-  const { messages } = await import(`../locales/${locale}/messages.ts`);
-  i18n.load(locale, messages);
-  i18n.activate(locale);
+// This function is used to determine the locale to activate based on the prioritization rules.
+export function getPriorityLocale(): string {
+  const serverDefault = useServerApiState.getState().server.default_locale;
+  const userDefault = useLocalState.getState().language;
+
+  return userDefault || serverDefault || defaultLocale;
+}
+
+export async function activateLocale(locale: string | null) {
+  if (!locale) {
+    locale = getPriorityLocale();
+  }
+
+  const localeDir = locale.split('-')[0]; // Extract the base locale (e.g., 'en' from 'en-US')
+
+  try {
+    const { messages } = await import(`../locales/${localeDir}/messages.ts`);
+    i18n.load(locale, messages);
+    i18n.activate(locale);
+  } catch (err) {
+    console.error(`Failed to load locale ${locale}:`, err);
+  }
 }

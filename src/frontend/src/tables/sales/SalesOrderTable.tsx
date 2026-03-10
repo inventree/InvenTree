@@ -20,13 +20,15 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UpdatedAtColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -47,7 +49,9 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -58,7 +62,14 @@ export function SalesOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -89,6 +100,8 @@ export function SalesOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
+      UpdatedBeforeFilter(),
+      UpdatedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
       ResponsibleFilter(),
@@ -139,7 +152,8 @@ export function SalesOrderTable({
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`
+        title: t`Customer Reference`,
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
@@ -173,6 +187,9 @@ export function SalesOrderTable({
       }),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
+      UpdatedAtColumn({
+        defaultVisible: false
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -183,7 +200,8 @@ export function SalesOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 

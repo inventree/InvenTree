@@ -9,7 +9,6 @@ import {
   Paper,
   Space,
   Stack,
-  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -37,7 +36,7 @@ import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
+import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**
  * Render a composite header for an InvenTree table
@@ -272,15 +271,10 @@ export default function InvenTreeTableHeader({
                         <StylishText size='md'>{t`Active Filters`}</StylishText>
                         <Divider />
                         {tableState.filterSet.activeFilters?.map((filter) => (
-                          <Group
-                            key={filter.name}
-                            justify='space-between'
-                            gap='xl'
-                            wrap='nowrap'
-                          >
-                            <Text size='sm'>{filter.label}</Text>
-                            <Text size='xs'>{filter.displayValue}</Text>
-                          </Group>
+                          <FilterPreview
+                            filter={filter}
+                            filters={tableProps.tableFilters}
+                          />
                         ))}
                       </Stack>
                     </Paper>

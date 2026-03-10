@@ -26,7 +26,7 @@ export default function BarcodeScanTable({
   const navigate = useNavigate();
   const user = useUserState();
 
-  const table = useTable('barcode-scan-results', 'id');
+  const table = useTable('barcode-scan-results', { idAccessor: 'id' });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

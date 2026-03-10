@@ -71,3 +71,6 @@ export {
   RowCancelAction,
   RowActions
 } from './components/RowActions';
+
+// Shared hooks
+export { default as monitorDataOutput } from './hooks/MonitorDataOutput';
