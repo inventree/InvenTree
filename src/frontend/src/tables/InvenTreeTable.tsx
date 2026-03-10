@@ -333,9 +333,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
-    const columnNames: string = cols.map((col) => col.accessor).join(',');
-    setColumnHash(hashString(columnNames));
-
     return cols;
   }, [
     columns,
@@ -344,6 +341,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
+
+  useEffect(() => {
+    const columnNames: string = dataColumns
+      .map((col: any) => col.accessor)
+      .join(',');
+    setColumnHash(hashString(columnNames));
+  }, [dataColumns]);
 
   // Callback when column visibility is toggled
   const toggleColumn = useCallback(
