@@ -22,7 +22,7 @@ class TenantSerializerMixin(serializers.Serializer):
     """
 
     tenant = serializers.PrimaryKeyRelatedField(
-        read_only=True,
+        queryset=Tenant.objects.all(),
         label='Tenant',
         help_text='Tenant this entity belongs to',
     )

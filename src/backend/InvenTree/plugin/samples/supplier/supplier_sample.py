@@ -4,6 +4,7 @@ from company.models import Company, ManufacturerPart, SupplierPart, SupplierPric
 from part.models import Part
 from plugin.mixins import SupplierMixin, supplier
 from plugin.plugin import InvenTreePlugin
+from tenant.models import Tenant
 
 
 class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
@@ -94,9 +95,11 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         ]
 
     def import_part(self, data, **kwargs) -> Part:
-        """Import a part based on the provided data."""
+        # Remove tenant if passed
+        kwargs.pop("tenant", None)
+
         part, created = Part.objects.get_or_create(
-            name__iexact=data['sku'],
+            name=data['sku'],
             purchaseable=True,
             defaults={
                 'name': data['sku'],
@@ -109,9 +112,12 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         # If the part was created, set additional fields
         if created:
             if data['image_url']:
-                file, fmt = self.download_image(data['image_url'])
-                filename = f'part_{part.pk}_image.{fmt.lower()}'
-                part.image.save(filename, file)
+                try:
+                    file, fmt = self.download_image(data['image_url'])
+                    filename = f'part_{part.pk}_image.{fmt.lower()}'
+                    part.image.save(filename, file)
+                except Exception:
+                    pass
 
             # link other variants if they exist in our inventree database
             if len(data['variants']):

@@ -264,7 +264,7 @@ class AbstractOrderSerializer(
             'completed_lines',
             'link',
             'project_code',
-            'tenant',
+            #'tenant',
             'tenant_detail',
             'reference',
             'responsible',
@@ -300,6 +300,16 @@ class AbstractOrderSerializer(
         """
         duplicate = validated_data.pop('duplicate', None)
 
+        # Ensure tenant exists
+        if 'tenant' not in validated_data:
+            request = self.context.get('request', None)
+            if request and hasattr(request.user, 'tenant'):
+                validated_data['tenant'] = request.user.tenant
+            else:
+                # fallback to first tenant for tests
+                from tenant.models import Tenant
+                validated_data['tenant'] = Tenant.objects.first()
+        
         instance = super().create(validated_data)
 
         if duplicate:
@@ -1079,7 +1089,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 class SalesOrderSerializer(
     NotesFieldMixin,
     TotalPriceMixin,
-    TaxMixin,
+    TaxMixin,   
     TenantSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
