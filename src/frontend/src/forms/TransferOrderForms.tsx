@@ -83,7 +83,8 @@ export function useTransferOrderLineItemFields({
       },
       part: {
         filters: {
-          active: true
+          active: true,
+          virtual: false
         }
         // onValueChange: (_: any, record?: any) => setPart(record)
       },
