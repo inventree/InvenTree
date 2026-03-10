@@ -637,6 +637,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PART_BOM_ALLOW_ZERO_QUANTITY': {
+        'name': _('Allow BOM Zero Quantity'),
+        'description': _(
+            'Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'LABEL_ENABLE': {
         'name': _('Enable label printing'),
         'description': _('Enable label printing from the web interface'),

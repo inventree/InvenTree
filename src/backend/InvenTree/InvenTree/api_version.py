@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 459
+INVENTREE_API_VERSION = 460
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
+    - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints
+    - Adds "updated_before" and "updated_after" date filters to all three order list endpoints
+    - Adds "updated_at" ordering option to all three order list endpoints
 
 v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
     - Changed PurchaseOrderLine "auto_pricing" default value from true to false
