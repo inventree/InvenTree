@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("common", "0041_auto_20251203_1244"),
         ("company", "0077_delete_manufacturerpartparameter"),
-        ("order", "0114_purchaseorderextraline_project_code_and_more"),
+        ("order", "0115_purchaseorder_updated_at_returnorder_updated_at_and_more"),
         ("part", "0146_auto_20251203_1241"),
         ("stock", "0116_alter_stockitem_link"),
         ("users", "0015_alter_userprofile_type"),
