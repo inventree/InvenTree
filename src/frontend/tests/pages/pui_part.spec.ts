@@ -799,9 +799,27 @@ test('Parts - Import supplier part', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
   await page.waitForTimeout(250);
-  await page
-    .getByRole('button', { name: 'action-button-import-part-now' })
-    .click();
+
+  // we might get rate limited here so we might try up to 3 times to click the "import now" button
+  // wait for "Import Now" button to be enabled, then click it
+  for (let i = 0; i < 3; i++) {
+    try {
+      await page
+        .getByRole('button', { name: 'action-button-import-part-now' })
+        .waitFor({ state: 'enabled', timeout: 5000 });
+      await page
+        .getByRole('button', { name: 'action-button-import-part-now' })
+        .click();
+      // check for action-button-import-create-parameters to be present for 5 seconds to confirm that the click was successful - if it was break
+      await page
+        .getByRole('button', { name: 'action-button-import-create-parameters' })
+        .waitFor({ timeout: 5000 });
+    } catch (e) {
+      if (i === 2) {
+        throw e; // if it's the last attempt, re-throw the error
+      }
+    }
+  }
 
   await page
     .getByRole('button', { name: 'action-button-import-create-parameters' })
