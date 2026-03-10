@@ -17,3 +17,4 @@ Custom states can be defined for the following models:
 - [Purchase Order](../purchasing/purchase_order.md)
 - [Sales Order](../sales/sales_order.md)
 - [Return Order](../sales/return_order.md)
+- [Transfer Order](../stock/transfer_order.md)

@@ -145,6 +145,7 @@ nav:
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
+    - Transfer Orders: stock/transfer_order.md
   - Manufacturing:
     - Manufacturing: manufacturing/index.md
     - Bill of Materials: manufacturing/bom.md
