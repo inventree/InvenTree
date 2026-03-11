@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -72,6 +73,8 @@ const MachineManagementPanel = Loadable(
 );
 
 const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
+
+const TestTemplatePanel = Loadable(lazy(() => import('./TestTemplatePanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -205,6 +208,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
+        name: 'test-templates',
+        label: t`Test Templates`,
+        icon: <IconClipboardCheck />,
+        content: <TestTemplatePanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
         name: 'labels',
         label: t`Label Templates`,
         icon: <IconTags />,
@@ -276,6 +286,7 @@ export default function AdminCenter() {
         panelIDs: [
           'parameters',
           'category-parameters',
+          'test-templates',
           'location-types',
           'stocktake'
         ]

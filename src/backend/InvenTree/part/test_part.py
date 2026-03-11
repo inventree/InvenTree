@@ -140,7 +140,7 @@ class TemplateTagTest(InvenTreeTestCase):
         )
 
 
-class PartTest(TestCase):
+class SimplePartTests(TestCase):
     """Tests for the Part model."""
 
     fixtures = ['category', 'part', 'location', 'part_pricebreaks']
@@ -608,6 +608,10 @@ class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class."""
 
     fixtures = ['category', 'part', 'location', 'test_templates']
+
+    def get_part_test_inheritance(self):
+        """Test PartTest inheritance for a given Part instance."""
+        raise NotImplementedError('This test is not yet implemented')
 
     def test_template_count(self):
         """Tests for the test template functions."""
