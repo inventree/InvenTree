@@ -806,7 +806,7 @@ test('Parts - Import supplier part', async ({ browser }) => {
     try {
       await page
         .getByRole('button', { name: 'action-button-import-part-now' })
-        .waitFor({ state: 'enabled', timeout: 5000 });
+        .waitFor({ state: 'visible', timeout: 5000 });
       await page
         .getByRole('button', { name: 'action-button-import-part-now' })
         .click();
