@@ -83,7 +83,7 @@ export default function monitorDataOutput({
 
               if (data.output) {
                 const url = data.output;
-                const base = hostname ?? window.location.hostname;
+                const base = hostname ?? window.location.origin;
 
                 const downloadUrl = new URL(url, base);
 
@@ -109,14 +109,15 @@ export default function monitorDataOutput({
 
             return data;
           })
-          .catch(() => {
+          .catch((error: Error) => {
+            console.error('Error in monitorDataOutput:', error);
             setLoading(false);
             notifications.update({
               id: `data-output-${id}`,
               loading: false,
               autoClose: 2500,
               title: title,
-              message: t`Process failed`,
+              message: error.message || t`Process failed`,
               color: 'red'
             });
             return {};
