@@ -73,12 +73,12 @@ jobs:
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # pin@v1
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
+        uses: svenstaro/upload-release-action@b98a3b12e86552593f3e4e577ca8a62aa2f3f22b # pin@2.11.4
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: src/backend/InvenTree/web/static/frontend-build.zip
@@ -86,12 +86,12 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
       - name: Upload frontend to artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # pin@v7.0.0
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
+        uses: svenstaro/upload-release-action@b98a3b12e86552593f3e4e577ca8a62aa2f3f22b # pin@2.11.4
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           asset_name: frontend-build.intoto.jsonl
@@ -134,7 +134,7 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
+        uses: svenstaro/upload-release-action@b98a3b12e86552593f3e4e577ca8a62aa2f3f22b # pin@2.11.4
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: docs/site/docs-html.zip
@@ -163,7 +163,7 @@ jobs:
           persist-credentials: false
 
       - name: Get frontend artifact
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # pin@v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # pin@v8.0.0
         with:
           name: frontend-build
       - name: Setup
@@ -244,7 +244,7 @@ jobs:
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
+        uses: svenstaro/upload-release-action@b98a3b12e86552593f3e4e577ca8a62aa2f3f22b # pin@2.11.4
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ steps.package.outputs.package_path }}
