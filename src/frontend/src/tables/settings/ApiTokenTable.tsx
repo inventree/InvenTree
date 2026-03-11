@@ -26,7 +26,7 @@ export function ApiTokenTable({
   const [opened, { open, close }] = useDisclosure(false);
 
   const generateToken = useCreateApiFormModal({
-    url: ApiEndpoints.user_tokens,
+    url: ApiEndpoints.user_token,
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
