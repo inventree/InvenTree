@@ -49,6 +49,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
+import ParametricStockItemTable from '../../tables/stock/ParametricStockItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockLocationParametricTable from '../../tables/stock/StockLocationParametricTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
@@ -171,6 +172,7 @@ export default function Stock() {
   }, [location, instanceQuery]);
 
   const [sublocationView, setSublocationView] = useState<string>('table');
+  const [stockView, setStockView] = useState<string>('table');
 
   const locationPanels: PanelType[] = useMemo(() => {
     return [
@@ -206,20 +208,36 @@ export default function Stock() {
           }
         ]
       }),
-      {
-        name: 'stock-items',
+      SegmentedControlPanel({
+        name: 'stockitems',
         label: t`Stock Items`,
         icon: <IconPackages />,
-        content: (
-          <StockItemTable
-            tableName='location-stock'
-            allowAdd
-            params={{
-              location: id
-            }}
-          />
-        )
-      },
+        hidden: !user.hasViewPermission(ModelType.stockitem),
+        selection: stockView,
+        onChange: setStockView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <StockItemTable
+                tableName='location-stock'
+                allowAdd
+                params={{
+                  location: id
+                }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <ParametricStockItemTable locationId={id} />
+          }
+        ]
+      }),
       {
         name: 'default_parts',
         label: t`Default Parts`,
@@ -241,7 +259,7 @@ export default function Stock() {
         hidden: !location.pk
       })
     ];
-  }, [sublocationView, location, id]);
+  }, [sublocationView, stockView, location, id]);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,

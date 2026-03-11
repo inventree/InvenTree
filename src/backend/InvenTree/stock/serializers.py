@@ -378,6 +378,7 @@ class StockItemSerializer(
             'stale',
             'tracking_items',
             'tags',
+            'parameters',
             # Detail fields (FK relationships)
             'supplier_part_detail',
             'part_detail',
@@ -656,6 +657,8 @@ class StockItemSerializer(
     )
 
     tags = common.filters.enable_tags_filter()
+
+    parameters = common.filters.enable_parameters_filter()
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
