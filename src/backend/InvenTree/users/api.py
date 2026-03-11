@@ -348,6 +348,7 @@ class GetAuthToken(GenericAPIView):
 
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = GetAuthTokenSerializer
+    role_required = 'read'
 
     @extend_schema(
         parameters=[
