@@ -15,7 +15,16 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
     SLUG = 'samplesupplier'
     TITLE = 'My sample supplier plugin'
 
-    VERSION = '0.0.1'
+    VERSION = '0.0.2'
+
+    SETTINGS = {
+        'DOWNLOAD_IMAGES': {
+            'name': 'Download part images',
+            'description': 'Enable downloading of part images during import (not recommended during testing)',
+            'validator': bool,
+            'default': False,
+        }
+    }
 
     def __init__(self):
         """Initialize the sample supplier plugin."""
@@ -111,7 +120,11 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         # If the part was created, set additional fields
         if created:
             # Prevent downloading images during testing, as this can lead to unreliable tests
-            if data['image_url'] and not settings.TESTING:
+            if (
+                data['image_url']
+                and not settings.TESTING
+                and self.get_setting('DOWNLOAD_IMAGES')
+            ):
                 file, fmt = self.download_image(data['image_url'])
                 filename = f'part_{part.pk}_image.{fmt.lower()}'
                 part.image.save(filename, file)
