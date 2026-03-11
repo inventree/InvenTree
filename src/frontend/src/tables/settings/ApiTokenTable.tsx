@@ -27,6 +27,7 @@ export function ApiTokenTable({
 
   const generateToken = useCreateApiFormModal({
     url: ApiEndpoints.user_token,
+    method: 'GET',
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
