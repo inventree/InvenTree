@@ -90,7 +90,8 @@ export function useSalesOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
