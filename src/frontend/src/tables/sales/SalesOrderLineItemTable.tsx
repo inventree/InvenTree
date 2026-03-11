@@ -50,6 +50,7 @@ import {
   IPNColumn,
   LinkColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -99,11 +100,7 @@ export default function SalesOrderLineItemTable({
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
-      {
-        accessor: 'reference',
-        sortable: false,
-        switchable: true
-      },
+      ReferenceColumn({}),
       ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',
