@@ -1577,6 +1577,65 @@ class SalesOrderTest(OrderTest):
             expected_code=201,
         )
 
+    def test_so_duplicate(self):
+        """Test SalesOrder duplication via the API."""
+        from common.models import Parameter, ParameterTemplate
+
+        url = reverse('api-so-list')
+
+        self.assignRole('sales_order.add')
+
+        so = models.SalesOrder.objects.get(pk=1)
+        self.assertEqual(so.status, SalesOrderStatus.PENDING)
+
+        # Add some parameters to the sales order
+        for idx in range(5):
+            template = ParameterTemplate.objects.create(name=f'Template {idx}')
+
+            Parameter.objects.create(
+                template=template,
+                model_type=so.get_content_type(),
+                model_id=so.pk,
+                data=f'Value {idx}',
+            )
+
+        self.assertEqual(so.parameters.count(), 5)
+
+        # Create a duplicate of this sales order
+        # We explicitly specify "copy_parameters" as False, so the duplicated sales order should not have any parameters
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12345',
+                'customer': so.customer.pk,
+                'duplicate': {'order_id': so.pk, 'copy_parameters': False},
+            },
+        )
+
+        duplicate_id = response.data['pk']
+        duplicate_so = models.SalesOrder.objects.get(pk=duplicate_id)
+
+        self.assertEqual(duplicate_so.reference, 'SO-12345')
+        self.assertEqual(duplicate_so.customer, so.customer)
+        self.assertEqual(duplicate_so.parameters.count(), 0)
+
+        # Duplicate again, with default values for the "duplicate" options (which should result in parameters being copied)
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12346',
+                'customer': so.customer.pk,
+                'duplicate': {'order_id': so.pk},
+            },
+        )
+
+        duplicate_id = response.data['pk']
+        duplicate_so = models.SalesOrder.objects.get(pk=duplicate_id)
+
+        self.assertEqual(duplicate_so.reference, 'SO-12346')
+        self.assertEqual(duplicate_so.customer, so.customer)
+        self.assertEqual(duplicate_so.parameters.count(), 5)
+
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""
         so = models.SalesOrder.objects.get(pk=1)
