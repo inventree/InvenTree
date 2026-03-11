@@ -71,6 +71,13 @@ def validate_return_order_reference(value):
     ReturnOrder.validate_reference_field(value)
 
 
+def validate_transfer_order_reference_pattern(pattern):
+    """Validate the TransferOrder reference 'pattern' setting."""
+    from order.models import TransferOrder
+
+    TransferOrder.validate_reference_pattern(pattern)
+
+
 def validate_transfer_order_reference(value):
     """Validate that the ReturnOrder reference field matches the required pattern."""
     from order.models import TransferOrder

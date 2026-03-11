@@ -903,7 +903,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             'Required pattern for generating Transfer Order reference field'
         ),
         'default': 'TO-{ref:04d}',
-        'validator': order.validators.validate_transfer_order_reference,
+        'validator': order.validators.validate_transfer_order_reference_pattern,
     },
     'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
         'name': _('Require Responsible Owner'),
