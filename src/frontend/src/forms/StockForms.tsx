@@ -51,6 +51,7 @@ import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -1372,6 +1373,38 @@ export function useChangeStockStatus(props: StockOperationProps) {
         {t`Change the status of the selected stock items.`}
       </Alert>
     )
+  });
+}
+
+export function useChangeStockBatchCode(props: StockOperationProps) {
+  // Return a common batch code value if all items share the same batch code, otherwise return undefined
+  const batchCode = useMemo(() => {
+    const batchCodeValues = new Set(
+      props.items?.filter((item) => item.batch).map((item) => item.batch)
+    );
+
+    if (batchCodeValues.size === 1) {
+      return batchCodeValues.values().next().value;
+    }
+
+    return undefined;
+  }, [props.items]);
+
+  return useBulkEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    items: props.items?.map((item: any) => item.pk) ?? [],
+    title: t`Change Batch Code`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Change batch code for the selected stock items`}
+      </Alert>
+    ),
+    fields: {
+      batch: {
+        value: batchCode
+      }
+    },
+    onFormSuccess: props.refresh
   });
 }
 
