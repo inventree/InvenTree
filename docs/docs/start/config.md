@@ -287,6 +287,18 @@ If running with a MySQL database backend, the following additional options are a
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
+### SQLite Settings
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.
+
+If running with a SQLite database backend, the following additional options are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
+| INVENTREE_DB_TRANSACTION_MODE | database.transaction_mode | SQLite transaction mode (DEFERRED, IMMEDIATE, EXCLUSIVE) | IMMEDIATE |
+
 ## Caching
 
 InvenTree can be configured to use [redis](https://redis.io) as a global cache backend.
