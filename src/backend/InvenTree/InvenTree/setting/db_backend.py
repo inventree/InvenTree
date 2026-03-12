@@ -122,8 +122,36 @@ def set_mysql_options(db_options: dict):
 
 
 def set_sqlite_options(db_options: dict):
-    """Set database options specific to sqlite backend."""
-    # TODO: Verify timeouts are not an issue because no network is involved for SQLite
+    """Set database options specific to sqlite backend.
+
+    References:
+    - https://docs.djangoproject.com/en/5.0/ref/databases/#sqlite-notes
+    - https://docs.djangoproject.com/en/6.0/ref/databases/#database-is-locked-errors
+    """
+    # Specify minimum timeout behavior for SQLite connections
+    if 'timeout' not in db_options:
+        db_options['timeout'] = int(
+            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 10)
+        )
+
+    # Specify the transaction mode for the database
+    # The default mode for SQLite is "DEFERRED"
+    # However, in most cases it is preferable to use "IMMEDIATE"
+    if 'transaction_mode' not in db_options:
+        transaction_mode = str(
+            get_setting(
+                'INVENTREE_DB_TRANSACTION_MODE',
+                'database.transaction_mode',
+                'IMMEDIATE',
+            )
+        ).upper()
+
+        if transaction_mode not in ['DEFERRED', 'IMMEDIATE', 'EXCLUSIVE']:
+            raise ValueError(
+                f"Specified database transaction mode '{transaction_mode}' is not a valid option."
+            )
+
+        db_options['transaction_mode'] = transaction_mode
 
     # SQLite's default isolation level is Serializable due to SQLite's
     # single writer implementation.  Presumably as a result of this, it is
