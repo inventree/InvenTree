@@ -166,8 +166,8 @@ test('Importing - Purchase Order', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/po_data.csv');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('cell', { name: 'Database Field' }).waitFor();
-  await page.getByRole('cell', { name: 'Field Description' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Database Field' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Field Description' }).waitFor();
 });
 
 test('Importing - Natural Keys', async ({ browser }) => {
