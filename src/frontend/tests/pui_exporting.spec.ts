@@ -63,7 +63,7 @@ test('Exporting - Orders', async ({ browser }) => {
     .waitFor();
 
   // Delete all exported file outputs
-  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page.getByLabel('action-button-delete-selected').click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByText('Items Deleted').waitFor();
