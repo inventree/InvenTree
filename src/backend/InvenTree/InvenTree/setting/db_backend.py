@@ -1,4 +1,4 @@
-"""Configuration settings specific to a particula rdatabase backend."""
+"""Configuration settings specific to a particular database backend."""
 
 import structlog
 
@@ -44,7 +44,7 @@ def set_postgres_options(db_options: dict):
     # Setup TCP keepalive
     # DB server is in the same DC, it should not become unresponsive for
     # very long. With the defaults below we wait 5 seconds for the network
-    # issue to resolve itself.  It it that doesn't happen whatever happened
+    # issue to resolve itself.  If that doesn't happen, whatever happened
     # is probably fatal and no amount of waiting is going to fix it.
     # # 0 - TCP Keepalives disabled; 1 - enabled
     if 'keepalives' not in db_options:
@@ -109,7 +109,7 @@ def set_mysql_options(db_options: dict):
     # MariaDB's default isolation level is Repeatable Read which is
     # normally fine, but most developers think the database server is
     # actually going to Serializable type checks on the queries to
-    # protect against siumltaneous changes.
+    # protect against simultaneous changes.
     # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if 'isolation_level' not in db_options:
