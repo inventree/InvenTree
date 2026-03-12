@@ -23,7 +23,7 @@ def set_db_options(engine: str, db_options: dict):
     elif 'sqlite' in engine:
         set_sqlite_options(db_options)
     else:
-        logger.warning('Unknown database engine: %s', engine)
+        raise ValueError(f'Unknown database engine: {engine}')
 
 
 def set_postgres_options(db_options: dict):
