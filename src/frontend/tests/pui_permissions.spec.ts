@@ -37,10 +37,7 @@ test('Permissions - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText("['This password is too short").waitFor();
   await page
-    .locator('label')
-    .filter({ hasText: 'Override warning' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-override_warning' })
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Password updated').click();
