@@ -559,6 +559,22 @@ test('Parts - Parameters by Category', async ({ browser }) => {
 test('Parts - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
+  // check that "is polarized" parameter is not already present - if it is, delete it before proceeding with the rest of the test
+  await page
+    .getByText('Is this part polarized?')
+    .waitFor({ state: 'detached', timeout: 1000 })
+    .catch(async () => {
+      const cell = await page.getByRole('cell', {
+        name: 'Is this part polarized?'
+      });
+      const row = await getRowFromCell(cell);
+      await row.getByLabel(/row-action-menu-/i).click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+      await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      await page.getByText('No records found').first().waitFor();
+    });
+
   // Create a new template
   await page
     .getByRole('button', { name: 'action-menu-add-parameters' })
@@ -599,12 +615,7 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Toggle false to true
-  await page
-    .locator('label')
-    .filter({ hasText: 'DataParameter Value' })
-    .locator('div')
-    .first()
-    .click();
+  await page.getByRole('switch', { name: 'boolean-field-data' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Finally, delete the parameter
