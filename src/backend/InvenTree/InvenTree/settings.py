@@ -843,6 +843,10 @@ BACKGROUND_WORKER_COUNT = (
     else 1
 )
 
+# If running with SQLite, limit background worker threads to 1 to prevent database locking issues
+if 'sqlite' in DB_ENGINE:
+    BACKGROUND_WORKER_COUNT = 1
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
