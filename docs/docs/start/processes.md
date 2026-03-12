@@ -127,6 +127,8 @@ If the background worker process is not running, InvenTree will not be able to p
 
 If the [cache server](#cache-server) is not running, the background worker will be limited to running a single threaded worker. This is because the background worker uses the cache server to manage task locking, and without a global cache server to communicate between processes, concurrency issues can occur.
 
+Additionally, if you are running SQLite as the database backend, the background worker will be limited to a single thread, due to database locking issues which can occur with SQLite when multiple threads are accessing the database concurrently.
+
 ### Cache Server
 
 The InvenTree cache server is used to store temporary data which is shared between the InvenTree web server and the background worker processes. The cache server is also used to store task information, and to manage task locking between the background worker processes.
