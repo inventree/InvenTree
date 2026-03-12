@@ -605,10 +605,7 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     .getByLabel('text-field-serial_numbers', { exact: true })
     .fill('16');
   await page
-    .locator('label')
-    .filter({ hasText: 'Auto Allocate Serial' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-auto_allocate' })
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
 

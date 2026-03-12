@@ -1050,7 +1050,11 @@ class StockOutputOptions(OutputConfiguration):
 
 
 class StockList(
-    DataExportViewMixin, StockApiMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockApiMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of Stock objects.
 
