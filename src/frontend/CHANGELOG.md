@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.8.2 - March 2026
+
+Bug fixes for the `monitorDataOutput` hook - https://github.com/inventree/InvenTree/pull/11458
+
 ### 0.8.0 - March 2026
 
 Exposes the `monitorDataOutput` hook, which allows plugins to monitor the output of a long-running task and display notifications when the task is complete. This is useful for plugins that need to perform long-running tasks and want to provide feedback to the user when the task is complete.

@@ -16,10 +16,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
 
   await page
-    .locator('label')
-    .filter({ hasText: 'Update Existing RecordsIf' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-update_records' })
     .click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
