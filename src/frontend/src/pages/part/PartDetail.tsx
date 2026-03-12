@@ -1118,6 +1118,7 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
+    changeBatch: false,
     enabled: true
   });
 
