@@ -573,6 +573,7 @@ export default function BuildOutputTable({
           title: t`Complete`,
           tooltip: t`Complete build output`,
           color: 'green',
+          hidden: !production,
           icon: <InvenTreeIcon icon='success' />,
           onClick: () => {
             setSelectedOutputs([record]);
@@ -608,7 +609,7 @@ export default function BuildOutputTable({
         }
       ];
     },
-    [buildStatus, user, partId, hasTrackedItems]
+    [buildStatus, build.status, user, partId, hasTrackedItems]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
