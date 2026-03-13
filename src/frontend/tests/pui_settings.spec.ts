@@ -1,5 +1,6 @@
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
+import { adminuser, allaccessuser, stevenuser } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -34,8 +35,7 @@ import { setPluginState, setSettingState } from './settings.js';
 
 test('Settings - User theme', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits'
+    user: allaccessuser
   });
 
   await page.waitForLoadState('networkidle');
@@ -82,8 +82,7 @@ test('Settings - User theme', async ({ browser }) => {
 
 test('Settings - User', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/user/'
   });
 
@@ -136,8 +135,7 @@ test('Settings - User', async ({ browser }) => {
 
 test('Settings - Global', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/system/'
   });
 
@@ -214,8 +212,7 @@ test('Settings - Global', async ({ browser }) => {
 test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // User settings
@@ -320,8 +317,7 @@ test('Settings - Admin', async ({ browser }) => {
 test('Settings - Admin - Barcode History', async ({ browser }) => {
   // Login with admin credentials
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that the "save scans" setting is enabled
@@ -375,8 +371,7 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
 test('Settings - Admin - Parameter', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
@@ -483,8 +478,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
 test('Settings - Admin - Unauthorized', async ({ browser }) => {
   // Try to access "admin" page with a non-staff user
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/admin/'
   });
 
@@ -516,8 +510,7 @@ test('Settings - Admin - Unauthorized', async ({ browser }) => {
 // Test for user auth configuration
 test('Settings - Auth - Email', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/user/'
   });
 
