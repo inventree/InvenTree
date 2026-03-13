@@ -96,7 +96,7 @@ test('Machines - Activation', async ({ browser }) => {
   // Let's print something with the machine
   await navigate(page, 'stock/location/1/stock-items');
 
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('tabpanel', { name: 'Stock Items' })
     .getByLabel('action-menu-printing-actions')
