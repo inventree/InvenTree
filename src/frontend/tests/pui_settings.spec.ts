@@ -561,6 +561,9 @@ test('Settings - Auth - Tokens', async ({ browser }) => {
     .fill('testtoken');
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await page.getByText('Tokens are only shown once').waitFor();
-  await page.locator('.mantine-Modal-overlay').click();
+  await page
+    .getByTestId('generated-api-token')
+    .locator('.mantine-CloseButton-root')
+    .click();
   await page.getByRole('cell', { name: 'testtoken' }).waitFor();
 });

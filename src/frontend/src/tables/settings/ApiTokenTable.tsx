@@ -179,6 +179,7 @@ export function ApiTokenTable({
             onClose={close}
             title={<StylishText size='xl'>{t`Token`}</StylishText>}
             centered
+            data-testid='generated-api-token'
           >
             <Text c='dimmed'>
               <Trans>
