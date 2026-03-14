@@ -110,6 +110,7 @@ export function RenderStockItem(
   // Form the "secondary" text to display
   const secondary: ReactNode = (
     <Group gap='xs' style={{ paddingLeft: '5px' }}>
+      <InlineSecondaryBadge title={t`ID`} text={instance.pk} />
       {showLocation && location?.name && (
         <InlineSecondaryBadge title={t`Location`} text={location.name} />
       )}
