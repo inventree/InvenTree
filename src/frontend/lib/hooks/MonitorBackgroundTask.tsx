@@ -1,6 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { ActionIcon, Loader } from '@mantine/core';
 import { useDocumentVisibility } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import {
@@ -19,6 +18,7 @@ export default function monitorBackgroundTask({
   api,
   queryClient,
   title,
+  message,
   taskId,
   onSuccess,
   onFailure,
@@ -27,7 +27,8 @@ export default function monitorBackgroundTask({
 }: {
   api: AxiosInstance;
   queryClient?: QueryClient;
-  title: string;
+  title?: string;
+  message: string;
   taskId?: string;
   onSuccess?: () => void;
   onFailure?: () => void;
@@ -44,10 +45,10 @@ export default function monitorBackgroundTask({
       showNotification({
         id: `background-task-${taskId}`,
         title: title,
+        message: message,
         loading: true,
         autoClose: false,
-        withCloseButton: false,
-        message: <Loader size='md' />
+        withCloseButton: false
       });
     } else {
       setTracking(false);
@@ -72,14 +73,11 @@ export default function monitorBackgroundTask({
               showNotification({
                 id: `background-task-${taskId}`,
                 title: title,
-                message: (
-                  <ActionIcon>
-                    {response.data?.success ? (
-                      <IconCircleCheck color='green' />
-                    ) : (
-                      <IconCircleX color='red' />
-                    )}
-                  </ActionIcon>
+                message: message,
+                icon: response.data?.success ? (
+                  <IconCircleCheck color='green' />
+                ) : (
+                  <IconCircleX color='red' />
                 ),
                 autoClose: 1000,
                 withCloseButton: true
@@ -103,11 +101,8 @@ export default function monitorBackgroundTask({
             showNotification({
               id: `background-task-${taskId}`,
               title: title,
-              message: (
-                <ActionIcon>
-                  <IconExclamationCircle color='red' />
-                </ActionIcon>
-              ),
+              message: message,
+              icon: <IconExclamationCircle color='red' />,
               autoClose: 5000,
               withCloseButton: true
             });
