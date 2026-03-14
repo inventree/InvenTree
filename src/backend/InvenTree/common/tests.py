@@ -1107,6 +1107,41 @@ class TaskListApiTests(InvenTreeAPITestCase):
         for task in response.data:
             self.assertEqual(task['name'], 'time.sleep')
 
+    def test_task_detail(self):
+        """Test the BackgroundTaskDetail API endpoint."""
+        from InvenTree.tasks import offload_task
+
+        # Force run a task
+        result = offload_task('fake_module.test_task', force_sync=True)
+        self.assertFalse(result)
+        self.assertEqual(type(result), bool)
+
+        # Schedule a dummy task - and ensure it offloads to the worker
+        task_id = offload_task('fake_module.test_task', force_async=True)
+        self.assertIsNotNone(task_id)
+        self.assertEqual(type(task_id), str)
+
+        url = reverse('api-task-detail', kwargs={'task_id': task_id})
+
+        data = self.get(url).data
+
+        self.assertEqual(data['task_id'], task_id)
+        self.assertTrue(data['exists'])
+        self.assertTrue(data['pending'])
+        self.assertFalse(data['complete'])
+        self.assertFalse(data['success'])
+
+        # Perform a lookup for a non-existent task
+        url = reverse('api-task-detail', kwargs={'task_id': 'doesnotexist'})
+
+        data = self.get(url, expected_code=404).data
+
+        self.assertEqual(data['task_id'], 'doesnotexist')
+        self.assertFalse(data['exists'])
+        self.assertFalse(data['pending'])
+        self.assertFalse(data['complete'])
+        self.assertFalse(data['success'])
+
 
 class WebhookMessageTests(TestCase):
     """Tests for webhooks."""
