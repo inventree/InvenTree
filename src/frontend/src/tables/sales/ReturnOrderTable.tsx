@@ -179,7 +179,8 @@ export function ReturnOrderTable({
       customer: customerId
     },
     follow: true,
-    modelType: ModelType.returnorder
+    modelType: ModelType.returnorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {

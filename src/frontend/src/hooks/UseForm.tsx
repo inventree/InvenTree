@@ -97,8 +97,7 @@ export function useCreateApiFormModal(props: ApiFormModalProps) {
         props.successMessage === null
           ? null
           : (props.successMessage ?? t`Item Created`),
-      method: props.method ?? 'POST',
-      keepOpenOption: true
+      method: props.method ?? 'POST'
     }),
     [props]
   );

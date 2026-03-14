@@ -210,7 +210,8 @@ export function SupplierPartTable({
     onFormSuccess: (response: any) => {
       table.refreshTable();
     },
-    successMessage: t`Supplier part created`
+    successMessage: t`Supplier part created`,
+    keepOpenOption: true
   });
 
   const supplierPlugins = usePluginsWithMixin('supplier');

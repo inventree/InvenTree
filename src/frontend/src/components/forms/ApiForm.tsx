@@ -734,8 +734,7 @@ export function CreateApiForm({
   const createProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
-      method: 'POST',
-      keepOpenOption: true
+      method: 'POST'
     }),
     [props]
   );
