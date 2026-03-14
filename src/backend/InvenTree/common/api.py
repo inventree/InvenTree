@@ -1447,9 +1447,6 @@ common_api_urls = [
     path(
         'background-task/',
         include([
-            path(
-                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
-            ),
             path('pending/', PendingTaskList.as_view(), name='api-pending-task-list'),
             path(
                 'scheduled/',
@@ -1457,6 +1454,9 @@ common_api_urls = [
                 name='api-scheduled-task-list',
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path(
+                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
+            ),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
         ]),
     ),
