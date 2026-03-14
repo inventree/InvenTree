@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.9.0 - March 2026
+
+Exposes the `monitorBackgroundTask` hook, which allows plugins to monitor the status of a background task and display notifications when the task is complete. This is useful for plugins that offload long-running tasks to the background and want to provide feedback to the user when the task is complete.
+
 ### 0.8.2 - March 2026
 
 Bug fixes for the `monitorDataOutput` hook - https://github.com/inventree/InvenTree/pull/11458
