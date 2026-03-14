@@ -2,7 +2,13 @@ import { type FullConfig, chromium, request } from '@playwright/test';
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { apiUrl } from '../tests/defaults';
+import {
+  adminuser,
+  allaccessuser,
+  apiUrl,
+  readeruser,
+  stevenuser
+} from '../tests/defaults';
 import { doCachedLogin } from '../tests/login';
 
 async function globalSetup(config: FullConfig) {
@@ -45,26 +51,22 @@ async function globalSetup(config: FullConfig) {
 
   // Perform login for each user (each in a separate browser instance)
   await doCachedLogin(await chromium.launch(), {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
-    username: 'reader',
-    password: 'readonly',
+    user: readeruser,
     baseUrl: baseUrl
   });
 
   await doCachedLogin(await chromium.launch(), {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     baseUrl: baseUrl
   });
 }
