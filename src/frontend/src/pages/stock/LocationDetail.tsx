@@ -352,6 +352,7 @@ export default function Stock() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     enabled: true,
+    changeBatch: false,
     delete: false,
     merge: false,
     assign: false

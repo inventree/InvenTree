@@ -417,6 +417,7 @@ test('Parts - Pricing (Supplier)', async ({ browser }) => {
 
 test('Parts - Pricing (Variant)', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/106/pricing' });
+
   await page.getByText('A chair - available in multiple colors').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -438,6 +439,7 @@ test('Parts - Pricing (Variant)', async ({ browser }) => {
 
 test('Parts - Pricing (Internal)', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/65/pricing' });
+
   await page.getByText('Socket head cap screw, M2').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();

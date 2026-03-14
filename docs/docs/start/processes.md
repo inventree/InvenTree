@@ -122,7 +122,7 @@ InvenTree uses the [Redis](https://redis.io/) cache server to manage cache data.
 
 !!! info "Redis on Docker"
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
+    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/).
 
 !!! tip "Enable Cache"
     While a redis container is provided in the default configuration, by default it is not enabled in the InvenTree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)

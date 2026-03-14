@@ -1,4 +1,5 @@
 import { expect, test } from '../baseFixtures.js';
+import { stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -117,8 +118,7 @@ test('Stock - Location Delete', async ({ browser }) => {
 
 test('Stock - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: '/stock/location/index/'
   });
 
@@ -385,7 +385,7 @@ test('Stock - Return Items', async ({ browser }) => {
   });
 
   // Return stock items assigned to customer
-  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page.getByRole('button', { name: 'action-menu-stock-actions' }).click();
   await page
     .getByRole('menuitem', { name: 'action-menu-stock-actions-return-stock' })

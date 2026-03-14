@@ -786,6 +786,7 @@ export default function StockDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     delete: false,
+    changeBatch: false,
     assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
     return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
