@@ -1,4 +1,5 @@
 import { test } from './baseFixtures.js';
+import { stevenuser } from './defaults.js';
 import {
   clearTableFilters,
   navigate,
@@ -43,8 +44,7 @@ test('Tables - Filters', async ({ browser }) => {
 test('Tables - Pagination', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'manufacturing/index/buildorders',
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   await clearTableFilters(page);
@@ -76,8 +76,7 @@ test('Tables - Columns', async ({ browser }) => {
   // Go to the "stock list" page
   const page = await doCachedLogin(browser, {
     url: 'stock/location/index/stock-items',
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   // Open column selector
@@ -104,8 +103,7 @@ test('Tables - Sorting', async ({ browser }) => {
   // Go to the "stock list" page
   const page = await doCachedLogin(browser, {
     url: 'stock/location/index/stock-items',
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   // Stock table sorting

@@ -516,7 +516,7 @@ class StockItemSerializer(
         queryset = queryset.annotate(
             expired=Case(
                 When(
-                    StockItem.EXPIRED_FILTER,
+                    StockItem.get_expired_filter(),
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),

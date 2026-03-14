@@ -1,5 +1,11 @@
 import type { Browser, Page } from '@playwright/test';
-import { loginUrl, logoutUrl, user, webUrl } from './defaults';
+import {
+  type UserType,
+  allaccessuser,
+  loginUrl,
+  logoutUrl,
+  webUrl
+} from './defaults';
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +14,7 @@ import { navigate } from './helpers.js';
 interface LoginOptions {
   username?: string;
   password?: string;
+  user?: UserType;
   baseUrl?: string;
 }
 
@@ -15,8 +22,10 @@ interface LoginOptions {
  * Perform form based login operation from the "login" URL
  */
 export const doLogin = async (page: Page, options?: LoginOptions) => {
-  const username: string = options?.username ?? user.username;
-  const password: string = options?.password ?? user.password;
+  const username: string =
+    options?.username ?? options?.user?.username ?? allaccessuser.username;
+  const password: string =
+    options?.password ?? options?.user?.testcred ?? allaccessuser.testcred;
 
   console.log('- Logging in with username:', username);
 
@@ -44,8 +53,7 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
 };
 
 export interface CachedLoginOptions {
-  username?: string;
-  password?: string;
+  user?: UserType;
   url?: string;
   baseUrl?: string;
 }
@@ -61,8 +69,8 @@ export const doCachedLogin = async (
   browser: Browser,
   options?: CachedLoginOptions
 ): Promise<Page> => {
-  const username = options?.username ?? user.username;
-  const password = options?.password ?? user.password;
+  const username = options?.user?.username ?? allaccessuser.username;
+  const password = options?.user?.testcred ?? allaccessuser.testcred;
   const url = options?.url ?? '';
 
   // FAIL if an unsupported username is provided

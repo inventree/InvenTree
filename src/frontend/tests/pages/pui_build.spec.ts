@@ -226,7 +226,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await loadTab(page, 'Incomplete Outputs');
 
   // Check the "printing" actions for the selected outputs
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('tabpanel', { name: 'Incomplete Outputs' })
     .getByLabel('action-menu-printing-actions')
@@ -244,7 +244,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).click();
   await page.getByText('Errors exist for one or more form fields').waitFor();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
 
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();
@@ -478,7 +478,7 @@ test('Build Order - Consume Stock', async ({ browser }) => {
   await page.getByText('5 / 40', { exact: true }).waitFor();
 
   // Open the "Allocate Stock" dialog
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-allocate-stock' })
     .click();
@@ -503,7 +503,7 @@ test('Build Order - Consume Stock', async ({ browser }) => {
 
   // Try with a different build order
   await navigate(page, 'manufacturing/build-order/26/line-items');
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-consume-stock' })
     .click();
