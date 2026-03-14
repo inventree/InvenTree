@@ -139,3 +139,4 @@ django_find_project = false
 pythonpath = ["src/backend/InvenTree"]
 DJANGO_SETTINGS_MODULE = "InvenTree.settings"
 python_files = ["test*.py",]
+timeout = "120"
