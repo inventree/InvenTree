@@ -275,6 +275,40 @@ def offload_task(
     return True
 
 
+def get_queued_task(task_id: str):
+    """Find the task in the queue, if it exists.
+
+    Note that the OrmQ table does NOT keep the task ID as a database field,
+    it is instead stored in the payload data.
+    If there are a large number of pending tasks, this query may be inefficient,
+    but there is no other way to find a queued task by ID.
+    """
+    offset = 0
+    limit = 500
+
+    if not task_id:
+        # Return early if no task ID was provided
+        return None
+
+    task_id = str(task_id)
+
+    from django_q.models import OrmQ
+
+    while True:
+        queued_tasks = OrmQ.objects.all().order_by('id')[offset : offset + limit]
+        if not queued_tasks:
+            break
+
+        for task in queued_tasks:
+            if task.task_id() == task_id:
+                return task
+
+        offset += limit
+
+    # No matching task was discovered
+    return None
+
+
 @dataclass()
 class ScheduledTask:
     """A scheduled task.

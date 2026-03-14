@@ -531,6 +531,58 @@ class TaskDetailSerializer(serializers.Serializer):
     complete = serializers.BooleanField(read_only=True)
     success = serializers.BooleanField(read_only=True)
 
+    @classmethod
+    def from_task(cls, task_id: str | bool | None) -> 'TaskDetailSerializer':
+        """Create a TaskDetailSerializer instance from a django_q Task.
+
+        Arguments:
+            task_id: The ID of the task to retrieve details for.
+
+        Returns:
+            An instance of TaskDetailSerializer with the task details.
+
+        Notes:
+            - If the provided task_id is None, the task has not been run, or has errored out
+            - If the provided task_id is a boolean, the task has been run synchronously, and the boolean value indicates success or failure
+            - If the provided task_id is a string, the task has been offloaded to the background worker, and the details can be from the database
+
+        """
+        from InvenTree.tasks import get_queued_task
+
+        if task_id is None or type(task_id) is bool:
+            # If the task_id is a boolean, the task has been run synchronously
+            return cls({
+                'task_id': '',
+                'exists': False,
+                'pending': False,
+                'complete': task_id is not None,
+                'success': False if task_id is None else bool(task_id),
+            })
+
+        # A non-boolean result indicates that the task has been offloaded to the background worker
+        success = django_q.models.Success.objects.filter(id=task_id).first()
+        failure = django_q.models.Failure.objects.filter(id=task_id).first()
+        task = (
+            success
+            or failure
+            or django_q.models.Task.objects.filter(id=task_id).first()
+        )
+        queued = False
+
+        exists = bool(success or failure or task)
+
+        if not exists:
+            # If the task has not been started yet, it may be present in the queue
+            queued = bool(get_queued_task(task_id))
+
+        return cls({
+            'task_id': task_id,
+            'exists': exists or queued,
+            'pending': queued,
+            'complete': bool(success or failure),
+            'success': bool(success),
+        })
+
 
 class TaskOverviewSerializer(serializers.Serializer):
     """Serializer for background task overview."""

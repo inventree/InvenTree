@@ -569,57 +569,12 @@ class BackgroundTaskDetail(APIView):
 
     permission_classes = [IsAuthenticatedOrReadScope]
 
-    def get_queued_task(self, task_id: str):
-        """Find the task in the queue, if it exists.
-
-        Note that the OrmQ table does NOT keep the task ID as a database field,
-        it is instead stored in the payload data.
-        If there are a large number of pending tasks, this query may be inefficient,
-        but there is no other way to find a queued task by ID.
-        """
-        offset = 0
-        limit = 500
-
-        while True:
-            queued_tasks = django_q.models.OrmQ.objects.all().order_by('id')[
-                offset : offset + limit
-            ]
-            if not queued_tasks:
-                break
-
-            for task in queued_tasks:
-                if task.task_id() == task_id:
-                    return task
-
-            offset += limit
-
     @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
     def get(self, request, task_id, *args, **kwargs):
         """Fetch information regarding a particular background task ID."""
-        # Lookup task based on the provided task ID
-        # First, look for a 'Success' object
-        success = django_q.models.Success.objects.filter(id=task_id).first()
-        failure = django_q.models.Failure.objects.filter(id=task_id).first()
-        task = django_q.models.Task.objects.filter(id=task_id).first()
-        queued = False
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
 
-        exists = bool(success or failure or task)
-
-        if not exists:
-            # If the task has not been started yet, it may be present in the queue
-            # Check the 'OrmQ' table for pending tasks
-            queued = bool(self.get_queued_task(task_id))
-
-        return Response(
-            {
-                'task_id': task_id,
-                'exists': exists or queued,
-                'pending': queued,
-                'complete': bool(success or failure),
-                'success': bool(success),
-            },
-            status=200 if exists or queued else 404,
-        )
+        return Response(response, status=200 if response['exists'] else 404)
 
 
 class BackgroundTaskOverview(APIView):
