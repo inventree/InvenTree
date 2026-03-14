@@ -297,7 +297,6 @@ If running with a SQLite database backend, the following additional options are 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
-| INVENTREE_DB_TRANSACTION_MODE | database.transaction_mode | SQLite transaction mode (DEFERRED, IMMEDIATE, EXCLUSIVE) | IMMEDIATE |
 
 ## Caching
 
