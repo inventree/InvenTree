@@ -564,6 +564,7 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
+@extend_schema(operation_id='background_task_detail')
 class BackgroundTaskDetail(APIView):
     """Detail view for a single background task."""
 
@@ -577,6 +578,7 @@ class BackgroundTaskDetail(APIView):
         return Response(response, status=200 if response['exists'] else 404)
 
 
+@extend_schema(operation_id='background_task_overview')
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
