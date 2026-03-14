@@ -581,15 +581,8 @@ class TaskDetailSerializer(serializers.Serializer):
 
         # Determine the http_status code for the task
         # - 200: Task exists and has been completed
-        # - 202: Task exists and is pending or in progress
         # - 404: Task does not exist
-
-        if complete:
-            http_status = 200
-        elif exists or queued:
-            http_status = 202
-        else:
-            http_status = 404
+        http_status = 200 if exists or queued else 404
 
         return cls({
             'task_id': task_id,

@@ -1123,8 +1123,7 @@ class TaskListApiTests(InvenTreeAPITestCase):
 
         url = reverse('api-task-detail', kwargs={'task_id': task_id})
 
-        # Expect a 202 response - the task is pending, but not yet complete
-        data = self.get(url, expected_code=202).data
+        data = self.get(url, expected_code=200).data
 
         self.assertEqual(data['task_id'], task_id)
         self.assertTrue(data['exists'])
