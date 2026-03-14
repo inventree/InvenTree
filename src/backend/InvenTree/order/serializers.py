@@ -577,7 +577,7 @@ class PurchaseOrderLineItemSerializer(
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    order.models.PurchaseOrderLineItem.OVERDUE_FILTER,
+                    order.models.PurchaseOrderLineItem.get_overdue_filter(),
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
@@ -1154,7 +1154,7 @@ class SalesOrderLineItemSerializer(
             overdue=Case(
                 When(
                     Q(order__status__in=SalesOrderStatusGroups.OPEN)
-                    & order.models.SalesOrderLineItem.OVERDUE_FILTER,
+                    & order.models.SalesOrderLineItem.get_overdue_filter(),
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
