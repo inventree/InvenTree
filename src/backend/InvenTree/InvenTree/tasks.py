@@ -161,7 +161,7 @@ def record_task_success(task_name: str):
 
 def offload_task(
     taskname, *args, force_async=False, force_sync=False, **kwargs
-) -> bool:
+) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
@@ -174,7 +174,7 @@ def offload_task(
         **kwargs: Keyword arguments to be passed to the task function
 
     Returns:
-        bool: True if the task was offloaded (or ran), False otherwise
+        str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
     from InvenTree.exceptions import log_error
 
@@ -210,6 +210,9 @@ def offload_task(
             task = AsyncTask(taskname, *args, group=group, **kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
+
+                # Return the ID of the offloaded task, so that it can be tracked if needed
+                return task.id
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
