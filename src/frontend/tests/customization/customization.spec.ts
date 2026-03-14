@@ -1,4 +1,5 @@
 import test, { expect } from '@playwright/test';
+import { noaccessuser } from '../defaults';
 import { navigate } from '../helpers';
 import { doLogin } from '../login';
 
@@ -22,8 +23,7 @@ test('Customization - Splash', async ({ page }) => {
 
 test('Customization - Logo', async ({ page }) => {
   await doLogin(page, {
-    username: 'noaccess',
-    password: 'youshallnotpass'
+    user: noaccessuser
   });
 
   await page.waitForLoadState('networkidle');

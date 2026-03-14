@@ -1,10 +1,10 @@
 import test from '@playwright/test';
+import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/admin/import'
   });
 
@@ -72,8 +72,7 @@ test('Importing - Admin Center', async ({ browser }) => {
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'part/109/bom'
   });
 
@@ -153,8 +152,7 @@ test('Importing - BOM', async ({ browser }) => {
 
 test('Importing - Purchase Order', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
@@ -172,8 +170,7 @@ test('Importing - Purchase Order', async ({ browser }) => {
 
 test('Importing - Natural Keys', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
