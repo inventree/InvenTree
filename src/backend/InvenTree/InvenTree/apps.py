@@ -9,9 +9,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
-from django.db.backends.signals import connection_created
 from django.db.utils import IntegrityError
-from django.dispatch import receiver
 
 import structlog
 from allauth.socialaccount.signals import social_account_updated
@@ -356,14 +354,3 @@ class InvenTreeConfig(AppConfig):
                 logger.error('INVE-W8: Database Migrations required')
                 sys.exit(1)
         MIGRATIONS_CHECK_DONE = True
-
-
-@receiver(connection_created)
-def set_sqlite_pragma(sender, connection, **kwargs):
-    """Enforce write-ahead logging for SQLite connections."""
-    if connection.vendor == 'sqlite':
-        with connection.cursor() as cursor:
-            # Enable WAL mode
-            cursor.execute('PRAGMA journal_mode=WAL;')
-            # Optional: Boost performance by keeping the temp store in memory
-            cursor.execute('PRAGMA synchronous=NORMAL;')
