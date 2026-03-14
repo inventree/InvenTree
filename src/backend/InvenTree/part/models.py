@@ -61,6 +61,7 @@ from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from stock import models as StockModels
 
@@ -1765,8 +1766,50 @@ class Part(
 
         return query['total']
 
+    def transfer_order_allocations(self, **kwargs):
+        """Return all transfer-order-allocation objects which allocate this part to a TransferOrder."""
+        include_variants = kwargs.get('include_variants', True)
+
+        queryset = OrderModels.TransferOrderAllocation.objects.all()
+
+        if include_variants:
+            # Include allocations for all variants
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(item__part__in=variants)
+        else:
+            # Only look at this part
+            queryset = queryset.filter(item__part=self)
+
+        # Default behaviour is to only return *pending* allocations
+        pending = kwargs.get('pending', True)
+
+        if pending is True:
+            # Look only for 'open' orders
+            queryset = queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+        elif pending is False:
+            # Look only for 'closed' orders
+            queryset = queryset.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return queryset
+
+    def transfer_order_allocation_count(self, **kwargs):
+        """Return the total quantity of this part allocated to transfer orders."""
+        query = self.transfer_order_allocations(**kwargs).aggregate(
+            total=Coalesce(
+                Sum('quantity', output_field=models.DecimalField()),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return query['total']
+
     def allocation_count(self, **kwargs):
-        """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
+        """Return the total quantity of stock allocated for this part, against build orders, sales orders, and transfer orders."""
         if self.id is None:
             # If this instance has not been saved, foreign-key lookups will fail
             return 0
@@ -1774,6 +1817,8 @@ class Part(
         return sum([
             self.build_order_allocation_count(**kwargs),
             self.sales_order_allocation_count(**kwargs),
+            # For now, stock allocated to a transfer order will not impact its availability
+            # self.transfer_order_allocation_count(**kwargs),
         ])
 
     def stock_entries(

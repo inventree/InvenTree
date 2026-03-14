@@ -233,6 +233,10 @@ Refer to the [sales order settings](../sales/sales_order.md#sales-order-settings
 
 Refer to the [return order settings](../sales/return_order.md#return-order-settings).
 
+### Transfer Orders
+
+Refer to the [transfer order settings](../stock/transfer_order.md#transfer-order-settings).
+
 ### Plugin Settings
 
 | Name | Description | Default | Units |

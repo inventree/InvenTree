@@ -14,7 +14,8 @@ import { RenderCompany } from '../../components/render/Company';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
-  RenderSalesOrder
+  RenderSalesOrder,
+  RenderTransferOrder
 } from '../../components/render/Order';
 import { RenderPart } from '../../components/render/Part';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -177,6 +178,17 @@ export function StockTrackingTable({
             deltas.returnorder_detail &&
             RenderReturnOrder({
               instance: deltas.returnorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Transfer Order`,
+          key: 'transferorder',
+          details:
+            deltas.transferorder_detail &&
+            RenderTransferOrder({
+              instance: deltas.transferorder_detail,
               link: true,
               navigate: navigate
             })
