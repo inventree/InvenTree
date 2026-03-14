@@ -608,7 +608,7 @@ class ScheduledTaskList(ListAPI):
 
     ordering_fields = ['pk', 'func', 'last_run', 'next_run']
 
-    search_fields = ['func']
+    search_fields = ['func', 'name']
 
     def get_queryset(self):
         """Return annotated queryset."""

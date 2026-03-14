@@ -1,10 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 460
+INVENTREE_API_VERSION = 463
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v463 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11499
+    - Allow "bulk update" actions against StockItem endpoint
+
+v462 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11497
+    - Allow "ScheduledTask" API endpoint to be filtered by "name" field
+
+v461 -> 2026-03-10 : https://github.com/inventree/InvenTree/pull/11479
+    - Adds option to copy parameters when duplicating an order via the API
 
 v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
     - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints

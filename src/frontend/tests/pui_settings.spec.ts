@@ -543,3 +543,27 @@ async function testColorPicker(page, ref: string) {
   await page.mouse.click(box.x + box.width / 2, box.y + box.height + 25);
   await page.getByText('Color Mode').click();
 }
+
+test('Settings - Auth - Tokens', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
+
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Access Tokens' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-generate-token' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('testtoken');
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page.getByText('Tokens are only shown once').waitFor();
+  await page
+    .getByTestId('generated-api-token')
+    .locator('.mantine-CloseButton-root')
+    .click();
+  await page.getByRole('cell', { name: 'testtoken' }).waitFor();
+});
