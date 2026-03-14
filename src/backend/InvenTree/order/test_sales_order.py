@@ -287,7 +287,14 @@ class SalesOrderTest(InvenTreeTestCase):
 
         # Mark the shipments as complete
         self.shipment.complete_shipment(None)
+        self.shipment.refresh_from_db()
         self.assertTrue(self.shipment.is_complete())
+
+        # Check that each of the items have now been allocated to the customer
+        for allocation in self.shipment.allocations.all():
+            item = allocation.item
+            self.assertEqual(item.customer, self.order.customer)
+            self.assertEqual(item.sales_order, self.order)
 
         # Now, should be OK to ship
         result = self.order.ship_order(None)
