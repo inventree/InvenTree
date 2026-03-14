@@ -1,7 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useDocumentVisibility } from '@mantine/hooks';
-import { showNotification } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
@@ -58,7 +58,7 @@ export default function monitorBackgroundTask({
   useQuery(
     {
       enabled: !!taskId && tracking && visibility === 'visible',
-      refetchInterval: 250,
+      refetchInterval: 500,
       queryKey: ['background-task', taskId],
       queryFn: () =>
         api
@@ -70,7 +70,7 @@ export default function monitorBackgroundTask({
               setTracking(false);
               onComplete?.();
 
-              showNotification({
+              notifications.update({
                 id: `background-task-${taskId}`,
                 title: title,
                 message: message,
@@ -89,6 +89,8 @@ export default function monitorBackgroundTask({
                 onFailure?.();
               }
             }
+
+            return response;
           })
           .catch((error) => {
             console.error(
@@ -98,7 +100,7 @@ export default function monitorBackgroundTask({
             setTracking(false);
             onError?.(error);
 
-            showNotification({
+            notifications.update({
               id: `background-task-${taskId}`,
               title: title,
               message: message,
