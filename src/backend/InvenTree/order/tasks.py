@@ -1,6 +1,7 @@
 """Background tasks for the 'order' app."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.contrib.auth.models import Group, User
 from django.db import transaction
@@ -236,15 +237,26 @@ def check_overdue_return_orders():
 
 
 @tracer.start_as_current_span('complete_sales_order_shipment')
-def complete_sales_order_shipment(shipment_id: int, user_id: int) -> None:
+def complete_sales_order_shipment(
+    shipment_id: int,
+    user_id: int,
+    shipment_date: str,
+    delivery_date: Optional[str] = None,
+) -> None:
     """Complete allocations for a pending shipment against a SalesOrder.
+
+    Arguments:
+        shipment_id: The ID of the SalesOrderShipment object to complete
+        user_id: The ID of the user performing the completion action
+        shipment_date: The date that the shipment was completed (if None, then the current date is used)
+        delivery_date: The date that the shipment was delivered (optional)
 
     At this stage, the shipment is assumed to be complete,
     and we need to perform the required "processing" tasks.
     """
     try:
         shipment = order.models.SalesOrderShipment.objects.get(pk=shipment_id)
-    except Exception:
+    except order.models.SalesOrderShipment.DoesNotExist:
         # Shipping object does not exist
         logger.warning(
             'Failed to complete shipment - no matching SalesOrderShipment for ID <%s>',
@@ -262,3 +274,12 @@ def complete_sales_order_shipment(shipment_id: int, user_id: int) -> None:
     with transaction.atomic():
         for allocation in shipment.allocations.all():
             allocation.complete_allocation(user=user)
+
+    # Once all allocations have been completed, we can mark the shipment as complete
+    shipment.shipment_date = shipment_date or datetime.now().date()
+    shipment.delivery_date = delivery_date
+    shipment.shipped_by = user
+    shipment.save()
+
+    # Trigger event signalling that the shipment has been completed
+    trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=shipment.pk)
