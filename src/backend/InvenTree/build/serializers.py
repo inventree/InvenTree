@@ -168,7 +168,8 @@ class BuildSerializer(
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Build.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
+                    Build.get_overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
