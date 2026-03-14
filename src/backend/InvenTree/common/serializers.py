@@ -530,6 +530,7 @@ class TaskDetailSerializer(serializers.Serializer):
     pending = serializers.BooleanField(read_only=True)
     complete = serializers.BooleanField(read_only=True)
     success = serializers.BooleanField(read_only=True)
+    http_status = serializers.IntegerField(read_only=True)
 
     @classmethod
     def from_task(cls, task_id: str | bool | None) -> 'TaskDetailSerializer':
@@ -557,6 +558,7 @@ class TaskDetailSerializer(serializers.Serializer):
                 'pending': False,
                 'complete': task_id is not None,
                 'success': False if task_id is None else bool(task_id),
+                'http_status': 404 if task_id is None else 200,
             })
 
         # A non-boolean result indicates that the task has been offloaded to the background worker
@@ -575,12 +577,27 @@ class TaskDetailSerializer(serializers.Serializer):
             # If the task has not been started yet, it may be present in the queue
             queued = bool(get_queued_task(task_id))
 
+        complete = bool(success) or bool(failure)
+
+        # Determine the http_status code for the task
+        # - 200: Task exists and has been completed
+        # - 202: Task exists and is pending or in progress
+        # - 404: Task does not exist
+
+        if complete:
+            http_status = 200
+        elif exists or queued:
+            http_status = 202
+        else:
+            http_status = 404
+
         return cls({
             'task_id': task_id,
             'exists': exists or queued,
             'pending': queued,
-            'complete': bool(success or failure),
+            'complete': complete,
             'success': bool(success),
+            'http_status': http_status,
         })
 
 

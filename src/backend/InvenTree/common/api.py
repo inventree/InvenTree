@@ -575,7 +575,7 @@ class BackgroundTaskDetail(APIView):
         """Fetch information regarding a particular background task ID."""
         response = common.serializers.TaskDetailSerializer.from_task(task_id).data
 
-        return Response(response, status=200 if response['exists'] else 404)
+        return Response(response, status=response['http_status'])
 
 
 @extend_schema(operation_id='background_task_overview')
