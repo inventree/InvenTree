@@ -166,6 +166,13 @@ def offload_task(
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
 
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        *args: Positional arguments to be passed to the task function
+        force_async: If True, force the task to be offloaded (even if workers are not running)
+        force_sync: If True, force the task to be run synchronously (even if workers are running)
+        **kwargs: Keyword arguments to be passed to the task function
+
     Returns:
         bool: True if the task was offloaded (or ran), False otherwise
     """
