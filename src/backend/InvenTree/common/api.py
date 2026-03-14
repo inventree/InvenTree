@@ -17,8 +17,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
+import django_q.tasks
 from django_filters.rest_framework.filterset import FilterSet
-from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
@@ -115,7 +115,7 @@ class WebhookView(CsrfExemptMixin, APIView):
         # process data
         message = self.webhook.save_data(payload, headers, request)
         if self.run_async:
-            async_task(self._process_payload, message.id)
+            django_q.tasks.async_task(self._process_payload, message.id)
         else:
             self._process_result(
                 self.webhook.process_payload(message, payload, headers), message
@@ -562,6 +562,36 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     queryset = Error.objects.all()
     serializer_class = common.serializers.ErrorMessageSerializer
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
+
+
+class BackgroundTaskDetail(APIView):
+    """Detail view for a single background task."""
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def get(self, request, task_id, *args, **kwargs):
+        """Fetch information regarding a particular background task ID."""
+        # Lookup task based on the provided task ID
+        # First, look for a 'Success' object
+        success = django_q.models.Success.objects.filter(id=task_id).first()
+        failure = django_q.models.Failure.objects.filter(id=task_id).first()
+        task = django_q.models.Task.objects.filter(id=task_id).first()
+
+        task = django_q.models.Task.get_task(task_id)
+
+        exists = bool(success or failure or task)
+
+        return Response(
+            {
+                'task_id': task_id,
+                'exists': exists,
+                'pending': bool(exists and not success and not failure),
+                'complete': bool(success or failure),
+                'success': bool(success),
+            },
+            status=200 if exists else 404,
+        )
 
 
 class BackgroundTaskOverview(APIView):
@@ -1389,6 +1419,9 @@ common_api_urls = [
     path(
         'background-task/',
         include([
+            path(
+                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
+            ),
             path('pending/', PendingTaskList.as_view(), name='api-pending-task-list'),
             path(
                 'scheduled/',

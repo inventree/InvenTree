@@ -522,6 +522,16 @@ class ErrorMessageSerializer(InvenTreeModelSerializer):
         read_only_fields = ['when', 'info', 'data', 'path', 'pk']
 
 
+class TaskDetailSerializer(serializers.Serializer):
+    """Serializer for a background task detail."""
+
+    task_id = serializers.CharField(read_only=True)
+    exists = serializers.BooleanField(read_only=True)
+    pending = serializers.BooleanField(read_only=True)
+    complete = serializers.BooleanField(read_only=True)
+    success = serializers.BooleanField(read_only=True)
+
+
 class TaskOverviewSerializer(serializers.Serializer):
     """Serializer for background task overview."""
 
