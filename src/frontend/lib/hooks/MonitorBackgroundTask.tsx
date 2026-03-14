@@ -74,7 +74,7 @@ export default function monitorBackgroundTask({
                 title: title,
                 message: (
                   <ActionIcon>
-                    {response.data ? (
+                    {response.data?.success ? (
                       <IconCircleCheck color='green' />
                     ) : (
                       <IconCircleX color='red' />
