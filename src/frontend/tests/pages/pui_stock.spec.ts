@@ -1,4 +1,5 @@
 import { expect, test } from '../baseFixtures.js';
+import { stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -117,8 +118,7 @@ test('Stock - Location Delete', async ({ browser }) => {
 
 test('Stock - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: '/stock/location/index/'
   });
 
