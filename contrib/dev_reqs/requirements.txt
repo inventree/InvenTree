@@ -3,7 +3,9 @@
 certifi==2026.2.25 \
     --hash=sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa \
     --hash=sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7
-    # via requests
+    # via
+    #   -c src/backend/requirements.txt
+    #   requests
 charset-normalizer==3.4.5 \
     --hash=sha256:014837af6fabf57121b6254fa8ade10dceabc3528b27b721a64bbc7b8b1d4eb4 \
     --hash=sha256:01a1ed54b953303ca7e310fafe0fe347aab348bd81834a0bcd602eb538f89d66 \
@@ -118,15 +120,19 @@ charset-normalizer==3.4.5 \
     --hash=sha256:f8102ae93c0bc863b1d41ea0f4499c20a83229f52ed870850892df555187154a \
     --hash=sha256:fc1c64934b8faf7584924143eb9db4770bbdb16659626e1a1a4d9efbcb68d947 \
     --hash=sha256:ff95a9283de8a457e6b12989de3f9f5193430f375d64297d323a615ea52cbdb3
-    # via requests
+    # via
+    #   -c src/backend/requirements.txt
+    #   requests
 idna==3.11 \
     --hash=sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea \
     --hash=sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902
-    # via requests
+    # via
+    #   -c src/backend/requirements.txt
+    #   requests
 jc==1.25.6 \
     --hash=sha256:27f58befc7ae0a4c63322926c5f1ec892e3eac4a065eff3b07cfe420a6924a07 \
     --hash=sha256:7367b59e6e0da8babeede1e5b0da083f3c5aa6b6e585b4aed28dd7c4b2d76162
-    # via -r requirements.in
+    # via -r contrib/dev_reqs/requirements.in
 pygments==2.19.2 \
     --hash=sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887 \
     --hash=sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b
@@ -205,11 +211,15 @@ pyyaml==6.0.3 \
     --hash=sha256:f7057c9a337546edc7973c0d3ba84ddcdf0daa14533c2065749c9075001090e6 \
     --hash=sha256:fa160448684b4e94d80416c0fa4aac48967a969efe22931448d853ada8baf926 \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
-    # via -r requirements.in
+    # via
+    #   -c src/backend/requirements.txt
+    #   -r contrib/dev_reqs/requirements.in
 requests==2.32.5 \
     --hash=sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6 \
     --hash=sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf
-    # via -r requirements.in
+    # via
+    #   -c src/backend/requirements.txt
+    #   -r contrib/dev_reqs/requirements.in
 ruamel-yaml==0.19.1 \
     --hash=sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93 \
     --hash=sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993
@@ -217,7 +227,9 @@ ruamel-yaml==0.19.1 \
 urllib3==2.6.3 \
     --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
     --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
-    # via requests
+    # via
+    #   -c src/backend/requirements.txt
+    #   requests
 xmltodict==1.0.2 \
     --hash=sha256:54306780b7c2175a3967cad1db92f218207e5bc1aba697d887807c0fb68b7649 \
     --hash=sha256:62d0fddb0dcbc9f642745d8bbf4d81fd17d6dfaec5a15b5c1876300aad92af0d
