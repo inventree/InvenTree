@@ -1,8 +1,13 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { Loader } from '@mantine/core';
+import { ActionIcon, Loader } from '@mantine/core';
 import { useDocumentVisibility } from '@mantine/hooks';
-import { hideNotification, showNotification } from '@mantine/notifications';
+import { showNotification } from '@mantine/notifications';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { type QueryClient, useQuery } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
@@ -62,9 +67,23 @@ export default function monitorBackgroundTask({
 
             if (data.complete) {
               setTracking(false);
-              hideNotification(`background-task-${taskId}`);
-
               onComplete?.();
+
+              showNotification({
+                id: `background-task-${taskId}`,
+                title: title,
+                message: (
+                  <ActionIcon>
+                    {response.data ? (
+                      <IconCircleCheck color='green' />
+                    ) : (
+                      <IconCircleX color='red' />
+                    )}
+                  </ActionIcon>
+                ),
+                autoClose: 1000,
+                withCloseButton: true
+              });
 
               if (data.success) {
                 onSuccess?.();
@@ -79,8 +98,19 @@ export default function monitorBackgroundTask({
               error
             );
             setTracking(false);
-            hideNotification(`background-task-${taskId}`);
             onError?.(error);
+
+            showNotification({
+              id: `background-task-${taskId}`,
+              title: title,
+              message: (
+                <ActionIcon>
+                  <IconExclamationCircle color='red' />
+                </ActionIcon>
+              ),
+              autoClose: 5000,
+              withCloseButton: true
+            });
           })
     },
     queryClient
