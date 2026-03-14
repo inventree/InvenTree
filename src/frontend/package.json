@@ -135,5 +135,8 @@
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-externals": "^0.6.2",
         "vite-plugin-istanbul": "^8.0.0"
+    },
+    "resolutions": {
+        "undici": "^6.24.0"
     }
 }
