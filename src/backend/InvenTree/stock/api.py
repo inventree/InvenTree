@@ -685,8 +685,8 @@ class StockFilter(FilterSet):
             return queryset
 
         if str2bool(value):
-            return queryset.filter(StockItem.EXPIRED_FILTER)
-        return queryset.exclude(StockItem.EXPIRED_FILTER)
+            return queryset.filter(StockItem.get_expired_filter())
+        return queryset.exclude(StockItem.get_expired_filter())
 
     external = rest_filters.BooleanFilter(
         label=_('External Location'), method='filter_external'
