@@ -15,4 +15,3 @@ django-stubs                            # typing
 requests-mock                           # Mock requests for unit tests
 pytest-codspeed                         # Performance testing with Codspeed
 pytest-django                           # Pytest support for Django (for benchnmarking)
-pytest-timeout                          # Timeout support for unit testing
