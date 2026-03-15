@@ -118,7 +118,8 @@ export function ManufacturerPartTable({
     initialData: {
       manufacturer: manufacturerId,
       part: partId
-    }
+    },
+    keepOpenOption: true
   });
 
   const editManufacturerPart = useEditApiFormModal({

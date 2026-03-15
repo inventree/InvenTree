@@ -407,7 +407,8 @@ export function PartListTable({
     fields: newPartFields,
     initialData: initialPartData,
     follow: true,
-    modelType: ModelType.part
+    modelType: ModelType.part,
+    keepOpenOption: true
   });
 
   const [selectedPart, setSelectedPart] = useState<any>({});
