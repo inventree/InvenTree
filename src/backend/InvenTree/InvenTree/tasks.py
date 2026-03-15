@@ -161,13 +161,20 @@ def record_task_success(task_name: str):
 
 def offload_task(
     taskname, *args, force_async=False, force_sync=False, **kwargs
-) -> bool:
+) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
 
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        *args: Positional arguments to be passed to the task function
+        force_async: If True, force the task to be offloaded (even if workers are not running)
+        force_sync: If True, force the task to be run synchronously (even if workers are running)
+        **kwargs: Keyword arguments to be passed to the task function
+
     Returns:
-        bool: True if the task was offloaded (or ran), False otherwise
+        str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
     from InvenTree.exceptions import log_error
 
@@ -203,6 +210,9 @@ def offload_task(
             task = AsyncTask(taskname, *args, group=group, **kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
+
+                # Return the ID of the offloaded task, so that it can be tracked if needed
+                return task.id
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
@@ -263,6 +273,40 @@ def offload_task(
 
     # Finally, task either completed successfully or was offloaded
     return True
+
+
+def get_queued_task(task_id: str):
+    """Find the task in the queue, if it exists.
+
+    Note that the OrmQ table does NOT keep the task ID as a database field,
+    it is instead stored in the payload data.
+    If there are a large number of pending tasks, this query may be inefficient,
+    but there is no other way to find a queued task by ID.
+    """
+    offset = 0
+    limit = 500
+
+    if not task_id:
+        # Return early if no task ID was provided
+        return None
+
+    task_id = str(task_id)
+
+    from django_q.models import OrmQ
+
+    while True:
+        queued_tasks = OrmQ.objects.all().order_by('id')[offset : offset + limit]
+        if not queued_tasks:
+            break
+
+        for task in queued_tasks:
+            if task.task_id() == task_id:
+                return task
+
+        offset += limit
+
+    # No matching task was discovered
+    return None
 
 
 @dataclass()

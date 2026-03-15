@@ -1,4 +1,4 @@
-import monitorDataOutput from '@lib/hooks/MonitorDataOutput';
+import useMonitorDataOutput from '@lib/hooks/MonitorDataOutput';
 import { useApi } from '../contexts/ApiContext';
 import { useLocalState } from '../states/LocalState';
 
@@ -15,7 +15,7 @@ export default function useDataOutput({
   const api = useApi();
   const { getHost } = useLocalState.getState();
 
-  return monitorDataOutput({
+  return useMonitorDataOutput({
     api: api,
     title: title,
     id: id,
