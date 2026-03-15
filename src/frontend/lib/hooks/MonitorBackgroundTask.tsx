@@ -1,5 +1,3 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import { useDocumentVisibility } from '@mantine/hooks';
 import { notifications, showNotification } from '@mantine/notifications';
 import {
@@ -10,7 +8,8 @@ import {
 import { type QueryClient, useQuery } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
-import { queryClient } from '../../src/App';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../functions/Api';
 
 export type MonitorBackgroundTaskProps = {
   api: AxiosInstance;
@@ -114,6 +113,6 @@ export default function useMonitorBackgroundTask(
             });
           })
     },
-    queryClient
+    props.queryClient
   );
 }
