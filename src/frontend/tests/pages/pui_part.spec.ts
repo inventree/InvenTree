@@ -140,6 +140,44 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 });
 
+/**
+ * Perform BOM validation process
+ * Note that this is a "background task" which is monitored by the "useBackgroundTask" hook
+ */
+test('Parts - BOM Validation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/107/bom' });
+
+  // Run BOM validation step
+  await page
+    .getByRole('button', { name: 'action-button-validate-bom' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Background task monitoring
+  await page.getByText('Validating BOM').waitFor();
+  await page.getByText('BOM validated').waitFor();
+
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page.getByText('Validated By: allaccessAlly').waitFor();
+
+  // Edit line item, to ensure BOM is not valid next time around
+  const cell = await page.getByRole('cell', { name: 'Red paint Red Paint' });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+
+  const input = await page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+
+  const value = await input.inputValue();
+
+  const nextValue = Number.parseFloat(value) + 0.24;
+
+  await input.fill(`${nextValue.toFixed(3)}`);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('BOM item updated').waitFor();
+});
+
 test('Parts - Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/details' });
 
@@ -417,6 +455,7 @@ test('Parts - Pricing (Supplier)', async ({ browser }) => {
 
 test('Parts - Pricing (Variant)', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/106/pricing' });
+
   await page.getByText('A chair - available in multiple colors').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -438,6 +477,7 @@ test('Parts - Pricing (Variant)', async ({ browser }) => {
 
 test('Parts - Pricing (Internal)', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/65/pricing' });
+
   await page.getByText('Socket head cap screw, M2').waitFor();
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -559,6 +599,22 @@ test('Parts - Parameters by Category', async ({ browser }) => {
 test('Parts - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
+  // check that "is polarized" parameter is not already present - if it is, delete it before proceeding with the rest of the test
+  await page
+    .getByText('Is this part polarized?')
+    .waitFor({ state: 'detached', timeout: 1000 })
+    .catch(async () => {
+      const cell = await page.getByRole('cell', {
+        name: 'Is this part polarized?'
+      });
+      const row = await getRowFromCell(cell);
+      await row.getByLabel(/row-action-menu-/i).click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+      await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      await page.getByText('No records found').first().waitFor();
+    });
+
   // Create a new template
   await page
     .getByRole('button', { name: 'action-menu-add-parameters' })
@@ -599,12 +655,7 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Toggle false to true
-  await page
-    .locator('label')
-    .filter({ hasText: 'DataParameter Value' })
-    .locator('div')
-    .first()
-    .click();
+  await page.getByRole('switch', { name: 'boolean-field-data' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Finally, delete the parameter

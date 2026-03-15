@@ -2582,21 +2582,22 @@ class Part(
         Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
+        from order.models import PurchaseOrderLineItem
+
         quantity = 0
 
-        # Iterate through all supplier parts
-        for sp in self.supplier_parts.all():
-            # Look at any incomplete line item for open orders
-            lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatusGroups.OPEN,
-                quantity__gt=F('received'),
-            )
+        # Find all outstanding PurchaseOrderLineItem objects which reference this part
+        lines = PurchaseOrderLineItem.objects.filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
+            part__part_id=self.pk,
+            quantity__gt=F('received'),
+        ).prefetch_related('part')
 
-            for line in lines:
-                remaining = line.quantity - line.received
+        for line in lines:
+            remaining = line.quantity - line.received
 
-                if remaining > 0:
-                    quantity += sp.base_quantity(remaining)
+            if remaining > 0:
+                quantity += line.part.base_quantity(remaining)
 
         return quantity
 

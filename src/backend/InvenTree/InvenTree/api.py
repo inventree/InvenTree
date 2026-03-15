@@ -594,17 +594,24 @@ class BulkUpdateMixin(BulkOperationMixin):
 
         n = queryset.count()
 
+        instance_data = []
+
         with transaction.atomic():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
+
+            # Run validation first
             for instance in queryset:
                 serializer = self.get_serializer(instance, data=data, partial=True)
-
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
 
-        return Response({'success': f'Updated {n} items'}, status=200)
+                instance_data.append(serializer.data)
+
+        return Response(
+            {'success': f'Updated {n} items', 'items': instance_data}, status=200
+        )
 
 
 class ParameterListMixin:
