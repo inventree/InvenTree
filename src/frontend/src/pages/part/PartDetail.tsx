@@ -171,7 +171,7 @@ function BomValidationInformation({
 
   const [taskId, setTaskId] = useState<string>('');
 
-  const validateBomTask = useBackgroundTask({
+  useBackgroundTask({
     taskId: taskId,
     message: t`Validating BOM`,
     onComplete: () => {
