@@ -275,7 +275,7 @@ If running with a PostgreSQL database backend, the following additional options 
 | INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 2 |
 | INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | TCP keepalive | 1 |
 | INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | Idle TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERNAL | database.tcp_keepalives_internal | Internal TCP keepalive | 1|
+| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | TCP keepalive interval | 1|
 | INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | TCP keepalive count | 5 |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
@@ -286,6 +286,17 @@ If running with a MySQL database backend, the following additional options are a
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+
+### SQLite Settings
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.
+
+If running with a SQLite database backend, the following additional options are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
 
 ## Caching
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#11303](https://github.com/inventree/InvenTree/pull/11303) removes the `default_supplier` field from the `Part` model. Instead, the `SupplierPart` model now has a `primary` field which is used to indicate which supplier is the default for a given part. Any external client applications which made use of the old `default_supplier` field will need to be updated.
+- [#11500](https://github.com/inventree/InvenTree/pull/11500) fixes a spelling mistake in the database configuration values, which may affect some users running the PostgreSQL database backend. The `tcp_keepalives_internal` option has been renamed to `tcp_keepalives_interval` to reflect the correct PostgreSQL configuration option name. If you are using PostgreSQL, and have set a custom value for the `tcp_keepalives_internal` option, you will need to update this to `tcp_keepalives_interval` in your configuration (either via environment variable or config file).
 
 ### Added
 

@@ -16,7 +16,22 @@ InvenTree supports a [number of database backends]({% include "django.html" %}/r
 
 Refer to the [database configuration guide](./config.md#database-options) for more information on selecting and configuring the database backend.
 
-In running InvenTree via [docker compose](./docker_install.md), the database process is managed by the `inventree-db` service which provides a [Postgres docker container](https://hub.docker.com/_/postgres).
+If running InvenTree via [docker compose](./docker_install.md), the database process is managed by the `inventree-db` service which provides a [Postgres docker container](https://hub.docker.com/_/postgres).
+
+!!! tip "Postgres Recommended"
+    We recommend using Postgres as the database backend for InvenTree, as it is a robust and scalable database which is well-suited to production use.
+
+#### SQLite Limitations
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, as it is not designed for high concurrency.
+
+While SQLite is supported, it is strongly *not* recommended for a production installation, especially where there may be multiple users accessing the system concurrently. SQLite is designed for low-concurrency applications, and can experience performance issues when multiple users are accessing the database at the same time.
+
+In addition to concurrency issues, there are other structural limitations which exist in SQLite that can prevent operations on large querysets.
+
+If you are using SQLite, you should be aware of these limitations. It is important to ensure that the database file is stored on a fast storage medium (such as an SSD), and that the database options are configured correctly to minimize locking issues. Refer to the [database configuration guide](./config.md#database-options) for more information on configuring SQLite options.
+
 
 ### Web Server
 
@@ -111,6 +126,8 @@ If the background worker process is not running, InvenTree will not be able to p
 #### Limitations
 
 If the [cache server](#cache-server) is not running, the background worker will be limited to running a single threaded worker. This is because the background worker uses the cache server to manage task locking, and without a global cache server to communicate between processes, concurrency issues can occur.
+
+Additionally, if you are running SQLite as the database backend, the background worker will be limited to a single thread, due to database locking issues which can occur with SQLite when multiple threads are accessing the database concurrently.
 
 ### Cache Server
 
