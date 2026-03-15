@@ -953,6 +953,7 @@ Q_CLUSTER = {
     'max_attempts': int(
         get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
     ),
+    'save_limit': 1000,
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,

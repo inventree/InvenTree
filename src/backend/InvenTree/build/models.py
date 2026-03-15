@@ -132,11 +132,14 @@ class Build(
         TRACKED = 'tracked'  # Tracked BOM items
         UNTRACKED = 'untracked'  # Untracked BOM items
 
-    OVERDUE_FILTER = (
-        Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-        & ~Q(target_date=None)
-        & Q(target_date__lte=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a build order is overdue."""
+        return (
+            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+            & ~Q(target_date=None)
+            & Q(target_date__lte=InvenTree.helpers.current_date())
+        )
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -465,7 +468,7 @@ class Build(
             bool: Is the build overdue
         """
         query = Build.objects.filter(pk=self.pk)
-        query = query.filter(Build.OVERDUE_FILTER)
+        query = query.filter(Build.get_overdue_filter())
 
         return query.exists()
 

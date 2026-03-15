@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
+import { readeruser } from '../defaults.ts';
 import {
   activateCalendarView,
   activateTableView,
@@ -259,8 +260,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
 
 test('Purchase Orders - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly'
+    user: readeruser
   });
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
