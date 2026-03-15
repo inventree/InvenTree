@@ -31,6 +31,7 @@ import {
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -569,6 +570,17 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to build order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
@@ -582,8 +594,10 @@ export default function BuildLineTable({
       substitutes: true,
       optional_items: false
     },
-    successMessage: t`Auto allocation in progress`,
-    table: table,
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
+    },
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
         <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
@@ -669,12 +683,28 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const [consumeTaskId, setConsumeTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: consumeTaskId,
+    message: t`Consuming allocated stock`,
+    successMessage: t`Stock consumed successfully`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const consumeLines = useConsumeBuildLinesForm({
     buildId: build.pk,
     buildLines: selectedRows,
-    onFormSuccess: () => {
+    onFormSuccess: (response: any) => {
       table.clearSelectedRecords();
-      table.refreshTable();
+
+      if (response.task_id) {
+        setConsumeTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     }
   });
 

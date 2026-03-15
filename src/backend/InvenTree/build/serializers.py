@@ -21,7 +21,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-import build.tasks
 import common.filters
 import common.settings
 import company.serializers
@@ -38,7 +37,6 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     enable_filter,
 )
-from InvenTree.tasks import offload_task
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
@@ -51,7 +49,6 @@ from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
-from .tasks import consume_build_item, consume_build_line
 
 
 class BuildSerializer(
@@ -1129,27 +1126,6 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Select item type to auto-allocate'),
     )
 
-    def save(self):
-        """Perform the auto-allocation step."""
-        import InvenTree.tasks
-
-        data = self.validated_data
-
-        build_order = self.context['build']
-
-        if not InvenTree.tasks.offload_task(
-            build.tasks.auto_allocate_build,
-            build_order.pk,
-            location=data.get('location', None),
-            exclude_location=data.get('exclude_location', None),
-            interchangeable=data['interchangeable'],
-            substitutes=data['substitutes'],
-            optional_items=data['optional_items'],
-            item_type=data.get('item_type', 'untracked'),
-            group='build',
-        ):
-            raise ValidationError(_('Failed to start auto-allocation task'))
-
 
 class BuildItemSerializer(
     FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
@@ -1847,46 +1823,3 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
-
-    @transaction.atomic
-    def save(self):
-        """Perform the stock consumption step."""
-        data = self.validated_data
-        request = self.context.get('request')
-        notes = data.get('notes', '')
-
-        # We may be passed either a list of BuildItem or BuildLine instances
-        items = data.get('items', [])
-        lines = data.get('lines', [])
-
-        with transaction.atomic():
-            # Process the provided BuildItem objects
-            for item in items:
-                build_item = item['build_item']
-                quantity = item['quantity']
-
-                if build_item.install_into:
-                    # If the build item is tracked into an output, we do not consume now
-                    # Instead, it gets consumed when the output is completed
-                    continue
-
-                # Offload a background task to consume this BuildItem
-                offload_task(
-                    consume_build_item,
-                    build_item.pk,
-                    quantity,
-                    notes=notes,
-                    user_id=request.user.pk if request else None,
-                )
-
-            # Process the provided BuildLine objects
-            for line in lines:
-                build_line = line['build_line']
-
-                # Offload a background task to consume this BuildLine
-                offload_task(
-                    consume_build_line,
-                    build_line.pk,
-                    notes=notes,
-                    user_id=request.user.pk if request else None,
-                )
