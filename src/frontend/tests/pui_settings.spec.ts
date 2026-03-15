@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
 import { adminuser, allaccessuser, stevenuser } from './defaults.js';
@@ -314,6 +315,29 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+test('Settings - Admin - Background Tasks', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/background'
+  });
+
+  // Background worker should be running, and idle
+  await page.getByText('Background worker running').waitFor();
+  await page.getByText('Failed Tasks0').waitFor();
+  await page.getByText('Pending Tasks0').waitFor();
+
+  // Expand the "scheduled tasks" view
+  await page.getByRole('button', { name: 'Scheduled Tasks' }).click();
+
+  // Check for some expected values
+  await page
+    .getByRole('cell', { name: 'InvenTree.tasks.delete_successful_tasks' })
+    .waitFor();
+  await page
+    .getByRole('cell', { name: 'InvenTree.tasks.check_for_migrations' })
+    .waitFor();
+});
+
 test('Settings - Admin - Barcode History', async ({ browser }) => {
   // Login with admin credentials
   const page = await doCachedLogin(browser, {
@@ -529,7 +553,7 @@ test('Settings - Auth - Email', async ({ browser }) => {
   await page.getByText('Currently no email addresses are registered').waitFor();
 });
 
-async function testColorPicker(page, ref: string) {
+async function testColorPicker(page: Page, ref: string) {
   const element = page.getByLabel(ref);
   await element.click();
   const box = (await element.boundingBox())!;
@@ -539,8 +563,7 @@ async function testColorPicker(page, ref: string) {
 
 test('Settings - Auth - Tokens', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/user/'
   });
 
