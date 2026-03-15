@@ -2418,6 +2418,12 @@ class SalesOrderShipment(
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
+
+        Arguments:
+            user: The user who is completing this shipment
+
+        Returns:
+            task_id: The ID of the background task which is processing this shipment
         """
         import order.tasks
 
@@ -2441,7 +2447,7 @@ class SalesOrderShipment(
 
         # Offload the "completion" of each line item to the background worker
         # This may take some time, and we don't want to block the main thread
-        InvenTree.tasks.offload_task(
+        task_id = InvenTree.tasks.offload_task(
             order.tasks.complete_sales_order_shipment,
             self.pk,
             user.pk if user else None,
@@ -2449,6 +2455,8 @@ class SalesOrderShipment(
             delivery_date=delivery_date,
             group='sales_order',
         )
+
+        return task_id
 
 
 class SalesOrderExtraLine(OrderExtraLine):

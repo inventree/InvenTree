@@ -13,7 +13,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -40,12 +39,11 @@ import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import {
   useCheckShipmentForm,
-  useSalesOrderShipmentCompleteFields,
+  useCompleteShipmentForm,
   useSalesOrderShipmentFields,
   useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
 import {
-  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -304,19 +302,9 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
-
-  const completeShipment = useCreateApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_complete,
-    pk: shipment.pk,
-    fields: completeShipmentFields,
-    title: t`Complete Shipment`,
-    focus: 'tracking_number',
-    initialData: {
-      ...shipment,
-      shipment_date: dayjs().format('YYYY-MM-DD')
-    },
-    onFormSuccess: refreshShipment
+  const completeShipment = useCompleteShipmentForm({
+    shipment: shipment,
+    onSuccess: refreshShipment
   });
 
   const checkShipment = useCheckShipmentForm({
