@@ -21,9 +21,9 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import dayjs from 'dayjs';
 import {
   useCheckShipmentForm,
+  useCompleteShipmentForm,
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields,
   useUncheckShipmentForm
@@ -77,6 +77,7 @@ export default function SalesOrderShipmentTable({
     url: ApiEndpoints.sales_order_shipment_list,
     fields: newShipmentFields,
     title: t`Create Shipment`,
+    successMessage: t`Shipment created`,
     table: table,
     initialData: {
       order: orderId
@@ -112,17 +113,9 @@ export default function SalesOrderShipmentTable({
     }
   });
 
-  const completeShipment = useCreateApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_complete,
-    pk: selectedShipment.pk,
-    fields: completeShipmentFields,
-    title: t`Complete Shipment`,
-    table: table,
-    focus: 'tracking_number',
-    initialData: {
-      ...selectedShipment,
-      shipment_date: dayjs().format('YYYY-MM-DD')
-    }
+  const completeShipment = useCompleteShipmentForm({
+    shipment: selectedShipment,
+    onSuccess: table.refreshTable
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
