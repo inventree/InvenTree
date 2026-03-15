@@ -14,6 +14,10 @@ import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import type {
+  DataImportWizardProps,
+  UseWizardReturn
+} from '@lib/types/Wizards';
 import { useImportSession } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
@@ -49,16 +53,10 @@ function ImportDrawerStepper({
   );
 }
 
-export default function ImporterDrawer({
-  sessionId,
-  opened,
-  onClose
-}: Readonly<{
-  sessionId: number;
-  opened: boolean;
-  onClose: () => void;
-}>) {
-  const session = useImportSession({ sessionId: sessionId });
+export default function ImporterDrawer(
+  props: DataImportWizardProps
+): React.ReactElement {
+  const session = useImportSession({ sessionId: props.sessionId });
 
   const importSessionStatus = useStatusCodes({
     modelType: ModelType.importsession
@@ -106,13 +104,13 @@ export default function ImporterDrawer({
             >
               {t`Data has been imported successfully`}
             </Alert>
-            <Button color='blue' onClick={onClose}>{t`Close`}</Button>
+            <Button color='blue' onClick={props.onClose}>{t`Close`}</Button>
           </Stack>
         );
       default:
         return <ImporterStatus session={session} />;
     }
-  }, [session.status, session.sessionQuery]);
+  }, [session.status, session.sessionQuery, props.onClose]);
 
   const title: ReactNode = useMemo(() => {
     return (
@@ -140,8 +138,8 @@ export default function ImporterDrawer({
       position='bottom'
       size='80%'
       title={title}
-      opened={opened}
-      onClose={onClose}
+      opened={props.opened}
+      onClose={props.onClose}
       withCloseButton={true}
       closeOnEscape={false}
       closeOnClickOutside={false}
@@ -159,4 +157,11 @@ export default function ImporterDrawer({
       </Stack>
     </Drawer>
   );
+}
+
+// Hook for using the import wizard in a plugin context
+export function useImportWizard(props: DataImportWizardProps): UseWizardReturn {
+  return {
+    wizard: <ImporterDrawer {...props} />
+  };
 }

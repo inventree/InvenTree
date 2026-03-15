@@ -37,6 +37,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useServerApiState } from '../../states/ServerApiState';
+import { useImportWizard } from '../importer/ImporterDrawer';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
@@ -86,6 +87,9 @@ export const useInvenTreeContext = () => {
           transferStock: useTransferStockItem,
           returnStock: useReturnStockItem
         }
+      },
+      wizards: {
+        importData: useImportWizard
       }
     };
   }, [
