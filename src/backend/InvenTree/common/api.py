@@ -564,7 +564,6 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
-@extend_schema(operation_id='background_task_detail')
 class BackgroundTaskDetail(APIView):
     """Detail view for a single background task."""
 
@@ -578,14 +577,16 @@ class BackgroundTaskDetail(APIView):
         return Response(response, status=response['http_status'])
 
 
-@extend_schema(operation_id='background_task_overview')
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
-    @extend_schema(responses={200: common.serializers.TaskOverviewSerializer})
+    @extend_schema(
+        operation_id='background_task_overview',
+        responses={200: common.serializers.TaskOverviewSerializer},
+    )
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
