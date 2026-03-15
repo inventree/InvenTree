@@ -6,15 +6,19 @@ import os
 import pytest
 from inventree.api import InvenTreeAPI
 
-server = os.environ.get('INVENTREE_PYTHON_TEST_SERVER', 'http://127.0.0.1:12345')
-user = os.environ.get('INVENTREE_PYTHON_TEST_USERNAME', 'testuser')
-pwd = os.environ.get('INVENTREE_PYTHON_TEST_PASSWORD', 'testpassword')
+server = os.environ.get(
+    'INVENTREE_PYTHON_TEST_SERVER', 'http://127.0.0.1:12345'
+)  # gitleaks:allow
+user = os.environ.get('INVENTREE_PYTHON_TEST_USERNAME', 'testuser')  # gitleaks:allow
+pwd = os.environ.get('INVENTREE_PYTHON_TEST_PASSWORD', 'testpassword')  # gitleaks:allow
+
+
 api_client = InvenTreeAPI(
     server,
     username=user,
     password=pwd,
     timeout=30,
-    token_name='python-test',
+    token_name='python-test',  # gitleaks:allow
     use_token_auth=True,
 )
 
@@ -27,7 +31,7 @@ def test_api_auth_performance():
         username=user,
         password=pwd,
         timeout=30,
-        token_name='python-test',
+        token_name='python-test',  # gitleaks:allow
         use_token_auth=True,
     )
     assert client
