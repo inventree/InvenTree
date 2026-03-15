@@ -29,15 +29,7 @@ def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
-
-    if not build_order:
-        logger.warning(
-            'Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
-
+    build_order = Build.objects.get(pk=build_id)
     build_order.auto_allocate_stock(**kwargs)
 
 

@@ -21,7 +21,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-import build.tasks
 import common.filters
 import common.settings
 import company.serializers
@@ -1126,27 +1125,6 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         label=_('Item Type'),
         help_text=_('Select item type to auto-allocate'),
     )
-
-    def save(self):
-        """Perform the auto-allocation step."""
-        import InvenTree.tasks
-
-        data = self.validated_data
-
-        build_order = self.context['build']
-
-        if not InvenTree.tasks.offload_task(
-            build.tasks.auto_allocate_build,
-            build_order.pk,
-            location=data.get('location', None),
-            exclude_location=data.get('exclude_location', None),
-            interchangeable=data['interchangeable'],
-            substitutes=data['substitutes'],
-            optional_items=data['optional_items'],
-            item_type=data.get('item_type', 'untracked'),
-            group='build',
-        ):
-            raise ValidationError(_('Failed to start auto-allocation task'))
 
 
 class BuildItemSerializer(

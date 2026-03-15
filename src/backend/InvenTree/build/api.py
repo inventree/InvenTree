@@ -771,6 +771,37 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     queryset = Build.objects.none()
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override the POST method to handle auto allocation task.
+
+        As this is offloaded to the background task,
+        we return information about the background task which is performing the auto allocation operation.
+        """
+        from build.tasks import auto_allocate_build
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Offload the task to the background worker
+        task_id = offload_task(
+            auto_allocate_build,
+            build.pk,
+            location=data.get('location', None),
+            exclude_location=data.get('exclude_location', None),
+            interchangeable=data['interchangeable'],
+            substitutes=data['substitutes'],
+            optional_items=data['optional_items'],
+            item_type=data.get('item_type', 'untracked'),
+            group='build',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
+
 
 class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     """API endpoint to allocate stock items to a build order.
