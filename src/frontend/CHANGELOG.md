@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.10.0 - March 2026
+
+- Exposes a "wizards" UI interface to the plugin context, allowing plugins to utilize command wizards within the InvenTree UI. This includes the `useImportWizard` hook, which provides a convenient interface for plugins to create and manage data import sessions.
+
 ### 0.9.0 - March 2026
 
 Exposes the `useMonitorBackgroundTask` hook, which allows plugins to monitor the status of a background task and display notifications when the task is complete. This is useful for plugins that offload long-running tasks to the background and want to provide feedback to the user when the task is complete.
