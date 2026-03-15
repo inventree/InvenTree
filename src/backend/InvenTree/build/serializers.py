@@ -51,7 +51,6 @@ from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
-from .tasks import consume_build_item, consume_build_line
 
 
 class BuildSerializer(
@@ -1859,34 +1858,50 @@ class BuildConsumeSerializer(serializers.Serializer):
         items = data.get('items', [])
         lines = data.get('lines', [])
 
-        with transaction.atomic():
-            # Process the provided BuildItem objects
-            for item in items:
-                build_item = item['build_item']
-                quantity = item['quantity']
+        build_order = self.context['build']
 
-                if build_item.install_into:
-                    # If the build item is tracked into an output, we do not consume now
-                    # Instead, it gets consumed when the output is completed
-                    continue
+        # TODO: Return the task ID for tracking task progress!
+        offload_task(
+            build.tasks.consume_build_stock,
+            build_order.pk,
+            lines=[line['build_line'].pk for line in lines],
+            items={item['build_item'].pk: item['quantity'] for item in items},
+            line_ids=[line['build_line'].pk for line in lines],
+            item_ids=[item['build_item'].pk for item in items],
+            user_id=request.user.pk if request else None,
+            notes=notes,
+        )
 
-                # Offload a background task to consume this BuildItem
-                offload_task(
-                    consume_build_item,
-                    build_item.pk,
-                    quantity,
-                    notes=notes,
-                    user_id=request.user.pk if request else None,
-                )
+        # return
 
-            # Process the provided BuildLine objects
-            for line in lines:
-                build_line = line['build_line']
+        # with transaction.atomic():
+        #     # Process the provided BuildItem objects
+        #     for item in items:
+        #         build_item = item['build_item']
+        #         quantity = item['quantity']
 
-                # Offload a background task to consume this BuildLine
-                offload_task(
-                    consume_build_line,
-                    build_line.pk,
-                    notes=notes,
-                    user_id=request.user.pk if request else None,
-                )
+        #         if build_item.install_into:
+        #             # If the build item is tracked into an output, we do not consume now
+        #             # Instead, it gets consumed when the output is completed
+        #             continue
+
+        #         # Offload a background task to consume this BuildItem
+        #         offload_task(
+        #             consume_build_item,
+        #             build_item.pk,
+        #             quantity,
+        #             notes=notes,
+        #             user_id=request.user.pk if request else None,
+        #         )
+
+        #     # Process the provided BuildLine objects
+        #     for line in lines:
+        #         build_line = line['build_line']
+
+        #         # Offload a background task to consume this BuildLine
+        #         offload_task(
+        #             consume_build_line,
+        #             build_line.pk,
+        #             notes=notes,
+        #             user_id=request.user.pk if request else None,
+        #         )

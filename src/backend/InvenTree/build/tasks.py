@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from decimal import Decimal
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -37,6 +38,38 @@ def auto_allocate_build(build_id: int, **kwargs):
         return
 
     build_order.auto_allocate_stock(**kwargs)
+
+
+@tracer.start_as_current_span('consume_build_stock')
+def consume_build_stock(
+    build_id: int,
+    lines: Optional[list[int]] = None,
+    items: Optional[dict] = None,
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Consume stock for the specified BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder to consume stock for
+        lines: Optional list of BuildLine IDs to consume
+        items: Optional dict of BuildItem IDs (and quantities)to consume
+        user_id: The ID of the user who initiated the stock consumption
+    """
+    from build.models import Build
+
+    print('consume_build_stock for build:', build_id)
+    print('- lines:', lines)
+    print('- items:', items)
+    print('- user_id:', user_id)
+
+    build = Build.objects.get(pk=build_id)
+
+    print('BUILD:', build)
+
+    from django.core.exceptions import ValidationError
+
+    raise ValidationError('OOOOOOOOH BOY')
 
 
 @tracer.start_as_current_span('consume_build_item')
