@@ -10,42 +10,40 @@ import {
 import { type QueryClient, useQuery } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
+import { queryClient } from '../../src/App';
 
-/**
- * Hook for monitoring a background task running on the server
- */
-export default function monitorBackgroundTask({
-  api,
-  queryClient,
-  title,
-  message,
-  taskId,
-  onSuccess,
-  onFailure,
-  onComplete,
-  onError
-}: {
+export type MonitorBackgroundTaskProps = {
   api: AxiosInstance;
   queryClient?: QueryClient;
   title?: string;
   message: string;
+  errorMessage?: string;
+  successMessage?: string;
+  failureMessage?: string;
   taskId?: string;
   onSuccess?: () => void;
   onFailure?: () => void;
   onComplete?: () => void;
   onError?: (error: Error) => void;
-}) {
+};
+
+/**
+ * Hook for monitoring a background task running on the server
+ */
+export default function monitorBackgroundTask(
+  props: MonitorBackgroundTaskProps
+) {
   const visibility = useDocumentVisibility();
 
   const [tracking, setTracking] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!!taskId) {
+    if (!!props.taskId) {
       setTracking(true);
       showNotification({
-        id: `background-task-${taskId}`,
-        title: title,
-        message: message,
+        id: `background-task-${props.taskId}`,
+        title: props.title,
+        message: props.message,
         loading: true,
         autoClose: false,
         withCloseButton: false
@@ -53,40 +51,44 @@ export default function monitorBackgroundTask({
     } else {
       setTracking(false);
     }
-  }, [taskId, title]);
+  }, [props.taskId]);
 
   useQuery(
     {
-      enabled: !!taskId && tracking && visibility === 'visible',
+      enabled: !!props.taskId && tracking && visibility === 'visible',
       refetchInterval: 500,
-      queryKey: ['background-task', taskId],
+      queryKey: ['background-task', props.taskId],
       queryFn: () =>
-        api
-          .get(apiUrl(ApiEndpoints.task_overview, taskId))
+        props.api
+          .get(apiUrl(ApiEndpoints.task_overview, props.taskId))
           .then((response) => {
             const data = response?.data ?? {};
 
             if (data.complete) {
               setTracking(false);
-              onComplete?.();
+              props.onComplete?.();
 
               notifications.update({
-                id: `background-task-${taskId}`,
-                title: title,
-                message: message,
+                id: `background-task-${props.taskId}`,
+                title: props.title,
+                loading: false,
+                color: data.success ? 'green' : 'red',
+                message: response.data?.success
+                  ? (props.successMessage ?? props.message)
+                  : (props.failureMessage ?? props.message),
                 icon: response.data?.success ? (
-                  <IconCircleCheck color='green' />
+                  <IconCircleCheck />
                 ) : (
-                  <IconCircleX color='red' />
+                  <IconCircleX />
                 ),
                 autoClose: 1000,
                 withCloseButton: true
               });
 
               if (data.success) {
-                onSuccess?.();
+                props.onSuccess?.();
               } else {
-                onFailure?.();
+                props.onFailure?.();
               }
             }
 
@@ -94,16 +96,18 @@ export default function monitorBackgroundTask({
           })
           .catch((error) => {
             console.error(
-              `Error fetching background task status for task ${taskId}:`,
+              `Error fetching background task status for task ${props.taskId}:`,
               error
             );
             setTracking(false);
-            onError?.(error);
+            props.onError?.(error);
 
             notifications.update({
-              id: `background-task-${taskId}`,
-              title: title,
-              message: message,
+              id: `background-task-${props.taskId}`,
+              title: props.title,
+              loading: false,
+              color: 'red',
+              message: props.errorMessage ?? props.message,
               icon: <IconExclamationCircle color='red' />,
               autoClose: 5000,
               withCloseButton: true

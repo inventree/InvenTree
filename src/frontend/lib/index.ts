@@ -74,3 +74,4 @@ export {
 
 // Shared hooks
 export { default as monitorDataOutput } from './hooks/MonitorDataOutput';
+export { default as monitorBackgroundTask } from './hooks/MonitorBackgroundTask';

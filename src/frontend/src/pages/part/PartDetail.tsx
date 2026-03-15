@@ -174,6 +174,7 @@ function BomValidationInformation({
   useBackgroundTask({
     taskId: taskId,
     message: t`Validating BOM`,
+    successMessage: t`BOM validated`,
     onComplete: () => {
       bomInformationQuery.refetch();
     }
@@ -195,7 +196,7 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`Bill of materials scheduled for validation`,
+    successMessage: null,
     onFormSuccess: (response: any) => {
       // If the process has been offloaded to a background task
       if (response.task_id) {
