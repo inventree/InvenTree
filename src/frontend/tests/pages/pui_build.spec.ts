@@ -219,6 +219,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('1');
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
@@ -648,9 +649,11 @@ test('Build Order - Filters', async ({ browser }) => {
 
   // Toggle 'Outstanding' filter
   await setTableChoiceFilter(page, 'Outstanding', 'Yes');
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('1');
   await page.getByRole('cell', { name: 'BO0017' }).waitFor();
 
   await clearTableFilters(page);
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('');
   await setTableChoiceFilter(page, 'Outstanding', 'No');
 
   await page.getByText('1 - 6 / 6').waitFor();
