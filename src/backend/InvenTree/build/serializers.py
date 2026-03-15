@@ -1871,37 +1871,3 @@ class BuildConsumeSerializer(serializers.Serializer):
             user_id=request.user.pk if request else None,
             notes=notes,
         )
-
-        # return
-
-        # with transaction.atomic():
-        #     # Process the provided BuildItem objects
-        #     for item in items:
-        #         build_item = item['build_item']
-        #         quantity = item['quantity']
-
-        #         if build_item.install_into:
-        #             # If the build item is tracked into an output, we do not consume now
-        #             # Instead, it gets consumed when the output is completed
-        #             continue
-
-        #         # Offload a background task to consume this BuildItem
-        #         offload_task(
-        #             consume_build_item,
-        #             build_item.pk,
-        #             quantity,
-        #             notes=notes,
-        #             user_id=request.user.pk if request else None,
-        #         )
-
-        #     # Process the provided BuildLine objects
-        #     for line in lines:
-        #         build_line = line['build_line']
-
-        #         # Offload a background task to consume this BuildLine
-        #         offload_task(
-        #             consume_build_line,
-        #             build_line.pk,
-        #             notes=notes,
-        #             user_id=request.user.pk if request else None,
-        #         )

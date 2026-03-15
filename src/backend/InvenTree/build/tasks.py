@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Optional
 
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -56,65 +57,33 @@ def consume_build_stock(
         items: Optional dict of BuildItem IDs (and quantities)to consume
         user_id: The ID of the user who initiated the stock consumption
     """
-    from build.models import Build
-
-    print('consume_build_stock for build:', build_id)
-    print('- lines:', lines)
-    print('- items:', items)
-    print('- user_id:', user_id)
+    from build.models import Build, BuildItem, BuildLine
 
     build = Build.objects.get(pk=build_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    print('BUILD:', build)
+    lines = lines or []
+    items = items or {}
+    notes = kwargs.pop('notes', '')
 
-    from django.core.exceptions import ValidationError
+    # Extract the relevant BuildLine and BuildItem objects
+    with transaction.atomic():
+        # Consume each of the specified BuildLine objects
+        for line_id in lines:
+            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
+                for item in build_line.allocations.all():
+                    item.complete_allocation(
+                        quantity=item.quantity, notes=notes, user=user
+                    )
 
-    raise ValidationError('OOOOOOOOH BOY')
-
-
-@tracer.start_as_current_span('consume_build_item')
-def consume_build_item(
-    item_id: str, quantity, notes: str = '', user_id: int | None = None
-):
-    """Consume stock against a particular BuildOrderLineItem allocation."""
-    from build.models import BuildItem
-
-    item = BuildItem.objects.filter(pk=item_id).first()
-
-    if not item:
-        logger.warning(
-            'Could not consume stock for BuildItem <%s> - BuildItem does not exist',
-            item_id,
-        )
-        return
-
-    item.complete_allocation(
-        quantity=quantity,
-        notes=notes,
-        user=User.objects.filter(pk=user_id).first() if user_id else None,
-    )
-
-
-@tracer.start_as_current_span('consume_build_line')
-def consume_build_line(line_id: int, notes: str = '', user_id: int | None = None):
-    """Consume stock against a particular BuildOrderLineItem."""
-    from build.models import BuildLine
-
-    line_item = BuildLine.objects.filter(pk=line_id).first()
-
-    if not line_item:
-        logger.warning(
-            'Could not consume stock for LineItem <%s> - LineItem does not exist',
-            line_id,
-        )
-        return
-
-    for item in line_item.allocations.all():
-        item.complete_allocation(
-            quantity=item.quantity,
-            notes=notes,
-            user=User.objects.filter(pk=user_id).first() if user_id else None,
-        )
+        # Consume each of the specified BuildItem objects
+        for item_id, quantity in items.items():
+            if build_item := BuildItem.objects.filter(
+                pk=item_id, build_line__build=build
+            ).first():
+                build_item.complete_allocation(
+                    quantity=quantity, notes=notes, user=user
+                )
 
 
 @tracer.start_as_current_span('complete_build_allocations')
