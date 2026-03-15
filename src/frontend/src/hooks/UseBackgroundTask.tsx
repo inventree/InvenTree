@@ -1,4 +1,4 @@
-import monitorBackgroundTask, {
+import useMonitorBackgroundTask, {
   type MonitorBackgroundTaskProps
 } from '@lib/hooks/MonitorBackgroundTask';
 import { useApi } from '../contexts/ApiContext';
@@ -11,7 +11,7 @@ export default function useBackgroundTask(
 ) {
   const api = useApi();
 
-  return monitorBackgroundTask({
+  return useMonitorBackgroundTask({
     ...props,
     api: api
   });

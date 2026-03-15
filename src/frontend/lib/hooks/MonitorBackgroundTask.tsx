@@ -30,7 +30,7 @@ export type MonitorBackgroundTaskProps = {
 /**
  * Hook for monitoring a background task running on the server
  */
-export default function monitorBackgroundTask(
+export default function useMonitorBackgroundTask(
   props: MonitorBackgroundTaskProps
 ) {
   const visibility = useDocumentVisibility();
