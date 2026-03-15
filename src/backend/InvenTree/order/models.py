@@ -1863,12 +1863,14 @@ class PurchaseOrderLineItem(OrderLineItem):
 
         verbose_name = _('Purchase Order Line Item')
 
-    # Filter for determining if a particular PurchaseOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(received__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular PurchaseOrderLineItem is overdue."""
+        return (
+            Q(received__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url() -> str:
@@ -2067,12 +2069,14 @@ class SalesOrderLineItem(OrderLineItem):
 
         verbose_name = _('Sales Order Line Item')
 
-    # Filter for determining if a particular SalesOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(shipped__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular SalesOrderLineItem is overdue."""
+        return (
+            Q(shipped__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url():
