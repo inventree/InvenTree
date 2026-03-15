@@ -9,48 +9,44 @@ import { ProgressBar } from '../components/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../functions/Api';
 
-/**
- * Hook for monitoring a data output process running on the server
- */
-export default function monitorDataOutput({
-  api,
-  queryClient,
-  title,
-  hostname,
-  id
-}: {
+export type MonitorDataOutputProps = {
   api: AxiosInstance;
   queryClient?: QueryClient;
   title: string;
   hostname?: string;
   id?: number;
-}) {
+};
+
+/**
+ * Hook for monitoring a data output process running on the server
+ */
+export default function useMonitorDataOutput(props: MonitorDataOutputProps) {
   const visibility = useDocumentVisibility();
 
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!!id) {
+    if (!!props.id) {
       setLoading(true);
       showNotification({
-        id: `data-output-${id}`,
-        title: title,
+        id: `data-output-${props.id}`,
+        title: props.title,
         loading: true,
         autoClose: false,
         withCloseButton: false,
         message: <ProgressBar size='lg' value={0} progressLabel />
       });
     } else setLoading(false);
-  }, [id, title]);
+  }, [props.id, props.title]);
 
   useQuery(
     {
-      enabled: !!id && loading && visibility === 'visible',
+      enabled: !!props.id && loading && visibility === 'visible',
       refetchInterval: 500,
-      queryKey: ['data-output', id, title],
+      queryKey: ['data-output', props.id, props.title],
       queryFn: () =>
-        api
-          .get(apiUrl(ApiEndpoints.data_output, id))
+        props.api
+          .get(apiUrl(ApiEndpoints.data_output, props.id))
           .then((response) => {
             const data = response?.data ?? {};
 
@@ -61,21 +57,21 @@ export default function monitorDataOutput({
                 data?.error ?? data?.errors?.error ?? t`Process failed`;
 
               notifications.update({
-                id: `data-output-${id}`,
+                id: `data-output-${props.id}`,
                 loading: false,
                 icon: <IconExclamationCircle />,
                 autoClose: 2500,
-                title: title,
+                title: props.title,
                 message: error,
                 color: 'red'
               });
             } else if (data.complete) {
               setLoading(false);
               notifications.update({
-                id: `data-output-${id}`,
+                id: `data-output-${props.id}`,
                 loading: false,
                 autoClose: 2500,
-                title: title,
+                title: props.title,
                 message: t`Process completed successfully`,
                 color: 'green',
                 icon: <IconCircleCheck />
@@ -83,7 +79,7 @@ export default function monitorDataOutput({
 
               if (data.output) {
                 const url = data.output;
-                const base = hostname ?? window.location.origin;
+                const base = props.hostname ?? window.location.origin;
 
                 const downloadUrl = new URL(url, base);
 
@@ -91,7 +87,7 @@ export default function monitorDataOutput({
               }
             } else {
               notifications.update({
-                id: `data-output-${id}`,
+                id: `data-output-${props.id}`,
                 loading: true,
                 autoClose: false,
                 withCloseButton: false,
@@ -110,19 +106,19 @@ export default function monitorDataOutput({
             return data;
           })
           .catch((error: Error) => {
-            console.error('Error in monitorDataOutput:', error);
+            console.error('Error in useMonitorDataOutput:', error);
             setLoading(false);
             notifications.update({
-              id: `data-output-${id}`,
+              id: `data-output-${props.id}`,
               loading: false,
               autoClose: 2500,
-              title: title,
+              title: props.title,
               message: error.message || t`Process failed`,
               color: 'red'
             });
             return {};
           })
     },
-    queryClient
+    props.queryClient
   );
 }
