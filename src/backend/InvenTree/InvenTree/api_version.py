@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 464
+INVENTREE_API_VERSION = 465
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v465 -> 2026-03-18 : https://github.com/inventree/InvenTree/pull/11529/
+    - BuildOrderAutoAllocate endpoint now returns a task ID which can be used to track the progress of the auto-allocation process
+    - BuildOrderConsume endpoint now returns a task ID which can be used to track the progress of the stock consumption process
 
 v464 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11527
     - Add API endpoint for monitoring the progress of a particular background task
