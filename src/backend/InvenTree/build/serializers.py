@@ -38,7 +38,6 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     enable_filter,
 )
-from InvenTree.tasks import offload_task
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
@@ -1846,28 +1845,3 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
-
-    @transaction.atomic
-    def save(self):
-        """Perform the stock consumption step."""
-        data = self.validated_data
-        request = self.context.get('request')
-        notes = data.get('notes', '')
-
-        # We may be passed either a list of BuildItem or BuildLine instances
-        items = data.get('items', [])
-        lines = data.get('lines', [])
-
-        build_order = self.context['build']
-
-        # TODO: Return the task ID for tracking task progress!
-        offload_task(
-            build.tasks.consume_build_stock,
-            build_order.pk,
-            lines=[line['build_line'].pk for line in lines],
-            items={item['build_item'].pk: item['quantity'] for item in items},
-            line_ids=[line['build_line'].pk for line in lines],
-            item_ids=[item['build_item'].pk for item in items],
-            user_id=request.user.pk if request else None,
-            notes=notes,
-        )

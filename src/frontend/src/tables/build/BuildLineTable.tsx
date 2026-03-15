@@ -31,6 +31,7 @@ import {
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -669,12 +670,28 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const [consumeTaskId, setConsumeTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: consumeTaskId,
+    message: t`Consuming allocated stock`,
+    successMessage: t`Stock consumed successfully`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const consumeLines = useConsumeBuildLinesForm({
     buildId: build.pk,
     buildLines: selectedRows,
-    onFormSuccess: () => {
+    onFormSuccess: (response: any) => {
       table.clearSelectedRecords();
-      table.refreshTable();
+
+      if (response.task_id) {
+        setConsumeTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     }
   });
 
