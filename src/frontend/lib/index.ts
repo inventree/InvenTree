@@ -15,6 +15,7 @@ export { UserRoles, UserPermissions } from './enums/Roles';
 export type {
   InvenTreePluginContext,
   InvenTreeFormsContext,
+  InvenTreeWizardsContext,
   PluginVersion,
   StockAdjustmentFormsContext
 } from './types/Plugins';
@@ -34,6 +35,12 @@ export type {
   UseModalProps,
   UseModalReturn
 } from './types/Modals';
+
+export type {
+  DataImportWizardProps,
+  UseWizardProps,
+  UseWizardReturn
+} from './types/Wizards';
 
 // Common utility functions
 export { apiUrl } from './functions/Api';

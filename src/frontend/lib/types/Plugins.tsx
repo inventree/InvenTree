@@ -14,6 +14,7 @@ import type { UseModalReturn } from './Modals';
 import type { RenderInstanceProps } from './Rendering';
 import type { SettingsStateProps } from './Settings';
 import type { UserStateProps } from './User';
+import type { DataImportWizardProps, UseWizardReturn } from './Wizards';
 
 export interface PluginProps {
   name: string;
@@ -48,6 +49,10 @@ export type InvenTreeFormsContext = {
   stockActions: StockAdjustmentFormsContext;
 };
 
+export type InvenTreeWizardsContext = {
+  importData: (props: DataImportWizardProps) => UseWizardReturn;
+};
+
 /**
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
@@ -60,6 +65,8 @@ export type InvenTreeFormsContext = {
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param forms - A set of functions for rendering common InvenTree forms (see ../lib/types/Plugins.tsx)
+ * @param wizards - A set of functions for rendering common InvenTree wizards (see ../lib/types/Plugins.tsx)
  * @param host - The current host URL
  * @param i18n - The i18n instance for translations (from @lingui/core)
  * @param locale - The current locale string (e.g. 'en' / 'de')
@@ -87,6 +94,7 @@ export type InvenTreePluginContext = {
   navigate: NavigateFunction;
   theme: MantineTheme;
   forms: InvenTreeFormsContext;
+  wizards: InvenTreeWizardsContext;
   colorScheme: MantineColorScheme;
   model?: ModelType | string;
   id?: string | number | null;
