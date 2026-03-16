@@ -147,20 +147,7 @@ test('Parts - BOM', async ({ browser }) => {
 test('Parts - BOM Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/107/bom' });
 
-  // Run BOM validation step
-  await page
-    .getByRole('button', { name: 'action-button-validate-bom' })
-    .click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  // Background task monitoring
-  await page.getByText('Validating BOM').waitFor();
-  await page.getByText('BOM validated').waitFor();
-
-  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
-  await page.getByText('Validated By: allaccessAlly').waitFor();
-
-  // Edit line item, to ensure BOM is not valid next time around
+  // Edit line item, to ensure BOM is not valid
   const cell = await page.getByRole('cell', { name: 'Red paint Red Paint' });
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
@@ -176,6 +163,22 @@ test('Parts - BOM Validation', async ({ browser }) => {
   await input.fill(`${nextValue.toFixed(3)}`);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('BOM item updated').waitFor();
+
+  await loadTab(page, 'Part Details');
+  await loadTab(page, 'Bill of Materials');
+
+  // Run BOM validation step
+  await page
+    .getByRole('button', { name: 'action-button-validate-bom' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Background task monitoring
+  await page.getByText('Validating BOM').waitFor();
+  await page.getByText('BOM validated').waitFor();
+
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page.getByText('Validated By: allaccessAlly').waitFor();
 });
 
 test('Parts - Editing', async ({ browser }) => {
