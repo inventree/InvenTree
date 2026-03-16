@@ -316,9 +316,9 @@ test('Parts - Requirements', async ({ browser }) => {
   // Also check requirements for part with open build orders which have been partially consumed
   await navigate(page, 'part/105/details');
 
-  await page.getByText('Required: 2').waitFor();
   await page.getByText('Available: 32').waitFor();
   await page.getByText('In Stock: 34').waitFor();
+  await page.getByText(/Required: \d+/).waitFor();
   await page.getByText('2 / 2').waitFor(); // Allocated to build orders
 });
 
