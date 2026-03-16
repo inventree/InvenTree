@@ -2,6 +2,7 @@
 
 import os
 from decimal import Decimal
+from typing import TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -53,7 +54,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class CompanyReportContext(report.mixins.BaseReportContext):
+class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Company model.
 
     Attributes:

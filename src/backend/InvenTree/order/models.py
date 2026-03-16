@@ -1,7 +1,7 @@
 """Order model definitions."""
 
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -179,7 +179,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class BaseOrderReportContext(report.mixins.BaseReportContext):
+class BaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Base context for all order models.
 
     Attributes:
@@ -199,7 +199,7 @@ class BaseOrderReportContext(report.mixins.BaseReportContext):
     title: str
 
 
-class PurchaseOrderReportContext(report.mixins.BaseReportContext):
+class PurchaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the purchase order model.
 
     Attributes:
@@ -221,7 +221,7 @@ class PurchaseOrderReportContext(report.mixins.BaseReportContext):
     supplier: Optional[Company]
 
 
-class SalesOrderReportContext(report.mixins.BaseReportContext):
+class SalesOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the sales order model.
 
     Attributes:
@@ -243,7 +243,7 @@ class SalesOrderReportContext(report.mixins.BaseReportContext):
     customer: Optional[Company]
 
 
-class ReturnOrderReportContext(report.mixins.BaseReportContext):
+class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the return order model.
 
     Attributes:
@@ -2197,7 +2197,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
+class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the SalesOrderShipment model.
 
     Attributes:

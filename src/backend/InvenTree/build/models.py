@@ -1,7 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-from typing import Optional
+from typing import Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -50,7 +50,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class BuildReportContext(report.mixins.BaseReportContext):
+class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the Build model.
 
     Attributes:
@@ -1695,7 +1695,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
-class BuildLineReportContext(report.mixins.BaseReportContext):
+class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the BuildLine model.
 
     Attributes:
