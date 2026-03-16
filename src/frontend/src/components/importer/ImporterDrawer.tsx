@@ -83,9 +83,12 @@ export default function ImporterDrawer(
   const widget = useMemo(() => {
     if (session.sessionQuery.isError) {
       return (
-        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
-          {t`Failed to fetch import session data`}
-        </Alert>
+        <Stack gap='xs'>
+          <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+            {t`Failed to fetch import session data`}
+          </Alert>
+          <Button color='red' onClick={props.onClose}>{t`Close`}</Button>
+        </Stack>
       );
     }
 
