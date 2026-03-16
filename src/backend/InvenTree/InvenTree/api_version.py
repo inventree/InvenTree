@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 464
+INVENTREE_API_VERSION = 465
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v465 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11540
+    - Add id to the ordering fields of the Parts model
 
 v464 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11527
     - Add API endpoint for monitoring the progress of a particular background task
