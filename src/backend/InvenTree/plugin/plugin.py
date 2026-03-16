@@ -92,16 +92,16 @@ class MetaBase:
     TITLE = None
 
     @mark_final
-    def get_meta_value(self, key: str, old_key: Optional[str] = None, __default=None):
+    def get_meta_value(self, key: str, old_key: Optional[str] = None, default=None):
         """Reference a meta item with a key.
 
         Args:
             key (str): key for the value
             old_key (str, optional): deprecated key - will throw warning
-            __default (optional): Value if nothing with key can be found. Defaults to None.
+            default (optional): Value if nothing with key can be found. Defaults to None.
 
         Returns:
-            Value referenced with key, old_key or __default if set and not value found
+            Value referenced with key, old_key or default if set and not value found
         """
         value = getattr(self, key, None)
 
@@ -117,9 +117,9 @@ class MetaBase:
                     stacklevel=2,
                 )
 
-        # Use __default if still nothing set
-        if (value is None) and __default:
-            return __default
+        # Use default if still nothing set
+        if value is None and default is not None:
+            return default
         return value
 
     @mark_final
