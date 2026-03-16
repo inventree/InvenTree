@@ -1501,8 +1501,8 @@ class InvenTreeImageMixin(models.Model):
         upload_to=rename_image,
         null=True,
         blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},  # ty:ignore[unknown-argument]
+        delete_orphans=False,  # ty:ignore[unknown-argument]
         verbose_name=_('Image'),
     )
 
