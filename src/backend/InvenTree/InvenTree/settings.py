@@ -483,7 +483,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -519,7 +519,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
