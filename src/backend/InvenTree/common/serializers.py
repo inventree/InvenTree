@@ -381,7 +381,7 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance[instance]}
+        return {'key': instance, **self.instance.get(instance)}
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):
@@ -457,7 +457,7 @@ class FlagSerializer(serializers.Serializer):
         data = {'key': instance, 'state': flag_state(instance, request=request)}
 
         if request and request.user.is_superuser:
-            data['conditions'] = self.instance[instance]
+            data['conditions'] = self.instance.get(instance)
 
         return data
 

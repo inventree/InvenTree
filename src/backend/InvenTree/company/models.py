@@ -243,7 +243,11 @@ class Company(
         # We may have a pre-fetched primary address list
         if hasattr(self, 'primary_address_list'):
             addresses = self.primary_address_list
-            return addresses[0] if len(addresses) > 0 else None
+            return (
+                addresses[0]
+                if len(addresses) > 0 and isinstance(addresses, list)
+                else None
+            )
 
         # Otherwise, query the database
         return self.addresses.filter(primary=True).first()
