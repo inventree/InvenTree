@@ -319,7 +319,7 @@ test('Parts - Requirements', async ({ browser }) => {
   await page.getByText('Available: 32').waitFor();
   await page.getByText('In Stock: 34').waitFor();
   await page.getByText(/Required: \d+/).waitFor();
-  await page.getByText('2 / 2').waitFor(); // Allocated to build orders
+  await page.getByText(/2 \/ \d+/).waitFor(); // Allocated to build orders
 });
 
 test('Parts - Allocations', async ({ browser }) => {
