@@ -4216,7 +4216,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if n <= 0:
             return 0.0
 
-        return int(available_stock / n)
+        return int(Decimal(available_stock) / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity.
