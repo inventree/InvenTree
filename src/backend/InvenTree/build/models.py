@@ -1512,10 +1512,10 @@ class Build(
                             unallocated_quantity -= quantity
 
                         except (ValidationError, serializers.ValidationError) as exc:
-                            # Catch model errors and re-throw as DRF errors
+                            # Re-raise with a Django-compatible validation payload
                             raise ValidationError(
-                                exc.message, detail=serializers.as_serializer_error(exc)
-                            )
+                                serializers.as_serializer_error(exc)
+                            ) from exc
 
                     if unallocated_quantity <= 0:
                         # We have now fully-allocated this BomItem - no need to continue!
