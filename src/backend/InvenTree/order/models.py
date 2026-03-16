@@ -568,7 +568,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.received = 0
 
-    def report_context(self) -> PurchaseOrderReportContext:
+    def report_context(self) -> type[PurchaseOrderReportContext]:
         """Return report context data for this PurchaseOrder."""
         return {**super().report_context(), 'supplier': self.supplier}
 
@@ -1267,7 +1267,7 @@ class SalesOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.shipped = 0
 
-    def report_context(self) -> SalesOrderReportContext:
+    def report_context(self) -> type[SalesOrderReportContext]:
         """Generate report context data for this SalesOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
@@ -2669,7 +2669,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = None
         line.outcome = ReturnOrderLineStatus.PENDING.value
 
-    def report_context(self) -> ReturnOrderReportContext:
+    def report_context(self) -> type[ReturnOrderReportContext]:
         """Generate report context data for this ReturnOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
