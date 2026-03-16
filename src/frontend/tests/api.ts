@@ -11,6 +11,6 @@ export const createApi = ({
   request.newContext({
     baseURL: apiUrl,
     extraHTTPHeaders: {
-      Authorization: `Basic ${btoa(`${username || adminuser.username}:${password || adminuser.password}`)}`
+      Authorization: `Basic ${btoa(`${username || adminuser.username}:${password || adminuser.testcred}`)}`
     }
   });

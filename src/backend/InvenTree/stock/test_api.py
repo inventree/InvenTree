@@ -2006,6 +2006,33 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
             self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
+    def test_bulk_batch_change(self):
+        """Test that we can bulk-change batch code for a set of stock items."""
+        url = reverse('api-stock-list')
+
+        # Find the first 10 stock items
+        items = StockItem.objects.all()[:10]
+        self.assertEqual(len(items), 10)
+
+        response = self.patch(
+            url,
+            data={'items': [item.pk for item in items], 'batch': 'NEW-BATCH-CODE'},
+            max_query_count=300,
+        )
+
+        data = response.data
+
+        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(len(data['items']), 10)
+
+        for item in data['items']:
+            self.assertEqual(item['batch'], 'NEW-BATCH-CODE')
+
+        # Check database items also
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""

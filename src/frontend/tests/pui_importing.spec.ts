@@ -1,10 +1,10 @@
 import test from '@playwright/test';
+import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/admin/import'
   });
 
@@ -16,10 +16,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
 
   await page
-    .locator('label')
-    .filter({ hasText: 'Update Existing RecordsIf' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-update_records' })
     .click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -66,7 +63,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
 
   // Manually delete records
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-delete-selected' })
     .click();
@@ -75,8 +72,7 @@ test('Importing - Admin Center', async ({ browser }) => {
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'part/109/bom'
   });
 
@@ -156,8 +152,7 @@ test('Importing - BOM', async ({ browser }) => {
 
 test('Importing - Purchase Order', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
@@ -169,14 +164,13 @@ test('Importing - Purchase Order', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/po_data.csv');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('cell', { name: 'Database Field' }).waitFor();
-  await page.getByRole('cell', { name: 'Field Description' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Database Field' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Field Description' }).waitFor();
 });
 
 test('Importing - Natural Keys', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 

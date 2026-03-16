@@ -329,6 +329,88 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_shipment_many_items(self):
+        """Test completion of a shipment with many items.
+
+        Here, we create a shipment with a very large number of items assigned,
+        and check that the shipment can be completed without error.
+
+        This test is designed to test that the database does not error out,
+        even when a large number of items are assigned to a shipment.
+
+        Ref: https://github.com/inventree/InvenTree/pull/11500
+        """
+        customer = Company.objects.create(name='Customer 2', is_customer=True)
+
+        # Create a new SalesOrder
+        so = SalesOrder.objects.create(customer=customer, reference='SO-5678')
+
+        shipment = so.shipments.first()
+
+        if not shipment:
+            shipment = SalesOrderShipment.objects.create(
+                reference='SHIP-MENT', order=so
+            )
+
+        # Create a part
+        part = Part.objects.create(name='Part 1', salable=True)
+
+        N_ITEMS = 750
+
+        line = SalesOrderLineItem.objects.create(part=part, order=so, quantity=N_ITEMS)
+
+        # Create stock items, and assign to shipment
+        allocations = []
+        stock_items = []
+
+        tree_id = StockItem.objects.all().order_by('-tree_id').first().tree_id
+
+        for idx in range(N_ITEMS):
+            tree_id += 1
+
+            stock_items.append(
+                StockItem(
+                    part=part,
+                    quantity=1 + idx % 5,
+                    level=0,
+                    lft=0,
+                    rght=0,
+                    tree_id=tree_id,
+                )
+            )
+
+        StockItem.objects.bulk_create(stock_items)
+
+        # Check expected available quantity
+        self.assertEqual(part.total_stock, 2250)
+
+        # Allocate a single quantity from each stock item to the shipment
+        for item in StockItem.objects.filter(part=part):
+            allocations.append(
+                SalesOrderAllocation(
+                    line=line, shipment=shipment, item=item, quantity=1
+                )
+            )
+
+        SalesOrderAllocation.objects.bulk_create(allocations)
+
+        # Validate initial conditions for the SalesOrderShipment
+        self.assertEqual(shipment.allocations.count(), N_ITEMS)
+        self.assertIsNone(shipment.shipment_date)
+        self.assertFalse(shipment.is_complete())
+        self.assertTrue(shipment.check_can_complete(raise_error=False))
+
+        # Complete the shipment
+        shipment.complete_shipment(None)
+
+        shipment.refresh_from_db()
+        self.assertIsNotNone(shipment.shipment_date)
+        self.assertTrue(shipment.is_complete())
+
+        # Part stock quantity should have reduced by 1 for each allocated item
+        part.refresh_from_db()
+        self.assertEqual(part.total_stock, 2250 - N_ITEMS)
+
     def test_default_shipment(self):
         """Test sales order default shipment creation."""
         # Default setting value should be False

@@ -145,8 +145,8 @@ class BuildFilter(FilterSet):
     def filter_overdue(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are overdue."""
         if str2bool(value):
-            return queryset.filter(Build.OVERDUE_FILTER)
-        return queryset.exclude(Build.OVERDUE_FILTER)
+            return queryset.filter(Build.get_overdue_filter())
+        return queryset.exclude(Build.get_overdue_filter())
 
     assigned_to_me = rest_filters.BooleanFilter(
         label=_('Assigned to me'), method='filter_assigned_to_me'

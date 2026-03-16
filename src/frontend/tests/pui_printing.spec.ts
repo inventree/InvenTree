@@ -1,4 +1,5 @@
 import { expect, test } from './baseFixtures.js';
+import { adminuser } from './defaults.js';
 import { activateTableView, loadTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
@@ -79,8 +80,7 @@ test('Printing - Report Printing', async ({ browser }) => {
 
 test('Printing - Report Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // activate the sample plugin for this test

@@ -428,7 +428,8 @@ export function StockItemTable({
 
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
-    return: allowReturn
+    return: allowReturn,
+    changeBatch: true
   });
 
   const tableActions = useMemo(() => {

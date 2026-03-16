@@ -292,7 +292,8 @@ export function usePurchaseOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
