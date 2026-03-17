@@ -1990,7 +1990,11 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'order': order_id, 'completed': 0}, 3)
 
         # Finally, mark this shipment as 'shipped'
-        self.post(reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk}), {})
+        self.post(
+            reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk}),
+            {},
+            expected_code=200,
+        )
 
         # Filter by 'completed' status
         self.filter({'order': order_id, 'completed': 1}, 2)
@@ -2278,7 +2282,7 @@ class SalesOrderAllocateTest(OrderTest):
                 'shipment_date': '2020-12-05',
                 'delivery_date': '2023-12-05',
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         self.shipment.refresh_from_db()

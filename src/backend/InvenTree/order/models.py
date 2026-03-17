@@ -2418,54 +2418,45 @@ class SalesOrderShipment(
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
+
+        Arguments:
+            user: The user who is completing this shipment
+
+        Returns:
+            task_id: The ID of the background task which is processing this shipment
         """
         import order.tasks
 
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
 
-        # Update the "shipment" date
-        self.shipment_date = kwargs.get(
-            'shipment_date', InvenTree.helpers.current_date()
-        )
-        self.shipped_by = user
-
-        # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number')
-
-        if tracking_number is not None:
+        if tracking_number := kwargs.get('tracking_number'):
             self.tracking_number = tracking_number
 
-        # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number')
-
-        if invoice_number is not None:
+        if invoice_number := kwargs.get('invoice_number'):
             self.invoice_number = invoice_number
 
-        # Was a link provided?
-        link = kwargs.get('link')
-
-        if link is not None:
+        if link := kwargs.get('link'):
             self.link = link
-
-        # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date')
-
-        if delivery_date is not None:
-            self.delivery_date = delivery_date
 
         self.save()
 
+        # Extract shipment date and delivery date from kwargs (if provided)
+        shipment_date = kwargs.get('shipment_date', InvenTree.helpers.current_date())
+        delivery_date = kwargs.get('delivery_date')
+
         # Offload the "completion" of each line item to the background worker
         # This may take some time, and we don't want to block the main thread
-        InvenTree.tasks.offload_task(
+        task_id = InvenTree.tasks.offload_task(
             order.tasks.complete_sales_order_shipment,
-            shipment_id=self.pk,
-            user_id=user.pk if user else None,
+            self.pk,
+            user.pk if user else None,
+            shipment_date,
+            delivery_date=delivery_date,
             group='sales_order',
         )
 
-        trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
+        return task_id
 
 
 class SalesOrderExtraLine(OrderExtraLine):
