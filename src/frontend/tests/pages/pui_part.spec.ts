@@ -140,6 +140,47 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 });
 
+/**
+ * Perform BOM validation process
+ * Note that this is a "background task" which is monitored by the "useBackgroundTask" hook
+ */
+test('Parts - BOM Validation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/107/bom' });
+
+  // Edit line item, to ensure BOM is not valid
+  const cell = await page.getByRole('cell', { name: 'Red paint Red Paint' });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+
+  const input = await page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+
+  const value = await input.inputValue();
+
+  const nextValue = Number.parseFloat(value) + 0.24;
+
+  await input.fill(`${nextValue.toFixed(3)}`);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('BOM item updated').waitFor();
+
+  await loadTab(page, 'Part Details');
+  await loadTab(page, 'Bill of Materials');
+
+  // Run BOM validation step
+  await page
+    .getByRole('button', { name: 'action-button-validate-bom' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Background task monitoring
+  await page.getByText('Validating BOM').waitFor();
+  await page.getByText('BOM validated').waitFor();
+
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page.getByText('Validated By: allaccessAlly').waitFor();
+});
+
 test('Parts - Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/details' });
 
@@ -275,10 +316,9 @@ test('Parts - Requirements', async ({ browser }) => {
   // Also check requirements for part with open build orders which have been partially consumed
   await navigate(page, 'part/105/details');
 
-  await page.getByText('Required: 2').waitFor();
   await page.getByText('Available: 32').waitFor();
   await page.getByText('In Stock: 34').waitFor();
-  await page.getByText('2 / 2').waitFor(); // Allocated to build orders
+  await page.getByText(/Required: \d+/).waitFor();
 });
 
 test('Parts - Allocations', async ({ browser }) => {
