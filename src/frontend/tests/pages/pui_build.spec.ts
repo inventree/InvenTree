@@ -316,7 +316,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 
   // Check for expected UI elements in the "scrap output" dialog
-  const cell3 = await page.getByRole('cell', { name: '16' });
+  const cell3 = await page.getByRole('cell', { name: '16', exact: true });
   const row3 = await getRowFromCell(cell3);
   await row3.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Scrap' }).click();
