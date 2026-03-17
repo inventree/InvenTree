@@ -94,7 +94,7 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
   await page.waitForTimeout(500);
 
-  await page.getByText('Importing Data').waitFor();
+  await page.getByText('Importing Data').first().waitFor();
   await page.getByText('0 / 3').waitFor();
 
   await page.getByText('Screw for fixing wood').first().waitFor();
