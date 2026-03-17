@@ -3,6 +3,7 @@
  */
 
 import test from '@playwright/test';
+import { adminuser, readeruser } from './defaults';
 import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
 
@@ -13,8 +14,7 @@ import { doCachedLogin } from './login';
 test('Permissions - Admin', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: '/settings/admin/'
   });
 
@@ -57,8 +57,7 @@ test('Permissions - Admin', async ({ browser }) => {
 test('Permissions - Reader', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly',
+    user: readeruser,
     url: '/part/category/index/'
   });
 

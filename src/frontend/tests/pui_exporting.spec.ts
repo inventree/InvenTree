@@ -1,4 +1,5 @@
 import test from '@playwright/test';
+import { stevenuser } from './defaults';
 import { globalSearch, loadTab, navigate } from './helpers';
 import { doCachedLogin } from './login';
 
@@ -13,8 +14,7 @@ const openExportDialog = async (page) => {
 // Test data export for various order types
 test('Exporting - Orders', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/index/purchase-orders'
   });
 
@@ -72,8 +72,7 @@ test('Exporting - Orders', async ({ browser }) => {
 // Test for custom BOM exporter
 test('Exporting - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   await globalSearch(page, 'MAST');
