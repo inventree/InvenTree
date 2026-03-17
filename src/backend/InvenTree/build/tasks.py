@@ -83,7 +83,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
+    build_order = Build.objects.get(pk=build_id)
 
     if user_id:
         try:
@@ -96,13 +96,6 @@ def complete_build_allocations(build_id: int, user_id: int):
             )
     else:
         user = None
-
-    if not build_order:
-        logger.warning(
-            'Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
 
     build_order.complete_allocations(user)
 
