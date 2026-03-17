@@ -568,9 +568,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.received = 0
 
-    def report_context(self) -> type[PurchaseOrderReportContext]:
+    def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return {**super().report_context(), 'supplier': self.supplier}
+        return_ctx = super().report_context()
+        return_ctx.update({'supplier': self.supplier})
+        return return_ctx
 
     def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
@@ -1267,9 +1269,11 @@ class SalesOrder(TotalPriceMixin, Order):
         super().clean_line_item(line)
         line.shipped = 0
 
-    def report_context(self) -> type[SalesOrderReportContext]:
+    def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
     def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
@@ -2669,9 +2673,11 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = None
         line.outcome = ReturnOrderLineStatus.PENDING.value
 
-    def report_context(self) -> type[ReturnOrderReportContext]:
+    def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
