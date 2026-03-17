@@ -970,12 +970,12 @@ class BuildAllocationTest(BuildAPITest):
         url = reverse('api-build-auto-allocate', kwargs={'pk': build.pk})
 
         # Allocate only 'untracked' items - this should not allocate our tracked item
-        self.post(url, data={'item_type': 'untracked'})
+        self.post(url, data={'item_type': 'untracked'}, expected_code=200)
 
         self.assertEqual(N, BuildItem.objects.count())
 
         # Allocate 'tracked' items - this should allocate our tracked item
-        self.post(url, data={'item_type': 'tracked'})
+        self.post(url, data={'item_type': 'tracked'}, expected_code=200)
 
         # A new BuildItem should have been created
         self.assertEqual(N + 1, BuildItem.objects.count())
@@ -1735,7 +1735,7 @@ class BuildConsumeTest(BuildAPITest):
             'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)
@@ -1758,7 +1758,7 @@ class BuildConsumeTest(BuildAPITest):
             ]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)
