@@ -3,7 +3,7 @@
 import inspect
 import warnings
 from datetime import datetime
-from distutils.sysconfig import get_python_lib
+from distutils.sysconfig import get_python_lib  # type: ignore[unresolved-import]
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 from typing import Optional

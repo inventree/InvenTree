@@ -86,7 +86,7 @@ class RenderMeta(enums.ChoicesType):
 
 
 class RenderChoices(models.TextChoices, metaclass=RenderMeta):
-    """Class for creating enumerated string choices for schema rendering."""
+    """Class for creating enumerated string choices for schema rendering."""  # ty:ignore[conflicting-metaclass]
 
 
 class MetaMixin(models.Model):
