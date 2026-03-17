@@ -198,7 +198,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
     with open(cfg_file, encoding='utf-8') as cfg:
         try:
             data = yaml.safe_load(cfg)
-        except yaml.parser.ParserError as error:  # ty:ignore[possibly-missing-attribute]
+        except yaml.parser.ParserError as error:
             logger.error(
                 "INVE-E13: Error reading InvenTree configuration file '%s': %s",
                 cfg_file,

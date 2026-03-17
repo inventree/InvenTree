@@ -311,7 +311,7 @@ def TestIfImageURL(url):
     ]
 
 
-def str2bool(text, test=True):
+def str2bool(text, test=True) -> bool:
     """Test if a string 'looks' like a boolean value.
 
     Args:

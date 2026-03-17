@@ -42,7 +42,7 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
+    def to_representation(self, instance: common_models.InvenTreeSetting):
         """Return the value of the setting.
 
         Protected settings are returned as '***'

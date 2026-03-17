@@ -1745,6 +1745,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
+    # type
     def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {

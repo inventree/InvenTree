@@ -15,7 +15,7 @@ TESTING = 'test' in sys.argv
 
 def clear():
     if not TESTING:  # pragma: no cover
-        os.system('cls' if os.name == 'nt' else 'clear')  # ty:ignore[deprecated]
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def reverse_association(apps, schema_editor):  # pragma: no cover
