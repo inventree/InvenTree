@@ -3,6 +3,7 @@ import { Trans } from '@lingui/react/macro';
 import {
   AspectRatio,
   Button,
+  Center,
   Divider,
   Group,
   Pagination,
@@ -71,7 +72,8 @@ function PartThumbComponent({
     color = hoverColor;
   }
 
-  const src: string | undefined = element?.image ? element?.image : undefined;
+  const src: string | undefined = element?.image || undefined;
+  const imageName = element.image?.split('/')?.at(-1) ?? '';
 
   return (
     <Paper
@@ -82,11 +84,13 @@ function PartThumbComponent({
       onClick={() => selectImage(element.image)}
     >
       <Stack justify='space-between'>
-        <AspectRatio ratio={1}>
-          <Thumbnail size={120} src={src} align='center' />
-        </AspectRatio>
+        <Center>
+          <AspectRatio ratio={1}>
+            <Thumbnail size={120} src={src} align='center' />
+          </AspectRatio>
+        </Center>
         <Text size='xs'>
-          {element.image.split('/')[1]} ({element.count})
+          {imageName || element.image} ({element.count})
         </Text>
       </Stack>
     </Paper>
@@ -197,6 +201,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           <Group justify='left' gap='xs'>
             <TextInput
               placeholder={t`Search...`}
+              aria-label='part-thumb-search'
               value={filterInput}
               onChange={(event) => {
                 setFilterInput(event.currentTarget.value);
