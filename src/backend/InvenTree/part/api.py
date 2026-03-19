@@ -160,7 +160,7 @@ class CategoryFilter(FilterSet):
 
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
-        parent = str2bool(self.data.get('parent', None))
+        parent = self.data.get('parent', None)
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
