@@ -248,6 +248,13 @@ def getBlankThumbnail():
     return getStaticUrl('img/blank_image.thumbnail.png')
 
 
+def checkStaticFile(*args) -> bool:
+    """Check if a file exists in the static storage."""
+    static_storage = StaticFilesStorage()
+    fn = os.path.join(*args)
+    return static_storage.exists(fn)
+
+
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
     if custom and settings.CUSTOM_LOGO:
