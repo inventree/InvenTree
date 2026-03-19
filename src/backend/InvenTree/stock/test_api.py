@@ -1417,11 +1417,18 @@ class StockItemTest(StockAPITestCase):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
+        # Create a new StockItem instance
         response = self.post(
             self.list_url, data={'part': 4, 'quantity': 10}, expected_code=201
         )
 
         self.assertEqual(response.data[0]['location'], 2)
+
+        # Check that the item was associated with the correct user
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(item.tracking_info_count, 1)
+        tracking = item.tracking_info.first()
+        self.assertEqual(tracking.user, self.user)
 
         # What if we explicitly set the location to a different value?
 
