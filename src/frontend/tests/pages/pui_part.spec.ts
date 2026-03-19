@@ -65,6 +65,38 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Build Orders');
 });
 
+test('Parts - Image Selection', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/911/details' });
+
+  // Select a new image from the available images
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-select-from-' })
+    .click();
+  await page.getByRole('textbox', { name: 'part-thumb-search' }).fill('red');
+  await page
+    .locator('div')
+    .filter({ hasText: /^chair_red\.png \(1\)$/ })
+    .nth(1)
+    .click();
+  await page.getByRole('button', { name: 'Select' }).click();
+  await page.getByText('The image has been updated successfully').waitFor();
+
+  // Now remove the associated image
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-delete-image' })
+    .click();
+  await page.getByRole('button', { name: 'Remove' }).click();
+  await page.getByText('The image has been removed successfully').waitFor();
+});
+
 test('Parts - Manufacturer Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/84/' });
 

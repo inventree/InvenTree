@@ -22,6 +22,7 @@ import { Suspense, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -118,6 +119,11 @@ async function setNewImage(
   if (response.data.image.includes(image)) {
     setImage(response.data.image);
     modals.closeAll();
+    showNotification({
+      title: t`Image updated`,
+      message: t`The image has been updated successfully`,
+      color: 'green'
+    });
   }
 }
 
