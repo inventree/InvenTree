@@ -579,8 +579,15 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     # endregion
 
     @mark_final
-    def plugin_static_file(self, *args) -> str:
+    def plugin_static_file(
+        self, *args, check_exists: bool = True, check_hash: bool = True
+    ) -> str:
         """Construct a path to a static file within the plugin directory.
+
+        Arguments:
+            *args: Path components to the static file (e.g. 'js', 'admin.js')
+            check_exists: If True, will check if the file actually exists on disk
+            check_hash: If True, will fallback to checking if the file has a hash in its name (for cache busting)
 
         - This will return a URL can be used to access the static file
         - The path is constructed using the STATIC_URL setting and the plugin slug
@@ -603,6 +610,12 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             url = url.replace('.js', '.tsx')
         else:
             # Otherwise, construct the URL using the STATIC_URL setting
+            if check_exists:
+                if not InvenTree.helpers.checkStaticFile('plugins', self.SLUG, *args):
+                    logger.error(
+                        f"Static file not found for plugin '{self.SLUG}': {args}"
+                    )
+
             url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
 
             if not url.startswith('/'):
