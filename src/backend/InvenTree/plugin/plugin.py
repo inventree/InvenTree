@@ -663,6 +663,8 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             url = url.replace('.js', '.tsx')
             return url
 
+        storage = StaticFilesStorage()
+
         file_name = args[-1] or ''
 
         # The file may be specified with a function, e.g. 'file.js:renderFunction'
@@ -681,17 +683,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         full_path = str(Path(*self.get_static_path(), *file_path, file_name))
 
         if check_exists:
-            storage = StaticFilesStorage()
-
             if not storage.exists(full_path):
                 logger.error(
                     f"Static file not found for plugin '{self.SLUG}': {full_path}"
                 )
 
-        url = str(Path(settings.STATIC_URL, full_path))
-
-        if not url.startswith('/'):
-            url = '/' + url
+        # Resolve the URL to the static file
+        url = storage.url(full_path)
 
         # Re-append the function name (if provided)
         if function_name:
