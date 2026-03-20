@@ -19,7 +19,7 @@ import {
 } from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import type { UserRoles } from '@lib/enums/Roles';
@@ -105,6 +105,48 @@ function UploadModal({
 }>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const clipboardItems = event.clipboardData?.items;
+
+      if (!clipboardItems) {
+        return;
+      }
+
+      const imageItem = Array.from(clipboardItems).find((item) =>
+        item.type.startsWith('image/')
+      );
+
+      if (!imageItem) {
+        return;
+      }
+
+      const imageFile = imageItem.getAsFile();
+
+      if (!imageFile) {
+        return;
+      }
+
+      const fileExtension = imageFile.type.split('/')[1] || 'png';
+      const pastedFile = new File(
+        [imageFile],
+        `clipboard-image.${fileExtension}`,
+        {
+          type: imageFile.type
+        }
+      ) as FileWithPath;
+
+      setCurrentFile(pastedFile);
+      event.preventDefault();
+    };
+
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, []);
 
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
