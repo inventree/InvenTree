@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 466
+INVENTREE_API_VERSION = 467
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
+    - Fix definition for the "parent" field on the StockItemSerializer
 
 v466 -> 2026-03-17 : https://github.com/inventree/InvenTree/pull/11525
     - SalesOrderShipmentComplete endpoint now returns a task ID which can be used to track the progress of the shipment completion process
