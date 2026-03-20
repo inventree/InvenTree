@@ -1244,14 +1244,19 @@ class StockList(
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
-                item = serializer.save()
+                item = StockItem(**serializer.validated_data)
 
                 if status_value and not item.compare_status(status_value):
                     item.set_status(status_value)
 
                 item.save(user=user)
+                item.refresh_from_db()
 
-                response_data = [serializer.data]
+                response_data = [
+                    StockSerializers.StockItemSerializer(
+                        item, context=self.get_serializer_context()
+                    ).data
+                ]
 
         return Response(
             response_data,

@@ -36,6 +36,25 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
+
+  // Let's create a new stock item
+  await navigate(page, 'part/822/stock');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'number-field-quantity' })
+    .fill('987');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Automatically navigate through to the newly created stock item
+  await page.getByText('Quantity: 987').first().waitFor();
+  await loadTab(page, 'Stock Tracking');
+  await page
+    .getByRole('cell', { name: 'Stock item created' })
+    .first()
+    .waitFor();
+  await page.getByRole('cell', { name: 'allaccess Ally Access' }).waitFor();
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
