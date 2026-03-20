@@ -720,9 +720,9 @@ django-xforwardedfor-middleware==2.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-djangorestframework==3.16.1 \
-    --hash=sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7 \
-    --hash=sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec
+djangorestframework==3.17.0 \
+    --hash=sha256:456fd992a33f9e64c9d0f47e85d9787db0efb44f894c1e513315b5e74765bd4c \
+    --hash=sha256:d84fe85f30b7ac6e8c0076ce9ff635e4eaedca5912f8d7d2926ce448c08533ba
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -1669,9 +1669,9 @@ pynacl==1.6.2 \
     # via
     #   -c src/backend/requirements.txt
     #   paramiko
-pypdf==6.8.0 \
-    --hash=sha256:2a025080a8dd73f48123c89c57174a5ff3806c71763ee4e49572dc90454943c7 \
-    --hash=sha256:cb7eaeaa4133ce76f762184069a854e03f4d9a08568f0e0623f7ea810407833b
+pypdf==6.9.1 \
+    --hash=sha256:ae052407d33d34de0c86c5c729be6d51010bf36e03035a8f23ab449bca52377d \
+    --hash=sha256:f35a6a022348fae47e092a908339a8f3dc993510c026bb39a96718fc7185e89f
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
