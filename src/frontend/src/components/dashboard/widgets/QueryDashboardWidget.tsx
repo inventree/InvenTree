@@ -6,10 +6,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
-import { useDocumentVisibility } from '@mantine/hooks';
-import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
-import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
@@ -27,11 +24,7 @@ function QueryWidget({
   icon?: keyof InvenTreeIconType;
   params: any;
 }>): ReactNode {
-  const api = useApi();
-  const user = useUserState();
   const navigate = useNavigate();
-  const visibility = useDocumentVisibility();
-
   const modelProperties = ModelInformationDict[modelType];
 
   const onFollowLink = useCallback(
