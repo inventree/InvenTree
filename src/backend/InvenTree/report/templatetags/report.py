@@ -166,10 +166,6 @@ def media_file_exists(path: Path | str) -> bool:
     except SuspiciousFileOperation:
         # Prevent path traversal attacks
         raise ValidationError(_('Invalid media file path') + f": '{path}'")
-    except Exception as e:
-        # Some other error occurred - log it, but return False (file does not exist)
-        logger.error("Error checking media file existence @ '%s': %s", path, e)
-        return False
 
 
 def static_file_exists(path: Path | str) -> bool:
@@ -189,10 +185,6 @@ def static_file_exists(path: Path | str) -> bool:
     except SuspiciousFileOperation:
         # Prevent path traversal attacks
         raise ValidationError(_('Invalid static file path') + f": '{path}'")
-    except Exception as e:
-        # Some other error occurred - log it, but return False (file does not exist)
-        logger.error("Error checking static file existence @ '%s': %s", path, e)
-        return False
 
 
 def get_static_file_contents(
@@ -207,6 +199,12 @@ def get_static_file_contents(
     Returns:
         The contents of the static file, or None if the file cannot be found
     """
+    if not path:
+        if raise_error:
+            raise ValueError('No media file specified')
+        else:
+            return None
+
     if not staticfiles_storage.exists(path):
         if raise_error:
             raise FileNotFoundError(f'Static file does not exist: {path!s}')
@@ -237,7 +235,6 @@ def get_media_file_contents(path: Path | str, raise_error: bool = True) -> bytes
     Notes:
         - The resulting path is resolved against the media root directory
     """
-    # First test if the image exists
     if not path:
         if raise_error:
             raise ValueError('No media file specified')

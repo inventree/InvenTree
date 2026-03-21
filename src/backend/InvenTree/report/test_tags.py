@@ -85,6 +85,23 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         with self.assertRaises(ValidationError):
             report_tags.asset('../../../report/assets/test.txt')
 
+    def test_file_access(self):
+        """Tests for media and static file access."""
+        for fn in [None, '', '@@@@@@', 'fake_file.txt']:
+            self.assertFalse(report_tags.media_file_exists(fn))
+            self.assertFalse(report_tags.static_file_exists(fn))
+
+        with self.assertRaises(FileNotFoundError):
+            report_tags.get_media_file_contents('dummy_file.txt')
+
+        with self.assertRaises(ValueError):
+            report_tags.get_static_file_contents(None)
+
+        # Try again, without throwing an error
+        self.assertIsNone(
+            report_tags.get_media_file_contents('dummy_file.txt', raise_error=False)
+        )
+
     def test_uploaded_image(self):
         """Tests for retrieving uploaded images."""
         # Test for a missing image
