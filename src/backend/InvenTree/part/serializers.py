@@ -129,7 +129,7 @@ class CategorySerializer(
     starred = serializers.SerializerMethodField()
 
     def get_starred(self, category) -> bool:
-        """Determine if the category is starred by the current user."""
+        """Return True if the category is directly "starred" by the current user."""
         if not self.request or not self.request.user:
             return False
 
@@ -761,7 +761,7 @@ class PartSerializer(
         return queryset
 
     def get_starred(self, part) -> bool:
-        """Determine if the part is starred by the current user."""
+        """Return "true" if the part is starred by the current user."""
         if not self.request or not self.request.user:
             return False
 
