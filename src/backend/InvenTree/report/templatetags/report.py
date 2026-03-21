@@ -195,7 +195,9 @@ def static_file_exists(path: Path | str) -> bool:
         return False
 
 
-def get_static_file_contents(path: Path | str, raise_error: bool = True) -> str | None:
+def get_static_file_contents(
+    path: Path | str, raise_error: bool = True
+) -> bytes | None:
     """Return the contents of a static file.
 
     Arguments:
@@ -217,7 +219,7 @@ def get_static_file_contents(path: Path | str, raise_error: bool = True) -> str 
     return file_data
 
 
-def get_media_file_contents(path: Path | str, raise_error: bool = True) -> str | None:
+def get_media_file_contents(path: Path | str, raise_error: bool = True) -> bytes | None:
     """Return the fully qualified file path to an uploaded media file.
 
     Arguments:
@@ -225,7 +227,7 @@ def get_media_file_contents(path: Path | str, raise_error: bool = True) -> str |
         raise_error: If True, raise an error if the file cannot be found (default = True)
 
     Returns:
-        The fully qualified file path to the media file
+        The contents of the media file, or None if the file cannot be found
 
     Raises:
         FileNotFoundError: If the requested media file cannot be loaded
