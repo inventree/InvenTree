@@ -423,23 +423,19 @@ class BulkOperationMixin:
     def get_bulk_queryset(self, request):
         """Return a queryset based on the selection made in the request.
 
-        Selection can be made by providing either:
-
-        - items: A list of primary key values
-        - filters: A dictionary of filter values
+        Selection can be made by providing a list of primary key values,
+        which will be used to filter the queryset.
         """
-        model = self.serializer_class.Meta.model
-
         items = request.data.pop('items', None)
-        filters = request.data.pop('filters', None)
         all_filter = request.GET.get('all', None)
 
-        queryset = model.objects.all()
+        # Return the base queryset for this model
+        queryset = self.get_queryset()
 
-        if not items and not filters and all_filter is None:
+        if not items and all_filter is None:
             raise ValidationError({
                 'non_field_errors': _(
-                    'List of items or filters must be provided for bulk operation'
+                    'List of items must be provided for bulk operation'
                 )
             })
 
@@ -455,19 +451,6 @@ class BulkOperationMixin:
             except Exception:
                 raise ValidationError({
                     'non_field_errors': _('Invalid items list provided')
-                })
-
-        if filters:
-            if type(filters) is not dict:
-                raise ValidationError({
-                    'non_field_errors': _('Filters must be provided as a dict')
-                })
-
-            try:
-                queryset = queryset.filter(**filters)
-            except Exception:
-                raise ValidationError({
-                    'non_field_errors': _('Invalid filters provided')
                 })
 
         if all_filter and not helpers.str2bool(all_filter):
