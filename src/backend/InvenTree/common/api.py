@@ -1001,6 +1001,22 @@ class DataOutputEndpointMixin:
     serializer_class = common.serializers.DataOutputSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Return the set of DataOutput objects which the user has permission to view."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            return common.models.DataOutput.objects.none()
+
+        # Allow staff users access to all DataOutput objects
+        if user.is_staff:
+            return queryset
+
+        # All other users are limited to viewing their own DataOutput objects
+        return queryset.filter(user=user)
+
 
 class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
     """List view for DataOutput objects."""
