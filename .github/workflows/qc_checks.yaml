@@ -348,6 +348,7 @@ jobs:
         run: |
           invoke dev.delete-data -f
           invoke dev.import-fixtures
+          invoke static
           invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
       - name: Run Tests For `${WRAPPER_NAME}`
