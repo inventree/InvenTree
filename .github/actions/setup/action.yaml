@@ -15,6 +15,10 @@ inputs:
         required: false
         description: 'Install the InvenTree requirements?'
         default: 'false'
+    static:
+        required: false
+        description: 'Should the static files be built?'
+        default: 'false'
     dev-install:
         required: false
         description: 'Install the InvenTree development requirements?'
