@@ -278,8 +278,7 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         response = self.delete(url, {}, expected_code=400)
 
         self.assertIn(
-            'List of items or filters must be provided for bulk operation',
-            str(response.data),
+            'List of items must be provided for bulk operation', str(response.data)
         )
 
         # DELETE with invalid 'items'
