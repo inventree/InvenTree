@@ -51,6 +51,7 @@ import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -58,6 +59,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -135,6 +137,10 @@ export function useStockFields({
       globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
     );
   }, [globalSettings]);
+
+  const stockItemStatusCodes = useStatusCodes({
+    modelType: ModelType.stockitem
+  });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -237,7 +243,8 @@ export function useStockFields({
         placeholder: batchGenerator.result
       },
       status_custom_key: {
-        label: t`Stock Status`
+        label: t`Stock Status`,
+        default: stockItemStatusCodes.OK
       },
       expiry_date: {
         icon: <IconCalendarExclamation />,
@@ -640,7 +647,8 @@ function StockOperationsRow({
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
             <StatusRenderer
-              status={record.status_custom_key}
+              status={record.status_custom_key || record.status}
+              fallbackStatus={record.status}
               type={ModelType.stockitem}
             />
           </Group>
@@ -862,10 +870,17 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -902,10 +917,17 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -941,10 +963,12 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items);
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         return (
           <StockOperationsRow
@@ -1022,6 +1046,30 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all non-null location values from the items
+  const locationValues = [
+    ...new Set(
+      items.filter((item) => item.location).map((item) => item.location)
+    )
+  ];
+
+  // Extract all non-null default location values from the items
+  const defaultLocationValues = [
+    ...new Set(
+      items
+        .filter((item) => item.part_detail?.default_location)
+        .map((item) => item.part_detail?.default_location)
+    )
+  ];
+
+  // Select a default location value
+  const defaultLocation =
+    locationValues.length === 1
+      ? locationValues[0]
+      : defaultLocationValues.length === 1
+        ? defaultLocationValues[0]
+        : undefined;
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -1051,7 +1099,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail?.default_location,
+      default: defaultLocation,
       filters: {
         structural: false
       }
@@ -1328,6 +1376,38 @@ export function useChangeStockStatus(props: StockOperationProps) {
   });
 }
 
+export function useChangeStockBatchCode(props: StockOperationProps) {
+  // Return a common batch code value if all items share the same batch code, otherwise return undefined
+  const batchCode = useMemo(() => {
+    const batchCodeValues = new Set(
+      props.items?.filter((item) => item.batch).map((item) => item.batch)
+    );
+
+    if (batchCodeValues.size === 1) {
+      return batchCodeValues.values().next().value;
+    }
+
+    return undefined;
+  }, [props.items]);
+
+  return useBulkEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    items: props.items?.map((item: any) => item.pk) ?? [],
+    title: t`Change Batch Code`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Change batch code for the selected stock items`}
+      </Alert>
+    ),
+    fields: {
+      batch: {
+        value: batchCode
+      }
+    },
+    onFormSuccess: props.refresh
+  });
+}
+
 export function useMergeStockItem(props: StockOperationProps) {
   return useStockOperationModal({
     ...props,
@@ -1456,6 +1536,10 @@ export function useTestResultFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else {
+            // No choices defined - this is a free-form text field
+            setChoices([]);
+            setFieldType('string');
           }
         }
       },

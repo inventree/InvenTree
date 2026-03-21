@@ -85,7 +85,7 @@ export function useInstance<T = any>({
           pk == null ||
           pk == undefined ||
           pk.toString().length == 0 ||
-          pk == '-1'
+          pk.toString() == '-1'
         ) {
           setInstance(defaultValue);
           return defaultValue;

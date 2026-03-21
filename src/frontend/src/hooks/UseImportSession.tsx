@@ -42,6 +42,7 @@ export function useImportSession({
   } = useInstance({
     endpoint: ApiEndpoints.import_session_list,
     pk: sessionId,
+    hasPrimaryKey: true,
     defaultValue: {}
   });
 
@@ -49,7 +50,7 @@ export function useImportSession({
     setInstance(data);
   }, []);
 
-  const importSessionStatus = useStatusCodes({
+  useStatusCodes({
     modelType: ModelType.importsession
   });
 

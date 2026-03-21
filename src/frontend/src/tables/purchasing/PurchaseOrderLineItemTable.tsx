@@ -237,7 +237,8 @@ export function PurchaseOrderLineItemTable({
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        ordering: 'SKU'
+        ordering: 'SKU',
+        copyable: true
       },
       LinkColumn({
         accessor: 'supplier_part_detail.link',
@@ -250,7 +251,8 @@ export function PurchaseOrderLineItemTable({
         ordering: 'MPN',
         title: t`Manufacturer Code`,
         sortable: true,
-        defaultVisible: false
+        defaultVisible: false,
+        copyable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',
@@ -289,7 +291,8 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const [initialData, setInitialData] = useState<any>({});
@@ -300,6 +303,7 @@ export function PurchaseOrderLineItemTable({
     fields: addPurchaseOrderFields,
     initialData: {
       ...initialData,
+      purchase_price: null,
       purchase_price_currency: currency
     },
     onFormSuccess: orderDetailRefresh,
@@ -311,7 +315,8 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const editLine = useEditApiFormModal({
@@ -437,7 +442,8 @@ export function PurchaseOrderLineItemTable({
           params: {
             ...params,
             order: orderId,
-            part_detail: true
+            part_detail: true,
+            destination_detail: true
           },
           rowActions: rowActions,
           tableActions: tableActions,

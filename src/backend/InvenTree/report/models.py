@@ -272,7 +272,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, context, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(string=html).write_pdf(pdf_forms=True)
 
         return pdf
 
@@ -704,7 +704,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
         base_context = super().get_context(instance, request, **kwargs)
-        label_context: LabelContextExtension = {  # type: ignore[invalid-assignment]
+        label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
             'page_style': None,

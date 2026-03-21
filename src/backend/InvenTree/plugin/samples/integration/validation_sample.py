@@ -68,7 +68,7 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         if isinstance(instance, part.models.BomItem):
             if self.get_setting('BOM_ITEM_INTEGER'):
-                if float(instance.quantity) != int(instance.quantity):
+                if float(instance.quantity) != int(instance.quantity):  # noqa: RUF069
                     self.raise_error({
                         'quantity': 'Bom item quantity must be an integer'
                     })
@@ -111,8 +111,8 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             self.raise_error("IPN must contain 'Q'")
 
-    def validate_part_parameter(self, parameter, data):
-        """Validate part parameter data.
+    def validate_parameter(self, parameter, data):
+        """Validate parameter data.
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """

@@ -7,8 +7,10 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
@@ -19,15 +21,17 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
-from taggit.serializers import TaggitSerializer
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
+from InvenTree.helpers_model import getModelsWithMixin
 
 from .setting.storages import StorageBackends
 
@@ -42,11 +46,15 @@ class FilterableSerializerField:
     is_filterable = None
     is_filterable_vals = {}
 
+    # Options for automatic queryset prefetching
+    prefetch_fields: Optional[list[str]] = None
+
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
-        if self.is_filterable is None:  # Materialize parameters for later usage
-            self.is_filterable = kwargs.pop('is_filterable', None)
-            self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        self.is_filterable = kwargs.pop('is_filterable', None)
+        self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        self.prefetch_fields = kwargs.pop('prefetch_fields', None)
+
         super().__init__(*args, **kwargs)
 
 
@@ -55,6 +63,7 @@ def enable_filter(
     default_include: bool = False,
     filter_name: Optional[str] = None,
     filter_by_query: bool = True,
+    prefetch_fields: Optional[list[str]] = None,
 ):
     """Decorator for marking a serializer field as filterable.
 
@@ -65,11 +74,12 @@ def enable_filter(
         default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
         filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
         filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
+        prefetch_fields (list of str, optional): List of related fields to prefetch when this field is included. This can be used to optimize database queries.
 
     Returns:
         The decorated serializer field, marked as filterable.
     """
-    # Ensure this function can be actually filteres
+    # Ensure this function can be actually filtered
     if not issubclass(func.__class__, FilterableSerializerField):
         raise TypeError(
             'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
@@ -82,6 +92,10 @@ def enable_filter(
         'filter_name': filter_name if filter_name else func.field_name,
         'filter_by_query': filter_by_query,
     }
+
+    # Attach queryset prefetching information
+    func._kwargs['prefetch_fields'] = prefetch_fields
+
     return func
 
 
@@ -111,12 +125,54 @@ class FilterableSerializerMixin:
         super().__init__(*args, **kwargs)
         self.do_filtering()
 
+    def prefetch_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Apply any prefetching to the queryset based on the optionally included fields.
+
+        Args:
+            queryset: The original queryset.
+
+        Returns:
+            The modified queryset with prefetching applied.
+        """
+        # If we are inside an OPTIONS request, DO NOT PREFETCH
+        if request := getattr(self, 'request', None):
+            if method := getattr(request, 'method', None):
+                if str(method).lower() == 'options':
+                    return queryset
+
+            if getattr(request, '_metadata_requested', False):
+                return queryset
+
+        # Gather up the set of simple 'prefetch' fields and functions
+        prefetch_fields = set()
+
+        filterable_fields = [
+            field
+            for field in self.fields.values()
+            if getattr(field, 'is_filterable', None)
+        ]
+
+        for field in filterable_fields:
+            if prefetch_names := getattr(field, 'prefetch_fields', None):
+                for pf in prefetch_names:
+                    prefetch_fields.add(pf)
+
+        if prefetch_fields and len(prefetch_fields) > 0:
+            queryset = queryset.prefetch_related(*list(prefetch_fields))
+
+        return queryset
+
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
+        context = kwargs.get('context', {})
+        request = context.get('request', None) or getattr(self, 'request', None)
+
+        # Gather query parameters from the request context
+        query_params = dict(getattr(request, 'query_params', {})) if request else {}
+
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
             return
-        self._was_filtered = True
 
         # Actually gather the filterable fields
         # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
@@ -126,32 +182,35 @@ class FilterableSerializerMixin:
             if getattr(a, 'is_filterable', None)
         }
 
-        # Gather query parameters from the request context
-        query_params = {}
-        if context := kwargs.get('context', {}):
-            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
-
         # Remove filter args from kwargs to avoid issues with super().__init__
-        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
+        popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals: dict[str, bool] = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['filter_name'] or k
-            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
-
+            val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
             # Optionally also look in query parameters
-            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+            # Note that we only do this for a top-level serializer, to avoid issues with nested serializers
+            if (
+                request
+                and val is None
+                and self.filter_on_query
+                and v.get('filter_by_query', True)
+            ):
                 val = query_params.pop(pop_ref, None)
+
                 if isinstance(val, list) and len(val) == 1:
                     val = val[0]
 
             if val:  # Save popped value for reuse
-                poped_kwargs[pop_ref] = val
+                popped_kwargs[pop_ref] = val
             tgs_vals[k] = (
                 str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
-        self.filter_target_values = tgs_vals
 
-        # Ensure this mixin is not proadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
+        self.filter_target_values = tgs_vals
+        self._was_filtered = True
+
+        # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
         if len(self.filter_targets) == 0 and not self.no_filters:
             raise Exception(
                 'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
@@ -165,6 +224,14 @@ class FilterableSerializerMixin:
             or InvenTree.ready.isGeneratingSchema()
         ):
             return
+
+        is_exporting = getattr(self, '_exporting_data', False)
+
+        # Skip filtering for a write requests - all fields should be present for data creation
+        if request := self.context.get('request', None):
+            if method := getattr(request, 'method', None):
+                if method not in SAFE_METHODS and not is_exporting:
+                    return
 
         # Throw out fields which are not requested (either by default or explicitly)
         for k, v in self.filter_target_values.items():
@@ -206,6 +273,13 @@ class FilterableCharField(FilterableSerializerField, serializers.CharField):
 
 class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
     """Custom IntegerField which allows filtering."""
+
+
+class FilterableTagListField(FilterableSerializerField, TagListSerializerField):
+    """Custom TagListSerializerField which allows filtering."""
+
+    class Meta:
+        """Empty Meta class."""
 
 
 # endregion
@@ -646,6 +720,11 @@ class InvenTreeDecimalField(serializers.FloatField):
 
     def to_internal_value(self, data):
         """Convert to python type."""
+        if data in [None, '']:
+            if self.allow_null:
+                return None
+            raise serializers.ValidationError(_('This field may not be null.'))
+
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
@@ -716,3 +795,96 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class ContentTypeField(serializers.ChoiceField):
+    """Serializer field which represents a ContentType as 'app_label.model_name'.
+
+    This field converts a ContentType instance to a string representation in the format 'app_label.model_name' during serialization, and vice versa during deserialization.
+
+    Additionally, a "mixin_class" can be supplied to the field, which will restrict the valid content types to only those models which inherit from the specified mixin.
+    """
+
+    mixin_class = None
+
+    def __init__(self, *args, mixin_class=None, **kwargs):
+        """Initialize the ContentTypeField.
+
+        Args:
+            mixin_class: Optional mixin class to restrict valid content types.
+        """
+        from InvenTree.cache import get_cached_content_types
+
+        self.mixin_class = mixin_class
+
+        # Override the 'choices' field, to limit to the appropriate models
+        if self.mixin_class is not None:
+            models = getModelsWithMixin(self.mixin_class)
+
+            kwargs['choices'] = [
+                (
+                    f'{model._meta.app_label}.{model._meta.model_name}',
+                    model._meta.verbose_name,
+                )
+                for model in models
+            ]
+        else:
+            content_types = get_cached_content_types()
+
+            kwargs['choices'] = [
+                (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
+            ]
+
+        if kwargs.get('allow_null') or kwargs.get('allow_blank'):
+            kwargs['choices'] = [('', '---------'), *kwargs['choices']]
+
+        super().__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        """Convert ContentType instance to string representation."""
+        return f'{value.app_label}.{value.model}'
+
+    def to_internal_value(self, data):
+        """Convert string representation back to ContentType instance."""
+        content_type = None
+
+        if data in ['', None]:
+            return None
+
+        # First, try to resolve the content type via direct pk value
+        try:
+            content_type_id = int(data)
+            content_type = ContentType.objects.get_for_id(content_type_id)
+        except (ValueError, ContentType.DoesNotExist):
+            content_type = None
+
+        try:
+            if len(data.split('.')) == 2:
+                app_label, model = data.split('.')
+                content_types = ContentType.objects.filter(
+                    app_label=app_label, model=model
+                )
+
+                if content_types.count() == 1:
+                    # Try exact match first
+                    content_type = content_types.first()
+            else:
+                # Try lookup just on model name
+                content_types = ContentType.objects.filter(model=data)
+                if content_types.exists() and content_types.count() == 1:
+                    content_type = content_types.first()
+
+        except Exception:
+            raise ValidationError(_('Invalid content type format'))
+
+        if content_type is None:
+            raise ValidationError(_('Content type not found'))
+
+        if self.mixin_class is not None:
+            model_class = content_type.model_class()
+            if not issubclass(model_class, self.mixin_class):
+                raise ValidationError(
+                    _('Content type does not match required mixin class')
+                )
+
+        return content_type

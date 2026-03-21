@@ -32,6 +32,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
@@ -303,6 +304,15 @@ export default function PurchaseOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
+      },
+      {
+        type: 'date',
+        name: 'updated_at',
+        label: t`Last Updated`,
+        icon: 'calendar',
+        copy: true,
+        showTime: true,
+        hidden: !order.updated_at
       }
     ];
 
@@ -389,13 +399,18 @@ export default function PurchaseOrderDetail() {
           />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.purchaseorder,
+        model_id: order.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.purchaseorder,
         model_id: order.pk
       }),
       NotesPanel({
         model_type: ModelType.purchaseorder,
-        model_id: order.pk
+        model_id: order.pk,
+        has_note: !!order.notes
       })
     ];
   }, [order, id, user]);

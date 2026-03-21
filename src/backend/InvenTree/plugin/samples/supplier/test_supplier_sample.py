@@ -2,14 +2,10 @@
 
 from django.urls import reverse
 
+from common.models import ParameterTemplate
 from company.models import ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import (
-    Part,
-    PartCategory,
-    PartCategoryParameterTemplate,
-    PartParameterTemplate,
-)
+from part.models import Part, PartCategory, PartCategoryParameterTemplate
 from plugin import registry
 
 
@@ -134,14 +130,14 @@ class SampleSupplierTest(InvenTreeAPITestCase):
 
         # valid supplier, valid part import
         category = PartCategory.objects.get(pk=1)
-        p_len = PartParameterTemplate(name='Length', units='mm')
-        p_test = PartParameterTemplate(name='Test Parameter')
+        p_len = ParameterTemplate(name='Length', units='mm')
+        p_test = ParameterTemplate(name='Test Parameter')
         p_len.save()
         p_test.save()
         PartCategoryParameterTemplate.objects.bulk_create([
-            PartCategoryParameterTemplate(category=category, parameter_template=p_len),
+            PartCategoryParameterTemplate(category=category, template=p_len),
             PartCategoryParameterTemplate(
-                category=category, parameter_template=p_test, default_value='Test Value'
+                category=category, template=p_test, default_value='Test Value'
             ),
         ])
         res = self.post(

@@ -22,8 +22,8 @@ import {
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconList,
   IconListCheck,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconPackages,
@@ -81,6 +81,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -97,7 +98,7 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -168,6 +169,17 @@ function BomValidationInformation({
       refetchOnMount: true
     });
 
+  const [taskId, setTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: taskId,
+    message: t`Validating BOM`,
+    successMessage: t`BOM validated`,
+    onComplete: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
   const validateBom = useApiFormModal({
     url: ApiEndpoints.bom_validate,
     method: 'PUT',
@@ -184,9 +196,14 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`Bill of materials scheduled for validation`,
-    onFormSuccess: () => {
-      bomInformationQuery.refetch();
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      // If the process has been offloaded to a background task
+      if (response.task_id) {
+        setTaskId(response.task_id);
+      } else {
+        bomInformationQuery.refetch();
+      }
     }
   });
 
@@ -693,13 +710,6 @@ export default function PartDetail() {
         hidden: !part.responsible
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.supplierpart,
-        hidden: !part.default_supplier
-      },
-      {
         name: 'default_expiry',
         label: t`Default Expiry`,
         hidden: !part.default_expiry,
@@ -787,17 +797,6 @@ export default function PartDetail() {
         label: t`Part Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
-      },
-      {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: (
-          <PartParameterTable
-            partId={id ?? -1}
-            partLocked={part?.locked == true}
-          />
-        )
       },
       {
         name: 'stock',
@@ -949,13 +948,38 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconListDetails />,
+        content: (
+          <>
+            {part.locked && (
+              <Alert
+                title={t`Part is Locked`}
+                color='orange'
+                icon={<IconLock />}
+                p='xs'
+              >
+                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
+              </Alert>
+            )}
+            <ParameterTable
+              modelType={ModelType.part}
+              modelId={part?.pk}
+              allowEdit={part?.locked != true}
+            />
+          </>
+        )
+      },
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk
       }),
       NotesPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        has_note: !!part?.notes
       })
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);
@@ -978,6 +1002,8 @@ export default function PartDetail() {
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
+
+    const shortfall = Math.max(required - partRequirements.total_stock, 0);
 
     return [
       <DetailsBadge
@@ -1024,6 +1050,12 @@ export default function PartDetail() {
         key='in_production'
       />,
       <DetailsBadge
+        label={`${t`Deficit`}: ${formatDecimal(shortfall)}`}
+        color='red'
+        visible={shortfall > 0}
+        key='deficit'
+      />,
+      <DetailsBadge
         label={t`Inactive`}
         color='red'
         visible={!part.active}
@@ -1038,7 +1070,10 @@ export default function PartDetail() {
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    partId: part.pk
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
@@ -1100,6 +1135,7 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
+    changeBatch: false,
     enabled: true
   });
 

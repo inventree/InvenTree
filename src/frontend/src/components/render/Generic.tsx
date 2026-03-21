@@ -2,6 +2,30 @@ import type { ReactNode } from 'react';
 
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
+export function RenderParameterTemplate({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.name}
+      secondary={instance.description}
+      suffix={instance.units}
+    />
+  );
+}
+
+export function RenderParameter({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.template?.name || ''}
+      secondary={instance.description}
+      suffix={instance.data || instance.data_numeric || ''}
+    />
+  );
+}
+
 export function RenderProjectCode({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {

@@ -29,9 +29,11 @@ import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
+import { hashString } from '../functions/tables';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
+import { CopyableCell } from './CopyableCell';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -101,7 +103,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
-    const key: string = `table-${tableState.tableKey}`;
+    const key: string = `tbl-${tableState.tableKey}`;
 
     // Remove anything after (and including) "mantine"
     const mantineIndex = key.indexOf('-mantine');
@@ -244,6 +246,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [tableState.setSelectedRecords]
   );
 
+  // A hash of the current column configuration
+  // This is a workaround to fix an issue with mantine-datatable where
+  // the columns do not update correctly when they are changed dynamically
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
+  const [columnHash, setColumnHash] = useState<string>('');
+
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
@@ -257,11 +265,40 @@ export function InvenTreeTable<T extends Record<string, any>>({
           ? false
           : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
+      // Wrap the render function with CopyableCell if copyable is enabled
+      const originalRender = col.render;
+      let wrappedRender = originalRender;
+
+      if (col.copyable) {
+        wrappedRender = (record: any, index?: number) => {
+          const content =
+            originalRender?.(record, index) ??
+            resolveItem(record, col.accessor);
+
+          // Determine the value to copy, ensuring it is always a string
+          let rawCopyValue: unknown;
+          if (typeof col.copyable === 'function') {
+            rawCopyValue = col.copyable(record);
+          } else {
+            const accessor = col.copyAccessor ?? col.accessor;
+            rawCopyValue = resolveItem(record, accessor);
+          }
+          const copyValue = rawCopyValue == null ? '' : String(rawCopyValue);
+
+          if (window.isSecureContext && !!copyValue) {
+            return <CopyableCell value={copyValue}>{content}</CopyableCell>;
+          } else {
+            return content;
+          }
+        };
+      }
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        render: wrappedRender,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -296,6 +333,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
+    const columnNames: string = cols.map((col) => col.accessor).join(',');
+    setColumnHash(hashString(columnNames));
+
     return cols;
   }, [
     columns,
@@ -328,27 +368,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
-    key: cacheKey,
+    key: `${cacheKey}-${columnHash}`,
     columns: dataColumns,
     getInitialValueInEffect: false
   });
-
-  // Cache the "ordering" of the columns
-  const dataColumnsOrder: string[] = useMemo(() => {
-    return dataColumns.map((col: any) => col.accessor);
-  }, [dataColumns]);
-
-  // Ensure that the "actions" column is always at the end of the list
-  // This effect is necessary as sometimes the underlying mantine-datatable columns change
-  useEffect(() => {
-    // Update the columns order only if it has changed
-    if (
-      JSON.stringify(tableColumns.columnsOrder) !=
-      JSON.stringify(dataColumnsOrder)
-    ) {
-      tableColumns.setColumnsOrder(dataColumnsOrder);
-    }
-  }, [cacheKey, dataColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -492,6 +515,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     (status: DataTableSortStatus<T>) => {
       tableState.setPage(1);
       setSortStatus(status);
+
+      if (!status.columnAccessor) {
+        console.error(`Invalid column accessor provided for table ${cacheKey}`);
+      }
 
       setTableSorting(cacheKey)(status);
     },

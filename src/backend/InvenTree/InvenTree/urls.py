@@ -186,6 +186,9 @@ urlpatterns.append(
 if settings.FRONTEND_SETTINGS.get('url_compatibility'):
     urlpatterns += cui_compatibility_urls(settings.FRONTEND_URL_BASE)
 
+if settings.DJANGO_SILK_ENABLED:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+
 # Send any unknown URLs to the index page
 urlpatterns += [
     re_path(

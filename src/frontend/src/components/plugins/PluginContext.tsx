@@ -18,6 +18,7 @@ import {
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
 import { i18n } from '@lingui/core';
+import { defaultLocale } from '../../contexts/LanguageContext';
 import {
   useAddStockItem,
   useAssignStockItem,
@@ -35,10 +36,12 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useServerApiState } from '../../states/ServerApiState';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
+  const [server] = useServerApiState(useShallow((s) => [s.server]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -57,7 +60,7 @@ export const useInvenTreeContext = () => {
       user: user,
       host: host,
       i18n: i18n,
-      locale: locale,
+      locale: locale || server.default_locale || defaultLocale,
       api: api,
       queryClient: queryClient,
       navigate: navigate,

@@ -4,6 +4,8 @@ import socket
 import threading
 from typing import Any
 
+from django.db.utils import OperationalError, ProgrammingError
+
 import structlog
 
 import InvenTree.config
@@ -169,3 +171,22 @@ def set_session_cache(key: str, value: Any) -> None:
 
     if request_cache is not None:
         request_cache[key] = value
+
+
+def get_cached_content_types(cache_key: str = 'all_content_types') -> list:
+    """Return a list of all ContentType objects, using session cache if possible."""
+    from django.contrib.contenttypes.models import ContentType
+
+    # Attempt to retrieve a list of ContentType objects from session cache
+    if content_types := get_session_cache(cache_key):
+        return content_types
+
+    try:
+        content_types = list(ContentType.objects.all())
+        if len(content_types) > 0:
+            set_session_cache(cache_key, content_types)
+    except (OperationalError, ProgrammingError):
+        # Database is likely not yet ready
+        content_types = []
+
+    return content_types

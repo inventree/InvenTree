@@ -20,6 +20,7 @@ export enum ApiEndpoints {
   user_simple_login = 'email/generate/',
 
   // User auth endpoints
+  auth_base = '/auth/',
   user_reset = 'auth/v1/auth/password/request',
   user_reset_set = 'auth/v1/auth/password/reset',
   auth_pwd_change = 'auth/v1/account/password/change',
@@ -111,8 +112,6 @@ export enum ApiEndpoints {
 
   // Part API endpoints
   part_list = 'part/',
-  part_parameter_list = 'part/parameter/',
-  part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
   part_requirements = 'part/:id/requirements/',
@@ -121,6 +120,7 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -134,7 +134,6 @@ export enum ApiEndpoints {
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
   // Stock location endpoints
   stock_location_list = 'stock/location/',
@@ -243,5 +242,10 @@ export enum ApiEndpoints {
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
-  config_list = 'admin/config/'
+  config_list = 'admin/config/',
+  parameter_list = 'parameter/',
+  parameter_template_list = 'parameter/template/',
+
+  // Internal system things
+  system_internal_trace_end = 'system-internal/observability/end'
 }

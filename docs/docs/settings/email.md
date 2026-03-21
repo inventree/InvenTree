@@ -9,7 +9,7 @@ InvenTree can be configured to send emails to users, for various purposes.
 To enable this, email configuration settings must be supplied to the InvenTree [configuration options](../start/config.md#email-settings).
 
 !!! info "Functionality might be degraded"
-    Multiple functions of InvenTree require functioning email delivery, including *Password Reset*, *Notififications*, *Update Infos*
+    Multiple functions of InvenTree require functioning email delivery, including *Password Reset*, *Notifications*, *Update Infos*
 
 ### Outgoing
 

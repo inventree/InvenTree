@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconCircleCheck,
@@ -13,7 +13,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import dayjs from 'dayjs';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -39,11 +38,12 @@ import { RenderAddress } from '../../components/render/Company';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import {
-  useSalesOrderShipmentCompleteFields,
-  useSalesOrderShipmentFields
+  useCheckShipmentForm,
+  useCompleteShipmentForm,
+  useSalesOrderShipmentFields,
+  useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
 import {
-  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -70,11 +70,7 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const {
-    instance: customer,
-    instanceQuery: customerQuery,
-    refreshInstance: refreshCustomer
-  } = useInstance({
+  const { instance: customer, instanceQuery: customerQuery } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: shipment.order_detail?.customer,
     hasPrimaryKey: true
@@ -277,7 +273,8 @@ export default function SalesOrderShipmentDetail() {
       }),
       NotesPanel({
         model_type: ModelType.salesordershipment,
-        model_id: shipment.pk
+        model_id: shipment.pk,
+        has_note: !!shipment.notes
       })
     ];
   }, [isPending, shipment, detailsPanel]);
@@ -305,59 +302,19 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
-
-  const completeShipment = useCreateApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_complete,
-    pk: shipment.pk,
-    fields: completeShipmentFields,
-    title: t`Complete Shipment`,
-    focus: 'tracking_number',
-    initialData: {
-      ...shipment,
-      shipment_date: dayjs().format('YYYY-MM-DD')
-    },
-    onFormSuccess: refreshShipment
+  const completeShipment = useCompleteShipmentForm({
+    shipment: shipment,
+    onSuccess: refreshShipment
   });
 
-  const checkShipment = useEditApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_list,
-    pk: shipment.pk,
-    title: t`Check Shipment`,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Check Shipment`}>
-        <Text>{t`Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct`}</Text>
-      </Alert>
-    ),
-    fetchInitialData: false,
-    fields: {
-      checked_by: {
-        hidden: true,
-        value: userId
-      }
-    },
-    successMessage: t`Shipment marked as checked`,
-    onFormSuccess: refreshShipment
+  const checkShipment = useCheckShipmentForm({
+    shipmentId: shipment.pk,
+    onSuccess: refreshShipment
   });
 
-  const uncheckShipment = useEditApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_list,
-    pk: shipment.pk,
-    title: t`Uncheck Shipment`,
-    preFormContent: (
-      <Alert color='red' icon={<IconCircleX />} title={t`Uncheck Shipment`}>
-        <Text>{t`Marking the shipment as unchecked indicates that the shipment requires further verification`}</Text>
-      </Alert>
-    ),
-    fetchInitialData: false,
-    fields: {
-      checked_by: {
-        hidden: true,
-        value: null
-      }
-    },
-    successMessage: t`Shipment marked as unchecked`,
-    onFormSuccess: refreshShipment
+  const uncheckShipment = useUncheckShipmentForm({
+    shipmentId: shipment.pk,
+    onSuccess: refreshShipment
   });
 
   const shipmentBadges = useMemo(() => {

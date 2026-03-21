@@ -9,7 +9,12 @@ from django.apps import AppConfig
 import structlog
 from maintenance_mode.core import set_maintenance_mode
 
-from InvenTree.ready import canAppAccessDatabase, isInMainThread, isInWorkerThread
+from InvenTree.ready import (
+    canAppAccessDatabase,
+    ignore_ready_warning,
+    isInMainThread,
+    isInWorkerThread,
+)
 from plugin import registry
 
 logger = structlog.get_logger('inventree')
@@ -24,6 +29,7 @@ class PluginAppConfig(AppConfig):
         """The ready method is extended to initialize plugins."""
         self.reload_plugin_registry()
 
+    @ignore_ready_warning
     def reload_plugin_registry(self):
         """Reload the plugin registry."""
         if not isInMainThread() and not isInWorkerThread():

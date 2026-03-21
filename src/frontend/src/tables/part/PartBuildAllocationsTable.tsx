@@ -165,7 +165,8 @@ export default function PartBuildAllocationsTable({
           project_code_detail: true,
           assembly_detail: true,
           build_detail: true,
-          order_outstanding: true
+          order_outstanding: true,
+          allocations: true
         },
         enableColumnSwitching: true,
         enableSearch: false,

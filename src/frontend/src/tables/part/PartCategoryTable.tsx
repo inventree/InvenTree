@@ -60,7 +60,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
-        sortable: false
+        sortable: true
       },
       {
         accessor: 'structural',

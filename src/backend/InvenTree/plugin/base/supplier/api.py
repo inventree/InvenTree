@@ -184,10 +184,10 @@ class ImportPart(APIView):
                     import_data, part=part, manufacturer_part=manufacturer_part
                 )
 
-                # set default supplier if not set
+                # Set as primary supplier if not already set
                 if not part.default_supplier:
-                    part.default_supplier = supplier_part
-                    part.save()
+                    supplier_part.primary = True
+                    supplier_part.save()
 
                 # get pricing
                 pricing = supplier_plugin.get_pricing_data(import_data)
@@ -213,17 +213,17 @@ class ImportPart(APIView):
 
             for c in category_parameters:
                 for p in parameters:
-                    if p.parameter_template == c.parameter_template:
+                    if p.parameter_template == c.template:
                         p.on_category = True
                         p.value = p.value if p.value is not None else c.default_value
                         break
                 else:
                     parameters.append(
                         supplier.ImportParameter(
-                            name=c.parameter_template.name,
+                            name=c.template.name,
                             value=c.default_value,
                             on_category=True,
-                            parameter_template=c.parameter_template,
+                            parameter_template=c.template,
                         )
                     )
             parameters.sort(key=lambda x: x.on_category, reverse=True)

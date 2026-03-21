@@ -3,6 +3,7 @@ import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
   IconLink,
+  IconPlug,
   IconPointer,
   IconSettings,
   IconUserBolt,
@@ -81,21 +82,22 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconPointer size='1.2rem' />
       },
       {
-        id: 'scan',
-        label: t`Scan`,
-        description: t`Scan a barcode or QR code`,
-        onClick: () => openQrModal(navigate),
-        leftSection: <IconBarcode size='1.2rem' />
-      },
-      {
         id: 'user-settings',
         label: t`User Settings`,
-
         description: t`Go to your user settings`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
       }
     ];
+
+    user?.isStaff() &&
+      _actions.push({
+        id: 'data-import',
+        label: t`Import Data`,
+        description: t`Import data from a file`,
+        onClick: () => navigate('/settings/admin/import'),
+        leftSection: <IconPlug size='1.2rem' />
+      });
 
     // Page Actions
     user?.hasViewRole(UserRoles.purchase_order) &&
@@ -129,6 +131,15 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
+    globalSettings.isSet('BARCODE_ENABLE') &&
+      _actions.push({
+        id: 'scan',
+        label: t`Scan`,
+        description: t`Scan a barcode or QR code`,
+        onClick: () => openQrModal(navigate),
+        leftSection: <IconBarcode size='1.2rem' />
+      });
+
     user?.hasViewRole(UserRoles.build) &&
       _actions.push({
         id: 'builds',
@@ -152,12 +163,21 @@ export function getActions(navigate: NavigateFunction) {
         id: 'admin-center',
         label: t`Admin Center`,
         description: t`Go to the Admin Center`,
-        onClick: () => {}, /// navigate(menuItems['settings-admin'].link),}
+        onClick: () => navigate('/settings/admin'),
         leftSection: <IconUserBolt size='1.2rem' />
+      });
+
+    user?.isStaff() &&
+      _actions.push({
+        id: 'plugin-settings',
+        label: t`Plugins`,
+        description: t`Manage InvenTree plugins`,
+        onClick: () => navigate('/settings/admin/plugin'),
+        leftSection: <IconPlug size='1.2rem' />
       });
 
     return _actions;
   }, [navigate, setNavigationOpen, globalSettings, user]);
 
-  return actions;
+  return actions.sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''));
 }

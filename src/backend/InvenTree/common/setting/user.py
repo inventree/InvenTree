@@ -41,6 +41,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'BARCODE_IN_FORM_FIELDS': {
+        'name': _('Barcode Scanner in Form Fields'),
+        'description': _('Allow barcode scanner input in form fields'),
+        'default': False,
+        'validator': bool,
+    },
     'SEARCH_PREVIEW_SHOW_PARTS': {
         'name': _('Search Parts'),
         'description': _('Display parts in search preview window'),

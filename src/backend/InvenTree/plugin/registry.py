@@ -473,12 +473,19 @@ class PluginsRegistry:
 
             # Ensure that each loaded plugin has a valid configuration object in the database
             for plugin in self.plugins.values():
-                config = self.get_plugin_config(plugin.slug)
+                if config := self.get_plugin_config(plugin.slug):
+                    # Ensure mandatory plugins are marked as active
+                    if config.is_mandatory() and not config.active:
+                        config.active = True
 
-                # Ensure mandatory plugins are marked as active
-                if config.is_mandatory() and not config.active:
-                    config.active = True
-                    config.save(no_reload=True)
+                        try:
+                            config.save(no_reload=True)
+                        except (OperationalError, ProgrammingError):
+                            # Database is not ready, cannot save config
+                            logger.warning(
+                                "Database not ready - cannot set mandatory flag for plugin '%s'",
+                                plugin.slug,
+                            )
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
@@ -774,9 +781,9 @@ class PluginsRegistry:
                     f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
                 )
                 if v := plg_i.MIN_VERSION:
-                    _msg += _(f'Plugin requires at least version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at least version {v}')  # ty:ignore[unsupported-operator]
                 if v := plg_i.MAX_VERSION:
-                    _msg += _(f'Plugin requires at most version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at most version {v}')  # ty:ignore[unsupported-operator]
                 # Log to error stack
                 log_registry_error(_msg, reference=f'{p}:init_plugin')
             else:

@@ -93,7 +93,8 @@ class BarcodeView(CreateAPIView):
             if num_scans > max_scans:
                 n = num_scans - max_scans
                 old_scan_ids = list(
-                    BarcodeScanResult.objects.all()
+                    BarcodeScanResult.objects
+                    .all()
                     .order_by('timestamp')
                     .values_list('pk', flat=True)[:n]
                 )

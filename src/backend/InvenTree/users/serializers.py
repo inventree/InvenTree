@@ -19,7 +19,7 @@ from InvenTree.serializers import (
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
-from .permissions import check_user_role
+from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
 
@@ -83,13 +83,16 @@ class RoleSerializer(InvenTreeModelSerializer):
         """Roles associated with the user."""
         roles = {}
 
+        # Cache the 'groups' queryset for the user
+        groups = prefetch_rule_sets(user)
+
         for ruleset in RULESET_CHOICES:
             role, _text = ruleset
 
             permissions = []
 
             for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
+                if check_user_role(user, role, permission, groups=groups):
                     permissions.append(permission)
 
             if len(permissions) > 0:
@@ -265,11 +268,13 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             source='rule_sets', many=True, read_only=True, allow_null=True
         ),
         filter_name='role_detail',
+        prefetch_fields=['rule_sets'],
     )
 
     users = enable_filter(
         UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
         filter_name='user_detail',
+        prefetch_fields=['user_set'],
     )
 
 

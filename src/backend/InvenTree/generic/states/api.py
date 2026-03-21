@@ -129,11 +129,24 @@ class AllStatusViews(StatusView):
         # Find all inherited status classes
         status_classes = inheritors(StatusCode)
 
-        for cls in status_classes:
-            cls_data = {'status_class': cls.__name__, 'values': cls.dict()}
+        # Pre-fetch all custom values from the database
+        # This reduces the number of queries required
+        from common.models import InvenTreeCustomUserStateModel
 
-            # Extend with custom values
-            for item in cls.custom_values():
+        custom_states_map = {}
+        for state in InvenTreeCustomUserStateModel.objects.all():
+            key = state.reference_status
+            if key not in custom_states_map:
+                custom_states_map[key] = []
+            custom_states_map[key].append(state)
+
+        for cls in status_classes:
+            cls_data = {'status_class': cls.__name__, 'values': cls.dict(custom=False)}
+
+            # Extend with custom values (from pre-cached queryset)
+            custom_states = custom_states_map.get(cls.__name__, [])
+
+            for item in custom_states:
                 label = str(item.name)
                 if label not in cls_data['values']:
                     cls_data['values'][label] = {

@@ -192,7 +192,7 @@ def get_modules(pkg, path=None):
             if sys.version_info < (3, 12):
                 module = finder.find_module(name).load_module(name)
             else:
-                spec = finder.find_spec(name)
+                spec = finder.find_spec(name)  # type: ignore[missing-argument]
                 module = module_from_spec(spec)
                 sys.modules[name] = module
                 spec.loader.exec_module(module)

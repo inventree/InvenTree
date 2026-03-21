@@ -15,7 +15,7 @@ root_command() {
   no_call=${args[--no-call]}
   dry_run=${args[--dry-run]}
 
-  REQS="wget apt-transport-https"
+  REQS="wget apt-transport-https curl gpg"
 
   function do_call() {
       if [[ $dry_run ]]; then

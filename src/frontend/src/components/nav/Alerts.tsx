@@ -1,5 +1,5 @@
 import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import type { SettingsStateProps } from '@lib/types/Settings';
@@ -34,7 +34,7 @@ export function Alerts() {
 
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const alerts: AlertInfo[] = useMemo(
+  const alerts: ExtendedAlertInfo[] = useMemo(
     () =>
       getAlerts(server, globalSettings).filter(
         (alert) => !dismissed.includes(alert.key)
@@ -79,11 +79,12 @@ export function Alerts() {
 export function ServerAlert({
   alert,
   closeAlert
-}: { alert: AlertInfo; closeAlert?: (key: string) => void }) {
+}: { alert: ExtendedAlertInfo; closeAlert?: (key: string) => void }) {
   return (
     <Alert
       withCloseButton={!!closeAlert}
-      color={alert.error ? 'red' : 'orange'}
+      color={alert.condition ? (alert.error ? 'red' : 'orange') : 'green'}
+      icon={alert.condition ? <IconExclamationCircle /> : <IconCircleCheck />}
       title={
         <Group gap='xs'>
           {alert.code && `${alert.code}: `}
@@ -93,14 +94,15 @@ export function ServerAlert({
       onClose={closeAlert ? () => closeAlert(alert.key) : undefined}
     >
       <Stack gap='xs'>
-        {alert.message}
-        {alert.code && errorCodeLink(alert.code)}
+        {!alert.condition && t`No issues detected`}
+        {alert.condition && alert.message}
+        {alert.condition && alert.code && errorCodeLink(alert.code)}
       </Stack>
     </Alert>
   );
 }
 
-type ExtendedAlertInfo = AlertInfo & {
+export type ExtendedAlertInfo = AlertInfo & {
   condition: boolean;
 };
 
@@ -112,7 +114,7 @@ export function getAlerts(
   const n_migrations =
     Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
 
-  const allalerts: ExtendedAlertInfo[] = [
+  const allAlerts: ExtendedAlertInfo[] = [
     {
       key: 'debug',
       title: t`Debug Mode`,
@@ -150,7 +152,7 @@ export function getAlerts(
     }
   ];
 
-  return allalerts.filter((alert) => inactive || alert.condition);
+  return allAlerts.filter((alert) => inactive || alert.condition);
 }
 
 export function errorCodeLink(code: string) {

@@ -20,7 +20,7 @@ def get_spectacular_settings():
         'SERVE_INCLUDE_SCHEMA': False,
         'SCHEMA_PATH_PREFIX': '/api/',
         'POSTPROCESSING_HOOKS': [
-            'drf_spectacular.hooks.postprocess_schema_enums',
+            'InvenTree.schema.postprocess_schema_enums',
             'InvenTree.schema.postprocess_required_nullable',
             'InvenTree.schema.postprocess_print_stats',
         ],
@@ -28,6 +28,7 @@ def get_spectacular_settings():
             'UserTypeEnum': 'users.models.UserProfile.UserType',
             'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
             'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+            'ParameterModelTypeEnum': 'common.models.Parameter.ModelChoices',
             'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
             # Allauth
             'UnauthorizedStatus': [[401, 401]],

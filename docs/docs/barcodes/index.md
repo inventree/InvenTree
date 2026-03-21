@@ -69,6 +69,27 @@ To access this page, select *Scan Barcode* from the main navigation menu:
 {{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
 {{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
 
+## Barcodes in Forms
+
+The InvenTree user interface supports direct scanning of barcodes within certain forms in the web UI. This means that any form field which points to a model which supports barcodes can accept barcode input. If barcode scanning is supported for a particular field, a barcode icon will be displayed next to the input field:
+
+{{ image("barcode/barcode_field.png", "Barcode form field") }}
+
+To scan a barcode into a form field, click this barcode icon. A barcode scanning dialog will be displayed, allowing the user to scan a barcode using their preferred input method:
+
+{{ image("barcode/barcode_field_dialog.png", "Barcode field scan dialog") }}
+
+Once scanned, the form field will be automatically populated with the correct item.
+
+{{ image("barcode/barcode_field_filled.png", "Barcode field populated") }}
+
+Any field which supports barcode input will have this functionality, such as allocating stock items to an order:
+
+{{ image("barcode/barcode_allocate_stock.png", "Allocate stock via barcode") }}
+
+### User Configuration
+
+By default, barcode scanning in form fields is disabled. Each user can enable this feature via their [user preferences](../settings/user.md#display-settings).
 
 ## App Integration
 
@@ -76,8 +97,15 @@ Barcode scanning is a key feature of the [companion mobile app](../app/barcode.m
 
 ## Barcode History
 
-If enabled, InvenTree can retain logs of the most recent barcode scans. This can be very useful for debugging or auditing purpopes.
+If enabled, InvenTree can retain logs of the most recent barcode scans. This can be very useful for debugging or auditing purposes.
 
 Refer to the [barcode settings](../settings/global.md#barcodes) to enable barcode history logging.
 
 The barcode history can be viewed via the admin panel in the web interface.
+
+## Barcode Settings
+
+There are a number of settings which control the behavior of barcodes within InvenTree. For more information, refer to the links below:
+
+- [Global Barcode Settings](../settings/global.md#barcodes)
+- [User Preferences for Barcode Scanning](../settings/user.md#display-settings)

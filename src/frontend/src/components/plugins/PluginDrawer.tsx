@@ -93,6 +93,14 @@ export default function PluginDrawer({
                     name={t`Active`}
                     value={pluginInstance?.active}
                   />
+                  {pluginInstance?.meta.website && (
+                    <InfoItem
+                      type='text'
+                      name={t`Website`}
+                      value={pluginInstance?.meta.website}
+                      link={pluginInstance?.meta.website}
+                    />
+                  )}
                 </Stack>
               </Stack>
             </Card>

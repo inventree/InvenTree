@@ -36,7 +36,8 @@ import {
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -110,27 +111,23 @@ export default function ReturnOrderLineItemTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        part: 'part_detail'
+        part: 'part_detail',
+        ordering: 'part'
       }),
       {
         accessor: 'part_detail.IPN',
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
-      {
-        accessor: 'item_detail.serial',
-        title: t`Quantity`,
+      StockColumn({
+        accessor: 'item_detail',
         switchable: false,
-        render: (record: any) => {
-          if (record.item_detail.serial && record.quantity == 1) {
-            return `# ${record.item_detail.serial}`;
-          } else {
-            return record.quantity;
-          }
-        }
-      },
+        sortable: true,
+        ordering: 'stock'
+      }),
       StatusColumn({
         model: ModelType.stockitem,
         sortable: false,

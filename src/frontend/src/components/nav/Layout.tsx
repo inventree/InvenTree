@@ -133,6 +133,7 @@ export default function LayoutComponent() {
             actions={actions}
             store={firstStore}
             highlightQuery
+            scrollable
             searchProps={{
               leftSection: <IconSearch size='1.2rem' />,
               placeholder: t`Search...`

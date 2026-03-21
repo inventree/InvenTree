@@ -191,7 +191,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
     if CONFIG_DATA is not None and not set_cache:
         return CONFIG_DATA
 
-    import yaml
+    import yaml.parser
 
     cfg_file = get_config_file()
 
@@ -200,7 +200,9 @@ def load_config_data(set_cache: bool = False) -> map | None:
             data = yaml.safe_load(cfg)
         except yaml.parser.ParserError as error:
             logger.error(
-                "Error reading InvenTree configuration file '%s': %s", cfg_file, error
+                "INVE-E13: Error reading InvenTree configuration file '%s': %s",
+                cfg_file,
+                error,
             )
             sys.exit(1)
 

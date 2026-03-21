@@ -36,6 +36,8 @@ Refer to the source code for the Stock status codes:
         show_source: True
         members: []
 
+### Custom Status Codes
+
 Stock Status supports [custom states](../concepts/custom_states.md).
 
 ### Default Status Code

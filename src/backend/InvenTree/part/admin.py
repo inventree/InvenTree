@@ -5,12 +5,6 @@ from django.contrib import admin
 from part import models
 
 
-class PartParameterInline(admin.TabularInline):
-    """Inline for part parameter data."""
-
-    model = models.PartParameter
-
-
 @admin.register(models.Part)
 class PartAdmin(admin.ModelAdmin):
     """Admin class for the Part model."""
@@ -31,12 +25,11 @@ class PartAdmin(admin.ModelAdmin):
         'variant_of',
         'category',
         'default_location',
-        'default_supplier',
         'bom_checked_by',
         'creation_user',
     ]
 
-    inlines = [PartParameterInline]
+    inlines = []
 
 
 @admin.register(models.PartPricing)
@@ -97,33 +90,6 @@ class BomItemAdmin(admin.ModelAdmin):
     )
 
     autocomplete_fields = ('part', 'sub_part')
-
-
-@admin.register(models.PartParameterTemplate)
-class ParameterTemplateAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameterTemplate model."""
-
-    list_display = ('name', 'units')
-
-    search_fields = ('name', 'units')
-
-
-@admin.register(models.PartParameter)
-class ParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameter model."""
-
-    list_display = ('part', 'template', 'data')
-
-    readonly_fields = ('updated', 'updated_by')
-
-    autocomplete_fields = ('part', 'template')
-
-
-@admin.register(models.PartCategoryParameterTemplate)
-class PartCategoryParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartCategoryParameterTemplate model."""
-
-    autocomplete_fields = ('category', 'parameter_template')
 
 
 @admin.register(models.PartSellPriceBreak)
