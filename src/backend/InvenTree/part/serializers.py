@@ -129,7 +129,16 @@ class CategorySerializer(
 
     def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
-        return category in self.context.get('starred_categories', [])
+        if not self.request or not self.request.user:
+            return False
+
+        # Cache the "starred_categories" list for the current user
+        if not hasattr(self, 'starred_categories'):
+            self.starred_categories = [
+                star.category.pk for star in self.request.user.starred_categories.all()
+            ]
+
+        return category.pk in self.starred_categories
 
     path = enable_filter(
         FilterableListField(
@@ -638,7 +647,6 @@ class PartSerializer(
 
         - Allows us to optionally pass extra fields based on the query.
         """
-        self.starred_parts = kwargs.pop('starred_parts', [])
         create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
@@ -754,7 +762,16 @@ class PartSerializer(
 
     def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
-        return part in self.starred_parts
+        if not self.request or not self.request.user:
+            return False
+
+        # Cache the "starred_parts" list for the current user
+        if not hasattr(self, 'starred_parts'):
+            self.starred_parts = [
+                star.part.pk for star in self.request.user.starred_parts.all()
+            ]
+
+        return part.pk in self.starred_parts
 
     # Extra detail for the category
     category_detail = enable_filter(

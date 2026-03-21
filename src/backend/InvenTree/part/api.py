@@ -73,20 +73,6 @@ class CategoryMixin:
         queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
         return queryset
 
-    def get_serializer_context(self):
-        """Add extra context to the serializer for the CategoryDetail endpoint."""
-        ctx = super().get_serializer_context()
-
-        try:
-            ctx['starred_categories'] = [
-                star.category for star in self.request.user.starred_categories.all()
-            ]
-        except AttributeError:
-            # Error is thrown if the view does not have an associated request
-            ctx['starred_categories'] = []
-
-        return ctx
-
 
 class CategoryFilter(FilterSet):
     """Custom filterset class for the PartCategoryList endpoint."""
@@ -266,13 +252,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         """Perform 'update' function and mark this part as 'starred' (or not)."""
         # Clean up input data
         data = self.clean_data(request.data)
+        response = super().update(request, *args, **kwargs)
 
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
             self.get_object().set_starred(request.user, starred, include_parents=False)
-
-        response = super().update(request, *args, **kwargs)
 
         return response
 
@@ -1027,26 +1012,7 @@ class PartMixin(SerializerContextMixin):
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
-        # Pass a list of "starred" parts to the current user to the serializer
-        # We do this to reduce the number of database queries required!
-        if (
-            self.starred_parts is None
-            and self.request is not None
-            and hasattr(self.request.user, 'starred_parts')
-        ):
-            self.starred_parts = [
-                star.part for star in self.request.user.starred_parts.all()
-            ]
-        kwargs['starred_parts'] = self.starred_parts
-
         return super().get_serializer(*args, **kwargs)
-
-    def get_serializer_context(self):
-        """Extend serializer context data."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
 
 
 class PartOutputOptions(OutputConfiguration):
@@ -1132,6 +1098,7 @@ class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
         """
         # Clean input data
         data = self.clean_data(request.data)
+        response = super().update(request, *args, **kwargs)
 
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
@@ -1139,8 +1106,6 @@ class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
             self.get_object().set_starred(
                 request.user, starred, include_variants=False, include_categories=False
             )
-
-        response = super().update(request, *args, **kwargs)
 
         return response
 
