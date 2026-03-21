@@ -297,6 +297,7 @@ If running with a SQLite database backend, the following additional options are 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
+| INVENTREE_DB_WAL_MODE | database.wal_mode | Enable Write-Ahead Logging (WAL) mode for SQLite databases | True |
 
 ## Caching
 

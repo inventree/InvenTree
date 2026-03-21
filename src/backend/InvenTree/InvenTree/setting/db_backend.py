@@ -148,5 +148,6 @@ def set_sqlite_options(db_options: dict):
     # not possible to implement any lower isolation levels in SQLite.
     # https://www.sqlite.org/isolation.html
 
-    # Specify that we want to use Write-Ahead Logging (WAL) mode for SQLite databases, as this allows for better concurrency and performance
-    db_options['init_command'] = 'PRAGMA journal_mode=WAL;'
+    if get_boolean_setting('INVENTREE_DB_WAL_MODE', 'database.wal_mode', True):
+        # Specify that we want to use Write-Ahead Logging (WAL) mode for SQLite databases, as this allows for better concurrency and performance
+        db_options['init_command'] = 'PRAGMA journal_mode=WAL;'
