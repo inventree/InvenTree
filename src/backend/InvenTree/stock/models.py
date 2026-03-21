@@ -3102,7 +3102,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     date = models.DateTimeField(
-        default=InvenTree.helpers.current_date,
-        verbose_name=_('Date'),
-        help_text=_('The timestamp of when the test result was recorded'),
+        default=InvenTree.helpers.current_date, verbose_name=_('Date')
     )
