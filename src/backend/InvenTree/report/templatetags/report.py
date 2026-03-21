@@ -5,12 +5,16 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
+from io import BytesIO
+from pathlib import Path
 from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
+from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
@@ -145,6 +149,106 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
     return container.get(key, backup_value)
 
 
+def media_file_exists(path: Path | str) -> bool:
+    """Check if a media file exists at the specified path.
+
+    Arguments:
+        path: The path to the media file, relative to the media storage root
+
+    Returns:
+        True if the file exists, False otherwise
+    """
+    if not path:
+        return False
+
+    try:
+        return default_storage.exists(str(path))
+    except SuspiciousFileOperation:
+        # Prevent path traversal attacks
+        raise ValidationError(_('Invalid media file path') + f": '{path}'")
+    except Exception as e:
+        # Some other error occurred - log it, but return False (file does not exist)
+        logger.error("Error checking media file existence @ '%s': %s", path, e)
+        return False
+
+
+def static_file_exists(path: Path | str) -> bool:
+    """Check if a static file exists at the specified path.
+
+    Arguments:
+        path: The path to the static file, relative to the static storage root
+
+    Returns:
+        True if the file exists, False otherwise
+    """
+    if not path:
+        return False
+
+    try:
+        return staticfiles_storage.exists(str(path))
+    except SuspiciousFileOperation:
+        # Prevent path traversal attacks
+        raise ValidationError(_('Invalid static file path') + f": '{path}'")
+    except Exception as e:
+        # Some other error occurred - log it, but return False (file does not exist)
+        logger.error("Error checking static file existence @ '%s': %s", path, e)
+        return False
+
+
+def get_static_file_contents(path: Path | str, raise_error: bool = True) -> str | None:
+    """Return the contents of a static file.
+
+    Arguments:
+        path: The path to the static file, relative to the static storage root
+        raise_error: If True, raise an error if the file cannot be found (default = True)
+
+    Returns:
+        The contents of the static file, or None if the file cannot be found
+    """
+    if not staticfiles_storage.exists(path):
+        if raise_error:
+            raise FileNotFoundError(f'Static file does not exist: {path!s}')
+        else:
+            return None
+
+    with staticfiles_storage.open(str(path)) as f:
+        file_data = f.read()
+
+    return file_data
+
+
+def get_media_file_contents(path: Path | str, raise_error: bool = True) -> str | None:
+    """Return the fully qualified file path to an uploaded media file.
+
+    Arguments:
+        path: The path to the media file, relative to the media storage root
+        raise_error: If True, raise an error if the file cannot be found (default = True)
+
+    Returns:
+        The fully qualified file path to the media file
+
+    Raises:
+        FileNotFoundError: If the requested media file cannot be loaded
+        PermissionError: If the requested media file is outside of the media root
+        ValidationError: If the provided path is invalid
+
+    Notes:
+        - The resulting path is resolved against the media root directory
+    """
+    # First test if the image exists
+    if not path or not media_file_exists(path):
+        if raise_error:
+            raise FileNotFoundError('No media file specified')
+        else:
+            return None
+
+    # Load the file - and return the contents
+    with default_storage.open(str(path)) as f:
+        file_data = f.read()
+
+    return file_data
+
+
 @register.simple_tag()
 def asset(filename):
     """Return fully-qualified path for an upload report asset file.
@@ -159,18 +263,16 @@ def asset(filename):
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
-    # If in debug mode, return URL to the image, not a local file
-    debug_mode = get_global_setting('REPORT_DEBUG_MODE', cache=False)
+    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    if get_global_setting('REPORT_DEBUG_MODE', cache=False):
+        return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
 
-    # Test if the file actually exists
-    full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
+    full_path = Path('report', 'assets', filename)
 
-    if not full_path.exists() or not full_path.is_file():
-        raise FileNotFoundError(_('Asset file does not exist') + f": '{filename}'")
+    if not media_file_exists(full_path):
+        raise FileNotFoundError(_('Asset file not found') + f": '{filename}'")
 
-    if debug_mode:
-        return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
-    return f'file://{full_path}'
+    return f'file://{settings.MEDIA_ROOT}/{full_path}'
 
 
 @register.simple_tag()
@@ -187,7 +289,7 @@ def uploaded_image(
     """Return raw image data from an 'uploaded' image.
 
     Arguments:
-        filename: The filename of the image relative to the MEDIA_ROOT directory
+        filename: The filename of the image relative to the media root directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
         replacement_file: The filename of the placeholder image (default = 'blank_image.png')
         validate: Optionally validate that the file is a valid image file
@@ -208,19 +310,8 @@ def uploaded_image(
     # If in debug mode, return URL to the image, not a local file
     debug_mode = get_global_setting('REPORT_DEBUG_MODE', cache=False)
 
-    # Check if the file exists
-    if not filename:
-        exists = False
-    else:
-        try:
-            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-            exists = full_path.exists() and full_path.is_file()
-        except Exception:  # pragma: no cover
-            exists = False  # pragma: no cover
-
-    if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
-        logger.warning("File '%s' is not a valid image", filename)
-        exists = False
+    # Load image data - this will check if the file exists
+    exists = media_file_exists(filename)
 
     if not exists and not replace_missing:
         raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
@@ -231,12 +322,24 @@ def uploaded_image(
             return os.path.join(settings.MEDIA_URL, filename)
         return os.path.join(settings.STATIC_URL, 'img', replacement_file)
 
-    elif not exists:
-        full_path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
-
     # Load the image, check that it is valid
-    if full_path.exists() and full_path.is_file():
-        img = Image.open(full_path)
+    if exists:
+        img_data = get_media_file_contents(filename, raise_error=False)
+
+        if (
+            img_data
+            and validate
+            and not InvenTree.helpers.TestIfImage(BytesIO(img_data))
+        ):
+            logger.warning("File '%s' is not a valid image", filename)
+            img_data = None
+    else:
+        # Load the backup image from the static files directory
+        replacement_file_path = Path('img', replacement_file)
+        img_data = get_static_file_contents(replacement_file_path)
+
+    if img_data:
+        img = Image.open(BytesIO(img_data))
     else:
         # A placeholder image showing that the image is missing
         img = Image.new('RGB', (64, 64), color='red')
@@ -288,22 +391,11 @@ def encode_svg_image(filename: str) -> str:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
-    # Check if the file exists
     if not filename:
-        exists = False
-    else:
-        try:
-            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-            exists = full_path.exists() and full_path.is_file()
-        except Exception:
-            exists = False
+        raise FileNotFoundError(_('No image file specified'))
 
-    if not exists:
-        raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
-
-    # Read the file data
-    with open(full_path, 'rb') as f:
-        data = f.read()
+    # Read out the file contents
+    data = get_media_file_contents(filename)
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
@@ -323,8 +415,12 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     Raises:
         TypeError: If provided part is not a Part instance
     """
-    if type(part) is not Part:
-        raise TypeError(_('part_image tag requires a Part instance'))
+    image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
+
+    if kwargs.get('check_exists'):
+        if not media_file_exists(image_filename):
+            raise FileNotFoundError(_('Image file not found') + f": '{image_filename}'")
+
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
     )
