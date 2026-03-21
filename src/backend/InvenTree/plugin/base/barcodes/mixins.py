@@ -60,7 +60,7 @@ class BarcodeMixin:
         """Does this plugin support barcode generation."""
         try:
             # Attempt to call the generate method
-            self.generate(None)  # type: ignore
+            self.generate(None)
         except NotImplementedError:
             # If a NotImplementedError is raised, then barcode generation is not supported
             return False

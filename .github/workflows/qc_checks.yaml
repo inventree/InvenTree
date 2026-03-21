@@ -341,6 +341,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
           npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
@@ -362,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@281164b0f014a4e7badd2c02cecad9b595b70537 # pin@v4
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -398,6 +399,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
@@ -452,7 +454,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@281164b0f014a4e7badd2c02cecad9b595b70537 # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -500,6 +502,7 @@ jobs:
           pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -548,6 +551,7 @@ jobs:
           pip-dependency: mysqlclient
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -759,7 +763,7 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && yarn run compile && yarn run build
+        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Zip frontend

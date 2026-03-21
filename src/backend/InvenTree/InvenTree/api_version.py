@@ -1,14 +1,36 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 461
+INVENTREE_API_VERSION = 468
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v461 -> 2026-03-01 : https://github.com/inventree/InvenTree/pull/9928
+v468 -> 2026-03-21 : https://github.com/inventree/InvenTree/pull/9928
     - Refactor of "PartTestTemplate" models and API endpoints
     - Add "PartTest" API endpoint
+
+v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
+    - Fix definition for the "parent" field on the StockItemSerializer
+
+v466 -> 2026-03-17 : https://github.com/inventree/InvenTree/pull/11525
+    - SalesOrderShipmentComplete endpoint now returns a task ID which can be used to track the progress of the shipment completion process
+
+v465 -> 2026-03-16 : https://github.com/inventree/InvenTree/pull/11529/
+    - BuildOrderAutoAllocate endpoint now returns a task ID which can be used to track the progress of the auto-allocation process
+    - BuildOrderConsume endpoint now returns a task ID which can be used to track the progress of the stock consumption process
+
+v464 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11527
+    - Add API endpoint for monitoring the progress of a particular background task
+
+v463 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11499
+    - Allow "bulk update" actions against StockItem endpoint
+
+v462 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11497
+    - Allow "ScheduledTask" API endpoint to be filtered by "name" field
+
+v461 -> 2026-03-10 : https://github.com/inventree/InvenTree/pull/11479
+    - Adds option to copy parameters when duplicating an order via the API
 
 v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
     - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints

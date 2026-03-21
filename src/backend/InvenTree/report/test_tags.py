@@ -14,7 +14,6 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
-from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
 from part.test_api import PartImageTestMixin
@@ -81,7 +80,27 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
-        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
+
+        # Test for attempted path traversal
+        with self.assertRaises(ValidationError):
+            report_tags.asset('../../../report/assets/test.txt')
+
+    def test_file_access(self):
+        """Tests for media and static file access."""
+        for fn in [None, '', '@@@@@@', 'fake_file.txt']:
+            self.assertFalse(report_tags.media_file_exists(fn))
+            self.assertFalse(report_tags.static_file_exists(fn))
+
+        with self.assertRaises(FileNotFoundError):
+            report_tags.get_media_file_contents('dummy_file.txt')
+
+        with self.assertRaises(ValueError):
+            report_tags.get_static_file_contents(None)
+
+        # Try again, without throwing an error
+        self.assertIsNone(
+            report_tags.get_media_file_contents('dummy_file.txt', raise_error=False)
+        )
 
     def test_uploaded_image(self):
         """Tests for retrieving uploaded images."""
@@ -148,6 +167,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         )
         self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
 
+        # Attempted path traversal
+        with self.assertRaises(ValidationError):
+            report_tags.uploaded_image('../../../part/images/test.jpg')
+
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
         with self.assertRaises(TypeError):
@@ -157,8 +180,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.create_test_image()
         obj.refresh_from_db()
 
-        report_tags.part_image(obj, preview=True)
-        report_tags.part_image(obj, thumbnail=True)
+        r = report_tags.part_image(obj, preview=True)
+        self.assertIn('data:image/png;charset=utf-8;base64,', r)
+        r = report_tags.part_image(obj, thumbnail=True)
+        self.assertIn('data:image/png;charset=utf-8;base64,', r)
 
     def test_company_image(self):
         """Unit tests for the 'company_image' tag."""
@@ -392,12 +417,16 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_encode_svg_image(self):
         """Test the encode_svg_image template tag."""
         # Generate smallest possible SVG for testing
-        svg_path = get_testfolder_dir() / 'part_image_123abc.png'
+        # Store it in the media directory
+
+        img_path = 'part_image_123abc.png'
+        svg_path = settings.MEDIA_ROOT / img_path
+
         with open(svg_path, 'w', encoding='utf8') as f:
             f.write('<svg xmlns="http://www.w3.org/2000/svg>')
 
         # Test with a valid SVG file
-        svg = report_tags.encode_svg_image(svg_path)
+        svg = report_tags.encode_svg_image(img_path)
         self.assertTrue(svg.startswith('data:image/svg+xml;charset=utf-8;base64,'))
         self.assertIn('svg', svg)
         self.assertEqual(

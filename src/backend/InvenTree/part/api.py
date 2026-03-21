@@ -8,10 +8,11 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
@@ -161,7 +162,7 @@ class CategoryFilter(FilterSet):
 
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
-        parent = str2bool(self.data.get('parent', None))
+        parent = self.data.get('parent', None)
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
@@ -697,8 +698,18 @@ class PartValidateBOM(RetrieveUpdateAPI):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
 
+    @extend_schema(
+        responses={
+            200: common.serializers.TaskDetailSerializer,
+            404: common.serializers.TaskDetailSerializer,
+        }
+    )
     def update(self, request, *args, **kwargs):
-        """Validate the referenced BomItem instance."""
+        """Validate the referenced BomItem instance.
+
+        As this task if offloaded to the background worker,
+        we return information about the background task which is performing the validation.
+        """
         part = self.get_object()
 
         partial = kwargs.pop('partial', False)
@@ -712,7 +723,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
         valid = str2bool(serializer.validated_data.get('valid', False))
 
         # BOM validation may take some time, so we offload it to a background task
-        offload_task(
+        task_id = offload_task(
             part_tasks.validate_bom,
             part.pk,
             valid,
@@ -720,10 +731,8 @@ class PartValidateBOM(RetrieveUpdateAPI):
             group='part',
         )
 
-        # Re-serialize the response
-        serializer = self.get_serializer(part, many=False)
-
-        return Response(serializer.data)
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class PartFilter(FilterSet):

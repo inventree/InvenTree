@@ -1,7 +1,28 @@
 import { expect, test } from './baseFixtures.js';
+import { adminuser } from './defaults.js';
 import { activateTableView, loadTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
+
+// Test for the label editing interface
+test('Printing - Label Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/labels'
+  });
+
+  // Open a particular label template for editing
+  await page.getByRole('cell', { name: 'Sample build line label' }).click();
+
+  // Await expected entries
+  await page.getByRole('tab', { name: 'PDF Preview' }).waitFor();
+  await page.getByText('This is an example template').waitFor();
+  await page
+    .locator('div')
+    .filter({ hasText: /^BO\d+$/ })
+    .first()
+    .waitFor();
+});
 
 /*
  * Test for label printing.
@@ -79,8 +100,7 @@ test('Printing - Report Printing', async ({ browser }) => {
 
 test('Printing - Report Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // activate the sample plugin for this test
