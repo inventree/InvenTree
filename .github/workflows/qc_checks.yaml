@@ -322,6 +322,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
           npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
@@ -378,6 +379,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
@@ -480,6 +482,7 @@ jobs:
           pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -528,6 +531,7 @@ jobs:
           pip-dependency: mysqlclient
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test

@@ -229,8 +229,15 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
+def TestIfImage(img) -> bool:
+    """Test if an image file is indeed an image.
+
+    Arguments:
+        img: A file-like object
+
+    Returns:
+        True if the file is a valid image, False otherwise
+    """
     try:
         Image.open(img).verify()
         return True
