@@ -107,3 +107,7 @@ runs:
         if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update --skip-backup --skip-static
+      - name: Collect static files
+        if: ${{ inputs.static == 'true' }}
+        shell: bash
+        run: invoke static --skip-plugins
