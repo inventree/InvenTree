@@ -74,7 +74,6 @@ class PartImageTestMixin:
                 {'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/part_images/part_image'))
         return image_name
@@ -1838,7 +1837,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         # Part should not have an image!
         with self.assertRaises(ValueError):
-            print(p.image.file)
+            _x = p.image.file
 
         # Try to upload a non-image file
         test_path = get_testfolder_dir() / 'dummy_image'

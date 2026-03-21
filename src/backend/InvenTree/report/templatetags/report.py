@@ -263,14 +263,17 @@ def asset(filename):
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
-    # In debug mode, return a web URL to the asset file (rather than a local file path)
-    if get_global_setting('REPORT_DEBUG_MODE', cache=False):
-        return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
+    # Remove any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
 
     full_path = Path('report', 'assets', filename)
 
     if not media_file_exists(full_path):
         raise FileNotFoundError(_('Asset file not found') + f": '{filename}'")
+
+    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    if get_global_setting('REPORT_DEBUG_MODE', cache=False):
+        return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
 
     return f'file://{settings.MEDIA_ROOT}/{full_path}'
 
@@ -307,25 +310,22 @@ def uploaded_image(
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
+    # Strip out any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
+
     # If in debug mode, return URL to the image, not a local file
     debug_mode = get_global_setting('REPORT_DEBUG_MODE', cache=False)
 
     # Load image data - this will check if the file exists
-    exists = media_file_exists(filename)
+    exists = bool(filename) and media_file_exists(filename)
 
     if not exists and not replace_missing:
         raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
 
-    if debug_mode:
-        # In debug mode, return a web path (rather than an encoded image blob)
-        if exists:
-            return os.path.join(settings.MEDIA_URL, filename)
-        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
-
-    # Load the image, check that it is valid
     if exists:
         img_data = get_media_file_contents(filename, raise_error=False)
 
+        # Check if the image data is valid
         if (
             img_data
             and validate
@@ -333,10 +333,17 @@ def uploaded_image(
         ):
             logger.warning("File '%s' is not a valid image", filename)
             img_data = None
+            exists = False
     else:
         # Load the backup image from the static files directory
         replacement_file_path = Path('img', replacement_file)
         img_data = get_static_file_contents(replacement_file_path)
+
+    if debug_mode:
+        # In debug mode, return a web path (rather than an encoded image blob)
+        if exists:
+            return os.path.join(settings.MEDIA_URL, filename)
+        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
 
     if img_data:
         img = Image.open(BytesIO(img_data))
@@ -391,10 +398,14 @@ def encode_svg_image(filename: str) -> str:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
+    # Remove any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
+
     if not filename:
         raise FileNotFoundError(_('No image file specified'))
 
     # Read out the file contents
+    # Note: This will check if the file exists, and raise an error if it does not
     data = get_media_file_contents(filename)
 
     # Return the base64-encoded data
@@ -415,6 +426,9 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     Raises:
         TypeError: If provided part is not a Part instance
     """
+    if not part or not isinstance(part, Part):
+        raise TypeError(_('part_image tag requires a Part instance'))
+
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
     if kwargs.get('check_exists'):

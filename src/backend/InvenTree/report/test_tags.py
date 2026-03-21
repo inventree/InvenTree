@@ -83,6 +83,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         asset = report_tags.asset('test.txt')
         self.assertEqual(asset, f'file://{asset_dir}/test.txt')
 
+        # Test for attempted path traversal
+        with self.assertRaises(ValidationError):
+            report_tags.asset('../../../report/assets/test.txt')
+
     def test_uploaded_image(self):
         """Tests for retrieving uploaded images."""
         # Test for a missing image
@@ -148,6 +152,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         )
         self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
 
+        # Attempted path traversal
+        with self.assertRaises(ValidationError):
+            report_tags.uploaded_image('../../../part/images/test.jpg')
+
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
         with self.assertRaises(TypeError):
@@ -157,8 +165,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.create_test_image()
         obj.refresh_from_db()
 
-        report_tags.part_image(obj, preview=True)
-        report_tags.part_image(obj, thumbnail=True)
+        r = report_tags.part_image(obj, preview=True)
+        self.assertIn('data:image/png;charset=utf-8;base64,', r)
+        r = report_tags.part_image(obj, thumbnail=True)
+        self.assertIn('data:image/png;charset=utf-8;base64,', r)
 
     def test_company_image(self):
         """Unit tests for the 'company_image' tag."""
