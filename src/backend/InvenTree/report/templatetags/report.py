@@ -246,7 +246,7 @@ def get_media_file_contents(path: Path | str, raise_error: bool = True) -> bytes
 
     if not media_file_exists(path):
         if raise_error:
-            raise FileNotFoundError('No media file specified')
+            raise FileNotFoundError(f'Media file does not exist: {path!s}')
         else:
             return None
 

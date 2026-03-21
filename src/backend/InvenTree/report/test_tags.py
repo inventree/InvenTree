@@ -14,7 +14,6 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
-from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
 from part.test_api import PartImageTestMixin
@@ -401,12 +400,16 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_encode_svg_image(self):
         """Test the encode_svg_image template tag."""
         # Generate smallest possible SVG for testing
-        svg_path = get_testfolder_dir() / 'part_image_123abc.png'
+        # Store it in the media directory
+
+        img_path = 'part_image_123abc.png'
+        svg_path = settings.MEDIA_ROOT / img_path
+
         with open(svg_path, 'w', encoding='utf8') as f:
             f.write('<svg xmlns="http://www.w3.org/2000/svg>')
 
         # Test with a valid SVG file
-        svg = report_tags.encode_svg_image(svg_path)
+        svg = report_tags.encode_svg_image(img_path)
         self.assertTrue(svg.startswith('data:image/svg+xml;charset=utf-8;base64,'))
         self.assertIn('svg', svg)
         self.assertEqual(
