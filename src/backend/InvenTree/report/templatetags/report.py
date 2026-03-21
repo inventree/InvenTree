@@ -281,7 +281,9 @@ def asset(filename):
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
         return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
 
-    return f'file://{settings.MEDIA_ROOT}/{full_path}'
+    storage_path = default_storage.path(str(full_path))
+
+    return f'file://{storage_path}'
 
 
 @register.simple_tag()

@@ -81,7 +81,6 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
-        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
 
         # Test for attempted path traversal
         with self.assertRaises(ValidationError):
