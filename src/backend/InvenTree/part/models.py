@@ -303,24 +303,34 @@ class PartCategory(
         if include_parents:
             cats = self.get_ancestors(include_self=True)
             queryset = PartCategoryStar.objects.filter(category__in=cats)
+            print('-AA')
         else:
             queryset = PartCategoryStar.objects.filter(category=self)
+            print('-BB')
 
         for result in queryset:
             subscribers.add(result.user)
+            print('- category:', result.category, 'user:', result.user)
 
         return list(subscribers)
 
     def is_starred_by(self, user, **kwargs):
         """Returns True if the specified user subscribes to this category."""
+        print('category:', self, self.pk, 'is_starred_by:', user, kwargs)
+        print('- subscribers:', self.get_subscribers(**kwargs))
+
         return user in self.get_subscribers(**kwargs)
 
     def set_starred(self, user, status: bool, **kwargs) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
+        print('PartCategory.set_starred:', user, '->', status)
+
         if not user:
+            print('- No user provided')
             return
 
         if self.is_starred_by(user, **kwargs) == status:
+            print('- Already in desired state')
             return
 
         if status:
