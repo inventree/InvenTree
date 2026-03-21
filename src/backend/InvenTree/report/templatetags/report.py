@@ -236,7 +236,13 @@ def get_media_file_contents(path: Path | str, raise_error: bool = True) -> str |
         - The resulting path is resolved against the media root directory
     """
     # First test if the image exists
-    if not path or not media_file_exists(path):
+    if not path:
+        if raise_error:
+            raise ValueError('No media file specified')
+        else:
+            return None
+
+    if not media_file_exists(path):
         if raise_error:
             raise FileNotFoundError('No media file specified')
         else:
