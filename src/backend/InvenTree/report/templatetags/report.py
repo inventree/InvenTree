@@ -188,20 +188,20 @@ def static_file_exists(path: Path | str) -> bool:
 
 
 def get_static_file_contents(
-    path: Path | str, raise_error: bool = True
+    path: Path | str, raise_error: bool = False
 ) -> bytes | None:
     """Return the contents of a static file.
 
     Arguments:
         path: The path to the static file, relative to the static storage root
-        raise_error: If True, raise an error if the file cannot be found (default = True)
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Returns:
         The contents of the static file, or None if the file cannot be found
     """
     if not path:
         if raise_error:
-            raise ValueError('No media file specified')
+            raise ValueError('No static file specified')
         else:
             return None
 
@@ -217,12 +217,14 @@ def get_static_file_contents(
     return file_data
 
 
-def get_media_file_contents(path: Path | str, raise_error: bool = True) -> bytes | None:
+def get_media_file_contents(
+    path: Path | str, raise_error: bool = False
+) -> bytes | None:
     """Return the fully qualified file path to an uploaded media file.
 
     Arguments:
         path: The path to the media file, relative to the media storage root
-        raise_error: If True, raise an error if the file cannot be found (default = True)
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Returns:
         The contents of the media file, or None if the file cannot be found
@@ -255,15 +257,24 @@ def get_media_file_contents(path: Path | str, raise_error: bool = True) -> bytes
 
 
 @register.simple_tag()
-def asset(filename):
+def asset(filename: str, raise_error: bool = False) -> str | None:
     """Return fully-qualified path for an upload report asset file.
 
     Arguments:
         filename: Asset filename (relative to the 'assets' media directory)
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Raises:
         FileNotFoundError: If file does not exist
+        ValueError: If an invalid filename is provided (e.g. empty string)
+        ValidationError: If the filename is invalid (e.g. path traversal attempt)
     """
+    if not filename:
+        if raise_error:
+            raise ValueError('No asset file specified')
+        else:
+            return None
+
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -274,7 +285,10 @@ def asset(filename):
     full_path = Path('report', 'assets', filename)
 
     if not media_file_exists(full_path):
-        raise FileNotFoundError(_('Asset file not found') + f": '{filename}'")
+        if raise_error:
+            raise FileNotFoundError(_('Asset file not found') + f": '{filename}'")
+        else:
+            return None
 
     # In debug mode, return a web URL to the asset file (rather than a local file path)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
@@ -294,6 +308,7 @@ def uploaded_image(
     width: Optional[int] = None,
     height: Optional[int] = None,
     rotate: Optional[float] = None,
+    raise_error: bool = False,
     **kwargs,
 ) -> str:
     """Return raw image data from an 'uploaded' image.
@@ -306,12 +321,14 @@ def uploaded_image(
         width: Optional width of the image
         height: Optional height of the image
         rotate: Optional rotation to apply to the image
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Returns:
         Binary image data to be rendered directly in a <img> tag
 
     Raises:
         FileNotFoundError: If the file does not exist
+        ValueError: If an invalid filename is provided (e.g. empty string)
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -330,7 +347,7 @@ def uploaded_image(
         raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
 
     if exists:
-        img_data = get_media_file_contents(filename, raise_error=False)
+        img_data = get_media_file_contents(filename, raise_error=raise_error)
 
         # Check if the image data is valid
         if (
@@ -344,7 +361,9 @@ def uploaded_image(
     else:
         # Load the backup image from the static files directory
         replacement_file_path = Path('img', replacement_file)
-        img_data = get_static_file_contents(replacement_file_path)
+        img_data = get_static_file_contents(
+            replacement_file_path, raise_error=raise_error
+        )
 
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
