@@ -8,10 +8,11 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
@@ -72,20 +73,6 @@ class CategoryMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
         return queryset
-
-    def get_serializer_context(self):
-        """Add extra context to the serializer for the CategoryDetail endpoint."""
-        ctx = super().get_serializer_context()
-
-        try:
-            ctx['starred_categories'] = [
-                star.category for star in self.request.user.starred_categories.all()
-            ]
-        except AttributeError:
-            # Error is thrown if the view does not have an associated request
-            ctx['starred_categories'] = []
-
-        return ctx
 
 
 class CategoryFilter(FilterSet):
@@ -160,7 +147,7 @@ class CategoryFilter(FilterSet):
 
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
-        parent = str2bool(self.data.get('parent', None))
+        parent = self.data.get('parent', None)
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
@@ -266,13 +253,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         """Perform 'update' function and mark this part as 'starred' (or not)."""
         # Clean up input data
         data = self.clean_data(request.data)
+        response = super().update(request, *args, **kwargs)
 
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
             self.get_object().set_starred(request.user, starred, include_parents=False)
-
-        response = super().update(request, *args, **kwargs)
 
         return response
 
@@ -614,8 +600,18 @@ class PartValidateBOM(RetrieveUpdateAPI):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
 
+    @extend_schema(
+        responses={
+            200: common.serializers.TaskDetailSerializer,
+            404: common.serializers.TaskDetailSerializer,
+        }
+    )
     def update(self, request, *args, **kwargs):
-        """Validate the referenced BomItem instance."""
+        """Validate the referenced BomItem instance.
+
+        As this task if offloaded to the background worker,
+        we return information about the background task which is performing the validation.
+        """
         part = self.get_object()
 
         partial = kwargs.pop('partial', False)
@@ -629,7 +625,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
         valid = str2bool(serializer.validated_data.get('valid', False))
 
         # BOM validation may take some time, so we offload it to a background task
-        offload_task(
+        task_id = offload_task(
             part_tasks.validate_bom,
             part.pk,
             valid,
@@ -637,10 +633,8 @@ class PartValidateBOM(RetrieveUpdateAPI):
             group='part',
         )
 
-        # Re-serialize the response
-        serializer = self.get_serializer(part, many=False)
-
-        return Response(serializer.data)
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class PartFilter(FilterSet):
@@ -1027,26 +1021,7 @@ class PartMixin(SerializerContextMixin):
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
-        # Pass a list of "starred" parts to the current user to the serializer
-        # We do this to reduce the number of database queries required!
-        if (
-            self.starred_parts is None
-            and self.request is not None
-            and hasattr(self.request.user, 'starred_parts')
-        ):
-            self.starred_parts = [
-                star.part for star in self.request.user.starred_parts.all()
-            ]
-        kwargs['starred_parts'] = self.starred_parts
-
         return super().get_serializer(*args, **kwargs)
-
-    def get_serializer_context(self):
-        """Extend serializer context data."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
 
 
 class PartOutputOptions(OutputConfiguration):
@@ -1132,6 +1107,7 @@ class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
         """
         # Clean input data
         data = self.clean_data(request.data)
+        response = super().update(request, *args, **kwargs)
 
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
@@ -1139,8 +1115,6 @@ class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
             self.get_object().set_starred(
                 request.user, starred, include_variants=False, include_categories=False
             )
-
-        response = super().update(request, *args, **kwargs)
 
         return response
 

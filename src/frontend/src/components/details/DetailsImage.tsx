@@ -82,8 +82,14 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
     ),
     labels: { confirm: t`Remove`, cancel: t`Cancel` },
     onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
+      api.patch(apiPath, { image: null }).then(() => {
+        setImage(backup_image);
+        showNotification({
+          title: t`Image removed`,
+          message: t`The image has been removed successfully`,
+          color: 'green'
+        });
+      });
     }
   });
 

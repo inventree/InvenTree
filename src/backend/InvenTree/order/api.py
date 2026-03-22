@@ -18,6 +18,7 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
@@ -36,7 +37,7 @@ from InvenTree.api import (
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import current_date, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -1426,19 +1427,45 @@ class SalesOrderShipmentComplete(CreateAPI):
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
+    def get_shipment(self):
+        """Return the shipment associated with this endpoint."""
+        try:
+            shipment = models.SalesOrderShipment.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except (ValueError, models.SalesOrderShipment.DoesNotExist):
+            raise NotFound(detail=_('Shipment not found'))
+
+        return shipment
+
     def get_serializer_context(self):
         """Pass the request object to the serializer."""
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
-
-        try:
-            ctx['shipment'] = models.SalesOrderShipment.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
-            pass
+        ctx['shipment'] = self.get_shipment()
 
         return ctx
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, request, *args, **kwargs):
+        """Override the post method to handle shipment completion."""
+        shipment = self.get_shipment()
+
+        serializer = self.get_serializer(shipment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        task_id = shipment.complete_shipment(
+            request.user,
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
+            invoice_number=data.get('invoice_number', shipment.invoice_number),
+            link=data.get('link', shipment.link),
+            shipment_date=data.get('shipment_date', None) or current_date(),
+            delivery_date=data.get('delivery_date', shipment.delivery_date),
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class ReturnOrderFilter(OrderFilter):

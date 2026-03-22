@@ -1,11 +1,11 @@
 import { systemKey, test } from './baseFixtures.js';
+import { adminuser } from './defaults.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
 test('Modals - Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // use server info

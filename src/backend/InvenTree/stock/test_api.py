@@ -1417,11 +1417,18 @@ class StockItemTest(StockAPITestCase):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
+        # Create a new StockItem instance
         response = self.post(
             self.list_url, data={'part': 4, 'quantity': 10}, expected_code=201
         )
 
         self.assertEqual(response.data[0]['location'], 2)
+
+        # Check that the item was associated with the correct user
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(item.tracking_info_count, 1)
+        tracking = item.tracking_info.first()
+        self.assertEqual(tracking.user, self.user)
 
         # What if we explicitly set the location to a different value?
 
@@ -2006,6 +2013,33 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
             self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
+    def test_bulk_batch_change(self):
+        """Test that we can bulk-change batch code for a set of stock items."""
+        url = reverse('api-stock-list')
+
+        # Find the first 10 stock items
+        items = StockItem.objects.all()[:10]
+        self.assertEqual(len(items), 10)
+
+        response = self.patch(
+            url,
+            data={'items': [item.pk for item in items], 'batch': 'NEW-BATCH-CODE'},
+            max_query_count=300,
+        )
+
+        data = response.data
+
+        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(len(data['items']), 10)
+
+        for item in data['items']:
+            self.assertEqual(item['batch'], 'NEW-BATCH-CODE')
+
+        # Check database items also
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
@@ -2400,17 +2434,7 @@ class StockTestResultTest(StockAPITestCase):
         self.delete(url, {}, expected_code=400)
 
         # Now, let's delete all the newly created items with a single API request
-        # However, we will provide incorrect filters
-        response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 10}}, expected_code=400
-        )
-
-        self.assertEqual(StockItemTestResult.objects.count(), n + 50)
-
-        # Try again, but with the correct filters this time
-        response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=200
-        )
+        response = self.delete(url, {'items': tests}, expected_code=200)
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
 

@@ -161,7 +161,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
 
         # assign parent_part to root_part if root_part has no variant of already
         if root_part and not root_part.is_template and not root_part.variant_of:
-            root_part.variant_of = parent_part  # type: ignore
+            root_part.variant_of = parent_part
             root_part.save()
 
         return parent_part
