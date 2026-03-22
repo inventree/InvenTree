@@ -65,6 +65,70 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Build Orders');
 });
 
+test('Parts - Image Selection', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/911/details' });
+
+  // Select a new image from the available images
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-select-from-' })
+    .click();
+  await page.getByRole('textbox', { name: 'part-thumb-search' }).fill('red');
+  await page
+    .locator('div')
+    .filter({ hasText: /^chair_red\.png \(1\)$/ })
+    .nth(1)
+    .click();
+  await page.getByRole('button', { name: 'Select' }).click();
+  await page.getByText('The image has been updated successfully').waitFor();
+
+  // Now remove the associated image
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-delete-image' })
+    .click();
+  await page.getByRole('button', { name: 'Remove' }).click();
+  await page.getByText('The image has been removed successfully').waitFor();
+});
+
+// Test subscription logic for parts and categories
+test('Parts - Subscriptions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/3/parts' });
+
+  // Click to subscribe to this category
+  await page
+    .getByRole('button', { name: 'action-button-subscribe-to-' })
+    .click();
+  await page.getByText('Subscription added').waitFor();
+
+  // Click to unsubscribe from this category
+  await page
+    .getByRole('button', { name: 'action-button-unsubscribe-' })
+    .click();
+  await page.getByText('Subscription removed').waitFor();
+
+  // Navigate through to a part detail page
+  await page.getByRole('cell', { name: 'Thumbnail M3x10 FHS-PLA' }).click();
+
+  // Click to subscribe to this part
+  await page
+    .getByRole('button', { name: 'action-button-subscribe-to-' })
+    .click();
+  await page.getByText('Subscription added').waitFor();
+
+  // Click to unsubscribe from this part
+  await page
+    .getByRole('button', { name: 'action-button-unsubscribe-' })
+    .click();
+  await page.getByText('Subscription removed').waitFor();
+});
+
 test('Parts - Manufacturer Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/84/' });
 
@@ -262,19 +326,22 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Allocated to Sales Orders').waitFor();
   await page.getByText('Can Build').waitFor();
 
-  await page.getByText('0 / 10').waitFor();
+  // The "allocated to sales order" quantity may vary, based on other tests
+  await page.getByText(/0 \/ \d+/).waitFor();
 
   // Depending on the state of other tests, the "In Production" value may vary
   // This could be either 4 / 49, or 5 / 49
   await page.getByText(/[4|5] \/ \d+/).waitFor();
 
   // Badges
-  await page.getByText('Required: 10').waitFor();
+  await page.getByText(/Required: \d+/).waitFor();
   await page.getByText('No Stock').waitFor();
   await page.getByText(/In Production: [4|5]/).waitFor();
 
   await page.getByText('Creation Date').waitFor();
   await page.getByText('2022-04-29').waitFor();
+
+  await page.getByText('Latest Serial Number').waitFor();
 });
 
 test('Parts - Requirements', async ({ browser }) => {

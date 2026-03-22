@@ -8,6 +8,7 @@ import structlog
 from allauth.account.models import EmailAddress
 
 import InvenTree.ready
+import InvenTree.tasks as tasks
 from common.models import Priority, issue_mail
 
 logger = structlog.get_logger('inventree')
@@ -98,7 +99,7 @@ def send_email(
                 )
                 return False, 'INVE-W7: no from_email or DEFAULT_FROM_EMAIL specified'
 
-    InvenTree.tasks.offload_task(
+    tasks.offload_task(
         issue_mail,
         subject=subject,
         body=body,

@@ -199,7 +199,7 @@ def regenerate_imagefile(_file, _name: str):
         _name: Name of the variation (e.g. 'thumbnail', 'preview')
     """
     name = _file.field.attr_class.get_variation_name(_file.name, _name)
-    return ImageFieldFile(_file.instance, _file, name)  # type: ignore
+    return ImageFieldFile(_file.instance, _file, name)  # ty:ignore[too-many-positional-arguments]
 
 
 def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
@@ -229,8 +229,15 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
+def TestIfImage(img) -> bool:
+    """Test if an image file is indeed an image.
+
+    Arguments:
+        img: A file-like object
+
+    Returns:
+        True if the file is a valid image, False otherwise
+    """
     try:
         Image.open(img).verify()
         return True
@@ -246,6 +253,13 @@ def getBlankImage():
 def getBlankThumbnail():
     """Return the qualified path for the 'blank image' thumbnail placeholder."""
     return getStaticUrl('img/blank_image.thumbnail.png')
+
+
+def checkStaticFile(*args) -> bool:
+    """Check if a file exists in the static storage."""
+    static_storage = StaticFilesStorage()
+    fn = os.path.join(*args)
+    return static_storage.exists(fn)
 
 
 def getLogoImage(as_file=False, custom=True):
@@ -311,7 +325,7 @@ def TestIfImageURL(url):
     ]
 
 
-def str2bool(text, test=True):
+def str2bool(text, test=True) -> bool:
     """Test if a string 'looks' like a boolean value.
 
     Args:

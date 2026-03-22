@@ -1,12 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 465
+INVENTREE_API_VERSION = 467
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v465 -> 2026-03-18 : https://github.com/inventree/InvenTree/pull/11529/
+v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
+    - Fix definition for the "parent" field on the StockItemSerializer
+
+v466 -> 2026-03-17 : https://github.com/inventree/InvenTree/pull/11525
+    - SalesOrderShipmentComplete endpoint now returns a task ID which can be used to track the progress of the shipment completion process
+
+v465 -> 2026-03-16 : https://github.com/inventree/InvenTree/pull/11529/
     - BuildOrderAutoAllocate endpoint now returns a task ID which can be used to track the progress of the auto-allocation process
     - BuildOrderConsume endpoint now returns a task ID which can be used to track the progress of the stock consumption process
 

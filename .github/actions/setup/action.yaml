@@ -15,6 +15,10 @@ inputs:
         required: false
         description: 'Install the InvenTree requirements?'
         default: 'false'
+    static:
+        required: false
+        description: 'Should the static files be built?'
+        default: 'false'
     dev-install:
         required: false
         description: 'Install the InvenTree development requirements?'
@@ -103,3 +107,7 @@ runs:
         if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update --skip-backup --skip-static
+      - name: Collect static files
+        if: ${{ inputs.static == 'true' }}
+        shell: bash
+        run: invoke static --skip-plugins

@@ -6,6 +6,44 @@ import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
+class DataOutputAPITests(InvenTreeAPITestCase):
+    """API tests for the DataOutput endpoint."""
+
+    roles = 'all'
+
+    def setUp(self):
+        """Set up some test data for DataOutput API testing."""
+        from report.models import DataOutput
+
+        super().setUp()
+
+        for ii in range(5):
+            DataOutput.objects.create(
+                output_type='test_output',
+                user=self.user if ii % 2 == 0 else None,
+                complete=ii % 2 == 1,
+            )
+
+    def test_data_output_list(self):
+        """Test the DataOutput API list endpoint."""
+        url = reverse('api-data-output-list')
+
+        #  Non-staff user should only see outputs which are either enabled for all users, or created by themselves
+        self.user.is_staff = False
+        self.user.save()
+        response = self.get(url)
+        self.assertEqual(len(response.data), 3)
+
+        for output in response.data:
+            self.assertEqual(output['user'], self.user.pk)
+
+        # Set staff access = True, so we should see all outputs
+        self.user.is_staff = True
+        self.user.save()
+        response = self.get(url)
+        self.assertEqual(len(response.data), 5)
+
+
 class ParameterAPITests(InvenTreeAPITestCase):
     """Tests for the Parameter API."""
 

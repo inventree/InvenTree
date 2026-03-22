@@ -118,6 +118,9 @@ Extra python packages can be installed by setting the environment variable `SETU
 
 The used database backend can be configured with environment variables (before the first setup) or in the config file after the installation. Check the [configuration section](./config.md#database-options) for more information.
 
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, as it is not designed for high concurrency.
+
 ## Moving Data
 
 To change the data storage location, link the new location to `/opt/inventree/data`. A rough outline of steps to achieve this could be:
