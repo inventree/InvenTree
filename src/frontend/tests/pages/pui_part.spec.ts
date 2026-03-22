@@ -97,6 +97,38 @@ test('Parts - Image Selection', async ({ browser }) => {
   await page.getByText('The image has been removed successfully').waitFor();
 });
 
+// Test subscription logic for parts and categories
+test('Parts - Subscriptions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/3/parts' });
+
+  // Click to subscribe to this category
+  await page
+    .getByRole('button', { name: 'action-button-subscribe-to-' })
+    .click();
+  await page.getByText('Subscription added').waitFor();
+
+  // Click to unsubscribe from this category
+  await page
+    .getByRole('button', { name: 'action-button-unsubscribe-' })
+    .click();
+  await page.getByText('Subscription removed').waitFor();
+
+  // Navigate through to a part detail page
+  await page.getByRole('cell', { name: 'Thumbnail M3x10 FHS-PLA' }).click();
+
+  // Click to subscribe to this part
+  await page
+    .getByRole('button', { name: 'action-button-subscribe-to-' })
+    .click();
+  await page.getByText('Subscription added').waitFor();
+
+  // Click to unsubscribe from this part
+  await page
+    .getByRole('button', { name: 'action-button-unsubscribe-' })
+    .click();
+  await page.getByText('Subscription removed').waitFor();
+});
+
 test('Parts - Manufacturer Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/84/' });
 
