@@ -209,6 +209,54 @@ class InvenTreePluginTests(TestCase):
         if plug:
             self.assertEqual(plug.is_active(), False)
 
+    def test_plugin_static_file_lookup(self):
+        """Test that the plugin static file lookup works as expected."""
+        from django.contrib.staticfiles.storage import StaticFilesStorage
+        from django.core.files.base import ContentFile
+
+        # Create a sample plugin with a known static file
+        class StaticFilePlugin(InvenTreePlugin):
+            NAME = 'StaticFilePlugin'
+            SLUG = 'static-file-test'
+
+            def get_static_file_url(self, file_name):
+                return self.get_plugin_static_file(file_name)
+
+        plugin = StaticFilePlugin()
+        storage = StaticFilesStorage()
+
+        # A simple test to ensure the path is correctly resolved
+        self.assertEqual(
+            plugin.plugin_static_file(
+                'sample.js', check_exists=False, check_hash=False
+            ),
+            storage.url('plugins/static-file-test/sample.js'),
+        )
+
+        manifest_path = 'plugins/static-file-test/.vite/manifest.json'
+
+        manifest_data = textwrap.dedent("""{
+            "src/sample.js": {
+                "file": "sample.123456.js",
+                "name": "sample",
+                "src": "src/sample.js",
+                "isEntry": true
+            }
+        }""")
+
+        # A more comprehensive test - to find a hashed version of the file
+        # Note: This requires a manifest file to be present - let's create one
+        if not storage.exists(manifest_path):
+            storage.save(manifest_path, content=ContentFile(manifest_data))
+
+        lookup = plugin.plugin_static_file(
+            'sample.js', check_exists=False, check_hash=True
+        )
+
+        self.assertEqual(
+            lookup, storage.url('plugins/static-file-test/sample.123456.js')
+        )
+
 
 class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     """Tests for registry loading methods."""
@@ -254,7 +302,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
         # Run in temporary directory -> always a new random name
-        with tempfile.TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
+        with tempfile.TemporaryDirectory() as tmp:
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
             shutil.copytree(self.mockDir(), new_dir)

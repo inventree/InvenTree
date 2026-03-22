@@ -65,9 +65,7 @@ Admin users can install plugins directly from the web interface, via the "Plugin
 
 {{ image("plugin/plugin_install_web.png", "Install plugin via web interface") }}
 
-Enter the package name into the form as shown below. You can add a path and a version. Leave 
-the version field empty for the latest version. In case the package is on pypi the path can
-be omitted. Pip will find it automatically. 
+Enter the package name into the form as shown below. You can add a path and a version. Leave the version field empty for the latest version. In case the package is on pypi the path can be omitted. Pip will find it automatically.
 
 {{ image("plugin/plugin_install_git.png", "Install plugin from git") }}
 

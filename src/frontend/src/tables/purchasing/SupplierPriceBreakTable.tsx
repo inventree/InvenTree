@@ -206,7 +206,8 @@ export default function SupplierPriceBreakTable({
             supplier_detail: true
           },
           tableActions: tableActions,
-          rowActions: rowActions
+          rowActions: rowActions,
+          enableDownload: true
         }}
       />
     </>

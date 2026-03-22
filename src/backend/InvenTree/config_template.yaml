@@ -40,6 +40,10 @@ debug_silk: False
 debug_silk_profiling: False
 debug_shell: False
 
+# Schema generation options
+#schema:
+#  level: 0 # Level of added schema extensions detail (0-3) 0 = including no additional detail, or use the environment variable INVENTREE_SCHEMA_LEVEL
+
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
@@ -223,6 +227,7 @@ ldap:
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   disable_theme_storage: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 

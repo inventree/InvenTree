@@ -5,8 +5,9 @@ import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -16,11 +17,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
+import django_q.tasks
 from django_filters.rest_framework.filterset import FilterSet
-from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
@@ -33,17 +35,21 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.models
+import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkCreateMixin, BulkDeleteMixin, MetadataView
-from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import (
-    ORDER_FILTER,
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    GenericMetadataView,
+    SimpleGenericMetadataView,
+    meta_path,
 )
+from InvenTree.config import CONFIG_LOOKUPS
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
@@ -109,7 +115,7 @@ class WebhookView(CsrfExemptMixin, APIView):
         # process data
         message = self.webhook.save_data(payload, headers, request)
         if self.run_async:
-            async_task(self._process_payload, message.id)
+            django_q.tasks.async_task(self._process_payload, message.id)
         else:
             self._process_result(
                 self.webhook.process_payload(message, payload, headers), message
@@ -558,13 +564,29 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
+class BackgroundTaskDetail(APIView):
+    """Detail view for a single background task."""
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def get(self, request, task_id, *args, **kwargs):
+        """Fetch information regarding a particular background task ID."""
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+
+        return Response(response, status=response['http_status'])
+
+
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
-    @extend_schema(responses={200: common.serializers.TaskOverviewSerializer})
+    @extend_schema(
+        operation_id='background_task_overview',
+        responses={200: common.serializers.TaskOverviewSerializer},
+    )
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
@@ -602,7 +624,7 @@ class ScheduledTaskList(ListAPI):
 
     ordering_fields = ['pk', 'func', 'last_run', 'next_run']
 
-    search_fields = ['func']
+    search_fields = ['func', 'name']
 
     def get_queryset(self):
         """Return annotated queryset."""
@@ -830,7 +852,13 @@ class ParameterTemplateFilter(FilterSet):
         content_type = common.filters.determine_content_type(value)
 
         if not content_type:
-            return queryset.none()
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # If the 'filter_exists_for_model_id' filter is applied, defer to that
+        if self.request.query_params.get('exists_for_model_id', None):
+            return queryset
 
         queryset = queryset.prefetch_related('parameters')
 
@@ -842,6 +870,160 @@ class ParameterTemplateFilter(FilterSet):
         )
 
         # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+
+        Reference: https://github.com/inventree/InvenTree/issues/11381
+        """
+        exists_for_model = self.request.query_params.get('exists_for_model', None)
+
+        if not exists_for_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        content_type = common.filters.determine_content_type(exists_for_model)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        model_class = content_type.model_class()
+
+        # Try to find the model instance
+        try:
+            instance = model_class.objects.get(pk=value)
+        except (model_class.DoesNotExist, ValueError):
+            # If the model instance does not exist, then we can return an empty queryset
+            raise ValidationError({
+                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+            })
+
+        # If the provided model is a "tree" structure, then we should also include any child objects in the filter
+        if isinstance(instance, InvenTree.models.InvenTreeTree):
+            id_values = list(
+                instance.get_descendants(include_self=True).values_list('pk', flat=True)
+            )
+        else:
+            id_values = [instance.pk]
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': content_type, 'model_id__in': id_values}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_related_model = rest_filters.CharFilter(
+        method='filter_exists_for_related_model', label='Exists For Related Model'
+    )
+
+    def filter_exists_for_related_model(self, queryset, name, value):
+        """Filter applied to map parameter templates to a particular model relation against the target model.
+
+        For instance, specify 'category' to filter part parameters which exist for any part in that category.
+
+        Note:
+            - This filter has no effect on its own
+            - It requires the 'exists_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
+        """
+        return queryset
+
+    exists_for_related_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_related_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_related_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given related model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
+            - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
+
+        Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
+            - exists_for_model=part
+            - exists_for_related_model=category
+            - exists_for_related_model_id=5
+        """
+        model = self.request.query_params.get('exists_for_model', None)
+        related_model = self.request.query_params.get('exists_for_related_model', None)
+
+        if not model or not related_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # Determine content type for the base model, to ensure they are valid
+        model_type = common.filters.determine_content_type(model)
+
+        if not model_type:
+            return queryset.none()
+
+        # Determine the model class for the 'related' model
+        try:
+            related_model_field = model_type.model_class()._meta.get_field(
+                related_model
+            )
+        except FieldDoesNotExist:
+            raise ValidationError({
+                'exists_for_related_model': 'Invalid related model - no such field on the base model'
+            })
+        if related_model_field := model_type.model_class()._meta.get_field(
+            related_model
+        ):
+            related_model_class = related_model_field.related_model
+        else:
+            # Return an empty queryset if the provided related model is invalid
+            return queryset.none()
+
+        # Find all instances of the related model which match the provided related model id
+        try:
+            related_instance = related_model_class.objects.get(pk=value)
+        except (related_model_class.DoesNotExist, ValueError):
+            return queryset.none()
+
+        # Account for potential tree structure in the related model
+        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+            related_instances = list(
+                related_instance.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
+            )
+        else:
+            related_instances = [related_instance.pk]
+
+        # Next, find all instances of the base model which are related to the related model instances
+        model_instances = model_type.model_class().objects.filter(**{
+            f'{related_model}__in': related_instances
+        })
+        model_instance_ids = list(model_instances.values_list('pk', flat=True))
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': model_type, 'model_id__in': model_instance_ids}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
         return queryset.filter(parameter_count__gt=0)
 
 
@@ -909,7 +1091,7 @@ class ParameterList(
     """List API endpoint for Parameter objects."""
 
     filterset_class = ParameterFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
 
@@ -996,6 +1178,22 @@ class DataOutputEndpointMixin:
     serializer_class = common.serializers.DataOutputSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Return the set of DataOutput objects which the user has permission to view."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            return common.models.DataOutput.objects.none()
+
+        # Allow staff users access to all DataOutput objects
+        if user.is_staff:
+            return queryset
+
+        # All other users are limited to viewing their own DataOutput objects
+        return queryset.filter(user=user)
+
 
 class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
     """List view for DataOutput objects."""
@@ -1063,6 +1261,92 @@ class TestEmail(CreateAPI):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
+
+
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
+
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
+    )
+
+
+class HealthCheckView(APIView):
+    """Simple JSON endpoint for InvenTree health check.
+
+    Intended to be used by external services to confirm that the InvenTree server is running.
+    """
+
+    permission_classes = [AllowAnyOrReadScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
+        status = (
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
+        )
+        return JsonResponse(
+            {'status': 'ok' if status else 'loading'}, status=200 if status else 503
+        )
+
+
+class ObservabilityEndSerializer(serializers.Serializer):
+    """Serializer for observability end endpoint."""
+
+    traceid = serializers.CharField(
+        help_text='Trace ID to end', max_length=128, required=True
+    )
+    service = serializers.CharField(
+        help_text='Service name', max_length=128, required=True
+    )
+
+
+class ObservabilityEnd(CreateAPI):
+    """Endpoint for observability tools."""
+
+    permission_classes = [AllowAnyOrReadScope]
+    serializer_class = ObservabilityEndSerializer
+
+    def create(self, request, *args, **kwargs):
+        """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
+        data = self.get_serializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        traceid = data.validated_data['traceid']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
+
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
+
+        return Response({'status': 'ok'})
 
 
 selection_urls = [
@@ -1144,6 +1428,9 @@ common_api_urls = [
                 name='api-scheduled-task-list',
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path(
+                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
+            ),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
         ]),
     ),
@@ -1154,11 +1441,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Attachment),
-                        name='api-attachment-metadata',
-                    ),
+                    meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
@@ -1175,13 +1458,7 @@ common_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(
-                                    model=common.models.ParameterTemplate
-                                ),
-                                name='api-parameter-template-metadata',
-                            ),
+                            meta_path(common.models.ParameterTemplate),
                             path(
                                 '',
                                 ParameterTemplateDetail.as_view(),
@@ -1199,11 +1476,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Parameter),
-                        name='api-parameter-metadata',
-                    ),
+                    meta_path(common.models.Parameter),
                     path('', ParameterDetail.as_view(), name='api-parameter-detail'),
                 ]),
             ),
@@ -1217,6 +1490,22 @@ common_api_urls = [
             path('', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
+    # Metadata
+    path(
+        'metadata/',
+        include([
+            path(
+                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+            path(
+                '<str:model>/<int:pk>/',
+                SimpleGenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+        ]),
+    ),
     # Project codes
     path(
         'project-code/',
@@ -1224,14 +1513,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(
-                            model=common.models.ProjectCode,
-                            permission_classes=[IsStaffOrReadOnlyScope],
-                        ),
-                        name='api-project-code-metadata',
-                    ),
+                    meta_path(common.models.ProjectCode),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
@@ -1343,6 +1625,26 @@ common_api_urls = [
                 '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
             ),
             path('', DataOutputList.as_view(), name='api-data-output-list'),
+        ]),
+    ),
+    # System APIs (related to basic system functions)
+    path(
+        'system/',
+        include([
+            # Health check
+            path('health/', HealthCheckView.as_view(), name='api-system-health')
+        ]),
+    ),
+    # Internal System APIs - DO NOT USE
+    path(
+        'system-internal/',
+        include([
+            # Observability
+            path(
+                'observability/end',
+                ObservabilityEnd.as_view(),
+                name='api-system-observability',
+            )
         ]),
     ),
 ]

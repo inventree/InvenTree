@@ -2,6 +2,7 @@
 
 import os
 from decimal import Decimal
+from typing import TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -53,7 +54,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class CompanyReportContext(report.mixins.BaseReportContext):
+class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Company model.
 
     Attributes:
@@ -111,6 +112,7 @@ class Company(
     """
 
     IMAGE_RENAME = rename_company_image
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -242,7 +244,11 @@ class Company(
         # We may have a pre-fetched primary address list
         if hasattr(self, 'primary_address_list'):
             addresses = self.primary_address_list
-            return addresses[0] if len(addresses) > 0 else None
+            return (
+                addresses[0]
+                if len(addresses) > 0 and isinstance(addresses, list)
+                else None
+            )
 
         # Otherwise, query the database
         return self.addresses.filter(primary=True).first()
@@ -296,6 +302,8 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         email: contact email
         role: position in company
     """
+
+    IMPORT_ID_FIELDS = ['name', 'email']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -370,22 +378,19 @@ class Address(InvenTree.models.InvenTreeModel):
         Rules:
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-        others = list(
-            Address.objects.filter(company=self.company).exclude(pk=self.pk).all()
-        )
+        others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
 
         # If this is the *only* address for this company, make it the primary one
-        if len(others) == 0:
+        if not others.exists():
             self.primary = True
 
         super().save(*args, **kwargs)
 
         # Once this address is saved, check others
         if self.primary:
-            for addr in others:
-                if addr.primary:
-                    addr.primary = False
-                    addr.save()
+            Address.objects.filter(company=self.company).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     @staticmethod
     def get_api_url():
@@ -493,6 +498,8 @@ class ManufacturerPart(
         link: Link to external website for this manufacturer part
         description: Descriptive notes field
     """
+
+    IMPORT_ID_FIELDS = ['MPN']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -607,6 +614,7 @@ class SupplierPart(
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         active: Boolean value, is this supplier part active
+        primary: Boolean value, is this the primary supplier part for the linked Part
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
@@ -619,6 +627,8 @@ class SupplierPart(
         pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
+
+    IMPORT_ID_FIELDS = ['SKU']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -732,7 +742,20 @@ class SupplierPart(
         self.clean()
         self.validate_unique()
 
+        # Ensure that only one SupplierPart is marked as "primary" for a given Part
+        others = SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk)
+
+        # If this is the *only* SupplierPart for this Part, make it the primary one
+        if not others.exists():
+            self.primary = True
+
         super().save(*args, **kwargs)
+
+        # Once this SupplierPart is saved, check others
+        if self.primary:
+            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     part = models.ForeignKey(
         'part.Part',
@@ -762,6 +785,12 @@ class SupplierPart(
         default=True,
         verbose_name=_('Active'),
         help_text=_('Is this supplier part active?'),
+    )
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary supplier part for the linked Part?'),
     )
 
     manufacturer_part = models.ForeignKey(

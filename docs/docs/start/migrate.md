@@ -117,7 +117,7 @@ Once the migration process completes, the database records are now updated! Rest
 
 ## Migrating Between Incompatible Database Versions
 
-There may be occasions when InvenTree data needs to be migrated between two database installations running *incompatible* versions of the database software. For example, InvenTree may be running on a Postgres database running on version 12, and the administrator wishes to migrate the data to a Postgres version 17 database.
+There may be occasions when InvenTree data needs to be migrated between two database installations running *incompatible* versions of the database software. For example, InvenTree may be running on a Postgres database running on version 12, and the administrator wishes to migrate the data to a Postgres version {{ config.extra.docker_postgres_version }} database.
 
 !!! warning "Advanced Procedure"
     The following procedure is *advanced*, and should only be attempted by experienced database administrators. Always ensure that database backups are made before attempting any migration procedure.
@@ -127,7 +127,7 @@ Due to inherit incompatibilities between different major versions of database so
 !!! warning "InvenTree Version"
     It is *crucial* that both InvenTree database installations are running the same version of InvenTree software! If this is not the case, data migration may fail, and there is a possibility that data corruption can occur. Ensure that the original database is up to date, by running `invoke update`.
 
-The following instructions assume that the source (old) database is Postgres version 15, and the target (new) database is Postgres version 17. Additionally, it assumes that the InvenTree installation is running under [docker / docker compose](./docker.md), for simplicity. Adjust commands as required for other InvenTree configurations or database software.
+The following instructions assume that the source (old) database is Postgres version 15, and the target (new) database is Postgres version {{ config.extra.docker_postgres_version }}. Additionally, it assumes that the InvenTree installation is running under [docker / docker compose](./docker.md), for simplicity. Adjust commands as required for other InvenTree configurations or database software.
 
 The overall procedure is as follows:
 
@@ -154,13 +154,13 @@ docker compose down
 
 ### Remove Old Database Files
 
-The raw database files are incompatible between different major versions of Postgres. Thus, the old database files must be removed before starting the new database.
+The raw database files are incompatible between different major versions of Postgres. Thus, the old database files must be removed before starting the new database. Rather than removing the database directory, we will move the database files to a temporary location, just in case we need to revert back to the old database.
 
 !!! warning "Data Loss"
     Ensure that a complete backup of the old database has been made before proceeding! Removing the database files will result in data loss if a backup does not exist.
 
 ```
-rm -rf ./path/to/database/*
+mv ./path/to/database ./path/to/database_backup
 ```
 
 !!! info "Database Location"
@@ -168,7 +168,7 @@ rm -rf ./path/to/database/*
 
 ### Start New Database
 
-Update the InvenTree docker configuration to use the new version of Postgres (e.g. `postgres:17`), and then start the InvenTree installation:
+Update the InvenTree docker configuration to use the new version of Postgres (e.g. `postgres:{{ config.extra.docker_postgres_version }}`), and then start the InvenTree installation:
 
 ```
 docker compose up -d

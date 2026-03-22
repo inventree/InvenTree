@@ -113,16 +113,6 @@ export function usePurchaseOrderLineItemFields({
     }
   }, [create, part, quantity, priceBreaks]);
 
-  useEffect(() => {
-    if (autoPricing) {
-      setPurchasePrice('');
-    }
-  }, [autoPricing]);
-
-  useEffect(() => {
-    setAutoPricing(purchasePrice === '');
-  }, [purchasePrice]);
-
   const fields = useMemo(() => {
     const fields: ApiFormFieldSet = {
       order: {
@@ -159,6 +149,7 @@ export function usePurchaseOrderLineItemFields({
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        disabled: autoPricing,
         placeholder: suggestedPurchasePrice,
         placeholderAutofill: true,
         onValueChange: setPurchasePrice
@@ -169,6 +160,7 @@ export function usePurchaseOrderLineItemFields({
         onValueChange: setPurchasePriceCurrency
       },
       auto_pricing: {
+        default: create !== false,
         value: autoPricing,
         onValueChange: setAutoPricing
       },
@@ -300,7 +292,8 @@ export function usePurchaseOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
@@ -361,12 +354,7 @@ function LineItemFormRow({
 
   // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator({
-    isEnabled: () => batchOpen && trackable,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.idx, 'serial_numbers', value);
-      }
-    }
+    isEnabled: () => trackable
   });
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
@@ -384,7 +372,6 @@ function LineItemFormRow({
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
       props.changeFn(props.idx, 'batch_code', undefined);
-      props.changeFn(props.idx, 'serial_numbers', undefined);
     },
     onOpen: () => {
       // Generate a new batch code
@@ -392,6 +379,14 @@ function LineItemFormRow({
         part: record?.supplier_part_detail?.part,
         order: record?.order
       });
+    }
+  });
+
+  const [serialOpen, serialHandlers] = useDisclosure(false, {
+    onClose: () => {
+      props.changeFn(props.idx, 'serial_numbers', undefined);
+    },
+    onOpen: () => {
       // Generate new serial numbers
       if (trackable) {
         serialNumberGenerator.update({
@@ -434,14 +429,6 @@ function LineItemFormRow({
   useEffect(() => {
     props.changeFn(props.idx, 'barcode', barcode);
   }, [barcode]);
-
-  const batchToolTip: string = useMemo(() => {
-    if (trackable) {
-      return t`Assign Batch Code and Serial Numbers`;
-    } else {
-      return t`Assign Batch Code`;
-    }
-  }, [trackable]);
 
   // Update location field description on state change
   useEffect(() => {
@@ -564,10 +551,21 @@ function LineItemFormRow({
               size='sm'
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon='batch_code' />}
-              tooltip={batchToolTip}
+              tooltip={t`Assign Batch Code`}
               tooltipAlignment='top'
               variant={batchOpen ? 'outline' : 'transparent'}
             />
+            {trackable && (
+              <ActionButton
+                size='sm'
+                onClick={() => serialHandlers.toggle()}
+                icon={<InvenTreeIcon icon='serial' />}
+                tooltip={t`Assign Serial Numbers`}
+                tooltipAlignment='top'
+                variant={serialOpen ? 'outline' : 'transparent'}
+              />
+            )}
+
             {settings.isSet('STOCK_ENABLE_EXPIRY') && (
               <ActionButton
                 size='sm'
@@ -717,7 +715,7 @@ function LineItemFormRow({
         error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
-        visible={batchOpen && trackable}
+        visible={serialOpen}
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
@@ -726,7 +724,10 @@ function LineItemFormRow({
           field_type: 'string',
           label: t`Serial Numbers`,
           description: t`Enter serial numbers for received items`,
-          value: props.item.serial_numbers
+          value: props.item.serial_numbers,
+          placeholderAutofill: true,
+          placeholder:
+            serialNumberGenerator.result && `${serialNumberGenerator.result}`
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />

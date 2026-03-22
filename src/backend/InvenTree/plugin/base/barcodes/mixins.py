@@ -60,7 +60,7 @@ class BarcodeMixin:
         """Does this plugin support barcode generation."""
         try:
             # Attempt to call the generate method
-            self.generate(None)  # type: ignore
+            self.generate(None)
         except NotImplementedError:
             # If a NotImplementedError is raised, then barcode generation is not supported
             return False
@@ -191,7 +191,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
             q1 = Q(manufacturer=supplier)
             # Case 2: Supplied by this supplier
             m = (
-                SupplierPart.objects.filter(supplier=supplier)
+                SupplierPart.objects
+                .filter(supplier=supplier)
                 .values_list('manufacturer_part', flat=True)
                 .distinct()
             )

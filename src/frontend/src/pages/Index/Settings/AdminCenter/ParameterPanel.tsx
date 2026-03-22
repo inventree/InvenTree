@@ -5,7 +5,7 @@ import { StylishText } from '../../../../components/items/StylishText';
 import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
 import SelectionListTable from '../../../../tables/part/SelectionListTable';
 
-export default function PartParameterPanel() {
+export default function ParameterPanel() {
   return (
     <Accordion multiple defaultValue={['parameter-templates']}>
       <Accordion.Item value='parameter-templates' key='parameter-templates'>

@@ -85,8 +85,8 @@ class RenderMeta(enums.ChoicesType):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
-    """Class for creating enumerated string choices for schema rendering."""
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""  # ty:ignore[conflicting-metaclass]
 
 
 class MetaMixin(models.Model):
@@ -147,6 +147,8 @@ class UpdatedUserMixin(models.Model):
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    IMPORT_ID_FIELDS = ['code']
 
     class Meta:
         """Class options for the ProjectCode model."""
@@ -970,6 +972,22 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
+    def confirm(self) -> bool:
+        """Return if this setting requires confirmation on change."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm', False)
+
+    def confirm_text(self) -> str:
+        """Return the confirmation text for this setting, if provided."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm_text', '')
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
@@ -1066,7 +1084,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.validator_is_bool(validator)
 
-    def as_bool(self):
+    def as_bool(self) -> bool:
         """Return the value of this setting converted to a boolean value.
 
         Warning: Only use on values where is_bool evaluates to true!
@@ -1200,7 +1218,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    SETTINGS: dict[str, InvenTreeSettingsKeyType]
+    from common.setting.system import SYSTEM_SETTINGS
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType] = SYSTEM_SETTINGS
 
     CHECK_SETTING_KEY = True
 
@@ -1266,9 +1286,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
-    from common.setting.system import SYSTEM_SETTINGS
-
-    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
@@ -1294,6 +1311,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     import common.setting.user
 
+    SETTINGS = common.setting.user.USER_SETTINGS
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1304,8 +1323,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
-
-    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
@@ -2380,6 +2397,8 @@ class ParameterTemplate(
         selectionlist: Optional link to a SelectionList for this template
         enabled: Is this template enabled?
     """
+
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass options for the ParameterTemplate model."""

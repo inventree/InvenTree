@@ -91,6 +91,7 @@ nav:
       - Privacy: privacy.md
   - Concepts:
     - Terminology: concepts/terminology.md
+    - User Interface: concepts/user_interface.md
     - Threat Model: concepts/threat_model.md
     - Physical Units: concepts/units.md
     - Companies: concepts/company.md
@@ -137,6 +138,7 @@ nav:
   - Stock:
     - Stock Items: stock/index.md
     - Availability: stock/availability.md
+    - Traceability: stock/traceability.md
     - Stock Tracking: stock/tracking.md
     - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md

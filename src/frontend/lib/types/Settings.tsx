@@ -34,6 +34,8 @@ export interface Setting {
   method?: string;
   required?: boolean;
   read_only?: boolean;
+  confirm?: boolean;
+  confirm_text?: string;
 }
 
 export interface SettingChoice {

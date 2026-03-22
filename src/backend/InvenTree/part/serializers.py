@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
+import common.models
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -30,6 +31,7 @@ import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
 import users.models
+from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -128,7 +130,16 @@ class CategorySerializer(
 
     def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
-        return category in self.context.get('starred_categories', [])
+        if not self.request or not self.request.user:
+            return False
+
+        # Cache the "starred_categories" list for the current user
+        if not hasattr(self, 'starred_categories'):
+            self.starred_categories = [
+                star.category.pk for star in self.request.user.starred_categories.all()
+            ]
+
+        return category.pk in self.starred_categories
 
     path = enable_filter(
         FilterableListField(
@@ -575,7 +586,6 @@ class PartSerializer(
             'default_expiry',
             'default_location',
             'default_location_detail',
-            'default_supplier',
             'description',
             'full_name',
             'image',
@@ -637,7 +647,6 @@ class PartSerializer(
 
         - Allows us to optionally pass extra fields based on the query.
         """
-        self.starred_parts = kwargs.pop('starred_parts', [])
         create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
@@ -753,7 +762,16 @@ class PartSerializer(
 
     def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
-        return part in self.starred_parts
+        if not self.request or not self.request.user:
+            return False
+
+        # Cache the "starred_parts" list for the current user
+        if not hasattr(self, 'starred_parts'):
+            self.starred_parts = [
+                star.part.pk for star in self.request.user.starred_parts.all()
+            ]
+
+        return part.pk in self.starred_parts
 
     # Extra detail for the category
     category_detail = enable_filter(
@@ -1187,7 +1205,11 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         return part.sales_order_allocation_count(include_variants=True, pending=True)
 
 
-class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartStocktakeSerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
     """Serializer for the PartStocktake model."""
 
     class Meta:
@@ -1196,17 +1218,31 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         model = PartStocktake
         fields = [
             'pk',
-            'date',
             'part',
+            'part_name',
+            'part_ipn',
+            'part_description',
+            'date',
             'item_count',
             'quantity',
             'cost_min',
             'cost_min_currency',
             'cost_max',
             'cost_max_currency',
+            # Optional detail fields
+            'part_detail',
         ]
 
         read_only_fields = ['date', 'user']
+
+    def __init__(self, *args, **kwargs):
+        """Custom initialization for PartStocktakeSerializer."""
+        exclude_pk = kwargs.pop('exclude_pk', False)
+
+        super().__init__(*args, **kwargs)
+
+        if exclude_pk:
+            self.fields.pop('pk', None)
 
     quantity = serializers.FloatField()
 
@@ -1216,6 +1252,28 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_max_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
 
+    part_name = serializers.CharField(
+        source='part.name', read_only=True, label=_('Part Name')
+    )
+
+    part_ipn = serializers.CharField(
+        source='part.IPN', read_only=True, allow_null=True, label=_('Part IPN')
+    )
+
+    part_description = serializers.CharField(
+        source='part.description',
+        read_only=True,
+        allow_null=True,
+        label=_('Part Description'),
+    )
+
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='part', read_only=True, allow_null=True, many=False, pricing=False
+        ),
+        default_include=False,
+    )
+
     def save(self):
         """Called when this serializer is saved."""
         data = self.validated_data
@@ -1224,6 +1282,72 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         request = self.context.get('request')
         data['user'] = request.user if request else None
         return super().save()
+
+
+class PartStocktakeGenerateSerializer(serializers.Serializer):
+    """Serializer for generating PartStocktake entries."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'part',
+            'category',
+            'location',
+            'generate_entry',
+            'generate_report',
+            'output',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        label=_('Part'),
+        help_text=_(
+            'Select a part to generate stocktake information for that part (and any variant parts)'
+        ),
+        required=False,
+        allow_null=True,
+    )
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        label=_('Category'),
+        help_text=_(
+            'Select a category to include all parts within that category (and subcategories)'
+        ),
+        required=False,
+        allow_null=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        label=_('Location'),
+        help_text=_(
+            'Select a location to include all parts with stock in that location (including sub-locations)'
+        ),
+        required=False,
+        allow_null=True,
+    )
+
+    generate_entry = serializers.BooleanField(
+        label=_('Generate Stocktake Entries'),
+        help_text=_('Save stocktake entries for the selected parts'),
+        write_only=True,
+        required=False,
+        default=False,
+    )
+
+    generate_report = serializers.BooleanField(
+        label=_('Generate Report'),
+        help_text=_('Generate a stocktake report for the selected parts'),
+        write_only=True,
+        required=False,
+        default=False,
+    )
+
+    output = common.serializers.DataOutputSerializer(
+        read_only=True, many=False, label=_('Output')
+    )
 
 
 @extend_schema_field(
@@ -1550,8 +1674,20 @@ class BomItemSerializer(
 
     def validate_quantity(self, quantity):
         """Perform validation for the BomItem quantity field."""
-        if quantity <= 0:
-            raise serializers.ValidationError(_('Quantity must be greater than zero'))
+        allow_zero_qty = common.models.InvenTreeSetting.get_setting(
+            'PART_BOM_ALLOW_ZERO_QUANTITY', False
+        )
+
+        if allow_zero_qty:
+            if quantity < 0:
+                raise serializers.ValidationError(
+                    _('Quantity must be greater than or equal to zero')
+                )
+        else:
+            if quantity <= 0:
+                raise serializers.ValidationError(
+                    _('Quantity must be greater than zero')
+                )
 
         return quantity
 

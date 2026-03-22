@@ -505,7 +505,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        mp = ManufacturerPart.objects.first()
+
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'MPN123')
@@ -710,6 +712,32 @@ class SupplierPartTest(InvenTreeAPITestCase):
         for result in response.data:
             self.assertEqual(result['supplier'], company.pk)
 
+    def test_primary(self):
+        """Test for the 'primary' field in the SupplierPart model."""
+        for sp in SupplierPart.objects.filter(part=1):
+            self.patch(
+                reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+                {'primary': True},
+                expected_code=200,
+            )
+
+            # Only one supplier part should be primary for this part
+            self.assertEqual(
+                SupplierPart.objects.filter(part=1, primary=True).count(), 1
+            )
+
+            # Filter via the API
+            response = self.get(
+                reverse('api-supplier-part-list'),
+                {'part': 1, 'primary': True},
+                expected_code=200,
+            )
+
+            self.assertEqual(len(response.data), 1)
+
+        self.assertEqual(SupplierPart.objects.filter(part=1).count(), 4)
+        self.assertEqual(SupplierPart.objects.filter(part=1, primary=False).count(), 3)
+
     def test_filterable_fields(self):
         """Test inclusion/exclusion of optional API fields."""
         fields = {
@@ -745,58 +773,6 @@ class SupplierPartTest(InvenTreeAPITestCase):
             self.assertNotIn(
                 field, response.data[0], f'Field: {field} failed exclusion test'
             )
-
-
-class CompanyMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'company',
-        'contact',
-        'manufacturer_part',
-        'supplier_part',
-    ]
-
-    roles = ['company.change', 'purchase_order.change', 'part.change']
-
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = f'12{len(apikey)}'
-
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-manufacturer-part-metadata': ManufacturerPart,
-            'api-supplier-part-metadata': SupplierPart,
-            'api-company-metadata': Company,
-            'api-contact-metadata': Contact,
-        }.items():
-            self.metatester(apikey, model)
 
 
 class SupplierPriceBreakAPITest(InvenTreeAPITestCase):

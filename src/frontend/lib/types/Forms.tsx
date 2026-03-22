@@ -111,6 +111,8 @@ export type ApiFormFieldType = {
   read_only?: boolean;
   placeholder?: string;
   placeholderAutofill?: boolean;
+  placeholderWarningCompare?: string | number;
+  placeholderWarning?: string;
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;

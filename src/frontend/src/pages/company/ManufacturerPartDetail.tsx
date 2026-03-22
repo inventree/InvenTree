@@ -198,7 +198,8 @@ export default function ManufacturerPartDetail() {
       }),
       NotesPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        has_note: !!manufacturerPart?.notes
       })
     ];
   }, [user, manufacturerPart]);

@@ -358,6 +358,7 @@ export default function StockItemTestResultTable({
           icon: <IconCircleCheck />,
           hidden:
             !record.templateId ||
+            !!record.choices ||
             record?.requires_attachment ||
             record?.requires_value ||
             record.result,

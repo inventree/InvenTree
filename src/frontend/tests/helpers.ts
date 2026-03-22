@@ -167,3 +167,46 @@ export const deletePart = async (name: string) => {
     expect(res.status()).toBe(204);
   }
 };
+
+// Click on the column sorting toggle
+export const toggleColumnSorting = async (page: Page, columnName: string) => {
+  // Click on the column header to toggle sorting
+  const regex = new RegExp(
+    `^${columnName}\\s*(Not sorted|Sorted ascending|Sorted descending)$`,
+    'i'
+  );
+
+  await page.getByRole('button', { name: regex }).click();
+  await page.waitForTimeout(50);
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'table' view
+export const showTableView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'parameteric' view
+export const showParametricView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'calendar' view
+export const showCalendarView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Check for an expected number of columns in the visible table
+export const expectTableColumnCount = async (page: Page, count: number) => {
+  const columns = page.locator('table thead tr th');
+  await expect(columns).toHaveCount(count);
+};

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Skeleton, Stack } from '@mantine/core';
+import { Divider, Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -217,6 +217,7 @@ export default function SystemSettings() {
               'PART_SALABLE',
               'PART_VIRTUAL',
               'PART_COPY_BOM',
+              'PART_BOM_ALLOW_ZERO_QUANTITY',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
@@ -254,15 +255,26 @@ export default function SystemSettings() {
         label: t`Stock History`,
         icon: <IconClipboardList />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'STOCKTAKE_ENABLE',
-              'STOCKTAKE_EXCLUDE_EXTERNAL',
-              'STOCKTAKE_AUTO_DAYS',
-              'STOCKTAKE_DELETE_OLD_ENTRIES',
-              'STOCKTAKE_DELETE_DAYS'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              heading={t`Part Stocktake`}
+              keys={[
+                'STOCKTAKE_ENABLE',
+                'STOCKTAKE_EXCLUDE_EXTERNAL',
+                'STOCKTAKE_AUTO_DAYS',
+                'STOCKTAKE_DELETE_OLD_ENTRIES',
+                'STOCKTAKE_DELETE_DAYS'
+              ]}
+            />
+            <Divider />
+            <GlobalSettingList
+              heading={t`Stock Tracking`}
+              keys={[
+                'STOCK_TRACKING_DELETE_OLD_ENTRIES',
+                'STOCK_TRACKING_DELETE_DAYS'
+              ]}
+            />
+          </Stack>
         )
       },
       {

@@ -10,11 +10,13 @@ import type { PanelType } from './Panel';
 export default function NotesPanel({
   model_type,
   model_id,
-  editable
+  editable,
+  has_note
 }: {
   model_type: ModelType;
   model_id: number | undefined;
   editable?: boolean;
+  has_note?: boolean;
 }): PanelType {
   const user = useUserState.getState();
 
@@ -22,6 +24,7 @@ export default function NotesPanel({
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
+    notification_dot: has_note ? 'info' : null,
     content:
       model_type && model_id ? (
         <NotesEditor

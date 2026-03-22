@@ -21,6 +21,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer, TagListSerializerField
@@ -163,10 +164,15 @@ class FilterableSerializerMixin:
 
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
+        context = kwargs.get('context', {})
+        request = context.get('request', None) or getattr(self, 'request', None)
+
+        # Gather query parameters from the request context
+        query_params = dict(getattr(request, 'query_params', {})) if request else {}
+
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
             return
-        self._was_filtered = True
 
         # Actually gather the filterable fields
         # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
@@ -176,21 +182,22 @@ class FilterableSerializerMixin:
             if getattr(a, 'is_filterable', None)
         }
 
-        # Gather query parameters from the request context
-        query_params = {}
-        if context := kwargs.get('context', {}):
-            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
-
         # Remove filter args from kwargs to avoid issues with super().__init__
         popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals: dict[str, bool] = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['filter_name'] or k
             val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
-
             # Optionally also look in query parameters
-            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+            # Note that we only do this for a top-level serializer, to avoid issues with nested serializers
+            if (
+                request
+                and val is None
+                and self.filter_on_query
+                and v.get('filter_by_query', True)
+            ):
                 val = query_params.pop(pop_ref, None)
+
                 if isinstance(val, list) and len(val) == 1:
                     val = val[0]
 
@@ -199,7 +206,9 @@ class FilterableSerializerMixin:
             tgs_vals[k] = (
                 str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
+
         self.filter_target_values = tgs_vals
+        self._was_filtered = True
 
         # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
         if len(self.filter_targets) == 0 and not self.no_filters:
@@ -216,14 +225,12 @@ class FilterableSerializerMixin:
         ):
             return
 
-        # Skip filtering when exporting data - leave all fields intact
-        if getattr(self, '_exporting_data', False):
-            return
+        is_exporting = getattr(self, '_exporting_data', False)
 
         # Skip filtering for a write requests - all fields should be present for data creation
         if request := self.context.get('request', None):
             if method := getattr(request, 'method', None):
-                if str(method).lower() in ['post', 'put', 'patch']:
+                if method not in SAFE_METHODS and not is_exporting:
                     return
 
         # Throw out fields which are not requested (either by default or explicitly)

@@ -27,9 +27,11 @@ import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
+  useBuildAutoAllocateFields,
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -43,6 +45,7 @@ import {
   CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   RenderPartColumn
@@ -90,7 +93,9 @@ export function BuildLineSubTable({
       },
       {
         accessor: 'stock_item_detail.batch',
-        title: t`Batch`
+        title: t`Batch`,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       LocationColumn({
         accessor: 'location_detail'
@@ -331,11 +336,7 @@ export default function BuildLineTable({
           );
         }
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: false,
-        title: t`IPN`
-      },
+      IPNColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -569,32 +570,37 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to build order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
     title: t`Allocate Stock`,
-    fields: {
-      location: {
-        filters: {
-          structural: false
-        }
-      },
-      exclude_location: {},
-      interchangeable: {},
-      substitutes: {},
-      optional_items: {}
-    },
+    fields: useBuildAutoAllocateFields({
+      item_type: 'untracked'
+    }),
     initialData: {
       location: build.take_from,
       interchangeable: true,
       substitutes: true,
       optional_items: false
     },
-    successMessage: t`Auto allocation in progress`,
-    table: table,
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
+    },
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
       </Alert>
     )
   });
@@ -677,12 +683,28 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const [consumeTaskId, setConsumeTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: consumeTaskId,
+    message: t`Consuming allocated stock`,
+    successMessage: t`Stock consumed successfully`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const consumeLines = useConsumeBuildLinesForm({
     buildId: build.pk,
     buildLines: selectedRows,
-    onFormSuccess: () => {
+    onFormSuccess: (response: any) => {
       table.clearSelectedRecords();
-      table.refreshTable();
+
+      if (response.task_id) {
+        setConsumeTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     }
   });
 
@@ -776,7 +798,7 @@ export default function BuildLineTable({
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !canBuild,
+          hidden: !canBuild || !isActive,
           color: 'blue',
           onClick: () => {
             setInitialData({
@@ -795,7 +817,7 @@ export default function BuildLineTable({
         })
       ];
     },
-    [user, navigate, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus, isActive]
   );
 
   const tableActions = useMemo(() => {

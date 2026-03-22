@@ -29,6 +29,7 @@ The following configuration options are available for backup:
 | INVENTREE_BACKUP_DATE_FORMAT | backup_date_format | Date format string used to format timestamps in backup filenames. | `%Y-%m-%d-%H%M%S` |
 | INVENTREE_BACKUP_DATABASE_FILENAME_TEMPLATE | backup_database_filename_template | Template string used to generate database backup filenames. | `InvenTree-db-{datetime}.{extension}` |
 | INVENTREE_BACKUP_MEDIA_FILENAME_TEMPLATE | backup_media_filename_template | Template string used to generate media backup filenames. | `InvenTree-media-{datetime}.{extension}` |
+| INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION | backup_restore_allow_newer_version | If True, allows restoring a backup created with a newer version of InvenTree. This is dangerous as it can lead to hard-to-debug data loss. | False |
 
 ### Storage Backend
 

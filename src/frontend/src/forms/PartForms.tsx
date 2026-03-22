@@ -1,4 +1,3 @@
-import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
@@ -10,8 +9,10 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
  */
 export function usePartFields({
   create = false,
+  partId,
   duplicatePartInstance
 }: {
+  partId?: number;
   duplicatePartInstance?: any;
   create?: boolean;
 }): ApiFormFieldSet {
@@ -52,13 +53,6 @@ export function usePartFields({
       default_location: {
         filters: {
           structural: false
-        }
-      },
-      default_supplier: {
-        model: ModelType.company,
-        api_url: apiUrl(ApiEndpoints.company_list),
-        filters: {
-          is_supplier: true
         }
       },
       default_expiry: {},
@@ -199,6 +193,7 @@ export function usePartFields({
 
     return fields;
   }, [
+    partId,
     virtual,
     purchaseable,
     create,
@@ -263,7 +258,6 @@ export function partStocktakeFields(): ApiFormFieldSet {
     cost_min: {},
     cost_min_currency: {},
     cost_max: {},
-    cost_max_currency: {},
-    note: {}
+    cost_max_currency: {}
   };
 }

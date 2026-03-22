@@ -81,6 +81,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -168,6 +169,17 @@ function BomValidationInformation({
       refetchOnMount: true
     });
 
+  const [taskId, setTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: taskId,
+    message: t`Validating BOM`,
+    successMessage: t`BOM validated`,
+    onComplete: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
   const validateBom = useApiFormModal({
     url: ApiEndpoints.bom_validate,
     method: 'PUT',
@@ -184,9 +196,14 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`Bill of materials scheduled for validation`,
-    onFormSuccess: () => {
-      bomInformationQuery.refetch();
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      // If the process has been offloaded to a background task
+      if (response.task_id) {
+        setTaskId(response.task_id);
+      } else {
+        bomInformationQuery.refetch();
+      }
     }
   });
 
@@ -502,13 +519,6 @@ export default function PartDetail() {
         hidden: part.default_location || !part.category_default_location
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.company,
-        hidden: !part.default_supplier
-      },
-      {
         type: 'string',
         name: 'units',
         label: t`Units`,
@@ -698,13 +708,6 @@ export default function PartDetail() {
         label: t`Responsible`,
         badge: 'owner',
         hidden: !part.responsible
-      },
-      {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.supplierpart,
-        hidden: !part.default_supplier
       },
       {
         name: 'default_expiry',
@@ -975,7 +978,8 @@ export default function PartDetail() {
       }),
       NotesPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        has_note: !!part?.notes
       })
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);
@@ -1066,7 +1070,10 @@ export default function PartDetail() {
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    partId: part.pk
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
@@ -1128,6 +1135,7 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
+    changeBatch: false,
     enabled: true
   });
 

@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import cast
+from typing import TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -52,7 +52,6 @@ from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -84,8 +83,8 @@ class PartCategory(
     """
 
     ITEM_PARENT_KEY = 'category'
-
     EXTRA_PATH_FIELDS = ['icon']
+    IMPORT_ID_FIELDS = ['pathstring', 'name']
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -225,7 +224,8 @@ class PartCategory(
     def prefetch_parts_parameters(self, cascade=True):
         """Prefectch parts parameters."""
         return (
-            self.get_parts(cascade=cascade)
+            self
+            .get_parts(cascade=cascade)
             .prefetch_related('parameters_list', 'parameters_list__template')
             .all()
         )
@@ -427,7 +427,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class PartReportContext(report.mixins.BaseReportContext):
+class PartReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Part model.
 
     Attributes:
@@ -489,7 +489,6 @@ class Part(
         link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
-        default_supplier: The default SupplierPart which should be used to procure and stock this part
         default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
@@ -516,6 +515,7 @@ class Part(
 
     NODE_PARENT_KEY = 'variant_of'
     IMAGE_RENAME = rename_part_image
+    IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
 
@@ -615,7 +615,8 @@ class Part(
                 if previous.image is not None and self.image != previous.image:
                     # Are there any (other) parts which reference the image?
                     n_refs = (
-                        Part.objects.filter(image=previous.image)
+                        Part.objects
+                        .filter(image=previous.image)
                         .exclude(pk=self.pk)
                         .count()
                     )
@@ -1040,7 +1041,8 @@ class Part(
             self.revision_of
             and self.revision
             and (
-                Part.objects.exclude(pk=self.pk)
+                Part.objects
+                .exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
                 .exists()
             )
@@ -1049,7 +1051,8 @@ class Part(
 
         # Ensure unique across (Name, revision, IPN) (as specified)
         if (self.revision or self.IPN) and (
-            Part.objects.exclude(pk=self.pk)
+            Part.objects
+            .exclude(pk=self.pk)
             .filter(name=self.name, revision=self.revision, IPN=self.IPN)
             .exists()
         ):
@@ -1210,31 +1213,14 @@ class Part(
         # Default case - no default category found
         return None
 
-    def get_default_supplier(self):
-        """Get the default supplier part for this part (may be None).
+    @property
+    def default_supplier(self):
+        """Return the default (primary) SupplierPart for this Part.
 
-        - If the part specifies a default_supplier, return that
-        - If there is only one supplier part available, return that
-        - Else, return None
+        This function is included for backwards compatibility,
+        as the 'Part' model used to have a 'default_supplier' field which was a ForeignKey to SupplierPart.
         """
-        if self.default_supplier:
-            return self.default_supplier
-
-        if self.supplier_count == 1:
-            return self.supplier_parts.first()
-
-        # Default to None if there are multiple suppliers to choose from
-        return None
-
-    default_supplier = models.ForeignKey(
-        SupplierPart,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('Default Supplier'),
-        help_text=_('Default supplier part'),
-        related_name='default_parts',
-    )
+        return self.supplier_parts.filter(primary=True).first()
 
     default_expiry = models.PositiveIntegerField(
         default=0,
@@ -1621,8 +1607,8 @@ class Part(
         if not self.has_bom:
             return 0
 
-        # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items()
+        # Ignore virtual parts when calculating the "can_build" quantity
+        queryset = self.get_bom_items(include_virtual=False)
 
         # Ignore 'consumable' BOM items for this calculation
         queryset = queryset.filter(consumable=False)
@@ -1815,7 +1801,7 @@ class Part(
 
         if include_external is False:
             # Exclude stock entries which are not 'internal'
-            query = query.filter(external=False)
+            query = query.filter(location__external=False)
 
         if location:
             locations = location.get_descendants(include_self=True)
@@ -2596,21 +2582,22 @@ class Part(
         Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
+        from order.models import PurchaseOrderLineItem
+
         quantity = 0
 
-        # Iterate through all supplier parts
-        for sp in self.supplier_parts.all():
-            # Look at any incomplete line item for open orders
-            lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatusGroups.OPEN,
-                quantity__gt=F('received'),
-            )
+        # Find all outstanding PurchaseOrderLineItem objects which reference this part
+        lines = PurchaseOrderLineItem.objects.filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
+            part__part_id=self.pk,
+            quantity__gt=F('received'),
+        ).prefetch_related('part')
 
-            for line in lines:
-                remaining = line.quantity - line.received
+        for line in lines:
+            remaining = line.quantity - line.received
 
-                if remaining > 0:
-                    quantity += sp.base_quantity(remaining)
+            if remaining > 0:
+                quantity += line.part.base_quantity(remaining)
 
         return quantity
 
@@ -3631,6 +3618,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    IMPORT_ID_FIELDS = ['key']
+
     class Meta:
         """Metaclass options for the PartTestTemplate model."""
 
@@ -3828,9 +3817,17 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         return assemblies
 
     def get_valid_parts_for_allocation(
-        self, allow_variants=True, allow_substitutes=True
+        self,
+        allow_variants: bool = True,
+        allow_substitutes: bool = True,
+        allow_inactive: bool = True,
     ):
         """Return a list of valid parts which can be allocated against this BomItem.
+
+        Arguments:
+            allow_variants: If True, include variants of the sub_part
+            allow_substitutes: If True, include any directly specified substitute parts
+            allow_inactive: If True, include inactive parts in the returned list
 
         Includes:
         - The referenced sub_part
@@ -3862,6 +3859,10 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         for p in parts:
             # Trackable status must be the same as the sub_part
             if p.trackable != self.sub_part.trackable:
+                continue
+
+            # Filter by 'active' status
+            if not allow_inactive and not p.active:
                 continue
 
             valid_parts.append(p)
@@ -4112,7 +4113,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
-            # This is to provide some backwards compatibility from before these fields were addede
+            # This is to provide some backwards compatibility from before these fields were added
             if value is not None and field in [
                 'quantity',
                 'attrition',
@@ -4215,7 +4216,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if n <= 0:
             return 0.0
 
-        return int(available_stock / n)
+        return int(Decimal(available_stock) / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity.

@@ -107,6 +107,7 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
+// Expose global objects for the plugin system
 (window as any).React = React;
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;

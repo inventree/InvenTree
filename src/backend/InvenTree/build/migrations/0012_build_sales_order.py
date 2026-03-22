@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='build',
             name='sales_order',
-            field=models.ForeignKey(blank=True, help_text='SalesOrder to which this build is allocated', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='builds', to='order.SalesOrder'),
+            field=models.ForeignKey(blank=True, help_text='Sales Order to which this build is allocated', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='builds', to='order.SalesOrder'),
         ),
     ]

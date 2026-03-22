@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('reference', models.CharField(blank=True, help_text='Line item reference', max_length=100, verbose_name='Reference')),
                 ('notes', models.CharField(blank=True, help_text='Line item notes', max_length=500, verbose_name='Notes')),
                 ('target_date', models.DateField(blank=True, help_text='Target date for this line item (leave blank to use the target date from the order)', null=True, verbose_name='Target Date')),
-                ('received_date', models.DateField(blank=True, help_text='The date this this return item was received', null=True, verbose_name='Received Date')),
+                ('received_date', models.DateField(blank=True, help_text='The date this return item was received', null=True, verbose_name='Received Date')),
                 ('outcome', models.PositiveIntegerField(choices=[(10, 'Pending'), (20, 'Return'), (30, 'Repair'), (50, 'Refund'), (40, 'Replace'), (60, 'Reject')], default=10, help_text='Outcome for this line item', verbose_name='Outcome')),
                 ('price_currency', djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3)),
                 ('price', InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=6, default_currency='', help_text='Cost associated with return or repair for this line item', max_digits=19, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)], verbose_name='Price')),

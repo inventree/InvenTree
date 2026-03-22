@@ -26,19 +26,14 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import (
-    get_boolean_setting,
-    get_custom_file,
-    get_oidc_private_key,
-    get_setting,
-)
-from InvenTree.ready import isInMainThread
+from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import locales, markdown, spectacular, storages
+from .setting import db_backend, locales, markdown, spectacular, storages
 
 try:
     import django_stubs_ext
@@ -82,6 +77,9 @@ config.load_version_file()
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
+
+# Internal flag to determine if we are running in docker mode
+DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -260,11 +258,21 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
+DBBACKUP_BACKUP_METADATA_SETTER = InvenTree.backup.metadata_set
+DBBACKUP_RESTORE_METADATA_VALIDATOR = InvenTree.backup.validate_restore
+
 # Data storage options
 DBBACKUP_STORAGE_CONFIG = {
     'BACKEND': InvenTree.backup.get_backup_storage_backend(),
     'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
+
+# This can also be overridden with a command line flag --restore-allow-newer-version when running the restore command
+BACKUP_RESTORE_ALLOW_NEWER_VERSION = get_boolean_setting(
+    'INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION',
+    'backup_restore_allow_newer_version',
+    False,
+)
 
 # Enable django admin interface?
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
@@ -475,7 +483,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -511,7 +519,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
@@ -543,9 +551,6 @@ if LDAP_AUTH:  # pragma: no cover
         typecast=dict,
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
-
-# Internal flag to determine if we are running in docker mode
-DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -715,108 +720,8 @@ db_options = db_config.get('OPTIONS', db_config.get('options'))
 if db_options is None:
     db_options = {}
 
-# Specific options for postgres backend
-if 'postgres' in DB_ENGINE:  # pragma: no cover
-    from django.db.backends.postgresql.psycopg_any import (  # type: ignore[unresolved-import]
-        IsolationLevel,
-    )
-
-    # Connection timeout
-    if 'connect_timeout' not in db_options:
-        # The DB server is in the same data center, it should not take very
-        # long to connect to the database server
-        # # seconds, 2 is minimum allowed by libpq
-        db_options['connect_timeout'] = int(
-            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
-        )
-
-    # Setup TCP keepalive
-    # DB server is in the same DC, it should not become unresponsive for
-    # very long. With the defaults below we wait 5 seconds for the network
-    # issue to resolve itself.  It it that doesn't happen whatever happened
-    # is probably fatal and no amount of waiting is going to fix it.
-    # # 0 - TCP Keepalives disabled; 1 - enabled
-    if 'keepalives' not in db_options:
-        db_options['keepalives'] = int(
-            get_setting('INVENTREE_DB_TCP_KEEPALIVES', 'database.tcp_keepalives', 1)
-        )
-
-    # Seconds after connection is idle to send keep alive
-    if 'keepalives_idle' not in db_options:
-        db_options['keepalives_idle'] = int(
-            get_setting(
-                'INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1
-            )
-        )
-
-    # Seconds after missing ACK to send another keep alive
-    if 'keepalives_interval' not in db_options:
-        db_options['keepalives_interval'] = int(
-            get_setting(
-                'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
-                'database.tcp_keepalives_internal',
-                '1',
-            )
-        )
-
-    # Number of missing ACKs before we close the connection
-    if 'keepalives_count' not in db_options:
-        db_options['keepalives_count'] = int(
-            get_setting(
-                'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
-                'database.tcp_keepalives_count',
-                '5',
-            )
-        )
-
-    # # Milliseconds for how long pending data should remain unacked
-    # by the remote server
-    # TODO: Supported starting in PSQL 11
-    # "tcp_user_timeout": int(os.getenv("PGTCP_USER_TIMEOUT", "1000"),
-
-    # Postgres's default isolation level is Read Committed which is
-    # normally fine, but most developers think the database server is
-    # actually going to do Serializable type checks on the queries to
-    # protect against simultaneous changes.
-    # https://www.postgresql.org/docs/devel/transaction-iso.html
-    # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
-    if 'isolation_level' not in db_options:
-        serializable = get_boolean_setting(
-            'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
-        )
-        db_options['isolation_level'] = (
-            IsolationLevel.SERIALIZABLE
-            if serializable
-            else IsolationLevel.READ_COMMITTED
-        )
-
-# Specific options for MySql / MariaDB backend
-elif 'mysql' in DB_ENGINE:  # pragma: no cover
-    # TODO TCP time outs and keepalives
-
-    # MariaDB's default isolation level is Repeatable Read which is
-    # normally fine, but most developers think the database server is
-    # actually going to Serializable type checks on the queries to
-    # protect against siumltaneous changes.
-    # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
-    # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
-    if 'isolation_level' not in db_options:
-        serializable = get_boolean_setting(
-            'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
-        )
-        db_options['isolation_level'] = (
-            'serializable' if serializable else 'read committed'
-        )
-
-# Specific options for sqlite backend
-elif 'sqlite' in DB_ENGINE:
-    # TODO: Verify timeouts are not an issue because no network is involved for SQLite
-
-    # SQLite's default isolation level is Serializable due to SQLite's
-    # single writer implementation.  Presumably as a result of this, it is
-    # not possible to implement any lower isolation levels in SQLite.
-    # https://www.sqlite.org/isolation.html
-    pass
+# Set database-specific options
+db_backend.set_db_options(DB_ENGINE, db_options)
 
 # Provide OPTIONS dict back to the database configuration dict
 db_config['OPTIONS'] = db_options
@@ -867,7 +772,7 @@ TRACING_ENABLED = get_boolean_setting(
 )
 TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED:  # pragma: no cover
+if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
 
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
@@ -938,6 +843,10 @@ BACKGROUND_WORKER_COUNT = (
     else 1
 )
 
+# If running with SQLite, limit background worker threads to 1 to prevent database locking issues
+if 'sqlite' in DB_ENGINE:
+    BACKGROUND_WORKER_COUNT = 1
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
@@ -948,6 +857,7 @@ Q_CLUSTER = {
     'max_attempts': int(
         get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
     ),
+    'save_limit': 1000,
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
@@ -1289,10 +1199,12 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+_allowed_headers = (*default_cors_headers, 'traceparent')
 # Allow extra CORS headers in DEBUG mode
 # Required for serving /static/ and /media/ files
 if DEBUG:
-    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+    _allowed_headers = (*_allowed_headers, 'cache-control', 'pragma', 'expires')
+CORS_ALLOW_HEADERS = _allowed_headers
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
@@ -1451,12 +1363,9 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         logger.debug('- Override value for %s = ********', key)
 
 # User interface customization values
-CUSTOM_LOGO = get_custom_file(
-    'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
-)
-CUSTOM_SPLASH = get_custom_file(
-    'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
-)
+CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
+
+CUSTOM_SPLASH = get_setting('INVENTREE_CUSTOM_SPLASH', 'customize.splash', typecast=str)
 
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
@@ -1495,6 +1404,9 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+SCHEMA_VENDOREXTENSION_LEVEL = get_setting(
+    'INVENTREE_SCHEMA_LEVEL', 'schema.level', default_value=0, typecast=int
+)
 
 OAUTH2_PROVIDER = {
     # default scopes

@@ -237,7 +237,8 @@ export function PurchaseOrderLineItemTable({
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        ordering: 'SKU'
+        ordering: 'SKU',
+        copyable: true
       },
       LinkColumn({
         accessor: 'supplier_part_detail.link',
@@ -250,7 +251,8 @@ export function PurchaseOrderLineItemTable({
         ordering: 'MPN',
         title: t`Manufacturer Code`,
         sortable: true,
-        defaultVisible: false
+        defaultVisible: false,
+        copyable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',
@@ -301,6 +303,7 @@ export function PurchaseOrderLineItemTable({
     fields: addPurchaseOrderFields,
     initialData: {
       ...initialData,
+      purchase_price: null,
       purchase_price_currency: currency
     },
     onFormSuccess: orderDetailRefresh,

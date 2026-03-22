@@ -838,16 +838,26 @@ class StockBarcodeTest(StockTestBase):
 
         # Render simple barcode data for the StockItem
         barcode = item.barcode
-        self.assertEqual(barcode, '{"stockitem": 1}')
+        self.assertEqual(barcode, 'INV-SI1')
 
     def test_location_barcode_basics(self):
         """Simple tests for the StockLocation barcode integration."""
+        # Set the barcode plugin to use the legacy barcode format
+        from plugin.registry import registry
+
+        plugin = registry.get_plugin('inventreebarcode')
+
+        plugin.set_setting('INTERNAL_BARCODE_FORMAT', 'json')
+
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
         loc = StockLocation.objects.get(pk=1)
 
         barcode = loc.format_barcode()
         self.assertEqual('{"stocklocation": 1}', barcode)
+
+        # Revert the barcode format to the default
+        plugin.set_setting('INTERNAL_BARCODE_FORMAT', 'short')
 
 
 class VariantTest(StockTestBase):
@@ -866,6 +876,16 @@ class VariantTest(StockTestBase):
         green = Part.objects.get(pk=10003)
         self.assertEqual(green.stock_entries(include_variants=False).count(), 0)
         self.assertEqual(green.stock_entries().count(), 3)
+
+        # Test with an "external" location
+        entry = green.stock_entries().first()
+        entry.location = StockLocation.objects.create(
+            name='External Location', description='An external location', external=True
+        )
+        entry.save()
+
+        self.assertEqual(green.stock_entries(include_external=True).count(), 3)
+        self.assertEqual(green.stock_entries(include_external=False).count(), 2)
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""

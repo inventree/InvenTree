@@ -1,5 +1,4 @@
 # Dev requirements for InvenTree
--c requirements.txt
 coverage[toml]                          # Unit test coverage
 django-querycount                       # Display number of URL queries for requests
 django-silk                             # API query profiling

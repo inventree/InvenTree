@@ -7,6 +7,7 @@ from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
@@ -160,9 +161,10 @@ class ReportConfig(AppConfig):
             # Otherwise, create a new entry
             try:
                 # Create a new entry
-                report.models.LabelTemplate.objects.create(
-                    **template, template=self.file_from_template('label', filename)
-                )
+                with transaction.atomic():
+                    report.models.LabelTemplate.objects.create(
+                        **template, template=self.file_from_template('label', filename)
+                    )
                 logger.info("Creating new label template: '%s'", template['name'])
             except ValidationError:
                 logger.warning(

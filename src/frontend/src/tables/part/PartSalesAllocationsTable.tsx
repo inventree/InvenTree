@@ -16,6 +16,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  IPNColumn,
   PartColumn,
   ProjectCodeColumn,
   StatusColumn
@@ -56,10 +57,7 @@ export default function PartSalesAllocationsTable({
       PartColumn({
         part: 'part_detail'
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`
-      },
+      IPNColumn({}),
       ProjectCodeColumn({
         accessor: 'order_detail.project_code_detail'
       }),

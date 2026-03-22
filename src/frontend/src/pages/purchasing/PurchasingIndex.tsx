@@ -108,6 +108,7 @@ export default function PurchasingIndex() {
             icon: <IconTable />,
             content: (
               <CompanyTable
+                companyType='supplier'
                 path='purchasing/supplier'
                 params={{ is_supplier: true }}
               />
@@ -157,6 +158,7 @@ export default function PurchasingIndex() {
             icon: <IconTable />,
             content: (
               <CompanyTable
+                companyType='manufacturer'
                 path='purchasing/manufacturer'
                 params={{ is_manufacturer: true }}
               />

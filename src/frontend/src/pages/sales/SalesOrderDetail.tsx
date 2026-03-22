@@ -273,6 +273,15 @@ export default function SalesOrderDetail() {
         label: t`Completion Date`,
         hidden: !order.shipment_date,
         copy: true
+      },
+      {
+        type: 'date',
+        name: 'updated_at',
+        label: t`Last Updated`,
+        icon: 'calendar',
+        copy: true,
+        showTime: true,
+        hidden: !order.updated_at
       }
     ];
 
@@ -438,7 +447,8 @@ export default function SalesOrderDetail() {
       }),
       NotesPanel({
         model_type: ModelType.salesorder,
-        model_id: order.pk
+        model_id: order.pk,
+        has_note: !!order.notes
       })
     ];
   }, [order, id, user, soStatus, user]);

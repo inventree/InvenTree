@@ -11,12 +11,13 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
 import build.models as build_models
 import build.serializers
 import common.models
+import common.serializers
 import part.models as part_models
 import stock.models as stock_models
 import stock.serializers
@@ -24,10 +25,10 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
+from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    SEARCH_ORDER_FILTER_ALIAS,
+    SEARCH_ORDER_FILTER,
     InvenTreeDateFilter,
     NumberOrNullFilter,
 )
@@ -145,8 +146,8 @@ class BuildFilter(FilterSet):
     def filter_overdue(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are overdue."""
         if str2bool(value):
-            return queryset.filter(Build.OVERDUE_FILTER)
-        return queryset.exclude(Build.OVERDUE_FILTER)
+            return queryset.filter(Build.get_overdue_filter())
+        return queryset.exclude(Build.get_overdue_filter())
 
     assigned_to_me = rest_filters.BooleanFilter(
         label=_('Assigned to me'), method='filter_assigned_to_me'
@@ -343,9 +344,11 @@ class BuildList(
 
     output_options = BuildListOutputOptions
     filterset_class = BuildFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = [
         'reference',
+        'part',
+        'IPN',
         'part__name',
         'status',
         'creation_date',
@@ -364,6 +367,8 @@ class BuildList(
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
+        'part': ['part__name'],
+        'IPN': ['part__IPN'],
     }
     ordering = '-reference'
     search_fields = [
@@ -590,10 +595,11 @@ class BuildLineList(
     """API endpoint for accessing a list of BuildLine objects."""
 
     filterset_class = BuildLineFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
+        'IPN',
         'allocated',
         'category',
         'consumed',
@@ -612,6 +618,7 @@ class BuildLineList(
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
+        'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
@@ -656,6 +663,13 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
 class BuildOrderContextMixin:
     """Mixin class which adds build order as serializer context variable."""
 
+    def get_build(self):
+        """Return the Build object associated with this API endpoint."""
+        try:
+            return Build.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, Build.DoesNotExist):
+            raise NotFound(_('Build not found'))
+
     def get_serializer_context(self):
         """Add extra context information to the endpoint serializer."""
         ctx = super().get_serializer_context()
@@ -664,8 +678,8 @@ class BuildOrderContextMixin:
         ctx['to_complete'] = True
 
         try:
-            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+            ctx['build'] = self.get_build()
+        except NotFound:
             pass
 
         return ctx
@@ -758,6 +772,37 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     queryset = Build.objects.none()
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override the POST method to handle auto allocation task.
+
+        As this is offloaded to the background task,
+        we return information about the background task which is performing the auto allocation operation.
+        """
+        from build.tasks import auto_allocate_build
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Offload the task to the background worker
+        task_id = offload_task(
+            auto_allocate_build,
+            build.pk,
+            location=data.get('location', None),
+            exclude_location=data.get('exclude_location', None),
+            interchangeable=data['interchangeable'],
+            substitutes=data['substitutes'],
+            optional_items=data['optional_items'],
+            item_type=data.get('item_type', 'untracked'),
+            group='build',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
+
 
 class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     """API endpoint to allocate stock items to a build order.
@@ -779,6 +824,39 @@ class BuildConsume(BuildOrderContextMixin, CreateAPI):
 
     queryset = Build.objects.none()
     serializer_class = build.serializers.BuildConsumeSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override the POST method to handle consume task.
+
+        As this is offloaded to the background task,
+        we return information about the background task which is performing the consume operation.
+        """
+        from build.tasks import consume_build_stock
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Extract the information we need to consume build stock
+        items = data.get('items', [])
+        lines = data.get('lines', [])
+        notes = data.get('notes', '')
+
+        # Offload the task to the background worker
+        task_id = offload_task(
+            consume_build_stock,
+            build.pk,
+            lines=[line['build_line'].pk for line in lines],
+            items={item['build_item'].pk: item['quantity'] for item in items},
+            user_id=self.request.user.pk,
+            notes=notes,
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class BuildIssue(BuildOrderContextMixin, CreateAPI):
@@ -802,11 +880,15 @@ class BuildCancel(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a BuildItem object."""
+class BuildItemMixin:
+    """Mixin class for BuildItem API endpoints."""
 
-    queryset = BuildItem.objects.all()
+    queryset = BuildItem.objects.all().prefetch_related('stock_item__location')
     serializer_class = build.serializers.BuildItemSerializer
+
+
+class BuildItemDetail(BuildItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildItem object."""
 
 
 class BuildItemFilter(FilterSet):
@@ -893,16 +975,45 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('location_detail'),
-        InvenTreeOutputOption('stock_detail'),
-        InvenTreeOutputOption('build_detail'),
-        InvenTreeOutputOption('supplier_part_detail'),
+        InvenTreeOutputOption(
+            'part_detail',
+            default=False,
+            description='Include detailed information about the part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'location_detail',
+            default=False,
+            description='Include detailed information about the location of the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'stock_detail',
+            default=False,
+            description='Include detailed information about the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'build_detail',
+            default=False,
+            description='Include detailed information about the associated build order.',
+        ),
+        InvenTreeOutputOption(
+            'supplier_part_detail',
+            default=False,
+            description='Include detailed information about the supplier part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'install_into_detail',
+            default=False,
+            description='Include detailed information about the build output for this build item.',
+        ),
     ]
 
 
 class BuildItemList(
-    DataExportViewMixin, OutputOptionsMixin, BulkDeleteMixin, ListCreateAPI
+    BuildItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -911,10 +1022,8 @@ class BuildItemList(
     """
 
     output_options = BuildItemOutputOptions
-    queryset = BuildItem.objects.all()
-    serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     def get_queryset(self):
         """Override the queryset method, to perform custom prefetch."""
@@ -960,11 +1069,7 @@ build_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BuildItem),
-                        name='api-build-item-metadata',
-                    ),
+                    meta_path(BuildItem),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
                 ]),
             ),
@@ -1007,11 +1112,7 @@ build_api_urls = [
             path('finish/', BuildFinish.as_view(), name='api-build-finish'),
             path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Build),
-                name='api-build-metadata',
-            ),
+            meta_path(Build),
             path('', BuildDetail.as_view(), name='api-build-detail'),
         ]),
     ),

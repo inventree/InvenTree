@@ -1,8 +1,13 @@
 import { ApiEndpoints, ModelType } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
-import { DescriptionColumn, ReferenceColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  PartColumn,
+  ReferenceColumn
+} from '../ColumnRenderers';
 import { OrderStatusFilter, OutstandingFilter } from '../Filter';
 import ParametricDataTable from '../general/ParametricDataTable';
 
@@ -15,6 +20,10 @@ export default function BuildOrderParametricTable({
     return [
       ReferenceColumn({
         switchable: false
+      }),
+      PartColumn({
+        part: 'part_detail',
+        title: t`Part`
       }),
       DescriptionColumn({
         accessor: 'title'
@@ -33,6 +42,7 @@ export default function BuildOrderParametricTable({
       customColumns={customColumns}
       customFilters={customFilters}
       queryParams={{
+        part_detail: true,
         ...queryParams
       }}
     />

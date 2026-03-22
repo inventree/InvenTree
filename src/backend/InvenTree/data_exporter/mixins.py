@@ -304,7 +304,7 @@ class DataExportViewMixin:
         """Export the data in the specified format.
 
         Arguments:
-            export_plugin: The plugin instance to use for exporting the data
+            export_plugin: The plugin instance to use for exporting the data. If not provided, the default exporter is used
             export_format: The file format to export the data in
             export_context: Additional context data to pass to the plugin
             output: The DataOutput object to write to
@@ -312,6 +312,11 @@ class DataExportViewMixin:
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
         """
+        if export_plugin is None:
+            from plugin.registry import registry
+
+            export_plugin = registry.get_plugin('inventree-exporter')
+
         # Get the base serializer class for the view
         serializer_class = self.get_serializer_class()
 
@@ -337,6 +342,12 @@ class DataExportViewMixin:
         # Update the output instance with the total number of items to export
         output.total = queryset.count()
         output.save()
+        request = context.get('request', None)
+
+        if request:
+            query_params = getattr(request, 'query_params', {})
+            context.update(**query_params)
+            context['request'] = request
 
         data = None
         serializer = serializer_class(context=context, exporting=True)
@@ -363,7 +374,12 @@ class DataExportViewMixin:
         # The returned data *must* be a list of dict objects
         try:
             data = export_plugin.export_data(
-                queryset, serializer_class, headers, export_context, output
+                queryset,
+                serializer_class,
+                headers,
+                export_context,
+                output,
+                serializer_context=context,
             )
 
         except Exception as e:
