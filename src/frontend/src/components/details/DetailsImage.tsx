@@ -154,7 +154,9 @@ function UploadModal({
       <InvenTreeIcon icon='photo' iconProps={{ size: '3.2rem', stroke: 1.5 }} />
       <div>
         <Text size='xl' inline>
-          <Trans>Drag and drop to upload</Trans>
+          <Trans>
+            Drag and drop to upload, or paste an image from the clipboard
+          </Trans>
         </Text>
         <Text size='sm' c='dimmed' inline mt={7}>
           <Trans>Click to select file(s)</Trans>
