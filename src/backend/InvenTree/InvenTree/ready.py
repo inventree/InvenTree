@@ -120,6 +120,7 @@ def isGeneratingSchema():
         'makemessages',
         'wait_for_db',
         'gunicorn',
+        'sqlflush',
         'qcluster',
         'check',
         'shell',
