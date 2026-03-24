@@ -8,7 +8,7 @@ def template_hash(template):
     
     This is used to identify similar templates that can be consolidated.
 
-    To be eligable for consolidation, the template must be unique across:
+    To be eligible for consolidation, the template must be unique across:
     - key
     - enabled
     - required
@@ -26,7 +26,7 @@ def migrate_test_template(apps, schema_editor):
     - In migration 0148 we added a PartTest model, to replace the PartTestTemplate model
     - The PartTest will link either a Part or PartCategory to a PartTestTemplate
     - This migration will create PartTest entries for existing PartTestTemplate entries
-    - It will also attemt to consolidate similar PartTestTemplate entries (where possible)
+    - It will also attempt to consolidate similar PartTestTemplate entries (where possible)
     """
 
     PartTestTemplate = apps.get_model('part', 'PartTestTemplate')
