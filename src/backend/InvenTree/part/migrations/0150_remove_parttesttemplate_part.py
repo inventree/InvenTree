@@ -10,8 +10,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Remove the link from the PartTestTemplate to a Part model
         migrations.RemoveField(
             model_name="parttesttemplate",
             name="part",
+        ),
+        # Remove the PartTestTemplate fields which have been moved to the PartTest model
+        migrations.RemoveField(
+            model_name="parttesttemplate",
+            name="enabled",
+        ),
+        migrations.RemoveField(
+            model_name="parttesttemplate",
+            name="required",
         ),
     ]

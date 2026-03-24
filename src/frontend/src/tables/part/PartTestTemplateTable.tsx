@@ -41,11 +41,7 @@ export function TestTemplateTable() {
 
           return (
             <TableHoverCard
-              value={
-                <Text c={record.enabled ? undefined : 'red'}>
-                  {record.test_name}
-                </Text>
-              }
+              value={<Text>{record.test_name}</Text>}
               title={t`Template Details`}
               extra={extra}
             />
@@ -64,17 +60,11 @@ export function TestTemplateTable() {
       DescriptionColumn({
         switchable: false
       }),
-      BooleanColumn({
-        accessor: 'enabled'
-      }),
       {
         accessor: 'choices',
         sortable: false,
         switchable: true
       },
-      BooleanColumn({
-        accessor: 'required'
-      }),
       BooleanColumn({
         accessor: 'requires_value'
       }),
@@ -87,16 +77,6 @@ export function TestTemplateTable() {
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
-        name: 'required',
-        label: t`Required`,
-        description: t`Show required tests`
-      },
-      {
-        name: 'enabled',
-        label: t`Enabled`,
-        description: t`Show enabled tests`
-      },
-      {
         name: 'requires_value',
         label: t`Requires Value`,
         description: t`Show tests that require a value`
@@ -105,11 +85,6 @@ export function TestTemplateTable() {
         name: 'requires_attachment',
         label: t`Requires Attachment`,
         description: t`Show tests that require an attachment`
-      },
-      {
-        name: 'include_inherited',
-        label: t`Include Inherited`,
-        description: t`Show tests from inherited templates`
       },
       {
         name: 'has_results',

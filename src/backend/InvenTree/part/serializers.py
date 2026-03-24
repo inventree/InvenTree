@@ -200,8 +200,6 @@ class PartTestTemplateSerializer(
             'key',
             'test_name',
             'description',
-            'enabled',
-            'required',
             'requires_value',
             'requires_attachment',
             'results',
@@ -209,6 +207,7 @@ class PartTestTemplateSerializer(
         ]
 
     key = serializers.CharField(read_only=True)
+
     results = serializers.IntegerField(
         label=_('Results'),
         help_text=_('Number of results recorded against this template'),
@@ -1205,7 +1204,10 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         return part.sales_order_allocation_count(include_variants=True, pending=True)
 
 
-class PartTestSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartTestSerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
     """Serializer for the PartTest class."""
 
     class Meta:
@@ -1215,20 +1217,23 @@ class PartTestSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         fields = [
             'pk',
             'template',
-            'template_detail',
             'part',
+            'enabled',
+            'required',
+            # Optional detail fields
             'part_detail',
-            'category',
-            'category_detail',
+            'template_detail',
         ]
 
-    template_detail = PartTestTemplateSerializer(
-        source='template', many=False, read_only=True
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True),
+        default_include=True,
     )
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    template_detail = enable_filter(
+        PartTestTemplateSerializer(source='template', many=False, read_only=True),
+        default_include=True,
+    )
 
 
 class PartStocktakeSerializer(

@@ -11,20 +11,19 @@ def template_hash(template):
     To be eligible for consolidation, the template must be unique across:
     - key
     - enabled
-    - required
     - requires_value
     - requires_attachment
     - choices
     """
 
-    return f"{template.key}-{template.enabled}-{template.required}-{template.requires_value}-{template.requires_attachment}-{template.choices}"
+    return f"{template.key}-{template.enabled}-{template.requires_value}-{template.requires_attachment}-{template.choices}"
 
 
 def migrate_test_template(apps, schema_editor):
     """Migrate PartTestTemplate entries.
 
     - In migration 0148 we added a PartTest model, to replace the PartTestTemplate model
-    - The PartTest will link either a Part or PartCategory to a PartTestTemplate
+    - The PartTest will link a Part to a PartTestTemplate
     - This migration will create PartTest entries for existing PartTestTemplate entries
     - It will also attempt to consolidate similar PartTestTemplate entries (where possible)
     """
@@ -54,6 +53,9 @@ def migrate_test_template(apps, schema_editor):
         # print("-", template.key, '->', template_hash(template))
         key = template_hash(template)
 
+        enabled = template.enabled
+        required = template.required
+
         if matching_template := template_map.get(key):
             # We have found a duplicate template
             # Assign all the StockItemTestResult entries to the matching template
@@ -78,7 +80,9 @@ def migrate_test_template(apps, schema_editor):
         # Create a new PartTest instance for this template
         PartTest.objects.create(
             template=template,
-            part=template.part
+            part=template.part,
+            enabled=enabled,
+            required=required,
         )
 
         template_map[key] = template
@@ -118,6 +122,7 @@ def reverse_migrate_test_template(apps, schema_editor):
             continue
 
         # Point the template part back to the original part instance
+        # Note that this will not be a perfect reversal of the original data, as we may have consolidated multiple templates into a single template during the forward migration
         template = test.template
         template.part = test.part
         template.save()

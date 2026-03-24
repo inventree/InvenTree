@@ -2510,7 +2510,6 @@ class Part(
         required: Optional[bool] = None,
         enabled: Optional[bool] = None,
         include_parent: bool = True,
-        include_category: bool = True,
         queryset: Optional[QuerySet[PartTestTemplate]] = None,
     ) -> QuerySet[PartTestTemplate]:
         """Return a queryset of all PartTest instances associated with this Part.
@@ -2519,7 +2518,6 @@ class Part(
             required: If set, filter by whether the test is required
             enabled: If set, filter by whether the test is enabled
             include_parent: If True, include tests from parent parts
-            include_category: If True, include tests from the part category
             queryset: If set, use this queryset as the basis for filtering (instead of all tests for this part)
 
         Returns:
@@ -2528,12 +2526,10 @@ class Part(
         Notes:
             - Each PartTest instance maps this part to a PartTestTemplate, which defines the test to be performed.
             - If include_parent is True, tests from parent parts will be included
-            - If include_category is True, tests from the part category will be included
             - At most, one test will be return for each PartTestTemplate
             - The most "specific" PartTest will be returned:
                 - If a test exists for this part, it will be returned
                 - Else if a test exists for a parent part, the closest parent's test will be returned
-                - Else if a test exists for the category, it will be returned
         """
         if queryset is None:
             queryset = PartTest.objects.all()
@@ -2554,17 +2550,6 @@ class Part(
                 # This test template has not been added yet, so add it to the list
                 template_ids.add(test.template.key)
                 test_ids.append(test.pk)
-
-        if include_category and self.category:
-            categories = self.category.get_ancestors(include_self=True)
-
-            for test in PartTest.objects.filter(category__in=categories).order_by(
-                '-category__level'
-            ):
-                if test.template.key not in template_ids:
-                    # This test template has not been added yet, so add it to the list
-                    template_ids.add(test.template.key)
-                    test_ids.append(test.pk)
 
         # Filter only by the matching PartTest ID values
         queryset = queryset.filter(pk__in=test_ids)
@@ -2593,6 +2578,8 @@ class Part(
         Returns:
             QuerySet: A queryset of matching test templates.
         """
+        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
+
         if include_parent:
             tests = PartTestTemplate.objects.filter(
                 part__in=self.get_ancestors(include_self=True)
@@ -2612,6 +2599,8 @@ class Part(
         """Return a map of all test templates associated with this Part."""
         templates = {}
 
+        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
+
         for template in self.getTestTemplates(**kwargs):
             templates[template.key] = template
 
@@ -2624,6 +2613,8 @@ class Part(
             include_parent: If True, include tests which are defined for parent parts
             enabled: If set (either True or False), filter by template "enabled" status
         """
+        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
+
         return self.getTestTemplates(
             required=True, enabled=enabled, include_parent=include_parent
         )
@@ -3694,7 +3685,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         test_name: The name of the test [string]
         key: An identifiable key for the test, generated from the test_name [string]
         description: A description of the test [string]
-        enabled: Boolean flag to indicate whether the test is enabled [bool]
         required: Boolean flag to indicate whether the test is required to pass [bool]
         requires_value: Boolean flag to indicate whether the test requires a value when adding a test result [bool]
         requires_attachment: Boolean flag to indicate whether the test requires an attachment when adding a test result [bool]
@@ -3793,16 +3783,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Enter description for this test'),
     )
 
-    enabled = models.BooleanField(
-        default=True, verbose_name=_('Enabled'), help_text=_('Is this test enabled?')
-    )
-
-    required = models.BooleanField(
-        default=True,
-        verbose_name=_('Required'),
-        help_text=_('Is this test required to pass?'),
-    )
-
     requires_value = models.BooleanField(
         default=False,
         verbose_name=_('Requires Value'),
@@ -3835,45 +3815,27 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 class PartTest(InvenTree.models.InvenTreeModel):
     """Link a PartTestTemplate to a Part or PartCategory.
 
-    This model allows a single PartTestTemplate to map to
-    multiple Part or PartCategory instances.
+    This model allows a single PartTestTemplate to map to multiple part instances
 
     - This allows a test template to be "reused" across multiple parts
     - It allows a test to be defined against a Part, which will apply to that specific part
-    - It allows a test to be defined against a PartCategory, which will apply to all parts within that category
 
     Attributes:
         template: The PartTestTemplate to apply [ForeignKey]
-        part: The Part to which this test applies [ForeignKey, optional]
-        category: The PartCategory to which this test applies [ForeignKey, optional]
+        part: The Part to which this test applies [ForeignKey]
+        enabled: Boolean flag to indicate whether this test is enabled for the associated part [bool]
     """
 
     class Meta:
         """Metaclass options for the PartTest model."""
 
         verbose_name = _('Part Test')
-        unique_together = [('template', 'part'), ('template', 'category')]
+        unique_together = [('template', 'part')]
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a PartTest instance."""
         self.clean()
         super().save(*args, **kwargs)
-
-    def clean(self):
-        """Custom cleaning step for this model.
-
-        Checks:
-        - A PartTest cannot be created with both a part and a category
-        """
-        super().clean()
-
-        if self.part and self.category:
-            msg = _('A test cannot be created with both a part and a category')
-            raise ValidationError({'part': msg, 'category': msg})
-
-        if not self.part and not self.category:
-            msg = _('A test must be associated with either a part or a category')
-            raise ValidationError({'part': msg, 'category': msg})
 
     template = models.ForeignKey(
         PartTestTemplate,
@@ -3893,14 +3855,16 @@ class PartTest(InvenTree.models.InvenTreeModel):
         help_text=_('Part to which this test applies'),
     )
 
-    category = models.ForeignKey(
-        PartCategory,
-        on_delete=models.CASCADE,
-        related_name='tests',
-        blank=True,
-        null=True,
-        verbose_name=_('Part Category'),
-        help_text=_('Part category to which this test applies'),
+    enabled = models.BooleanField(
+        default=True,
+        verbose_name=_('Enabled'),
+        help_text=_('Is this test enabled for the associated part?'),
+    )
+
+    required = models.BooleanField(
+        default=True,
+        verbose_name=_('Required'),
+        help_text=_('Is this test required to pass?'),
     )
 
 

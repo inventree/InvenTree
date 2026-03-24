@@ -40,18 +40,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "category",
-                    models.ForeignKey(
-                        blank=True,
-                        help_text="Part category to which this test applies",
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="tests",
-                        to="part.partcategory",
-                        verbose_name="Part Category",
-                    ),
-                ),
-                (
                     "part",
                     models.ForeignKey(
                         blank=True,
@@ -73,10 +61,26 @@ class Migration(migrations.Migration):
                         verbose_name="Test Template",
                     ),
                 ),
+                (
+                    "enabled",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Is this test enabled for the associated part?",
+                        verbose_name="Enabled",
+                    ),
+                ),
+                (
+                    "required",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Is this test required to pass?",
+                        verbose_name="Required",
+                    ),
+                )
             ],
             options={
                 "verbose_name": "Part Test",
-                "unique_together": {("template", "part"), ("template", "category")},
+                "unique_together": {("template", "part")},
             },
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),

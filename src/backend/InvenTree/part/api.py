@@ -397,7 +397,7 @@ class PartTestTemplateFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTestTemplate
-        fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
+        fields = ['key', 'requires_attachment', 'requires_value']
 
     has_results = rest_filters.BooleanFilter(
         label=_('Has Results'), method='filter_has_results'
@@ -457,7 +457,7 @@ class PartTestFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTest
-        fields = ['template']
+        fields = ['template', 'part', 'enabled', 'required']
 
     for_part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), label=_('For Part'), method='filter_for_part'
@@ -475,54 +475,6 @@ class PartTestFilter(FilterSet):
         """
         return part.getPartTests(queryset=queryset)
 
-    enabled = rest_filters.BooleanFilter(
-        label=_('Enabled'), field_name='template__enabled'
-    )
-
-    required = rest_filters.BooleanFilter(
-        label=_('Required'), field_name='template__required'
-    )
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), label=_('Part'), method='filter_part'
-    )
-
-    def filter_part(self, queryset, name, part):
-        """Filter 'PartTest' instances by the associated 'Part'.
-
-        Here, we return all PartTest instances which match:
-        - The specified part directly
-        - Any "parent" (template) parts
-        - Any categories associated with the part
-        """
-        query = Q(part=part)
-
-        templates = part.get_ancestors(include_self=True)
-
-        query |= Q(part__in=templates)
-
-        if part.category:
-            categories = part.category.get_ancestors(include_self=True)
-            query |= Q(category__in=categories)
-
-        return queryset.filter(query).distinct()
-
-    category = rest_filters.ModelChoiceFilter(
-        queryset=PartCategory.objects.all(),
-        label=_('Category'),
-        method='filter_category',
-    )
-
-    def filter_category(self, queryset, name, category):
-        """Filter 'PartTest' instances by the associated 'PartCategory'.
-
-        Here, we return all PartTest instances which match:
-        - The specified category directly
-        - Any parent categories
-        """
-        categories = category.get_ancestors(include_self=True)
-        return queryset.filter(category__in=categories)
-
 
 class PartTestMixin:
     """Mixin class for the PartTest API endpoints."""
@@ -533,9 +485,7 @@ class PartTestMixin:
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the PartTestDetail endpoints."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related(
-            'template', 'category', 'part', 'part__pricing_data'
-        )
+        queryset = queryset.prefetch_related('template', 'part', 'part__pricing_data')
         return queryset
 
 
@@ -547,7 +497,7 @@ class PartTestList(PartTestMixin, ListCreateAPI):
 
     search_fields = ['template__test_name', 'template__description']
 
-    ordering_fields = ['tempalte', 'part', 'category']
+    ordering_fields = ['template', 'part', 'enabled', 'required']
 
 
 class PartTestDetail(PartTestMixin, RetrieveUpdateDestroyAPI):

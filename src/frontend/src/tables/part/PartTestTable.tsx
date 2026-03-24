@@ -14,6 +14,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +24,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import {
-  CategoryColumn,
+  BooleanColumn,
   DescriptionColumn,
   PartColumn
 } from '../ColumnRenderers';
@@ -31,11 +32,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
 export function PartTestTable({
-  partId,
-  categoryId
+  partId
 }: Readonly<{
   partId?: number;
-  categoryId?: number;
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
@@ -46,23 +45,15 @@ export function PartTestTable({
         accessor: 'part_detail',
         switchable: true
       }),
-      CategoryColumn({
-        accessor: 'category_detail',
-        switchable: true
-      }),
       {
         accessor: 'template_detail.test_name',
-        title: t`Template`,
+        title: t`Test Template`,
         switchable: false,
         render: (record: any) => {
           const extra = [];
 
           if (record.part && partId && record.part != partId) {
             extra.push(t`Test defined for a higher level part`);
-          }
-
-          if (record.category && categoryId && record.category != categoryId) {
-            extra.push(t`Test defined for a higher level category`);
           }
 
           return (
@@ -84,15 +75,42 @@ export function PartTestTable({
       DescriptionColumn({
         accessor: 'template_detail.description',
         switchable: true
+      }),
+      BooleanColumn({
+        accessor: 'enabled',
+        title: t`Enabled`,
+        switchable: true,
+        sortable: true
+      }),
+      BooleanColumn({
+        accessor: 'required',
+        title: t`Required`,
+        switchable: true,
+        sortable: true
+      }),
+      BooleanColumn({
+        accessor: 'template_detail.requires_value',
+        title: t`Requires Value`,
+        switchable: true,
+        sortable: false,
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'template_detail.requires_attachment',
+        title: t`Requires Attachment`,
+        switchable: true,
+        sortable: false,
+        defaultVisible: false
       })
     ];
-  }, [partId, categoryId]);
+  }, [partId]);
 
   const partTestFields: ApiFormFieldSet = useMemo(() => {
     return {
       part: {},
-      category: {},
-      template: {}
+      template: {},
+      enabled: {},
+      required: {}
     };
   }, []);
 
@@ -105,8 +123,7 @@ export function PartTestTable({
     title: t`Add Test`,
     fields: useMemo(() => ({ ...partTestFields }), [partTestFields]),
     initialData: {
-      part: partId,
-      category: categoryId
+      part: partId
     },
     focus: 'template',
     table: table
@@ -128,7 +145,26 @@ export function PartTestTable({
     table: table
   });
 
-  // TODO: Table filters
+  // Table filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show enabled tests`
+      },
+      {
+        name: 'required',
+        label: t`Required`,
+        description: t`Show required tests`
+      },
+      {
+        name: 'include_inherited',
+        label: t`Include Inherited`,
+        description: t`Show tests from inherited templates`
+      }
+    ];
+  }, []);
 
   const tableActions = useMemo(() => {
     return [
@@ -145,7 +181,7 @@ export function PartTestTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       // This test is defined for a different part
-      if (partId && record.part != partId) {
+      if (partId && record.part && record.part != partId) {
         return [
           RowViewAction({
             title: t`View Part`,
@@ -155,19 +191,6 @@ export function PartTestTable({
           })
         ];
       }
-
-      // This test is defined for a different category
-      if (categoryId && record.category != categoryId) {
-        return [
-          RowViewAction({
-            title: t`View Category`,
-            modelType: ModelType.partcategory,
-            modelId: record.category,
-            navigate: navigate
-          })
-        ];
-      }
-
       return [
         RowEditAction({
           hidden: !user.hasChangePermission(ModelType.parttest),
@@ -185,7 +208,7 @@ export function PartTestTable({
         })
       ];
     },
-    [partId, categoryId, navigate, user]
+    [partId, navigate, user]
   );
 
   return (
@@ -199,10 +222,10 @@ export function PartTestTable({
         columns={tableColumns}
         props={{
           params: {
-            for_part: partId,
-            category: categoryId
+            for_part: partId
           },
           rowActions: rowActions,
+          tableFilters: tableFilters,
           tableActions: tableActions
         }}
       />
