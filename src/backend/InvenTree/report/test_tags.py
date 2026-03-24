@@ -61,7 +61,15 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             self.debug_mode(b)
 
             with self.assertRaises(FileNotFoundError):
-                report_tags.asset('bad_file.txt')
+                report_tags.asset('bad_file.txt', raise_error=True)
+
+        # Test for missing file, no error
+        self.assertIsNone(report_tags.asset('missing.txt'))
+
+        self.assertIsNone(report_tags.asset(''))
+
+        with self.assertRaises(ValueError):
+            report_tags.asset('', raise_error=True)
 
         # Create an asset file
         asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
@@ -80,6 +88,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, f'file://{settings.MEDIA_ROOT}/report/assets/test.txt')
 
         # Test for attempted path traversal
         with self.assertRaises(ValidationError):
@@ -92,10 +101,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             self.assertFalse(report_tags.static_file_exists(fn))
 
         with self.assertRaises(FileNotFoundError):
-            report_tags.get_media_file_contents('dummy_file.txt')
+            report_tags.get_media_file_contents('dummy_file.txt', raise_error=True)
 
         with self.assertRaises(ValueError):
-            report_tags.get_static_file_contents(None)
+            report_tags.get_static_file_contents(None, raise_error=True)
 
         # Try again, without throwing an error
         self.assertIsNone(
