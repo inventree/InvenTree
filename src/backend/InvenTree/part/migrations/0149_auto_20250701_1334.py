@@ -109,6 +109,8 @@ def reverse_migrate_test_template(apps, schema_editor):
     
     PartTest = apps.get_model('part', 'PartTest')
 
+    N = 0
+
     for test in PartTest.objects.all():
 
         # If this test does *not* link to a particular part instance, ignore it
@@ -119,6 +121,11 @@ def reverse_migrate_test_template(apps, schema_editor):
         template = test.template
         template.part = test.part
         template.save()
+
+        N += 1
+
+    if N > 0:
+        print(f"Reversed {N} PartTestTemplate entries.")
 
 
 class Migration(migrations.Migration):
