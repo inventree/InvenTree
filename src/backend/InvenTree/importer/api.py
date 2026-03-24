@@ -80,7 +80,7 @@ class DataImportSessionMixin:
         try:
             user = self.request.user
         except AttributeError:
-            return importer.models.DataImportSession.objects.none()
+            raise PermissionDenied('User information is not available')
 
         # Allow staff users access to all DataImportSession objects
         if user.is_staff:
