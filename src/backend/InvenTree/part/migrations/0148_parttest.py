@@ -12,6 +12,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Mark the 'part' field on the PartTestTemplate model as nullable
+        # Note that this field will be deleted in migration part.0150
+        migrations.AlterField(
+            model_name="parttesttemplate",
+            name="part",
+            field=models.ForeignKey(
+                blank=True,
+                limit_choices_to={"testable": True},
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="test_templates",
+                to="part.part",
+                verbose_name="Part",
+            ),
+        ),
         migrations.CreateModel(
             name="PartTest",
             fields=[
