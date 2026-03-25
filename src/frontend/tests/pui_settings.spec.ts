@@ -499,6 +499,21 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+test('Settings - Admin - Test Templates', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser
+  });
+  await page.getByRole('button', { name: 'admin' }).click();
+  await page.getByRole('menuitem', { name: 'Admin Center' }).click();
+
+  await loadTab(page, 'Test Templates');
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('Firmware');
+  await page.getByText('Programmed with firmware - add version').waitFor();
+  await page.getByText('Firmware checksum').waitFor();
+});
+
 test('Settings - Admin - Unauthorized', async ({ browser }) => {
   // Try to access "admin" page with a non-staff user
   const page = await doCachedLogin(browser, {
