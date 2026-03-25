@@ -22,6 +22,9 @@ class DataExportMixin:
 
     ExportOptionsSerializer = None
 
+    # How many rows to fetch into memory at once when exporting data?
+    EXPORT_CHUNK_SIZE: int = 250
+
     class MixinMeta:
         """Meta options for this mixin."""
 
@@ -108,10 +111,29 @@ class DataExportMixin:
 
         Returns: The exported data (a list of dict objects)
         """
-        # The default implementation simply serializes the queryset
-        return serializer_class(
-            queryset, many=True, exporting=True, context=serializer_context or {}
-        ).data
+        output.refresh_from_db()
+        N = queryset.count()
+
+        rows = []
+
+        offset = 0
+
+        while offset < N:
+            chunk = queryset[offset : offset + self.EXPORT_CHUNK_SIZE]
+
+            chunk_rows = serializer_class(
+                chunk, many=True, exporting=True, context=serializer_context or {}
+            ).data
+
+            rows.extend(chunk_rows)
+
+            offset += self.EXPORT_CHUNK_SIZE
+
+            # Update the export progress
+            output.progress += len(chunk_rows)
+            output.save()
+
+        return rows
 
     def get_export_options_serializer(self, **kwargs) -> serializers.Serializer | None:
         """Return a serializer class with dynamic export options for this plugin.
