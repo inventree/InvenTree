@@ -2555,10 +2555,10 @@ class Part(
         queryset = queryset.filter(pk__in=test_ids)
 
         if required is not None:
-            queryset = queryset.filter(template__required=required)
+            queryset = queryset.filter(required=required)
 
         if enabled is not None:
-            queryset = queryset.filter(template__enabled=enabled)
+            queryset = queryset.filter(enabled=enabled)
 
         return queryset
 
