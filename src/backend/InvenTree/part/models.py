@@ -2563,59 +2563,50 @@ class Part(
         return queryset
 
     def getTestTemplates(
-        self, required=None, include_parent: bool = True, enabled=None
+        self,
+        include_parent: bool = True,
+        enabled: Optional[bool] = None,
+        required: Optional[bool] = None,
     ) -> QuerySet[PartTestTemplate]:
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
 
-
         Args:
-            required (bool, optional): Filter templates by whether they are required. Defaults to None.
             include_parent (bool, optional): Include templates from parent parts. Defaults to True.
             enabled (bool, optional): Filter templates by their enabled status. Defaults to None.
+            required (bool, optional): Filter templates by whether they are required. Defaults to None.
 
         Returns:
             QuerySet: A queryset of matching test templates.
         """
-        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
+        # Start with the tests associated with this part
+        tests = self.getPartTests(
+            required=required, enabled=enabled, include_parent=include_parent
+        ).select_related('template')
 
-        if include_parent:
-            tests = PartTestTemplate.objects.filter(
-                part__in=self.get_ancestors(include_self=True)
-            )
-        else:
-            tests = self.test_templates
+        # Extract the unique template IDs from the tests
+        template_ids = [test.template_id for test in tests]
 
-        if required is not None:
-            tests = tests.filter(required=required)
-
-        if enabled is not None:
-            tests = tests.filter(enabled=enabled)
-
-        return tests
+        return PartTestTemplate.objects.filter(pk__in=template_ids)
 
     def getTestTemplateMap(self, **kwargs):
         """Return a map of all test templates associated with this Part."""
         templates = {}
-
-        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
 
         for template in self.getTestTemplates(**kwargs):
             templates[template.key] = template
 
         return templates
 
-    def getRequiredTests(self, include_parent=True, enabled=True):
+    def getRequiredTests(self, include_parent: bool = True, enabled: bool = True):
         """Return the tests which are required by this part.
 
         Arguments:
             include_parent: If True, include tests which are defined for parent parts
             enabled: If set (either True or False), filter by template "enabled" status
         """
-        raise NotImplementedError('THIS FUNCTION NEEDS TO BE REFACTORED - DO NOT USE')
-
-        return self.getTestTemplates(
+        return self.getPartTests(
             required=True, enabled=enabled, include_parent=include_parent
         )
 
