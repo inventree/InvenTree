@@ -284,11 +284,11 @@ msgstr "库存历史记录"
 
 #: lib/enums/ModelInformation.tsx:120
 msgid "Build"
-msgstr "生产..."
+msgstr "生产单"
 
 #: lib/enums/ModelInformation.tsx:121
 msgid "Builds"
-msgstr "编译"
+msgstr "生产单"
 
 #: lib/enums/ModelInformation.tsx:130
 msgid "Build Line"
@@ -300,11 +300,11 @@ msgstr "生产行"
 
 #: lib/enums/ModelInformation.tsx:138
 msgid "Build Item"
-msgstr "构建项目："
+msgstr "生产项"
 
 #: lib/enums/ModelInformation.tsx:139
 msgid "Build Items"
-msgstr "构建多个项目"
+msgstr "生产项"
 
 #: lib/enums/ModelInformation.tsx:144
 #: src/pages/company/CompanyDetail.tsx:347
@@ -391,11 +391,11 @@ msgstr "销售订单"
 #: lib/enums/ModelInformation.tsx:185
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:434
 msgid "Sales Order Shipment"
-msgstr "销售订单配送"
+msgstr "销售订单发货单"
 
 #: lib/enums/ModelInformation.tsx:186
 msgid "Sales Order Shipments"
-msgstr "销售订单配送"
+msgstr "销售订单发货单"
 
 #: lib/enums/ModelInformation.tsx:194
 #: src/pages/sales/ReturnOrderDetail.tsx:564
@@ -1214,13 +1214,13 @@ msgstr "没有未读新闻项目"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:15
 msgid "Generating Stocktake Report"
-msgstr ""
+msgstr "正在生成盘点报告"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:20
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:53
 #: src/pages/part/PartStockHistoryDetail.tsx:96
 msgid "Generate Stocktake Report"
-msgstr ""
+msgstr "生成盘点报告"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:37
 #: src/pages/part/PartStockHistoryDetail.tsx:108
@@ -1229,11 +1229,11 @@ msgstr "生成"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:64
 msgid "Stocktake"
-msgstr ""
+msgstr "盘点"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:65
 msgid "Generate a new stocktake report"
-msgstr ""
+msgstr "生成新的盘点报告"
 
 #: src/components/details/Details.tsx:117
 #~ msgid "Email:"
@@ -1288,11 +1288,11 @@ msgstr "移除"
 
 #: src/components/details/DetailsImage.tsx:88
 msgid "Image removed"
-msgstr ""
+msgstr "图片已移除"
 
 #: src/components/details/DetailsImage.tsx:89
 msgid "The image has been removed successfully"
-msgstr ""
+msgstr "图片已成功移除"
 
 #: src/components/details/DetailsImage.tsx:115
 msgid "Drag and drop to upload"
@@ -4841,13 +4841,13 @@ msgstr "已收到库存物品"
 #. placeholder {0}: salePrice ? `; suggested: (${salePrice})` : '.'
 #: src/forms/SalesOrderForms.tsx:182
 msgid "Price based on part and quantity differs{0}"
-msgstr ""
+msgstr "基于零件和数量计算的价格不一致{0}"
 
 #: src/forms/SalesOrderForms.tsx:213
 #: src/forms/SalesOrderForms.tsx:215
 #: src/tables/sales/SalesOrderShipmentTable.tsx:210
 msgid "Check Shipment"
-msgstr "检查发货"
+msgstr "核对发货单"
 
 #: src/forms/SalesOrderForms.tsx:216
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
@@ -4855,38 +4855,38 @@ msgstr "将装运标记为已检查的货物，表明您已经验证这批装运
 
 #: src/forms/SalesOrderForms.tsx:226
 msgid "Shipment marked as checked"
-msgstr ""
+msgstr "发货单已标记为已核对"
 
 #: src/forms/SalesOrderForms.tsx:241
 #: src/forms/SalesOrderForms.tsx:243
 #: src/tables/sales/SalesOrderShipmentTable.tsx:223
 msgid "Uncheck Shipment"
-msgstr ""
+msgstr "取消核对发货单"
 
 #: src/forms/SalesOrderForms.tsx:244
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
-msgstr ""
+msgstr "将发货单标记为未核对表示该发货单仍需进一步核验"
 
 #: src/forms/SalesOrderForms.tsx:254
 msgid "Shipment marked as unchecked"
-msgstr ""
+msgstr "发货单已标记为未核对"
 
 #: src/forms/SalesOrderForms.tsx:272
 msgid "Completing shipment"
-msgstr ""
+msgstr "正在完成发货"
 
 #: src/forms/SalesOrderForms.tsx:273
 msgid "Shipment completed successfully"
-msgstr ""
+msgstr "发货已成功完成"
 
 #: src/forms/SalesOrderForms.tsx:280
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
 msgid "Complete Shipment"
-msgstr "完成配送"
+msgstr "完成发货"
 
 #: src/forms/SalesOrderForms.tsx:525
 msgid "Leave blank to use the order address"
-msgstr ""
+msgstr "留空则使用订单地址"
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -5024,11 +5024,11 @@ msgstr "变更选定库存物料的状态。"
 #: src/forms/StockForms.tsx:1396
 #: src/hooks/UseStockAdjustActions.tsx:162
 msgid "Change Batch Code"
-msgstr ""
+msgstr "修改批次代码"
 
 #: src/forms/StockForms.tsx:1399
 msgid "Change batch code for the selected stock items"
-msgstr ""
+msgstr "修改所选库存项的批次代码"
 
 #: src/forms/StockForms.tsx:1416
 #: src/hooks/UseStockAdjustActions.tsx:142
@@ -5168,7 +5168,7 @@ msgstr "已登出"
 
 #: src/functions/auth.tsx:125
 msgid "There was a conflicting session for this browser, which has been logged out."
-msgstr ""
+msgstr "当前浏览器存在冲突会话，该会话已被注销。"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -5241,11 +5241,11 @@ msgstr "设置 MFA 失败"
 
 #: src/functions/auth.tsx:587
 msgid "MFA Setup successful"
-msgstr ""
+msgstr "多重身份验证设置成功"
 
 #: src/functions/auth.tsx:588
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
-msgstr ""
+msgstr "已成功启用基于 TOTP 的多重身份验证；你需要重新登录。"
 
 #: src/functions/auth.tsx:603
 msgid "Password set"
@@ -5382,7 +5382,7 @@ msgstr "修改选中库存物料状态"
 
 #: src/hooks/UseStockAdjustActions.tsx:164
 msgid "Change batch code of selected stock items"
-msgstr ""
+msgstr "修改所选库存项的批次代码"
 
 #: src/hooks/UseStockAdjustActions.tsx:172
 msgid "Assign Stock"
@@ -5499,7 +5499,7 @@ msgstr "TOTP 代码"
 
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
-msgstr ""
+msgstr "请输入以下任一验证码：{mfa_types}"
 
 #: src/pages/Auth/MFA.tsx:42
 msgid "Remember this device"
@@ -6048,7 +6048,7 @@ msgstr "您已成功重新验证。"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
 msgid "Error during reauthentication"
-msgstr ""
+msgstr "重新验证时出错"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
 msgid "Reauthentication Failed"
@@ -6073,19 +6073,19 @@ msgstr "输入您的密码"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 msgid "Enter one of your TOTP codes"
-msgstr ""
+msgstr "请输入一个 TOTP 验证码"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
 msgid "WebAuthn Credential Removed"
-msgstr ""
+msgstr "WebAuthn 凭据已移除"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
 msgid "WebAuthn credential removed successfully."
-msgstr ""
+msgstr "WebAuthn 凭据已成功移除。"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "Error removing WebAuthn credential"
-msgstr ""
+msgstr "移除 WebAuthn 凭据时出错"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
 msgid "Remove WebAuthn Credential"
@@ -6129,15 +6129,15 @@ msgstr "已经注册了 TOTP"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
 msgid "A TOTP token is already registered for this account."
-msgstr ""
+msgstr "此账户已注册 TOTP 令牌。"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 msgid "Error Fetching TOTP Registration"
-msgstr ""
+msgstr "获取 TOTP 注册信息时出错"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:482
 msgid "An unexpected error occurred while fetching TOTP registration data."
-msgstr ""
+msgstr "获取 TOTP 注册数据时发生意外错误。"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
 msgid "TOTP Registered"
@@ -6167,11 +6167,11 @@ msgstr "恢复代码"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:652
 msgid "The following one time recovery codes are available for use"
-msgstr ""
+msgstr "以下一次性恢复码可供使用"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:669
 msgid "Copy recovery codes to clipboard"
-msgstr ""
+msgstr "复制恢复码到剪贴板"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
 msgid "No Unused Codes"
@@ -6179,7 +6179,7 @@ msgstr "没有未使用的代码"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:681
 msgid "There are no available recovery codes"
-msgstr ""
+msgstr "当前没有可用的恢复码"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
 msgid "WebAuthn Registered"
@@ -6199,11 +6199,11 @@ msgstr "WebAuthn 注册失败"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
 msgid "Failed to register WebAuthn credential"
-msgstr ""
+msgstr "注册 WebAuthn 凭据失败"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:819
 msgid "Error fetching WebAuthn registration"
-msgstr ""
+msgstr "获取 WebAuthn 注册信息时出错"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:859
 msgid "TOTP"
@@ -6223,7 +6223,7 @@ msgstr "WebAuthn"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
-msgstr ""
+msgstr "Web 身份验证（WebAuthn）是一项用于安全身份验证的 Web 标准"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:970
 msgid "Last used at"
@@ -6245,15 +6245,15 @@ msgstr "该账户未配置多因素认证令牌"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:993
 msgid "Register Authentication Method"
-msgstr ""
+msgstr "注册身份验证方式"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1009
 msgid "No MFA Methods Available"
-msgstr ""
+msgstr "没有可用的多重身份验证方式"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1013
 msgid "There are no MFA methods available for configuration"
-msgstr ""
+msgstr "当前没有可配置的多重身份验证方式"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:27
 msgid "Secret"
@@ -6572,19 +6572,19 @@ msgstr "系统状态"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
 msgid "Admin Center Information"
-msgstr ""
+msgstr "管理中心说明"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
 msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-msgstr ""
+msgstr "首页面板（以及整个管理中心）是随新 UI 引入的新功能，在此前（1.0 之前）并不存在。"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
 msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-msgstr ""
+msgstr "管理中心为所有管理功能提供了统一入口，目标是逐步替代通过（Django）后端管理界面进行的操作。"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
 msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
-msgstr ""
+msgstr "如果你发现当前 UI 缺少现有后端管理界面的功能，请先检查问题跟踪器后再提交功能请求。后端管理界面应谨慎且尽量少用。"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:85
 msgid "Quick Actions"
@@ -6793,7 +6793,7 @@ msgstr "附加到模型"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:32
 msgid "Background worker running"
-msgstr ""
+msgstr "后台工作进程运行中"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 #~ msgid "Background Worker Not Running"
@@ -6917,7 +6917,7 @@ msgstr "标签"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:260
 msgid "Part Stocktake"
-msgstr ""
+msgstr "零件盘点"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:271
 #: src/pages/part/PartStockHistoryDetail.tsx:296
@@ -7368,7 +7368,7 @@ msgstr "日历视图"
 #: src/pages/sales/SalesIndex.tsx:152
 #: src/pages/stock/LocationDetail.tsx:199
 msgid "Parametric View"
-msgstr ""
+msgstr "参数视图"
 
 #: src/pages/company/CompanyDetail.tsx:108
 msgid "Phone Number"
@@ -7707,11 +7707,11 @@ msgstr "分配销售订单"
 
 #: src/pages/part/PartDetail.tsx:176
 msgid "Validating BOM"
-msgstr ""
+msgstr "正在验证 BOM"
 
 #: src/pages/part/PartDetail.tsx:177
 msgid "BOM validated"
-msgstr ""
+msgstr "BOM 已验证"
 
 #: src/pages/part/PartDetail.tsx:187
 #~ msgid "Bill of materials scheduled for validation"
@@ -7979,7 +7979,7 @@ msgstr "必填"
 
 #: src/pages/part/PartDetail.tsx:1053
 msgid "Deficit"
-msgstr ""
+msgstr "缺口"
 
 #: src/pages/part/PartDetail.tsx:1093
 #: src/tables/part/PartTable.tsx:406
@@ -8100,7 +8100,7 @@ msgstr "删除盘点条目"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:109
 msgid "Stocktake report scheduled for generation"
-msgstr ""
+msgstr "盘点报告已安排生成"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:123
 msgid "Stock Quantity"
@@ -8115,7 +8115,7 @@ msgstr "库存价值"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:201
 msgid "Generate Stocktake Entry"
-msgstr ""
+msgstr "生成盘点条目"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:271
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:334
@@ -8129,7 +8129,7 @@ msgstr "最大值"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:304
 msgid "Stocktake Entries"
-msgstr ""
+msgstr "盘点条目"
 
 #: src/pages/part/PartStocktakeDetail.tsx:104
 #: src/tables/settings/StocktakeReportTable.tsx:72
@@ -8470,13 +8470,13 @@ msgstr "客户参考"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:196
 msgid "Return Address"
-msgstr ""
+msgstr "退货地址"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:202
 #: src/pages/sales/SalesOrderDetail.tsx:195
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:177
 msgid "Not specified"
-msgstr ""
+msgstr "未指定"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:349
 #~ msgid "Order canceled"
@@ -8515,7 +8515,7 @@ msgstr "完成配送"
 #: src/pages/sales/SalesOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:166
 msgid "Shipping Address"
-msgstr ""
+msgstr "收货地址"
 
 #: src/pages/sales/SalesOrderDetail.tsx:326
 msgid "Edit Sales Order"
@@ -8530,7 +8530,7 @@ msgstr "添加销售订单"
 #: src/pages/sales/SalesOrderDetail.tsx:406
 #: src/tables/sales/SalesOrderTable.tsx:165
 msgid "Shipments"
-msgstr "配送"
+msgstr "发货单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:458
 msgid "Issue Sales Order"
@@ -8562,12 +8562,12 @@ msgstr "完成销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:538
 msgid "Ship Order"
-msgstr "装货单"
+msgstr "订单发货"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:138
 #: src/tables/sales/SalesOrderShipmentTable.tsx:150
 msgid "Shipment Reference"
-msgstr "配送参考"
+msgstr "发货单编号"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:144
 msgid "Tracking Number"
@@ -8583,11 +8583,11 @@ msgstr "已分配的项"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:192
 msgid "Checked By"
-msgstr ""
+msgstr "核对人"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:198
 msgid "Not checked"
-msgstr ""
+msgstr "未核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:204
 #: src/tables/ColumnRenderers.tsx:723
@@ -8613,7 +8613,7 @@ msgstr "发货详情"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:395
 #: src/tables/sales/SalesOrderShipmentTable.tsx:98
 msgid "Edit Shipment"
-msgstr "编辑配送"
+msgstr "编辑发货单"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:298
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:414
@@ -8630,17 +8630,17 @@ msgstr "待定"
 #: src/tables/sales/SalesOrderShipmentTable.tsx:163
 #: src/tables/sales/SalesOrderShipmentTable.tsx:294
 msgid "Checked"
-msgstr ""
+msgstr "已核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:340
 msgid "Not Checked"
-msgstr ""
+msgstr "未核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:346
 #: src/tables/sales/SalesOrderShipmentTable.tsx:170
 #: src/tables/sales/SalesOrderShipmentTable.tsx:299
 msgid "Shipped"
-msgstr "已配送"
+msgstr "已发货"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:352
 #: src/tables/sales/SalesOrderShipmentTable.tsx:177
@@ -8651,27 +8651,27 @@ msgstr "已送达"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:367
 msgid "Send Shipment"
-msgstr "发送货物"
+msgstr "发送发货单"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:390
 msgid "Shipment Actions"
-msgstr "货运操作"
+msgstr "发货单操作"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:399
 msgid "Check"
-msgstr ""
+msgstr "核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:400
 msgid "Mark shipment as checked"
-msgstr ""
+msgstr "将发货单标记为已核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:406
 msgid "Uncheck"
-msgstr ""
+msgstr "取消核对"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:407
 msgid "Mark shipment as unchecked"
-msgstr ""
+msgstr "将发货单标记为未核对"
 
 #: src/pages/stock/LocationDetail.tsx:119
 msgid "Parent Location"
@@ -8728,7 +8728,7 @@ msgstr "对此位置中的库存物品执行的操作"
 
 #: src/pages/stock/LocationDetail.tsx:280
 msgid "Locations Action"
-msgstr ""
+msgstr "位置操作"
 
 #: src/pages/stock/LocationDetail.tsx:282
 msgid "Action for child locations in this location"
@@ -9014,7 +9014,7 @@ msgstr "此库存项是过期项"
 
 #: src/tables/ColumnRenderers.tsx:219
 msgid "This stock item is over-allocated"
-msgstr ""
+msgstr "此库存项已被过量分配"
 
 #: src/tables/ColumnRenderers.tsx:227
 msgid "This stock item is fully allocated"
@@ -9240,7 +9240,7 @@ msgstr "在此之后更新"
 
 #: src/tables/Filter.tsx:293
 msgid "Show orders updated after this date"
-msgstr ""
+msgstr "显示在此日期之后更新的订单"
 
 #: src/tables/Filter.tsx:301
 #: src/tables/stock/StockItemTable.tsx:278
@@ -9249,7 +9249,7 @@ msgstr "在此之前更新"
 
 #: src/tables/Filter.tsx:302
 msgid "Show orders updated before this date"
-msgstr ""
+msgstr "显示在此日期之前更新的订单"
 
 #: src/tables/Filter.tsx:314
 msgid "Has Project Code"
@@ -9410,7 +9410,7 @@ msgstr "查看详情"
 
 #: src/tables/InvenTreeTable.tsx:721
 msgid "View {model}"
-msgstr ""
+msgstr "查看 {model}"
 
 #: src/tables/InvenTreeTable.tsx:725
 #~ msgid "Clear custom query filters"
@@ -9567,7 +9567,7 @@ msgstr "激活的零件"
 
 #: src/tables/bom/BomTable.tsx:429
 msgid "Show active items"
-msgstr ""
+msgstr "显示启用项"
 
 #: src/tables/bom/BomTable.tsx:434
 #: src/tables/build/BuildLineTable.tsx:214
@@ -9791,17 +9791,17 @@ msgstr "移除已分配的库存"
 #: src/tables/build/BuildLineTable.tsx:675
 #: src/tables/sales/SalesOrderAllocationTable.tsx:220
 msgid "Are you sure you want to remove this allocated stock from the order?"
-msgstr ""
+msgstr "确定要从订单中移除这项已分配库存吗？"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:197
 #: src/tables/build/BuildLineTable.tsx:690
 msgid "Consuming allocated stock"
-msgstr ""
+msgstr "正在消耗已分配库存"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:198
 #: src/tables/build/BuildLineTable.tsx:691
 msgid "Stock consumed successfully"
-msgstr ""
+msgstr "库存消耗成功"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:258
 msgid "Consume"
@@ -9811,7 +9811,7 @@ msgstr "库存消耗"
 #: src/tables/build/BuildLineTable.tsx:117
 #: src/tables/sales/SalesOrderAllocationTable.tsx:247
 msgid "Remove allocated stock"
-msgstr ""
+msgstr "移除已分配库存"
 
 #: src/tables/build/BuildLineTable.tsx:59
 #~ msgid "Show lines with available stock"
@@ -9835,7 +9835,7 @@ msgstr "显示已完全消耗的行"
 
 #: src/tables/build/BuildLineTable.tsx:199
 msgid "Show items with sufficient available stock"
-msgstr ""
+msgstr "显示可用库存充足的项目"
 
 #: src/tables/build/BuildLineTable.tsx:204
 msgid "Show consumable lines"
@@ -9861,7 +9861,7 @@ msgstr "显示已跟踪项目"
 
 #: src/tables/build/BuildLineTable.tsx:229
 msgid "Show items with stock on order"
-msgstr ""
+msgstr "显示已有在途库存的项目"
 
 #: src/tables/build/BuildLineTable.tsx:264
 #: src/tables/sales/SalesOrderLineItemTable.tsx:166
@@ -9909,12 +9909,12 @@ msgstr "创建生产订单"
 #: src/tables/build/BuildLineTable.tsx:577
 #: src/tables/build/BuildOutputTable.tsx:223
 msgid "Allocating stock to build order"
-msgstr ""
+msgstr "正在为生产单分配库存"
 
 #: src/tables/build/BuildLineTable.tsx:578
 #: src/tables/build/BuildOutputTable.tsx:224
 msgid "Stock allocation complete"
-msgstr ""
+msgstr "库存分配完成"
 
 #: src/tables/build/BuildLineTable.tsx:585
 #~ msgid "Auto allocation in progress"
@@ -9933,7 +9933,7 @@ msgstr "自动分配库存量"
 
 #: src/tables/build/BuildLineTable.tsx:603
 msgid "Automatically allocate untracked BOM items to this build according to the selected options"
-msgstr ""
+msgstr "根据所选选项，自动为此生产单分配未跟踪的 BOM 项目"
 
 #: src/tables/build/BuildLineTable.tsx:623
 #: src/tables/build/BuildLineTable.tsx:637
@@ -10038,7 +10038,7 @@ msgstr "生成产出库存分配"
 
 #: src/tables/build/BuildOutputTable.tsx:248
 msgid "Automatically allocate tracked BOM items to this build according to the selected options"
-msgstr ""
+msgstr "根据所选选项，自动为此生产单分配已跟踪的 BOM 项目"
 
 #: src/tables/build/BuildOutputTable.tsx:304
 #~ msgid "Edit build output"
@@ -10326,7 +10326,7 @@ msgstr "更新人"
 
 #: src/tables/general/ParameterTable.tsx:118
 msgid "Show parameters for enabled templates"
-msgstr ""
+msgstr "显示已启用模板的参数"
 
 #: src/tables/general/ParameterTable.tsx:124
 msgid "Filter by user who last updated the parameter"
@@ -10423,7 +10423,7 @@ msgstr "型号类型"
 
 #: src/tables/general/ParameterTemplateTable.tsx:159
 msgid "Filter by model type"
-msgstr ""
+msgstr "按模型类型筛选"
 
 #: src/tables/general/ParametricDataTable.tsx:79
 msgid "Click to edit"
@@ -11101,11 +11101,11 @@ msgstr "模板参数无法编辑，因为组件已锁定"
 
 #: src/tables/part/PartThumbTable.tsx:123
 msgid "Image updated"
-msgstr ""
+msgstr "图片已更新"
 
 #: src/tables/part/PartThumbTable.tsx:124
 msgid "The image has been updated successfully"
-msgstr ""
+msgstr "图片已成功更新"
 
 #: src/tables/part/PartThumbTable.tsx:233
 msgid "Select"
@@ -11409,7 +11409,7 @@ msgstr "制造商零件编号 (MPN)"
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:43
 #: src/tables/purchasing/ManufacturerPartTable.tsx:154
 msgid "Show manufacturer parts for active internal parts."
-msgstr ""
+msgstr "显示启用的内部零件对应的制造商零件。"
 
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:48
 #: src/tables/purchasing/ManufacturerPartTable.tsx:159
@@ -11502,7 +11502,7 @@ msgstr "显示活动供应商零件"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 msgid "Show primary supplier parts"
-msgstr ""
+msgstr "显示主供应商零件"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:259
 msgid "Show active internal parts"
@@ -11606,7 +11606,7 @@ msgstr "分配序列号"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:295
 msgid "Stock allocated successfully"
-msgstr ""
+msgstr "库存分配成功"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:338
 msgid "Show lines which are fully allocated"
@@ -11638,7 +11638,7 @@ msgstr "创建配送"
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:80
 msgid "Shipment created"
-msgstr ""
+msgstr "发货单已创建"
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:159
 msgid "Items"
@@ -12425,7 +12425,7 @@ msgstr "显示外部库存地点的项目"
 
 #: src/tables/stock/StockItemTable.tsx:420
 msgid "Stock item created"
-msgstr ""
+msgstr "库存项已创建"
 
 #: src/tables/stock/StockItemTable.tsx:441
 msgid "Order items"
@@ -12600,7 +12600,7 @@ msgstr "为选定项目设置父级位置"
 
 #: src/tables/stock/StockTrackingTable.tsx:93
 msgid "Old Status"
-msgstr ""
+msgstr "旧状态"
 
 #: src/tables/stock/StockTrackingTable.tsx:109
 msgid "Added"
@@ -12612,7 +12612,7 @@ msgstr "已删除"
 
 #: src/tables/stock/StockTrackingTable.tsx:250
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "库存项已不存在"
 
 #: src/tables/stock/StockTrackingTable.tsx:276
 msgid "No user information"
@@ -12643,3 +12643,42 @@ msgstr "阅读文档"
 msgid "Ignore and continue to Desktop view"
 msgstr "忽略并继续到桌面视图"
 
+#: src/contexts/LanguageContext.tsx:169
+msgid "An error occurred while loading translations, see browser console for details."
+msgstr "加载翻译时发生错误，请查看浏览器控制台了解详细信息。"
+
+#: src/components/buttons/StarredToggleButton.tsx:39
+msgid "Subscription removed"
+msgstr "订阅已取消"
+
+#: src/components/buttons/StarredToggleButton.tsx:40
+msgid "Subscription added"
+msgstr "订阅已添加"
+
+#: src/defaults/defaultHostList.tsx:8
+msgid "InvenTree Demo"
+msgstr "InvenTree 演示站"
+
+#: src/defaults/defaultHostList.tsx:10
+msgid "Current Server"
+msgstr "当前服务器"
+
+#: src/defaults/defaultHostList.tsx:6
+msgid "Local Server"
+msgstr "本地服务器"
+
+#: src/pages/stock/LocationDetail.tsx:384
+msgid "Scan in stock items"
+msgstr "扫描入库库存项"
+
+#: src/pages/stock/LocationDetail.tsx:386
+msgid "Scan item into this location"
+msgstr "将库存项扫描到此位置"
+
+#: src/pages/stock/LocationDetail.tsx:390
+msgid "Scan in container"
+msgstr "扫描入库容器"
+
+#: src/pages/stock/LocationDetail.tsx:392
+msgid "Scan container into this location"
+msgstr "将容器扫描到此位置"
