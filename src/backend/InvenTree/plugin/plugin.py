@@ -5,7 +5,7 @@ import json
 import re
 import warnings
 from datetime import datetime
-from distutils.sysconfig import get_python_lib  # type: ignore[unresolved-import]
+from distutils.sysconfig import get_python_lib
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 from typing import Optional

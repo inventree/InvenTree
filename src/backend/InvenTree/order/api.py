@@ -23,6 +23,7 @@ from rest_framework.response import Response
 
 import build.models
 import common.models
+import common.serializers
 import common.settings
 import company.models
 import stock.models as stock_models
