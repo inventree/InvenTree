@@ -722,6 +722,15 @@ def translate(c, ignore_static=False, no_frontend=False):
     success('Translation files built successfully')
 
 
+@task
+@state_logger('backend_trans')
+def backend_trans(c):
+    """Compile backend Django translation files."""
+    info('Compiling backend translations')
+    manage(c, 'compilemessages')
+    success('Backend translations compiled successfully')
+
+
 @task(
     help={
         'clean': 'Clean up old backup files',
@@ -911,6 +920,7 @@ def update(
     The following tasks are performed, in order:
 
     - install
+    - backend_trans
     - backup (optional)
     - migrate
     - frontend_compile or frontend_download (optional)
@@ -921,6 +931,9 @@ def update(
 
     # Ensure required components are installed
     install(c, uv=uv)
+
+    # Compile backend translation files to ensure django.mo stays in sync
+    backend_trans(c)
 
     if not skip_backup:
         backup(c)
@@ -2096,6 +2109,7 @@ internal = Collection(
 )
 
 ns = Collection(
+    backend_trans,
     backup,
     export_records,
     frontend_download,
