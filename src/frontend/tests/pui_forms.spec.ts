@@ -150,7 +150,7 @@ test('Forms - Keep form open option', async ({ browser }) => {
   await page.getByLabel('text-field-name', { exact: true }).fill(locationName);
 
   // Check keep form open switch and submit
-  await page.getByText('Keep form open', { exact: true }).click();
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Location should be created, form should remain opened
@@ -161,7 +161,7 @@ test('Forms - Keep form open option', async ({ browser }) => {
   await page
     .getByLabel('text-field-name', { exact: true })
     .fill(`Another ${locationName}`);
-  await page.getByText('Keep form open', { exact: true }).click();
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Location should be created, and the form (modal) should disappear
