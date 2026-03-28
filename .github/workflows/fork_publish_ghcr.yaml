@@ -1,0 +1,84 @@
+name: Fork Publish GHCR
+
+on:
+  push:
+    branches:
+      - master
+      - fix/**
+      - feat/**
+      - chore/**
+  workflow_dispatch:
+    inputs:
+      extra_tag:
+        description: "可选：额外镜像标签（例如 staging）"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build and Publish Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Prepare image tags
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BRANCH_TAG="$(echo "${GITHUB_REF_NAME}" | tr '/_' '--' | tr '[:upper:]' '[:lower:]')"
+          SHORT_SHA="$(git rev-parse --short HEAD)"
+
+          IMAGE_BASE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/inventree"
+
+          TAGS="${IMAGE_BASE}:${BRANCH_TAG},${IMAGE_BASE}:sha-${SHORT_SHA}"
+
+          # 在 master 分支额外推送 latest，便于生产环境跟随主线
+          if [[ "${GITHUB_REF_NAME}" == "master" ]]; then
+            TAGS="${TAGS},${IMAGE_BASE}:latest"
+          fi
+
+          # 手动触发时可指定额外标签（可选）
+          EXTRA_TAG="${{ github.event.inputs.extra_tag }}"
+          if [[ -n "${EXTRA_TAG}" ]]; then
+            TAGS="${TAGS},${IMAGE_BASE}:${EXTRA_TAG}"
+          fi
+
+          echo "IMAGE_TAGS=${TAGS}" >> "${GITHUB_ENV}"
+          echo "COMMIT_HASH=${SHORT_SHA}" >> "${GITHUB_ENV}"
+          echo "COMMIT_DATE=$(git show -s --format=%ci)" >> "${GITHUB_ENV}"
+
+          echo "将发布镜像标签:"
+          echo "${TAGS}" | tr ',' '\n'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # pin@v4.0.0
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # pin@v4.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push production image
+        uses: docker/build-push-action@17e35ff9f2e4238f4a57ac6e9f21d1f9f14d10d0 # pin@v6.18.0
+        with:
+          context: .
+          file: ./contrib/container/Dockerfile
+          target: production
+          push: true
+          # 线上实例是 x86_64，先发布 amd64，提速并降低失败面
+          platforms: linux/amd64
+          tags: ${{ env.IMAGE_TAGS }}
+          build-args: |
+            commit_hash=${{ env.COMMIT_HASH }}
+            commit_date=${{ env.COMMIT_DATE }}
