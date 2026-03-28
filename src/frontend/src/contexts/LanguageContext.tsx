@@ -1,5 +1,4 @@
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
@@ -166,7 +165,8 @@ export function LanguageContext({
   if (loadedState === 'error') {
     return (
       <Text>
-        {t`An error occurred while loading translations, see browser console for details.`}
+        An error occurred while loading translations, see browser console for
+        details.
       </Text>
     );
   }
