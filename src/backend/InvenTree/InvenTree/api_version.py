@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 468
 
 INVENTREE_API_TEXT = """
 
-468 -> 2026-03-27 : https://github.com/inventree/InvenTree/pull/999999999
+v468 -> 2026-03-27 : https://github.com/inventree/InvenTree/pull/11617
     - Non-functional refactor, adaptations of descriptions
 
 v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
