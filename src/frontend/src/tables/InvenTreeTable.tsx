@@ -377,6 +377,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     getInitialValueInEffect: false
   });
 
+  // Reset column ordering and custom widths when the component is mounted
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759#issuecomment-4148942070
+  useEffect(() => {
+    tableColumns.resetColumnsOrder();
+    tableColumns.resetColumnsWidth();
+  }, []);
+
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
