@@ -464,6 +464,7 @@ export function useAllocateToSalesOrderForm({
     onFormSuccess: onFormSuccess,
     successMessage: t`Stock items allocated`,
     size: '80%',
+    keepOpenOption: true,
     initialData: {
       items: lineItems.map((item) => {
         return {

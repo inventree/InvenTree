@@ -109,7 +109,8 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     },
     follow: true,
     modelType: ModelType.partcategory,
-    table: table
+    table: table,
+    keepOpenOption: true
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);

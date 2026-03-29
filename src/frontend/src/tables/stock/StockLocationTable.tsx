@@ -110,7 +110,8 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     },
     follow: true,
     modelType: ModelType.stocklocation,
-    table: table
+    table: table,
+    keepOpenOption: true
   });
 
   const [selectedLocation, setSelectedLocation] = useState<number>(-1);
