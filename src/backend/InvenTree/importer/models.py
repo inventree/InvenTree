@@ -152,7 +152,7 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def get_related_model(self, field_name: str) -> models.Model:
+    def get_related_model(self, field_name: str) -> Optional[models.Model]:
         """Return the related model for a given field name.
 
         Arguments:
@@ -699,7 +699,7 @@ class DataImportRow(models.Model):
         if commit:
             self.save()
 
-    def convert_date_field(self, value: str) -> str:
+    def convert_date_field(self, value: str) -> Optional[str]:
         """Convert an incoming date field to the correct format for the database."""
         if value in [None, '']:
             return None

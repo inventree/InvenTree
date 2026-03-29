@@ -45,6 +45,7 @@ import {
   useStockItemSerializeFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -215,6 +216,17 @@ export default function BuildOutputTable({
     }
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to build order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      refetchTrackedItems();
+    }
+  });
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
@@ -226,12 +238,9 @@ export default function BuildOutputTable({
       location: build.take_from,
       substitutes: true
     },
-    successMessage: t`Auto-allocation in progress`,
-    onFormSuccess: () => {
-      // After a short delay, refresh the tracked items
-      setTimeout(() => {
-        refetchTrackedItems();
-      }, 2500);
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
     },
     table: table,
     preFormContent: (

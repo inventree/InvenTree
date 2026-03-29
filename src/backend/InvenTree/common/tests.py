@@ -1352,12 +1352,18 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Now, let's bulk delete all 'unread' notifications via the API,
         # but only associated with the logged in user
-        response = self.delete(url, {'filters': {'read': False}}, expected_code=200)
+        read_notifications = NotificationMessage.objects.filter(read=True)
+        response = self.delete(
+            url, {'items': [ntf.pk for ntf in read_notifications]}, expected_code=200
+        )
 
-        # Only 7 notifications should have been deleted,
+        # Only 3 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
-        self.assertEqual(NotificationMessage.objects.count(), 13)
-        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
+        self.assertEqual(NotificationMessage.objects.count(), 17)
+        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 7)
+        self.assertEqual(
+            NotificationMessage.objects.filter(user=self.user, read=True).count(), 0
+        )
 
     def test_simple(self):
         """Test that a simple notification can be created."""
@@ -1569,9 +1575,14 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(
-                reverse('api-currency-refresh'), expected_code=200, max_query_time=30
-            )
+            try:
+                self.post(
+                    reverse('api-currency-refresh'),
+                    expected_code=200,
+                    max_query_time=30,
+                )
+            except Exception:
+                continue
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():

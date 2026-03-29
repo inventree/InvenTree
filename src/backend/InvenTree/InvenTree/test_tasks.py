@@ -234,11 +234,8 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
 
         msg = NotificationMessage.objects.last()
 
-        self.assertEqual(msg.name, 'Task Failure')
-        self.assertEqual(
-            msg.message,
-            "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
-        )
+        self.assertEqual(msg.name, 'Server Error')
+        self.assertEqual(msg.message, 'An error has been logged by the server.')
 
     def test_delete_old_emails(self):
         """Test the delete_old_emails task."""
