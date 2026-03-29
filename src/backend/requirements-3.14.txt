@@ -1685,9 +1685,9 @@ pynacl==1.6.2 \
     # via
     #   -c src/backend/requirements.txt
     #   paramiko
-pypdf==6.9.1 \
-    --hash=sha256:ae052407d33d34de0c86c5c729be6d51010bf36e03035a8f23ab449bca52377d \
-    --hash=sha256:f35a6a022348fae47e092a908339a8f3dc993510c026bb39a96718fc7185e89f
+pypdf==6.9.2 \
+    --hash=sha256:662cf29bcb419a36a1365232449624ab40b7c2d0cfc28e54f42eeecd1fd7e844 \
+    --hash=sha256:7f850faf2b0d4ab936582c05da32c52214c2b089d61a316627b5bfb5b0dab46c
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -1928,9 +1928,9 @@ referencing==0.37.0 \
     #   -c src/backend/requirements.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.5 \
-    --hash=sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6 \
-    --hash=sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf
+requests==2.33.0 \
+    --hash=sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b \
+    --hash=sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652
     # via
     #   -c src/backend/requirements.txt
     #   django-allauth
