@@ -1,3 +1,4 @@
+import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
 import { activateTableView, loadTab } from './helpers.js';
@@ -116,6 +117,14 @@ test('Printing - Report Editing', async ({ browser }) => {
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();
+
+  // check that styles are applied correctly
+  await expect(page.getByText('{% block style %}')).toBeVisible();
+  const element: Locator = page.getByText('block').first();
+  const color = await element.evaluate((el) => {
+    return window.getComputedStyle(el).getPropertyValue('color');
+  });
+  expect(color).toBe('rgb(78, 201, 176)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();

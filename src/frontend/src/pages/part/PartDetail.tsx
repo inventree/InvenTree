@@ -1013,6 +1013,10 @@ export default function PartDetail() {
       return [];
     }
 
+    const allocated =
+      partRequirements.allocated_to_build_orders +
+      partRequirements.allocated_to_sales_orders;
+
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
@@ -1046,6 +1050,12 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
+        label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        color='blue'
+        visible={allocated > 0}
+        key='allocated'
+      />,
+      <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
@@ -1058,9 +1068,9 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
-        visible={partRequirements.building > 0}
+        visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge

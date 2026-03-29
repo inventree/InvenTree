@@ -180,6 +180,8 @@ export interface ApiFormProps {
   follow?: boolean;
   actions?: ApiFormAction[];
   timeout?: number;
+  keepOpenOption?: boolean;
+  onKeepOpenChange?: (keepOpen: boolean) => void;
 }
 
 /**

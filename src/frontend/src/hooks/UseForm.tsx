@@ -24,9 +24,15 @@ export function useApiFormModal(props: ApiFormModalProps) {
     return props.modalId ?? id;
   }, [props.modalId, id]);
 
+  const keepOpenRef = useRef(false);
+  const setKeepOpen = (v: boolean) => {
+    keepOpenRef.current = v;
+  };
+
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
+      onKeepOpenChange: setKeepOpen,
       actions: [
         ...(props.actions || []),
         {
@@ -38,7 +44,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
         }
       ],
       onFormSuccess: (data, form) => {
-        if (props.checkClose?.(data, form) ?? true) {
+        if (!keepOpenRef.current && (props.checkClose?.(data, form) ?? true)) {
           modalClose.current();
         }
         props.onFormSuccess?.(data, form);

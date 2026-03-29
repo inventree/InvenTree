@@ -352,9 +352,10 @@ test('Parts - Requirements', async ({ browser }) => {
 
   // Check top-level badges
   await page.getByText('In Stock: 209').waitFor();
+  await page.getByText(/Allocated: \d/).waitFor();
   await page.getByText('Available: 204').waitFor();
   await page.getByText(/Required: 2\d+/).waitFor();
-  await page.getByText('In Production: 24').waitFor();
+  await page.getByText(/In Production: 2\d\d/).waitFor();
 
   // Check requirements details
   await page.getByText('204 / 209').waitFor(); // Available stock
@@ -374,7 +375,7 @@ test('Parts - Requirements', async ({ browser }) => {
   await page.getByText('In Stock: 44').waitFor();
   await page.getByText('Available: 39').waitFor();
   await page.getByText('Required: 100').waitFor();
-  await page.getByText('In Production: 10').waitFor();
+  await page.getByText(/In Production: 1\d\d/).waitFor();
 
   await page.getByText('39 / 44').waitFor(); // Available stock
   await page.getByText('5 / 100').waitFor(); // Allocated to sales orders
