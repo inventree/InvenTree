@@ -999,6 +999,10 @@ export default function PartDetail() {
       return [];
     }
 
+    const allocated =
+      partRequirements.allocated_to_build_orders +
+      partRequirements.allocated_to_sales_orders;
+
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
@@ -1030,6 +1034,12 @@ export default function PartDetail() {
         color='orange'
         visible={!part.virtual && partRequirements.total_stock == 0}
         key='no_stock'
+      />,
+      <DetailsBadge
+        label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        color='blue'
+        visible={allocated > 0}
+        key='allocated'
       />,
       <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
