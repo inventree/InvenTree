@@ -1044,9 +1044,9 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
-        visible={partRequirements.building > 0}
+        visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge
