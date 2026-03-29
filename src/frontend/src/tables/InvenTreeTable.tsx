@@ -303,9 +303,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
-    const columnNames: string = cols.map((col) => col.accessor).join(',');
-    setColumnHash(hashString(columnNames));
-
     return cols;
   }, [
     columns,
@@ -314,6 +311,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
+
+  useEffect(() => {
+    const columnNames: string = dataColumns
+      .map((col: any) => col.accessor)
+      .join(',');
+    setColumnHash(hashString(columnNames));
+  }, [dataColumns]);
 
   // Callback when column visibility is toggled
   const toggleColumn = useCallback(
@@ -342,6 +346,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     columns: dataColumns,
     getInitialValueInEffect: false
   });
+
+  // Reset column ordering and custom widths when the component is mounted
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759#issuecomment-4148942070
+  useEffect(() => {
+    tableColumns.resetColumnsOrder();
+    tableColumns.resetColumnsWidth();
+  }, []);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
