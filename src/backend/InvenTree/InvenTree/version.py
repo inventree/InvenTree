@@ -289,8 +289,10 @@ def inventreeBranch():
         return ' '.join(branch.splitlines())
 
     if main_branch is None:
-        return None
-    return main_branch.decode('utf-8')
+        return None  # pragma: no cover - branch information may not be available in all environments
+    return main_branch.decode(
+        'utf-8'
+    )  # pragma: no cover - branch information may not be available in all environments
 
 
 def inventreeTarget():

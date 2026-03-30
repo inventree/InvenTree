@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
         id: filter
         with:
           filters: |
@@ -284,7 +284,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # pin@v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
         with:
           path: artifact
           merge-multiple: true
@@ -341,6 +341,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
           npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
@@ -362,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@281164b0f014a4e7badd2c02cecad9b595b70537 # pin@v4
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -398,6 +399,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
@@ -452,7 +454,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@281164b0f014a4e7badd2c02cecad9b595b70537 # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -500,6 +502,7 @@ jobs:
           pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -548,6 +551,7 @@ jobs:
           pip-dependency: mysqlclient
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test

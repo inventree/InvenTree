@@ -85,8 +85,8 @@ class RenderMeta(enums.ChoicesType):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
-    """Class for creating enumerated string choices for schema rendering."""
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""  # ty:ignore[conflicting-metaclass]
 
 
 class MetaMixin(models.Model):
@@ -1084,7 +1084,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.validator_is_bool(validator)
 
-    def as_bool(self):
+    def as_bool(self) -> bool:
         """Return the value of this setting converted to a boolean value.
 
         Warning: Only use on values where is_bool evaluates to true!

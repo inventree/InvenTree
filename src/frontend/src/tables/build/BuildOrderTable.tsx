@@ -218,7 +218,8 @@ export function BuildOrderTable({
       parent: parentBuildId
     },
     follow: true,
-    modelType: ModelType.build
+    modelType: ModelType.build,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {
