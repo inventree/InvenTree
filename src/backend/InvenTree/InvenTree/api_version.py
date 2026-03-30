@@ -60,6 +60,7 @@ v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
 
 v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
+
 v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
     - Adds "install_into_detail" field to the BuildItem API endpoint
 
