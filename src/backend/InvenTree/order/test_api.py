@@ -1336,6 +1336,33 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 4, StockItem.objects.count())
 
+    def test_virtual(self):
+        """Test receipt of "virtual" items (i.e. items which do not create a StockItem)."""
+        line = models.PurchaseOrderLineItem.objects.get(pk=1)
+        base_part = line.part.part
+        base_part.virtual = True
+        base_part.save()
+
+        self.assertEqual(line.received, 0)
+
+        data = {
+            'items': [{'line_item': line.pk, 'quantity': line.quantity}],
+            'location': 1,
+        }
+
+        N_ITEMS = base_part.stock_entries().count()
+        N_STOCK = base_part.get_stock_count()
+
+        self.post(self.url, data, expected_code=201)
+
+        # No new stock items should have been created
+        self.assertEqual(base_part.stock_entries().count(), N_ITEMS)
+        self.assertEqual(base_part.get_stock_count(), N_STOCK)
+
+        # Check that the line item has been fully received
+        line.refresh_from_db()
+        self.assertEqual(line.received, line.quantity)
+
 
 class SalesOrderTest(OrderTest):
     """Tests for the SalesOrder API."""
