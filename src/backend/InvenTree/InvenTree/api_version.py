@@ -323,12 +323,6 @@ v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
 v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
     - Fixes "issued_by" filter for the BuildOrder list API endpoint
 
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
-    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
-
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
-    - Fixes "issued_by" filter for the BuildOrder list API endpoint
-
 v379 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10124
     - Removes "PartStocktakeReport" model and associated API endpoints
     - Remove "last_stocktake" field from the Part model
