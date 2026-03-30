@@ -1310,6 +1310,35 @@ class NotificationTest(InvenTreeAPITestCase):
         # POST action should fail (not allowed)
         response = self.post(url, {}, expected_code=405)
 
+    def test_api_read(self):
+        """Test that NotificationMessage can be marked as read."""
+        # Create a notification message
+        NotificationMessage.objects.create(
+            user=self.user,
+            category='test',
+            message='This is a test notification',
+            target_object=self.user,
+        )
+        user2 = get_user_model().objects.get(pk=2)
+        NotificationMessage.objects.create(
+            user=user2,
+            category='test',
+            message='This is a second test notification',
+            target_object=user2,
+        )
+
+        url = reverse('api-notifications-list')
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 0)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+
+        # Read with readall endpoint
+        self.get(reverse('api-notifications-readall'), {}, expected_code=200)
+
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 1)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+        # filtered by read status should be 0
+        self.assertEqual(len(self.get(url, {'read': False}, expected_code=200).data), 0)
+
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications."""
         from error_report.models import Error
