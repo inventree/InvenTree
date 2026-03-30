@@ -1640,7 +1640,9 @@ def setup_test(
 
     # Load data
     info('Loading database records ...')
-    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
+    import_records(
+        c, filename=template_dir.joinpath('inventree_data.json'), clear=True, force=True
+    )
 
     # Copy media files
     src = template_dir.joinpath('media')
