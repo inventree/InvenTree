@@ -18,6 +18,14 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def safe_value(fnc):
+    """Helper function to safely get value from function, catching import exceptions."""
+    try:
+        return fnc()
+    except (ModuleNotFoundError, ImportError):
+        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
+
+
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean."""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
@@ -43,6 +51,51 @@ def is_debug_environment():
     return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
         os.environ.get('RUNNER_DEBUG', 'False')
     )
+
+
+def get_django_version():
+    """Return the current Django version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeDjangoVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeDjangoVersion)
+
+
+def get_inventree_version():
+    """Return the current InvenTree version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeVersion)
+
+
+def get_inventree_api_version():
+    """Return the current InvenTree API version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeApiVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeApiVersion)
+
+
+def get_commit_hash():
+    """Return the current git commit hash."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitHash,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeCommitHash)
+
+
+def get_commit_date():
+    """Return the current git commit date."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitDate,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeCommitDate)
 
 
 def get_version_vals():
@@ -249,7 +302,7 @@ def main():
 # endregion
 
 
-def apps():
+def builtin_apps():
     """Returns a list of installed apps."""
     return [
         'build',
@@ -384,7 +437,9 @@ if __name__ in ['__main__', 'tasks']:
     main()
 
 
-def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
+def run(
+    c, cmd, path: Optional[Path] = None, pty: bool = False, hide: bool = False, env=None
+):
     """Runs a given command a given path.
 
     Args:
@@ -392,20 +447,23 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
         cmd: Command to run.
         path: Path to run the command in.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        hide (bool, optional): Hide the command output. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     env = env or {}
     path = path or local_dir()
 
     try:
-        c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+        result = c.run(f'cd "{path}" && {cmd}', pty=pty, env=env, hide=hide)
     except UnexpectedExit as e:
         error(f"ERROR: InvenTree command failed: '{cmd}'")
         warning('- Refer to the error messages in the log above for more information')
         raise e
 
+    return result
 
-def manage(c, cmd, pty: bool = False, env=None):
+
+def manage(c, cmd, pty: bool = False, env=None, **kwargs):
     """Runs a given command against django's "manage.py" script.
 
     Args:
@@ -414,7 +472,23 @@ def manage(c, cmd, pty: bool = False, env=None):
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
-    run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
+    return run(
+        c, f'python3 manage.py {cmd}', manage_py_dir(), pty=pty, env=env, **kwargs
+    )
+
+
+def installed_apps(c) -> list[str]:
+    """Returns a list of all installed apps, including plugins."""
+    result = manage(c, 'list_apps', pty=False, hide=True)
+    output = result.stdout.strip()
+
+    # Look for the expected pattern
+    match = re.findall(r'>>> (.*) <<<', output)
+
+    if not match:
+        raise ValueError(f"Unexpected output from 'list_apps' command: {output}")
+
+    return match[0].split(',')
 
 
 def run_install(
@@ -1030,7 +1104,20 @@ def export_records(
     with open(tmpfile, encoding='utf-8') as f_in:
         data = json.loads(f_in.read())
 
-    data_out = []
+    data_out = [
+        {
+            'metadata': True,
+            'comment': 'This file contains a dump of the InvenTree database',
+            'exported_at': datetime.datetime.now().isoformat(),
+            'exported_at_utc': datetime.datetime.utcnow().isoformat(),
+            'source_version': get_inventree_version(),
+            'api_version': get_inventree_api_version(),
+            'django_version': get_django_version(),
+            'python_version': python_version(),
+            'source_commit': get_commit_hash(),
+            'installed_apps': installed_apps(c),
+        }
+    ]
 
     for entry in data:
         model_name = entry.get('model', None)
@@ -1060,17 +1147,77 @@ def export_records(
     success('Data export completed')
 
 
+def validate_import_metadata(c, metadata: dict, strict: bool = False) -> bool:
+    """Validate the metadata associated with an import file.
+
+    Arguments:
+        c: The context or connection object
+        metadata (dict): The metadata to validate
+        strict (bool): If True, the import process will fail if any issues are detected.
+    """
+    info('Validating import metadata...')
+
+    valid = True
+
+    def metadata_issue(message: str):
+        """Handle an issue with the metadata."""
+        nonlocal valid
+        valid = False
+
+        if strict:
+            error(f'INVE-E16 Data Import Error: {message}')
+            sys.exit(1)
+        else:
+            warning(f'INVE-W13 Data Import Warning: {message}')
+
+    if not metadata:
+        metadata_issue(
+            'No metadata found in the import file - cannot validate source version'
+        )
+        return False
+
+    source_version = metadata.get('source_version')
+
+    if source_version != get_inventree_version():
+        metadata_issue(
+            f"Source version '{source_version}' does not match the current InvenTree version '{get_inventree_version()}' - this may lead to issues with the import process"
+        )
+
+    local_apps = set(installed_apps(c))
+    source_apps = set(metadata.get('installed_apps', []))
+
+    for app in source_apps:
+        if app not in local_apps:
+            metadata_issue(
+                f"Source app '{app}' is not installed in the current environment - this may break the import process"
+            )
+
+    if valid:
+        success('Metadata validation succeeded - no issues detected')
+
+    return valid
+
+
 @task(
     help={
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
+        'force': 'Force deletion of existing data without confirmation (only applies if --clear is set)',
+        'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
+        'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
-    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+    c,
+    filename='data.json',
+    clear: bool = False,
+    retain_temp: bool = False,
+    strict: bool = False,
+    force: bool = False,
+    ignore_nonexistent: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1083,7 +1230,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True, migrate=True)
+        delete_data(c, force=force, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -1104,7 +1251,14 @@ def import_records(
     auth_data = []
     load_data = []
 
+    # A dict containing metadata associated with the data file
+    metadata = {}
+
     for entry in data:
+        if entry.get('metadata', False):
+            metadata = entry
+            continue
+
         if 'model' in entry:
             # Clear out any permissions specified for a group
             if entry['model'] == 'auth.group':
@@ -1123,6 +1277,9 @@ def import_records(
             warning('WARNING: Invalid entry in data file')
             print(entry)
 
+    # Check the metadata associated with the imported data
+    validate_import_metadata(c, metadata, strict=strict)
+
     # Write the auth file data
     with open(authfile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(auth_data, indent=2))
@@ -1131,16 +1288,24 @@ def import_records(
     with open(datafile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(load_data, indent=2))
 
+    # A set of content types to exclude from the import process
     excludes = content_excludes(allow_auth=False)
 
     # Import auth models first
     info('Importing user auth data...')
     cmd = f"loaddata '{authfile}'"
+
+    if ignore_nonexistent:
+        cmd += ' --ignorenonexistent'
+
     manage(c, cmd, pty=True)
 
     # Import everything else next
     info('Importing database records...')
     cmd = f"loaddata '{datafile}' -i {excludes}"
+
+    if ignore_nonexistent:
+        cmd += ' --ignorenonexistent'
 
     manage(c, cmd, pty=True)
 
@@ -1388,7 +1553,7 @@ def test(
 
     pty = not disable_pty
 
-    tested_apps = ' '.join(apps())
+    tested_apps = ' '.join(builtin_apps())
 
     cmd = 'test'
 
@@ -1475,7 +1640,9 @@ def setup_test(
 
     # Load data
     info('Loading database records ...')
-    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
+    import_records(
+        c, filename=template_dir.joinpath('inventree_data.json'), clear=True, force=True
+    )
 
     # Copy media files
     src = template_dir.joinpath('media')
@@ -1597,7 +1764,6 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
@@ -1605,13 +1771,6 @@ def version(c):
         get_plugin_file,
         get_static_dir,
     )
-
-    def get_value(fnc):
-        """Helper function to safely get value from function, catching import exceptions."""
-        try:
-            return fnc()
-        except (ModuleNotFoundError, ImportError):
-            return wrap_color('ENVIRONMENT ERROR', '91')
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
@@ -1645,17 +1804,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_value(get_config_file)}
-Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
-Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
-Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
-Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
+Config      {safe_value(get_config_file)}
+Plugin File {safe_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {safe_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {safe_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {safe_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
-InvenTree   {InvenTreeVersion.inventreeVersion()}
-API         {InvenTreeVersion.inventreeApiVersion()}
+InvenTree   {get_inventree_version() or NOT_SPECIFIED}
+API         {get_inventree_api_version() or NOT_SPECIFIED}
 Python      {python_version()}
-Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
+Django      {get_django_version() or NOT_SPECIFIED}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1663,8 +1822,8 @@ Environment:
 Platform    {platform}
 Debug       {is_debug_environment()}
 
-Commit hash: {InvenTreeVersion.inventreeCommitHash()}
-Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {get_commit_hash() or NOT_SPECIFIED}
+Commit date: {get_commit_date() or NOT_SPECIFIED}"""
     )
     if is_pkg_installer_by_path():
         print(
