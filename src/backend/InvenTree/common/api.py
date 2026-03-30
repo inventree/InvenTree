@@ -20,7 +20,12 @@ import django_q.models
 import django_q.tasks
 from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
 from error_report.models import Error
 from opentelemetry import trace
 from pint._typing import UnitLike
@@ -427,6 +432,18 @@ class NewsFeedViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet)
 common_router.register('news', NewsFeedViewSet, basename='api-news')
 
 
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='key',
+                description='Unique identifier for this configuration',
+                required=True,
+                location=OpenApiParameter.PATH,
+            )
+        ]
+    )
+)
 class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
     """A simple ViewSet for all accessed configurations."""
 
@@ -1212,11 +1229,11 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
         'thread_id_key',
     ]
 
+    @extend_schema(responses={201: common.serializers.TestEmailSerializer})
     @action(
         detail=False,
         methods=['post'],
         serializer_class=common.serializers.TestEmailSerializer,
-        # status_code=status.HTTP_201_CREATED #TODO
     )
     def test(self, request):
         """Send a test email."""
@@ -1234,6 +1251,7 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
+        # TODO @matmair - breaking change: this should be a 200
         return Response(serializer.data, status=201)
 
 

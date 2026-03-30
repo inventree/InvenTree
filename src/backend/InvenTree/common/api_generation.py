@@ -35,7 +35,7 @@ class BulkEnabledRouter(routers.SimpleRouter):
             list_route = next(
                 (route for route in routes if route.mapping.get('get') == 'list'), None
             )
-            list_route.mapping['delete'] = 'delete'
+            list_route.mapping['delete'] = 'bulk_delete'
 
         return routes
 
