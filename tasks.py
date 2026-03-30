@@ -1135,10 +1135,63 @@ def export_records(
     success('Data export completed')
 
 
+def validate_import_metadata(c, metadata: dict, strict: bool = False) -> bool:
+    """Validate the metadata associated with an import file.
+
+    Arguments:
+        c: The context or connection object
+        metadata (dict): The metadata to validate
+        strict (bool): If True, the import process will fail if any issues are detected.
+    """
+    info('Validating import metadata...')
+
+    valid = True
+
+    def metadata_issue(message: str):
+        """Handle an issue with the metadata."""
+        nonlocal valid
+        valid = False
+
+        if strict:
+            error(f'Data Import Error: {message}')
+            sys.exit(1)
+        else:
+            warning(f'Data Import Issue: {message}')
+
+    if not metadata:
+        metadata_issue(
+            'No metadata found in the import file - cannot validate source version'
+        )
+        return False
+
+    source_version = metadata.get('source_version')
+
+    if source_version != get_inventree_version():
+        metadata_issue(
+            f"Source version '{source_version}' does not match the current InvenTree version '{get_inventree_version()}' - this may lead to issues with the import process"
+        )
+
+    local_apps = set(installed_apps(c))
+    source_apps = set(metadata.get('installed_apps', []))
+
+    for app in source_apps:
+        if app not in local_apps:
+            metadata_issue(
+                f"Source app '{app}' is not installed in the current environment - this may break the import process"
+            )
+
+    if valid:
+        success('Metadata validation succeeded - no issues detected')
+
+    return valid
+
+
 @task(
     help={
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
+        'force': 'Force deletion of existing data without confirmation (only applies if --clear is set)',
+        'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
         'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
     },
@@ -1150,6 +1203,8 @@ def import_records(
     filename='data.json',
     clear: bool = False,
     retain_temp: bool = False,
+    strict: bool = False,
+    force: bool = False,
     ignore_nonexistent: bool = False,
 ):
     """Import database records from a file."""
@@ -1163,7 +1218,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True, migrate=True)
+        delete_data(c, force=force, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -1210,9 +1265,8 @@ def import_records(
             warning('WARNING: Invalid entry in data file')
             print(entry)
 
-    print('metadata:')
-    for k, v in metadata.items():
-        print(f'  {k}: {v}')
+    # Check the metadata associated with the imported data
+    validate_import_metadata(c, metadata, strict=strict)
 
     # Write the auth file data
     with open(authfile, 'w', encoding='utf-8') as f_out:
