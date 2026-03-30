@@ -125,7 +125,8 @@ export function SalesOrderTable({
       customer: customerId
     },
     follow: true,
-    modelType: ModelType.salesorder
+    modelType: ModelType.salesorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {

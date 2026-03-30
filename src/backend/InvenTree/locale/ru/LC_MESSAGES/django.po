@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-21 12:48+0000\n"
-"PO-Revision-Date: 2026-03-21 12:51\n"
+"POT-Creation-Date: 2026-03-29 03:28+0000\n"
+"PO-Revision-Date: 2026-03-29 03:31\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -203,7 +203,7 @@ msgstr "Войти в приложение"
 msgid "Email"
 msgstr "Электронная почта"
 
-#: InvenTree/middleware.py:178
+#: InvenTree/middleware.py:183
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Вы должны включить двухфакторную аутентификацию, прежде чем делать что-нибудь еще."
 
@@ -536,7 +536,7 @@ msgstr "Неверная физическая единица"
 msgid "Not a valid currency code"
 msgstr "Неверный код валюты"
 
-#: build/api.py:55 order/api.py:113 order/api.py:280 order/api.py:1379
+#: build/api.py:55 order/api.py:114 order/api.py:281 order/api.py:1380
 #: order/serializers.py:123
 msgid "Order Status"
 msgstr "Статус заказа"
@@ -545,16 +545,16 @@ msgstr "Статус заказа"
 msgid "Parent Build"
 msgstr "Родительский заказ на производство"
 
-#: build/api.py:85 build/api.py:904 order/api.py:557 order/api.py:780
-#: order/api.py:1180 order/api.py:1481 stock/api.py:572
+#: build/api.py:85 build/api.py:904 order/api.py:558 order/api.py:781
+#: order/api.py:1181 order/api.py:1482 stock/api.py:572
 msgid "Include Variants"
 msgstr "Включая варианты"
 
 #: build/api.py:101 build/api.py:461 build/api.py:918 build/models.py:283
 #: build/serializers.py:1205 build/serializers.py:1376
 #: build/serializers.py:1462 company/models.py:1037 company/serializers.py:435
-#: order/api.py:308 order/api.py:312 order/api.py:937 order/api.py:1193
-#: order/api.py:1196 order/models.py:1959 order/models.py:2127
+#: order/api.py:309 order/api.py:313 order/api.py:938 order/api.py:1194
+#: order/api.py:1197 order/models.py:1959 order/models.py:2127
 #: order/models.py:2128 part/api.py:1132 part/api.py:1135 part/api.py:1348
 #: part/models.py:527 part/models.py:3324 part/models.py:3467
 #: part/models.py:3525 part/models.py:3546 part/models.py:3568
@@ -589,7 +589,7 @@ msgstr "Категория"
 msgid "Ancestor Build"
 msgstr "Родительская сборка"
 
-#: build/api.py:153 order/api.py:131
+#: build/api.py:153 order/api.py:132
 msgid "Assigned to me"
 msgstr "Назначено мне"
 
@@ -637,11 +637,11 @@ msgstr "Завершено до"
 msgid "Completed after"
 msgstr "Завершено после"
 
-#: build/api.py:250 order/api.py:236
+#: build/api.py:250 order/api.py:237
 msgid "Min Date"
 msgstr "Минимальная дата"
 
-#: build/api.py:273 order/api.py:255
+#: build/api.py:273 order/api.py:256
 msgid "Max Date"
 msgstr "Максимальная дата"
 
@@ -675,11 +675,11 @@ msgstr "Отслеживается"
 msgid "Testable"
 msgstr "Тестируемая"
 
-#: build/api.py:466 order/api.py:1001 order/api.py:1369
+#: build/api.py:466 order/api.py:1002 order/api.py:1370
 msgid "Order Outstanding"
 msgstr "Невыполненные заказы"
 
-#: build/api.py:476 build/serializers.py:1502 order/api.py:960
+#: build/api.py:476 build/serializers.py:1502 order/api.py:961
 msgid "Allocated"
 msgstr "Зарезервировано"
 
@@ -713,7 +713,7 @@ msgstr "Заказ на производство"
 
 #: build/api.py:955 build/api.py:959 build/serializers.py:360
 #: build/serializers.py:485 build/serializers.py:555 build/serializers.py:1253
-#: build/serializers.py:1258 order/api.py:1240 order/api.py:1245
+#: build/serializers.py:1258 order/api.py:1241 order/api.py:1246
 #: order/serializers.py:802 order/serializers.py:942 order/serializers.py:2023
 #: part/serializers.py:1324 stock/api.py:986 stock/serializers.py:111
 #: stock/serializers.py:600 stock/serializers.py:716 stock/serializers.py:894
@@ -891,7 +891,7 @@ msgstr "Создано"
 msgid "User who issued this build order"
 msgstr "Пользователь, создавший этот заказ на производство"
 
-#: build/models.py:411 common/models.py:186 order/api.py:181
+#: build/models.py:411 common/models.py:186 order/api.py:182
 #: order/models.py:516 part/models.py:1351
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
@@ -919,7 +919,7 @@ msgid "Priority of this build order"
 msgstr "Приоритет этого заказа на производство"
 
 #: build/models.py:435 common/models.py:156 common/models.py:170
-#: order/api.py:167 order/models.py:456 order/models.py:1821
+#: order/api.py:168 order/models.py:456 order/models.py:1821
 msgid "Project Code"
 msgstr "Код проекта"
 
@@ -1370,8 +1370,8 @@ msgstr "Установить в"
 msgid "Build"
 msgstr "Сборка"
 
-#: build/serializers.py:1288 company/models.py:638 order/api.py:321
-#: order/api.py:326 order/api.py:553 order/serializers.py:605
+#: build/serializers.py:1288 company/models.py:638 order/api.py:322
+#: order/api.py:327 order/api.py:554 order/serializers.py:605
 #: stock/models.py:1043 stock/serializers.py:573
 msgid "Supplier Part"
 msgstr "Деталь поставщика"
@@ -2347,7 +2347,7 @@ msgstr "{verbose_name} отменен"
 msgid "A order that is assigned to you was canceled"
 msgstr "Заказ, назначенный вам, был отменён"
 
-#: common/notifications.py:73 common/notifications.py:80 order/api.py:604
+#: common/notifications.py:73 common/notifications.py:80 order/api.py:605
 msgid "Items Received"
 msgstr "Полученные элементы"
 
@@ -4579,7 +4579,7 @@ msgstr "Количество копий для печати каждой эти�
 msgid "Connected"
 msgstr "Подключен"
 
-#: machine/machine_types/label_printer.py:232 order/api.py:1839
+#: machine/machine_types/label_printer.py:232 order/api.py:1840
 msgid "Unknown"
 msgstr "Неизвестно"
 
@@ -4707,116 +4707,116 @@ msgstr "Максимальный прогресс"
 msgid "Maximum value for progress type, required if type=progress"
 msgstr "Максимальное значение для типа прогресса, требуется, если тип=progress"
 
-#: order/api.py:127
+#: order/api.py:128
 msgid "Order Reference"
 msgstr "Ссылка на заказ"
 
-#: order/api.py:155 order/api.py:1213
+#: order/api.py:156 order/api.py:1214
 msgid "Outstanding"
 msgstr "Невыполненный"
 
-#: order/api.py:171
+#: order/api.py:172
 msgid "Has Project Code"
 msgstr "Есть код проекта"
 
-#: order/api.py:185 order/models.py:493
+#: order/api.py:186 order/models.py:493
 msgid "Created By"
 msgstr "Создал"
 
-#: order/api.py:189
+#: order/api.py:190
 msgid "Created Before"
 msgstr "Создано до"
 
-#: order/api.py:193
+#: order/api.py:194
 msgid "Created After"
 msgstr "Создано после"
 
-#: order/api.py:197
+#: order/api.py:198
 msgid "Has Start Date"
 msgstr "Есть дата начала"
 
-#: order/api.py:205
+#: order/api.py:206
 msgid "Start Date Before"
 msgstr "Дата начала до"
 
-#: order/api.py:209
+#: order/api.py:210
 msgid "Start Date After"
 msgstr "Дата начала после"
 
-#: order/api.py:213
+#: order/api.py:214
 msgid "Has Target Date"
 msgstr "Есть целевая дата"
 
-#: order/api.py:221
+#: order/api.py:222
 msgid "Target Date Before"
 msgstr "Целевая дата до"
 
-#: order/api.py:225
+#: order/api.py:226
 msgid "Target Date After"
 msgstr "Целевая дата после"
 
-#: order/api.py:229
+#: order/api.py:230
 msgid "Updated Before"
 msgstr ""
 
-#: order/api.py:233
+#: order/api.py:234
 msgid "Updated After"
 msgstr ""
 
-#: order/api.py:284
+#: order/api.py:285
 msgid "Has Pricing"
 msgstr "Имеет цену"
 
-#: order/api.py:337 order/api.py:822 order/api.py:1522
+#: order/api.py:338 order/api.py:823 order/api.py:1523
 msgid "Completed Before"
 msgstr "Завершено до"
 
-#: order/api.py:341 order/api.py:826 order/api.py:1526
+#: order/api.py:342 order/api.py:827 order/api.py:1527
 msgid "Completed After"
 msgstr "Завершено после"
 
-#: order/api.py:347 order/api.py:351
+#: order/api.py:348 order/api.py:352
 msgid "External Build Order"
 msgstr "Сторонний заказ на сборку"
 
-#: order/api.py:536 order/api.py:922 order/api.py:1176 order/models.py:1940
+#: order/api.py:537 order/api.py:923 order/api.py:1177 order/models.py:1940
 #: order/models.py:2066 order/models.py:2118 order/models.py:2298
 #: order/models.py:2487 order/models.py:3016 order/models.py:3082
 msgid "Order"
 msgstr "Заказ"
 
-#: order/api.py:540 order/api.py:990
+#: order/api.py:541 order/api.py:991
 msgid "Order Complete"
 msgstr "Заказ выполнен"
 
-#: order/api.py:572 order/api.py:576 order/serializers.py:714
+#: order/api.py:573 order/api.py:577 order/serializers.py:714
 msgid "Internal Part"
 msgstr "Внутренняя деталь"
 
-#: order/api.py:594
+#: order/api.py:595
 msgid "Order Pending"
 msgstr "Заказ в ожидании"
 
-#: order/api.py:975
+#: order/api.py:976
 msgid "Completed"
 msgstr "Завершённые"
 
-#: order/api.py:1229
+#: order/api.py:1230
 msgid "Has Shipment"
 msgstr "Есть отгрузка"
 
-#: order/api.py:1437
+#: order/api.py:1438
 msgid "Shipment not found"
 msgstr ""
 
-#: order/api.py:1833 order/models.py:564 order/models.py:1941
+#: order/api.py:1834 order/models.py:564 order/models.py:1941
 #: order/models.py:2067
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:129 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Заказ на закупку"
 
-#: order/api.py:1835 order/models.py:1265 order/models.py:2119
+#: order/api.py:1836 order/models.py:1265 order/models.py:2119
 #: order/models.py:2299 order/models.py:2488
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
@@ -4825,7 +4825,7 @@ msgstr "Заказ на закупку"
 msgid "Sales Order"
 msgstr "Заказ на продажу"
 
-#: order/api.py:1837 order/models.py:2659 order/models.py:3017
+#: order/api.py:1838 order/models.py:2659 order/models.py:3017
 #: order/models.py:3083
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/email/overdue_return_order.html:15
@@ -8271,23 +8271,23 @@ msgstr ""
 msgid "Invalid static file path"
 msgstr ""
 
-#: report/templatetags/report.py:277
+#: report/templatetags/report.py:289
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:330 report/templatetags/report.py:443
+#: report/templatetags/report.py:347 report/templatetags/report.py:462
 msgid "Image file not found"
 msgstr "Файл изображения не найден"
 
-#: report/templatetags/report.py:412
+#: report/templatetags/report.py:431
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:437
+#: report/templatetags/report.py:456
 msgid "part_image tag requires a Part instance"
 msgstr "Тег part_image требует экземпляр детали"
 
-#: report/templatetags/report.py:501
+#: report/templatetags/report.py:520
 msgid "company_image tag requires a Company instance"
 msgstr "Тег company_image требует экземпляр компании"
 

@@ -175,7 +175,8 @@ export function PurchaseOrderTable({
       supplier: supplierId
     },
     follow: true,
-    modelType: ModelType.purchaseorder
+    modelType: ModelType.purchaseorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {
