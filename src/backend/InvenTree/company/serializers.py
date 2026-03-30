@@ -272,12 +272,7 @@ class ManufacturerPartSerializer(
             'allow_null': True,
         },
         default_include=True,
-        prefetch_fields=[
-            Prefetch(
-                'part', queryset=part.models.Part.objects.select_related('pricing_data')
-            ),
-            'part__category',
-        ],
+        prefetch_fields=['part__category'],
     )
 
     pretty_name = OptionalField(
