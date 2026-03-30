@@ -500,6 +500,39 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
 });
 
+test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/19'
+  });
+
+  // Duplicate this order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+
+  // Issue the new order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Receive the line item
+  await loadTab(page, 'Line Items');
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-receive-items' })
+    .click();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByText('Factory/Storage Room A').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // 1/1 items received
+  await page.getByText('1 / 1', { exact: true }).waitFor();
+});
+
 test('Purchase Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'purchasing/purchase-order/13/detail'
