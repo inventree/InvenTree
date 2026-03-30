@@ -8,14 +8,37 @@ def set_default_raw_amount(apps, schema_editor):
     BomItem = apps.get_model("part", "BomItem")
 
     to_update = []
+    updated_count = 0
+
+    # Run BulkUpdate in batches to avoid memory issues with large datasets
+    BATCH_SIZE = 100
+
+    N_BOM_ITEMS = BomItem.objects.count()
+
+    def add_bom_item(item):
+        nonlocal to_update
+        nonlocal updated_count
+
+        to_update.append(item)
+
+        if len(to_update) >= BATCH_SIZE:
+            BomItem.objects.bulk_update(to_update, ["raw_amount"])
+            updated_count += len(to_update)
+            to_update = []
 
     for item in BomItem.objects.all():
         item.raw_amount = str(item.quantity)
-        to_update.append(item)
+        add_bom_item(item)
 
+    # Handle any remaining items that were not updated in the loop
     if len(to_update) > 0:
-        print(f"Initializing 'raw_amount' field for {len(to_update)} BomItem records.")
         BomItem.objects.bulk_update(to_update, ["raw_amount"])
+        updated_count += len(to_update)
+
+    assert updated_count == N_BOM_ITEMS, f"Expected to update {N_BOM_ITEMS} BomItem records, but updated {updated_count} records instead."
+
+    if updated_count > 0:
+        print(f"Initialized 'raw_amount' field for {updated_count} BomItem records.")
 
 
 class Migration(migrations.Migration):
