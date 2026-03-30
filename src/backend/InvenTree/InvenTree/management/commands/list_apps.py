@@ -25,5 +25,5 @@ class Command(BaseCommand):
 
         app_list.sort()
 
-        print(f'Installed Apps: {len(app_list)}')
-        print('>>>', ','.join(app_list), '<<<')
+        self.stdout.write(f'Installed Apps: {len(app_list)}')
+        self.stdout.write('>>> ' + ','.join(app_list) + ' <<<')

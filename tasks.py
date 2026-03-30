@@ -18,6 +18,14 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def safe_value(fnc):
+    """Helper function to safely get value from function, catching import exceptions."""
+    try:
+        return fnc()
+    except (ModuleNotFoundError, ImportError):
+        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
+
+
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean."""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
@@ -51,7 +59,7 @@ def get_django_version():
         inventreeDjangoVersion,  # type: ignore[import]
     )
 
-    return inventreeDjangoVersion()
+    return safe_value(inventreeDjangoVersion)
 
 
 def get_inventree_version():
@@ -60,7 +68,7 @@ def get_inventree_version():
         inventreeVersion,  # type: ignore[import]
     )
 
-    return inventreeVersion()
+    return safe_value(inventreeVersion)
 
 
 def get_inventree_api_version():
@@ -69,7 +77,7 @@ def get_inventree_api_version():
         inventreeApiVersion,  # type: ignore[import]
     )
 
-    return inventreeApiVersion()
+    return safe_value(inventreeApiVersion)
 
 
 def get_commit_hash():
@@ -78,7 +86,7 @@ def get_commit_hash():
         inventreeCommitHash,  # type: ignore[import]
     )
 
-    return inventreeCommitHash()
+    return safe_value(inventreeCommitHash)
 
 
 def get_commit_date():
@@ -87,7 +95,7 @@ def get_commit_date():
         inventreeCommitDate,  # type: ignore[import]
     )
 
-    return inventreeCommitDate()
+    return safe_value(inventreeCommitDate)
 
 
 def get_version_vals():
@@ -1101,7 +1109,11 @@ def export_records(
             'metadata': True,
             'comment': 'This file contains a dump of the InvenTree database',
             'exported_at': datetime.datetime.now().isoformat(),
+            'exported_at_utc': datetime.datetime.utcnow().isoformat(),
             'source_version': get_inventree_version(),
+            'api_version': get_inventree_api_version(),
+            'django_version': get_django_version(),
+            'python_version': python_version(),
             'source_commit': get_commit_hash(),
             'installed_apps': installed_apps(c),
         }
@@ -1758,13 +1770,6 @@ def version(c):
         get_static_dir,
     )
 
-    def get_value(fnc):
-        """Helper function to safely get value from function, catching import exceptions."""
-        try:
-            return fnc()
-        except (ModuleNotFoundError, ImportError):
-            return wrap_color('ENVIRONMENT ERROR', '91')
-
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
@@ -1797,17 +1802,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_value(get_config_file)}
-Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
-Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
-Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
-Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
+Config      {safe_value(get_config_file)}
+Plugin File {safe_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {safe_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {safe_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {safe_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
-InvenTree   {get_inventree_version()}
-API         {get_inventree_api_version()}
+InvenTree   {get_inventree_version() or NOT_SPECIFIED}
+API         {get_inventree_api_version() or NOT_SPECIFIED}
 Python      {python_version()}
-Django      {get_django_version()}
+Django      {get_django_version() or NOT_SPECIFIED}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1815,8 +1820,8 @@ Environment:
 Platform    {platform}
 Debug       {is_debug_environment()}
 
-Commit hash: {get_commit_hash()}
-Commit date: {get_commit_date()}"""
+Commit hash: {get_commit_hash() or NOT_SPECIFIED}
+Commit date: {get_commit_date() or NOT_SPECIFIED}"""
     )
     if is_pkg_installer_by_path():
         print(
