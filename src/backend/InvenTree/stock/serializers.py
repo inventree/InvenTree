@@ -220,7 +220,16 @@ class StockItemTestResultSerializer(
             'template',
             'template_detail',
         ]
-        read_only_fields = ['pk', 'user', 'date']
+        read_only_fields = ['pk']
+
+    def __init__(self, *args, **kwargs):
+        """Handle custom initialization for the serializer."""
+        super().__init__(*args, **kwargs)
+
+        if not self._is_importing:
+            # Unless we are importing data, mark the 'user' and 'date' fields as read-only
+            self.fields['user'].read_only = True
+            self.fields['date'].read_only = True
 
     user_detail = enable_filter(
         UserSerializer(source='user', read_only=True, allow_null=True),

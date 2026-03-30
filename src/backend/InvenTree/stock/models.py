@@ -3101,4 +3101,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('The timestamp of the test finish'),
     )
 
-    date = models.DateTimeField(auto_now_add=True, editable=False)
+    date = models.DateTimeField(
+        default=InvenTree.helpers.current_time, verbose_name=_('Date')
+    )
