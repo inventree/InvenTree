@@ -81,7 +81,6 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
-import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -169,17 +168,6 @@ function BomValidationInformation({
       refetchOnMount: true
     });
 
-  const [taskId, setTaskId] = useState<string>('');
-
-  useBackgroundTask({
-    taskId: taskId,
-    message: t`Validating BOM`,
-    successMessage: t`BOM validated`,
-    onComplete: () => {
-      bomInformationQuery.refetch();
-    }
-  });
-
   const validateBom = useApiFormModal({
     url: ApiEndpoints.bom_validate,
     method: 'PUT',
@@ -196,14 +184,9 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      // If the process has been offloaded to a background task
-      if (response.task_id) {
-        setTaskId(response.task_id);
-      } else {
-        bomInformationQuery.refetch();
-      }
+    successMessage: t`Bill of materials scheduled for validation`,
+    onFormSuccess: () => {
+      bomInformationQuery.refetch();
     }
   });
 
@@ -1135,7 +1118,6 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
-    changeBatch: false,
     enabled: true
   });
 

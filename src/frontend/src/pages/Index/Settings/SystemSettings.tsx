@@ -217,7 +217,6 @@ export default function SystemSettings() {
               'PART_SALABLE',
               'PART_VIRTUAL',
               'PART_COPY_BOM',
-              'PART_BOM_ALLOW_ZERO_QUANTITY',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',

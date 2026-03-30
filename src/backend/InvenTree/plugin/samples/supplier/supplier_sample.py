@@ -1,7 +1,5 @@
 """Sample supplier plugin."""
 
-from django.conf import settings
-
 from company.models import Company, ManufacturerPart, SupplierPart, SupplierPriceBreak
 from part.models import Part
 from plugin.mixins import SupplierMixin, supplier
@@ -15,16 +13,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
     SLUG = 'samplesupplier'
     TITLE = 'My sample supplier plugin'
 
-    VERSION = '0.0.2'
-
-    SETTINGS = {
-        'DOWNLOAD_IMAGES': {
-            'name': 'Download part images',
-            'description': 'Enable downloading of part images during import (not recommended during testing)',
-            'validator': bool,
-            'default': False,
-        }
-    }
+    VERSION = '0.0.1'
 
     def __init__(self):
         """Initialize the sample supplier plugin."""
@@ -119,12 +108,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
 
         # If the part was created, set additional fields
         if created:
-            # Prevent downloading images during testing, as this can lead to unreliable tests
-            if (
-                data['image_url']
-                and not settings.TESTING
-                and self.get_setting('DOWNLOAD_IMAGES')
-            ):
+            if data['image_url']:
                 file, fmt = self.download_image(data['image_url'])
                 filename = f'part_{part.pk}_image.{fmt.lower()}'
                 part.image.save(filename, file)
@@ -152,7 +136,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                 # after the template part was created, we need to refresh the part from the db because its tree id may have changed
                 # which results in an error if saved directly
                 part.refresh_from_db()
-                part.variant_of = parent_part
+                part.variant_of = parent_part  # type: ignore
                 part.save()
 
         return part

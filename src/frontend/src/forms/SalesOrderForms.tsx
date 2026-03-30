@@ -24,9 +24,7 @@ import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '@lib/types/Forms';
-import dayjs from 'dayjs';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
@@ -92,8 +90,7 @@ export function useSalesOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {},
-          copy_parameters: {}
+          copy_extra_lines: {}
         }
       };
     }
@@ -256,45 +253,6 @@ export function useUncheckShipmentForm({
   });
 }
 
-export function useCompleteShipmentForm({
-  shipment,
-  onSuccess
-}: {
-  shipment: any;
-  onSuccess: () => void;
-}) {
-  const [taskId, setTaskId] = useState<string>('');
-
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
-
-  useBackgroundTask({
-    taskId: taskId,
-    message: t`Completing shipment`,
-    successMessage: t`Shipment completed successfully`,
-    onSuccess: onSuccess
-  });
-
-  return useCreateApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_complete,
-    pk: shipment.pk,
-    title: t`Complete Shipment`,
-    fields: completeShipmentFields,
-    focus: 'tracking_number',
-    initialData: {
-      ...shipment,
-      shipment_date: dayjs().format('YYYY-MM-DD')
-    },
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      if (response.task_id) {
-        setTaskId(response.task_id);
-      } else {
-        onSuccess();
-      }
-    }
-  });
-}
-
 function SalesOrderAllocateLineRow({
   props,
   record,
@@ -446,7 +404,6 @@ export function useAllocateToSalesOrderForm({
         }
       },
       shipment: {
-        autoFill: true,
         filters: {
           shipped: false,
           order_detail: true,

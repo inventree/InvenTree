@@ -1,10 +1,10 @@
 import test from '@playwright/test';
-import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'settings/admin/import'
   });
 
@@ -16,7 +16,10 @@ test('Importing - Admin Center', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
 
   await page
-    .getByRole('switch', { name: 'boolean-field-update_records' })
+    .locator('label')
+    .filter({ hasText: 'Update Existing RecordsIf' })
+    .locator('div')
+    .first()
     .click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -63,7 +66,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
 
   // Manually delete records
-  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('button', { name: 'action-button-delete-selected' })
     .click();
@@ -72,7 +75,8 @@ test('Importing - Admin Center', async ({ browser }) => {
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'part/109/bom'
   });
 
@@ -94,7 +98,7 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
   await page.waitForTimeout(500);
 
-  await page.getByText('Importing Data').first().waitFor();
+  await page.getByText('Importing Data').waitFor();
   await page.getByText('0 / 3').waitFor();
 
   await page.getByText('Screw for fixing wood').first().waitFor();
@@ -152,7 +156,8 @@ test('Importing - BOM', async ({ browser }) => {
 
 test('Importing - Purchase Order', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'purchasing/purchase-order/15/line-items'
   });
 
@@ -164,13 +169,14 @@ test('Importing - Purchase Order', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/po_data.csv');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('columnheader', { name: 'Database Field' }).waitFor();
-  await page.getByRole('columnheader', { name: 'Field Description' }).waitFor();
+  await page.getByRole('cell', { name: 'Database Field' }).waitFor();
+  await page.getByRole('cell', { name: 'Field Description' }).waitFor();
 });
 
 test('Importing - Natural Keys', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'purchasing/purchase-order/15/line-items'
   });
 

@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { logoutUrl, noaccessuser } from './defaults.js';
+import { logoutUrl } from './defaults.js';
 import { navigate } from './helpers.js';
 import { doLogin } from './login.js';
 
@@ -48,7 +48,8 @@ test('Login - Failures', async ({ page }) => {
 
 test('Login - Change Password', async ({ page }) => {
   await doLogin(page, {
-    user: noaccessuser
+    username: 'noaccess',
+    password: 'youshallnotpass'
   });
 
   // Navigate to the 'change password' page
@@ -89,7 +90,8 @@ test('Login - Change Password', async ({ page }) => {
 // Tests for assigning MFA tokens to users
 test('Login - MFA - TOTP', async ({ page }) => {
   await doLogin(page, {
-    user: noaccessuser
+    username: 'noaccess',
+    password: 'youshallnotpass'
   });
 
   await navigate(page, 'settings/user/security', { waitUntil: 'networkidle' });

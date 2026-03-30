@@ -3,7 +3,6 @@
  */
 
 import test from '@playwright/test';
-import { adminuser, readeruser } from './defaults';
 import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
 
@@ -14,7 +13,8 @@ import { doCachedLogin } from './login';
 test('Permissions - Admin', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    user: adminuser,
+    username: 'admin',
+    password: 'inventree',
     url: '/settings/admin/'
   });
 
@@ -37,7 +37,10 @@ test('Permissions - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText("['This password is too short").waitFor();
   await page
-    .getByRole('switch', { name: 'boolean-field-override_warning' })
+    .locator('label')
+    .filter({ hasText: 'Override warning' })
+    .locator('div')
+    .first()
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Password updated').click();
@@ -57,7 +60,8 @@ test('Permissions - Admin', async ({ browser }) => {
 test('Permissions - Reader', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    user: readeruser,
+    username: 'reader',
+    password: 'readonly',
     url: '/part/category/index/'
   });
 

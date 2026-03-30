@@ -120,7 +120,6 @@ def isGeneratingSchema():
         'makemessages',
         'wait_for_db',
         'gunicorn',
-        'sqlflush',
         'qcluster',
         'check',
         'shell',
@@ -129,15 +128,7 @@ def isGeneratingSchema():
     if any(cmd in sys.argv for cmd in excluded_commands):
         return False
 
-    included_commands = [
-        'schema',
-        # schema adjacent calls
-        'export_settings_definitions',
-        'export_tags',
-        'export_filters',
-        'export_report_context',
-    ]
-    if any(cmd in sys.argv for cmd in included_commands):
+    if 'schema' in sys.argv:
         return True
 
     # This is a very inefficient call - so we only use it as a last resort

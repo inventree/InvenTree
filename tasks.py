@@ -1350,21 +1350,19 @@ def test_translations(c):
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
         'pytest': 'Use pytest to run tests',
-        'verbosity': 'Verbosity level for test output (default = 1)',
     }
 )
 def test(
     c,
-    check: bool = False,
-    disable_pty: bool = False,
-    runtest: str = '',
-    migrations: bool = False,
-    report: bool = False,
-    coverage: bool = False,
-    translations: bool = False,
-    keepdb: bool = False,
-    pytest: bool = False,
-    verbosity: int = 1,
+    check=False,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    translations=False,
+    keepdb=False,
+    pytest=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -1411,8 +1409,6 @@ def test(
         cmd += ' --exclude-tag migration_test'
 
     cmd += ' --exclude-tag performance_test'
-
-    cmd += f' --verbosity {verbosity}'
 
     if coverage:
         # Run tests within coverage environment, and generate report

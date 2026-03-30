@@ -7,34 +7,13 @@ export const homeUrl = `${webUrl}/home`;
 export const loginUrl = `${webUrl}/login`;
 export const logoutUrl = `${webUrl}/logout`;
 
-export type UserType = {
-  name?: string;
-  username: string;
-  testcred: string;
-};
-
-export const allaccessuser: UserType = {
+export const user = {
   name: 'Ally Access',
   username: 'allaccess',
-  testcred: 'nolimits'
+  password: 'nolimits'
 };
 
-export const adminuser: UserType = {
+export const adminuser = {
   username: 'admin',
-  testcred: 'inventree'
-};
-
-export const stevenuser: UserType = {
-  username: 'steven',
-  testcred: 'wizardstaff'
-};
-
-export const readeruser: UserType = {
-  username: 'reader',
-  testcred: 'readonly'
-};
-
-export const noaccessuser: UserType = {
-  username: 'noaccess',
-  testcred: 'youshallnotpass'
+  password: 'inventree'
 };

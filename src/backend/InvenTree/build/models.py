@@ -1,7 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-from typing import Optional, TypedDict
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -50,7 +50,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
+class BuildReportContext(report.mixins.BaseReportContext):
     """Context for the Build model.
 
     Attributes:
@@ -132,14 +132,11 @@ class Build(
         TRACKED = 'tracked'  # Tracked BOM items
         UNTRACKED = 'untracked'  # Untracked BOM items
 
-    @classmethod
-    def get_overdue_filter(cls):
-        """Filter for determining if a build order is overdue."""
-        return (
-            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-            & ~Q(target_date=None)
-            & Q(target_date__lte=InvenTree.helpers.current_date())
-        )
+    OVERDUE_FILTER = (
+        Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+        & ~Q(target_date=None)
+        & Q(target_date__lte=InvenTree.helpers.current_date())
+    )
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -468,7 +465,7 @@ class Build(
             bool: Is the build overdue
         """
         query = Build.objects.filter(pk=self.pk)
-        query = query.filter(Build.get_overdue_filter())
+        query = query.filter(Build.OVERDUE_FILTER)
 
         return query.exists()
 
@@ -1039,7 +1036,7 @@ class Build(
         lines = lines.exclude(bom_item__consumable=True)
         lines = lines.annotate(allocated=annotate_allocated_quantity())
 
-        for build_line in lines:
+        for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
@@ -1512,10 +1509,10 @@ class Build(
                             unallocated_quantity -= quantity
 
                         except (ValidationError, serializers.ValidationError) as exc:
-                            # Re-raise with a Django-compatible validation payload
+                            # Catch model errors and re-throw as DRF errors
                             raise ValidationError(
-                                serializers.as_serializer_error(exc)
-                            ) from exc
+                                exc.message, detail=serializers.as_serializer_error(exc)
+                            )
 
                     if unallocated_quantity <= 0:
                         # We have now fully-allocated this BomItem - no need to continue!
@@ -1695,7 +1692,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
-class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
+class BuildLineReportContext(report.mixins.BaseReportContext):
     """Context for the BuildLine model.
 
     Attributes:
@@ -1745,7 +1742,6 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
-    # type
     def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {

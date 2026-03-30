@@ -85,7 +85,6 @@ export function ApiFormField({
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
-      allow_null: undefined,
       read_only: undefined,
       children: undefined,
       exclude: undefined

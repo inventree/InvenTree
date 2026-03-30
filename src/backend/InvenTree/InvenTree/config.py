@@ -188,7 +188,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
     if CONFIG_DATA is not None and not set_cache:
         return CONFIG_DATA
 
-    import yaml.parser
+    import yaml
 
     cfg_file = get_config_file()
 

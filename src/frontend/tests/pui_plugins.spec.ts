@@ -1,6 +1,5 @@
 import test from 'playwright/test';
 
-import { adminuser } from './defaults.js';
 import {
   clearTableFilters,
   clickOnRowMenu,
@@ -14,7 +13,8 @@ import { setPluginState, setSettingState } from './settings.js';
 // Unit test for plugin settings
 test('Plugins - Settings', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser
+    username: 'admin',
+    password: 'inventree'
   });
 
   // Ensure that the SampleIntegration plugin is enabled
@@ -106,7 +106,8 @@ test('Plugins - User Settings', async ({ browser }) => {
 test('Plugins - Functionality', async ({ browser }) => {
   // Navigate and select the plugin
   const page = await doCachedLogin(browser, {
-    user: adminuser,
+    username: 'admin',
+    password: 'inventree',
     url: 'settings/admin/plugin/'
   });
 
@@ -148,7 +149,8 @@ test('Plugins - Functionality', async ({ browser }) => {
 
 test('Plugins - Panels', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser
+    username: 'admin',
+    password: 'inventree'
   });
 
   // Ensure that UI plugins are enabled
@@ -196,7 +198,8 @@ test('Plugins - Panels', async ({ browser }) => {
  */
 test('Plugins - Custom Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser
+    username: 'admin',
+    password: 'inventree'
   });
 
   // Ensure that the SampleUI plugin is enabled
@@ -228,7 +231,8 @@ test('Plugins - Custom Admin', async ({ browser }) => {
 
 test('Plugins - Locate Item', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser
+    username: 'admin',
+    password: 'inventree'
   });
 
   // Ensure that the sample location plugin is enabled

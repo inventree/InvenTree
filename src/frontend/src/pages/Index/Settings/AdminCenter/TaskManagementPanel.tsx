@@ -3,7 +3,6 @@ import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { StylishText } from '../../../../components/items/StylishText';
 import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
@@ -27,18 +26,8 @@ export default function TaskManagementPanel() {
 
   return (
     <>
-      {taskInfo?.is_running ? (
-        <Alert
-          title={t`Background worker running`}
-          color='green'
-          icon={<IconCircleCheck />}
-        />
-      ) : (
-        <Alert
-          title={t`Background worker not running`}
-          color='red'
-          icon={<IconExclamationCircle />}
-        >
+      {taskInfo?.is_running == false && (
+        <Alert title={t`Background worker not running`} color='red'>
           <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
           {errorCodeLink('INVE-W5')}
         </Alert>

@@ -417,7 +417,7 @@ export function StockItemTable({
       // Navigate to the first result
       navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
     },
-    successMessage: t`Stock item created`
+    successMessage: t`Stock item serialized`
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
@@ -428,8 +428,7 @@ export function StockItemTable({
 
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
-    return: allowReturn,
-    changeBatch: true
+    return: allowReturn
   });
 
   const tableActions = useMemo(() => {

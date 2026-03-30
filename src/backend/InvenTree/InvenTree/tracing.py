@@ -4,7 +4,7 @@ import base64
 import logging
 from typing import Optional
 
-from opentelemetry import metrics, trace
+from opentelemetry import metrics, trace  # type: ignore[import]
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor

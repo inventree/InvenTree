@@ -1,5 +1,4 @@
 import { test } from '../baseFixtures.js';
-import { stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -58,7 +57,8 @@ test('Company', async ({ browser }) => {
 
 test('Company - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'purchasing/index/suppliers'
   });
 
@@ -75,7 +75,8 @@ test('Company - Parameters', async ({ browser }) => {
 
 test('Company - Supplier Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'purchasing/index/suppliers'
   });
 

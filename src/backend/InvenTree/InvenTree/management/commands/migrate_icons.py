@@ -99,7 +99,7 @@ class Command(BaseCommand):
                     if kwargs['include_items']:
                         icons[icon]['items'].append({
                             'model': model.__name__.lower(),
-                            'id': item.id,
+                            'id': item.id,  # type: ignore
                         })
 
             self.stdout.write(f'Writing icon map for {len(icons.keys())} icons')

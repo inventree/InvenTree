@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test';
 import { createApi } from '../api';
 import { test } from '../baseFixtures';
-import { adminuser } from '../defaults';
 import { doCachedLogin } from '../login';
 
 const scan = async (page: Page, barcode: string) => {
@@ -66,7 +65,6 @@ test('Barcode Scanning - Part', async ({ browser }) => {
 
 test('Barcode Scanning - Stockitem', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
-
   await scan(page, '{"stockitem": 408}');
 
   await page.getByText('1551ABK').waitFor();
@@ -89,7 +87,6 @@ test('Barcode Scanning - StockLocation', async ({ browser }) => {
 
 test('Barcode Scanning - SupplierPart', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
-
   await scan(page, '{"supplierpart": 204}');
 
   await page.waitForLoadState('networkidle');
@@ -99,7 +96,6 @@ test('Barcode Scanning - SupplierPart', async ({ browser }) => {
 
 test('Barcode Scanning - PurchaseOrder', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
-
   await scan(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
@@ -123,7 +119,6 @@ test('Barcode Scanning - SalesOrder', async ({ browser }) => {
 
 test('Barcode Scanning - Build', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
-
   await scan(page, '{"build": 8}');
 
   // build: 8
@@ -134,7 +129,8 @@ test('Barcode Scanning - Build', async ({ browser }) => {
 
 test('Barcode Scanning - Forms', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser,
+    username: 'admin',
+    password: 'inventree',
     url: '/stock/location/index/stock-items'
   });
 

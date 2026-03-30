@@ -1,12 +1,12 @@
 import test from 'playwright/test';
-import { adminuser } from './defaults';
 import { clickOnRowMenu, navigate } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
 test('Machines - Admin Panel', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser,
+    username: 'admin',
+    password: 'inventree',
     url: 'settings/admin/machine'
   });
 
@@ -20,7 +20,8 @@ test('Machines - Admin Panel', async ({ browser }) => {
 
 test('Machines - Activation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: adminuser,
+    username: 'admin',
+    password: 'inventree',
     url: 'settings/admin/machine'
   });
 
@@ -95,7 +96,7 @@ test('Machines - Activation', async ({ browser }) => {
   // Let's print something with the machine
   await navigate(page, 'stock/location/1/stock-items');
 
-  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('tabpanel', { name: 'Stock Items' })
     .getByLabel('action-menu-printing-actions')

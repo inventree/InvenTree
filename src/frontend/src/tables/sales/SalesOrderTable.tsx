@@ -27,8 +27,7 @@ import {
   ShipmentDateColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn,
-  UpdatedAtColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -49,9 +48,7 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter,
-  UpdatedAfterFilter,
-  UpdatedBeforeFilter
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -100,8 +97,6 @@ export function SalesOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      UpdatedBeforeFilter(),
-      UpdatedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
       ResponsibleFilter(),
@@ -187,9 +182,6 @@ export function SalesOrderTable({
       }),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
-      UpdatedAtColumn({
-        defaultVisible: false
-      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',

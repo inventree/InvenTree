@@ -413,8 +413,6 @@ class StockItemSerializer(
     parent = serializers.PrimaryKeyRelatedField(
         many=False,
         read_only=True,
-        required=False,
-        allow_null=True,
         label=_('Parent Item'),
         help_text=_('Parent stock item'),
     )
@@ -518,7 +516,7 @@ class StockItemSerializer(
         queryset = queryset.annotate(
             expired=Case(
                 When(
-                    StockItem.get_expired_filter(),
+                    StockItem.EXPIRED_FILTER,
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),

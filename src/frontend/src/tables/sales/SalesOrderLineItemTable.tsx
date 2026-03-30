@@ -50,7 +50,6 @@ import {
   IPNColumn,
   LinkColumn,
   ProjectCodeColumn,
-  ReferenceColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -100,7 +99,11 @@ export default function SalesOrderLineItemTable({
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
-      ReferenceColumn({}),
+      {
+        accessor: 'reference',
+        sortable: false,
+        switchable: true
+      },
       ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',
@@ -292,7 +295,6 @@ export default function SalesOrderLineItemTable({
     ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
-    successMessage: t`Stock allocated successfully`,
     table: table
   });
 

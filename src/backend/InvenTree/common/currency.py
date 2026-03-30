@@ -230,6 +230,6 @@ def get_price(
     quantity = decimal.Decimal(f'{quantity}')
 
     if pb_found:
-        cost = decimal.Decimal(pb_cost) * quantity
+        cost = pb_cost * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
     return None

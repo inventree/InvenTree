@@ -1,12 +1,12 @@
 /** Unit tests for form validation, rendering, etc */
 import test from 'playwright/test';
-import { stevenuser } from './defaults';
 import { navigate } from './helpers';
 import { doCachedLogin } from './login';
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'stock/location/index/stock-items'
   });
 
@@ -82,7 +82,8 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
 
 test('Forms - Supplier Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    user: stevenuser,
+    username: 'steven',
+    password: 'wizardstaff',
     url: 'purchasing/index/suppliers'
   });
   await page.waitForURL('**/purchasing/index/**');

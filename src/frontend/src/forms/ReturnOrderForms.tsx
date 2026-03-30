@@ -91,8 +91,7 @@ export function useReturnOrderFields({
             value: false,
             hidden: true
           },
-          copy_extra_lines: {},
-          copy_parameters: {}
+          copy_extra_lines: {}
         }
       };
     }

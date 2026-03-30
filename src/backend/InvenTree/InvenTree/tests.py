@@ -702,12 +702,12 @@ class TestHelpers(TestCase):
         """Test getMediaUrl."""
         # Str should not work
         with self.assertRaises(TypeError):
-            helpers.getMediaUrl('xx/yy.png')
+            helpers.getMediaUrl('xx/yy.png')  # type: ignore
 
         # Correct usage
         part = Part().image
         self.assertEqual(
-            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # ty:ignore[too-many-positional-arguments]
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
             '/media/xx/yy.png',
         )
 
