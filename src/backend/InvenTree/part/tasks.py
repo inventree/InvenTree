@@ -12,6 +12,7 @@ from opentelemetry import trace
 
 import common.currency
 import common.notifications
+import InvenTree.helpers
 import InvenTree.helpers_model
 from common.settings import get_global_setting
 from InvenTree.tasks import (

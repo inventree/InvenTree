@@ -13,6 +13,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { Alert } from '@mantine/core';
 import { IconCircleDashedCheck, IconCircleX } from '@tabler/icons-react';
 import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -150,7 +151,9 @@ export default function BuildAllocatedStockTable({
         accessor: 'sku',
         title: t`Supplier Part`,
         render: (record: any) => record?.supplier_part_detail?.SKU,
-        sortable: true
+        sortable: true,
+        copyable: true,
+        copyAccessor: 'supplier_part_detail.SKU'
       }
     ];
   }, []);
@@ -189,12 +192,28 @@ export default function BuildAllocatedStockTable({
     return selectedItems.filter((item) => !item.part_detail?.trackable);
   }, [selectedItems]);
 
+  const [consumeTaskId, setConsumeTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: consumeTaskId,
+    message: t`Consuming allocated stock`,
+    successMessage: t`Stock consumed successfully`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const consumeStock = useConsumeBuildItemsForm({
     buildId: buildId ?? 0,
     allocatedItems: itemsToConsume,
-    onFormSuccess: () => {
+    onFormSuccess: (response: any) => {
       table.clearSelectedRecords();
-      table.refreshTable();
+
+      if (response.task_id) {
+        setConsumeTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     }
   });
 

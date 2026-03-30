@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import cast
+from typing import TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -427,7 +427,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class PartReportContext(report.mixins.BaseReportContext):
+class PartReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Part model.
 
     Attributes:
@@ -4216,7 +4216,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if n <= 0:
             return 0.0
 
-        return int(available_stock / n)
+        return int(Decimal(available_stock) / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity.

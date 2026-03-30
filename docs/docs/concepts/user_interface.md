@@ -224,6 +224,8 @@ Example: Creating a new part via the "Add Part" form:
 
 {{ image("concepts/ui_form_add_part.png", "Add Part Button") }}
 
+On several forms is displayed option "Keep form open" in bottom part of the form on left side of Submit button (option is visible on the screenshot above). When this switch is turned on, form window is not closed after submit and filled form data is not reset. This is useful for creating more entries at one time with similar properties (e.g. only different number in name).
+
 ### Data Editing
 
 Example: Editing an existing purchase order via the "Edit Purchase Order" form:
@@ -280,11 +282,12 @@ Alternatively, the spotlight search can be opened using the keyboard shortcut `C
 
 Users may opt to disable the spotlight search functionality if they do not find it useful or prefer not to use it. To disable the spotlight search, navigate to your [user settings](../settings/user.md) and locate the option to disable the spotlight feature. Once disabled, the spotlight search will no longer be accessible from the main menu or via keyboard shortcuts.
 
-## Barcode Scanning
+## Copy Button
 
-## Notifications
+Many fields within the InvenTree user interface include a "copy" button, which allows users to quickly copy the value of that field to their clipboard. This is particularly useful for fields that contain important identifiers, such as part numbers, stock item codes, or other relevant data that may need to be easily copied and pasted elsewhere.
 
-## Customization
+!!! important "Secure Context"
+    The "copy" button functionality relies on the browser's clipboard API, which may not be available in all contexts (e.g. if the user is accessing the InvenTree interface via a non-https connection, or through an embedded iframe or a non-standard browser). In such cases, the "copy" button may not function as intended.
 
 ## User Permissions
 
