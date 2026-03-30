@@ -249,7 +249,7 @@ def main():
 # endregion
 
 
-def apps():
+def builtin_apps():
     """Returns a list of installed apps."""
     return [
         'build',
@@ -384,7 +384,9 @@ if __name__ in ['__main__', 'tasks']:
     main()
 
 
-def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
+def run(
+    c, cmd, path: Optional[Path] = None, pty: bool = False, hide: bool = False, env=None
+):
     """Runs a given command a given path.
 
     Args:
@@ -392,20 +394,23 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
         cmd: Command to run.
         path: Path to run the command in.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        hide (bool, optional): Hide the command output. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     env = env or {}
     path = path or local_dir()
 
     try:
-        c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+        result = c.run(f'cd "{path}" && {cmd}', pty=pty, env=env, hide=hide)
     except UnexpectedExit as e:
         error(f"ERROR: InvenTree command failed: '{cmd}'")
         warning('- Refer to the error messages in the log above for more information')
         raise e
 
+    return result
 
-def manage(c, cmd, pty: bool = False, env=None):
+
+def manage(c, cmd, pty: bool = False, env=None, **kwargs):
     """Runs a given command against django's "manage.py" script.
 
     Args:
@@ -414,7 +419,23 @@ def manage(c, cmd, pty: bool = False, env=None):
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
-    run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
+    return run(
+        c, f'python3 manage.py {cmd}', manage_py_dir(), pty=pty, env=env, **kwargs
+    )
+
+
+def installed_apps(c) -> list[str]:
+    """Returns a list of all installed apps, including plugins."""
+    result = manage(c, 'list_apps', pty=False, hide=True)
+    output = result.stdout.strip()
+
+    # Look for the expected pattern
+    match = re.findall(r'>>> (.*) <<<', output)
+
+    if not match:
+        raise ValueError(f"Unexpected output from 'list_apps' command: {output}")
+
+    return match[0].split(',')
 
 
 def run_install(
@@ -1388,7 +1409,7 @@ def test(
 
     pty = not disable_pty
 
-    tested_apps = ' '.join(apps())
+    tested_apps = ' '.join(builtin_apps())
 
     cmd = 'test'
 

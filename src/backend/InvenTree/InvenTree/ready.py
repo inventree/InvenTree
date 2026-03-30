@@ -119,6 +119,7 @@ def isGeneratingSchema():
         'collectstatic',
         'makemessages',
         'wait_for_db',
+        'list_apps',
         'gunicorn',
         'sqlflush',
         'qcluster',
