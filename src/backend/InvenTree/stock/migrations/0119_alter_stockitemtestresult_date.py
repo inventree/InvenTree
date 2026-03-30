@@ -16,8 +16,7 @@ class Migration(migrations.Migration):
             name="date",
             field=models.DateTimeField(
                 default=InvenTree.helpers.current_time,
-                help_text="The timestamp of when the test result was recorded",
-                verbose_name="Date",
+                verbose_name="Date"
             ),
         ),
     ]
