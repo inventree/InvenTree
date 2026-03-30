@@ -345,7 +345,10 @@ class UserSettingsDetail(RetrieveUpdateAPI):
 class NotificationMessageViewSet(
     BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet
 ):
-    """Notifications for the current user."""
+    """Notifications for the current user.
+
+    - User can only view / delete their own notification objects
+    """
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
@@ -394,7 +397,7 @@ class NotificationMessageViewSet(
 
     # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope])  # TODO: re-enable permission override
     def list(self, request, *args, **kwargs):
-        """Override list method to mark all messages as read."""
+        """List view for all notifications of the current user."""
         return super().list(request, *args, **kwargs)
 
     @action(
@@ -417,7 +420,7 @@ common_router.register(
 
 
 class NewsFeedViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet):
-    """Generic mixin for NewsFeedEntry."""
+    """Newsfeed from the official inventree.org website."""
 
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
