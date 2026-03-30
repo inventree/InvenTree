@@ -58,14 +58,6 @@ v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
 v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
     - Adds "purchase_price" ordering option to StockItem API endpoint
 
-v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
-    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
-    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
-    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
-
-v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
-    - Adds "purchase_price" ordering option to StockItem API endpoint
-
 v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
 v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
