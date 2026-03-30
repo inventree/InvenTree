@@ -2560,7 +2560,7 @@ class Part(
         if enabled is not None:
             queryset = queryset.filter(enabled=enabled)
 
-        return queryset
+        return queryset.distinct()
 
     def getTestTemplates(
         self,
@@ -3857,6 +3857,11 @@ class PartTest(InvenTree.models.InvenTreeModel):
         verbose_name=_('Required'),
         help_text=_('Is this test required to pass?'),
     )
+
+    @property
+    def test_name(self):
+        """Return the name of the associated test template."""
+        return self.template.test_name
 
 
 def validate_template_name(name):

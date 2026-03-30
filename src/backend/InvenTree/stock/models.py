@@ -2812,7 +2812,7 @@ class StockItem(
         failed = 0
 
         for test in required_tests:
-            key = InvenTree.helpers.generateTestKey(test.test_name)
+            key = InvenTree.helpers.generateTestKey(test.template.test_name)
 
             if key in results:
                 result = results[key]
@@ -2836,7 +2836,6 @@ class StockItem(
     def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
         status = self.requiredTestStatus(required_tests=required_tests)
-
         return status['passed'] >= status['total']
 
 
