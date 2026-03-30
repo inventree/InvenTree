@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#11303](https://github.com/inventree/InvenTree/pull/11303) removes the `default_supplier` field from the `Part` model. Instead, the `SupplierPart` model now has a `primary` field which is used to indicate which supplier is the default for a given part. Any external client applications which made use of the old `default_supplier` field will need to be updated.
+- [#11500](https://github.com/inventree/InvenTree/pull/11500) fixes a spelling mistake in the database configuration values, which may affect some users running the PostgreSQL database backend. The `tcp_keepalives_internal` option has been renamed to `tcp_keepalives_interval` to reflect the correct PostgreSQL configuration option name. If you are using PostgreSQL, and have set a custom value for the `tcp_keepalives_internal` option, you will need to update this to `tcp_keepalives_interval` in your configuration (either via environment variable or config file).
 
 ### Added
 
@@ -20,10 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#10887](https://github.com/inventree/InvenTree/pull/10887) adds the ability to auto-allocate tracked items against specific build outputs. Currently, this will only allocate items where the serial number of the tracked item matches the serial number of the build output, but in future this may be extended to allow for more flexible allocation rules.
 - [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
 - [#11374](https://github.com/inventree/InvenTree/pull/11374) adds `updated_at` field on purchase, sales and return orders.
+- [#11074](https://github.com/inventree/InvenTree/pull/11074) adds "Keep form open" option on create form which leaves dialog with form opened after form submitting.
 
 ### Changed
 
 ### Removed
+
+- [#11581](https://github.com/inventree/InvenTree/pull/11581) removes the ability to specify arbitrary filters when performing bulk operations via the API. This functionality represented a significant security risk, and was not required for any existing use cases. Bulk operations now only work with a provided list of primary keys.
 
 ## 1.2.0 - 2026-02-12
 

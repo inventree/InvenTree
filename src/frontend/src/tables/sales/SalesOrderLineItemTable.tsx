@@ -292,6 +292,8 @@ export default function SalesOrderLineItemTable({
     ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
+    successMessage: t`Stock allocated successfully`,
+    keepOpenOption: true,
     table: table
   });
 

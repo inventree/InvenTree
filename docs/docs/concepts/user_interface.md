@@ -224,6 +224,8 @@ Example: Creating a new part via the "Add Part" form:
 
 {{ image("concepts/ui_form_add_part.png", "Add Part Button") }}
 
+On several forms is displayed option "Keep form open" in bottom part of the form on left side of Submit button (option is visible on the screenshot above). When this switch is turned on, form window is not closed after submit and filled form data is not reset. This is useful for creating more entries at one time with similar properties (e.g. only different number in name).
+
 ### Data Editing
 
 Example: Editing an existing purchase order via the "Edit Purchase Order" form:

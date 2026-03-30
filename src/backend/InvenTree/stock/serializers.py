@@ -413,6 +413,8 @@ class StockItemSerializer(
     parent = serializers.PrimaryKeyRelatedField(
         many=False,
         read_only=True,
+        required=False,
+        allow_null=True,
         label=_('Parent Item'),
         help_text=_('Parent stock item'),
     )

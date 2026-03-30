@@ -330,7 +330,7 @@ class ScheduledTask:
     QUARTERLY: str = 'Q'
     YEARLY: str = 'Y'
 
-    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)  # type: ignore[invalid-assignment]
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)
 
 
 class TaskRegister:
