@@ -1345,13 +1345,27 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertEqual(line.received, 0)
 
+        N_ITEMS = base_part.stock_entries().count()
+        N_STOCK = base_part.get_stock_count()
+
+        # Try with serial numbers (expect to fail)
+        data = {
+            'items': [{'line_item': line.pk, 'quantity': 1, 'serial_numbers': '999'}],
+            'location': 1,
+        }
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn(
+            'Serial numbers cannot be assigned to virtual parts',
+            str(response.data['non_field_errors']),
+        )
+
+        # Try without serial numbers (expect to succeed)
         data = {
             'items': [{'line_item': line.pk, 'quantity': line.quantity}],
             'location': 1,
         }
-
-        N_ITEMS = base_part.stock_entries().count()
-        N_STOCK = base_part.get_stock_count()
 
         self.post(self.url, data, expected_code=201)
 
