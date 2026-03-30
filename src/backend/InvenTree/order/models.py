@@ -1038,6 +1038,29 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             base_part = supplier_part.part
 
+            # Update the line item quantity
+            line.received += quantity
+            line_items_to_update.append(line)
+
+            # Extract optional serial numbers
+            serials = item.get('serials', None)
+
+            if serials and type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
+
+            if base_part.virtual:
+                # Virtual parts are not received into stock, so skip the rest of the loop
+
+                if serialize:
+                    raise ValidationError(
+                        _('Serial numbers cannot be assigned to virtual parts')
+                    )
+
+                continue
+
             stock_location = item.get('location', location) or line.get_destination()
 
             # Calculate the received quantity in base part units
@@ -1051,15 +1074,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_price = convert_money(purchase_price, default_currency)
             else:
                 purchase_price = None
-
-            # Extract optional serial numbers
-            serials = item.get('serials', None)
-
-            if serials and type(serials) is list and len(serials) > 0:
-                serialize = True
-            else:
-                serialize = False
-                serials = [None]
 
             # Construct dataset for creating a new StockItem instances
             stock_data = {
@@ -1143,10 +1157,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
-
-            # Update the line item quantity
-            line.received += quantity
-            line_items_to_update.append(line)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:

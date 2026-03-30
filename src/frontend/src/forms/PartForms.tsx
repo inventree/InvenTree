@@ -106,7 +106,7 @@ export function usePartFields({
     };
 
     // Additional fields for creation
-    if (create) {
+    if (create && !virtual) {
       fields.copy_category_parameters = {};
 
       if (virtual != false) {
