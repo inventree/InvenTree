@@ -24,8 +24,12 @@ class RetrieveDestroyModelViewSet(
     """Viewset which provides 'retrieve', 'destroy' and 'list' actions."""
 
 
-class BulkEnabledRouter(routers.SimpleRouter):
-    """Custom router which adds support for bulk delete operations."""
+class InvenTreeApiRouter(routers.SimpleRouter):
+    """Custom router which adds various specific functions.
+
+    Currently adds the following features:
+    - support for bulk delete operations
+    """
 
     def get_routes(self, viewset):
         """Override the default get_routes method to add bulk delete support."""
@@ -39,7 +43,6 @@ class BulkEnabledRouter(routers.SimpleRouter):
 
         return routes
 
-    # override base--name to fit old api- pre-fix on all basenames
     def get_default_basename(self, viewset):
         """Extract the default base name from the viewset."""
         basename = super().get_default_basename(viewset)

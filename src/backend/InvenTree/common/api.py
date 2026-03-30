@@ -43,11 +43,6 @@ import common.serializers
 import InvenTree.conversion
 import InvenTree.models
 import InvenTree.ready
-from common.api_generation import (
-    BulkEnabledRouter,
-    RetrieveDestroyModelViewSet,
-    RetrieveUpdateDestroyModelViewSet,
-)
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
@@ -63,6 +58,11 @@ from InvenTree.api import (
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
+from InvenTree.helpers_api import (
+    InvenTreeApiRouter,
+    RetrieveDestroyModelViewSet,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
@@ -84,8 +84,8 @@ from InvenTree.permissions import (
 )
 from InvenTree.serializers import EmptySerializer
 
-admin_router = BulkEnabledRouter()
-common_router = BulkEnabledRouter()
+admin_router = InvenTreeApiRouter()
+common_router = InvenTreeApiRouter()
 
 
 class CsrfExemptMixin:
@@ -173,12 +173,12 @@ class WebhookView(CsrfExemptMixin, APIView):
 class CurrencyViewSet(viewsets.GenericViewSet):
     """Viewset for currency exchange information."""
 
+    permission_classes = [IsAuthenticatedOrReadScope]
     serializer_class = EmptySerializer
 
     @action(
         detail=False,
         methods=['get'],
-        permission_classes=[IsAuthenticatedOrReadScope],
         serializer_class=common.serializers.CurrencyExchangeSerializer,
     )
     def exchange(self, request, fmt=None):
@@ -396,6 +396,7 @@ class NotificationMessageViewSet(
         return queryset
 
     # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope])  # TODO: re-enable permission override
+
     def list(self, request, *args, **kwargs):
         """List view for all notifications of the current user."""
         return super().list(request, *args, **kwargs)
