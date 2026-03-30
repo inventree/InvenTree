@@ -400,6 +400,7 @@ class NotificationMessageViewSet(
         """List view for all notifications of the current user."""
         return super().list(request, *args, **kwargs)
 
+    # TODO @matmair this should really be a POST
     @action(
         detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope]
     )
