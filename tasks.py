@@ -45,6 +45,51 @@ def is_debug_environment():
     )
 
 
+def get_django_version():
+    """Return the current Django version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeDjangoVersion,  # type: ignore[import]
+    )
+
+    return inventreeDjangoVersion()
+
+
+def get_inventree_version():
+    """Return the current InvenTree version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeVersion,  # type: ignore[import]
+    )
+
+    return inventreeVersion()
+
+
+def get_inventree_api_version():
+    """Return the current InvenTree API version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeApiVersion,  # type: ignore[import]
+    )
+
+    return inventreeApiVersion()
+
+
+def get_commit_hash():
+    """Return the current git commit hash."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitHash,  # type: ignore[import]
+    )
+
+    return inventreeCommitHash()
+
+
+def get_commit_date():
+    """Return the current git commit date."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitDate,  # type: ignore[import]
+    )
+
+    return inventreeCommitDate()
+
+
 def get_version_vals():
     """Get values from the VERSION file."""
     version_file = local_dir().joinpath('VERSION')
@@ -1051,7 +1096,16 @@ def export_records(
     with open(tmpfile, encoding='utf-8') as f_in:
         data = json.loads(f_in.read())
 
-    data_out = []
+    data_out = [
+        {
+            'metadata': True,
+            'comment': 'This file contains a dump of the InvenTree database',
+            'exported_at': datetime.datetime.now().isoformat(),
+            'source_version': get_inventree_version(),
+            'source_commit': get_commit_hash(),
+            'installed_apps': installed_apps(c),
+        }
+    ]
 
     for entry in data:
         model_name = entry.get('model', None)
@@ -1086,12 +1140,17 @@ def export_records(
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
+        'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
-    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+    c,
+    filename='data.json',
+    clear: bool = False,
+    retain_temp: bool = False,
+    ignore_nonexistent: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1125,7 +1184,14 @@ def import_records(
     auth_data = []
     load_data = []
 
+    # A dict containing metadata associated with the data file
+    metadata = {}
+
     for entry in data:
+        if entry.get('metadata', False):
+            metadata = entry
+            continue
+
         if 'model' in entry:
             # Clear out any permissions specified for a group
             if entry['model'] == 'auth.group':
@@ -1144,6 +1210,10 @@ def import_records(
             warning('WARNING: Invalid entry in data file')
             print(entry)
 
+    print('metadata:')
+    for k, v in metadata.items():
+        print(f'  {k}: {v}')
+
     # Write the auth file data
     with open(authfile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(auth_data, indent=2))
@@ -1152,16 +1222,24 @@ def import_records(
     with open(datafile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(load_data, indent=2))
 
+    # A set of content types to exclude from the import process
     excludes = content_excludes(allow_auth=False)
 
     # Import auth models first
     info('Importing user auth data...')
     cmd = f"loaddata '{authfile}'"
+
+    if ignore_nonexistent:
+        cmd += ' --ignorenonexistent'
+
     manage(c, cmd, pty=True)
 
     # Import everything else next
     info('Importing database records...')
     cmd = f"loaddata '{datafile}' -i {excludes}"
+
+    if ignore_nonexistent:
+        cmd += ' --ignorenonexistent'
 
     manage(c, cmd, pty=True)
 
@@ -1618,7 +1696,6 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
@@ -1673,10 +1750,10 @@ Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
 Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
-InvenTree   {InvenTreeVersion.inventreeVersion()}
-API         {InvenTreeVersion.inventreeApiVersion()}
+InvenTree   {get_inventree_version()}
+API         {get_inventree_api_version()}
 Python      {python_version()}
-Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
+Django      {get_django_version()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1684,8 +1761,8 @@ Environment:
 Platform    {platform}
 Debug       {is_debug_environment()}
 
-Commit hash: {InvenTreeVersion.inventreeCommitHash()}
-Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {get_commit_hash()}
+Commit date: {get_commit_date()}"""
     )
     if is_pkg_installer_by_path():
         print(
