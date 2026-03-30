@@ -1038,6 +1038,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             base_part = supplier_part.part
 
+            # Update the line item quantity
+            line.received += quantity
+            line_items_to_update.append(line)
+
+            if base_part.virtual:
+                # Virtual parts are not received into stock, so skip the rest of the loop
+                continue
+
             stock_location = item.get('location', location) or line.get_destination()
 
             # Calculate the received quantity in base part units
@@ -1143,10 +1151,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
-
-            # Update the line item quantity
-            line.received += quantity
-            line_items_to_update.append(line)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
