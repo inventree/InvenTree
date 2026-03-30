@@ -151,7 +151,9 @@ export default function BuildAllocatedStockTable({
         accessor: 'sku',
         title: t`Supplier Part`,
         render: (record: any) => record?.supplier_part_detail?.SKU,
-        sortable: true
+        sortable: true,
+        copyable: true,
+        copyAccessor: 'supplier_part_detail.SKU'
       }
     ];
   }, []);
