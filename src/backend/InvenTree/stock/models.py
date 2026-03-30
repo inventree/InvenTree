@@ -3102,5 +3102,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     date = models.DateTimeField(
-        default=InvenTree.helpers.current_date, verbose_name=_('Date')
+        default=InvenTree.helpers.current_time, verbose_name=_('Date')
     )
