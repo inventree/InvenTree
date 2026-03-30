@@ -1153,10 +1153,10 @@ def validate_import_metadata(c, metadata: dict, strict: bool = False) -> bool:
         valid = False
 
         if strict:
-            error(f'Data Import Error: {message}')
+            error(f'INVE-E16 Data Import Error: {message}')
             sys.exit(1)
         else:
-            warning(f'Data Import Issue: {message}')
+            warning(f'INVE-W13 Data Import Warning: {message}')
 
     if not metadata:
         metadata_issue(
