@@ -1303,7 +1303,8 @@ class NotificationTest(InvenTreeAPITestCase):
         self.assertNotIn('POST', response.data['actions'])
 
         self.assertEqual(
-            response.data['description'], 'Notifications for the current user.'
+            response.data['description'],
+            'Notifications for the current user.\n\n- User can only view / delete their own notification objects',
         )
 
         # POST action should fail (not allowed)

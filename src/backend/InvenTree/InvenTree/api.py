@@ -689,7 +689,7 @@ class BulkDeleteMixin(CommonBulkDeleteMixin):
         Note that the typical DRF list endpoint does not support DELETE,
         so this method is provided as a custom implementation.
         """
-        self._delete(request, *args, **kwargs)
+        return self._delete(request, *args, **kwargs)
 
 
 class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
@@ -703,7 +703,7 @@ class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
 
         This action is performed attomically, so either all items will be deleted, or none will be deleted.
         """
-        self._delete(request, *args, **kwargs)
+        return self._delete(request, *args, **kwargs)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
