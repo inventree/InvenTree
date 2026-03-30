@@ -39,6 +39,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         accessor: 'name',
         sortable: true,
         switchable: false,
+        copyable: true,
         render: (record: any) => (
           <Group gap='xs' wrap='nowrap' justify='space-between'>
             <Group gap='xs' wrap='nowrap'>
@@ -60,6 +61,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
+        copyable: true,
         sortable: true
       },
       {
@@ -109,7 +111,8 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     },
     follow: true,
     modelType: ModelType.partcategory,
-    table: table
+    table: table,
+    keepOpenOption: true
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
