@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 469
 
 INVENTREE_API_TEXT = """
 
-v469 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/11641
+v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
     - Adds parameter support to the SalesOrderShipment model and API endpoints
 
 v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
