@@ -9,7 +9,6 @@ INVENTREE_API_TEXT = """
 v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
     - Add ordering to contetype related fields - no functional changes
 
-
 v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
     - Fix definition for the "parent" field on the StockItemSerializer
 
