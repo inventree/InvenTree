@@ -1066,39 +1066,21 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
-        'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     },
     pre=[wait],
 )
 def export_records(
     c,
     filename='data.json',
-    overwrite=False,
-    include_email=False,
-    include_permissions=False,
-    include_tokens=False,
-    exclude_plugins=False,
-    include_sso=False,
-    include_session=False,
-    retain_temp=False,
+    overwrite: bool = False,
+    include_email: bool = False,
+    include_permissions: bool = False,
+    include_tokens: bool = False,
+    exclude_plugins: bool = False,
+    include_sso: bool = False,
+    include_session: bool = False,
 ):
-    """Export all database records to a file.
-
-    Write data to the file defined by filename.
-    If --overwrite is not set, the user will be prompted about overwriting an existing files.
-    If --include-permissions is not set, the file defined by filename will have permissions specified for a user or group removed.
-    If --delete-temp is not set, the temporary file (which includes permissions) will not be deleted. This file is named filename.tmp
-
-    For historical reasons, calling this function without any arguments will thus result in two files:
-    - data.json: does not include permissions
-    - data.json.tmp: includes permissions
-
-    If you want the script to overwrite any existing files without asking, add argument -o / --overwrite.
-
-    If you only want one file, add argument - d / --delete-temp.
-
-    If you want only one file, with permissions, then additionally add argument -i / --include-permissions
-    """
+    """Export all database records to a file."""
     # Get an absolute path to the file
     target = Path(filename)
     if not target.is_absolute():
@@ -1108,8 +1090,6 @@ def export_records(
 
     check_file_existence(target, overwrite)
 
-    tmpfile = f'{target}.tmp'
-
     excludes = content_excludes(
         allow_email=include_email,
         allow_tokens=include_tokens,
@@ -1118,16 +1098,19 @@ def export_records(
         allow_sso=include_sso,
     )
 
-    cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile}' {excludes}"
+    with tempfile.NamedTemporaryFile(
+        suffix='.json', encoding='utf-8', mode='w+t', delete=True
+    ) as tmpfile:
+        cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
 
-    # Dump data to temporary file
-    manage(c, cmd, pty=True)
+        # Dump data to temporary file
+        manage(c, cmd, pty=True)
 
-    info('Running data post-processing step...')
+        info('Running data post-processing step...')
 
-    # Post-process the file, to remove any "permissions" specified for a user or group
-    with open(tmpfile, encoding='utf-8') as f_in:
-        data = json.loads(f_in.read())
+        # Post-process the file, to remove any "permissions" specified for a user or group
+        tmpfile.seek(0)
+        data = json.loads(tmpfile.read())
 
     data_out = [
         {
@@ -1164,10 +1147,6 @@ def export_records(
     # Write the processed data to file
     with open(target, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
-
-    if not retain_temp:
-        info('Removing temporary files')
-        os.remove(tmpfile)
 
     success('Data export completed')
 
@@ -1231,10 +1210,10 @@ def validate_import_metadata(
     help={
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
-        'force': 'Force deletion of existing data without confirmation (only applies if --clear is set)',
         'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
         'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
+        'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
     },
     pre=[wait],
@@ -1246,23 +1225,11 @@ def import_records(
     clear: bool = False,
     retain_temp: bool = False,
     strict: bool = False,
-    force: bool = False,
+    exclude_plugins: bool = False,
     ignore_nonexistent: bool = False,
     skip_migrations: bool = False,
 ):
-    """Import database records from a file.
-
-    The data import process is split into the following steps:
-
-    1. Clear all existing data from the database (optional, but recommended)
-    2. Run database migrations to ensure the database schema is up to date (optional, but recommended)
-    3. Import authentication data (users and groups) from the file, into the database.
-    4. Import global settings from the file, into the database.
-    5. Import plugin data from the file, into the database.
-    6. Run data migrations again, to ensure any new plugins have their database schema up to date
-    7. Import all remaining data from the file, into the database.
-
-    """
+    """Import database records from a file."""
     # Get an absolute path to the supplied filename
     target = Path(filename)
 
@@ -1274,7 +1241,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=force, migrate=True)
+        delete_data(c, force=True, migrate=True)
 
     if not skip_migrations:
         migrate(c)
@@ -1326,8 +1293,6 @@ def import_records(
         if excludes:
             cmd += f' -i {excludes}'
 
-        print('- running command:', cmd)
-
         manage(c, cmd, pty=True)
 
     # Iterate through each entry in the provided data file, and separate out into different categories based on the model type
@@ -1370,11 +1335,13 @@ def import_records(
     # Load the temporary files in order
     load_data('auth', auth_data, app='auth')
     load_data('common', common_data, app='common')
-    load_data('plugins', plugin_data, app='plugin')
 
-    # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
-    if not skip_migrations:
-        migrate(c)
+    if not exclude_plugins:
+        load_data('plugins', plugin_data, app='plugin')
+
+        # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
+        if not skip_migrations:
+            migrate(c)
 
     # Run validation again - ensure that the plugin apps have been loaded correctly
     validate_import_metadata(c, metadata, strict=strict, apps=False)
