@@ -450,7 +450,7 @@ class PluginUserSettingList(APIView):
 
         # Sort settings by the 'key' field before returning,
         # to ensure a deterministic order in the API response
-        settings_values = sorted(settings_dict.values(), key=lambda x: x.key0)
+        settings_values = sorted(settings_dict.values(), key=lambda x: x.key)
 
         results = PluginSerializers.PluginUserSettingSerializer(
             settings_values, many=True
