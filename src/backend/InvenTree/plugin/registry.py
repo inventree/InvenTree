@@ -225,10 +225,19 @@ class PluginsRegistry:
         if InvenTree.ready.isImportingData():
             return None
 
+        # Under certain circumstances, we want to avoid creating new PluginConfig instances in the database
+        prevent_create = any([
+            InvenTree.ready.isRunningBackup(),
+            InvenTree.ready.isRebuildingData(),
+            InvenTree.ready.isGeneratingSchema(),
+            InvenTree.ready.isRunningMigrations(),
+            InvenTree.ready.isWaitingForDatabase(),
+        ])
+
         try:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
-            if not cfg:
+            if not cfg and not prevent_create:
                 logger.debug(
                     "get_plugin_config: Creating new PluginConfig for '%s'", slug
                 )
