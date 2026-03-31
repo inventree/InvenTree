@@ -190,6 +190,11 @@ def canAppAccessDatabase(
 ):
     """Returns True if the apps.py file can access database records.
 
+    Arguments:
+        allow_test: If True, override checks and allow database access during testing mode
+        allow_plugins: If True, override checks and allow database access during plugin loading
+        allow_shell: If True, override checks and allow database access during shell sessions
+
     There are some circumstances where we don't want the ready function in apps.py
     to touch the database
     """
@@ -198,7 +203,7 @@ def canAppAccessDatabase(
         return False
 
     # Prevent database access if we are importing data
-    if isImportingData():
+    if not allow_plugins and isImportingData():
         return False
 
     # Prevent database access if we are rebuilding data
