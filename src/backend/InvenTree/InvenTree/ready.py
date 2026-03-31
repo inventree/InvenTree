@@ -185,6 +185,28 @@ def isInMainThread():
     return not isInWorkerThread()
 
 
+def readOnlyCommands():
+    """Return a list of read-only management commands which should not trigger database writes."""
+    return [
+        'help',
+        'check',
+        'shell',
+        'sqlflush',
+        'list_apps',
+        'wait_for_db',
+        'spectactular',
+        'makemessages',
+        'collectstatic',
+        'showmigrations',
+        'compilemessages',
+    ]
+
+
+def isReadOnlyCommand():
+    """Return True if the current command is a read-only command, which should not trigger any database writes."""
+    return any(cmd in sys.argv for cmd in readOnlyCommands())
+
+
 def canAppAccessDatabase(
     allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False
 ):
@@ -217,13 +239,13 @@ def canAppAccessDatabase(
     # If any of the following management commands are being executed,
     # prevent custom "on load" code from running!
     excluded_commands = [
-        'check',
-        'createsuperuser',
-        'wait_for_db',
-        'makemessages',
         'compilemessages',
-        'spectactular',
+        'createsuperuser',
         'collectstatic',
+        'makemessages',
+        'spectactular',
+        'wait_for_db',
+        'check',
     ]
 
     if not allow_shell:

@@ -1152,7 +1152,7 @@ def export_records(
 
 
 def validate_import_metadata(
-    c, metadata: dict, strict: bool = False, apps: bool = True
+    c, metadata: dict, strict: bool = False, apps: bool = True, verbose: bool = False
 ) -> bool:
     """Validate the metadata associated with an import file.
 
@@ -1161,8 +1161,10 @@ def validate_import_metadata(
         metadata (dict): The metadata to validate
         apps (bool): If True, validate that all apps listed in the metadata are installed in the current environment.
         strict (bool): If True, the import process will fail if any issues are detected.
+        verbose (bool): If True, print detailed information during validation.
     """
-    info('Validating import metadata...')
+    if verbose:
+        info('Validating import metadata...')
 
     valid = True
 
@@ -1200,7 +1202,7 @@ def validate_import_metadata(
                     f"Source app '{app}' is not installed in the current environment - this may break the import process"
                 )
 
-    if valid:
+    if verbose and valid:
         success('Metadata validation succeeded - no issues detected')
 
     return valid
@@ -1314,6 +1316,8 @@ def import_records(
             # Handle certain model types separately, to ensure they are loaded in the correct order
             if model.startswith('auth.'):
                 auth_data.append(entry)
+            if model.startswith('users.'):
+                auth_data.append(entry)
             elif model.startswith('common.'):
                 common_data.append(entry)
             elif model.startswith('plugin.'):
@@ -1333,7 +1337,7 @@ def import_records(
     validate_import_metadata(c, metadata, strict=strict, apps=False)
 
     # Load the temporary files in order
-    load_data('auth', auth_data, app='auth')
+    load_data('auth', auth_data)
     load_data('common', common_data, app='common')
 
     if not exclude_plugins:
