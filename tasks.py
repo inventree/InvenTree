@@ -1344,7 +1344,7 @@ def import_records(
             migrate(c)
 
     # Run validation again - ensure that the plugin apps have been loaded correctly
-    validate_import_metadata(c, metadata, strict=strict, apps=False)
+    validate_import_metadata(c, metadata, strict=strict, apps=True)
 
     load_data('remaining', all_data, excludes=content_excludes(allow_auth=False))
 
