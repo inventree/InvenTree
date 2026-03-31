@@ -269,6 +269,13 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         if version:
             full_pkg = f'{full_pkg}=={version}'
 
+    if not full_pkg:
+        raise ValidationError(_('No package name or URL provided for installation'))
+
+    # Sanitize the package name for installation
+    if any(c in full_pkg for c in ';&|`$()'):
+        raise ValidationError(_('Invalid characters in package name or URL'))
+
     install_name.append(full_pkg)
 
     ret = {}
