@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#11630](https://github.com/inventree/InvenTree/pull/11630) enhances the `import_records` and `export_records` system commands, by adding a metadata entry to the exported data file to allow for compatibility checks during data import.
+
 ### Removed
 
 - [#11581](https://github.com/inventree/InvenTree/pull/11581) removes the ability to specify arbitrary filters when performing bulk operations via the API. This functionality represented a significant security risk, and was not required for any existing use cases. Bulk operations now only work with a provided list of primary keys.
