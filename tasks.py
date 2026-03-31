@@ -796,6 +796,15 @@ def translate(c, ignore_static=False, no_frontend=False):
     success('Translation files built successfully')
 
 
+@task
+@state_logger('backend_trans')
+def backend_trans(c):
+    """Compile backend Django translation files."""
+    info('Compiling backend translations')
+    manage(c, 'compilemessages')
+    success('Backend translations compiled successfully')
+
+
 @task(
     help={
         'clean': 'Clean up old backup files',
@@ -962,6 +971,8 @@ def showmigrations(c, app=''):
     post=[clean_settings],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
+        'backend': 'Force backend translation compilation step (ignores INVENTREE_DOCKER)',
+        'no_backend': 'Skip backend translation compilation step',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
@@ -972,6 +983,8 @@ def showmigrations(c, app=''):
 def update(
     c,
     skip_backup: bool = False,
+    backend: bool = False,
+    no_backend: bool = False,
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
@@ -985,6 +998,7 @@ def update(
     The following tasks are performed, in order:
 
     - install
+    - backend_trans (optional)
     - backup (optional)
     - migrate
     - frontend_compile or frontend_download (optional)
@@ -995,6 +1009,16 @@ def update(
 
     # Ensure required components are installed
     install(c, uv=uv)
+
+    # Skip backend translation compilation on docker, unless explicitly requested.
+    # Users can also forcefully disable the step via `--no-backend`.
+    if (is_docker_environment() and not backend) or no_backend:
+        if no_backend:
+            info('Skipping backend translation compilation (no_backend flag set)')
+        else:
+            info('Skipping backend translation compilation (INVENTREE_DOCKER flag set)')
+    else:
+        backend_trans(c)
 
     if not skip_backup:
         backup(c)
@@ -2255,6 +2279,7 @@ internal = Collection(
 )
 
 ns = Collection(
+    backend_trans,
     backup,
     export_records,
     frontend_download,
