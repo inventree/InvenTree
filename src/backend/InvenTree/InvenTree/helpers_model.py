@@ -288,6 +288,8 @@ def getModelsWithMixin(mixin_class) -> list:
     models_with_mixin = [
         x for x in db_models if x is not None and issubclass(x, mixin_class)
     ]
+    # sort to make resulting list deterministic (and easier to test)
+    models_with_mixin.sort(key=lambda x: x._meta.label_lower)
 
     # Store the result in the session cache
     set_session_cache(cache_key, models_with_mixin)
