@@ -19,7 +19,7 @@ from InvenTree.serializers import FilterableSerializerMixin
 
 
 class CleanMixin:
-    """Model mixin class which cleans inputs using the nh3 HTML sanitization library."""
+    """Model mixin class which cleans inputs using nh3."""
 
     # Define a list of field names which will *not* be cleaned
     SAFE_FIELDS = []
@@ -52,16 +52,7 @@ class CleanMixin:
         return Response(serializer.data)
 
     def clean_string(self, field: str, data: str) -> str:
-        """Clean / sanitize a single input string.
-
-        Note that this function will *allow* orphaned <>& characters,
-        which would normally be escaped by nh3.
-
-        Nominally, the only thing that will be "cleaned" will be HTML tags
-
-        Ref: https://github.com/messense/nh3
-
-        """
+        """Clean / sanitize a single input string."""
         cleaned = data
 
         # By default, newline characters are removed
