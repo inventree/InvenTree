@@ -380,12 +380,8 @@ class PluginAllSettingList(APIView):
             settings_definition=settings, plugin=plugin.plugin_config()
         )
 
-        # Sort settings by the 'key' field before returning,
-        # to ensure a deterministic order in the API response
-        settings_values = sorted(settings_dict.values(), key=lambda x: x.key)
-
         results = PluginSerializers.PluginSettingSerializer(
-            settings_values, many=True
+            list(settings_dict.values()), many=True
         ).data
         return Response(results)
 
@@ -448,12 +444,8 @@ class PluginUserSettingList(APIView):
             user=request.user,
         )
 
-        # Sort settings by the 'key' field before returning,
-        # to ensure a deterministic order in the API response
-        settings_values = sorted(settings_dict.values(), key=lambda x: x.key)
-
         results = PluginSerializers.PluginUserSettingSerializer(
-            settings_values, many=True
+            list(settings_dict.values()), many=True
         ).data
         return Response(results)
 
