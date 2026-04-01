@@ -98,7 +98,7 @@ class MachineSettingList(APIView):
             all_settings.extend(list(settings_dict.values()))
 
         results = MachineSerializers.MachineSettingSerializer(
-            list(all_settings.values()), many=True
+            list(all_settings), many=True
         ).data
         return Response(results)
 
