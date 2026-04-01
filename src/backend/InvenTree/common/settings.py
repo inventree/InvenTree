@@ -53,6 +53,12 @@ def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     kwargs['change_user'] = change_user
     kwargs['create'] = create
 
+    if get_global_setting(key, create=False, cache=False) == value:
+        logger.debug(
+            f'Global setting "{key}" already has the desired value, no update needed'
+        )
+        return True
+
     return InvenTreeSetting.set_setting(key, value, **kwargs)
 
 
