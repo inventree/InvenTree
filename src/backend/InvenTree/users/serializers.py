@@ -380,6 +380,9 @@ class MeUserSerializer(ExtendedUserSerializer):
         but ensures that certain fields are read-only.
         """
 
+        # Remove the 'group_ids' field, as this is not relevant for the 'me' endpoint
+        fields = [f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids']
+
         read_only_fields = [
             *ExtendedUserSerializer.Meta.read_only_fields,
             'is_active',
@@ -388,6 +391,28 @@ class MeUserSerializer(ExtendedUserSerializer):
         ]
 
     profile = UserProfileSerializer(many=False, read_only=True)
+
+    # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
+    is_staff = serializers.BooleanField(
+        label=_('Staff'),
+        help_text=_('Does this user have staff permissions'),
+        required=False,
+        read_only=True,
+    )
+
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'),
+        help_text=_('Is this user a superuser'),
+        required=False,
+        read_only=True,
+    )
+
+    is_active = serializers.BooleanField(
+        label=_('Active'),
+        help_text=_('Is this user account active'),
+        required=False,
+        read_only=True,
+    )
 
 
 def make_random_password(length=14):
