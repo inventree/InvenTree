@@ -244,6 +244,7 @@ ALLOWED_ATTRIBUTES_SVG = [
 ]
 
 # Default allowlists (matching bleach's original defaults)
+# TODO: I do not see us needing a bunch of these but I do not want to introduce a breaking change; we might want to narroy this down with the next breaking change
 DEFAULT_TAGS = frozenset([
     'a',
     'abbr',
@@ -307,6 +308,7 @@ DEFAULT_CSS = frozenset([
     'white-space',
     'width',
 ])
+# TODO: We might want to respect the setting EXTRA_URL_SCHEMES here but that would be breaking
 DEFAULT_PROTOCOLS = frozenset(['http', 'https', 'mailto'])
 
 
