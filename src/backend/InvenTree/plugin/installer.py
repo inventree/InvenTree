@@ -245,9 +245,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    install_name = ['install', '-U', '--disable-pip-version-check']
-
-    full_pkg = ''
+    full_pkg = None
 
     if url:
         # use custom registration / VCS
@@ -255,27 +253,34 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
             identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
         ]:
             # using a VCS provider
-            full_pkg = f'{packagename}@{url}' if packagename else url
-        elif url:
-            install_name.append('-i')
-            full_pkg = url
-        elif packagename:
-            full_pkg = packagename
+            full_pkg = [f'{packagename}@{url}' if packagename else url]
+        elif url and packagename:
+            full_pkg = [packagename, '-i', url]
+        else:
+            full_pkg = ['-i', url]
 
     elif packagename:
         # use pypi
-        full_pkg = packagename
+        full_pkg = [packagename]
 
         if version:
-            full_pkg = f'{full_pkg}=={version}'
+            full_pkg = [f'{packagename}=={version}']
 
-    install_name.append(full_pkg)
+    if not full_pkg:
+        raise ValidationError(
+            _('No package name or URL could be generated with the inputs provided')
+        )
 
     ret = {}
 
     # Execute installation via pip
     try:
-        result = pip_command(*install_name)
+        result = pip_command(*[
+            'install',
+            '-U',
+            '--disable-pip-version-check',
+            *full_pkg,
+        ])
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
         ret['output'] = str(result, 'utf-8')
@@ -292,7 +297,11 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     if version := ret.get('version'):
         # Save plugin to plugins file
-        update_plugins_file(packagename, full_package=full_pkg, version=version)
+        update_plugins_file(
+            packagename,
+            full_package=' '.join(full_pkg) if isinstance(full_pkg, list) else None,
+            version=version,
+        )
 
         # Reload the plugin registry, to discover the new plugin
         from plugin.registry import registry
