@@ -97,12 +97,8 @@ class MachineSettingList(APIView):
             )
             all_settings.extend(list(settings_dict.values()))
 
-        # Sort settings by the 'key' field before returning,
-        # to ensure a deterministic order in the API response
-        all_settings = sorted(all_settings, key=lambda x: x.key)
-
         results = MachineSerializers.MachineSettingSerializer(
-            all_settings, many=True
+            list(all_settings), many=True
         ).data
         return Response(results)
 
