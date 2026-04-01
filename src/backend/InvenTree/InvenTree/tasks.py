@@ -196,6 +196,7 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
             continue
 
         task_id = task.task_id()
+
         break
 
     return task_id
@@ -229,11 +230,6 @@ def offload_task(
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
 
-    if check_duplicates:
-        if task_id := check_existing_task(taskname, group, *args, **kwargs):
-            logger.debug("Skipping duplicate task '%s' with ID '%s'", taskname, task_id)
-            return task_id
-
     try:
         import importlib
 
@@ -258,6 +254,15 @@ def offload_task(
             force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
+        # Before offloading, check if a duplicate task exists
+        if not force_sync and check_duplicates:
+            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+                logger.debug(
+                    "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
+                )
+
+                return task_id
+
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
