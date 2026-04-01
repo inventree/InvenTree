@@ -42,7 +42,7 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
+    def to_representation(self, instance: common_models.InvenTreeSetting):
         """Return the value of the setting.
 
         Protected settings are returned as '***'
@@ -381,7 +381,7 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance[instance]}
+        return {'key': instance, **self.instance.get(instance)}
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):
@@ -457,7 +457,7 @@ class FlagSerializer(serializers.Serializer):
         data = {'key': instance, 'state': flag_state(instance, request=request)}
 
         if request and request.user.is_superuser:
-            data['conditions'] = self.instance[instance]
+            data['conditions'] = self.instance.get(instance)
 
         return data
 
@@ -520,6 +520,78 @@ class ErrorMessageSerializer(InvenTreeModelSerializer):
         fields = ['when', 'info', 'data', 'path', 'pk']
 
         read_only_fields = ['when', 'info', 'data', 'path', 'pk']
+
+
+class TaskDetailSerializer(serializers.Serializer):
+    """Serializer for a background task detail."""
+
+    task_id = serializers.CharField(read_only=True)
+    exists = serializers.BooleanField(read_only=True)
+    pending = serializers.BooleanField(read_only=True)
+    complete = serializers.BooleanField(read_only=True)
+    success = serializers.BooleanField(read_only=True)
+    http_status = serializers.IntegerField(read_only=True)
+
+    @classmethod
+    def from_task(cls, task_id: str | bool | None) -> 'TaskDetailSerializer':
+        """Create a TaskDetailSerializer instance from a django_q Task.
+
+        Arguments:
+            task_id: The ID of the task to retrieve details for.
+
+        Returns:
+            An instance of TaskDetailSerializer with the task details.
+
+        Notes:
+            - If the provided task_id is None, the task has not been run, or has errored out
+            - If the provided task_id is a boolean, the task has been run synchronously, and the boolean value indicates success or failure
+            - If the provided task_id is a string, the task has been offloaded to the background worker, and the details can be from the database
+
+        """
+        from InvenTree.tasks import get_queued_task
+
+        if task_id is None or type(task_id) is bool:
+            # If the task_id is a boolean, the task has been run synchronously
+            return cls({
+                'task_id': '',
+                'exists': False,
+                'pending': False,
+                'complete': task_id is not None,
+                'success': False if task_id is None else bool(task_id),
+                'http_status': 404 if task_id is None else 200,
+            })
+
+        # A non-boolean result indicates that the task has been offloaded to the background worker
+        success = django_q.models.Success.objects.filter(id=task_id).first()
+        failure = django_q.models.Failure.objects.filter(id=task_id).first()
+        task = (
+            success
+            or failure
+            or django_q.models.Task.objects.filter(id=task_id).first()
+        )
+        queued = False
+
+        exists = bool(success or failure or task)
+
+        if not exists:
+            # If the task has not been started yet, it may be present in the queue
+            queued = bool(get_queued_task(task_id))
+
+        complete = bool(success) or bool(failure)
+
+        # Determine the http_status code for the task
+        # - 200: Task exists and has been completed
+        # - 404: Task does not exist
+        http_status = 200 if exists or queued else 404
+
+        return cls({
+            'task_id': task_id,
+            'exists': exists or queued,
+            'pending': queued,
+            'complete': complete,
+            'success': bool(success),
+            'http_status': http_status,
+        })
 
 
 class TaskOverviewSerializer(serializers.Serializer):

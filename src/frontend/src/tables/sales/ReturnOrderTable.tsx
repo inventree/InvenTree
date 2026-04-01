@@ -25,7 +25,8 @@ import {
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UpdatedAtColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -46,7 +47,9 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -99,6 +102,8 @@ export function ReturnOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
+      UpdatedBeforeFilter(),
+      UpdatedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
       ResponsibleFilter(),
@@ -146,6 +151,9 @@ export function ReturnOrderTable({
       CompletionDateColumn({
         accessor: 'complete_date'
       }),
+      UpdatedAtColumn({
+        defaultVisible: false
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -171,7 +179,8 @@ export function ReturnOrderTable({
       customer: customerId
     },
     follow: true,
-    modelType: ModelType.returnorder
+    modelType: ModelType.returnorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {

@@ -781,9 +781,9 @@ class PluginsRegistry:
                     f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
                 )
                 if v := plg_i.MIN_VERSION:
-                    _msg += _(f'Plugin requires at least version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at least version {v}')  # ty:ignore[unsupported-operator]
                 if v := plg_i.MAX_VERSION:
-                    _msg += _(f'Plugin requires at most version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at most version {v}')  # ty:ignore[unsupported-operator]
                 # Log to error stack
                 log_registry_error(_msg, reference=f'{p}:init_plugin')
             else:

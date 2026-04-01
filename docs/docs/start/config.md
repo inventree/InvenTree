@@ -275,7 +275,7 @@ If running with a PostgreSQL database backend, the following additional options 
 | INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 2 |
 | INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | TCP keepalive | 1 |
 | INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | Idle TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERNAL | database.tcp_keepalives_internal | Internal TCP keepalive | 1|
+| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | TCP keepalive interval | 1|
 | INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | TCP keepalive count | 5 |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
@@ -286,6 +286,18 @@ If running with a MySQL database backend, the following additional options are a
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+
+### SQLite Settings
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.
+
+If running with a SQLite database backend, the following additional options are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
+| INVENTREE_DB_WAL_MODE | database.wal_mode | Enable Write-Ahead Logging (WAL) mode for SQLite databases | True |
 
 ## Caching
 
@@ -401,14 +413,10 @@ It is also possible to use alternative storage backends for static and media fil
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
-| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key |
-| *Not specified* |
-| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers |
-| *Not specified* |
-| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name |
-| *Not specified* |
-| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
-| *Not specified* |
+| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key | *Not specified* |
+| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers | *Not specified* |
+| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name | *Not specified* |
+| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set | *Not specified* |
 | INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
 | INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
 | INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |

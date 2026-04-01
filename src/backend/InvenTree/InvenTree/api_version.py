@@ -1,13 +1,46 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 460
+INVENTREE_API_VERSION = 470
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v460 -> 2026-02-26 : https://github.com/inventree/InvenTree/pull/10715
+v470 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+
+v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
+    - Adds parameter support to the SalesOrderShipment model and API endpoints
+
+v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
+    - Add ordering to contetype related fields - no functional changes
+
+v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
+    - Fix definition for the "parent" field on the StockItemSerializer
+
+v466 -> 2026-03-17 : https://github.com/inventree/InvenTree/pull/11525
+    - SalesOrderShipmentComplete endpoint now returns a task ID which can be used to track the progress of the shipment completion process
+
+v465 -> 2026-03-16 : https://github.com/inventree/InvenTree/pull/11529/
+    - BuildOrderAutoAllocate endpoint now returns a task ID which can be used to track the progress of the auto-allocation process
+    - BuildOrderConsume endpoint now returns a task ID which can be used to track the progress of the stock consumption process
+
+v464 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11527
+    - Add API endpoint for monitoring the progress of a particular background task
+
+v463 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11499
+    - Allow "bulk update" actions against StockItem endpoint
+
+v462 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11497
+    - Allow "ScheduledTask" API endpoint to be filtered by "name" field
+
+v461 -> 2026-03-10 : https://github.com/inventree/InvenTree/pull/11479
+    - Adds option to copy parameters when duplicating an order via the API
+
+v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
+    - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints
+    - Adds "updated_before" and "updated_after" date filters to all three order list endpoints
+    - Adds "updated_at" ordering option to all three order list endpoints
 
 v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
     - Changed PurchaseOrderLine "auto_pricing" default value from true to false
@@ -294,12 +327,6 @@ v382 -> 2025-08-07 : https://github.com/inventree/InvenTree/pull/10146
     - Removes legacy functionality to auto-create test result templates based on provided test names
 
 v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
-    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
-
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
-    - Fixes "issued_by" filter for the BuildOrder list API endpoint
-
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
     - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
 
 v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135

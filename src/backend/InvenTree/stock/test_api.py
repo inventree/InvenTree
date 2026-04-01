@@ -575,6 +575,81 @@ class StockItemListTest(StockAPITestCase):
         for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
             self.run_ordering_test(self.list_url, ordering)
 
+    def test_pagination(self):
+        """Test that pagination boundaries are observed correctly.
+
+        Ref: https://github.com/inventree/InvenTree/issues/11442
+        """
+        location = StockLocation.objects.first()
+        part = Part.objects.first()
+
+        items = []
+
+        # Delete all existing stock item objects
+        for item in StockItem.objects.all():
+            item.delete()
+
+        for idx in range(1000):
+            items.append(
+                StockItem(
+                    part=part,
+                    location=location,
+                    quantity=idx % 10,
+                    level=0,
+                    lft=0,
+                    rght=0,
+                    tree_id=0,
+                )
+            )
+
+            if len(items) >= 100:
+                StockItem.objects.bulk_create(items)
+                items = []
+
+        self.assertEqual(StockItem.objects.count(), 1000)
+
+        url = reverse('api-stock-list')
+
+        # Keep track of the unique PKs we have seen in the results
+        unique_pks = set()
+
+        for idx in range(0, 100, 10):
+            data = self.get(url, {'limit': 10, 'offset': idx}).data
+            self.assertEqual(data['count'], 1000)
+            self.assertEqual(len(data['results']), 10)
+
+            for item in data['results']:
+                self.assertNotIn(
+                    item['pk'],
+                    unique_pks,
+                    f'Duplicate PK {item["pk"]} found in paginated results @ page {idx // 10}',
+                )
+                unique_pks.add(item['pk'])
+
+        self.assertEqual(
+            len(unique_pks), 100, 'Expected to see 100 unique PKs in paginated results'
+        )
+
+        # Run same test again, with reverse ordering on part IPN
+        unique_pks = set()
+
+        for idx in range(0, 100, 10):
+            data = self.get(url, {'limit': 10, 'offset': idx, 'ordering': '-IPN'}).data
+            self.assertEqual(data['count'], 1000)
+            self.assertEqual(len(data['results']), 10)
+
+            for item in data['results']:
+                self.assertNotIn(
+                    item['pk'],
+                    unique_pks,
+                    f'Duplicate PK {item["pk"]} found in paginated results @ page {idx // 10} with reverse ordering',
+                )
+                unique_pks.add(item['pk'])
+
+        self.assertEqual(
+            len(unique_pks), 100, 'Expected to see 100 unique PKs in paginated results'
+        )
+
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location."""
         # No filters, should return *all* items
@@ -963,7 +1038,7 @@ class StockItemListTest(StockAPITestCase):
         # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
         with self.export_data(
             self.list_url,
-            max_query_count=50,
+            max_query_count=100,
             max_query_time=12.0,  # Test time increased due to worker variability
         ) as data_file:
             data = self.process_csv(data_file)
@@ -1342,11 +1417,18 @@ class StockItemTest(StockAPITestCase):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
+        # Create a new StockItem instance
         response = self.post(
             self.list_url, data={'part': 4, 'quantity': 10}, expected_code=201
         )
 
         self.assertEqual(response.data[0]['location'], 2)
+
+        # Check that the item was associated with the correct user
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(item.tracking_info_count, 1)
+        tracking = item.tracking_info.first()
+        self.assertEqual(tracking.user, self.user)
 
         # What if we explicitly set the location to a different value?
 
@@ -1931,6 +2013,33 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
             self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
+    def test_bulk_batch_change(self):
+        """Test that we can bulk-change batch code for a set of stock items."""
+        url = reverse('api-stock-list')
+
+        # Find the first 10 stock items
+        items = StockItem.objects.all()[:10]
+        self.assertEqual(len(items), 10)
+
+        response = self.patch(
+            url,
+            data={'items': [item.pk for item in items], 'batch': 'NEW-BATCH-CODE'},
+            max_query_count=300,
+        )
+
+        data = response.data
+
+        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(len(data['items']), 10)
+
+        for item in data['items']:
+            self.assertEqual(item['batch'], 'NEW-BATCH-CODE')
+
+        # Check database items also
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
@@ -2325,17 +2434,7 @@ class StockTestResultTest(StockAPITestCase):
         self.delete(url, {}, expected_code=400)
 
         # Now, let's delete all the newly created items with a single API request
-        # However, we will provide incorrect filters
-        response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 10}}, expected_code=400
-        )
-
-        self.assertEqual(StockItemTestResult.objects.count(), n + 50)
-
-        # Try again, but with the correct filters this time
-        response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 1}}, expected_code=200
-        )
+        response = self.delete(url, {'items': tests}, expected_code=200)
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
 

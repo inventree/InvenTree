@@ -54,10 +54,16 @@ export type DetailsField = {
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
-type StringDetailField = {
-  type: 'string' | 'text' | 'date';
-  unit?: boolean;
-};
+type StringDetailField =
+  | {
+      type: 'string' | 'text';
+      unit?: boolean;
+    }
+  | {
+      type: 'date';
+      unit?: boolean;
+      showTime?: boolean;
+    };
 
 type NumberDetailField = {
   type: 'number';
@@ -260,7 +266,13 @@ function NameBadge({
 }
 
 function DateValue(props: Readonly<FieldProps>) {
-  return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
+  return (
+    <Text size='sm'>
+      {formatDate(props.field_value?.toString(), {
+        showTime: props.field_data?.showTime
+      })}
+    </Text>
+  );
 }
 
 // Return a formatted "number" value, with optional unit

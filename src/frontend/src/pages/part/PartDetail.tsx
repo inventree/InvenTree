@@ -81,6 +81,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -168,6 +169,17 @@ function BomValidationInformation({
       refetchOnMount: true
     });
 
+  const [taskId, setTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: taskId,
+    message: t`Validating BOM`,
+    successMessage: t`BOM validated`,
+    onComplete: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
   const validateBom = useApiFormModal({
     url: ApiEndpoints.bom_validate,
     method: 'PUT',
@@ -184,9 +196,14 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`Bill of materials scheduled for validation`,
-    onFormSuccess: () => {
-      bomInformationQuery.refetch();
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      // If the process has been offloaded to a background task
+      if (response.task_id) {
+        setTaskId(response.task_id);
+      } else {
+        bomInformationQuery.refetch();
+      }
     }
   });
 
@@ -982,6 +999,10 @@ export default function PartDetail() {
       return [];
     }
 
+    const allocated =
+      partRequirements.allocated_to_build_orders +
+      partRequirements.allocated_to_sales_orders;
+
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
@@ -1015,6 +1036,12 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
+        label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        color='blue'
+        visible={allocated > 0}
+        key='allocated'
+      />,
+      <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
@@ -1027,9 +1054,9 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
-        visible={partRequirements.building > 0}
+        visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge
@@ -1118,6 +1145,7 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
+    changeBatch: false,
     enabled: true
   });
 

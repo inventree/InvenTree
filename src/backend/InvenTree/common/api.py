@@ -17,8 +17,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
+import django_q.tasks
 from django_filters.rest_framework.filterset import FilterSet
-from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
@@ -49,11 +49,7 @@ from InvenTree.api import (
     meta_path,
 )
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import (
-    ORDER_FILTER,
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-)
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
@@ -119,7 +115,7 @@ class WebhookView(CsrfExemptMixin, APIView):
         # process data
         message = self.webhook.save_data(payload, headers, request)
         if self.run_async:
-            async_task(self._process_payload, message.id)
+            django_q.tasks.async_task(self._process_payload, message.id)
         else:
             self._process_result(
                 self.webhook.process_payload(message, payload, headers), message
@@ -568,13 +564,29 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
+class BackgroundTaskDetail(APIView):
+    """Detail view for a single background task."""
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def get(self, request, task_id, *args, **kwargs):
+        """Fetch information regarding a particular background task ID."""
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+
+        return Response(response, status=response['http_status'])
+
+
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
-    @extend_schema(responses={200: common.serializers.TaskOverviewSerializer})
+    @extend_schema(
+        operation_id='background_task_overview',
+        responses={200: common.serializers.TaskOverviewSerializer},
+    )
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
@@ -612,7 +624,7 @@ class ScheduledTaskList(ListAPI):
 
     ordering_fields = ['pk', 'func', 'last_run', 'next_run']
 
-    search_fields = ['func']
+    search_fields = ['func', 'name']
 
     def get_queryset(self):
         """Return annotated queryset."""
@@ -1079,7 +1091,7 @@ class ParameterList(
     """List API endpoint for Parameter objects."""
 
     filterset_class = ParameterFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
 
@@ -1165,6 +1177,22 @@ class DataOutputEndpointMixin:
     queryset = common.models.DataOutput.objects.all()
     serializer_class = common.serializers.DataOutputSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Return the set of DataOutput objects which the user has permission to view."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        # Allow staff users access to all DataOutput objects
+        if user.is_staff:
+            return queryset
+
+        # All other users are limited to viewing their own DataOutput objects
+        return queryset.filter(user=user)
 
 
 class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
@@ -1400,6 +1428,9 @@ common_api_urls = [
                 name='api-scheduled-task-list',
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path(
+                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
+            ),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
         ]),
     ),

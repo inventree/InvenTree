@@ -2,8 +2,10 @@
 
 from datetime import timedelta
 from decimal import Decimal
+from typing import Optional
 
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -27,61 +29,53 @@ def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
-
-    if not build_order:
-        logger.warning(
-            'Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
-
+    build_order = Build.objects.get(pk=build_id)
     build_order.auto_allocate_stock(**kwargs)
 
 
-@tracer.start_as_current_span('consume_build_item')
-def consume_build_item(
-    item_id: str, quantity, notes: str = '', user_id: int | None = None
+@tracer.start_as_current_span('consume_build_stock')
+def consume_build_stock(
+    build_id: int,
+    lines: Optional[list[int]] = None,
+    items: Optional[dict] = None,
+    user_id: int | None = None,
+    **kwargs,
 ):
-    """Consume stock against a particular BuildOrderLineItem allocation."""
-    from build.models import BuildItem
+    """Consume stock for the specified BuildOrder.
 
-    item = BuildItem.objects.filter(pk=item_id).first()
+    Arguments:
+        build_id: The ID of the BuildOrder to consume stock for
+        lines: Optional list of BuildLine IDs to consume
+        items: Optional dict of BuildItem IDs (and quantities)to consume
+        user_id: The ID of the user who initiated the stock consumption
+    """
+    from build.models import Build, BuildItem, BuildLine
 
-    if not item:
-        logger.warning(
-            'Could not consume stock for BuildItem <%s> - BuildItem does not exist',
-            item_id,
-        )
-        return
+    build = Build.objects.get(pk=build_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    item.complete_allocation(
-        quantity=quantity,
-        notes=notes,
-        user=User.objects.filter(pk=user_id).first() if user_id else None,
-    )
+    lines = lines or []
+    items = items or {}
+    notes = kwargs.pop('notes', '')
 
+    # Extract the relevant BuildLine and BuildItem objects
+    with transaction.atomic():
+        # Consume each of the specified BuildLine objects
+        for line_id in lines:
+            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
+                for item in build_line.allocations.all():
+                    item.complete_allocation(
+                        quantity=item.quantity, notes=notes, user=user
+                    )
 
-@tracer.start_as_current_span('consume_build_line')
-def consume_build_line(line_id: int, notes: str = '', user_id: int | None = None):
-    """Consume stock against a particular BuildOrderLineItem."""
-    from build.models import BuildLine
-
-    line_item = BuildLine.objects.filter(pk=line_id).first()
-
-    if not line_item:
-        logger.warning(
-            'Could not consume stock for LineItem <%s> - LineItem does not exist',
-            line_id,
-        )
-        return
-
-    for item in line_item.allocations.all():
-        item.complete_allocation(
-            quantity=item.quantity,
-            notes=notes,
-            user=User.objects.filter(pk=user_id).first() if user_id else None,
-        )
+        # Consume each of the specified BuildItem objects
+        for item_id, quantity in items.items():
+            if build_item := BuildItem.objects.filter(
+                pk=item_id, build_line__build=build
+            ).first():
+                build_item.complete_allocation(
+                    quantity=quantity, notes=notes, user=user
+                )
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -89,7 +83,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
+    build_order = Build.objects.get(pk=build_id)
 
     if user_id:
         try:
@@ -102,13 +96,6 @@ def complete_build_allocations(build_id: int, user_id: int):
             )
     else:
         user = None
-
-    if not build_order:
-        logger.warning(
-            'Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
 
     build_order.complete_allocations(user)
 

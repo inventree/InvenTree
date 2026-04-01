@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
+import { readeruser } from '../defaults.ts';
 import {
   activateCalendarView,
   activateTableView,
@@ -259,8 +260,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
 
 test('Purchase Orders - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly'
+    user: readeruser
   });
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
@@ -442,6 +442,22 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await navigate(page, 'purchasing/purchase-order/2/line-items');
 
   const cell = await page.getByText('Red Paint', { exact: true });
+
+  // First, ensure that the row has sufficient quantity to receive
+  // This is required to ensure the robustness of this test,
+  // as the test data may be modified by other tests
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  const quantityInput = await page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+  const quantity = Number.parseInt(await quantityInput.inputValue());
+  await quantityInput.fill((quantity + 100).toString());
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+
+  // Now, receive the items
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Receive line item' }).click();
 
@@ -451,6 +467,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
 
   // Receive only a *single* item
   await page.getByLabel('number-field-quantity').fill('1');
+  await page.waitForTimeout(500);
 
   // Assign custom information
   await page.getByLabel('action-button-assign-batch-').click();
@@ -477,7 +494,43 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('my-batch-code');
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
+});
+
+test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/19'
+  });
+
+  // Duplicate this order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+
+  // Issue the new order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Receive the line item
+  await loadTab(page, 'Line Items');
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-receive-items' })
+    .click();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByText('Factory/Storage Room A').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // 1/1 items received
+  await page.getByText('1 / 1', { exact: true }).waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

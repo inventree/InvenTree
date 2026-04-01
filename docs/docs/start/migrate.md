@@ -67,6 +67,10 @@ invoke import-records -c -f data.json
 !!! warning "Character Encoding"
 	If the character encoding of the data file does not exactly match the target database, the import operation may not succeed. In this case, some manual editing of the database JSON file may be required.
 
+```
+{{ invoke_commands('import-records --help') }}
+```
+
 ### Copy Media Files
 
 Any media files (images, documents, etc) that were stored in the original database must be copied to the new database. In a typical InvenTree installation, these files are stored in the `media` subdirectory of the InvenTree data location.

@@ -74,7 +74,6 @@ class PartImageTestMixin:
                 {'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/part_images/part_image'))
         return image_name
@@ -111,7 +110,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-category-list')
 
         # star categories manually for tests as it is not possible with fixures
-        # because the current user is not fixured itself and throws an invalid
+        # because the current user is not fixtured itself and throws an invalid
         # foreign key constraint
         for pk in [3, 4]:
             PartCategory.objects.get(pk=pk).set_starred(self.user, True)
@@ -812,8 +811,13 @@ class PartAPITest(PartAPITestBase):
 
         # Children of PartCategory<1>, do not cascade
         response = self.get(url, {'parent': 1, 'cascade': 'false'})
-
         self.assertEqual(len(response.data), 3)
+
+        # Children of PartCategory<7>, with or without cascade
+        # Only 1 child in either case
+        for cascade in ['true', 'false']:
+            response = self.get(url, {'parent': 7, 'cascade': cascade})
+            self.assertEqual(len(response.data), 1)
 
     def test_add_categories(self):
         """Check that we can add categories."""
@@ -1644,7 +1648,7 @@ class PartCreationTests(PartAPITestBase):
 
         self.assertEqual(cat.parameter_templates.count(), 3)
 
-        # Creat a new Part, without copying category parameters
+        # Create a new Part, without copying category parameters
         data = self.post(
             reverse('api-part-list'),
             {
@@ -1833,7 +1837,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         # Part should not have an image!
         with self.assertRaises(ValueError):
-            print(p.image.file)
+            _x = p.image.file
 
         # Try to upload a non-image file
         test_path = get_testfolder_dir() / 'dummy_image'
@@ -2314,7 +2318,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['allocated_to_build_orders'], 0)
         self.assertEqual(data['allocated_to_sales_orders'], 0)
 
-        # The unallocated stock count should equal the 'in stock' coutn
+        # The unallocated stock count should equal the 'in stock' count
         in_stock = data['in_stock']
         self.assertEqual(in_stock, 126)
         self.assertEqual(data['unallocated_stock'], in_stock)

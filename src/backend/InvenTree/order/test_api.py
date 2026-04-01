@@ -1336,6 +1336,47 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 4, StockItem.objects.count())
 
+    def test_virtual(self):
+        """Test receipt of "virtual" items (i.e. items which do not create a StockItem)."""
+        line = models.PurchaseOrderLineItem.objects.get(pk=1)
+        base_part = line.part.part
+        base_part.virtual = True
+        base_part.save()
+
+        self.assertEqual(line.received, 0)
+
+        N_ITEMS = base_part.stock_entries().count()
+        N_STOCK = base_part.get_stock_count()
+
+        # Try with serial numbers (expect to fail)
+        data = {
+            'items': [{'line_item': line.pk, 'quantity': 1, 'serial_numbers': '999'}],
+            'location': 1,
+        }
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn(
+            'Serial numbers cannot be assigned to virtual parts',
+            str(response.data['non_field_errors']),
+        )
+
+        # Try without serial numbers (expect to succeed)
+        data = {
+            'items': [{'line_item': line.pk, 'quantity': line.quantity}],
+            'location': 1,
+        }
+
+        self.post(self.url, data, expected_code=201)
+
+        # No new stock items should have been created
+        self.assertEqual(base_part.stock_entries().count(), N_ITEMS)
+        self.assertEqual(base_part.get_stock_count(), N_STOCK)
+
+        # Check that the line item has been fully received
+        line.refresh_from_db()
+        self.assertEqual(line.received, line.quantity)
+
 
 class SalesOrderTest(OrderTest):
     """Tests for the SalesOrder API."""
@@ -1573,6 +1614,65 @@ class SalesOrderTest(OrderTest):
             },
             expected_code=201,
         )
+
+    def test_so_duplicate(self):
+        """Test SalesOrder duplication via the API."""
+        from common.models import Parameter, ParameterTemplate
+
+        url = reverse('api-so-list')
+
+        self.assignRole('sales_order.add')
+
+        so = models.SalesOrder.objects.get(pk=1)
+        self.assertEqual(so.status, SalesOrderStatus.PENDING)
+
+        # Add some parameters to the sales order
+        for idx in range(5):
+            template = ParameterTemplate.objects.create(name=f'Template {idx}')
+
+            Parameter.objects.create(
+                template=template,
+                model_type=so.get_content_type(),
+                model_id=so.pk,
+                data=f'Value {idx}',
+            )
+
+        self.assertEqual(so.parameters.count(), 5)
+
+        # Create a duplicate of this sales order
+        # We explicitly specify "copy_parameters" as False, so the duplicated sales order should not have any parameters
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12345',
+                'customer': so.customer.pk,
+                'duplicate': {'order_id': so.pk, 'copy_parameters': False},
+            },
+        )
+
+        duplicate_id = response.data['pk']
+        duplicate_so = models.SalesOrder.objects.get(pk=duplicate_id)
+
+        self.assertEqual(duplicate_so.reference, 'SO-12345')
+        self.assertEqual(duplicate_so.customer, so.customer)
+        self.assertEqual(duplicate_so.parameters.count(), 0)
+
+        # Duplicate again, with default values for the "duplicate" options (which should result in parameters being copied)
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12346',
+                'customer': so.customer.pk,
+                'duplicate': {'order_id': so.pk},
+            },
+        )
+
+        duplicate_id = response.data['pk']
+        duplicate_so = models.SalesOrder.objects.get(pk=duplicate_id)
+
+        self.assertEqual(duplicate_so.reference, 'SO-12346')
+        self.assertEqual(duplicate_so.customer, so.customer)
+        self.assertEqual(duplicate_so.parameters.count(), 5)
 
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""
@@ -1931,7 +2031,11 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'order': order_id, 'completed': 0}, 3)
 
         # Finally, mark this shipment as 'shipped'
-        self.post(reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk}), {})
+        self.post(
+            reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk}),
+            {},
+            expected_code=200,
+        )
 
         # Filter by 'completed' status
         self.filter({'order': order_id, 'completed': 1}, 2)
@@ -2219,7 +2323,7 @@ class SalesOrderAllocateTest(OrderTest):
                 'shipment_date': '2020-12-05',
                 'delivery_date': '2023-12-05',
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         self.shipment.refresh_from_db()

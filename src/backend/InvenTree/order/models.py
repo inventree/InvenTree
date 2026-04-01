@@ -1,7 +1,7 @@
 """Order model definitions."""
 
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -9,7 +9,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -179,7 +179,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class BaseOrderReportContext(report.mixins.BaseReportContext):
+class BaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Base context for all order models.
 
     Attributes:
@@ -199,7 +199,7 @@ class BaseOrderReportContext(report.mixins.BaseReportContext):
     title: str
 
 
-class PurchaseOrderReportContext(report.mixins.BaseReportContext):
+class PurchaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the purchase order model.
 
     Attributes:
@@ -221,7 +221,7 @@ class PurchaseOrderReportContext(report.mixins.BaseReportContext):
     supplier: Optional[Company]
 
 
-class SalesOrderReportContext(report.mixins.BaseReportContext):
+class SalesOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the sales order model.
 
     Attributes:
@@ -243,7 +243,7 @@ class SalesOrderReportContext(report.mixins.BaseReportContext):
     customer: Optional[Company]
 
 
-class ReturnOrderReportContext(report.mixins.BaseReportContext):
+class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the return order model.
 
     Attributes:
@@ -330,6 +330,8 @@ class Order(
         self.reference_int = self.rebuild_reference_field(self.reference)
         if not self.creation_date:
             self.creation_date = InvenTree.helpers.current_date()
+
+        self.updated_at = InvenTree.helpers.current_time()
 
         super().save(*args, **kwargs)
 
@@ -498,6 +500,13 @@ class Order(
         help_text=_('Date order was issued'),
     )
 
+    updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Updated At'),
+        help_text=_('Timestamp of last update'),
+    )
+
     responsible = models.ForeignKey(
         UserModels.Owner,
         on_delete=models.SET_NULL,
@@ -561,7 +570,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return {**super().report_context(), 'supplier': self.supplier}
+        return_ctx = super().report_context()
+        return_ctx.update({'supplier': self.supplier})
+        return return_ctx
 
     def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
@@ -1027,6 +1038,29 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             base_part = supplier_part.part
 
+            # Update the line item quantity
+            line.received += quantity
+            line_items_to_update.append(line)
+
+            # Extract optional serial numbers
+            serials = item.get('serials', None)
+
+            if serials and type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
+
+            if base_part.virtual:
+                # Virtual parts are not received into stock, so skip the rest of the loop
+
+                if serialize:
+                    raise ValidationError(
+                        _('Serial numbers cannot be assigned to virtual parts')
+                    )
+
+                continue
+
             stock_location = item.get('location', location) or line.get_destination()
 
             # Calculate the received quantity in base part units
@@ -1040,15 +1074,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_price = convert_money(purchase_price, default_currency)
             else:
                 purchase_price = None
-
-            # Extract optional serial numbers
-            serials = item.get('serials', None)
-
-            if serials and type(serials) is list and len(serials) > 0:
-                serialize = True
-            else:
-                serialize = False
-                serials = [None]
 
             # Construct dataset for creating a new StockItem instances
             stock_data = {
@@ -1132,10 +1157,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
-
-            # Update the line item quantity
-            line.received += quantity
-            line_items_to_update.append(line)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1260,7 +1281,9 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
     def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
@@ -1864,12 +1887,14 @@ class PurchaseOrderLineItem(OrderLineItem):
 
         verbose_name = _('Purchase Order Line Item')
 
-    # Filter for determining if a particular PurchaseOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(received__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular PurchaseOrderLineItem is overdue."""
+        return (
+            Q(received__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url() -> str:
@@ -2068,12 +2093,14 @@ class SalesOrderLineItem(OrderLineItem):
 
         verbose_name = _('Sales Order Line Item')
 
-    # Filter for determining if a particular SalesOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(shipped__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular SalesOrderLineItem is overdue."""
+        return (
+            Q(shipped__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url():
@@ -2184,7 +2211,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
+class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the SalesOrderShipment model.
 
     Attributes:
@@ -2207,6 +2234,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -2405,54 +2433,45 @@ class SalesOrderShipment(
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
+
+        Arguments:
+            user: The user who is completing this shipment
+
+        Returns:
+            task_id: The ID of the background task which is processing this shipment
         """
         import order.tasks
 
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
 
-        # Update the "shipment" date
-        self.shipment_date = kwargs.get(
-            'shipment_date', InvenTree.helpers.current_date()
-        )
-        self.shipped_by = user
-
-        # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number')
-
-        if tracking_number is not None:
+        if tracking_number := kwargs.get('tracking_number'):
             self.tracking_number = tracking_number
 
-        # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number')
-
-        if invoice_number is not None:
+        if invoice_number := kwargs.get('invoice_number'):
             self.invoice_number = invoice_number
 
-        # Was a link provided?
-        link = kwargs.get('link')
-
-        if link is not None:
+        if link := kwargs.get('link'):
             self.link = link
-
-        # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date')
-
-        if delivery_date is not None:
-            self.delivery_date = delivery_date
 
         self.save()
 
+        # Extract shipment date and delivery date from kwargs (if provided)
+        shipment_date = kwargs.get('shipment_date', InvenTree.helpers.current_date())
+        delivery_date = kwargs.get('delivery_date')
+
         # Offload the "completion" of each line item to the background worker
         # This may take some time, and we don't want to block the main thread
-        InvenTree.tasks.offload_task(
+        task_id = InvenTree.tasks.offload_task(
             order.tasks.complete_sales_order_shipment,
-            shipment_id=self.pk,
-            user_id=user.pk if user else None,
+            self.pk,
+            user.pk if user else None,
+            shipment_date,
+            delivery_date=delivery_date,
             group='sales_order',
         )
 
-        trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
+        return task_id
 
 
 class SalesOrderExtraLine(OrderExtraLine):
@@ -2658,7 +2677,9 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -3072,3 +3093,43 @@ class ReturnOrderExtraLine(OrderExtraLine):
         verbose_name=_('Order'),
         help_text=_('Return Order'),
     )
+
+
+def _touch_order_updated_at(instance):
+    """Bump updated_at on the parent order without triggering a full save."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+    instance.order.__class__.objects.filter(pk=instance.order_id).update(
+        updated_at=InvenTree.helpers.current_time()
+    )
+
+
+@receiver(post_save, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_save')
+@receiver(
+    post_delete, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_delete'
+)
+@receiver(
+    post_save, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_save'
+)
+@receiver(
+    post_delete, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_delete'
+)
+@receiver(post_save, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_save')
+@receiver(
+    post_delete, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_delete'
+)
+@receiver(post_save, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_save')
+@receiver(
+    post_delete, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_delete'
+)
+def update_order_on_lineitem_change(sender, instance, **kwargs):
+    """Update parent order updated_at when any line item is saved or deleted."""
+    _touch_order_updated_at(instance)

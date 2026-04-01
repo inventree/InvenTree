@@ -80,7 +80,8 @@ export function CompanyTable({
     fields: companyFields(),
     initialData: params,
     follow: true,
-    modelType: ModelType.company
+    modelType: ModelType.company,
+    keepOpenOption: true
   });
 
   const [selectedCompany, setSelectedCompany] = useState<number>(0);

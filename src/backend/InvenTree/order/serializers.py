@@ -27,13 +27,7 @@ from company.serializers import (
 )
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
-from InvenTree.helpers import (
-    current_date,
-    extract_serial_numbers,
-    hash_barcode,
-    normalize,
-    str2bool,
-)
+from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     FilterableSerializerMixin,
@@ -75,7 +69,7 @@ class DuplicateOrderSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['order_id', 'copy_lines', 'copy_extra_lines']
+        fields = ['order_id', 'copy_lines', 'copy_extra_lines', 'copy_parameters']
 
     order_id = serializers.IntegerField(
         required=True, label=_('Order ID'), help_text=_('ID of the order to duplicate')
@@ -93,6 +87,13 @@ class DuplicateOrderSerializer(serializers.Serializer):
         default=True,
         label=_('Copy Extra Lines'),
         help_text=_('Copy extra line items from the original order'),
+    )
+
+    copy_parameters = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Copy Parameters'),
+        help_text=_('Copy order parameters from the original order'),
     )
 
 
@@ -242,6 +243,7 @@ class AbstractOrderSerializer(
             order_id = duplicate.get('order_id', None)
             copy_lines = duplicate.get('copy_lines', True)
             copy_extra_lines = duplicate.get('copy_extra_lines', True)
+            copy_parameters = duplicate.get('copy_parameters', True)
 
             try:
                 copy_from = instance.__class__.objects.get(pk=order_id)
@@ -259,6 +261,9 @@ class AbstractOrderSerializer(
                     line.pk = None
                     line.order = instance
                     line.save()
+
+            if copy_parameters:
+                instance.copy_parameters_from(copy_from)
 
         return instance
 
@@ -373,8 +378,14 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'destination',
+            'updated_at',
         ])
-        read_only_fields = ['issue_date', 'complete_date', 'creation_date']
+        read_only_fields = [
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'updated_at',
+        ]
         extra_kwargs = {
             'supplier': {'required': True},
             'order_currency': {'required': False},
@@ -577,7 +588,7 @@ class PurchaseOrderLineItemSerializer(
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    order.models.PurchaseOrderLineItem.OVERDUE_FILTER,
+                    order.models.PurchaseOrderLineItem.get_overdue_filter(),
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
@@ -1026,8 +1037,9 @@ class SalesOrderSerializer(
             'shipments_count',
             'completed_shipments_count',
             'allocated_lines',
+            'updated_at',
         ])
-        read_only_fields = ['status', 'creation_date', 'shipment_date']
+        read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
 
     def skip_create_fields(self):
@@ -1154,7 +1166,7 @@ class SalesOrderLineItemSerializer(
             overdue=Case(
                 When(
                     Q(order__status__in=SalesOrderStatusGroups.OPEN)
-                    & order.models.SalesOrderLineItem.OVERDUE_FILTER,
+                    & order.models.SalesOrderLineItem.get_overdue_filter(),
                     then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
@@ -1308,6 +1320,7 @@ class SalesOrderShipmentSerializer(
             'link',
             'notes',
             # Extra detail fields
+            'parameters',
             'checked_by_detail',
             'customer_detail',
             'order_detail',
@@ -1362,6 +1375,8 @@ class SalesOrderShipmentSerializer(
         True,
         prefetch_fields=['shipment_address'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
 
 class SalesOrderAllocationSerializer(
@@ -1482,35 +1497,6 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         shipment.check_can_complete(raise_error=True)
 
         return data
-
-    def save(self):
-        """Save the serializer to complete the SalesOrderShipment."""
-        shipment = self.context.get('shipment', None)
-
-        if not shipment:
-            return
-
-        data = self.validated_data
-
-        request = self.context.get('request')
-        user = request.user if request else None
-
-        # Extract shipping date (defaults to today's date)
-        now = current_date()
-        shipment_date = data.get('shipment_date', now)
-        if shipment_date is None:
-            # Shipment date should not be None - check above only
-            # checks if shipment_date exists in data
-            shipment_date = now
-
-        shipment.complete_shipment(
-            user,
-            tracking_number=data.get('tracking_number', shipment.tracking_number),
-            invoice_number=data.get('invoice_number', shipment.invoice_number),
-            link=data.get('link', shipment.link),
-            shipment_date=shipment_date,
-            delivery_date=data.get('delivery_date', shipment.delivery_date),
-        )
 
 
 class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
@@ -1918,8 +1904,9 @@ class ReturnOrderSerializer(
             'customer_reference',
             'order_currency',
             'total_price',
+            'updated_at',
         ])
-        read_only_fields = ['creation_date']
+        read_only_fields = ['creation_date', 'updated_at']
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
