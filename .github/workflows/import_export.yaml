@@ -1,0 +1,64 @@
+# Ensure that data import / export functionality works as expected.
+
+name: Import / Export
+
+on:
+  push:
+    branches-ignore: ["l10*"]
+  pull_request:
+    branches-ignore: ["l10*"]
+
+jobs:
+  import_export:
+    runs-on: ubuntu-latest
+    name: Import / Export ${{ matrix.env-set }}
+
+    permissions:
+      contents: read
+
+    env:
+      python_version: 3.11
+
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
+      INVENTREE_PLUGINS_ENABLED: true
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    strategy:
+      matrix:
+        env-set: [sqlite, postgres]
+        include:
+          - env-set: sqlite
+            INVENTREE_DB_ENGINE: sqlite3
+            INVENTREE_DB_NAME: inventree
+          - env-set: postgres
+            INVENTREE_DB_ENGINE: postgresql
+            INVENTREE_DB_USER: inventree
+            INVENTREE_DB_PASSWORD: password
+            INVENTREE_DB_HOST: "127.0.0.1"
+            INVENTREE_DB_PORT: 5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          update: true
+          static: false
+      - name: Clear Database
+        run: |
+          invoke dev.delete-data --migrate --force
