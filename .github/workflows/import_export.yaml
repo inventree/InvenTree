@@ -15,19 +15,6 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      python_version: 3.11
-
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      INVENTREE_DEBUG: true
-      INVENTREE_LOG_LEVEL: INFO
-      INVENTREE_PLUGINS_ENABLED: true
-      INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
-      INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
-      INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
-      INVENTREE_SITE_URL: http://localhost:8000
-
     services:
       postgres:
         image: postgres:17
@@ -44,12 +31,36 @@ jobs:
           - env-set: sqlite
             INVENTREE_DB_ENGINE: sqlite3
             INVENTREE_DB_NAME: inventree
+            INVENTREE_DB_USER: ""
+            INVENTREE_DB_PASSWORD: ""
+            INVENTREE_DB_HOST: ""
+            INVENTREE_DB_PORT: ""
           - env-set: postgres
             INVENTREE_DB_ENGINE: postgresql
             INVENTREE_DB_USER: inventree
             INVENTREE_DB_PASSWORD: password
             INVENTREE_DB_HOST: "127.0.0.1"
             INVENTREE_DB_PORT: 5432
+
+    env:
+      python_version: 3.11
+
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
+      INVENTREE_PLUGINS_ENABLED: true
+      INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+      INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+      INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+      INVENTREE_SITE_URL: http://localhost:8000
+
+      INVENTREE_DB_ENGINE: ${{ matrix.INVENTREE_DB_ENGINE }}
+      INVENTREE_DB_NAME: ${{ matrix.INVENTREE_DB_NAME }}
+      INVENTREE_DB_USER: ${{ matrix.INVENTREE_DB_USER }}
+      INVENTREE_DB_PASSWORD: ${{ matrix.INVENTREE_DB_PASSWORD }}
+      INVENTREE_DB_HOST: ${{ matrix.INVENTREE_DB_HOST }}
+      INVENTREE_DB_PORT: ${{ matrix.INVENTREE_DB_PORT }}
 
     steps:
       - name: Checkout code
