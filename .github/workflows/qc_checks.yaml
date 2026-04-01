@@ -706,7 +706,7 @@ jobs:
           npm: true
           install: true
           update: true
-          apt-dependency: postgresql-client libpq-dev
+          apt-dependency: gettext postgresql-client libpq-dev
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
