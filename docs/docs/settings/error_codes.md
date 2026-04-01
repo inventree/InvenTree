@@ -210,6 +210,12 @@ The environment in which the backup was taken does not match the current environ
 
 This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
 
+#### INVE-W14
+**Elevated privileges - Backend**
+
+A user is logged in with elevated privileges. This might be a superuser or a administrator user. These types of users have elevated permissions and should not be used for regular usage.
+Use separate accounts for administrative tasks and regular usage to reduce risk. Make sure to review the [permission documentation](../settings/permissions.md#dangerous-user-flags).
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

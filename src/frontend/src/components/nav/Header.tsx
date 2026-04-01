@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Container,
   Group,
   Indicator,
@@ -39,7 +40,7 @@ import {
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
-import { Alerts } from './Alerts';
+import { Alerts, errorCodeLink } from './Alerts';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
@@ -79,7 +80,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, user } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
@@ -200,6 +201,17 @@ export function Header() {
           </Group>
         </Group>
       </Container>
+      {(user?.is_staff || user?.is_superuser || false) && (
+        <Alert
+          color={user.is_superuser ? 'red' : 'yellow'}
+          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
+        >
+          <Text>
+            {t`This type of user has elevated privileges and should not be used for regular usage.`}{' '}
+            {errorCodeLink('INVE-W14')}
+          </Text>
+        </Alert>
+      )}
     </div>
   );
 }
