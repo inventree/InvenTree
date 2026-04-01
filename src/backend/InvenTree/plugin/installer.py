@@ -158,7 +158,7 @@ def install_plugins_file():
     return True
 
 
-def update_plugins_file(install_name, full_package=None, version=None, remove=False):
+def update_plugins_file(install_name, install_ref=None, version=None, remove=False):
     """Add a plugin to the plugins file."""
     if remove:
         logger.info('Removing plugin from plugins file: %s', install_name)
@@ -166,8 +166,8 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
         logger.info('Adding plugin to plugins file: %s', install_name)
 
     # If a full package name is provided, use that instead
-    if full_package and full_package != install_name:
-        new_value = full_package
+    if install_ref and install_ref != install_name:
+        new_value = install_ref
     else:
         new_value = f'{install_name}=={version}' if version else install_name
 
@@ -245,7 +245,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    full_pkg = None
+    install_ref = None
 
     if url:
         # use custom registration / VCS
@@ -253,20 +253,20 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
             identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
         ]:
             # using a VCS provider
-            full_pkg = [f'{packagename}@{url}' if packagename else url]
+            install_ref = [f'{packagename}@{url}' if packagename else url]
         elif url and packagename:
-            full_pkg = [packagename, '-i', url]
+            install_ref = [packagename, '-i', url]
         else:
-            full_pkg = ['-i', url]
+            install_ref = ['-i', url]
 
     elif packagename:
         # use pypi
-        full_pkg = [packagename]
+        install_ref = [packagename]
 
         if version:
-            full_pkg = [f'{packagename}=={version}']
+            install_ref = [f'{packagename}=={version}']
 
-    if not full_pkg:
+    if not install_ref:
         raise ValidationError(
             _('No package name or URL could be generated with the inputs provided')
         )
@@ -279,7 +279,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
             'install',
             '-U',
             '--disable-pip-version-check',
-            *full_pkg,
+            *install_ref,
         ])
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
@@ -299,7 +299,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         # Save plugin to plugins file
         update_plugins_file(
             packagename,
-            full_package=' '.join(full_pkg) if isinstance(full_pkg, list) else None,
+            install_ref=' '.join(install_ref)
+            if isinstance(install_ref, list)
+            else None,
             version=version,
         )
 
