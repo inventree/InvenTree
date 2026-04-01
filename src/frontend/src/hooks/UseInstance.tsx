@@ -56,16 +56,14 @@ export function useInstance<T = any>({
 
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
+  // A memoized key to track changes in the params and pathParams
+  const paramsKey = useMemo(() => {
+    return JSON.stringify(params) + JSON.stringify(pathParams);
+  }, [params, pathParams]);
+
   const instanceQuery = useQuery<T>({
     enabled: !disabled,
-    queryKey: [
-      'instance',
-      endpoint,
-      pk,
-      JSON.stringify(params),
-      JSON.stringify(pathParams),
-      disabled
-    ],
+    queryKey: ['instance', endpoint, pk, paramsKey, disabled],
     retry: (failureCount, error: any) => {
       // If it's a 404, don't retry
       if (error.response?.status == 404) {
