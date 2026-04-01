@@ -34,6 +34,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { RenderAddress } from '../../components/render/Company';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
@@ -267,6 +268,10 @@ export default function SalesOrderShipmentDetail() {
           />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.salesordershipment,
+        model_id: shipment.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.salesordershipment,
         model_id: shipment.pk
