@@ -28,6 +28,12 @@ from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
+from InvenTree.sanitizer import (
+    DEAFAULT_ATTRS,
+    DEFAULT_CSS,
+    DEFAULT_PROTOCOLS,
+    DEFAULT_TAGS,
+)
 
 from .setting.storages import StorageBackends
 from .settings import MEDIA_URL, STATIC_URL
@@ -958,78 +964,12 @@ def clean_markdown(value: str) -> str:
         output_format='html',
     )
 
-    # Default allowlists (matching bleach's original defaults)
-    _default_tags = frozenset([
-        'a',
-        'abbr',
-        'acronym',
-        'b',
-        'blockquote',
-        'code',
-        'em',
-        'i',
-        'li',
-        'ol',
-        'strong',
-        'ul',
-    ])
-    _default_attrs = {'a': {'href', 'title'}, 'abbr': {'title'}, 'acronym': {'title'}}
-    _default_css = frozenset([
-        'azimuth',
-        'background-color',
-        'border-bottom-color',
-        'border-collapse',
-        'border-color',
-        'border-left-color',
-        'border-right-color',
-        'border-top-color',
-        'clear',
-        'color',
-        'cursor',
-        'direction',
-        'display',
-        'elevation',
-        'float',
-        'font',
-        'font-family',
-        'font-size',
-        'font-style',
-        'font-variant',
-        'font-weight',
-        'height',
-        'letter-spacing',
-        'line-height',
-        'overflow',
-        'pause',
-        'pause-after',
-        'pause-before',
-        'pitch',
-        'pitch-range',
-        'richness',
-        'speak',
-        'speak-header',
-        'speak-numeral',
-        'speak-punctuation',
-        'speech-rate',
-        'stress',
-        'text-align',
-        'text-decoration',
-        'text-indent',
-        'unicode-bidi',
-        'vertical-align',
-        'voice-family',
-        'volume',
-        'white-space',
-        'width',
-    ])
-    _default_protocols = frozenset(['http', 'https', 'mailto'])
-
     # nh3 sanitizer settings
-    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', _default_tags)
-    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', _default_attrs)
-    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', _default_css)
+    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
+    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
+    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
     whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', _default_protocols
+        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
     )
 
     # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
