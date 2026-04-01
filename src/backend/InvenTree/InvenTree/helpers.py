@@ -21,11 +21,8 @@ from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-import bleach
-import bleach.css_sanitizer
-import bleach.sanitizer
+import nh3
 import structlog
-from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
@@ -895,13 +892,13 @@ def clean_decimal(number):
 
 
 def strip_html_tags(value: str, raise_error=True, field_name=None):
-    """Strip HTML tags from an input string using the bleach library.
+    """Strip HTML tags from an input string using the nh3 library.
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
     value = str(value).strip()
 
-    cleaned = clean(value, strip=True, tags=[], attributes=[])
+    cleaned = nh3.clean(value, tags=frozenset())
 
     # Add escaped characters back in
     replacements = {'&gt;': '>', '&lt;': '<', '&amp;': '&'}
@@ -961,34 +958,98 @@ def clean_markdown(value: str) -> str:
         output_format='html',
     )
 
-    # Bleach settings
-    whitelist_tags = markdownify_settings.get(
-        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
-    )
-    whitelist_attrs = markdownify_settings.get(
-        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
-    )
-    whitelist_styles = markdownify_settings.get(
-        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
-    )
-    whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
-    )
-    strip = markdownify_settings.get('STRIP', True)
+    # Default allowlists (matching bleach's original defaults)
+    _default_tags = frozenset([
+        'a',
+        'abbr',
+        'acronym',
+        'b',
+        'blockquote',
+        'code',
+        'em',
+        'i',
+        'li',
+        'ol',
+        'strong',
+        'ul',
+    ])
+    _default_attrs = {'a': {'href', 'title'}, 'abbr': {'title'}, 'acronym': {'title'}}
+    _default_css = frozenset([
+        'azimuth',
+        'background-color',
+        'border-bottom-color',
+        'border-collapse',
+        'border-color',
+        'border-left-color',
+        'border-right-color',
+        'border-top-color',
+        'clear',
+        'color',
+        'cursor',
+        'direction',
+        'display',
+        'elevation',
+        'float',
+        'font',
+        'font-family',
+        'font-size',
+        'font-style',
+        'font-variant',
+        'font-weight',
+        'height',
+        'letter-spacing',
+        'line-height',
+        'overflow',
+        'pause',
+        'pause-after',
+        'pause-before',
+        'pitch',
+        'pitch-range',
+        'richness',
+        'speak',
+        'speak-header',
+        'speak-numeral',
+        'speak-punctuation',
+        'speech-rate',
+        'stress',
+        'text-align',
+        'text-decoration',
+        'text-indent',
+        'unicode-bidi',
+        'vertical-align',
+        'voice-family',
+        'volume',
+        'white-space',
+        'width',
+    ])
+    _default_protocols = frozenset(['http', 'https', 'mailto'])
 
-    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
-        allowed_css_properties=whitelist_styles
+    # nh3 sanitizer settings
+    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', _default_tags)
+    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', _default_attrs)
+    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', _default_css)
+    whitelist_protocols = markdownify_settings.get(
+        'WHITELIST_PROTOCOLS', _default_protocols
     )
-    cleaner = bleach.Cleaner(
-        tags=whitelist_tags,
-        attributes=whitelist_attrs,
-        css_sanitizer=css_sanitizer,
-        protocols=whitelist_protocols,
-        strip=strip,
-    )
+
+    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
+    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
+        attrs_dict = {'*': set(whitelist_attrs)}
+    elif isinstance(whitelist_attrs, dict):
+        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
+    else:
+        attrs_dict = None
 
     # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = cleaner.clean(html)
+    clean_html = nh3.clean(
+        html,
+        tags=set(whitelist_tags),
+        attributes=attrs_dict,
+        url_schemes=set(whitelist_protocols),
+        filter_style_properties=set(whitelist_styles),
+        link_rel=None,
+        strip_comments=True,
+    )
 
     if html != clean_html:
         raise ValidationError(_('Data contains prohibited markdown content'))

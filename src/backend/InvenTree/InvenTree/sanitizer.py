@@ -1,7 +1,66 @@
 """Functions to sanitize user input files."""
 
-from bleach import clean
-from bleach.css_sanitizer import CSSSanitizer
+import nh3
+
+# Allowed CSS properties for SVG sanitization (combines general CSS and SVG-specific properties)
+_SVG_ALLOWED_CSS_PROPERTIES = frozenset([
+    # General CSS (matching bleach's original ALLOWED_CSS_PROPERTIES)
+    'azimuth',
+    'background-color',
+    'border-bottom-color',
+    'border-collapse',
+    'border-color',
+    'border-left-color',
+    'border-right-color',
+    'border-top-color',
+    'clear',
+    'color',
+    'cursor',
+    'direction',
+    'display',
+    'elevation',
+    'float',
+    'font',
+    'font-family',
+    'font-size',
+    'font-style',
+    'font-variant',
+    'font-weight',
+    'height',
+    'letter-spacing',
+    'line-height',
+    'overflow',
+    'pause',
+    'pause-after',
+    'pause-before',
+    'pitch',
+    'pitch-range',
+    'richness',
+    'speak',
+    'speak-header',
+    'speak-numeral',
+    'speak-punctuation',
+    'speech-rate',
+    'stress',
+    'text-align',
+    'text-decoration',
+    'text-indent',
+    'unicode-bidi',
+    'vertical-align',
+    'voice-family',
+    'volume',
+    'white-space',
+    'width',
+    # SVG-specific CSS (matching bleach's ALLOWED_SVG_PROPERTIES)
+    'fill',
+    'fill-opacity',
+    'fill-rule',
+    'stroke',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'stroke-opacity',
+    'stroke-width',
+])
 
 ALLOWED_ELEMENTS_SVG = [
     'a',
@@ -206,13 +265,16 @@ def sanitize_svg(
     if isinstance(file_data, bytes):
         file_data = file_data.decode('utf-8')
 
-    cleaned = clean(
+    # nh3 requires attributes as dict[str, set[str]]; convert from list (allowed for all elements)
+    attrs_dict = {elem: set(attributes) for elem in elements}
+
+    cleaned = nh3.clean(
         file_data,
-        tags=elements,
-        attributes=attributes,
-        strip=strip,
+        tags=set(elements),
+        attributes=attrs_dict,
+        filter_style_properties=_SVG_ALLOWED_CSS_PROPERTIES,
         strip_comments=strip,
-        css_sanitizer=CSSSanitizer(),
+        link_rel=None,
     )
 
     return cleaned

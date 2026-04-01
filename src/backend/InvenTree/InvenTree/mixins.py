@@ -19,7 +19,7 @@ from InvenTree.serializers import FilterableSerializerMixin
 
 
 class CleanMixin:
-    """Model mixin class which cleans inputs using the Mozilla bleach tools."""
+    """Model mixin class which cleans inputs using the nh3 HTML sanitization library."""
 
     # Define a list of field names which will *not* be cleaned
     SAFE_FIELDS = []
@@ -55,11 +55,11 @@ class CleanMixin:
         """Clean / sanitize a single input string.
 
         Note that this function will *allow* orphaned <>& characters,
-        which would normally be escaped by bleach.
+        which would normally be escaped by nh3.
 
         Nominally, the only thing that will be "cleaned" will be HTML tags
 
-        Ref: https://github.com/mozilla/bleach/issues/192
+        Ref: https://github.com/messense/nh3
 
         """
         cleaned = data
@@ -101,7 +101,7 @@ class CleanMixin:
     def clean_data(self, data: dict) -> dict:
         """Clean / sanitize data.
 
-        This uses Mozilla's bleach under the hood to disable certain html tags by
+        This uses nh3 under the hood to disable certain html tags by
         encoding them - this leads to script tags etc. to not work.
         The results can be longer then the input; might make some character combinations
         `ugly`. Prevents XSS on the server-level.
