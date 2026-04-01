@@ -10,6 +10,7 @@ import json
 import math
 import os
 import uuid
+from collections import OrderedDict
 from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
@@ -363,9 +364,15 @@ class BaseInvenTreeSetting(models.Model):
 
         # Specify any "default" values which are not in the database
         settings_definition = settings_definition or cls.SETTINGS
+
+        all_settings = OrderedDict()
+
         for key, setting in settings_definition.items():
-            if key.upper() not in settings:
-                settings[key.upper()] = cls(
+            # If the setting is already in the database, use that value
+            if key.upper() in settings:
+                all_settings[key] = settings[key.upper()]
+            else:
+                all_settings[key.upper()] = cls(
                     key=key.upper(),
                     value=cls.get_setting_default(key, **filters),
                     **filters,
@@ -373,10 +380,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # remove any hidden settings
             if exclude_hidden and setting.get('hidden', False):
-                del settings[key.upper()]
+                del all_settings[key.upper()]
 
         # format settings values and remove protected
-        for key, setting in settings.items():
+        for key, setting in all_settings.items():
             validator = cls.get_setting_validator(key, **filters)
 
             if cls.is_protected(key, **filters) and setting.value != '':
@@ -389,7 +396,7 @@ class BaseInvenTreeSetting(models.Model):
                 except ValueError:
                     setting.value = cls.get_setting_default(key, **filters)
 
-        return settings
+        return all_settings
 
     @classmethod
     def allValues(
