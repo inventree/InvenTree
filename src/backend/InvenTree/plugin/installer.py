@@ -265,9 +265,7 @@ def install_plugin(
 
     if url:
         # VCS based install - this can just be a VCS reference
-        if True in [
-            identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
-        ]:
+        if url.startswith(('git+https://', 'hg+https://', 'svn+svn://')):
             # using a VCS provider
             package_ref = f'{packagename}@{url}' if packagename else url
         # http based index reference
