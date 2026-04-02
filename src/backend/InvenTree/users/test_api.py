@@ -37,9 +37,10 @@ class UserAPITests(InvenTreeAPITestCase):
             fields['is_active']['help_text'], 'Is this user account active'
         )
 
-        self.assertEqual(fields['is_staff']['label'], 'Staff')
+        self.assertEqual(fields['is_staff']['label'], 'Administrator')
         self.assertEqual(
-            fields['is_staff']['help_text'], 'Does this user have staff permissions'
+            fields['is_staff']['help_text'],
+            'Does this user have administrative permissions',
         )
 
     def test_api_url(self):
