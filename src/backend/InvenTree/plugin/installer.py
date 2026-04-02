@@ -160,22 +160,26 @@ def install_plugins_file():
 
 
 def update_plugins_file(
-    install_name: str,
-    full_package: Optional[str] = None,
+    install_name: Optional[str],
+    install_reference: Optional[str] = None,
     version: Optional[str] = None,
     remove: bool = False,
 ):
     """Add a plugin to the plugins file."""
-    if remove:
-        logger.info('Removing plugin from plugins file: %s', install_name)
-    else:
-        logger.info('Adding plugin to plugins file: %s', install_name)
-
     # If a full package name is provided, use that instead
-    if full_package and full_package != install_name:
-        new_value = full_package
+    if install_reference and install_reference != install_name:
+        package_reference = install_reference
     else:
-        new_value = f'{install_name}=={version}' if version else install_name
+        package_reference = f'{install_name}=={version}' if version else install_name
+
+    if not package_reference:
+        logger.error('No package reference provided for plugin')
+        return
+
+    if remove:
+        logger.info('Removing plugin from plugins file: %s', package_reference)
+    else:
+        logger.info('Adding plugin to plugins file: %s', package_reference)
 
     pf = settings.PLUGIN_FILE
 
@@ -212,13 +216,13 @@ def update_plugins_file(
             found = True
             if not remove:
                 # Replace line with new install name
-                output.append(new_value)
+                output.append(package_reference)
         else:
             output.append(line)
 
     # Append plugin to file
     if not found and not remove:
-        output.append(new_value)
+        output.append(package_reference)
 
     # Write file back to disk
     try:
@@ -256,42 +260,43 @@ def install_plugin(
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    install_ref = None
+    package_ref: Optional[str] = None
+    index_url = None
 
     if url:
-        # use custom registration / VCS
+        # VCS based install - this can just be a VCS reference
         if True in [
             identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
         ]:
             # using a VCS provider
-            install_ref = [f'{packagename}@{url}' if packagename else url]
-        elif url and packagename:
-            install_ref = [packagename, '-i', url]
+            package_ref = f'{packagename}@{url}' if packagename else url
+        # http based index reference
+        elif url.startswith(('http://', 'https://')) and packagename:
+            package_ref = packagename
+            index_url = url
+        # Ignore url and just use default index
+        elif packagename:
+            package_ref = packagename
         else:
-            install_ref = ['-i', url]
+            raise ValidationError(_('Invalid URL and no package name provided'))
 
     elif packagename:
-        # use pypi
-        install_ref = [packagename]
+        # use default index - most often pypi
+        package_ref = packagename
 
         if version:
-            install_ref = [f'{packagename}=={version}']
-
-    if not install_ref:
-        raise ValidationError(
-            _('No package name or URL could be generated with the inputs provided')
-        )
-
-    ret = {}
+            package_ref = f'{packagename}=={version}'
+    else:
+        raise ValidationError(_('No package name or URL provided'))
 
     # Execute installation via pip
+    cmd: list[str] = ['install', '-U', '--disable-pip-version-check']
+    if index_url:
+        cmd += ['-i', index_url]
+
+    ret = {}
     try:
-        result = pip_command(*[
-            'install',
-            '-U',
-            '--disable-pip-version-check',
-            *install_ref,
-        ])
+        result = pip_command(*cmd, package_ref)
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
         ret['output'] = str(result, 'utf-8')
@@ -309,11 +314,7 @@ def install_plugin(
     if version := ret.get('version'):
         # Save plugin to plugins file
         update_plugins_file(
-            packagename,
-            install_ref=' '.join(install_ref)
-            if isinstance(install_ref, list)
-            else None,
-            version=version,
+            install_name=packagename, install_reference=package_ref, version=version
         )
 
         # Reload the plugin registry, to discover the new plugin
