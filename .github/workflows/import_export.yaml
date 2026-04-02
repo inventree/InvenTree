@@ -80,13 +80,18 @@ jobs:
           pip-dependency: psycopg
           update: true
           static: false
-      - name: Clear Database
+      - name: Setup Database
         run: |
           invoke dev.delete-data --migrate --force
-      - name: Export Initial Dataset
-        run: |
-          invoke-export -o -f ${{ env.DATA_FILE }}
-      - name: Install Dummy Plugin
-        run: |
           pip install -U inventree-dummy-app-plugin
           invoke migrate
+          cd src/backend/InvenTree && python manage.py create_dummy_data
+      - name: Export Dataset
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+      - name: Clear Database
+        run: |
+          invoke dev.delete-data --force
+      - name: Import Dataset
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }}
