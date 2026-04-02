@@ -28,9 +28,7 @@ def set_db_options(engine: str, db_options: dict):
 
 def set_postgres_options(db_options: dict):
     """Set database options specific to postgres backend."""
-    from django.db.backends.postgresql.psycopg_any import (  # type: ignore[unresolved-import]
-        IsolationLevel,
-    )
+    from django.db.backends.postgresql.psycopg_any import IsolationLevel
 
     # Connection timeout
     if 'connect_timeout' not in db_options:

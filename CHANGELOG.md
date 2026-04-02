@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#11641](https://github.com/inventree/InvenTree/pull/11641) adds support for custom parameters against the SalesOrderShipment model.
 - [#11527](https://github.com/inventree/InvenTree/pull/11527) adds a new API endpoint for monitoring the status of a particular background task. This endpoint allows clients to check the status of a background task and receive updates when the task is complete. This is useful for long-running tasks that may take some time to complete, allowing clients to provide feedback to users about the progress of the task.
 - [#11405](https://github.com/inventree/InvenTree/pull/11405) adds default table filters, which hide inactive items by default. The default table filters are overridden by user filter selection, and only apply to the table view initially presented to the user. This means that users can still view inactive items if they choose to, but they will not be shown by default.
 - [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
@@ -21,8 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#10887](https://github.com/inventree/InvenTree/pull/10887) adds the ability to auto-allocate tracked items against specific build outputs. Currently, this will only allocate items where the serial number of the tracked item matches the serial number of the build output, but in future this may be extended to allow for more flexible allocation rules.
 - [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
 - [#11374](https://github.com/inventree/InvenTree/pull/11374) adds `updated_at` field on purchase, sales and return orders.
+- [#11074](https://github.com/inventree/InvenTree/pull/11074) adds "Keep form open" option on create form which leaves dialog with form opened after form submitting.
 
 ### Changed
+
+- [#11630](https://github.com/inventree/InvenTree/pull/11630) enhances the `import_records` and `export_records` system commands, by adding a metadata entry to the exported data file to allow for compatibility checks during data import.
 
 ### Removed
 

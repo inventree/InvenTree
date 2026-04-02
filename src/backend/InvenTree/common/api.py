@@ -1185,7 +1185,7 @@ class DataOutputEndpointMixin:
         try:
             user = self.request.user
         except AttributeError:
-            return common.models.DataOutput.objects.none()
+            raise PermissionDenied('User information is not available')
 
         # Allow staff users access to all DataOutput objects
         if user.is_staff:

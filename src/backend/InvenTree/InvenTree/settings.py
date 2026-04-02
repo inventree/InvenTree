@@ -194,6 +194,9 @@ PLUGINS_MANDATORY = get_setting(
     'INVENTREE_PLUGINS_MANDATORY', 'plugins_mandatory', typecast=list, default_value=[]
 )
 
+if PLUGINS_MANDATORY:
+    logger.info('Mandatory plugins: %s', PLUGINS_MANDATORY)
+
 PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
@@ -372,6 +375,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
 

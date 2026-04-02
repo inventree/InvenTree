@@ -490,7 +490,7 @@ class BulkCreateMixin:
             if unique_create_fields := getattr(self, 'unique_create_fields', None):
                 existing = collections.defaultdict(list)
                 for idx, item in enumerate(data):
-                    key = tuple(item[v] for v in list(unique_create_fields))
+                    key = tuple(item[v] for v in list(unique_create_fields))  # type: ignore[not-subscriptable]
                     existing[key].append(idx)
 
                 unique_errors = [[] for _ in range(len(data))]
