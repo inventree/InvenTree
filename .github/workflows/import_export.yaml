@@ -96,6 +96,7 @@ jobs:
       - name: Import Dataset
         run: |
           invoke import-records -c -f ${{ env.DATA_FILE }}
+          cd src/backend/InvenTree && python manage.py check_dummy_data
       - name: Export Dataset
         run: |
           invoke export-records -o -f ${{ env.DATA_FILE }}

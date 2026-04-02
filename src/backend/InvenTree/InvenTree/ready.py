@@ -125,6 +125,7 @@ def isGeneratingSchema():
         'qcluster',
         'check',
         'shell',
+        'help',
     ]
 
     if any(cmd in sys.argv for cmd in excluded_commands):
@@ -132,12 +133,14 @@ def isGeneratingSchema():
 
     included_commands = [
         'schema',
+        'spectactular',
         # schema adjacent calls
         'export_settings_definitions',
         'export_tags',
         'export_filters',
         'export_report_context',
     ]
+
     if any(cmd in sys.argv for cmd in included_commands):
         return True
 
