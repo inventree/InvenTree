@@ -223,20 +223,20 @@ def update_plugins_file(package_reference: str, remove: bool = False):
 
 
 def install_plugin(
+    user,
     url: Optional[str] = None,
     packagename: Optional[str] = None,
-    user=None,
     version: Optional[str] = None,
 ):
     """Install a plugin into the python virtual environment.
 
     Args:
+        user: user performing the installation
         packagename: Optional package name to install
         url: Optional URL to install from
-        user: Optional user performing the installation
         version: Optional version specifier
     """
-    if user and not user.is_staff:
+    if not user or not user.is_staff:
         raise ValidationError(_('Only staff users can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
