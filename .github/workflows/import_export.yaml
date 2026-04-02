@@ -57,6 +57,7 @@ jobs:
 
       INVENTREE_PLUGINS_ENABLED: true
       INVENTREE_PLUGINS_MANDATORY: "dummy-app-plugin"
+      INVENTREE_GLOBAL_SETTINGS: '{"ENABLE_PLUGINS_APP": true}'
 
       DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
 
