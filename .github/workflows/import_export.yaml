@@ -37,6 +37,7 @@ jobs:
             INVENTREE_DB_PORT: ""
           - env-set: postgres
             INVENTREE_DB_ENGINE: postgresql
+            INVENTREE_DB_NAME: inventree
             INVENTREE_DB_USER: inventree
             INVENTREE_DB_PASSWORD: password
             INVENTREE_DB_HOST: "127.0.0.1"
