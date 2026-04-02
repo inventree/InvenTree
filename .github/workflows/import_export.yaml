@@ -56,7 +56,7 @@ jobs:
       INVENTREE_SITE_URL: http://localhost:8000
 
       INVENTREE_PLUGINS_ENABLED: true
-      INVENTREE_PLUGINS_MANDATORY: '["dummy_app_plugin"]'
+      INVENTREE_PLUGINS_MANDATORY: "dummy-app-plugin"
 
       DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
 
@@ -89,9 +89,14 @@ jobs:
       - name: Export Dataset
         run: |
           invoke export-records -o -f ${{ env.DATA_FILE }}
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
       - name: Clear Database
         run: |
           invoke dev.delete-data --force
       - name: Import Dataset
         run: |
           invoke import-records -c -f ${{ env.DATA_FILE }}
+      - name: Export Dataset
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
