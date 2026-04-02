@@ -3,6 +3,7 @@
 import re
 import subprocess
 import sys
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -158,7 +159,12 @@ def install_plugins_file():
     return True
 
 
-def update_plugins_file(install_name, install_ref=None, version=None, remove=False):
+def update_plugins_file(
+    install_name: str,
+    full_package: Optional[str] = None,
+    version: Optional[str] = None,
+    remove: bool = False,
+):
     """Add a plugin to the plugins file."""
     if remove:
         logger.info('Removing plugin from plugins file: %s', install_name)
@@ -166,8 +172,8 @@ def update_plugins_file(install_name, install_ref=None, version=None, remove=Fal
         logger.info('Adding plugin to plugins file: %s', install_name)
 
     # If a full package name is provided, use that instead
-    if install_ref and install_ref != install_name:
-        new_value = install_ref
+    if full_package and full_package != install_name:
+        new_value = full_package
     else:
         new_value = f'{install_name}=={version}' if version else install_name
 
@@ -227,7 +233,12 @@ def update_plugins_file(install_name, install_ref=None, version=None, remove=Fal
         log_error('update_plugins_file', scope='plugins')
 
 
-def install_plugin(url=None, packagename=None, user=None, version=None):
+def install_plugin(
+    url: Optional[str] = None,
+    packagename: Optional[str] = None,
+    user=None,
+    version: Optional[str] = None,
+):
     """Install a plugin into the python virtual environment.
 
     Args:
