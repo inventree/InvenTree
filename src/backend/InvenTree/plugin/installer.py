@@ -159,23 +159,8 @@ def install_plugins_file():
     return True
 
 
-def update_plugins_file(
-    install_name: Optional[str],
-    install_reference: Optional[str] = None,
-    version: Optional[str] = None,
-    remove: bool = False,
-):
+def update_plugins_file(package_reference: str, remove: bool = False):
     """Add a plugin to the plugins file."""
-    # If a full package name is provided, use that instead
-    if install_reference and install_reference != install_name:
-        package_reference = install_reference
-    else:
-        package_reference = f'{install_name}=={version}' if version else install_name
-
-    if not package_reference:
-        logger.error('No package reference provided for plugin')
-        return
-
     if remove:
         logger.info('Removing plugin from plugins file: %s', package_reference)
     else:
@@ -189,7 +174,7 @@ def update_plugins_file(
 
     def compare_line(line: str):
         """Check if a line in the file matches the installname."""
-        return re.match(rf'^{install_name}[\s=@]', line.strip())
+        return re.match(rf'^{package_reference}[\s=@]', line.strip())
 
     # First, read in existing plugin file
     try:
@@ -311,9 +296,7 @@ def install_plugin(
 
     if version := ret.get('version'):
         # Save plugin to plugins file
-        update_plugins_file(
-            install_name=packagename, install_reference=package_ref, version=version
-        )
+        update_plugins_file(package_reference=package_ref)
 
         # Reload the plugin registry, to discover the new plugin
         from plugin.registry import registry
@@ -400,7 +383,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         raise ValidationError(_('Plugin installation not found'))
 
     # Update the plugins file
-    update_plugins_file(package_name, remove=True)
+    update_plugins_file(package_reference=package_name, remove=True)
 
     if delete_config:
         logger.info('Deleting plugin configuration from database: %s', cfg.key)
