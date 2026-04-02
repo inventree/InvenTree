@@ -1,4 +1,7 @@
 # Ensure that data import / export functionality works as expected.
+# - Create a dataset in a Postgres database (including plugin data)
+# - Export the dataset to an agnostic format (JSON)
+# - Import the dataset into a Sqlite database
 
 name: Import / Export
 
@@ -9,7 +12,7 @@ on:
     branches-ignore: ["l10*"]
 
 jobs:
-  import_export:
+  test:
     runs-on: ubuntu-latest
 
     permissions:
@@ -76,10 +79,13 @@ jobs:
           invoke export-records -o -f ${{ env.DATA_FILE }}
           python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
           invoke dev.delete-data --force
+      - name: Update Environment Variables for Sqlite
+        run: |
+          echo "Updating environment variables for Sqlite"
+          echo "INVENTREE_DB_ENGINE=sqlite" >> $GITHUB_ENV
+          echo "INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3" >> $GITHUB_ENV
       - name: Setup Sqlite Database
         run: |
-          export INVENTREE_DB_ENGINE=sqlite
-          export INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3
           invoke migrate
           test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
       - name: Import Sqlite Dataset
