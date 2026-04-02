@@ -514,7 +514,6 @@ Set the `INVENTREE_FRONTEND_SETTINGS` Environment variable to a JSON object or u
 | `debug` | Set the debug mode | *Server debug mode* |
 | `environment` | `development` or `production` | *development if Server is in debug mode* |
 | `show_server_selector` | In debug mode, show server selector by default. If no servers are specified, show server selector. | |
-| `url_compatibility` | Support compatibility with "legacy" URLs? | `true` |
 | `sentry_dsn` | Set a Sentry DSN url | *Not specified* |
 | `mobile_mode` | Controls if InvenTree web UI can be used by mobile devices. There are 3 options: `default` - does not allow mobile devices; `allow-ignore` - shows a mobile device detected banner with a button to ignore this warning AT THE USERS OWN RISK; `allow-always` - skips the mobile check and allows mobile devices always (of course at the server admins OWN RISK) | `default` |
 
