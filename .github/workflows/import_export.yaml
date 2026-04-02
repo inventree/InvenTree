@@ -11,12 +11,58 @@ on:
   pull_request:
     branches-ignore: ["l10*"]
 
+permissions:
+  contents: read
+
+env:
+  python_version: 3.11
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  INVENTREE_DEBUG: false
+  INVENTREE_LOG_LEVEL: WARNING
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+  INVENTREE_SITE_URL: http://localhost:8000
+
+  INVENTREE_PLUGINS_ENABLED: true
+  INVENTREE_AUTO_UPDATE: true
+  INVENTREE_PLUGINS_MANDATORY: "dummy-app-plugin"
+  INVENTREE_GLOBAL_SETTINGS: '{"ENABLE_PLUGINS_APP": true}'
+
+  DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
+
+  INVENTREE_DB_ENGINE: postgresql
+  INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_USER: inventree
+  INVENTREE_DB_PASSWORD: password
+  INVENTREE_DB_HOST: "127.0.0.1"
+  INVENTREE_DB_PORT: 5432
+
 jobs:
+
+  paths-filter:
+    name: filter
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'src/backend/InvenTree/**'
+              - 'src/backend/requirements.txt'
+              - 'src/backend/requirements-dev.txt'
   test:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
 
     services:
       postgres:
@@ -26,32 +72,6 @@ jobs:
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
-
-    env:
-      python_version: 3.11
-
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      INVENTREE_DEBUG: false
-      INVENTREE_LOG_LEVEL: WARNING
-      INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
-      INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
-      INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
-      INVENTREE_SITE_URL: http://localhost:8000
-
-      INVENTREE_PLUGINS_ENABLED: true
-      INVENTREE_AUTO_UPDATE: true
-      INVENTREE_PLUGINS_MANDATORY: "dummy-app-plugin"
-      INVENTREE_GLOBAL_SETTINGS: '{"ENABLE_PLUGINS_APP": true}'
-
-      DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
-
-      INVENTREE_DB_ENGINE: postgresql
-      INVENTREE_DB_NAME: inventree
-      INVENTREE_DB_USER: inventree
-      INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: "127.0.0.1"
-      INVENTREE_DB_PORT: 5432
 
     steps:
       - name: Checkout code
