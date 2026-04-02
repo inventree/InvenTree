@@ -24,25 +24,6 @@ jobs:
         ports:
           - 5432:5432
 
-    strategy:
-      matrix:
-        env-set: [sqlite, postgres]
-        include:
-          - env-set: sqlite
-            INVENTREE_DB_ENGINE: sqlite3
-            INVENTREE_DB_NAME: inventree
-            INVENTREE_DB_USER: ""
-            INVENTREE_DB_PASSWORD: ""
-            INVENTREE_DB_HOST: ""
-            INVENTREE_DB_PORT: ""
-          - env-set: postgres
-            INVENTREE_DB_ENGINE: postgresql
-            INVENTREE_DB_NAME: inventree
-            INVENTREE_DB_USER: inventree
-            INVENTREE_DB_PASSWORD: password
-            INVENTREE_DB_HOST: "127.0.0.1"
-            INVENTREE_DB_PORT: 5432
-
     env:
       python_version: 3.11
 
@@ -61,12 +42,12 @@ jobs:
 
       DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
 
-      INVENTREE_DB_ENGINE: ${{ matrix.INVENTREE_DB_ENGINE }}
-      INVENTREE_DB_NAME: ${{ matrix.INVENTREE_DB_NAME }}
-      INVENTREE_DB_USER: ${{ matrix.INVENTREE_DB_USER }}
-      INVENTREE_DB_PASSWORD: ${{ matrix.INVENTREE_DB_PASSWORD }}
-      INVENTREE_DB_HOST: ${{ matrix.INVENTREE_DB_HOST }}
-      INVENTREE_DB_PORT: ${{ matrix.INVENTREE_DB_PORT }}
+      INVENTREE_DB_ENGINE: postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: "127.0.0.1"
+      INVENTREE_DB_PORT: 5432
 
     steps:
       - name: Checkout code
@@ -81,24 +62,31 @@ jobs:
           pip-dependency: psycopg
           update: true
           static: false
-      - name: Setup Database
+      - name: Setup Postgres Database
         run: |
-          invoke dev.delete-data --migrate --force
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Create Plugin Data
+        run: |
           pip install -U inventree-dummy-app-plugin
           invoke migrate
           cd src/backend/InvenTree && python manage.py create_dummy_data
-      - name: Export Dataset
+      - name: Export Postgres Dataset
         run: |
           invoke export-records -o -f ${{ env.DATA_FILE }}
           python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
-      - name: Clear Database
-        run: |
           invoke dev.delete-data --force
-      - name: Import Dataset
+      - name: Setup Sqlite Database
+        run: |
+          export INVENTREE_DB_ENGINE=sqlite
+          export INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3
+          invoke migrate
+          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3
+      - name: Import Sqlite Dataset
         run: |
           invoke import-records -c -f ${{ env.DATA_FILE }}
           cd src/backend/InvenTree && python manage.py check_dummy_data
-      - name: Export Dataset
+      - name: Export Sqlite Dataset
         run: |
           invoke export-records -o -f ${{ env.DATA_FILE }}
           python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
