@@ -56,9 +56,8 @@ jobs:
         with:
           filters: |
             server:
-              - 'src/backend/InvenTree/**'
-              - 'src/backend/requirements.txt'
-              - 'src/backend/requirements-dev.txt'
+              - 'src/backend/**'
+              - 'tasks.py'
   test:
     runs-on: ubuntu-latest
     needs: paths-filter
