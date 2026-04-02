@@ -81,7 +81,7 @@ jobs:
           export INVENTREE_DB_ENGINE=sqlite
           export INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3
           invoke migrate
-          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3
+          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
       - name: Import Sqlite Dataset
         run: |
           invoke import-records -c -f ${{ env.DATA_FILE }}
