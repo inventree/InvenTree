@@ -203,11 +203,11 @@ export function Header() {
       </Container>
       {(user?.is_staff || user?.is_superuser || false) && (
         <Alert
-          color={user.is_superuser ? 'red' : 'yellow'}
+          color={user.is_superuser ? 'red' : 'orange'}
           title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
         >
           <Text>
-            {t`This type of user has elevated privileges and should not be used for regular usage.`}{' '}
+            {t`The current user has elevated privileges and should not be used for regular usage.`}
             {errorCodeLink('INVE-W14')}
           </Text>
         </Alert>
