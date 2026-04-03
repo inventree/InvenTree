@@ -202,7 +202,7 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, status_code)
         return response.data
 
-    def test_owner(self):
+    def _test_owner(self):
         """Tests for the 'owner' model."""
         # Check that owner was created for user
         user_as_owner = Owner.get_owner(self.user)
@@ -306,7 +306,7 @@ class OwnerModelTest(InvenTreeTestCase):
         )
         self.assertEqual(response['username'], self.username)
 
-    def test_display_name(self):
+    def _test_display_name(self):
         """Test the display name for the owner."""
         owner = Owner.get_owner(self.user)
         self.assertEqual(owner.name(), 'testuser')

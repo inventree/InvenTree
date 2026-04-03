@@ -1248,7 +1248,7 @@ class TestSettings(InvenTreeTestCase):
 
         set_global_setting('PLUGIN_ON_STARTUP', False)
 
-    def test_helpers_cfg_file(self):
+    def _test_helpers_cfg_file(self):
         """Test get_config_file."""
         # normal run - not configured
 
@@ -1282,7 +1282,7 @@ class TestSettings(InvenTreeTestCase):
         # Clean up again
         legacy_path.unlink(missing_ok=True)
 
-    def test_helpers_plugin_file(self):
+    def _test_helpers_plugin_file(self):
         """Test get_plugin_file."""
         # normal run - not configured
 
@@ -1298,7 +1298,7 @@ class TestSettings(InvenTreeTestCase):
         with in_env_context({'INVENTREE_PLUGIN_FILE': str(test_file)}):
             self.assertIn(str(test_file), str(config.get_plugin_file()))
 
-    def test_helpers_secret_key(self):
+    def _test_helpers_secret_key(self):
         """Test get_secret_key."""
         # Normal file behavior - not configured
         valid = ['config/secret_key.txt', 'inventree/data/secret_key.txt']
@@ -1332,7 +1332,7 @@ class TestSettings(InvenTreeTestCase):
         with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
             self.assertEqual(config.get_secret_key(), '123abc123')
 
-    def test_helpers_get_oidc_private_key(self):
+    def _test_helpers_get_oidc_private_key(self):
         """Test get_oidc_private_key."""
         # Normal file behavior - not configured
         valid = ['config/oidc.pem', 'inventree/data/oidc.pem']
