@@ -228,7 +228,6 @@ export default function SalesOrderShipmentDetail() {
               pk={customer?.pk}
               imageActions={{
                 selectExisting: false,
-                downloadImage: false,
                 uploadFile: false,
                 deleteFile: false
               }}

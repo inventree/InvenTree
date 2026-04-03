@@ -273,26 +273,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
-    'INVENTREE_DOWNLOAD_FROM_URL': {
-        'name': _('Download from URL'),
-        'description': _('Allow download of remote images and files from external URL'),
-        'validator': bool,
-        'default': False,
-    },
-    'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-        'name': _('Download Size Limit'),
-        'description': _('Maximum allowable download size for remote image'),
-        'units': 'MB',
-        'default': 1,
-        'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-    },
-    'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-        'name': _('User-agent used to download from URL'),
-        'description': _(
-            'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-        ),
-        'default': '',
-    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),

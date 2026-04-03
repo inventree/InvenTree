@@ -1,11 +1,9 @@
 """DRF data serializers for Part app."""
 
-import io
 import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
@@ -556,7 +554,6 @@ class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -589,7 +586,6 @@ class PartSerializer(
             'description',
             'full_name',
             'image',
-            'remote_image',
             'existing_image',
             'IPN',
             'is_template',
@@ -658,7 +654,7 @@ class PartSerializer(
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
                 # Fields required for certain operations, but are not part of the model
-                if f in ['remote_image', 'existing_image']:
+                if f in ['existing_image']:
                     continue
                 self.fields.pop(f, None)
 
@@ -1083,19 +1079,6 @@ class PartSerializer(
 
             part.image = img_path
             part.save()
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and part:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'part_{part.pk}_image.{fmt.lower()}'
-
-            part.image.save(filename, ContentFile(buffer.getvalue()))
 
         return self.instance
 

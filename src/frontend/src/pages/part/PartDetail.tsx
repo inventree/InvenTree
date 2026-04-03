@@ -709,7 +709,6 @@ export default function PartDetail() {
               appRole={UserRoles.part}
               imageActions={{
                 selectExisting: true,
-                downloadImage: true,
                 uploadFile: true,
                 deleteFile: true
               }}

@@ -8,7 +8,6 @@ from pathlib import Path
 from unittest import mock
 from zoneinfo import ZoneInfo
 
-import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -725,31 +724,6 @@ class TestHelpers(TestCase):
 
         logo = helpers.getLogoImage(as_file=True)
         self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
-
-    def test_download_image(self):
-        """Test function for downloading image from remote URL."""
-        # Run check with a sequence of bad URLs
-        for url in ['blog', 'htp://test.com/?', 'google', '\\invalid-url']:
-            with self.assertRaises(django_exceptions.ValidationError):
-                InvenTree.helpers_model.download_image_from_url(url)
-
-        large_img = 'https://github.com/inventree/InvenTree/raw/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
-
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None
-        )
-
-        # Attempt to download an image which is too large
-        with self.assertRaises(ValueError):
-            InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
-
-        # Increase allowable download size
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None
-        )
-
-        # Download a valid image (should not throw an error)
-        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""

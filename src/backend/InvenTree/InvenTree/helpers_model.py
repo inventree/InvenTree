@@ -1,22 +1,17 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
-import io
 from decimal import Decimal
 from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
-import requests
-import requests.exceptions
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from PIL import Image
 
 from common.notifications import (
     InvenTreeNotificationBodies,
@@ -86,105 +81,6 @@ def construct_absolute_url(*arg, base_url=None, request=None):
         base_url = get_base_url(request=request)
 
     return urljoin(base_url, relative_url)
-
-
-def download_image_from_url(remote_url, timeout=2.5):
-    """Download an image file from a remote URL.
-
-    This is a potentially dangerous operation, so we must perform some checks:
-    - The remote URL is available
-    - The Content-Length is provided, and is not too large
-    - The file is a valid image file
-
-    Arguments:
-        remote_url: The remote URL to retrieve image
-        max_size: Maximum allowed image size (default = 1MB)
-        timeout: Connection timeout in seconds (default = 5)
-
-    Returns:
-        An in-memory PIL image file, if the download was successful
-
-    Raises:
-        requests.exceptions.ConnectionError: Connection could not be established
-        requests.exceptions.Timeout: Connection timed out
-        requests.exceptions.HTTPError: Server responded with invalid response code
-        ValueError: Server responded with invalid 'Content-Length' value
-        TypeError: Response is not a valid image
-    """
-    # Check that the provided URL at least looks valid
-    validator = URLValidator()
-    validator(remote_url)
-
-    # Calculate maximum allowable image size (in bytes)
-    max_size = (
-        int(get_global_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
-    )
-
-    # Add user specified user-agent to request (if specified)
-    user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
-
-    headers = {'User-Agent': user_agent} if user_agent else None
-
-    try:
-        response = requests.get(
-            remote_url,
-            timeout=timeout,
-            allow_redirects=True,
-            stream=True,
-            headers=headers,
-        )
-        # Throw an error if anything goes wrong
-        response.raise_for_status()
-    except requests.exceptions.ConnectionError as exc:
-        raise Exception(_('Connection error') + f': {exc!s}')
-    except requests.exceptions.Timeout as exc:
-        raise exc
-    except requests.exceptions.HTTPError:
-        raise requests.exceptions.HTTPError(
-            _('Server responded with invalid status code') + f': {response.status_code}'
-        )
-    except Exception as exc:
-        raise Exception(_('Exception occurred') + f': {exc!s}')
-
-    if response.status_code != 200:
-        raise Exception(
-            _('Server responded with invalid status code') + f': {response.status_code}'
-        )
-
-    try:
-        content_length = int(response.headers.get('Content-Length', 0))
-    except ValueError:
-        raise ValueError(_('Server responded with invalid Content-Length value'))
-
-    if content_length > max_size:
-        raise ValueError(_('Image size is too large'))
-
-    # Download the file, ensuring we do not exceed the reported size
-    file = io.BytesIO()
-
-    dl_size = 0
-    chunk_size = 64 * 1024
-
-    for chunk in response.iter_content(chunk_size=chunk_size):
-        dl_size += len(chunk)
-
-        if dl_size > max_size:
-            raise ValueError(_('Image download exceeded maximum size'))
-
-        file.write(chunk)
-
-    if dl_size == 0:
-        raise ValueError(_('Remote server returned empty response'))
-
-    # Now, attempt to convert the downloaded data to a valid image file
-    # img.verify() will throw an exception if the image is not valid
-    try:
-        img = Image.open(file).convert()
-        img.verify()
-    except Exception:
-        raise TypeError(_('Supplied URL is not a valid image file'))
-
-    return img
 
 
 def render_currency(
