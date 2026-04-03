@@ -412,15 +412,11 @@ class PartTest(TestCase):
             name='Master Part', description='Master part (revision B)'
         )
 
-        with self.assertRaises(ValidationError) as exc:
-            rev_b.revision_of = rev_a
-            rev_b.revision = 'B'
-            rev_b.save()
-
-        self.assertIn(
-            'Cannot make a revision of a part which is already a revision',
-            str(exc.exception),
-        )
+        # Ensure we can make a revision of a revision
+        rev_b.revision_of = rev_a
+        rev_b.variant_of = template
+        rev_b.revision = 'B'
+        rev_b.save()
 
         rev_b.variant_of = template
         rev_b.revision_of = part
