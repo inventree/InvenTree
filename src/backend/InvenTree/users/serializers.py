@@ -238,8 +238,21 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
 
     def validate(self, data):
         """Validate the data for the serializer."""
+        request_user = self.context['request'].user
+        if not request_user:
+            raise serializers.ValidationError(
+                _('User must be authenticated')
+            )  # pragma: no cover
+
         if 'user' not in data:
-            data['user'] = self.context['request'].user
+            data['user'] = request_user
+
+        # Only superusers can create tokens for other users
+        if data['user'] != request_user and not request_user.is_superuser:
+            raise serializers.ValidationError(
+                _('Only a superuser can create a token for another user')
+            )
+
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
