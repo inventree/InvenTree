@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#11648](https://github.com/inventree/InvenTree/pull/11648) improves the import/export process, allowing data records defined by plugins to be loaded when importing a database from a file.
 - [#11630](https://github.com/inventree/InvenTree/pull/11630) enhances the `import_records` and `export_records` system commands, by adding a metadata entry to the exported data file to allow for compatibility checks during data import.
 
 ### Removed
