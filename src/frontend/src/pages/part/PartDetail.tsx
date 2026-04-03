@@ -440,6 +440,7 @@ export default function PartDetail() {
         name: 'variant_of',
         label: t`Variant of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.variant_of
       },
       {
@@ -447,6 +448,7 @@ export default function PartDetail() {
         name: 'revision_of',
         label: t`Revision of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.revision_of
       },
       {
