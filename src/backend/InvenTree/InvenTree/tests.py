@@ -1604,11 +1604,11 @@ class SanitizerTest(TestCase):
     def test_svg_sanitizer(self):
         """Test that SVGs are sanitized accordingly."""
         valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
-        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91"></path>
         </svg>"""
         dangerous_string = valid_string.format('<script>alert();</script>')
 
-        # Test that valid string
+        # Test that valid string passes through unchanged
         self.assertEqual(valid_string, sanitize_svg(valid_string))
 
         # Test that invalid string is cleaned

@@ -276,7 +276,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
-    def test_bleach(self):
+    def test_sanitizer(self):
         """Test that the data cleaning functionality is working.
 
         This helps to protect against XSS injection
