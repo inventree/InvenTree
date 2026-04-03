@@ -8,6 +8,7 @@ import {
   HoverCard,
   Loader,
   type MantineColor,
+  Paper,
   Skeleton,
   Stack,
   Text
@@ -720,10 +721,17 @@ export default function PartDetail() {
             </Grid.Col>
           </Grid>
           {enableRevisionSelection && (
-            <Stack gap='xs'>
-              <Text>{t`Select Part Revision`}</Text>
-              <RevisionSelector part={part} options={partRevisionOptions} />
-            </Stack>
+            <Paper p='sm' withBorder>
+              <Stack gap='xs'>
+                <Group gap='xs'>
+                  <ActionIcon variant='transparent'>
+                    <IconVersions />
+                  </ActionIcon>
+                  <Text>{t`Select Part Revision`}</Text>
+                </Group>
+                <RevisionSelector part={part} options={partRevisionOptions} />
+              </Stack>
+            </Paper>
           )}
         </Stack>
         <DetailsTable fields={tr} item={data} />
