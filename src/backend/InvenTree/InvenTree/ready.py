@@ -119,11 +119,13 @@ def isGeneratingSchema():
         'collectstatic',
         'makemessages',
         'wait_for_db',
+        'list_apps',
         'gunicorn',
         'sqlflush',
         'qcluster',
         'check',
         'shell',
+        'help',
     ]
 
     if any(cmd in sys.argv for cmd in excluded_commands):
@@ -131,12 +133,14 @@ def isGeneratingSchema():
 
     included_commands = [
         'schema',
+        'spectactular',
         # schema adjacent calls
         'export_settings_definitions',
         'export_tags',
         'export_filters',
         'export_report_context',
     ]
+
     if any(cmd in sys.argv for cmd in included_commands):
         return True
 
@@ -184,10 +188,37 @@ def isInMainThread():
     return not isInWorkerThread()
 
 
+def readOnlyCommands():
+    """Return a list of read-only management commands which should not trigger database writes."""
+    return [
+        'help',
+        'check',
+        'shell',
+        'sqlflush',
+        'list_apps',
+        'wait_for_db',
+        'spectactular',
+        'makemessages',
+        'collectstatic',
+        'showmigrations',
+        'compilemessages',
+    ]
+
+
+def isReadOnlyCommand():
+    """Return True if the current command is a read-only command, which should not trigger any database writes."""
+    return any(cmd in sys.argv for cmd in readOnlyCommands())
+
+
 def canAppAccessDatabase(
     allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False
 ):
     """Returns True if the apps.py file can access database records.
+
+    Arguments:
+        allow_test: If True, override checks and allow database access during testing mode
+        allow_plugins: If True, override checks and allow database access during plugin loading
+        allow_shell: If True, override checks and allow database access during shell sessions
 
     There are some circumstances where we don't want the ready function in apps.py
     to touch the database
@@ -197,7 +228,7 @@ def canAppAccessDatabase(
         return False
 
     # Prevent database access if we are importing data
-    if isImportingData():
+    if not allow_plugins and isImportingData():
         return False
 
     # Prevent database access if we are rebuilding data
@@ -211,13 +242,13 @@ def canAppAccessDatabase(
     # If any of the following management commands are being executed,
     # prevent custom "on load" code from running!
     excluded_commands = [
-        'check',
-        'createsuperuser',
-        'wait_for_db',
-        'makemessages',
         'compilemessages',
-        'spectactular',
+        'createsuperuser',
         'collectstatic',
+        'makemessages',
+        'spectactular',
+        'wait_for_db',
+        'check',
     ]
 
     if not allow_shell:

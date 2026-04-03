@@ -1,14 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 468
+INVENTREE_API_VERSION = 470
+
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v468 -> 2026-03-21 : https://github.com/inventree/InvenTree/pull/9928
+v470 -> 2026-04-03 : https://github.com/inventree/InvenTree/pull/9928
     - Refactor of "PartTestTemplate" models and API endpoints
     - Add "PartTest" API endpoint
+
+v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
+    - Adds parameter support to the SalesOrderShipment model and API endpoints
+
+v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
+    - Add ordering to contetype related fields - no functional changes
 
 v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
     - Fix definition for the "parent" field on the StockItemSerializer

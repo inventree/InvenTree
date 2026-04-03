@@ -1320,6 +1320,7 @@ class SalesOrderShipmentSerializer(
             'link',
             'notes',
             # Extra detail fields
+            'parameters',
             'checked_by_detail',
             'customer_detail',
             'order_detail',
@@ -1374,6 +1375,8 @@ class SalesOrderShipmentSerializer(
         True,
         prefetch_fields=['shipment_address'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
 
 class SalesOrderAllocationSerializer(

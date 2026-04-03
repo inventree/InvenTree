@@ -554,4 +554,4 @@ To override global settings, provide a "dictionary" of settings overrides in the
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |
+| INVENTREE_GLOBAL_SETTINGS | global_settings | JSON object containing global settings overrides | *Not specified* |
