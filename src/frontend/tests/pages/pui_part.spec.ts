@@ -745,13 +745,12 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(page, name);
     await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
-    // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
@@ -764,7 +763,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 });
 
 test('Parts - Test Results', async ({ browser }) => {
