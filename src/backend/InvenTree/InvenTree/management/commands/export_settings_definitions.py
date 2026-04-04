@@ -48,10 +48,14 @@ class Command(BaseCommand):
 
         # Configuration settings
         for key, config in CONFIG_LOOKUPS.items():
+            default_value = config.get('default_value', None)
+            if default_value is not None:
+                default_value = str(default_value)
+
             settings['config'][key] = {
                 'env_var': str(config.get('env_var', '')),
                 'config_key': str(config.get('config_key', '')),
-                'default_value': str(config.get('default_value', '')),
+                'default_value': default_value,
             }
 
         filename = kwargs.get('filename', 'inventree_settings.json')
