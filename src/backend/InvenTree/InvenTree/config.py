@@ -270,10 +270,13 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
     def set_metadata(source: str):
         """Set lookup metadata for the setting."""
+        global CONFIG_LOOKUPS
+
         key = env_var or config_key
         CONFIG_LOOKUPS[key] = {
             'env_var': env_var,
             'config_key': config_key,
+            'default_value': default_value,
             'source': source,
             'accessed': datetime.datetime.now(),
         }
