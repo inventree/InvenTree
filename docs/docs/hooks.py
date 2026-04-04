@@ -282,7 +282,7 @@ def on_post_build(*args, **kwargs):
         'user': ['LAST_USED_PRINTING_MACHINES'],
     }
 
-    for group in ['global', 'user']:
+    for group in ['global', 'user', 'config']:
         expected = expected_settings.get(group, {})
         observed = observed_settings.get(group, {})
         ignored = ignored_settings.get(group, [])
