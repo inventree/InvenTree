@@ -185,7 +185,6 @@ Proxy configuration can be complex, and any configuration beyond the basic setup
 
 Refer to the [proxy server documentation](./processes.md#proxy-server) for more information.
 
-
 ## Admin Site
 
 Django provides a powerful [administrator interface]({% include "django.html" %}/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, and available at the `/admin/` URL.
@@ -467,6 +466,17 @@ The login-experience can be altered with the following settings:
 ### Authentication Backends
 
 Custom authentication backends can be used by specifying them here. These can for example be used to add [LDAP / AD login](https://django-auth-ldap.readthedocs.io/en/latest/) to InvenTree
+
+## Background Worker Options
+
+The following options are available for configuring the InvenTree [background worker process](./processes.md#background-worker):
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_BACKGROUND_WORKERS | background.workers | Number of background worker processes | 1 |
+| INVENTREE_BACKGROUND_TIMEOUT | background.timeout | Timeout for background worker tasks (seconds) | 90 |
+| INVENTREE_BACKGROUND_RETRY | background.retry | Time to wait before retrying a background task (seconds) | 300 |
+| INVENTREE_BACKGROUND_MAX_ATTEMPTS | background.max_attempts | Maximum number of attempts for a background task | 5 |
 
 ## Sentry Integration
 

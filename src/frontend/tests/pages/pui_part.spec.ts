@@ -745,13 +745,12 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(page, name);
     await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
-    // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
@@ -764,7 +763,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 });
 
 test('Parts - Test Results', async ({ browser }) => {
@@ -804,20 +803,26 @@ test('Parts - 404', async ({ browser }) => {
   await page.evaluate(() => console.clear());
 });
 
-test('Parts - Revision', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/906/details' });
+test('Parts - Revisions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/917/details' });
 
-  await page.getByText('Revision of').waitFor();
+  await page.getByText('ENCAB | Encabulator | C').first().waitFor();
   await page.getByText('Select Part Revision').waitFor();
+
+  // Link to the "revision_of" part
+  await page.getByRole('cell', { name: 'ENCAB | Encabulator | B' }).waitFor();
+
+  // Select a revision
+  await page.getByText('ENCAB | Encabulator | CNo').click();
   await page
-    .getByText('Green Round Table (revision B) | B', { exact: true })
-    .click();
-  await page
-    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
+    .getByRole('option', {
+      name: 'Thumbnail ENCAB | Encabulator | C4 No stock'
+    })
     .click();
 
-  await page.waitForURL('**/web/part/101/**');
-  await page.getByText('Select Part Revision').waitFor();
+  await page.waitForURL('**/web/part/920/**');
+  await page.getByText('Part: ENCAB | Encabulator | C4').first().waitFor();
+  await page.getByRole('link', { name: 'ENCAB | Encabulator | C' }).waitFor();
 });
 
 test('Parts - Bulk Edit', async ({ browser }) => {

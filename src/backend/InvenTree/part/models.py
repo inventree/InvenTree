@@ -776,18 +776,12 @@ class Part(
                     'revision_of': _('Part cannot be a revision of itself')
                 })
 
-            # Part cannot be a revision of a part which is itself a revision
-            if self.revision_of.revision_of:
-                raise ValidationError({
-                    'revision_of': _(
-                        'Cannot make a revision of a part which is already a revision'
-                    )
-                })
-
             # If this part is a revision, it must have a revision code
             if not self.revision:
                 raise ValidationError({
-                    'revision': _('Revision code must be specified')
+                    'revision': _(
+                        'Revision code must be specified for a part marked as a revision'
+                    )
                 })
 
             if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
