@@ -111,6 +111,29 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         ).data
         self.assertEqual(data['success'], 'Installed plugin successfully')
 
+        # valid - python repository url and package name
+        data = self.post(
+            url,
+            {
+                'confirm': True,
+                'url': 'https://git.invenhost.com/api/packages/invenhost-c1/pypi/simple/',
+                'packagename': 'inventree-approval',
+            },
+            expected_code=201,
+            max_query_count=450,
+            max_query_time=30,
+        ).data
+        self.assertEqual(data['success'], 'Installed plugin successfully')
+
+        # valid (kindoff) - Pypi and onsense uri
+        data = self.post(
+            url,
+            {'confirm': True, 'packagename': self.PKG_NAME, 'url': 'lol://example.com'},
+            expected_code=201,
+            max_query_time=30,
+            max_query_count=450,
+        ).data
+
         # invalid tries
         # no input
         data = self.post(url, {}, expected_code=400).data
