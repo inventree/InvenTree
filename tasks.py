@@ -2210,18 +2210,18 @@ def doc_schema(c):
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
         'compile_schema': 'Compile the API schema documentation first (default: False)',
-        'export_definitions': 'Export settings definitions before starting the server (default: True)',
+        'export_settings': 'Export settings definitions before starting the server (default: True)',
     }
 )
 def docs_server(
     c,
     address='localhost:8080',
     compile_schema: bool = False,
-    export_definitions: bool = True,
+    export_settings: bool = True,
 ):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    if export_definitions:
+    if export_settings:
         export_definitions(c, basedir='docs')
 
     if compile_schema:
