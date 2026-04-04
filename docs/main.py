@@ -380,46 +380,22 @@ def define_env(env):
         return rendersetting(key, setting, short=short)
 
     @env.macro
-    def renderconfigsetting(
-        key: str, setting: dict, description: str, default: Optional[str] = None
-    ):
-        """Render a provided configuration setting object into a table row.
-
-        Arguments:
-            key: The name of the setting to extract information for.
-            setting: The setting object to render.
-            description: A description of the configuration setting (as this is not included in the settings definitions)
-            default: An optional default value to override the setting's default display value.
-
-        Returns:
-            A markdown table row containing information on the configuration setting, including the default value.
-        """
-        env_key = setting.get('env_var')
-        cfg_key = setting.get('config_key')
-        default = default or setting.get('default_value')
-
-        if not cfg_key:
-            cfg_key = '-'
-
-        if default is None:
-            default = '-'
-
-        return f'| <div title="{env_key}">{env_key}</div> | {cfg_key} | {description} | {default} |'
-
-    @env.macro
-    def configsetting(key: str, description: str):
+    def configsetting(key: str, default: Optional[str] = None):
         """Extract information on a particular configuration setting.
 
         Arguments:
             key: The name of the configuration setting to extract information for.
-            description: A description of the configuration setting (as this is not included in the settings definitions)
+            default: An optional default value to override the setting's default display value.
         """
         global CONFIG_SETTINGS
         setting = CONFIG_SETTINGS[key]
 
         observe_setting(key, 'config')
 
-        return renderconfigsetting(key, setting, description)
+        cfg_key = setting.get('config_key', '-')
+        default = default or setting.get('default', '-')
+
+        return f'| <div title="{key}">{key}</div> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():
