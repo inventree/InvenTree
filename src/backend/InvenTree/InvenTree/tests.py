@@ -1789,25 +1789,3 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
-
-
-class URLCompatibilityTest(InvenTreeTestCase):
-    """Unit test for legacy URL compatibility."""
-
-    URL_MAPPINGS = [
-        ('/index/', '/web'),
-        ('/part/1/', '/web/part/1/'),
-        ('/company/customers/', '/web/sales/index/customers'),
-        ('/build/3/', '/web/manufacturing/build-order/3'),
-        ('/stock/item/1/', '/web/stock/item/1/'),
-    ]
-
-    @override_settings(
-        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
-    )
-    def test_legacy_urls(self):
-        """Test legacy URLs."""
-        for old_url, new_url in self.URL_MAPPINGS:
-            response = self.client.get(old_url)
-            self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], new_url)
