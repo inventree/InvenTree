@@ -12,7 +12,6 @@ database setup in this file.
 import logging
 import os
 import sys
-from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -639,107 +638,11 @@ Configure the database backend based on the user-specified values.
 
 logger.debug('Configuring database backend:')
 
-# Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', None) if CONFIG else None
+# Load database configuration from the config file and environment variables
+database = db_backend.get_db_backend()
+DB_ENGINE = database['ENGINE']
 
-if not db_config:
-    db_config = {}
-
-# Environment variables take preference over config file!
-
-db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
-
-for key in db_keys:
-    # First, check the environment variables
-    env_key = f'INVENTREE_DB_{key}'
-    env_var = os.environ.get(env_key, None)
-
-    if env_var:
-        # Make use PORT is int
-        if key == 'PORT':
-            try:
-                env_var = int(env_var)
-            except ValueError:
-                logger.exception('Invalid number for %s: %s', env_key, env_var)
-        # Override configuration value
-        db_config[key] = env_var
-
-# Check that required database configuration options are specified
-required_keys = ['ENGINE', 'NAME']
-
-# Ensure all database keys are upper case
-db_config = {key.upper(): value for key, value in db_config.items()}
-
-for key in required_keys:
-    if key not in db_config:  # pragma: no cover
-        error_msg = (
-            f'Missing required database configuration value `INVENTREE_DB_{key}`'
-        )
-        logger.error(error_msg)
-
-        print('Error: ' + error_msg)
-        sys.exit(-1)
-
-"""
-Special considerations for the database 'ENGINE' setting.
-It can be specified in config.yaml (or envvar) as either (for example):
-- sqlite3
-- django.db.backends.sqlite3
-- django.db.backends.postgresql
-"""
-
-DB_ENGINE = db_config['ENGINE'].lower()
-
-# Correct common misspelling
-if DB_ENGINE == 'sqlite':
-    DB_ENGINE = 'sqlite3'  # pragma: no cover
-
-if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
-    # Prepend the required python module string
-    DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
-    db_config['ENGINE'] = DB_ENGINE
-
-db_name = db_config['NAME']
-db_host = db_config.get('HOST', "''")
-
-if 'sqlite' in DB_ENGINE:
-    db_name = str(Path(db_name).resolve())
-    db_config['NAME'] = db_name
-
-logger.info('DB_ENGINE: %s', DB_ENGINE)
-logger.info('DB_NAME: %s', db_name)
-logger.info('DB_HOST: %s', db_host)
-
-"""
-In addition to base-level database configuration, we may wish to specify specific options to the database backend
-Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
-"""
-
-# 'OPTIONS' or 'options' can be specified in config.yaml
-# Set useful sensible timeouts for a transactional webserver to communicate
-# with its database server, that is, if the webserver is having issues
-# connecting to the database server (such as a replica failover) don't sit and
-# wait for possibly an hour or more, just tell the client something went wrong
-# and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options'))
-
-if db_options is None:
-    db_options = {}
-
-# Set database-specific options
-db_backend.set_db_options(DB_ENGINE, db_options)
-
-# Provide OPTIONS dict back to the database configuration dict
-db_config['OPTIONS'] = db_options
-
-# Set testing options for the database
-db_config['TEST'] = {'CHARSET': 'utf8'}
-
-# Set collation option for mysql test database
-if 'mysql' in DB_ENGINE:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
-
-DATABASES = {'default': db_config}
+DATABASES = {'default': database}
 
 # login settings
 REMOTE_LOGIN = get_boolean_setting(
