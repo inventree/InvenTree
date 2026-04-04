@@ -17,7 +17,7 @@ def get_db_backend():
         'USER': get_setting('INVENTREE_DB_USER', 'database.user', None),
         'PASSWORD': get_setting('INVENTREE_DB_PASSWORD', 'database.password', None),
         'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', None),
-        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', None, typecast=int),
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', 5432, typecast=int),
         'OPTIONS': get_setting(
             'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
         )
