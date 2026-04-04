@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-31 23:35\n"
+"PO-Revision-Date: 2026-04-03 13:14\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -73,7 +73,7 @@ msgstr "アクション"
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
-#: src/pages/part/PartDetail.tsx:1201
+#: src/pages/part/PartDetail.tsx:1168
 msgid "Search"
 msgstr "検索"
 
@@ -119,7 +119,7 @@ msgstr "いいえ"
 #: src/forms/StockForms.tsx:1143
 #: src/forms/StockForms.tsx:1187
 #: src/pages/build/BuildDetail.tsx:219
-#: src/pages/part/PartDetail.tsx:1253
+#: src/pages/part/PartDetail.tsx:1220
 #: src/tables/ColumnRenderers.tsx:91
 #: src/tables/build/BuildOrderParametricTable.tsx:26
 #: src/tables/part/PartTestResultTable.tsx:247
@@ -138,7 +138,7 @@ msgstr "パーツ"
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:340
 #: src/pages/part/CategoryDetail.tsx:371
-#: src/pages/part/PartDetail.tsx:989
+#: src/pages/part/PartDetail.tsx:956
 msgid "Parts"
 msgstr "パーツ"
 
@@ -160,7 +160,7 @@ msgstr "パラメータ"
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
 #: src/pages/Index/Settings/SystemSettings.tsx:191
-#: src/pages/part/PartDetail.tsx:953
+#: src/pages/part/PartDetail.tsx:920
 msgid "Parameters"
 msgstr "パラメータ"
 
@@ -222,7 +222,7 @@ msgstr "パーツカテゴリ"
 #: lib/enums/Roles.tsx:37
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:362
-#: src/pages/part/PartDetail.tsx:1242
+#: src/pages/part/PartDetail.tsx:1209
 msgid "Part Categories"
 msgstr "パーツカテゴリ"
 
@@ -274,7 +274,7 @@ msgstr "ストックロケーションの種類"
 
 #: lib/enums/ModelInformation.tsx:114
 #: src/pages/Index/Settings/SystemSettings.tsx:255
-#: src/pages/part/PartDetail.tsx:910
+#: src/pages/part/PartDetail.tsx:877
 msgid "Stock History"
 msgstr "株式履歴"
 
@@ -351,7 +351,7 @@ msgstr "注文"
 #: src/pages/Index/Settings/SystemSettings.tsx:301
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
-#: src/pages/part/PartDetail.tsx:874
+#: src/pages/part/PartDetail.tsx:841
 #: src/pages/purchasing/PurchasingIndex.tsx:66
 msgid "Purchase Orders"
 msgstr "購入注文"
@@ -383,7 +383,7 @@ msgstr "セールスオーダー"
 #: src/defaults/actions.tsx:116
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #: src/pages/company/CompanyDetail.tsx:224
-#: src/pages/part/PartDetail.tsx:886
+#: src/pages/part/PartDetail.tsx:853
 #: src/pages/sales/SalesIndex.tsx:53
 msgid "Sales Orders"
 msgstr "セールスオーダー"
@@ -408,7 +408,7 @@ msgstr "リターンオーダー"
 #: src/defaults/actions.tsx:127
 #: src/pages/Index/Settings/SystemSettings.tsx:334
 #: src/pages/company/CompanyDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:893
+#: src/pages/part/PartDetail.tsx:860
 #: src/pages/sales/SalesIndex.tsx:99
 msgid "Return Orders"
 msgstr "返品注文"
@@ -595,7 +595,7 @@ msgstr "管理者"
 #: src/defaults/actions.tsx:146
 #: src/pages/Index/Settings/SystemSettings.tsx:282
 #: src/pages/build/BuildIndex.tsx:67
-#: src/pages/part/PartDetail.tsx:903
+#: src/pages/part/PartDetail.tsx:870
 #: src/pages/sales/SalesOrderDetail.tsx:431
 msgid "Build Orders"
 msgstr "組立注文"
@@ -751,7 +751,7 @@ msgid "Failed to link barcode"
 msgstr "バーコードのリンクに失敗"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetail.tsx:538
+#: src/pages/part/PartDetail.tsx:498
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:223
 #: src/pages/sales/ReturnOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderDetail.tsx:182
@@ -1791,7 +1791,7 @@ msgstr "ホスト"
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:91
-#: src/pages/part/PartDetail.tsx:463
+#: src/pages/part/PartDetail.tsx:421
 #: src/pages/stock/LocationDetail.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
@@ -2323,7 +2323,7 @@ msgstr "項目なし"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:1024
+#: src/pages/part/PartDetail.tsx:991
 #: src/pages/stock/StockDetail.tsx:265
 #: src/pages/stock/StockDetail.tsx:944
 #: src/tables/ColumnRenderers.tsx:243
@@ -2686,7 +2686,7 @@ msgstr "ログアウト"
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:803
 #: src/pages/Index/Settings/SystemSettings.tsx:231
-#: src/pages/part/PartDetail.tsx:803
+#: src/pages/part/PartDetail.tsx:770
 #: src/pages/stock/LocationDetail.tsx:427
 #: src/pages/stock/LocationDetail.tsx:457
 #: src/pages/stock/StockDetail.tsx:643
@@ -2773,7 +2773,7 @@ msgstr "検索グループの削除"
 
 #: src/components/nav/SearchDrawer.tsx:288
 #: src/pages/company/ManufacturerPartDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:861
+#: src/pages/part/PartDetail.tsx:828
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:100
 msgid "Suppliers"
@@ -2883,7 +2883,7 @@ msgstr "プラグイン情報"
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:146
 #: src/pages/part/CategoryDetail.tsx:111
-#: src/pages/part/PartDetail.tsx:477
+#: src/pages/part/PartDetail.tsx:435
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
@@ -2913,7 +2913,7 @@ msgstr "日付"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
-#: src/pages/part/PartDetail.tsx:632
+#: src/pages/part/PartDetail.tsx:592
 #: src/tables/bom/UsedInTable.tsx:95
 #: src/tables/company/CompanyTable.tsx:66
 #: src/tables/company/CompanyTable.tsx:101
@@ -3053,7 +3053,7 @@ msgstr "発送"
 #: src/pages/company/CompanyDetail.tsx:330
 #: src/pages/company/SupplierPartDetail.tsx:379
 #: src/pages/core/UserDetail.tsx:211
-#: src/pages/part/PartDetail.tsx:1069
+#: src/pages/part/PartDetail.tsx:1036
 #: src/tables/ColumnRenderers.tsx:614
 msgid "Inactive"
 msgstr "非アクティブ"
@@ -3074,7 +3074,7 @@ msgstr "在庫なし"
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:400
-#: src/pages/part/PartDetail.tsx:1051
+#: src/pages/part/PartDetail.tsx:1018
 #: src/tables/bom/BomTable.tsx:448
 #: src/tables/build/BuildLineTable.tsx:228
 #: src/tables/part/PartTable.tsx:109
@@ -3083,8 +3083,8 @@ msgstr "注文中"
 
 #: src/components/render/Part.tsx:55
 #: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/part/PartDetail.tsx:604
-#: src/pages/part/PartDetail.tsx:1057
+#: src/pages/part/PartDetail.tsx:564
+#: src/pages/part/PartDetail.tsx:1024
 #: src/pages/stock/StockDetail.tsx:927
 #: src/tables/part/PartTestResultTable.tsx:306
 #: src/tables/stock/StockItemTable.tsx:213
@@ -3098,7 +3098,7 @@ msgstr "詳細"
 
 #: src/components/render/Part.tsx:112
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/part/PartDetail.tsx:504
+#: src/pages/part/PartDetail.tsx:464
 #: src/tables/ColumnRenderers.tsx:414
 #: src/tables/ColumnRenderers.tsx:423
 #: src/tables/notifications/NotificationTable.tsx:32
@@ -3761,7 +3761,7 @@ msgid "Next"
 msgstr "次へ"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:1091
+#: src/pages/part/PartDetail.tsx:1058
 #: src/tables/part/PartTable.tsx:415
 msgid "Edit Part"
 msgstr "パーツを編集"
@@ -3854,8 +3854,8 @@ msgstr "販売要件"
 #: src/forms/StockForms.tsx:1190
 #: src/pages/company/SupplierPartDetail.tsx:191
 #: src/pages/company/SupplierPartDetail.tsx:384
-#: src/pages/part/PartDetail.tsx:551
-#: src/pages/part/PartDetail.tsx:1014
+#: src/pages/part/PartDetail.tsx:511
+#: src/pages/part/PartDetail.tsx:981
 #: src/tables/Filter.tsx:134
 #: src/tables/purchasing/SupplierPartTable.tsx:269
 msgid "In Stock"
@@ -4569,7 +4569,7 @@ msgstr "ビルドアウトプットはキャンセルされました"
 #: src/pages/build/BuildDetail.tsx:226
 #: src/pages/company/ManufacturerPartDetail.tsx:84
 #: src/pages/company/SupplierPartDetail.tsx:97
-#: src/pages/part/PartDetail.tsx:470
+#: src/pages/part/PartDetail.tsx:428
 #: src/pages/stock/StockDetail.tsx:153
 #: src/tables/ColumnRenderers.tsx:116
 #: src/tables/part/RelatedPartTable.tsx:73
@@ -4580,7 +4580,7 @@ msgstr "IPN"
 #: src/forms/BuildForms.tsx:836
 #: src/forms/BuildForms.tsx:937
 #: src/forms/SalesOrderForms.tsx:429
-#: src/pages/part/PartDetail.tsx:1039
+#: src/pages/part/PartDetail.tsx:1006
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
 #: src/tables/sales/SalesOrderLineItemTable.tsx:338
@@ -4659,9 +4659,9 @@ msgstr "この明細行のプロジェクトコードを選択してください
 #~ msgstr "Company updated"
 
 #: src/forms/PartForms.tsx:101
-#: src/forms/PartForms.tsx:231
+#: src/forms/PartForms.tsx:230
 #: src/pages/part/CategoryDetail.tsx:127
-#: src/pages/part/PartDetail.tsx:685
+#: src/pages/part/PartDetail.tsx:645
 #: src/tables/part/PartCategoryTable.tsx:96
 #: src/tables/part/PartTable.tsx:322
 msgid "Subscribed"
@@ -4679,11 +4679,11 @@ msgstr "このパーツの通知を受け取る"
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:217
+#: src/forms/PartForms.tsx:216
 msgid "Parent part category"
 msgstr "親部品カテゴリー"
 
-#: src/forms/PartForms.tsx:232
+#: src/forms/PartForms.tsx:231
 msgid "Subscribe to notifications for this category"
 msgstr "このカテゴリの通知を受け取る"
 
@@ -4721,8 +4721,8 @@ msgid "Default location selected"
 msgstr "デフォルトの場所を選択"
 
 #: src/forms/PurchaseOrderForms.tsx:536
-#: src/pages/part/PartDetail.tsx:680
-#: src/pages/part/PartDetail.tsx:1075
+#: src/pages/part/PartDetail.tsx:640
+#: src/pages/part/PartDetail.tsx:1042
 #: src/tables/bom/BomTable.tsx:149
 #: src/tables/bom/BomTable.tsx:438
 msgid "Virtual Part"
@@ -5435,7 +5435,7 @@ msgid "Delete selected stock items"
 msgstr "選択された在庫品を削除します"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:1183
+#: src/pages/part/PartDetail.tsx:1150
 msgid "Stock Actions"
 msgstr "ストックアクション"
 
@@ -7052,7 +7052,7 @@ msgstr "組み立てられた部品には部品表（BOM）が定義されてい
 #~ msgstr "Delete build order"
 
 #: src/pages/build/BuildDetail.tsx:234
-#: src/pages/part/PartDetail.tsx:497
+#: src/pages/part/PartDetail.tsx:457
 #: src/pages/stock/StockDetail.tsx:161
 #: src/tables/bom/UsedInTable.tsx:49
 #: src/tables/build/BuildOrderTable.tsx:87
@@ -7097,7 +7097,7 @@ msgid "Build Quantity"
 msgstr "数量"
 
 #: src/pages/build/BuildDetail.tsx:294
-#: src/pages/part/PartDetail.tsx:615
+#: src/pages/part/PartDetail.tsx:575
 #: src/tables/bom/BomTable.tsx:364
 #: src/tables/bom/BomTable.tsx:406
 msgid "Can Build"
@@ -7115,7 +7115,7 @@ msgid "Issued By"
 msgstr "発行者"
 
 #: src/pages/build/BuildDetail.tsx:328
-#: src/pages/part/PartDetail.tsx:708
+#: src/pages/part/PartDetail.tsx:668
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:262
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:233
@@ -7208,7 +7208,7 @@ msgid "Child Build Orders"
 msgstr "チャイルド・ビルド・オーダー"
 
 #: src/pages/build/BuildDetail.tsx:534
-#: src/pages/part/PartDetail.tsx:936
+#: src/pages/part/PartDetail.tsx:903
 #: src/pages/stock/StockDetail.tsx:587
 #: src/tables/build/BuildOutputTable.tsx:704
 #: src/tables/stock/StockItemTestResultTable.tsx:173
@@ -7497,7 +7497,7 @@ msgstr "外部リンク"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:147
 #: src/pages/company/SupplierPartDetail.tsx:233
-#: src/pages/part/PartDetail.tsx:797
+#: src/pages/part/PartDetail.tsx:764
 msgid "Part Details"
 msgstr "部品詳細"
 
@@ -7596,7 +7596,7 @@ msgid "Add Supplier Part"
 msgstr "サプライヤー部品の追加"
 
 #: src/pages/company/SupplierPartDetail.tsx:394
-#: src/pages/part/PartDetail.tsx:1033
+#: src/pages/part/PartDetail.tsx:1000
 msgid "No Stock"
 msgstr "在庫切れ"
 
@@ -7735,11 +7735,11 @@ msgstr "ビルド・オーダー・アロケーション"
 msgid "Sales Order Allocations"
 msgstr "販売注文の割り当て"
 
-#: src/pages/part/PartDetail.tsx:176
+#: src/pages/part/PartDetail.tsx:177
 msgid "Validating BOM"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:177
+#: src/pages/part/PartDetail.tsx:178
 msgid "BOM validated"
 msgstr ""
 
@@ -7747,42 +7747,42 @@ msgstr ""
 #~ msgid "Bill of materials scheduled for validation"
 #~ msgstr "Bill of materials scheduled for validation"
 
-#: src/pages/part/PartDetail.tsx:192
-#: src/pages/part/PartDetail.tsx:195
-#: src/pages/part/PartDetail.tsx:244
+#: src/pages/part/PartDetail.tsx:193
+#: src/pages/part/PartDetail.tsx:196
+#: src/pages/part/PartDetail.tsx:245
 msgid "Validate BOM"
 msgstr "BOMの検証"
 
-#: src/pages/part/PartDetail.tsx:196
+#: src/pages/part/PartDetail.tsx:197
 msgid "Do you want to validate the bill of materials for this assembly?"
 msgstr "このアセンブリの部品表を検証しますか？"
 
-#: src/pages/part/PartDetail.tsx:222
+#: src/pages/part/PartDetail.tsx:223
 msgid "BOM Validated"
 msgstr "部品表の検証が完了しました"
 
-#: src/pages/part/PartDetail.tsx:223
+#: src/pages/part/PartDetail.tsx:224
 msgid "The Bill of Materials for this part has been validated"
 msgstr "この部品の部品表は検証済みです"
 
-#: src/pages/part/PartDetail.tsx:227
-#: src/pages/part/PartDetail.tsx:232
+#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:233
 msgid "BOM Not Validated"
 msgstr "BOMが未検証です"
 
-#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:229
 msgid "The Bill of Materials for this part has previously been checked, but requires revalidation"
 msgstr "この部品の部品表は既にチェック済みですが、再検証が必要となります。"
 
-#: src/pages/part/PartDetail.tsx:233
+#: src/pages/part/PartDetail.tsx:234
 msgid "The Bill of Materials for this part has not yet been validated"
 msgstr "この部品の部品表はまだ検証されていません"
 
-#: src/pages/part/PartDetail.tsx:264
+#: src/pages/part/PartDetail.tsx:265
 msgid "Validated On"
 msgstr "検証日時"
 
-#: src/pages/part/PartDetail.tsx:269
+#: src/pages/part/PartDetail.tsx:270
 msgid "Validated By"
 msgstr "検証者"
 
@@ -7802,38 +7802,38 @@ msgstr "検証者"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:483
+#: src/pages/part/PartDetail.tsx:441
 msgid "Variant of"
 msgstr "変種"
 
-#: src/pages/part/PartDetail.tsx:490
+#: src/pages/part/PartDetail.tsx:449
 msgid "Revision of"
 msgstr "改訂版"
 
-#: src/pages/part/PartDetail.tsx:510
+#: src/pages/part/PartDetail.tsx:470
 #: src/tables/ColumnRenderers.tsx:390
 #: src/tables/ColumnRenderers.tsx:399
 msgid "Default Location"
 msgstr "デフォルトの場所"
 
-#: src/pages/part/PartDetail.tsx:510
-#~ msgid "Stocktake By"
-#~ msgstr "Stocktake By"
-
-#: src/pages/part/PartDetail.tsx:517
+#: src/pages/part/PartDetail.tsx:477
 msgid "Category Default Location"
 msgstr "カテゴリー デフォルトの場所"
 
-#: src/pages/part/PartDetail.tsx:524
+#: src/pages/part/PartDetail.tsx:484
 msgid "Units"
 msgstr "単位"
 
-#: src/pages/part/PartDetail.tsx:531
+#: src/pages/part/PartDetail.tsx:491
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "キーワード"
 
-#: src/pages/part/PartDetail.tsx:559
+#: src/pages/part/PartDetail.tsx:510
+#~ msgid "Stocktake By"
+#~ msgstr "Stocktake By"
+
+#: src/pages/part/PartDetail.tsx:519
 #: src/tables/bom/BomTable.tsx:443
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTable.tsx:316
@@ -7841,71 +7841,71 @@ msgstr "キーワード"
 msgid "Available Stock"
 msgstr "在庫状況"
 
-#: src/pages/part/PartDetail.tsx:565
+#: src/pages/part/PartDetail.tsx:525
 #: src/tables/bom/BomTable.tsx:340
 #: src/tables/build/BuildLineTable.tsx:273
 #: src/tables/sales/SalesOrderLineItemTable.tsx:174
 msgid "On order"
 msgstr "注文中"
 
-#: src/pages/part/PartDetail.tsx:572
+#: src/pages/part/PartDetail.tsx:532
 msgid "Required for Orders"
 msgstr "ご注文に必要なもの"
 
-#: src/pages/part/PartDetail.tsx:583
+#: src/pages/part/PartDetail.tsx:543
 msgid "Allocated to Build Orders"
 msgstr "建設受注に割り当て"
 
-#: src/pages/part/PartDetail.tsx:595
+#: src/pages/part/PartDetail.tsx:555
 msgid "Allocated to Sales Orders"
 msgstr "販売注文に割り当て"
 
-#: src/pages/part/PartDetail.tsx:613
-#~ msgid "Scheduling"
-#~ msgstr "Scheduling"
-
-#: src/pages/part/PartDetail.tsx:622
+#: src/pages/part/PartDetail.tsx:582
 msgid "Minimum Stock"
 msgstr "最小在庫"
 
-#: src/pages/part/PartDetail.tsx:637
+#: src/pages/part/PartDetail.tsx:597
 #: src/tables/part/ParametricPartTable.tsx:24
 #: src/tables/part/PartTable.tsx:204
 msgid "Locked"
 msgstr "ロック中"
 
-#: src/pages/part/PartDetail.tsx:643
+#: src/pages/part/PartDetail.tsx:603
 msgid "Template Part"
 msgstr "テンプレート部品"
 
-#: src/pages/part/PartDetail.tsx:648
+#: src/pages/part/PartDetail.tsx:608
 #: src/tables/bom/BomTable.tsx:433
 msgid "Assembled Part"
 msgstr "組立部品"
 
-#: src/pages/part/PartDetail.tsx:653
+#: src/pages/part/PartDetail.tsx:613
 msgid "Component Part"
 msgstr "構成部品"
 
-#: src/pages/part/PartDetail.tsx:658
+#: src/pages/part/PartDetail.tsx:613
+#~ msgid "Scheduling"
+#~ msgstr "Scheduling"
+
+#: src/pages/part/PartDetail.tsx:618
 #: src/tables/bom/BomTable.tsx:418
 msgid "Testable Part"
 msgstr "テスト可能な部分"
 
-#: src/pages/part/PartDetail.tsx:664
+#: src/pages/part/PartDetail.tsx:624
 #: src/tables/bom/BomTable.tsx:423
 msgid "Trackable Part"
 msgstr "追跡可能部品"
 
-#: src/pages/part/PartDetail.tsx:669
+#: src/pages/part/PartDetail.tsx:629
 msgid "Purchaseable Part"
 msgstr "購入可能部品"
 
-#: src/pages/part/PartDetail.tsx:675
+#: src/pages/part/PartDetail.tsx:635
 msgid "Saleable Part"
 msgstr "売却可能部分"
 
-#: src/pages/part/PartDetail.tsx:695
+#: src/pages/part/PartDetail.tsx:655
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:272
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:243
@@ -7913,127 +7913,127 @@ msgstr "売却可能部分"
 msgid "Creation Date"
 msgstr "作成日時"
 
-#: src/pages/part/PartDetail.tsx:698
-#~ msgid "Default Supplier"
-#~ msgstr "Default Supplier"
-
-#: src/pages/part/PartDetail.tsx:700
+#: src/pages/part/PartDetail.tsx:660
 #: src/tables/ColumnRenderers.tsx:639
 #: src/tables/Filter.tsx:433
 msgid "Created By"
 msgstr "作成者"
 
-#: src/pages/part/PartDetail.tsx:714
+#: src/pages/part/PartDetail.tsx:674
 msgid "Default Expiry"
 msgstr "デフォルトの有効期限"
 
-#: src/pages/part/PartDetail.tsx:719
+#: src/pages/part/PartDetail.tsx:679
 msgid "days"
 msgstr "日"
 
-#: src/pages/part/PartDetail.tsx:729
+#: src/pages/part/PartDetail.tsx:689
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:180
 msgid "Price Range"
 msgstr "料金帯"
 
-#: src/pages/part/PartDetail.tsx:739
+#: src/pages/part/PartDetail.tsx:698
+#~ msgid "Default Supplier"
+#~ msgstr "Default Supplier"
+
+#: src/pages/part/PartDetail.tsx:699
 msgid "Latest Serial Number"
 msgstr "最新のシリアル番号"
 
-#: src/pages/part/PartDetail.tsx:767
+#: src/pages/part/PartDetail.tsx:732
 msgid "Select Part Revision"
 msgstr "部品リビジョンの選択"
 
-#: src/pages/part/PartDetail.tsx:822
+#: src/pages/part/PartDetail.tsx:789
 msgid "Variants"
 msgstr "バリアント"
 
-#: src/pages/part/PartDetail.tsx:829
+#: src/pages/part/PartDetail.tsx:796
 #: src/pages/stock/StockDetail.tsx:542
 msgid "Allocations"
 msgstr "割り当て"
 
-#: src/pages/part/PartDetail.tsx:836
+#: src/pages/part/PartDetail.tsx:803
 msgid "Bill of Materials"
 msgstr "部品表"
 
-#: src/pages/part/PartDetail.tsx:848
+#: src/pages/part/PartDetail.tsx:815
 msgid "Used In"
 msgstr "中古"
 
-#: src/pages/part/PartDetail.tsx:855
+#: src/pages/part/PartDetail.tsx:822
 msgid "Part Pricing"
 msgstr "部品価格"
 
-#: src/pages/part/PartDetail.tsx:925
+#: src/pages/part/PartDetail.tsx:892
 msgid "Test Templates"
 msgstr "テストテンプレート"
 
-#: src/pages/part/PartDetail.tsx:947
+#: src/pages/part/PartDetail.tsx:914
 msgid "Related Parts"
 msgstr "関連部品"
 
-#: src/pages/part/PartDetail.tsx:956
-#~ msgid "Count part stock"
-#~ msgstr "Count part stock"
-
-#: src/pages/part/PartDetail.tsx:959
+#: src/pages/part/PartDetail.tsx:926
 #: src/tables/ColumnRenderers.tsx:73
 #: src/tables/bom/BomTable.tsx:661
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "部品がロックされています"
 
-#: src/pages/part/PartDetail.tsx:964
+#: src/pages/part/PartDetail.tsx:931
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "パートがロックされているため、パートパラメータを編集できません。"
+
+#: src/pages/part/PartDetail.tsx:956
+#~ msgid "Count part stock"
+#~ msgstr "Count part stock"
 
 #: src/pages/part/PartDetail.tsx:967
 #~ msgid "Transfer part stock"
 #~ msgstr "Transfer part stock"
 
-#: src/pages/part/PartDetail.tsx:1045
+#: src/pages/part/PartDetail.tsx:1012
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:405
 msgid "Required"
 msgstr "必須"
 
-#: src/pages/part/PartDetail.tsx:1063
+#: src/pages/part/PartDetail.tsx:1030
 msgid "Deficit"
 msgstr "不足数"
 
-#: src/pages/part/PartDetail.tsx:1103
+#: src/pages/part/PartDetail.tsx:1070
 #: src/tables/part/PartTable.tsx:402
 #: src/tables/part/PartTable.tsx:456
 msgid "Add Part"
 msgstr "部品追加"
 
-#: src/pages/part/PartDetail.tsx:1117
+#: src/pages/part/PartDetail.tsx:1084
 msgid "Delete Part"
 msgstr "削除部分"
 
-#: src/pages/part/PartDetail.tsx:1126
+#: src/pages/part/PartDetail.tsx:1093
 msgid "Deleting this part cannot be reversed"
 msgstr "この部分の削除は元に戻せません"
 
-#: src/pages/part/PartDetail.tsx:1189
+#: src/pages/part/PartDetail.tsx:1156
 #: src/pages/stock/StockDetail.tsx:885
 msgid "Order"
 msgstr "注文"
 
-#: src/pages/part/PartDetail.tsx:1190
+#: src/pages/part/PartDetail.tsx:1157
 #: src/pages/stock/StockDetail.tsx:886
 #: src/tables/build/BuildLineTable.tsx:790
 msgid "Order Stock"
 msgstr "注文在庫"
 
-#: src/pages/part/PartDetail.tsx:1202
+#: src/pages/part/PartDetail.tsx:1169
 msgid "Search by serial number"
 msgstr "シリアル番号で検索"
 
-#: src/pages/part/PartDetail.tsx:1210
+#: src/pages/part/PartDetail.tsx:1177
 #: src/tables/part/PartTable.tsx:513
 msgid "Part Actions"
 msgstr "パートアクション"
