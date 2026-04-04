@@ -171,6 +171,17 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 str(response.data['non_field_errors']),
             )
 
+        # plugin - normal user should not be able to install plugins
+        self.user.is_staff = False
+        self.user.save()
+        self.post(
+            url,
+            {'confirm': True, 'packagename': self.PKG_NAME},
+            expected_code=400,
+            max_query_time=30,
+            max_query_count=450,
+        )
+
     def test_plugin_deactivate_mandatory(self):
         """Test deactivating a mandatory plugin."""
         self.user.is_superuser = True
