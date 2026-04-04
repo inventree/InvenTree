@@ -46,6 +46,9 @@ Environment variable settings generally use the `INVENTREE_` prefix, and are all
 !!! warning "Available Variables"
     Some configuration options cannot be set via environment variables. Refer to the documentation below.
 
+!!! info "Environment Variable Priority"
+    Note that a provided environment variable will override the value provided in the configuration file.
+
 #### List Values
 
 To specify a list value in an environment variable, use a comma-separated list. For example, to specify a list of trusted origins:
@@ -116,26 +119,23 @@ Depending on how your InvenTree installation is configured, you will need to pay
 !!! danger "Not Secure"
     Allowing access from any host is not secure, and should be adjusted for your installation.
 
-!!! info "Environment Variables"
-    Note that a provided environment variable will override the value provided in the configuration file.
-
 !!! success "INVENTREE_SITE_URL"
     If you have specified the `INVENTREE_SITE_URL`, this will automatically be used as a trusted CSRF and CORS host (see below).
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ALLOWED_HOSTS | allowed_hosts | List of allowed hosts | `*` |
-| INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
-| INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | `False` |
-| INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
-| INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
-| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
-| INVENTREE_SITE_LAX_PROTOCOL | site_lax_protocol | Ignore protocol mismatches on INVE-E7 site checks | `True` |
-| INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
-| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
-| INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
-| INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
-| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ALLOWED_HOSTS") }} List of allowed hosts |
+{{ configsetting("INVENTREE_TRUSTED_ORIGINS", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) |
+{{ configsetting("INVENTREE_CORS_ORIGIN_ALLOW_ALL") }} Allow all remote URLS for CORS checks |
+{{ configsetting("INVENTREE_CORS_ORIGIN_WHITELIST", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) |
+{{ configsetting("INVENTREE_CORS_ORIGIN_REGEX") }} List of regular expressions for CORS whitelisted URL patterns |
+{{ configsetting("INVENTREE_CORS_ALLOW_CREDENTIALS") }} Allow cookies in cross-site requests |
+{{ configsetting("INVENTREE_SITE_LAX_PROTOCOL") }} Ignore protocol mismatches on INVE-E7 site checks |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_HOST") }} Use forwarded host header |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_PORT") }} Use forwarded port header |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_PROTO") }} Use forwarded protocol header |
+| `INVENTREE_X_FORWARDED_PROTO_NAME` | `x_forwarded_proto_name` | `HTTP_X_FORWARDED_PROTO` | Name of the header to use for forwarded protocol information |
+| `INVENTREE_SESSION_COOKIE_SECURE` | `cookie.secure` | False | Enforce secure session cookies |
+{{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
 
 ### Debug Mode
 
@@ -189,10 +189,9 @@ Django provides a powerful [administrator interface]({% include "django.html" %}
 
 The following admin site configuration options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the django administrator interface | True |
-| INVENTREE_ADMIN_URL | admin_url | URL for accessing the admin interface | admin |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the django administrator interface |
+{{ configsetting("INVENTREE_ADMIN_URL") }} URL for accessing the admin interface |
 
 !!! warning "Security"
     Changing the admin URL is a simple way to improve security, but it is not a substitute for proper security practices.
@@ -201,12 +200,11 @@ The following admin site configuration options are available:
 
 An administrator account can be specified using the following environment variables:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ADMIN_USER | admin_user | Admin account username | *Not specified* |
-| INVENTREE_ADMIN_PASSWORD | admin_password | Admin account password | *Not specified* |
-| INVENTREE_ADMIN_PASSWORD_FILE | admin_password_file | Admin account password file | *Not specified* |
-| INVENTREE_ADMIN_EMAIL | admin_email |Admin account email address | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ADMIN_USER") }} Admin account username |
+{{ configsetting("INVENTREE_ADMIN_PASSWORD") }} Admin account password |
+{{ configsetting("INVENTREE_ADMIN_PASSWORD_FILE") }} Admin account password file |
+{{ configsetting("INVENTREE_ADMIN_EMAIL") }} Admin account email address |
 
 You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, or you can specify a file containing the password using `INVENTREE_ADMIN_PASSWORD_FILE` (this is useful for nix users).
 
@@ -236,12 +234,11 @@ A PEM-encoded file containing the oidc private key can be passed via the environ
 
 If not specified via environment variables, the fallback files (automatically generated as part of InvenTree installation) will be used.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SECRET_KEY | secret_key | Raw secret key value | *Not specified* |
-| INVENTREE_SECRET_KEY_FILE | secret_key_file | File containing secret key value | *Not specified* |
-| INVENTREE_OIDC_PRIVATE_KEY | oidc_private_key | Raw private key value | *Not specified* |
-| INVENTREE_OIDC_PRIVATE_KEY_FILE | oidc_private_key_file | File containing private key value in PEM format | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SECRET_KEY") }} Raw secret key value |
+{{ configsetting("INVENTREE_SECRET_KEY_FILE") }} File containing secret key value |
+{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY") }} Raw private key value |
+{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY_FILE") }} File containing private key value in PEM format |
 
 ## Database Options
 
@@ -251,14 +248,14 @@ Database options are specified under the *database* heading in the configuration
 
 The following database options can be configured:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_ENGINE | database.ENGINE | Database backend | *Not specified* |
-| INVENTREE_DB_NAME | database.NAME | Database name | *Not specified* |
-| INVENTREE_DB_USER | database.USER | Database username (if required) | *Not specified* |
-| INVENTREE_DB_PASSWORD | database.PASSWORD | Database password (if required) | *Not specified* |
-| INVENTREE_DB_HOST | database.HOST | Database host address (if required) | *Not specified* |
-| INVENTREE_DB_PORT | database.PORT | Database host port (if required) | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DB_ENGINE") }} Database backend |
+{{ configsetting("INVENTREE_DB_NAME") }} Database name |
+{{ configsetting("INVENTREE_DB_USER") }} Database username (if required) |
+{{ configsetting("INVENTREE_DB_PASSWORD") }} Database password (if required) |
+{{ configsetting("INVENTREE_DB_HOST") }} Database host address (if required) |
+{{ configsetting("INVENTREE_DB_PORT") }} Database host port (if required) |
+
 
 !!! tip "Database Password"
     The value specified for `INVENTREE_DB_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the database may fail.
@@ -267,22 +264,20 @@ The following database options can be configured:
 
 If running with a PostgreSQL database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 2 |
-| INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | Idle TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | TCP keepalive interval | 1|
-| INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | TCP keepalive count | 5 |
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+{{ configtable() }}
+| INVENTREE_DB_TIMEOUT | database.timeout | 2 | Database connection timeout (s) |
+| INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | 1 | TCP keepalive |
+| INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
+| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | 1| TCP keepalive interval |
+| INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | 5 | TCP keepalive count |
+| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### MySQL Settings
 
 If running with a MySQL database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+{{ configtable() }}
+| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
 
@@ -291,10 +286,9 @@ If running with a MySQL database backend, the following additional options are a
 
 If running with a SQLite database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
-| INVENTREE_DB_WAL_MODE | database.wal_mode | Enable Write-Ahead Logging (WAL) mode for SQLite databases | True |
+{{ configtable() }}
+| INVENTREE_DB_TIMEOUT | database.timeout | 10 | Database connection timeout (s) |
+| INVENTREE_DB_WAL_MODE | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
 
 ## Caching
 
@@ -312,20 +306,19 @@ Enabling global caching requires connection to a redis server (which is separate
 
 The following cache settings are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
-| INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
-| INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
-| INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
-| INVENTREE_CACHE_USER | cache.user | Cache server username | none |
-| INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
-| INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
-| INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
-| INVENTREE_CACHE_KEEPALIVE_COUNT | cache.keepalive_count | Cache keepalive count | 5 |
-| INVENTREE_CACHE_KEEPALIVE_IDLE | cache.keepalive_idle | Cache keepalive idle | 1 |
-| INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
-| INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_CACHE_ENABLED") }} Enable redis caching |
+{{ configsetting("INVENTREE_CACHE_HOST") }} Cache server host |
+{{ configsetting("INVENTREE_CACHE_PORT") }} Cache server port |
+{{ configsetting("INVENTREE_CACHE_PASSWORD") }} Cache server password |
+{{ configsetting("INVENTREE_CACHE_USER") }} Cache server username |
+{{ configsetting("INVENTREE_CACHE_CONNECT_TIMEOUT") }} Cache connection timeout (seconds) |
+{{ configsetting("INVENTREE_CACHE_TIMEOUT") }} Cache timeout (seconds) |
+{{ configsetting("INVENTREE_CACHE_TCP_KEEPALIVE") }} Cache TCP keepalive |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_COUNT") }} Cache keepalive count |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_IDLE") }} Cache keepalive idle |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_INTERVAL") }} Cache keepalive interval |
+{{ configsetting("INVENTREE_CACHE_USER_TIMEOUT") }} Cache user timeout |
 
 !!! tip "Cache Password"
     The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.
