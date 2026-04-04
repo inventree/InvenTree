@@ -89,18 +89,17 @@ With "auto update" enabled, the InvenTree server will automatically apply databa
 
 The following debugging / logging options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
-| INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
-| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
-| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
-| INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
-| INVENTREE_JSON_LOG | json_log | log as json | False |
-| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
-| INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
-| INVENTREE_SCHEMA_LEVEL | schema.level | Set level of added schema extensions detail (0-3) 0 = including no additional detail | 0 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DEBUG") }} Enable [debug mode](./index.md#debug-mode) |
+{{ configsetting("INVENTREE_DB_LOGGING") }} Enable logging of database messages |
+{{ configsetting("INVENTREE_LOG_LEVEL") }} Set level of logging to terminal |
+{{ configsetting("INVENTREE_JSON_LOG") }} Log messages as json |
+{{ configsetting("INVENTREE_WRITE_LOG") }} Enable writing of log messages to file at config base |
+{{ configsetting("INVENTREE_CONSOLE_LOG") }} Enable logging to console |
+{{ configsetting("INVENTREE_SCHEMA_LEVEL") }} Set level of added schema extensions detail (0-3) 0 = including no additional detail |
+{{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
+{{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
+| INVENTREE_DEBUG_SILK_PROFILING | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
 
 ### Debug Mode
 

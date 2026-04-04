@@ -380,6 +380,11 @@ def define_env(env):
         return rendersetting(key, setting, short=short)
 
     @env.macro
+    def configtable():
+        """Generate a header for the configuration settings table."""
+        return '| Environment Variable | Configuration File | Default | Description |\n| --- | --- | --- | --- |'
+
+    @env.macro
     def configsetting(key: str, default: Optional[str] = None):
         """Extract information on a particular configuration setting.
 
@@ -392,10 +397,12 @@ def define_env(env):
 
         observe_setting(key, 'config')
 
-        cfg_key = setting.get('config_key', '-')
+        cfg_key = setting.get('config_key', None)
+        cfg_key = f'`{cfg_key}`' if cfg_key else '-'
+
         default = default or setting.get('default', '-')
 
-        return f'| <div title="{key}">{key}</div> | {cfg_key} | {default} |'
+        return f'| <div title="{key}">`{key}`</div> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():
