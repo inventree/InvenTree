@@ -54,11 +54,12 @@ export function Header() {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
-
   const [
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
+  const [elevatedAlertClosed, setElevatedAlertClosed] =
+    useState<boolean>(false);
 
   useHotkeys([
     [
@@ -201,17 +202,22 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {(user?.is_staff || user?.is_superuser || false) && (
-        <Alert
-          color={user.is_superuser ? 'red' : 'orange'}
-          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
-        >
-          <Text>
-            {t`The current user has elevated privileges and should not be used for regular usage.`}
-            {errorCodeLink('INVE-W14')}
-          </Text>
-        </Alert>
-      )}
+      {(user?.is_staff || user?.is_superuser || false) &&
+        !elevatedAlertClosed && (
+          <Alert
+            color={user.is_superuser ? 'red' : 'orange'}
+            title={
+              user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`
+            }
+            withCloseButton
+            onClose={() => setElevatedAlertClosed(true)}
+          >
+            <Text>
+              {t`The current user has elevated privileges and should not be used for regular usage.`}
+              {errorCodeLink('INVE-W14')}
+            </Text>
+          </Alert>
+        )}
     </div>
   );
 }
