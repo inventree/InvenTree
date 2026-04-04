@@ -130,6 +130,14 @@ export function Header() {
     else closeNavDrawer();
   }, [navigationOpen]);
 
+  const showElevated = useMemo(
+    () =>
+      (user?.is_staff || user?.is_superuser || false) &&
+      !elevatedAlertClosed &&
+      !window.INVENTREE_SETTINGS.dangerous_hide_evelevated_alert,
+    [user, elevatedAlertClosed]
+  );
+
   const headerStyle: any = useMemo(() => {
     const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
 
@@ -202,22 +210,19 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {(user?.is_staff || user?.is_superuser || false) &&
-        !elevatedAlertClosed && (
-          <Alert
-            color={user.is_superuser ? 'red' : 'orange'}
-            title={
-              user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`
-            }
-            withCloseButton
-            onClose={() => setElevatedAlertClosed(true)}
-          >
-            <Text>
-              {t`The current user has elevated privileges and should not be used for regular usage.`}
-              {errorCodeLink('INVE-W14')}
-            </Text>
-          </Alert>
-        )}
+      {showElevated && user && (
+        <Alert
+          color={user.is_superuser ? 'red' : 'orange'}
+          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
+          withCloseButton
+          onClose={() => setElevatedAlertClosed(true)}
+        >
+          <Text>
+            {t`The current user has elevated privileges and should not be used for regular usage.`}
+            {errorCodeLink('INVE-W14')}
+          </Text>
+        </Alert>
+      )}
     </div>
   );
 }
