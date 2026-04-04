@@ -81,6 +81,8 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 
+AUTO_UPDATE = get_boolean_setting('INVENTREE_AUTO_UPDATE', 'auto_update', False)
+
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)

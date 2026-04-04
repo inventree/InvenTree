@@ -58,14 +58,13 @@ INVENTREE_TRUSTED_ORIGINS='https://inventree.example.com:8443,https://stock.exam
 
 The following basic options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
-| INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
-| INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
-| INVENTREE_LANGUAGE | language | Default language | en-us |
-| INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SITE_URL") }} Specify a fixed site URL |
+{{ configsetting("INVENTREE_TIMEZONE") }} Server timezone |
+{{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) |
+{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing [admin interface](../settings/admin.md) |
+{{ configsetting("INVENTREE_LANGUAGE") }} Default language |
+{{ configsetting("INVENTREE_AUTO_UPDATE") }} Database migrations will be run automatically |
 
 ### Site URL
 

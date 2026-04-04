@@ -400,7 +400,7 @@ def define_env(env):
         cfg_key = setting.get('config_key', None)
         cfg_key = f'`{cfg_key}`' if cfg_key else '-'
 
-        default = default or setting.get('default', '-')
+        default = default or setting.get('default_value', '-')
 
         return f'| <div title="{key}">`{key}`</div> | {cfg_key} | {default} |'
 
