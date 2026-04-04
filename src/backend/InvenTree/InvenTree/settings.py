@@ -866,10 +866,10 @@ INTERNAL_EMAIL_BACKEND = get_setting(
 )
 
 # SMTP backend
-EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
+EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
-EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
-EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
+EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username')
+EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password')
 EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 # Anymail

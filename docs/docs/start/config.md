@@ -329,17 +329,16 @@ To enable [email functionality](../settings/email.md), email settings must be co
 
 The following email settings are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | django.core.mail.backends.smtp.EmailBackend |
-| INVENTREE_EMAIL_HOST | email.host | Email server host | *Not specified* |
-| INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
-| INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
-| INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
-| INVENTREE_EMAIL_TLS | email.tls | Enable STARTTLS support (commonly port 567) | False |
-| INVENTREE_EMAIL_SSL | email.ssl | Enable legacy SSL/TLS support (commonly port 465) | False |
-| INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
-| INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+{{ configtable() }}
+{{ configsetting("INVENTREE_EMAIL_BACKEND") }} Email backend module |
+{{ configsetting("INVENTREE_EMAIL_HOST") }} Email server host |
+{{ configsetting("INVENTREE_EMAIL_PORT") }} Email server port |
+{{ configsetting("INVENTREE_EMAIL_USERNAME") }} Email account username |
+{{ configsetting("INVENTREE_EMAIL_PASSWORD") }} Email account password |
+{{ configsetting("INVENTREE_EMAIL_TLS") }} Enable STARTTLS support (commonly port 567) |
+{{ configsetting("INVENTREE_EMAIL_SSL") }} Enable legacy SSL/TLS support (commonly port 465) |
+{{ configsetting("INVENTREE_EMAIL_SENDER") }} Sending email address |
+{{ configsetting("INVENTREE_EMAIL_PREFIX") }} Prefix for subject text |
 
 ### Email Backend
 
@@ -356,11 +355,10 @@ The "sender" email address is the address from which InvenTree emails are sent (
 
 InvenTree requires some external directories for storing files:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_STATIC_ROOT | static_root | [Static files](./processes.md#static-files) directory | *Not specified* |
-| INVENTREE_MEDIA_ROOT | media_root | [Media files](./processes.md#media-files) directory | *Not specified* |
-| INVENTREE_BACKUP_DIR | backup_dir | Backup files directory | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_STATIC_ROOT") }} [Static files](./processes.md#static-files) directory |
+{{ configsetting("INVENTREE_MEDIA_ROOT") }} [Media files](./processes.md#media-files) directory |
+{{ configsetting("INVENTREE_BACKUP_DIR") }} Directory for backup files |
 
 !!! tip "Serving Files"
     Read the [proxy server documentation](./processes.md#proxy-server) for more information on hosting *static* and *media* files
@@ -394,43 +392,42 @@ Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` env
 
 It is also possible to use alternative storage backends for static and media files, at the moment there is direct provide direct support bundled for S3 and SFTP. Google cloud storage and Azure blob storage would also be supported by the [used library](https://django-storages.readthedocs.io), but require additional packages to be installed.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_STORAGE_TARGET | storage.target | Storage target to use for static and media files, valid options: local, s3, sftp | local |
+{{ configtable() }}
+{{ configsetting("INVENTREE_STORAGE_TARGET") }} Storage target to use for static and media files, valid options: local, s3, sftp |
+
 
 #### S3
 
-| Environment Variable | Configuration File | Description | Default |
+| Environment Variable | Configuration File | Default | Description |
 | --- | --- | --- | --- |
-| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
-| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key | *Not specified* |
-| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers | *Not specified* |
-| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name | *Not specified* |
-| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set | *Not specified* |
-| INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
-| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
-| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
-| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
-| INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
+| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | *Not specified* | Access key |
+| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | *Not specified* | Secret key |
+| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | *Not specified* | Bucket name, required by most providers |
+| INVENTREE_S3_REGION_NAME | storage.s3.region_name | *Not specified* | S3 region name |
+| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | *Not specified* | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
+| INVENTREE_S3_LOCATION | storage.s3.location | inventree-server | Sub-Location that should be used |
+| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | *Not specified* | Default ACL for uploaded files, defaults to provider default if not set |
+| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | True | Verify SSL certificate for S3 endpoint |
+| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | False | Overwrite existing files in S3 bucket |
+| INVENTREE_S3_VIRTUAL | storage.s3.virtual | False | Use virtual addressing style - by default False -> `path` style, `virtual` style if True |
 
 #### SFTP
 
-| Environment Variable | Configuration File | Description | Default |
+| Environment Variable | Configuration File | Default | Description |
 | --- | --- | --- | --- |
-| INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
-| INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
-| INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
-| INVENTREE_SFTP_GID | storage.sftp.gid | SFTP group ID - not required | *Not specified* |
-| INVENTREE_SFTP_LOCATION | storage.sftp.location | Sub-Location that should be used | inventree-server |
+| INVENTREE_SFTP_HOST | storage.sftp.host | *Not specified* | SFTP host |
+| INVENTREE_SFTP_PARAMS | storage.sftp.params | *Not specified* | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` |
+| INVENTREE_SFTP_UID | storage.sftp.uid | *Not specified* | SFTP user ID - not required |
+| INVENTREE_SFTP_GID | storage.sftp.gid | *Not specified* | SFTP group ID - not required |
+| INVENTREE_SFTP_LOCATION | storage.sftp.location | inventree-server | Sub-Location that should be used |
 
 ## Authentication
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
-| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp,webauthn |
+{{ configtable() }}
+{{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
+{{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
 
 ### Single Sign On
 
@@ -445,11 +442,10 @@ There are multiple configuration parameters which must be specified (either in y
 
 The login-experience can be altered with the following settings:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_LOGIN_CONFIRM_DAYS | login_confirm_days | Duration for which confirmation links are valid | 3 |
-| INVENTREE_LOGIN_ATTEMPTS | login_attempts | Count of allowed login attempts before blocking user | 5 |
-| INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL | login_default_protocol | Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) | Uses the protocol specified in `INVENTREE_SITE_URL`, or defaults to *http* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_LOGIN_CONFIRM_DAYS") }} Duration for which confirmation links are valid |
+{{ configsetting("INVENTREE_LOGIN_ATTEMPTS") }} Count of allowed login attempts before blocking user |
+{{ configsetting("INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL", default="Uses the protocol specified in `INVENTREE_SITE_URL`, or defaults to *http*") }} Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) |
 
 !!! tip "Default Protocol"
     If you have specified `INVENTREE_SITE_URL`, the default protocol will be used from that setting. Otherwise, the default protocol will be *http*.
@@ -462,22 +458,20 @@ Custom authentication backends can be used by specifying them here. These can fo
 
 The following options are available for configuring the InvenTree [background worker process](./processes.md#background-worker):
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_BACKGROUND_WORKERS | background.workers | Number of background worker processes | 1 |
-| INVENTREE_BACKGROUND_TIMEOUT | background.timeout | Timeout for background worker tasks (seconds) | 90 |
-| INVENTREE_BACKGROUND_RETRY | background.retry | Time to wait before retrying a background task (seconds) | 300 |
-| INVENTREE_BACKGROUND_MAX_ATTEMPTS | background.max_attempts | Maximum number of attempts for a background task | 5 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_BACKGROUND_WORKERS") }} Number of background worker processes |
+{{ configsetting("INVENTREE_BACKGROUND_TIMEOUT") }} Timeout for background worker tasks (seconds) |
+{{ configsetting("INVENTREE_BACKGROUND_RETRY") }} Time to wait before retrying a background task (seconds) |
+{{ configsetting("INVENTREE_BACKGROUND_MAX_ATTEMPTS") }} Maximum number of attempts for a background task |
 
 ## Sentry Integration
 
 The InvenTree server can be integrated with the [sentry.io](https://sentry.io) monitoring service, for error logging and performance tracking.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SENTRY_ENABLED | sentry_enabled | Enable sentry.io integration | False |
-| INVENTREE_SENTRY_DSN | sentry_dsn | Sentry DSN (data source name) key | *Defaults to InvenTree developer key* |
-| INVENTREE_SENTRY_SAMPLE_RATE | sentry_sample_rate | How often to send data samples | 0.1 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SENTRY_ENABLED") }} Enable sentry.io integration |
+{{ configsetting("INVENTREE_SENTRY_DSN", default="Defaults to InvenTree developer key") }} Sentry DSN (data source name) key |
+{{ configsetting("INVENTREE_SENTRY_SAMPLE_RATE") }} How often to send data samples (seconds) |
 
 !!! info "Default DSN"
     If enabled with the default DSN, server errors will be logged to a sentry.io account monitored by the InvenTree developers.
