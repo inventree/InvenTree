@@ -2,7 +2,6 @@
 
 import base64
 import logging
-import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -11,7 +10,6 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
-from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
@@ -292,7 +290,7 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
 
     # In debug mode, return a web URL to the asset file (rather than a local file path)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
-        return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
+        return default_storage.url(str(full_path))
 
     storage_path = default_storage.path(str(full_path))
 
@@ -368,8 +366,9 @@ def uploaded_image(
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
         if exists:
-            return os.path.join(settings.MEDIA_URL, filename)
-        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+            return default_storage.url(filename)
+
+        return staticfiles_storage.url(str(Path('img', replacement_file)))
 
     if img_data:
         img = Image.open(BytesIO(img_data))

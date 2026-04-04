@@ -1,14 +1,13 @@
 """Serializers used in various InvenTree apps."""
 
-import os
 from collections import OrderedDict
 from copy import deepcopy
 from decimal import Decimal
 from typing import Any, Optional
 
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -32,8 +31,6 @@ from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import getModelsWithMixin
-
-from .setting.storages import StorageBackends
 
 
 # region path filtering
@@ -689,9 +686,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
-        if settings.STORAGE_TARGET == StorageBackends.S3:
-            return str(value.url)
-        return os.path.join(str(settings.MEDIA_URL), str(value))
+        return default_storage.url(str(value))
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
@@ -705,9 +700,7 @@ class InvenTreeImageSerializerField(serializers.ImageField):
         if not value:
             return None
 
-        if settings.STORAGE_TARGET == StorageBackends.S3:
-            return str(value.url)
-        return os.path.join(str(settings.MEDIA_URL), str(value))
+        return default_storage.url(str(value))
 
 
 class InvenTreeDecimalField(serializers.FloatField):
