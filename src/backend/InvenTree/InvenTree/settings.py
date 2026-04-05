@@ -397,11 +397,8 @@ if DJANGO_SILK_ENABLED:  # pragma: no cover
 
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
-if (
-    get_boolean_setting(  # pragma: no cover
-        'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
-    )
-    and DEBUG
+if DEBUG and get_boolean_setting(  # pragma: no cover
+    'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
     logger.debug('Running with debug_querycount middleware enabled')
