@@ -1276,6 +1276,10 @@ def import_records(
         nonlocal ignore_nonexistent
         nonlocal c
 
+        # Skip if there is no data to load
+        if len(data) == 0:
+            return
+
         info(f'Loading {len(data)} {title} records...')
 
         with tempfile.NamedTemporaryFile(
