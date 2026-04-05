@@ -13,11 +13,6 @@ build:
   tools:
     python: "3.11"
   jobs:
-    pre_build:
-      - export INVENTREE_DEBUG="True"
-      - export INVENTREE_LDAP_ENABLED="True"
-      - export INVENTREE_TRACING_ENABLED="True"
-      - export INVENTREE_EMAIL_BACKEND="anymail.backends.console.EmailBackend"
     post_install:
       - pip install -U invoke
       - echo "Generating API schema file"
