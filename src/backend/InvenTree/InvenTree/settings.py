@@ -32,7 +32,7 @@ from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import db_backend, locales, markdown, spectacular, storages
+from .setting import db_backend, locales, markdown, spectacular, storages, worker
 
 try:
     import django_stubs_ext
@@ -739,59 +739,12 @@ GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
-BACKGROUND_WORKER_TIMEOUT = int(
-    get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
+# Background task processing with django-q
+Q_CLUSTER = worker.get_worker_config(
+    DB_ENGINE,
+    GLOBAL_CACHE_ENABLED,
+    SENTRY_DSN if SENTRY_ENABLED and SENTRY_DSN else None,
 )
-
-# Set the retry time for background workers to be slightly longer than the worker timeout, to ensure that workers have time to timeout before being retried
-BACKGROUND_WORKER_RETRY = max(
-    int(get_setting('INVENTREE_BACKGROUND_RETRY', 'background.retry', 300)),
-    BACKGROUND_WORKER_TIMEOUT + 120,
-)
-
-# Prevent running multiple background workers if global cache is disabled
-# This is to prevent scheduling conflicts due to the lack of a shared cache
-BACKGROUND_WORKER_COUNT = (
-    int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4))
-    if GLOBAL_CACHE_ENABLED
-    else 1
-)
-
-# If running with SQLite, limit background worker threads to 1 to prevent database locking issues
-if 'sqlite' in DB_ENGINE:
-    BACKGROUND_WORKER_COUNT = 1
-
-BACKGROUND_WORKER_ATTEMPTS = int(
-    get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
-)
-
-# django-q background worker configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'label': 'Background Tasks',
-    'workers': BACKGROUND_WORKER_COUNT,
-    'timeout': BACKGROUND_WORKER_TIMEOUT,
-    'retry': BACKGROUND_WORKER_RETRY,
-    'max_attempts': BACKGROUND_WORKER_ATTEMPTS,
-    'save_limit': 1000,
-    'queue_limit': 50,
-    'catch_up': False,
-    'bulk': 10,
-    'orm': 'default',
-    'cache': 'default',
-    'sync': False,
-    'poll': 1.5,
-}
-
-# Configure django-q sentry integration
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
-
-if GLOBAL_CACHE_ENABLED:  # pragma: no cover
-    # If using external redis cache, make the cache the broker for Django Q
-    # as well
-    Q_CLUSTER['django_redis'] = 'worker'
-
 
 SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
