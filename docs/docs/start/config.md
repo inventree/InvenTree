@@ -535,7 +535,7 @@ The following [plugin](../plugins/index.md) configuration options are available:
 {{ configsetting("INVENTREE_PLUGINS_ENABLED") }} Enable plugin support |
 {{ configsetting("INVENTREE_PLUGIN_NOINSTALL") }} Disable Plugin installation via API |
 {{ configsetting("INVENTREE_PLUGIN_FILE") }} Location of plugin installation file |
-{{ configsetting("INVENTREE_PLUGIN_DIR") }} Location of external plugin directory |
+| `INVENTREE_PLUGIN_DIR` | `plugin_dir` | *Not specified* | Location of external plugin directory |
 {{ configsetting("INVENTREE_PLUGINS_MANDATORY") }} List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) |
 {{ configsetting("INVENTREE_PLUGIN_DEV_SLUG") }} Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) |
 {{ configsetting("INVENTREE_PLUGIN_DEV_HOST") }} Specify host for development mode plugin |
