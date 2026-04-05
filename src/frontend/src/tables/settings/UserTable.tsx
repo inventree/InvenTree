@@ -180,7 +180,7 @@ export function UserDrawer({
                     disabled: isCurrentUser
                   },
                   is_staff: {
-                    label: t`Is Staff`,
+                    label: t`Is Administrator`,
                     description: t`Designates whether the user can log into the django admin site.`,
                     disabled: isCurrentUser
                   },
@@ -281,7 +281,8 @@ export function UserTable({
         }
       },
       BooleanColumn({
-        accessor: 'is_staff'
+        accessor: 'is_staff',
+        title: t`Administrator`
       }),
       BooleanColumn({
         accessor: 'is_superuser'
@@ -402,8 +403,8 @@ export function UserTable({
       },
       {
         name: 'is_staff',
-        label: t`Staff`,
-        description: t`Show staff users`
+        label: t`Administrator`,
+        description: t`Show administrators`
       },
       {
         name: 'is_superuser',
