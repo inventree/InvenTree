@@ -60,7 +60,12 @@ If you only need a superuser, run the `superuser` task. It should prompt you for
 
 #### Run background workers
 
-If you need to process your queue with background workers, run the `worker` task. This is a foreground task which will execute in the terminal.
+If you need to process your queue with background workers, open a new terminal and run the `worker` task with `invoke worker`. This is a foreground task which will execute in the terminal.
+
+If you are developing functions that will be executed by background workers there are a few debugging options.
+
+- If the workers are started with the `worker` task you can add `print` or `logger` statements to the code and monitor the output in the terminal.
+- All tasks can be forced to run in the foreground worker by temporarily changing the Q_CLUSTER settings (in settings.py) - and set sync=True. With this setting you do not need to start the background worker at all, instead you start the `InvenTree Server` from the `Run and Debug` side panel as described in the [Running InvenTree](#running-inventree) section. As all task will now run in one single process you can set breakpoints, inspect variables and single step also tasks that normally will be offloaded to background workers. It should be noted that with this setting the GUI will be unresponsive while tasks are executed.
 
 ### Running InvenTree
 
