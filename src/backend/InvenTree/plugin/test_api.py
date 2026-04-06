@@ -681,7 +681,7 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
     @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_registry(self):
         """Test install with a custom registry."""
-        plrg_name = 'inventree-approval'
+        plrg_name = 'inventree-dummy-app-plugin'
 
         # install - python repository url and package name
         data = self.post(
