@@ -49,7 +49,8 @@ def validate_part_name_format(value):
                 })
 
     # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
+    # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated
+    p = Part(pk=1, name='test part', description='some test part')
 
     try:
         SandboxedEnvironment().from_string(value).render({'part': p})

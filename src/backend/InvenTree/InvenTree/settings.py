@@ -201,6 +201,11 @@ PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
 
+if not PLUGINS_ENABLED:
+    PLUGINS_INSTALL_DISABLED = (
+        True  # If plugins are disabled, also disable installation
+    )
+
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings

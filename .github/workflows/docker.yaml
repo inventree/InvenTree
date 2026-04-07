@@ -174,7 +174,7 @@ jobs:
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # pin@v4.0.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # pin@v4.1.0
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # pin@v4.1.1
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |
