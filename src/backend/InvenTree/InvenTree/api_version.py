@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 470
+INVENTREE_API_VERSION = 471
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v471 -> 2026-04-07 : https://github.com/inventree/InvenTree/pull/11685
+    - Adds data importer support for the "SalesOrderShipment" model
 
 v470 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/11659
     - Renames "is_staff" field to "is_admin" and updates help texts accordingly to highlight current security boundaries
