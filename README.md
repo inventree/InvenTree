@@ -110,7 +110,65 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 <!-- Getting Started -->
 ## 	:toolbox: Deployment / Getting Started
 
-There are several options to deploy InvenTree.
+---
+
+## Quick Docker Setup (Beginner Friendly)
+
+Setting up InvenTree using Docker can be confusing for first-time users. Follow these simplified steps:
+
+### 1. Navigate to the correct folder
+
+```bash
+cd contrib/container
+```
+
+### 2. Configure environment variables
+
+Open the `.env` file and **uncomment / update the following lines**:
+
+```
+INVENTREE_ADMIN_USER=admin
+INVENTREE_ADMIN_PASSWORD=admin123
+INVENTREE_ADMIN_EMAIL=admin@example.com
+```
+
+### 3. Initialize the database
+
+```bash
+docker compose run --rm inventree-server invoke update
+```
+
+### 4. Start the application
+
+```bash
+docker compose up -d
+```
+
+### 5. Access the application
+
+Open your browser and go to:
+
+```
+http://inventree.localhost
+```
+
+Login with:
+
+* Username: admin
+* Password: admin123
+
+---
+
+### Common mistakes
+
+* Running Docker commands from the root repository instead of `contrib/container`
+* Not updating the `.env` file
+* Skipping the `invoke update` step before starting containers
+
+---
+
+This section is intended to improve onboarding experience for new users.
+
 
 <div align="center"><h4>
     <a href="https://docs.inventree.org/en/latest/start/docker/">Docker</a>
