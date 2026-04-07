@@ -143,3 +143,7 @@ InvenTree uses the [Redis](https://redis.io/) cache server to manage cache data.
 
 !!! tip "Enable Cache"
     While a redis container is provided in the default configuration, by default it is not enabled in the InvenTree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
+
+### Configuration
+
+Refer to the [background worker configuration options](./config.md#background-worker-options) for more information on configuring the background worker process.

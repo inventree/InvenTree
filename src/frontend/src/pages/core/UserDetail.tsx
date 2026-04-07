@@ -84,14 +84,14 @@ export default function UserDetail() {
       {
         type: 'boolean',
         name: 'is_staff',
-        label: t`Staff`,
-        icon: 'info'
+        label: t`Administrator`,
+        icon: 'warning'
       },
       {
         type: 'boolean',
         name: 'is_superuser',
         label: t`Superuser`,
-        icon: 'info'
+        icon: 'warning'
       },
       {
         type: 'text',
@@ -197,13 +197,13 @@ export default function UserDetail() {
       ? []
       : [
           instance.is_staff && (
-            <Badge key='is_staff' color='blue'>{t`Staff`}</Badge>
+            <Badge key='is_staff' color='orange'>{t`Administrator`}</Badge>
           ),
           instance.is_superuser && (
             <Badge key='is_superuser' color='red'>{t`Superuser`}</Badge>
           ),
           !instance.is_staff && !instance.is_superuser && (
-            <Badge key='is_normal' color='yellow'>{t`Basic user`}</Badge>
+            <Badge key='is_normal' color='yellow'>{t`Normal user`}</Badge>
           ),
           instance.is_active ? (
             <Badge key='is_active' color='green'>{t`Active`}</Badge>

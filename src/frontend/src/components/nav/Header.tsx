@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Container,
   Group,
   Indicator,
@@ -39,7 +40,7 @@ import {
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
-import { Alerts } from './Alerts';
+import { Alerts, errorCodeLink } from './Alerts';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
@@ -53,11 +54,12 @@ export function Header() {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
-
   const [
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
+  const [elevatedAlertClosed, setElevatedAlertClosed] =
+    useState<boolean>(false);
 
   useHotkeys([
     [
@@ -79,7 +81,7 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
-  const { isLoggedIn } = useUserState();
+  const { isLoggedIn, user } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
@@ -127,6 +129,14 @@ export function Header() {
     if (navigationOpen) openNavDrawer();
     else closeNavDrawer();
   }, [navigationOpen]);
+
+  const showElevated = useMemo(
+    () =>
+      (user?.is_staff || user?.is_superuser || false) &&
+      !elevatedAlertClosed &&
+      !window.INVENTREE_SETTINGS.dangerous_hide_evelevated_alert,
+    [user, elevatedAlertClosed]
+  );
 
   const headerStyle: any = useMemo(() => {
     const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
@@ -200,6 +210,19 @@ export function Header() {
           </Group>
         </Group>
       </Container>
+      {showElevated && user && (
+        <Alert
+          color={user.is_superuser ? 'red' : 'orange'}
+          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
+          withCloseButton
+          onClose={() => setElevatedAlertClosed(true)}
+        >
+          <Text>
+            {t`The current user has elevated privileges and should not be used for regular usage.`}
+            {errorCodeLink('INVE-W14')}
+          </Text>
+        </Alert>
+      )}
     </div>
   );
 }

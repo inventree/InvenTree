@@ -127,7 +127,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
           data?.image,
           <>
             {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
-            {data.is_staff && <Badge color='blue'>{t`Staff`}</Badge>}
+            {data.is_staff && <Badge color='orange'>{t`Administrator`}</Badge>}
             {data.email && t`Email: ` + data.email}
           </>
         ];
