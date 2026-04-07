@@ -19,7 +19,7 @@ v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
     - Adds parameter support to the SalesOrderShipment model and API endpoints
 
 v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
-    - Add ordering to contetype related fields - no functional changes
+    - Add ordering to contentype related fields - no functional changes
 
 v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
     - Fix definition for the "parent" field on the StockItemSerializer
