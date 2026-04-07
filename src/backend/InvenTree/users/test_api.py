@@ -258,6 +258,8 @@ class SuperuserAPITests(InvenTreeAPITestCase):
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
 
+    fixtures = ['users']
+
     def test_token_generation(self):
         """Test user token generation."""
         url = reverse('api-token')
@@ -395,6 +397,28 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
+
+    def test_token_security(self):
+        """Test that token generation is only available to users with the correct permissions."""
+        url = reverse('api-token-list')
+
+        # Try to generate a token for a different user (should fail)
+        response = self.post(url, data={'name': 'test', 'user': 1}, expected_code=400)
+        self.assertIn(
+            'Only a superuser can create a token for another user', str(response.data)
+        )
+
+        # there should be no tokens created
+        self.assertEqual(ApiToken.objects.count(), 0)
+
+        # now with superuser permissions
+        self.user.is_superuser = True
+        self.user.save()
+
+        response = self.post(url, data={'name': 'test', 'user': 1}, expected_code=201)
+        self.assertIn('token', response.data)
+
+        self.assertEqual(ApiToken.objects.count(), 1)
 
 
 class GroupDetialTests(InvenTreeAPITestCase):
