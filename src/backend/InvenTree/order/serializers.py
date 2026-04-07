@@ -1297,7 +1297,10 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
-    FilterableSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
 
