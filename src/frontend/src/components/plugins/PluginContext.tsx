@@ -36,6 +36,12 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import {
+  type ImporterOpenOptions,
+  closeGlobalImporter,
+  getGlobalImporterState,
+  openGlobalImporter
+} from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { RenderInstance } from '../render/Instance';
 
@@ -70,6 +76,13 @@ export const useInvenTreeContext = () => {
       renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
+      importer: {
+        open: (sessionId: number, options?: ImporterOpenOptions) =>
+          openGlobalImporter(sessionId, options),
+        close: () => closeGlobalImporter(),
+        isOpen: () => getGlobalImporterState().isOpen,
+        sessionId: () => getGlobalImporterState().sessionId
+      },
       forms: {
         bulkEdit: useBulkEditApiFormModal,
         create: useCreateApiFormModal,

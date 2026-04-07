@@ -20,7 +20,6 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -35,6 +34,7 @@ import {
 } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
@@ -357,12 +357,7 @@ export function PartListTable({
   });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -383,8 +378,9 @@ export function PartListTable({
     title: t`Import Parts`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
@@ -596,15 +592,6 @@ export function PartListTable({
             category_detail: true,
             location_detail: true
           }
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

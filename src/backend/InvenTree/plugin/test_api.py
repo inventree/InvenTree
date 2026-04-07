@@ -63,6 +63,21 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         """Test the plugin install command."""
         url = reverse('api-plugin-install')
 
+        # Requires superuser permissions
+        self.user.is_superuser = False
+        self.user.save()
+
+        self.post(
+            url,
+            {'confirm': True, 'packagename': self.PKG_NAME},
+            expected_code=403,
+            max_query_time=30,
+        )
+
+        # Provide superuser permissions
+        self.user.is_superuser = True
+        self.user.save()
+
         # invalid package name
         data = self.post(
             url,
@@ -209,7 +224,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         test_plg.refresh_from_db()
         self.assertTrue(test_plg.is_active())
 
-    def test_pluginCfg_delete(self):
+    def test_plugin_config_delete(self):
         """Test deleting a config."""
         test_plg = self.plugin_confs.first()
         assert test_plg is not None
