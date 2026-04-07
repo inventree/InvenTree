@@ -36,10 +36,12 @@ import { RenderRemoteInstance } from '../render/Instance';
 function ImporterDataCell({
   session,
   column,
+  fieldDef,
   row,
   onEdit
 }: Readonly<{
   session: ImportSessionState;
+  fieldDef: any;
   column: any;
   row: any;
   onEdit?: () => void;
@@ -63,22 +65,22 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   const cellValue: ReactNode = useMemo(() => {
-    const field_def = session.availableFields[column.field];
+    // const field_def = session.availableFields[column.field];
 
     if (!row?.data) {
       return '-';
     }
 
-    switch (field_def?.type) {
+    switch (fieldDef?.type) {
       case 'boolean':
         return (
           <YesNoButton value={row.data ? row.data[column.field] : false} />
         );
       case 'related field':
-        if (field_def.model && row.data[column.field]) {
+        if (fieldDef.model && row.data[column.field]) {
           return (
             <RenderRemoteInstance
-              model={field_def.model}
+              model={fieldDef.model}
               pk={row.data[column.field]}
             />
           );
@@ -127,9 +129,11 @@ function ImporterDataCell({
 }
 
 export default function ImporterDataSelector({
-  session
+  session,
+  customFields
 }: Readonly<{
   session: ImportSessionState;
+  customFields?: ApiFormFieldSet | null;
 }>) {
   const api = useApi();
   const table = useTable('dataimporter');
@@ -142,9 +146,11 @@ export default function ImporterDataSelector({
     for (const field of selectedFieldNames) {
       // Find the field definition in session.availableFields
       const fieldDef = session.availableFields[field];
-      if (fieldDef) {
+      const customField = customFields?.[field] ?? null;
+
+      if (fieldDef || customField) {
         // Construct field filters based on session field filters
-        let filters = fieldDef.filters ?? {};
+        let filters = fieldDef?.filters ?? {};
 
         if (session.fieldFilters[field]) {
           filters = {
@@ -159,15 +165,30 @@ export default function ImporterDataSelector({
 
         fields[field] = {
           ...fieldDef,
+          ...customField,
           field_type: fieldDef.type,
           description: fieldDef.help_text,
           filters: filters
         };
+
+        console.log('Defined Field:', field);
+        console.log({
+          ...fieldDef,
+          ...customField,
+          field_type: fieldDef.type,
+          description: fieldDef.help_text,
+          filters: filters
+        });
       }
     }
 
     return fields;
-  }, [selectedFieldNames, session.availableFields, session.fieldFilters]);
+  }, [
+    customFields,
+    selectedFieldNames,
+    session.availableFields,
+    session.fieldFilters
+  ]);
 
   const importData = useCallback(
     (rows: number[]) => {
@@ -322,6 +343,7 @@ export default function ImporterDataSelector({
                 column={column}
                 row={row}
                 onEdit={() => editCell(row, column)}
+                fieldDef={session.availableFields[column.field]}
               />
             );
           }
