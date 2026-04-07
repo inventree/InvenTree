@@ -17,7 +17,8 @@
     "jsx": "react-jsx",
     "paths": {
       "@lib/*": ["./lib/*"]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src", "lib", "vite-env.d.ts"],
   "exclude": ["node_nodules", "dist"],
