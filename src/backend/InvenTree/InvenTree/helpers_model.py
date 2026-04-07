@@ -113,13 +113,11 @@ def validate_url_no_ssrf(url):
     except socket.gaierror:
         raise ValueError(_('Invalid URL: hostname could not be resolved'))
 
-    for family, _type, _proto, _canonname, sockaddr in addrinfo:
+    for _family, _type, _proto, _canonname, sockaddr in addrinfo:
         ip = ipaddress.ip_address(sockaddr[0])
 
         if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
-            raise ValueError(
-                _('URL points to a private or reserved IP address')
-            )
+            raise ValueError(_('URL points to a private or reserved IP address'))
 
 
 def download_image_from_url(remote_url, timeout=2.5):

@@ -37,10 +37,7 @@ def compile_full_name_template(*args, **kwargs):
     # Cache the template string
     _part_full_name_template_string = template_string
 
-    env = SandboxedEnvironment(
-        variable_start_string='{{',
-        variable_end_string='}}',
-    )
+    env = SandboxedEnvironment(variable_start_string='{{', variable_end_string='}}')
 
     # Compile the template
     try:
