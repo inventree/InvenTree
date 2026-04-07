@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 04:36+0000\n"
-"PO-Revision-Date: 2026-04-02 04:39\n"
+"POT-Creation-Date: 2026-04-04 00:50+0000\n"
+"PO-Revision-Date: 2026-04-04 00:53\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -254,7 +254,7 @@ msgstr "Geçersiz seçim"
 #: InvenTree/models.py:1022 common/models.py:1438 common/models.py:1865
 #: common/models.py:2126 common/models.py:2251 common/models.py:2520
 #: common/serializers.py:638 generic/states/serializers.py:20
-#: machine/models.py:25 part/models.py:1107 plugin/models.py:54
+#: machine/models.py:25 part/models.py:1101 plugin/models.py:54
 #: report/models.py:216 stock/models.py:86
 msgid "Name"
 msgstr "Adı"
@@ -262,7 +262,7 @@ msgstr "Adı"
 #: InvenTree/models.py:1028 build/models.py:265 common/models.py:178
 #: common/models.py:2258 common/models.py:2371 common/models.py:2535
 #: company/models.py:558 company/models.py:818 order/models.py:447
-#: order/models.py:1851 part/models.py:1130 report/models.py:222
+#: order/models.py:1851 part/models.py:1124 report/models.py:222
 #: report/models.py:815 report/models.py:841
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:92
@@ -320,51 +320,51 @@ msgstr "Bir hafta sunucu tarafından kayıt edildi."
 msgid "Image"
 msgstr "Görsel"
 
-#: InvenTree/serializers.py:327 part/models.py:4174
+#: InvenTree/serializers.py:324 part/models.py:4168
 msgid "Must be a valid number"
 msgstr "Geçerli bir numara olmalı"
 
-#: InvenTree/serializers.py:369 company/models.py:217 part/models.py:3313
+#: InvenTree/serializers.py:366 company/models.py:217 part/models.py:3307
 msgid "Currency"
 msgstr "Para birimi"
 
-#: InvenTree/serializers.py:372 part/serializers.py:1355
+#: InvenTree/serializers.py:369 part/serializers.py:1355
 msgid "Select currency from available options"
 msgstr "Mevcut seçeneklerden para birimini seçin"
 
-#: InvenTree/serializers.py:726
+#: InvenTree/serializers.py:719
 msgid "This field may not be null."
 msgstr "Bu alan boş olamaz."
 
-#: InvenTree/serializers.py:732
+#: InvenTree/serializers.py:725
 msgid "Invalid value"
 msgstr "Geçersiz değer"
 
-#: InvenTree/serializers.py:769
+#: InvenTree/serializers.py:762
 msgid "Remote Image"
 msgstr "Uzak Görsel"
 
-#: InvenTree/serializers.py:770
+#: InvenTree/serializers.py:763
 msgid "URL of remote image file"
 msgstr "Uzak görselin dosya URL'si"
 
-#: InvenTree/serializers.py:788
+#: InvenTree/serializers.py:781
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Uzak URL'den görsel indirme etkin değil"
 
-#: InvenTree/serializers.py:795
+#: InvenTree/serializers.py:788
 msgid "Failed to download image from remote URL"
 msgstr "Uzak URL'den görsel indirilemedi"
 
-#: InvenTree/serializers.py:878
+#: InvenTree/serializers.py:871
 msgid "Invalid content type format"
 msgstr "Geçersiz içerik türü biçimi"
 
-#: InvenTree/serializers.py:881
+#: InvenTree/serializers.py:874
 msgid "Content type not found"
 msgstr "İçerik türü bulunamadı"
 
-#: InvenTree/serializers.py:887
+#: InvenTree/serializers.py:880
 msgid "Content type does not match required mixin class"
 msgstr "İçerik türü gerekli mixin sınıfı ile eşleşmemektedir"
 
@@ -556,9 +556,9 @@ msgstr "Varyantları Dahil Et"
 #: order/api.py:309 order/api.py:313 order/api.py:938 order/api.py:1194
 #: order/api.py:1197 order/models.py:1969 order/models.py:2137
 #: order/models.py:2138 part/api.py:1132 part/api.py:1135 part/api.py:1348
-#: part/models.py:527 part/models.py:3324 part/models.py:3467
-#: part/models.py:3525 part/models.py:3546 part/models.py:3568
-#: part/models.py:3709 part/models.py:3971 part/models.py:4390
+#: part/models.py:527 part/models.py:3318 part/models.py:3461
+#: part/models.py:3519 part/models.py:3540 part/models.py:3562
+#: part/models.py:3703 part/models.py:3965 part/models.py:4384
 #: part/serializers.py:1304 part/serializers.py:1926
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -580,7 +580,7 @@ msgid "Part"
 msgstr "Parça"
 
 #: build/api.py:121 build/api.py:124 build/serializers.py:1475 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1148 part/models.py:3596
+#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3590
 #: part/serializers.py:1314 part/serializers.py:1742 stock/api.py:868
 msgid "Category"
 msgstr "Kategori"
@@ -653,16 +653,16 @@ msgstr "Ağacı Hariç Tut"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Üretim silinemeden önce iptal edilmelidir"
 
-#: build/api.py:444 build/serializers.py:1406 part/models.py:4005
+#: build/api.py:444 build/serializers.py:1406 part/models.py:3999
 msgid "Consumable"
 msgstr "Sarf Malzemesi"
 
-#: build/api.py:447 build/serializers.py:1409 part/models.py:3999
+#: build/api.py:447 build/serializers.py:1409 part/models.py:3993
 msgid "Optional"
 msgstr "İsteğe Bağlı"
 
 #: build/api.py:450 build/serializers.py:1449 common/setting/system.py:470
-#: part/models.py:1253 part/serializers.py:1696 part/serializers.py:1715
+#: part/models.py:1247 part/serializers.py:1696 part/serializers.py:1715
 #: stock/api.py:638
 msgid "Assembly"
 msgstr "Montaj"
@@ -671,7 +671,7 @@ msgstr "Montaj"
 msgid "Tracked"
 msgstr "İzlenen"
 
-#: build/api.py:456 build/serializers.py:1412 part/models.py:1271
+#: build/api.py:456 build/serializers.py:1412 part/models.py:1265
 msgid "Testable"
 msgstr "Test Edilebilir"
 
@@ -769,7 +769,7 @@ msgstr "Üretim Emri Referansı"
 
 #: build/models.py:259 build/serializers.py:1403 order/models.py:628
 #: order/models.py:1337 order/models.py:1799 order/models.py:2735
-#: part/models.py:4045
+#: part/models.py:4039
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:35
 #: report/templates/report/inventree_return_order_report.html:26
@@ -855,7 +855,7 @@ msgid "Batch code for this build output"
 msgstr "Bu üretim çıktısının parti kodu"
 
 #: build/models.py:364 order/models.py:484 order/serializers.py:166
-#: part/models.py:1334
+#: part/models.py:1328
 msgid "Creation Date"
 msgstr "Oluşturulma tarihi"
 
@@ -892,7 +892,7 @@ msgid "User who issued this build order"
 msgstr "Bu üretim emrini düzenleyen kullanıcı"
 
 #: build/models.py:411 common/models.py:187 order/api.py:182
-#: order/models.py:516 part/models.py:1351
+#: order/models.py:516 part/models.py:1345
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "Sorumlu"
@@ -905,7 +905,7 @@ msgstr "Bu üretim emrinden sorumlu kullanıcı veya grup"
 msgid "External Link"
 msgstr "Harici Bağlantı"
 
-#: build/models.py:419 common/models.py:2014 part/models.py:1182
+#: build/models.py:419 common/models.py:2014 part/models.py:1176
 #: stock/models.py:1102
 msgid "Link to external URL"
 msgstr "Harici URL'ye bağlantı"
@@ -1004,7 +1004,7 @@ msgstr "Üretim nesnesi"
 #: build/models.py:1777 build/models.py:2102 build/serializers.py:259
 #: build/serializers.py:308 build/serializers.py:1424 common/models.py:1368
 #: order/models.py:1782 order/models.py:2618 order/serializers.py:1678
-#: order/serializers.py:2115 part/models.py:3481 part/models.py:3993
+#: order/serializers.py:2115 part/models.py:3475 part/models.py:3987
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1388,7 +1388,7 @@ msgstr "Üretim Referansı"
 msgid "Part Category Name"
 msgstr "Parça Kategorisi Adı"
 
-#: build/serializers.py:1415 common/setting/system.py:494 part/models.py:1265
+#: build/serializers.py:1415 common/setting/system.py:494 part/models.py:1259
 msgid "Trackable"
 msgstr "Takip Edilebilir"
 
@@ -1396,12 +1396,12 @@ msgstr "Takip Edilebilir"
 msgid "Inherited"
 msgstr "Devralınmış"
 
-#: build/serializers.py:1421 part/models.py:4078
+#: build/serializers.py:1421 part/models.py:4072
 msgid "Allow Variants"
 msgstr "Varyantlara İzin Ver"
 
-#: build/serializers.py:1427 build/serializers.py:1432 part/models.py:3799
-#: part/models.py:4382 stock/api.py:881
+#: build/serializers.py:1427 build/serializers.py:1432 part/models.py:3793
+#: part/models.py:4376 stock/api.py:881
 msgid "BOM Item"
 msgstr "ML Ögesi"
 
@@ -1601,7 +1601,7 @@ msgstr "Anahtar dizesi benzersiz olmalı"
 #: common/models.py:1346 common/models.py:1347 common/models.py:1451
 #: common/models.py:1452 common/models.py:1697 common/models.py:1698
 #: common/models.py:2030 common/models.py:2031 common/models.py:2829
-#: importer/models.py:101 part/models.py:3575 part/models.py:3603
+#: importer/models.py:101 part/models.py:3569 part/models.py:3597
 #: plugin/models.py:355 plugin/models.py:356
 #: report/templates/report/inventree_test_report.html:105 users/models.py:124
 #: users/models.py:501
@@ -1635,7 +1635,7 @@ msgstr "Bu web kancası için ad"
 
 #: common/models.py:1443 common/models.py:2271 common/models.py:2378
 #: company/models.py:194 company/models.py:786 machine/models.py:40
-#: part/models.py:1288 plugin/models.py:69 stock/api.py:641 users/models.py:195
+#: part/models.py:1282 plugin/models.py:69 stock/api.py:641 users/models.py:195
 #: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "Aktif"
@@ -1715,7 +1715,7 @@ msgstr "Başlık"
 #: common/models.py:1750 common/models.py:2013 company/models.py:188
 #: company/models.py:479 company/models.py:549 company/models.py:809
 #: order/models.py:462 order/models.py:1812 order/models.py:2373
-#: part/models.py:1181
+#: part/models.py:1175
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "Bağlantı"
@@ -1946,7 +1946,7 @@ msgstr "Seçim listesinin adı"
 msgid "Description of the selection list"
 msgstr "Seçim listesinin açıklaması"
 
-#: common/models.py:2265 part/models.py:1293
+#: common/models.py:2265 part/models.py:1287
 msgid "Locked"
 msgstr "Kilitli"
 
@@ -2042,7 +2042,7 @@ msgstr "Onay kutusu parametrelerinin birimleri olamaz"
 msgid "Checkbox parameters cannot have choices"
 msgstr "Onay kutusu parametrelerinin seçenekleri olamaz"
 
-#: common/models.py:2476 part/models.py:3673
+#: common/models.py:2476 part/models.py:3667
 msgid "Choices must be unique"
 msgstr "Seçenekler eşsiz olmalıdır"
 
@@ -2058,7 +2058,7 @@ msgstr "Bu parametre şablonu için hedef modeli türü"
 msgid "Parameter Name"
 msgstr "Parametre Adı"
 
-#: common/models.py:2527 part/models.py:1246
+#: common/models.py:2527 part/models.py:1240
 msgid "Units"
 msgstr "Birim"
 
@@ -2078,7 +2078,7 @@ msgstr "Onay kutusu"
 msgid "Is this parameter a checkbox?"
 msgstr "Bu parametre bir onay kutusu mu?"
 
-#: common/models.py:2548 part/models.py:3760
+#: common/models.py:2548 part/models.py:3754
 msgid "Choices"
 msgstr "Seçenekler"
 
@@ -2090,7 +2090,7 @@ msgstr "Bu parametre için geçerli seçenekler (virgül ile ayrılmış)"
 msgid "Selection list for this parameter"
 msgstr "Bu parametre için seçim listesi"
 
-#: common/models.py:2565 part/models.py:3735 report/models.py:287
+#: common/models.py:2565 part/models.py:3729 report/models.py:287
 msgid "Enabled"
 msgstr "Etkin"
 
@@ -2141,7 +2141,7 @@ msgid "Parameter Value"
 msgstr "Parametre Değeri"
 
 #: common/models.py:2786 company/models.py:826 order/serializers.py:852
-#: order/serializers.py:2031 part/models.py:4053 part/models.py:4422
+#: order/serializers.py:2031 part/models.py:4047 part/models.py:4416
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
@@ -2827,7 +2827,7 @@ msgstr "Parçaları varsayılan olan şablondur"
 msgid "Parts can be assembled from other components by default"
 msgstr "Parçalar varsayılan olarak başka bileşenlerden monte edilebilir"
 
-#: common/setting/system.py:476 part/models.py:1259 part/serializers.py:1724
+#: common/setting/system.py:476 part/models.py:1253 part/serializers.py:1724
 #: part/serializers.py:1731
 msgid "Component"
 msgstr "Bileşen"
@@ -2836,7 +2836,7 @@ msgstr "Bileşen"
 msgid "Parts can be used as sub-components by default"
 msgstr "Parçalar varsayılan olarak alt bileşen olarak kullanılabilir"
 
-#: common/setting/system.py:482 part/models.py:1277
+#: common/setting/system.py:482 part/models.py:1271
 msgid "Purchaseable"
 msgstr "Satın Alınabilir"
 
@@ -2844,7 +2844,7 @@ msgstr "Satın Alınabilir"
 msgid "Parts are purchaseable by default"
 msgstr "Parçalar varsayılan olarak satın alınabilir"
 
-#: common/setting/system.py:488 part/models.py:1283 stock/api.py:642
+#: common/setting/system.py:488 part/models.py:1277 stock/api.py:642
 msgid "Salable"
 msgstr "Satılabilir"
 
@@ -2856,7 +2856,7 @@ msgstr "Parçalar varsayılan olarak satılabilir"
 msgid "Parts are trackable by default"
 msgstr "Parçalar varsayılan olarak takip edilebilir"
 
-#: common/setting/system.py:500 part/models.py:1299
+#: common/setting/system.py:500 part/models.py:1293
 msgid "Virtual"
 msgstr "Sanal"
 
@@ -4250,11 +4250,11 @@ msgstr "Harici tedarikçi parçası bağlantısı için URL"
 msgid "Supplier part description"
 msgstr "Tedarikçi parçası açıklaması"
 
-#: company/models.py:835 part/models.py:2301
+#: company/models.py:835 part/models.py:2295
 msgid "base cost"
 msgstr "temel maliyet"
 
-#: company/models.py:836 part/models.py:2302
+#: company/models.py:836 part/models.py:2296
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimum ücret (örneğin stoklama ücreti)"
 
@@ -4275,7 +4275,7 @@ msgstr "Paket Miktarı"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Tek bir pakette tedarik edilen toplam miktar. Tekli ürünler için boş bırakın."
 
-#: company/models.py:870 part/models.py:2308
+#: company/models.py:870 part/models.py:2302
 msgid "multiple"
 msgstr "çoklu"
 
@@ -5428,7 +5428,7 @@ msgstr "Aynı parça, hedef ve hedef tarihe sahip kalemleri tek bir satırda bir
 msgid "SKU"
 msgstr "SKU"
 
-#: order/serializers.py:710 part/models.py:1157 part/serializers.py:348
+#: order/serializers.py:710 part/models.py:1151 part/serializers.py:348
 msgid "Internal Part Number"
 msgstr "Dahili Parça Numarası"
 
@@ -5769,7 +5769,7 @@ msgstr "Parça Kategorisi"
 msgid "Part Categories"
 msgstr "Parça Kategorileri"
 
-#: part/models.py:111 part/models.py:1193
+#: part/models.py:111 part/models.py:1187
 msgid "Default Location"
 msgstr "Varsayılan Konum"
 
@@ -5862,592 +5862,588 @@ msgid "Part cannot be a revision of itself"
 msgstr "Parça, kendisinin revizyonu olamaz"
 
 #: part/models.py:783
-msgid "Cannot make a revision of a part which is already a revision"
-msgstr "Zaten bir revizyon olan bir parçanın revizyonu yapılamaz"
+msgid "Revision code must be specified for a part marked as a revision"
+msgstr ""
 
-#: part/models.py:790
-msgid "Revision code must be specified"
-msgstr "Revizyon kodu belirtilmelidir"
-
-#: part/models.py:797
+#: part/models.py:791
 msgid "Revisions are only allowed for assembly parts"
 msgstr "Revizyonlara yalnızca montaj parçaları için izin verilir"
 
-#: part/models.py:804
+#: part/models.py:798
 msgid "Cannot make a revision of a template part"
 msgstr "Bir şablon parçanın revizyonu yapılamaz"
 
-#: part/models.py:810
+#: part/models.py:804
 msgid "Parent part must point to the same template"
 msgstr "Üst parça aynı şablonu göstermelidir"
 
-#: part/models.py:907
+#: part/models.py:901
 msgid "Stock item with this serial number already exists"
 msgstr "Bu seri numarasına sahip stok kalemi zaten var"
 
-#: part/models.py:1037
+#: part/models.py:1031
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "Yinelenen DPN'ye parça ayarlarında izin verilmiyor"
 
-#: part/models.py:1050
+#: part/models.py:1044
 msgid "Duplicate part revision already exists."
 msgstr "Kopyası oluşturulan parça revizyonu zaten var."
 
-#: part/models.py:1060
+#: part/models.py:1054
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr "Bu Ad, IPN ve Revizyona sahip parça zaten var."
 
-#: part/models.py:1075
+#: part/models.py:1069
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Parçalar yapısal parça kategorilerine atanamaz!"
 
-#: part/models.py:1107
+#: part/models.py:1101
 msgid "Part name"
 msgstr "Parça adı"
 
-#: part/models.py:1112
+#: part/models.py:1106
 msgid "Is Template"
 msgstr "Şablon Mu"
 
-#: part/models.py:1113
+#: part/models.py:1107
 msgid "Is this part a template part?"
 msgstr "Bu parça bir şablon parçası mı?"
 
-#: part/models.py:1123
+#: part/models.py:1117
 msgid "Is this part a variant of another part?"
 msgstr "Bu parça başka bir parçanın varyantı mı?"
 
-#: part/models.py:1124
+#: part/models.py:1118
 msgid "Variant Of"
 msgstr "Şunun Varyantı"
 
-#: part/models.py:1131
+#: part/models.py:1125
 msgid "Part description (optional)"
 msgstr "Açıklama (isteğe bağlı)"
 
-#: part/models.py:1138
+#: part/models.py:1132
 msgid "Keywords"
 msgstr "Anahtar kelimeler"
 
-#: part/models.py:1139
+#: part/models.py:1133
 msgid "Part keywords to improve visibility in search results"
 msgstr "Arama sonuçlarında görünürlüğü artırmak için parça anahtar kelimeleri"
 
-#: part/models.py:1149
+#: part/models.py:1143
 msgid "Part category"
 msgstr "Parça kategorisi"
 
-#: part/models.py:1156 part/serializers.py:819
+#: part/models.py:1150 part/serializers.py:819
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr "DPN"
 
-#: part/models.py:1164
+#: part/models.py:1158
 msgid "Part revision or version number"
 msgstr "Parça revizyon veya versiyon numarası"
 
-#: part/models.py:1165 report/models.py:228
+#: part/models.py:1159 report/models.py:228
 msgid "Revision"
 msgstr "Revizyon"
 
-#: part/models.py:1174
+#: part/models.py:1168
 msgid "Is this part a revision of another part?"
 msgstr "Bu parça başka bir parçanın revizyonu mu?"
 
-#: part/models.py:1175
+#: part/models.py:1169
 msgid "Revision Of"
 msgstr "Şunun Revizyonu"
 
-#: part/models.py:1191
+#: part/models.py:1185
 msgid "Where is this item normally stored?"
 msgstr "Bu kalem normalde nerede depolanır?"
 
-#: part/models.py:1228
+#: part/models.py:1222
 msgid "Default Expiry"
 msgstr "Varsayılan Son Kullanma"
 
-#: part/models.py:1229
+#: part/models.py:1223
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "Bu parçanın stok kalemleri için son kullanma süresi (gün olarak)"
 
-#: part/models.py:1237 part/serializers.py:889
+#: part/models.py:1231 part/serializers.py:889
 msgid "Minimum Stock"
 msgstr "Minimum Stok"
 
-#: part/models.py:1238
+#: part/models.py:1232
 msgid "Minimum allowed stock level"
 msgstr "İzin verilen minimum stok düzeyi"
 
-#: part/models.py:1247
+#: part/models.py:1241
 msgid "Units of measure for this part"
 msgstr "Bu parça için ölçü birimleri"
 
-#: part/models.py:1254
+#: part/models.py:1248
 msgid "Can this part be built from other parts?"
 msgstr "Bu parça diğer parçalardan üretilebilir mi?"
 
-#: part/models.py:1260
+#: part/models.py:1254
 msgid "Can this part be used to build other parts?"
 msgstr "Bu parça diğer parçaların üretiminde kullanılabilir mi?"
 
-#: part/models.py:1266
+#: part/models.py:1260
 msgid "Does this part have tracking for unique items?"
 msgstr "Bu parçanın benzersiz kalemler için izleme özelliği var mı?"
 
-#: part/models.py:1272
+#: part/models.py:1266
 msgid "Can this part have test results recorded against it?"
 msgstr "Bu parçanın test sonuçları kaydedilebilir mi?"
 
-#: part/models.py:1278
+#: part/models.py:1272
 msgid "Can this part be purchased from external suppliers?"
 msgstr "Bu parça dış tedarikçilerden satın alınabilir mi?"
 
-#: part/models.py:1284
+#: part/models.py:1278
 msgid "Can this part be sold to customers?"
 msgstr "Bu parça müşterilere satılabilir mi?"
 
-#: part/models.py:1288
+#: part/models.py:1282
 msgid "Is this part active?"
 msgstr "Bu parça aktif mi?"
 
-#: part/models.py:1294
+#: part/models.py:1288
 msgid "Locked parts cannot be edited"
 msgstr "Kilitli parçalar değiştirilemez"
 
-#: part/models.py:1300
+#: part/models.py:1294
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "Bu, yazılım ürünü veya lisans gibi sanal bir parça mı?"
 
-#: part/models.py:1305
+#: part/models.py:1299
 msgid "BOM Validated"
 msgstr "BOM Doğrulandı"
 
-#: part/models.py:1306
+#: part/models.py:1300
 msgid "Is the BOM for this part valid?"
 msgstr "Bu parçanın BOM'u geçerli mi?"
 
-#: part/models.py:1312
+#: part/models.py:1306
 msgid "BOM checksum"
 msgstr "BOM sağlama toplamı"
 
-#: part/models.py:1313
+#: part/models.py:1307
 msgid "Stored BOM checksum"
 msgstr "Saklanan BOM sağlama toplamı"
 
-#: part/models.py:1321
+#: part/models.py:1315
 msgid "BOM checked by"
 msgstr "BOM'u kontrol eden"
 
-#: part/models.py:1326
+#: part/models.py:1320
 msgid "BOM checked date"
 msgstr "BOM kontrol tarihi"
 
-#: part/models.py:1342
+#: part/models.py:1336
 msgid "Creation User"
 msgstr "Oluşturan Kullanıcı"
 
-#: part/models.py:1352
+#: part/models.py:1346
 msgid "Owner responsible for this part"
 msgstr "Bu parçanın sorumlu sahibi"
 
-#: part/models.py:2309
+#: part/models.py:2303
 msgid "Sell multiple"
 msgstr "Birden fazla sat"
 
-#: part/models.py:3314
+#: part/models.py:3308
 msgid "Currency used to cache pricing calculations"
 msgstr "Fiyat hesaplamalarını önbelleğe almak için kullanılan para birimi"
 
-#: part/models.py:3330
+#: part/models.py:3324
 msgid "Minimum BOM Cost"
 msgstr "Minimum BOM Maliyeti"
 
-#: part/models.py:3331
+#: part/models.py:3325
 msgid "Minimum cost of component parts"
 msgstr "Bileşenlerin minimum maliyeti"
 
-#: part/models.py:3337
+#: part/models.py:3331
 msgid "Maximum BOM Cost"
 msgstr "Maksimum BOM Maliyeti"
 
-#: part/models.py:3338
+#: part/models.py:3332
 msgid "Maximum cost of component parts"
 msgstr "Bileşenlerin maksimum maliyeti"
 
-#: part/models.py:3344
+#: part/models.py:3338
 msgid "Minimum Purchase Cost"
 msgstr "Minimum Satın Alma Maliyeti"
 
-#: part/models.py:3345
+#: part/models.py:3339
 msgid "Minimum historical purchase cost"
 msgstr "Minimum tarihsel satın alma maliyeti"
 
-#: part/models.py:3351
+#: part/models.py:3345
 msgid "Maximum Purchase Cost"
 msgstr "Maksimum Satın Alma Maliyeti"
 
-#: part/models.py:3352
+#: part/models.py:3346
 msgid "Maximum historical purchase cost"
 msgstr "Maksimum tarihsel satın alma maliyeti"
 
-#: part/models.py:3358
+#: part/models.py:3352
 msgid "Minimum Internal Price"
 msgstr "Minimum Dahili Fiyat"
 
-#: part/models.py:3359
+#: part/models.py:3353
 msgid "Minimum cost based on internal price breaks"
 msgstr "Dahili fiyat kademelerine dayalı minimum maliyet"
 
-#: part/models.py:3365
+#: part/models.py:3359
 msgid "Maximum Internal Price"
 msgstr "Maksimum Dahili Fiyat"
 
-#: part/models.py:3366
+#: part/models.py:3360
 msgid "Maximum cost based on internal price breaks"
 msgstr "Dahili fiyat kademelerine dayalı maksimum maliyet"
 
-#: part/models.py:3372
+#: part/models.py:3366
 msgid "Minimum Supplier Price"
 msgstr "Minimum Tedarikçi Fiyatı"
 
-#: part/models.py:3373
+#: part/models.py:3367
 msgid "Minimum price of part from external suppliers"
 msgstr "Parça için minimum dış tedarikçi fiyatı"
 
-#: part/models.py:3379
+#: part/models.py:3373
 msgid "Maximum Supplier Price"
 msgstr "Maksimum Tedarikçi Fiyatı"
 
-#: part/models.py:3380
+#: part/models.py:3374
 msgid "Maximum price of part from external suppliers"
 msgstr "Parça için maksimum dış tedarikçi fiyatı"
 
-#: part/models.py:3386
+#: part/models.py:3380
 msgid "Minimum Variant Cost"
 msgstr "Minimum Varyant Maliyeti"
 
-#: part/models.py:3387
+#: part/models.py:3381
 msgid "Calculated minimum cost of variant parts"
 msgstr "Varyant parçaların hesaplanan minimum maliyeti"
 
-#: part/models.py:3393
+#: part/models.py:3387
 msgid "Maximum Variant Cost"
 msgstr "Maksimum Varyant Maliyeti"
 
-#: part/models.py:3394
+#: part/models.py:3388
 msgid "Calculated maximum cost of variant parts"
 msgstr "Varyant parçaların hesaplanan maksimum maliyeti"
 
-#: part/models.py:3400 part/models.py:3414
+#: part/models.py:3394 part/models.py:3408
 msgid "Minimum Cost"
 msgstr "Minimum Maliyet"
 
-#: part/models.py:3401
+#: part/models.py:3395
 msgid "Override minimum cost"
 msgstr "Minimum maliyeti geçersiz kıl"
 
-#: part/models.py:3407 part/models.py:3421
+#: part/models.py:3401 part/models.py:3415
 msgid "Maximum Cost"
 msgstr "Maksimum Maliyet"
 
-#: part/models.py:3408
+#: part/models.py:3402
 msgid "Override maximum cost"
 msgstr "Maksimum maliyeti geçersiz kıl"
 
-#: part/models.py:3415
+#: part/models.py:3409
 msgid "Calculated overall minimum cost"
 msgstr "Hesaplanan genel minimum maliyet"
 
-#: part/models.py:3422
+#: part/models.py:3416
 msgid "Calculated overall maximum cost"
 msgstr "Hesaplanan genel maksimum maliyet"
 
-#: part/models.py:3428
+#: part/models.py:3422
 msgid "Minimum Sale Price"
 msgstr "Minimum Satış Fiyatı"
 
-#: part/models.py:3429
+#: part/models.py:3423
 msgid "Minimum sale price based on price breaks"
 msgstr "Fiyat kademelerine dayalı minimum satış fiyatı"
 
-#: part/models.py:3435
+#: part/models.py:3429
 msgid "Maximum Sale Price"
 msgstr "Maksimum Satış Fiyatı"
 
-#: part/models.py:3436
+#: part/models.py:3430
 msgid "Maximum sale price based on price breaks"
 msgstr "Fiyat kademelerine dayalı maksimum satış fiyatı"
 
-#: part/models.py:3442
+#: part/models.py:3436
 msgid "Minimum Sale Cost"
 msgstr "Minimum Satış Maliyeti"
 
-#: part/models.py:3443
+#: part/models.py:3437
 msgid "Minimum historical sale price"
 msgstr "Minimum tarihsel satış fiyatı"
 
-#: part/models.py:3449
+#: part/models.py:3443
 msgid "Maximum Sale Cost"
 msgstr "Maksimum Satış Maliyeti"
 
-#: part/models.py:3450
+#: part/models.py:3444
 msgid "Maximum historical sale price"
 msgstr "Maksimum tarihsel satış fiyatı"
 
-#: part/models.py:3468
+#: part/models.py:3462
 msgid "Part for stocktake"
 msgstr "Stok sayımı için parça"
 
-#: part/models.py:3473
+#: part/models.py:3467
 msgid "Item Count"
 msgstr "Kalem Sayısı"
 
-#: part/models.py:3474
+#: part/models.py:3468
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "Sayım anındaki tekil stok kaydı sayısı"
 
-#: part/models.py:3482
+#: part/models.py:3476
 msgid "Total available stock at time of stocktake"
 msgstr "Sayım anındaki toplam mevcut stok"
 
-#: part/models.py:3486 report/templates/report/inventree_test_report.html:106
+#: part/models.py:3480 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3105
 msgid "Date"
 msgstr "Tarih"
 
-#: part/models.py:3487
+#: part/models.py:3481
 msgid "Date stocktake was performed"
 msgstr "Stok sayımının yapıldığı tarih"
 
-#: part/models.py:3494
+#: part/models.py:3488
 msgid "Minimum Stock Cost"
 msgstr "Minimum Stok Maliyeti"
 
-#: part/models.py:3495
+#: part/models.py:3489
 msgid "Estimated minimum cost of stock on hand"
 msgstr "Mevcut stokun tahmini minimum maliyeti"
 
-#: part/models.py:3501
+#: part/models.py:3495
 msgid "Maximum Stock Cost"
 msgstr "Maksimum Stok Maliyeti"
 
-#: part/models.py:3502
+#: part/models.py:3496
 msgid "Estimated maximum cost of stock on hand"
 msgstr "Mevcut stokun tahmini maksimum maliyeti"
 
-#: part/models.py:3512
+#: part/models.py:3506
 msgid "Part Sale Price Break"
 msgstr "Parça Satış Fiyat Kademesi"
 
-#: part/models.py:3626
+#: part/models.py:3620
 msgid "Part Test Template"
 msgstr "Parça Test Şablonu"
 
-#: part/models.py:3652
+#: part/models.py:3646
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "Geçersiz şablon adı - en az bir alfasayısal karakter içermelidir"
 
-#: part/models.py:3684
+#: part/models.py:3678
 msgid "Test templates can only be created for testable parts"
 msgstr "Test şablonları sadece test edilebilir paçalar için oluşturulabilir"
 
-#: part/models.py:3698
+#: part/models.py:3692
 msgid "Test template with the same key already exists for part"
 msgstr "Aynı anahtara sahip test şablonu parça için zaten mevcut"
 
-#: part/models.py:3715
+#: part/models.py:3709
 msgid "Test Name"
 msgstr "Test Adı"
 
-#: part/models.py:3716
+#: part/models.py:3710
 msgid "Enter a name for the test"
 msgstr "Test için bir ad girin"
 
-#: part/models.py:3722
+#: part/models.py:3716
 msgid "Test Key"
 msgstr "Test Anahtarı"
 
-#: part/models.py:3723
+#: part/models.py:3717
 msgid "Simplified key for the test"
 msgstr "Test için basitleştirilmiş anahtar"
 
-#: part/models.py:3730
+#: part/models.py:3724
 msgid "Test Description"
 msgstr "Test Açıklaması"
 
-#: part/models.py:3731
+#: part/models.py:3725
 msgid "Enter description for this test"
 msgstr "Bu test için açıklama girin"
 
-#: part/models.py:3735
+#: part/models.py:3729
 msgid "Is this test enabled?"
 msgstr "Bu test etkinleştirildi mi?"
 
-#: part/models.py:3740
+#: part/models.py:3734
 msgid "Required"
 msgstr "Gerekli"
 
-#: part/models.py:3741
+#: part/models.py:3735
 msgid "Is this test required to pass?"
 msgstr "Testi geçmesi için bu gerekli mi?"
 
-#: part/models.py:3746
+#: part/models.py:3740
 msgid "Requires Value"
 msgstr "Değer Gerektirir"
 
-#: part/models.py:3747
+#: part/models.py:3741
 msgid "Does this test require a value when adding a test result?"
 msgstr "Bir test sonucu eklerken bu test bir değer gerektirir mi?"
 
-#: part/models.py:3752
+#: part/models.py:3746
 msgid "Requires Attachment"
 msgstr "Ek Gerektirir"
 
-#: part/models.py:3754
+#: part/models.py:3748
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "Bir test sonucu eklerken bu test bir dosya eki gerektirir mi?"
 
-#: part/models.py:3761
+#: part/models.py:3755
 msgid "Valid choices for this test (comma-separated)"
 msgstr "Bu test için geçerli seçenekler (virgül ile ayrılmış)"
 
-#: part/models.py:3955
+#: part/models.py:3949
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "BOM kalemi değiştirilemez - montaj kilitlidir"
 
-#: part/models.py:3962
+#: part/models.py:3956
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "BOM kalemi değiştirilemez - varyant montajı kilitlidir"
 
-#: part/models.py:3972
+#: part/models.py:3966
 msgid "Select parent part"
 msgstr "Üst parçayı seçin"
 
-#: part/models.py:3982
+#: part/models.py:3976
 msgid "Sub part"
 msgstr "Alt parça"
 
-#: part/models.py:3983
+#: part/models.py:3977
 msgid "Select part to be used in BOM"
 msgstr "BOM'da kullanılacak parçayı seçin"
 
-#: part/models.py:3994
+#: part/models.py:3988
 msgid "BOM quantity for this BOM item"
 msgstr "Bu BOM kalemi için BOM miktarı"
 
-#: part/models.py:4000
+#: part/models.py:3994
 msgid "This BOM item is optional"
 msgstr "Bu BOM kalemi isteğe bağlıdır"
 
-#: part/models.py:4006
+#: part/models.py:4000
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Bu BOM kalemi bir sarf malzemesidir (üretim emirlerinde izlenmez)"
 
-#: part/models.py:4014
+#: part/models.py:4008
 msgid "Setup Quantity"
 msgstr "Hazırlık Payı"
 
-#: part/models.py:4015
+#: part/models.py:4009
 msgid "Extra required quantity for a build, to account for setup losses"
 msgstr "Bir üretimdeki hazırlık kayıplarını telafi etmek için gereken ek miktar"
 
-#: part/models.py:4023
+#: part/models.py:4017
 msgid "Attrition"
 msgstr "Fire"
 
-#: part/models.py:4025
+#: part/models.py:4019
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
 msgstr "Bir üretim için tahmini fire oranı, yüzde olarak ifade edilir (0-100)"
 
-#: part/models.py:4036
+#: part/models.py:4030
 msgid "Rounding Multiple"
 msgstr "Kat Yuvarlama"
 
-#: part/models.py:4038
+#: part/models.py:4032
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr "Gerekli üretim miktarını bu değerin en yakın katına yuvarlayın"
 
-#: part/models.py:4046
+#: part/models.py:4040
 msgid "BOM item reference"
 msgstr "BOM kalemi referansı"
 
-#: part/models.py:4054
+#: part/models.py:4048
 msgid "BOM item notes"
 msgstr "BOM kalemi notları"
 
-#: part/models.py:4060
+#: part/models.py:4054
 msgid "Checksum"
 msgstr "Sağlama Toplamı"
 
-#: part/models.py:4061
+#: part/models.py:4055
 msgid "BOM line checksum"
 msgstr "BOM satırı sağlama toplamı"
 
-#: part/models.py:4066
+#: part/models.py:4060
 msgid "Validated"
 msgstr "Doğrulandı"
 
-#: part/models.py:4067
+#: part/models.py:4061
 msgid "This BOM item has been validated"
 msgstr "Bu BOM kalemi doğrulandı"
 
-#: part/models.py:4072
+#: part/models.py:4066
 msgid "Gets inherited"
 msgstr "Devralınır"
 
-#: part/models.py:4073
+#: part/models.py:4067
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Bu BOM kalemi, varyant parçaların BOM'larından devralınmıştır"
 
-#: part/models.py:4079
+#: part/models.py:4073
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Varyant parçaların stok kalemleri bu BOM kalemi için kullanılabilir"
 
-#: part/models.py:4186 stock/models.py:932
+#: part/models.py:4180 stock/models.py:932
 msgid "Quantity must be integer value for trackable parts"
 msgstr "İzlenebilir parçalar için miktar tamsayı olmalıdır"
 
-#: part/models.py:4196 part/models.py:4198
+#: part/models.py:4190 part/models.py:4192
 msgid "Sub part must be specified"
 msgstr "Alt parça belirtilmelidir"
 
-#: part/models.py:4349
+#: part/models.py:4343
 msgid "BOM Item Substitute"
 msgstr "BOM Kalemi Muadili"
 
-#: part/models.py:4370
+#: part/models.py:4364
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Muadil parça ile asıl parça aynı olamaz"
 
-#: part/models.py:4383
+#: part/models.py:4377
 msgid "Parent BOM item"
 msgstr "Üst BOM kalemi"
 
-#: part/models.py:4391
+#: part/models.py:4385
 msgid "Substitute part"
 msgstr "Muadil parça"
 
-#: part/models.py:4407
+#: part/models.py:4401
 msgid "Part 1"
 msgstr "Parça 1"
 
-#: part/models.py:4415
+#: part/models.py:4409
 msgid "Part 2"
 msgstr "Parça 2"
 
-#: part/models.py:4416
+#: part/models.py:4410
 msgid "Select Related Part"
 msgstr "İlgili Parçayı Seçin"
 
-#: part/models.py:4423
+#: part/models.py:4417
 msgid "Note for this relationship"
 msgstr "Bu ilişki için not"
 
-#: part/models.py:4442
+#: part/models.py:4436
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Bir parça ile kendisi arasında parça ilişkisi oluşturulamaz"
 
-#: part/models.py:4447
+#: part/models.py:4441
 msgid "Duplicate relationship already exists"
 msgstr "Kopyalanan ilişki zaten mevcut"
 
@@ -7713,17 +7709,17 @@ msgstr "Eklenti"
 msgid "No author found"
 msgstr "Yazar bulunamadı"
 
-#: plugin/registry.py:781
+#: plugin/registry.py:786
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "'{p}' eklentisi, şu anki InvenTree sürümü {v} ile uyumlu değildir"
 
-#: plugin/registry.py:784
+#: plugin/registry.py:789
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Eklenti en az {v} sürümünü gerektirir"
 
-#: plugin/registry.py:786
+#: plugin/registry.py:791
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Eklenti en fazla {v} sürümünü gerektirir"
@@ -8268,31 +8264,31 @@ msgstr "Sonuç yok (gerekli)"
 msgid "No result"
 msgstr "Sonuç yok"
 
-#: report/templatetags/report.py:168
+#: report/templatetags/report.py:166
 msgid "Invalid media file path"
 msgstr ""
 
-#: report/templatetags/report.py:187
+#: report/templatetags/report.py:185
 msgid "Invalid static file path"
 msgstr ""
 
-#: report/templatetags/report.py:289
+#: report/templatetags/report.py:287
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:347 report/templatetags/report.py:462
+#: report/templatetags/report.py:345 report/templatetags/report.py:461
 msgid "Image file not found"
 msgstr "Görsel dosyası bulunumadı"
 
-#: report/templatetags/report.py:431
+#: report/templatetags/report.py:430
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:456
+#: report/templatetags/report.py:455
 msgid "part_image tag requires a Part instance"
 msgstr "part_image etiketi bir parça örneği gerektirir"
 
-#: report/templatetags/report.py:520
+#: report/templatetags/report.py:519
 msgid "company_image tag requires a Company instance"
 msgstr "company_image etiketi bir şirket örneği gerektirir"
 

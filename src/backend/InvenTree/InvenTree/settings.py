@@ -834,10 +834,15 @@ GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
-_q_worker_timeout = int(
+BACKGROUND_WORKER_TIMEOUT = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
 
+# Set the retry time for background workers to be slightly longer than the worker timeout, to ensure that workers have time to timeout before being retried
+BACKGROUND_WORKER_RETRY = max(
+    int(get_setting('INVENTREE_BACKGROUND_RETRY', 'background.retry', 300)),
+    BACKGROUND_WORKER_TIMEOUT + 120,
+)
 
 # Prevent running multiple background workers if global cache is disabled
 # This is to prevent scheduling conflicts due to the lack of a shared cache
@@ -851,16 +856,18 @@ BACKGROUND_WORKER_COUNT = (
 if 'sqlite' in DB_ENGINE:
     BACKGROUND_WORKER_COUNT = 1
 
+BACKGROUND_WORKER_ATTEMPTS = int(
+    get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
+)
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
     'workers': BACKGROUND_WORKER_COUNT,
-    'timeout': _q_worker_timeout,
-    'retry': max(120, _q_worker_timeout + 30),
-    'max_attempts': int(
-        get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
-    ),
+    'timeout': BACKGROUND_WORKER_TIMEOUT,
+    'retry': BACKGROUND_WORKER_RETRY,
+    'max_attempts': BACKGROUND_WORKER_ATTEMPTS,
     'save_limit': 1000,
     'queue_limit': 50,
     'catch_up': False,

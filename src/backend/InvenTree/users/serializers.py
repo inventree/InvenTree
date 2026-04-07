@@ -306,8 +306,8 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     is_staff = serializers.BooleanField(
-        label=_('Staff'),
-        help_text=_('Does this user have staff permissions'),
+        label=_('Administrator'),
+        help_text=_('Does this user have administrative permissions'),
         required=False,
     )
 
