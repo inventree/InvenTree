@@ -48,6 +48,7 @@ import {
   DecimalColumn,
   DescriptionColumn,
   IPNColumn,
+  LineItemColumn,
   LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -77,6 +78,7 @@ export default function SalesOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       {
         accessor: 'part',
         sortable: true,
@@ -539,6 +541,7 @@ export default function SalesOrderLineItemTable({
             order: orderId,
             part_detail: true
           },
+          defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

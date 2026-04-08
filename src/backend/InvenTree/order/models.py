@@ -1793,6 +1793,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         if self.price:
             return self.quantity * self.price
 
+    line = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
+        null=False,
+        verbose_name=_('Line Number'),
+        help_text=_('Line number for this item (optional)'),
+    )
+
     reference = models.CharField(
         max_length=100,
         blank=True,
