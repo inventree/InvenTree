@@ -467,16 +467,17 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 @register.simple_tag()
 def parameter(
-    instance: Model, parameter_name: str
+    instance: Model, parameter_name: str, default_value: Optional[Any] = None
 ) -> Optional[common.models.Parameter]:
     """Return a Parameter object for the given part and parameter name.
 
     Arguments:
         instance: A Model object
         parameter_name: The name of the parameter to retrieve (case insensitive)
+        default_value: The value to return if the parameter is not found
 
     Returns:
-        A Parameter object, or None if not found
+        A Parameter object, or the provided default value if not found
     """
     if instance is None:
         raise ValueError('parameter tag requires a valid Model instance')
@@ -501,6 +502,8 @@ def parameter(
         .first()
     ):
         return parameter
+
+    return default_value
 
 
 @register.simple_tag()
