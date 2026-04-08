@@ -169,6 +169,7 @@ export function useSalesOrderLineItemFields({
         },
         onValueChange: (_: any, record?: any) => setPart(record)
       },
+      line: {},
       reference: {},
       quantity: {
         onValueChange: (value) => {

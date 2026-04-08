@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-03 13:14\n"
+"PO-Revision-Date: 2026-04-08 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -35,7 +35,7 @@ msgstr "Редактировать"
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:170
 #: src/pages/Notifications.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:249
+#: src/tables/plugin/PluginListTable.tsx:247
 msgid "Delete"
 msgstr "Удалить"
 
@@ -56,7 +56,7 @@ msgstr "Отменить"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:890
+#: src/forms/PurchaseOrderForms.tsx:891
 #: src/forms/StockForms.tsx:805
 #: src/forms/StockForms.tsx:852
 #: src/forms/StockForms.tsx:905
@@ -69,7 +69,7 @@ msgstr "Действия"
 
 #: lib/components/SearchInput.tsx:34
 #: src/components/forms/fields/RelatedModelField.tsx:480
-#: src/components/nav/Header.tsx:169
+#: src/components/nav/Header.tsx:179
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
@@ -105,9 +105,9 @@ msgstr "Нет"
 #: src/forms/BuildForms.tsx:669
 #: src/forms/BuildForms.tsx:833
 #: src/forms/BuildForms.tsx:936
-#: src/forms/PurchaseOrderForms.tsx:886
-#: src/forms/ReturnOrderForms.tsx:243
-#: src/forms/SalesOrderForms.tsx:428
+#: src/forms/PurchaseOrderForms.tsx:887
+#: src/forms/ReturnOrderForms.tsx:244
+#: src/forms/SalesOrderForms.tsx:429
 #: src/forms/StockForms.tsx:368
 #: src/forms/StockForms.tsx:800
 #: src/forms/StockForms.tsx:847
@@ -230,7 +230,7 @@ msgstr "Категории деталей"
 #: src/forms/BuildForms.tsx:512
 #: src/forms/BuildForms.tsx:672
 #: src/forms/BuildForms.tsx:834
-#: src/forms/SalesOrderForms.tsx:430
+#: src/forms/SalesOrderForms.tsx:431
 #: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/ColumnRenderers.tsx:129
 #: src/tables/part/PartTestResultTable.tsx:256
@@ -464,7 +464,7 @@ msgstr "Владельцы"
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:77
+#: src/tables/settings/ImportSessionTable.tsx:78
 #: src/tables/stock/StockTrackingTable.tsx:225
 #: src/tables/stock/StockTrackingTable.tsx:273
 msgid "User"
@@ -575,7 +575,7 @@ msgstr "Списки выбора"
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
 #: src/tables/InvenTreeTableHeader.tsx:124
-#: src/tables/bom/BomTable.tsx:561
+#: src/tables/bom/BomTable.tsx:557
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
 msgid "Error"
@@ -680,8 +680,8 @@ msgstr "Введите данные штрихкода"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:27
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:506
-#: src/forms/PurchaseOrderForms.tsx:647
+#: src/forms/PurchaseOrderForms.tsx:507
+#: src/forms/PurchaseOrderForms.tsx:648
 msgid "Scan Barcode"
 msgstr "Сканировать штрихкод"
 
@@ -700,7 +700,7 @@ msgstr "Штрихкод не соответствует ожидаемому т
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:552
+#: src/tables/bom/BomTable.tsx:548
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Успешно"
@@ -766,7 +766,7 @@ msgstr "Это удалит ссылку на связанный штрих-ко
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:192
-#: src/forms/PurchaseOrderForms.tsx:637
+#: src/forms/PurchaseOrderForms.tsx:638
 msgid "Unlink Barcode"
 msgstr "Отвязать штрихкод"
 
@@ -1252,16 +1252,25 @@ msgstr "Создать новый отчёт инвентаризации"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
 #: src/pages/core/UserDetail.tsx:93
 #: src/pages/core/UserDetail.tsx:203
-#: src/tables/settings/UserTable.tsx:410
+#: src/tables/settings/UserTable.tsx:411
 msgid "Superuser"
 msgstr "Суперпользователь"
+
+#: src/components/details/Details.tsx:130
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+#: src/pages/core/UserDetail.tsx:87
+#: src/pages/core/UserDetail.tsx:200
+#: src/tables/settings/UserTable.tsx:285
+#: src/tables/settings/UserTable.tsx:406
+msgid "Administrator"
+msgstr ""
 
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
 #: src/tables/settings/UserTable.tsx:405
-msgid "Staff"
-msgstr "Сотрудник"
+#~ msgid "Staff"
+#~ msgstr "Staff"
 
 #: src/components/details/Details.tsx:131
 msgid "Email: "
@@ -1871,7 +1880,7 @@ msgid "Version"
 msgstr "Версия"
 
 #: src/components/forms/InstanceOptions.tsx:137
-#: src/components/modals/AboutInvenTreeModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:119
 #: src/components/modals/ServerInfoModal.tsx:34
 msgid "API Version"
 msgstr "Версия API"
@@ -1932,7 +1941,7 @@ msgid "Uncategorized"
 msgstr "Без категории"
 
 #: src/components/forms/fields/IconField.tsx:211
-#: src/components/nav/Layout.tsx:139
+#: src/components/nav/Layout.tsx:141
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "Поиск..."
@@ -1952,7 +1961,7 @@ msgid "{0} icons"
 msgstr "{0} значков"
 
 #: src/components/forms/fields/RelatedModelField.tsx:481
-#: src/components/modals/AboutInvenTreeModal.tsx:96
+#: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Загрузка"
@@ -2128,7 +2137,7 @@ msgid "Data has been imported successfully"
 msgstr "Данные успешно импортированы"
 
 #: src/components/importer/ImporterDrawer.tsx:109
-#: src/components/modals/AboutInvenTreeModal.tsx:205
+#: src/components/modals/AboutInvenTreeModal.tsx:200
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:137
@@ -2254,8 +2263,12 @@ msgstr "Сменить язык"
 
 #: src/components/items/OnlyStaff.tsx:10
 #: src/components/modals/AboutInvenTreeModal.tsx:50
-msgid "This information is only available for staff users"
-msgstr "Эта информация доступна только для сотрудников"
+#~ msgid "This information is only available for staff users"
+#~ msgstr "This information is only available for staff users"
+
+#: src/components/items/OnlyStaff.tsx:11
+msgid "This information is only available for administrative users"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2342,31 +2355,31 @@ msgstr "Выбрано"
 #~ msgid "Your InvenTree version status is"
 #~ msgstr "Your InvenTree version status is"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:118
+#: src/components/modals/AboutInvenTreeModal.tsx:113
 msgid "InvenTree Version"
 msgstr "Версия InvenTree"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:130
+#: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "Python Version"
 msgstr "Версия Python"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:135
+#: src/components/modals/AboutInvenTreeModal.tsx:130
 msgid "Django Version"
 msgstr "Версия Django"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:144
+#: src/components/modals/AboutInvenTreeModal.tsx:139
 msgid "Commit Hash"
 msgstr "Хеш коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:149
+#: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Commit Date"
 msgstr "Дата коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:154
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Commit Branch"
 msgstr "Ветка коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:165
+#: src/components/modals/AboutInvenTreeModal.tsx:160
 msgid "Version Information"
 msgstr "Информация о версии"
 
@@ -2379,28 +2392,28 @@ msgstr "Информация о версии"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-#~ msgid "View Code on GitHub"
-#~ msgstr "View Code on GitHub"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:174
 msgid "Links"
 msgstr "Ссылки"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:180
+#: src/components/modals/AboutInvenTreeModal.tsx:169
+#~ msgid "View Code on GitHub"
+#~ msgstr "View Code on GitHub"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:175
 #: src/components/nav/NavigationDrawer.tsx:208
 #: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Документация"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:181
+#: src/components/modals/AboutInvenTreeModal.tsx:176
 msgid "Source Code"
 msgstr "Исходный код"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:182
+#: src/components/modals/AboutInvenTreeModal.tsx:177
 msgid "Mobile App"
 msgstr "Мобильное Приложение"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:183
+#: src/components/modals/AboutInvenTreeModal.tsx:178
 msgid "Submit Bug Report"
 msgstr "Сообщить об ошибке"
 
@@ -2409,19 +2422,19 @@ msgstr "Сообщить об ошибке"
 #~ msgid "Dismiss"
 #~ msgstr "Dismiss"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:195
+#: src/components/modals/AboutInvenTreeModal.tsx:190
 msgid "Copy version information"
 msgstr "Копировать информацию о версии"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:215
+#: src/components/modals/AboutInvenTreeModal.tsx:210
 msgid "Development Version"
 msgstr "Версия разработки"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:217
+#: src/components/modals/AboutInvenTreeModal.tsx:212
 msgid "Up to Date"
 msgstr "Последняя версия"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:219
+#: src/components/modals/AboutInvenTreeModal.tsx:214
 msgid "Update Available"
 msgstr "Доступно обновление"
 
@@ -2581,7 +2594,7 @@ msgstr "Требуется применить миграции базы данн
 msgid "Learn more about {code}"
 msgstr "Подробнее о {code}"
 
-#: src/components/nav/Header.tsx:188
+#: src/components/nav/Header.tsx:198
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:122
@@ -2591,7 +2604,19 @@ msgstr "Подробнее о {code}"
 msgid "Notifications"
 msgstr "Уведомления"
 
-#: src/components/nav/Layout.tsx:142
+#: src/components/nav/Header.tsx:216
+msgid "Superuser Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:216
+msgid "Administrator Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:221
+msgid "The current user has elevated privileges and should not be used for regular usage."
+msgstr ""
+
+#: src/components/nav/Layout.tsx:144
 msgid "Nothing found..."
 msgstr "Ничего не найдено..."
 
@@ -2923,11 +2948,11 @@ msgstr "Дата"
 #: src/tables/part/PartTable.tsx:198
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
-#: src/tables/plugin/PluginListTable.tsx:418
+#: src/tables/plugin/PluginListTable.tsx:420
 #: src/tables/purchasing/SupplierPartTable.tsx:135
 #: src/tables/purchasing/SupplierPartTable.tsx:249
 #: src/tables/settings/ApiTokenTable.tsx:63
-#: src/tables/settings/UserTable.tsx:400
+#: src/tables/settings/UserTable.tsx:401
 #: src/tables/stock/StockItemTable.tsx:176
 msgid "Active"
 msgstr "Активно"
@@ -2950,7 +2975,7 @@ msgstr "Путь установки"
 #: src/tables/machine/MachineTypeTable.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:291
 #: src/tables/plugin/PluginListTable.tsx:101
-#: src/tables/plugin/PluginListTable.tsx:423
+#: src/tables/plugin/PluginListTable.tsx:425
 msgid "Builtin"
 msgstr "Встроенный"
 
@@ -3065,7 +3090,7 @@ msgid "Virtual"
 msgstr "Виртуальная"
 
 #: src/components/render/Part.tsx:34
-#: src/tables/bom/BomTable.tsx:306
+#: src/tables/bom/BomTable.tsx:301
 #: src/tables/part/PartTable.tsx:153
 msgid "No stock"
 msgstr "Нет склада"
@@ -3075,7 +3100,7 @@ msgstr "Нет склада"
 #: src/pages/company/SupplierPartDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:400
 #: src/pages/part/PartDetail.tsx:1018
-#: src/tables/bom/BomTable.tsx:448
+#: src/tables/bom/BomTable.tsx:443
 #: src/tables/build/BuildLineTable.tsx:228
 #: src/tables/part/PartTable.tsx:109
 msgid "On Order"
@@ -3110,7 +3135,7 @@ msgstr "Категория"
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:835
-#: src/forms/PurchaseOrderForms.tsx:680
+#: src/forms/PurchaseOrderForms.tsx:681
 #: src/forms/StockForms.tsx:801
 #: src/forms/StockForms.tsx:848
 #: src/forms/StockForms.tsx:901
@@ -3143,9 +3168,9 @@ msgstr "Серийный номер"
 #: src/forms/BuildForms.tsx:267
 #: src/forms/BuildForms.tsx:673
 #: src/forms/BuildForms.tsx:837
-#: src/forms/PurchaseOrderForms.tsx:889
-#: src/forms/ReturnOrderForms.tsx:244
-#: src/forms/SalesOrderForms.tsx:431
+#: src/forms/PurchaseOrderForms.tsx:890
+#: src/forms/ReturnOrderForms.tsx:245
+#: src/forms/SalesOrderForms.tsx:432
 #: src/forms/StockForms.tsx:850
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
@@ -3158,8 +3183,8 @@ msgstr "Серийный номер"
 #: src/tables/build/BuildLineTable.tsx:86
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:277
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:175
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:206
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:202
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
 #: src/tables/stock/StockTrackingTable.tsx:104
 msgid "Quantity"
@@ -3762,7 +3787,7 @@ msgstr "Далее"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:1058
-#: src/tables/part/PartTable.tsx:415
+#: src/tables/part/PartTable.tsx:411
 msgid "Edit Part"
 msgstr "Редактировать деталь"
 
@@ -3955,8 +3980,8 @@ msgstr "Исправьте ошибки в выбранных деталях"
 
 #: src/components/wizards/OrderPartsWizard.tsx:587
 #: src/tables/build/BuildLineTable.tsx:844
-#: src/tables/part/PartTable.tsx:529
-#: src/tables/sales/SalesOrderLineItemTable.tsx:366
+#: src/tables/part/PartTable.tsx:525
+#: src/tables/sales/SalesOrderLineItemTable.tsx:368
 msgid "Order Parts"
 msgstr "Закупить детали"
 
@@ -4485,9 +4510,9 @@ msgstr "Количество для завершения"
 #: src/forms/BuildForms.tsx:368
 #: src/forms/BuildForms.tsx:445
 #: src/forms/BuildForms.tsx:514
-#: src/forms/PurchaseOrderForms.tsx:805
-#: src/forms/ReturnOrderForms.tsx:198
-#: src/forms/ReturnOrderForms.tsx:245
+#: src/forms/PurchaseOrderForms.tsx:806
+#: src/forms/ReturnOrderForms.tsx:199
+#: src/forms/ReturnOrderForms.tsx:246
 #: src/forms/StockForms.tsx:721
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:241
@@ -4501,11 +4526,11 @@ msgstr "Количество для завершения"
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:318
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:135
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:173
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:137
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:175
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
-#: src/tables/settings/ImportSessionTable.tsx:117
+#: src/tables/settings/ImportSessionTable.tsx:118
 #: src/tables/stock/StockItemTable.tsx:181
 #: src/tables/stock/StockTrackingTable.tsx:82
 msgid "Status"
@@ -4579,40 +4604,40 @@ msgstr "Внутренний артикул"
 #: src/forms/BuildForms.tsx:671
 #: src/forms/BuildForms.tsx:836
 #: src/forms/BuildForms.tsx:937
-#: src/forms/SalesOrderForms.tsx:429
+#: src/forms/SalesOrderForms.tsx:430
 #: src/pages/part/PartDetail.tsx:1006
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
-#: src/tables/sales/SalesOrderLineItemTable.tsx:338
+#: src/tables/sales/SalesOrderLineItemTable.tsx:340
 #: src/tables/stock/StockItemTable.tsx:192
 msgid "Allocated"
 msgstr "Зарезервировано"
 
 #: src/forms/BuildForms.tsx:706
-#: src/forms/SalesOrderForms.tsx:418
+#: src/forms/SalesOrderForms.tsx:419
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:345
 msgid "Source Location"
 msgstr "Место хранения комплектующих"
 
 #: src/forms/BuildForms.tsx:707
-#: src/forms/SalesOrderForms.tsx:419
+#: src/forms/SalesOrderForms.tsx:420
 msgid "Select the source location for the stock allocation"
 msgstr "Выберите исходное расположение для распределения запасов"
 
 #: src/forms/BuildForms.tsx:739
-#: src/forms/SalesOrderForms.tsx:460
+#: src/forms/SalesOrderForms.tsx:461
 #: src/tables/build/BuildLineTable.tsx:587
 #: src/tables/build/BuildLineTable.tsx:760
 #: src/tables/build/BuildLineTable.tsx:859
 #: src/tables/build/BuildOutputTable.tsx:233
-#: src/tables/sales/SalesOrderLineItemTable.tsx:376
-#: src/tables/sales/SalesOrderLineItemTable.tsx:402
+#: src/tables/sales/SalesOrderLineItemTable.tsx:378
+#: src/tables/sales/SalesOrderLineItemTable.tsx:404
 msgid "Allocate Stock"
 msgstr "Зарезервировать остатки"
 
 #: src/forms/BuildForms.tsx:742
-#: src/forms/SalesOrderForms.tsx:465
+#: src/forms/SalesOrderForms.tsx:466
 msgid "Stock items allocated"
 msgstr "Запасы назначены"
 
@@ -4647,10 +4672,10 @@ msgstr "Полностью израсходовано"
 msgid "Consumed"
 msgstr "Израсходовано"
 
-#: src/forms/CommonForms.tsx:92
-#: src/forms/PurchaseOrderForms.tsx:172
-#: src/forms/ReturnOrderForms.tsx:139
-#: src/forms/SalesOrderForms.tsx:190
+#: src/forms/CommonForms.tsx:93
+#: src/forms/PurchaseOrderForms.tsx:173
+#: src/forms/ReturnOrderForms.tsx:140
+#: src/forms/SalesOrderForms.tsx:191
 msgid "Select project code for this line item"
 msgstr "Выберите код проекта для этой позиции"
 
@@ -4700,35 +4725,35 @@ msgstr "Подписаться на уведомления для этой ка�
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:453
+#: src/forms/PurchaseOrderForms.tsx:454
 msgid "Choose Location"
 msgstr "Выберите место хранения"
 
-#: src/forms/PurchaseOrderForms.tsx:461
+#: src/forms/PurchaseOrderForms.tsx:462
 msgid "Item Destination selected"
 msgstr "Пункт назначения товара выбран"
 
-#: src/forms/PurchaseOrderForms.tsx:471
+#: src/forms/PurchaseOrderForms.tsx:472
 msgid "Part category default location selected"
 msgstr "Выбрано расположение категории по умолчанию"
 
-#: src/forms/PurchaseOrderForms.tsx:481
+#: src/forms/PurchaseOrderForms.tsx:482
 msgid "Received stock location selected"
 msgstr "Выбрано место получения запасов"
 
-#: src/forms/PurchaseOrderForms.tsx:489
+#: src/forms/PurchaseOrderForms.tsx:490
 msgid "Default location selected"
 msgstr "Выбрано местоположение по умолчанию"
 
-#: src/forms/PurchaseOrderForms.tsx:536
+#: src/forms/PurchaseOrderForms.tsx:537
 #: src/pages/part/PartDetail.tsx:640
 #: src/pages/part/PartDetail.tsx:1042
-#: src/tables/bom/BomTable.tsx:149
-#: src/tables/bom/BomTable.tsx:438
+#: src/tables/bom/BomTable.tsx:144
+#: src/tables/bom/BomTable.tsx:433
 msgid "Virtual Part"
 msgstr "Виртуальная деталь"
 
-#: src/forms/PurchaseOrderForms.tsx:537
+#: src/forms/PurchaseOrderForms.tsx:538
 msgid "This part is virtual, no physical stock will be received."
 msgstr ""
 
@@ -4736,11 +4761,11 @@ msgstr ""
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:572
+#: src/forms/PurchaseOrderForms.tsx:573
 msgid "Set Location"
 msgstr "Задать место хранения"
 
-#: src/forms/PurchaseOrderForms.tsx:581
+#: src/forms/PurchaseOrderForms.tsx:582
 msgid "Assign Batch Code"
 msgstr "Назначить код партии"
 
@@ -4748,26 +4773,26 @@ msgstr "Назначить код партии"
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:591
+#: src/forms/PurchaseOrderForms.tsx:592
 msgid "Assign Serial Numbers"
 msgstr "Назначить серийный номер"
 
-#: src/forms/PurchaseOrderForms.tsx:603
+#: src/forms/PurchaseOrderForms.tsx:604
 msgid "Set Expiry Date"
 msgstr "Задать срок годности"
 
-#: src/forms/PurchaseOrderForms.tsx:612
+#: src/forms/PurchaseOrderForms.tsx:613
 #: src/forms/StockForms.tsx:702
 msgid "Adjust Packaging"
 msgstr "Настройка упаковки"
 
-#: src/forms/PurchaseOrderForms.tsx:621
+#: src/forms/PurchaseOrderForms.tsx:622
 #: src/forms/StockForms.tsx:693
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Изменить статус"
 
-#: src/forms/PurchaseOrderForms.tsx:628
+#: src/forms/PurchaseOrderForms.tsx:629
 msgid "Add Note"
 msgstr "Добавить заметку"
 
@@ -4775,19 +4800,19 @@ msgstr "Добавить заметку"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:695
+#: src/forms/PurchaseOrderForms.tsx:696
 msgid "Store at default location"
 msgstr "Использовать место хранения по умолчанию"
 
-#: src/forms/PurchaseOrderForms.tsx:710
+#: src/forms/PurchaseOrderForms.tsx:711
 msgid "Store at line item destination "
 msgstr "Использовать место хранения позиции заказа "
 
-#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/PurchaseOrderForms.tsx:723
 msgid "Store with already received stock"
 msgstr "Использовать место хранения уже полученных запасов"
 
-#: src/forms/PurchaseOrderForms.tsx:746
+#: src/forms/PurchaseOrderForms.tsx:747
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/stock/StockDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:954
@@ -4800,121 +4825,121 @@ msgstr "Использовать место хранения уже получе
 msgid "Batch Code"
 msgstr "Код партии"
 
-#: src/forms/PurchaseOrderForms.tsx:747
+#: src/forms/PurchaseOrderForms.tsx:748
 msgid "Enter batch code for received items"
 msgstr "Введите код партии для полученных запасов"
 
-#: src/forms/PurchaseOrderForms.tsx:760
+#: src/forms/PurchaseOrderForms.tsx:761
 #: src/forms/StockForms.tsx:224
 msgid "Serial Numbers"
 msgstr "Серийные номера"
 
-#: src/forms/PurchaseOrderForms.tsx:761
+#: src/forms/PurchaseOrderForms.tsx:762
 msgid "Enter serial numbers for received items"
 msgstr "Введите серийные номера для полученных запасов"
 
-#: src/forms/PurchaseOrderForms.tsx:778
+#: src/forms/PurchaseOrderForms.tsx:779
 #: src/pages/stock/StockDetail.tsx:382
 #: src/tables/stock/StockItemTable.tsx:148
 msgid "Expiry Date"
 msgstr "Срок годности"
 
-#: src/forms/PurchaseOrderForms.tsx:779
+#: src/forms/PurchaseOrderForms.tsx:780
 msgid "Enter an expiry date for received items"
 msgstr "Введите дату истечения срока годности полученных элементов"
 
-#: src/forms/PurchaseOrderForms.tsx:791
+#: src/forms/PurchaseOrderForms.tsx:792
 #: src/forms/StockForms.tsx:737
 #: src/pages/company/SupplierPartDetail.tsx:173
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/stock/StockDetail.tsx:419
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:227
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:223
 msgid "Packaging"
 msgstr "Упаковка"
 
-#: src/forms/PurchaseOrderForms.tsx:815
+#: src/forms/PurchaseOrderForms.tsx:816
 #: src/pages/company/SupplierPartDetail.tsx:121
 #: src/tables/ColumnRenderers.tsx:517
 msgid "Note"
 msgstr "Заметка"
 
-#: src/forms/PurchaseOrderForms.tsx:887
+#: src/forms/PurchaseOrderForms.tsx:888
 #: src/pages/company/SupplierPartDetail.tsx:139
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "Артикул поставщика"
 
-#: src/forms/PurchaseOrderForms.tsx:888
+#: src/forms/PurchaseOrderForms.tsx:889
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
 msgid "Received"
 msgstr "Получено"
 
-#: src/forms/PurchaseOrderForms.tsx:905
+#: src/forms/PurchaseOrderForms.tsx:906
 msgid "Receive Line Items"
 msgstr "Получить позиции"
 
-#: src/forms/PurchaseOrderForms.tsx:911
+#: src/forms/PurchaseOrderForms.tsx:912
 msgid "Items received"
 msgstr "Элементы получены"
 
-#: src/forms/ReturnOrderForms.tsx:258
+#: src/forms/ReturnOrderForms.tsx:259
 msgid "Receive Items"
 msgstr "Возврат позиций"
 
-#: src/forms/ReturnOrderForms.tsx:265
+#: src/forms/ReturnOrderForms.tsx:266
 msgid "Item received into stock"
 msgstr "Товар получен на складе"
 
 #. placeholder {0}: salePrice ? `; suggested: (${salePrice})` : '.'
-#: src/forms/SalesOrderForms.tsx:182
+#: src/forms/SalesOrderForms.tsx:183
 msgid "Price based on part and quantity differs{0}"
 msgstr "Цена на основе детали и количества отличается{0}"
 
-#: src/forms/SalesOrderForms.tsx:213
-#: src/forms/SalesOrderForms.tsx:215
+#: src/forms/SalesOrderForms.tsx:214
+#: src/forms/SalesOrderForms.tsx:216
 #: src/tables/sales/SalesOrderShipmentTable.tsx:210
 msgid "Check Shipment"
 msgstr "Проверить отправку"
 
-#: src/forms/SalesOrderForms.tsx:216
+#: src/forms/SalesOrderForms.tsx:217
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
 msgstr "Отметка отправления как проверенного означает, что вы проверили корректность всех предметов, включённых в эту отправку"
 
-#: src/forms/SalesOrderForms.tsx:226
+#: src/forms/SalesOrderForms.tsx:227
 msgid "Shipment marked as checked"
 msgstr "Отправление отмечено как проверенное"
 
-#: src/forms/SalesOrderForms.tsx:241
-#: src/forms/SalesOrderForms.tsx:243
+#: src/forms/SalesOrderForms.tsx:242
+#: src/forms/SalesOrderForms.tsx:244
 #: src/tables/sales/SalesOrderShipmentTable.tsx:223
 msgid "Uncheck Shipment"
 msgstr "Снять отметку проверки с отправки"
 
-#: src/forms/SalesOrderForms.tsx:244
+#: src/forms/SalesOrderForms.tsx:245
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
 msgstr "Отметка отправления как непроверенного означает, что требуется дополнительная проверка"
 
-#: src/forms/SalesOrderForms.tsx:254
+#: src/forms/SalesOrderForms.tsx:255
 msgid "Shipment marked as unchecked"
 msgstr "Отправление отмечено как непроверенное"
 
-#: src/forms/SalesOrderForms.tsx:272
+#: src/forms/SalesOrderForms.tsx:273
 msgid "Completing shipment"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:273
+#: src/forms/SalesOrderForms.tsx:274
 msgid "Shipment completed successfully"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:280
+#: src/forms/SalesOrderForms.tsx:281
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
 msgid "Complete Shipment"
 msgstr "Завершить отправку"
 
-#: src/forms/SalesOrderForms.tsx:526
+#: src/forms/SalesOrderForms.tsx:527
 msgid "Leave blank to use the order address"
 msgstr "Оставьте поле пустым, чтобы использовать адрес заказа"
 
@@ -6006,8 +6031,8 @@ msgstr "Фамилия"
 #~ msgstr "Last name:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-msgid "Staff Access"
-msgstr "Доступ сотрудника"
+#~ msgid "Staff Access"
+#~ msgstr "Staff Access"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
 #: src/pages/core/UserDetail.tsx:119
@@ -6047,7 +6072,7 @@ msgid "Edit Account"
 msgstr "Редактировать аккаунт"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
-#: src/tables/settings/UserTable.tsx:322
+#: src/tables/settings/UserTable.tsx:323
 msgid "Change Password"
 msgstr "Изменить пароль"
 
@@ -7098,8 +7123,8 @@ msgstr "Количество производимых деталей"
 
 #: src/pages/build/BuildDetail.tsx:294
 #: src/pages/part/PartDetail.tsx:575
-#: src/tables/bom/BomTable.tsx:364
-#: src/tables/bom/BomTable.tsx:406
+#: src/tables/bom/BomTable.tsx:359
+#: src/tables/bom/BomTable.tsx:401
 msgid "Can Build"
 msgstr "Можно произвести"
 
@@ -7165,14 +7190,14 @@ msgstr "Начальная дата"
 #: src/pages/sales/SalesOrderDetail.tsx:266
 #: src/tables/ColumnRenderers.tsx:699
 #: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:151
-#: src/tables/sales/SalesOrderLineItemTable.tsx:128
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:153
+#: src/tables/sales/SalesOrderLineItemTable.tsx:130
 msgid "Target Date"
 msgstr "Целевая дата"
 
 #: src/pages/build/BuildDetail.tsx:393
 #: src/tables/build/BuildOrderTable.tsx:97
-#: src/tables/sales/SalesOrderLineItemTable.tsx:343
+#: src/tables/sales/SalesOrderLineItemTable.tsx:345
 msgid "Completed"
 msgstr "Завершено"
 
@@ -7347,7 +7372,7 @@ msgstr "Отменить заказ"
 #: src/pages/stock/StockDetail.tsx:344
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:157
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:153
 #: src/tables/stock/StockTrackingTable.tsx:141
 msgid "Build Order"
 msgstr "Заказ на сборку"
@@ -7547,8 +7572,8 @@ msgstr "Описание детали"
 
 #: src/pages/company/SupplierPartDetail.tsx:180
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:191
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:187
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:229
 #: src/tables/purchasing/SupplierPartTable.tsx:169
 msgid "Pack Quantity"
 msgstr "Количество в упаковке"
@@ -7640,8 +7665,12 @@ msgid "User Details"
 msgstr "Сведения о пользователе"
 
 #: src/pages/core/UserDetail.tsx:206
-msgid "Basic user"
-msgstr "Базовый пользователь"
+msgid "Normal user"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:206
+#~ msgid "Basic user"
+#~ msgstr "Basic user"
 
 #: src/pages/part/CategoryDetail.tsx:103
 #: src/pages/stock/LocationDetail.tsx:103
@@ -7834,17 +7863,17 @@ msgstr "Ключевые слова"
 #~ msgstr "Stocktake By"
 
 #: src/pages/part/PartDetail.tsx:519
-#: src/tables/bom/BomTable.tsx:443
+#: src/tables/bom/BomTable.tsx:438
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTable.tsx:316
-#: src/tables/sales/SalesOrderLineItemTable.tsx:132
+#: src/tables/sales/SalesOrderLineItemTable.tsx:134
 msgid "Available Stock"
 msgstr "Доступно"
 
 #: src/pages/part/PartDetail.tsx:525
-#: src/tables/bom/BomTable.tsx:340
+#: src/tables/bom/BomTable.tsx:335
 #: src/tables/build/BuildLineTable.tsx:273
-#: src/tables/sales/SalesOrderLineItemTable.tsx:174
+#: src/tables/sales/SalesOrderLineItemTable.tsx:176
 msgid "On order"
 msgstr "В заказе"
 
@@ -7875,7 +7904,7 @@ msgid "Template Part"
 msgstr "Шаблон детали"
 
 #: src/pages/part/PartDetail.tsx:608
-#: src/tables/bom/BomTable.tsx:433
+#: src/tables/bom/BomTable.tsx:428
 msgid "Assembled Part"
 msgstr "Сборная деталь"
 
@@ -7888,12 +7917,12 @@ msgstr "Компонент для сборки"
 #~ msgstr "Scheduling"
 
 #: src/pages/part/PartDetail.tsx:618
-#: src/tables/bom/BomTable.tsx:418
+#: src/tables/bom/BomTable.tsx:413
 msgid "Testable Part"
 msgstr "Тестируемая деталь"
 
 #: src/pages/part/PartDetail.tsx:624
-#: src/tables/bom/BomTable.tsx:423
+#: src/tables/bom/BomTable.tsx:418
 msgid "Trackable Part"
 msgstr "Отслеживаемая деталь"
 
@@ -7977,7 +8006,7 @@ msgstr "Связанные детали"
 
 #: src/pages/part/PartDetail.tsx:926
 #: src/tables/ColumnRenderers.tsx:73
-#: src/tables/bom/BomTable.tsx:661
+#: src/tables/bom/BomTable.tsx:657
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "Деталь заблокирована"
@@ -8005,8 +8034,8 @@ msgid "Deficit"
 msgstr "Дефицит"
 
 #: src/pages/part/PartDetail.tsx:1070
-#: src/tables/part/PartTable.tsx:402
-#: src/tables/part/PartTable.tsx:456
+#: src/tables/part/PartTable.tsx:398
+#: src/tables/part/PartTable.tsx:452
 msgid "Add Part"
 msgstr "Создать деталь"
 
@@ -8034,7 +8063,7 @@ msgid "Search by serial number"
 msgstr "Поиск по серийному номеру"
 
 #: src/pages/part/PartDetail.tsx:1177
-#: src/tables/part/PartTable.tsx:513
+#: src/tables/part/PartTable.tsx:509
 msgid "Part Actions"
 msgstr "Действия с деталью"
 
@@ -8167,12 +8196,12 @@ msgstr "Записи инвентаризации"
 #: src/pages/part/pricing/BomPricingPanel.tsx:57
 #: src/pages/part/pricing/BomPricingPanel.tsx:135
 #: src/tables/ColumnRenderers.tsx:767
-#: src/tables/bom/BomTable.tsx:281
-#: src/tables/general/ExtraLineItemTable.tsx:72
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:263
+#: src/tables/bom/BomTable.tsx:276
+#: src/tables/general/ExtraLineItemTable.tsx:74
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
 #: src/tables/purchasing/PurchaseOrderTable.tsx:155
 #: src/tables/sales/ReturnOrderTable.tsx:160
-#: src/tables/sales/SalesOrderLineItemTable.tsx:118
+#: src/tables/sales/SalesOrderLineItemTable.tsx:120
 #: src/tables/sales/SalesOrderTable.tsx:197
 msgid "Total Price"
 msgstr "Общая стоимость"
@@ -8210,9 +8239,9 @@ msgstr "Максимальная цена"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
 #: src/pages/stock/StockDetail.tsx:390
-#: src/tables/bom/BomTable.tsx:271
-#: src/tables/general/ExtraLineItemTable.tsx:64
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
+#: src/tables/bom/BomTable.tsx:266
+#: src/tables/general/ExtraLineItemTable.tsx:66
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:113
 msgid "Unit Price"
@@ -8391,7 +8420,7 @@ msgid "Completed Line Items"
 msgstr "Завершенные позиции"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:197
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:274
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:270
 msgid "Destination"
 msgstr "Место хранения"
 
@@ -9066,7 +9095,7 @@ msgstr "Складская позиция частично зарезервир�
 
 #: src/tables/ColumnRenderers.tsx:252
 #: src/tables/build/BuildLineTable.tsx:308
-#: src/tables/sales/SalesOrderLineItemTable.tsx:154
+#: src/tables/sales/SalesOrderLineItemTable.tsx:156
 msgid "No stock available"
 msgstr "Нет на складе"
 
@@ -9075,9 +9104,9 @@ msgid "This stock item has been depleted"
 msgstr "Этот складской элемент был израсходован"
 
 #: src/tables/ColumnRenderers.tsx:283
-#: src/tables/bom/BomTable.tsx:357
+#: src/tables/bom/BomTable.tsx:352
 #: src/tables/part/PartTable.tsx:172
-#: src/tables/sales/SalesOrderLineItemTable.tsx:183
+#: src/tables/sales/SalesOrderLineItemTable.tsx:185
 msgid "Stock Information"
 msgstr "Информация о складе"
 
@@ -9085,6 +9114,10 @@ msgstr "Информация о складе"
 #: src/tables/build/BuildOutputTable.tsx:660
 msgid "Allocated Lines"
 msgstr "Зарезервированные позиции"
+
+#: src/tables/ColumnRenderers.tsx:774
+msgid "Line Item"
+msgstr ""
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
@@ -9465,7 +9498,7 @@ msgid "Are you sure you want to delete the selected items?"
 msgstr "Вы уверены, что хотите удалить выбранные элементы?"
 
 #: src/tables/InvenTreeTableHeader.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:322
+#: src/tables/plugin/PluginListTable.tsx:320
 msgid "This action cannot be undone"
 msgstr "Это действие нельзя будет отменить"
 
@@ -9502,26 +9535,26 @@ msgstr "Активные фильтры"
 #~ msgid "Upload Data"
 #~ msgstr "Upload Data"
 
-#: src/tables/bom/BomTable.tsx:103
+#: src/tables/bom/BomTable.tsx:98
 msgid "This BOM item is defined for a different parent"
 msgstr "Эта позиция в спецификации унаследована от родительской детали"
 
-#: src/tables/bom/BomTable.tsx:119
+#: src/tables/bom/BomTable.tsx:114
 msgid "Part Information"
 msgstr "Информация о детали"
 
-#: src/tables/bom/BomTable.tsx:122
+#: src/tables/bom/BomTable.tsx:117
 msgid "This BOM item has not been validated"
 msgstr "Эта позиция в спецификации не утверждена"
 
-#: src/tables/bom/BomTable.tsx:239
+#: src/tables/bom/BomTable.tsx:234
 msgid "Substitutes"
 msgstr "Замены"
 
-#: src/tables/bom/BomTable.tsx:301
-#: src/tables/sales/SalesOrderLineItemTable.tsx:135
-#: src/tables/sales/SalesOrderLineItemTable.tsx:193
-#: src/tables/sales/SalesOrderLineItemTable.tsx:210
+#: src/tables/bom/BomTable.tsx:296
+#: src/tables/sales/SalesOrderLineItemTable.tsx:137
+#: src/tables/sales/SalesOrderLineItemTable.tsx:195
+#: src/tables/sales/SalesOrderLineItemTable.tsx:212
 msgid "Virtual part"
 msgstr "Виртуальная деталь"
 
@@ -9529,24 +9562,24 @@ msgstr "Виртуальная деталь"
 #~ msgid "Create BOM Item"
 #~ msgstr "Create BOM Item"
 
-#: src/tables/bom/BomTable.tsx:310
-#~ msgid "Show asssmbled items"
-#~ msgstr "Show asssmbled items"
-
-#: src/tables/bom/BomTable.tsx:314
+#: src/tables/bom/BomTable.tsx:309
 #: src/tables/build/BuildLineTable.tsx:282
 #: src/tables/part/PartTable.tsx:146
 msgid "External stock"
 msgstr "Сторонний склад"
 
-#: src/tables/bom/BomTable.tsx:322
+#: src/tables/bom/BomTable.tsx:310
+#~ msgid "Show asssmbled items"
+#~ msgstr "Show asssmbled items"
+
+#: src/tables/bom/BomTable.tsx:317
 #: src/tables/build/BuildLineTable.tsx:245
 msgid "Includes substitute stock"
 msgstr "Включает запас заменителей"
 
-#: src/tables/bom/BomTable.tsx:331
+#: src/tables/bom/BomTable.tsx:326
 #: src/tables/build/BuildLineTable.tsx:255
-#: src/tables/sales/SalesOrderLineItemTable.tsx:160
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
 msgid "Includes variant stock"
 msgstr "Включает запас вариантов"
 
@@ -9558,7 +9591,7 @@ msgstr "Включает запас вариантов"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:348
+#: src/tables/bom/BomTable.tsx:343
 #: src/tables/part/PartTable.tsx:115
 msgid "Building"
 msgstr "Сборка"
@@ -9579,178 +9612,178 @@ msgstr "Сборка"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:398
+#: src/tables/bom/BomTable.tsx:393
 #: src/tables/build/BuildLineTable.tsx:498
 #: src/tables/build/BuildLineTable.tsx:539
 msgid "Consumable item"
 msgstr "Расходный материал"
 
-#: src/tables/bom/BomTable.tsx:401
+#: src/tables/bom/BomTable.tsx:396
 msgid "No available stock"
 msgstr "Нет на складе"
 
-#: src/tables/bom/BomTable.tsx:419
+#: src/tables/bom/BomTable.tsx:414
 #: src/tables/build/BuildLineTable.tsx:219
 msgid "Show testable items"
 msgstr "Показать тестируемые элементы"
 
-#: src/tables/bom/BomTable.tsx:424
+#: src/tables/bom/BomTable.tsx:419
 msgid "Show trackable items"
 msgstr "Показать отслеживаемые позиции"
 
-#: src/tables/bom/BomTable.tsx:428
+#: src/tables/bom/BomTable.tsx:423
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:42
 #: src/tables/purchasing/ManufacturerPartTable.tsx:154
 #: src/tables/purchasing/SupplierPartTable.tsx:259
 msgid "Active Part"
 msgstr "Активная деталь"
 
-#: src/tables/bom/BomTable.tsx:429
+#: src/tables/bom/BomTable.tsx:424
 msgid "Show active items"
 msgstr "Показать активные"
 
-#: src/tables/bom/BomTable.tsx:434
+#: src/tables/bom/BomTable.tsx:429
 #: src/tables/build/BuildLineTable.tsx:214
 msgid "Show assembled items"
 msgstr "Показать сборные детали"
 
-#: src/tables/bom/BomTable.tsx:439
+#: src/tables/bom/BomTable.tsx:434
 msgid "Show virtual items"
 msgstr "Показать виртуальные элементы"
 
-#: src/tables/bom/BomTable.tsx:444
+#: src/tables/bom/BomTable.tsx:439
 msgid "Show items with available stock"
 msgstr "Показать элементы, которые есть в наличии на складе"
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:444
 msgid "Show items on order"
 msgstr "Показать элементы, которые находятся в заказе"
 
-#: src/tables/bom/BomTable.tsx:453
+#: src/tables/bom/BomTable.tsx:448
 msgid "Validated"
 msgstr "Утверждено"
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:449
 msgid "Show validated items"
 msgstr "Показать утверждённые элементы"
 
-#: src/tables/bom/BomTable.tsx:458
+#: src/tables/bom/BomTable.tsx:453
 #: src/tables/bom/UsedInTable.tsx:85
 msgid "Inherited"
 msgstr "Унаследовано"
 
-#: src/tables/bom/BomTable.tsx:459
+#: src/tables/bom/BomTable.tsx:454
 #: src/tables/bom/UsedInTable.tsx:86
 msgid "Show inherited items"
 msgstr "Показать элементы, которые унаследованы"
 
-#: src/tables/bom/BomTable.tsx:463
+#: src/tables/bom/BomTable.tsx:458
 msgid "Allow Variants"
 msgstr "Разрешить разновидности"
 
-#: src/tables/bom/BomTable.tsx:464
+#: src/tables/bom/BomTable.tsx:459
 msgid "Show items which allow variant substitution"
 msgstr "Показать элементы, в которых разрешено использовать разновидности для замены"
 
-#: src/tables/bom/BomTable.tsx:468
+#: src/tables/bom/BomTable.tsx:463
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/build/BuildLineTable.tsx:208
 msgid "Optional"
 msgstr "Необязательно"
 
-#: src/tables/bom/BomTable.tsx:469
+#: src/tables/bom/BomTable.tsx:464
 #: src/tables/bom/UsedInTable.tsx:91
 msgid "Show optional items"
 msgstr "Показать необязательные элементы"
 
-#: src/tables/bom/BomTable.tsx:473
+#: src/tables/bom/BomTable.tsx:468
 #: src/tables/build/BuildLineTable.tsx:203
 msgid "Consumable"
 msgstr "Расходник"
 
-#: src/tables/bom/BomTable.tsx:474
+#: src/tables/bom/BomTable.tsx:469
 msgid "Show consumable items"
 msgstr "Показать элементы, которые являются расходниками"
 
-#: src/tables/bom/BomTable.tsx:478
+#: src/tables/bom/BomTable.tsx:473
 #: src/tables/part/PartTable.tsx:310
 msgid "Has Pricing"
 msgstr "Есть цена"
 
-#: src/tables/bom/BomTable.tsx:479
+#: src/tables/bom/BomTable.tsx:474
 msgid "Show items with pricing"
 msgstr "Показать позиции с ценой"
 
-#: src/tables/bom/BomTable.tsx:501
+#: src/tables/bom/BomTable.tsx:496
 msgid "Import BOM Data"
 msgstr "Импортировать данные спецификации"
 
-#: src/tables/bom/BomTable.tsx:511
-#: src/tables/bom/BomTable.tsx:635
+#: src/tables/bom/BomTable.tsx:507
+#: src/tables/bom/BomTable.tsx:631
 msgid "Add BOM Item"
 msgstr "Создать позицию в спецификации"
 
-#: src/tables/bom/BomTable.tsx:516
+#: src/tables/bom/BomTable.tsx:512
 msgid "BOM item created"
 msgstr "Создана позиция в спецификации"
 
-#: src/tables/bom/BomTable.tsx:523
+#: src/tables/bom/BomTable.tsx:519
 #: src/tables/bom/UsedInTable.tsx:111
 msgid "Edit BOM Item"
 msgstr "Редактировать позицию спецификации"
 
-#: src/tables/bom/BomTable.tsx:525
+#: src/tables/bom/BomTable.tsx:521
 #: src/tables/bom/UsedInTable.tsx:115
 msgid "BOM item updated"
 msgstr "Позиция в спецификации обновлена"
 
-#: src/tables/bom/BomTable.tsx:532
+#: src/tables/bom/BomTable.tsx:528
 msgid "Delete BOM Item"
 msgstr "Удалить позицию в спецификации"
 
-#: src/tables/bom/BomTable.tsx:533
+#: src/tables/bom/BomTable.tsx:529
 msgid "BOM item deleted"
 msgstr "Позиция в спецификации удалена"
 
-#: src/tables/bom/BomTable.tsx:553
+#: src/tables/bom/BomTable.tsx:549
 msgid "BOM item validated"
 msgstr "Позиция в спецификации утверждена"
 
-#: src/tables/bom/BomTable.tsx:562
+#: src/tables/bom/BomTable.tsx:558
 msgid "Failed to validate BOM item"
 msgstr "При утверждении позиции в спецификации произошла ошибка"
 
-#: src/tables/bom/BomTable.tsx:574
+#: src/tables/bom/BomTable.tsx:570
 msgid "View BOM"
 msgstr "Показать спецификацию"
 
-#: src/tables/bom/BomTable.tsx:585
+#: src/tables/bom/BomTable.tsx:581
 msgid "Validate BOM Line"
 msgstr "Утвердить позицию в спецификации"
 
-#: src/tables/bom/BomTable.tsx:604
+#: src/tables/bom/BomTable.tsx:600
 msgid "Edit Substitutes"
 msgstr "Редактировать варианты замены"
 
-#: src/tables/bom/BomTable.tsx:629
+#: src/tables/bom/BomTable.tsx:625
 msgid "Add BOM Items"
 msgstr "Добавить позиции спецификации"
 
-#: src/tables/bom/BomTable.tsx:637
+#: src/tables/bom/BomTable.tsx:633
 msgid "Add a single BOM item"
 msgstr "Добавить одну позицию спецификации"
 
-#: src/tables/bom/BomTable.tsx:641
-#: src/tables/general/ParameterTable.tsx:206
-#: src/tables/part/PartTable.tsx:553
+#: src/tables/bom/BomTable.tsx:637
+#: src/tables/general/ParameterTable.tsx:202
+#: src/tables/part/PartTable.tsx:549
 msgid "Import from File"
 msgstr "Импорт из файла"
 
-#: src/tables/bom/BomTable.tsx:643
+#: src/tables/bom/BomTable.tsx:639
 msgid "Import BOM items from a file"
 msgstr "Импорт спецификации из файла"
 
-#: src/tables/bom/BomTable.tsx:666
+#: src/tables/bom/BomTable.tsx:662
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "Невозможно отредактировать спецификацию, поскольку деталь заблокирована"
 
@@ -9904,7 +9937,7 @@ msgid "Show items with stock on order"
 msgstr "Показать элементы с запасом в заказе"
 
 #: src/tables/build/BuildLineTable.tsx:264
-#: src/tables/sales/SalesOrderLineItemTable.tsx:166
+#: src/tables/sales/SalesOrderLineItemTable.tsx:168
 msgid "In production"
 msgstr "В производстве"
 
@@ -9942,7 +9975,7 @@ msgid "Fully allocated"
 msgstr "Полностью распределено"
 
 #: src/tables/build/BuildLineTable.tsx:565
-#: src/tables/sales/SalesOrderLineItemTable.tsx:307
+#: src/tables/sales/SalesOrderLineItemTable.tsx:309
 msgid "Create Build Order"
 msgstr "Создать заказ на сборку"
 
@@ -10001,7 +10034,7 @@ msgid "Build Stock"
 msgstr "Собрать"
 
 #: src/tables/build/BuildLineTable.tsx:813
-#: src/tables/sales/SalesOrderLineItemTable.tsx:483
+#: src/tables/sales/SalesOrderLineItemTable.tsx:485
 msgid "View Part"
 msgstr "Показать деталь"
 
@@ -10327,31 +10360,31 @@ msgstr "Модель"
 msgid "View Item"
 msgstr "Показать элемент"
 
-#: src/tables/general/ExtraLineItemTable.tsx:95
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:302
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:408
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:84
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:184
-#: src/tables/sales/SalesOrderLineItemTable.tsx:246
-#: src/tables/sales/SalesOrderLineItemTable.tsx:353
+#: src/tables/general/ExtraLineItemTable.tsx:97
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:298
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:404
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:85
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:186
+#: src/tables/sales/SalesOrderLineItemTable.tsx:248
+#: src/tables/sales/SalesOrderLineItemTable.tsx:355
 msgid "Add Line Item"
 msgstr "Создать позицию"
 
-#: src/tables/general/ExtraLineItemTable.tsx:108
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:325
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:97
-#: src/tables/sales/SalesOrderLineItemTable.tsx:265
+#: src/tables/general/ExtraLineItemTable.tsx:110
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:321
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:98
+#: src/tables/sales/SalesOrderLineItemTable.tsx:267
 msgid "Edit Line Item"
 msgstr "Редактировать позицию"
 
-#: src/tables/general/ExtraLineItemTable.tsx:117
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:334
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:106
-#: src/tables/sales/SalesOrderLineItemTable.tsx:274
+#: src/tables/general/ExtraLineItemTable.tsx:119
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:330
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:107
+#: src/tables/sales/SalesOrderLineItemTable.tsx:276
 msgid "Delete Line Item"
 msgstr "Удалить позицию"
 
-#: src/tables/general/ExtraLineItemTable.tsx:155
+#: src/tables/general/ExtraLineItemTable.tsx:157
 msgid "Add Extra Line Item"
 msgstr "Создать дополнительные позиции"
 
@@ -10372,40 +10405,40 @@ msgstr "Показывать параметры для включённых ша
 msgid "Filter by user who last updated the parameter"
 msgstr "Фильтр по пользователю, который последний обновил параметр"
 
-#: src/tables/general/ParameterTable.tsx:154
+#: src/tables/general/ParameterTable.tsx:149
 msgid "Import Parameters"
 msgstr "Импортировать параметры"
 
-#: src/tables/general/ParameterTable.tsx:164
+#: src/tables/general/ParameterTable.tsx:160
 #: src/tables/general/ParametricDataTable.tsx:271
 #: src/tables/general/ParametricDataTable.tsx:402
 msgid "Add Parameter"
 msgstr "Создать параметр"
 
-#: src/tables/general/ParameterTable.tsx:175
-#: src/tables/general/ParameterTable.tsx:222
+#: src/tables/general/ParameterTable.tsx:171
+#: src/tables/general/ParameterTable.tsx:218
 #: src/tables/general/ParametricDataTable.tsx:295
 msgid "Edit Parameter"
 msgstr "Редактировать параметр"
 
-#: src/tables/general/ParameterTable.tsx:183
-#: src/tables/general/ParameterTable.tsx:230
+#: src/tables/general/ParameterTable.tsx:179
+#: src/tables/general/ParameterTable.tsx:226
 msgid "Delete Parameter"
 msgstr "Удалить параметр"
 
-#: src/tables/general/ParameterTable.tsx:191
+#: src/tables/general/ParameterTable.tsx:187
 msgid "Add Parameters"
 msgstr "Добавить параметры"
 
-#: src/tables/general/ParameterTable.tsx:197
+#: src/tables/general/ParameterTable.tsx:193
 msgid "Create Parameter"
 msgstr "Создать параметр"
 
-#: src/tables/general/ParameterTable.tsx:199
+#: src/tables/general/ParameterTable.tsx:195
 msgid "Create a new parameter"
 msgstr "Создайте новый параметр"
 
-#: src/tables/general/ParameterTable.tsx:208
+#: src/tables/general/ParameterTable.tsx:204
 msgid "Import parameters from a file"
 msgstr "Импортировать параметры из файла"
 
@@ -10456,7 +10489,7 @@ msgid "Show enabled templates"
 msgstr "Показывать включённые шаблоны"
 
 #: src/tables/general/ParameterTemplateTable.tsx:158
-#: src/tables/settings/ImportSessionTable.tsx:111
+#: src/tables/settings/ImportSessionTable.tsx:112
 #: src/tables/settings/TemplateTable.tsx:368
 msgid "Model Type"
 msgstr "Тип модели"
@@ -10747,7 +10780,7 @@ msgid "Required Stock"
 msgstr "Требуемый запас"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:386
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:382
 msgid "View Build Order"
 msgstr "Показать заказ на сборку"
 
@@ -10828,7 +10861,7 @@ msgstr "Удалить параметр категории"
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:79
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:197
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:193
 msgid "Total Quantity"
 msgstr "Общее количество"
 
@@ -10985,44 +11018,44 @@ msgstr "Показать детали, на которые пользовате�
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:383
+#: src/tables/part/PartTable.tsx:378
 msgid "Import Parts"
 msgstr "Импортировать детали"
 
-#: src/tables/part/PartTable.tsx:471
-#: src/tables/part/PartTable.tsx:519
+#: src/tables/part/PartTable.tsx:467
+#: src/tables/part/PartTable.tsx:515
 msgid "Set Category"
 msgstr "Выбрать категорию"
 
-#: src/tables/part/PartTable.tsx:521
+#: src/tables/part/PartTable.tsx:517
 msgid "Set category for selected parts"
 msgstr "Выбрать категорию для выбранных деталей"
 
-#: src/tables/part/PartTable.tsx:531
+#: src/tables/part/PartTable.tsx:527
 msgid "Order selected parts"
 msgstr "Закупить выбранные детали"
 
-#: src/tables/part/PartTable.tsx:541
+#: src/tables/part/PartTable.tsx:537
 msgid "Add Parts"
 msgstr "Добавить детали"
 
-#: src/tables/part/PartTable.tsx:547
+#: src/tables/part/PartTable.tsx:543
 msgid "Create Part"
 msgstr "Создать деталь"
 
-#: src/tables/part/PartTable.tsx:549
+#: src/tables/part/PartTable.tsx:545
 msgid "Create a new part"
 msgstr "Создать новую деталь"
 
-#: src/tables/part/PartTable.tsx:555
+#: src/tables/part/PartTable.tsx:551
 msgid "Import parts from a file"
 msgstr "Иморт деталей из файла"
 
-#: src/tables/part/PartTable.tsx:560
+#: src/tables/part/PartTable.tsx:556
 msgid "Import from Supplier"
 msgstr "Импорт от поставщика"
 
-#: src/tables/part/PartTable.tsx:562
+#: src/tables/part/PartTable.tsx:558
 msgid "Import parts from a supplier plugin"
 msgstr "Импортировать детали из плагина поставщика"
 
@@ -11231,7 +11264,7 @@ msgstr "Плагин"
 #~ msgstr "An error occurred while fetching plugin details"
 
 #: src/tables/plugin/PluginListTable.tsx:106
-#: src/tables/plugin/PluginListTable.tsx:428
+#: src/tables/plugin/PluginListTable.tsx:430
 msgid "Mandatory"
 msgstr "Обязательно"
 
@@ -11301,28 +11334,28 @@ msgstr "Активировать выбранный плагин"
 msgid "Update selected plugin"
 msgstr "Обновить выбранный плагин"
 
-#: src/tables/plugin/PluginListTable.tsx:230
+#: src/tables/plugin/PluginListTable.tsx:229
 #: src/tables/stock/InstalledItemsTable.tsx:98
 msgid "Uninstall"
 msgstr "Удалить"
 
-#: src/tables/plugin/PluginListTable.tsx:231
+#: src/tables/plugin/PluginListTable.tsx:230
 msgid "Uninstall selected plugin"
 msgstr "Удалить выбранный плагин"
 
-#: src/tables/plugin/PluginListTable.tsx:250
+#: src/tables/plugin/PluginListTable.tsx:248
 msgid "Delete selected plugin configuration"
 msgstr "Удалить конфигурацию выбранного плагина"
 
-#: src/tables/plugin/PluginListTable.tsx:266
+#: src/tables/plugin/PluginListTable.tsx:264
 msgid "Activate Plugin"
 msgstr "Активировать плагин"
 
-#: src/tables/plugin/PluginListTable.tsx:273
+#: src/tables/plugin/PluginListTable.tsx:271
 msgid "The plugin was activated"
 msgstr "Плагин был активирован"
 
-#: src/tables/plugin/PluginListTable.tsx:274
+#: src/tables/plugin/PluginListTable.tsx:272
 msgid "The plugin was deactivated"
 msgstr "Плагин был деактивирован"
 
@@ -11330,20 +11363,20 @@ msgstr "Плагин был деактивирован"
 #~ msgid "Install plugin"
 #~ msgstr "Install plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:287
-#: src/tables/plugin/PluginListTable.tsx:374
+#: src/tables/plugin/PluginListTable.tsx:285
+#: src/tables/plugin/PluginListTable.tsx:377
 msgid "Install Plugin"
 msgstr "Установить плагин"
 
-#: src/tables/plugin/PluginListTable.tsx:300
+#: src/tables/plugin/PluginListTable.tsx:298
 msgid "Install"
 msgstr "Установить"
 
-#: src/tables/plugin/PluginListTable.tsx:301
+#: src/tables/plugin/PluginListTable.tsx:299
 msgid "Plugin installed successfully"
 msgstr "Плагин успешно установлен"
 
-#: src/tables/plugin/PluginListTable.tsx:306
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "Uninstall Plugin"
 msgstr "Удалить плагин"
 
@@ -11351,23 +11384,23 @@ msgstr "Удалить плагин"
 #~ msgid "This action cannot be undone."
 #~ msgstr "This action cannot be undone."
 
-#: src/tables/plugin/PluginListTable.tsx:318
+#: src/tables/plugin/PluginListTable.tsx:316
 msgid "Confirm plugin uninstall"
 msgstr "Подтвердите удаление плагина"
 
-#: src/tables/plugin/PluginListTable.tsx:321
+#: src/tables/plugin/PluginListTable.tsx:319
 msgid "The selected plugin will be uninstalled."
 msgstr "Выбранный плагин будет удалён."
 
-#: src/tables/plugin/PluginListTable.tsx:326
+#: src/tables/plugin/PluginListTable.tsx:324
 msgid "Plugin uninstalled successfully"
 msgstr "Плагин успешно удалён"
 
-#: src/tables/plugin/PluginListTable.tsx:334
+#: src/tables/plugin/PluginListTable.tsx:332
 msgid "Delete Plugin"
 msgstr "Удалить плагин"
 
-#: src/tables/plugin/PluginListTable.tsx:335
+#: src/tables/plugin/PluginListTable.tsx:333
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr "Удаление этого плагина приведет к удалению всех связанных настроек и данных. Вы уверены, что хотите удалить этот плагин?"
 
@@ -11375,11 +11408,11 @@ msgstr "Удаление этого плагина приведет к удал�
 #~ msgid "Deactivate Plugin"
 #~ msgstr "Deactivate Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:348
+#: src/tables/plugin/PluginListTable.tsx:346
 msgid "Plugins reloaded"
 msgstr "Плагины перезагружены"
 
-#: src/tables/plugin/PluginListTable.tsx:349
+#: src/tables/plugin/PluginListTable.tsx:347
 msgid "Plugins were reloaded successfully"
 msgstr "Плагины были успешно перезагружены"
 
@@ -11391,7 +11424,7 @@ msgstr "Плагины были успешно перезагружены"
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:367
+#: src/tables/plugin/PluginListTable.tsx:370
 msgid "Reload Plugins"
 msgstr "Перезагрузить плагины"
 
@@ -11403,23 +11436,23 @@ msgstr "Перезагрузить плагины"
 #~ msgid "Deactivating plugin"
 #~ msgstr "Deactivating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:391
-msgid "Plugin Detail"
-msgstr "Сведения о плагине"
-
 #: src/tables/plugin/PluginListTable.tsx:392
 #~ msgid "Plugin updated"
 #~ msgstr "Plugin updated"
+
+#: src/tables/plugin/PluginListTable.tsx:393
+msgid "Plugin Detail"
+msgstr "Сведения о плагине"
 
 #: src/tables/plugin/PluginListTable.tsx:403
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:433
+#: src/tables/plugin/PluginListTable.tsx:435
 msgid "Sample"
 msgstr "Пример"
 
-#: src/tables/plugin/PluginListTable.tsx:438
+#: src/tables/plugin/PluginListTable.tsx:440
 #: src/tables/stock/StockItemTable.tsx:226
 msgid "Installed"
 msgstr "Установлено"
@@ -11477,24 +11510,24 @@ msgstr "Показать части производителя для актив
 #~ msgid "Are you sure you want to remove this manufacturer part?"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:115
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:398
 msgid "Import Line Items"
 msgstr "Импортировать позиции"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:237
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
 msgid "Supplier Code"
 msgstr "Код поставщика"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:241
 msgid "Supplier Link"
 msgstr "Ссылка поставщика"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:252
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:248
 msgid "Manufacturer Code"
 msgstr "Код производителя"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:286
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
 msgid "Show line items which have been received"
 msgstr "Показать полученные позиции"
 
@@ -11504,11 +11537,11 @@ msgstr "Показать полученные позиции"
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:355
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:351
 msgid "Receive line item"
 msgstr "Получить позицию"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:419
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:415
 msgid "Receive items"
 msgstr "Получить позиции"
 
@@ -11560,23 +11593,23 @@ msgstr "Показать активных поставщиков"
 msgid "Show supplier parts with stock"
 msgstr "Показать детали поставщиков в наличии"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:155
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:157
 msgid "Received Date"
 msgstr "Дата получения"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:169
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:171
 msgid "Show items which have been received"
 msgstr "Показать полученные элементы"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:174
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
 msgid "Filter by line item status"
 msgstr "Фильтр по статусу строки"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:192
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:194
 msgid "Receive selected items"
 msgstr "Получить выбранные элементы"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:227
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:229
 msgid "Receive Item"
 msgstr "Принять элемент"
 
@@ -11636,7 +11669,7 @@ msgstr "Назначить на доставку"
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:287
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
 msgid "Allocate Serial Numbers"
 msgstr "Выделить серийные номера"
 
@@ -11644,27 +11677,27 @@ msgstr "Выделить серийные номера"
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:295
+#: src/tables/sales/SalesOrderLineItemTable.tsx:297
 msgid "Stock allocated successfully"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:339
+#: src/tables/sales/SalesOrderLineItemTable.tsx:341
 msgid "Show lines which are fully allocated"
 msgstr "Показать строки, которые полностью распределены"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:344
+#: src/tables/sales/SalesOrderLineItemTable.tsx:346
 msgid "Show lines which are completed"
 msgstr "Показать завершённые строки"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:417
+#: src/tables/sales/SalesOrderLineItemTable.tsx:419
 msgid "Allocate serials"
 msgstr "Распределить серийные номера"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:435
+#: src/tables/sales/SalesOrderLineItemTable.tsx:437
 msgid "Build stock"
 msgstr "Собрать запас"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:453
+#: src/tables/sales/SalesOrderLineItemTable.tsx:455
 msgid "Order stock"
 msgstr "Заказать запас"
 
@@ -11989,7 +12022,7 @@ msgstr "Название группы пользователей"
 #~ msgstr "Permission set"
 
 #: src/tables/settings/GroupTable.tsx:170
-#: src/tables/settings/UserTable.tsx:315
+#: src/tables/settings/UserTable.tsx:316
 msgid "Open Profile"
 msgstr "Открыть профиль"
 
@@ -12021,29 +12054,29 @@ msgstr "Редактировать группу"
 msgid "Add Group"
 msgstr "Добавить группу"
 
-#: src/tables/settings/ImportSessionTable.tsx:38
+#: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
 msgstr "Удалить сессию импорта"
 
-#: src/tables/settings/ImportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:129
+#: src/tables/settings/ImportSessionTable.tsx:43
+#: src/tables/settings/ImportSessionTable.tsx:130
 msgid "Create Import Session"
 msgstr "Создать сессию импорта"
 
-#: src/tables/settings/ImportSessionTable.tsx:72
+#: src/tables/settings/ImportSessionTable.tsx:73
 msgid "Uploaded"
 msgstr "Загружено"
 
-#: src/tables/settings/ImportSessionTable.tsx:83
+#: src/tables/settings/ImportSessionTable.tsx:84
 msgid "Imported Rows"
 msgstr "Импортированные строки"
 
-#: src/tables/settings/ImportSessionTable.tsx:112
+#: src/tables/settings/ImportSessionTable.tsx:113
 #: src/tables/settings/TemplateTable.tsx:369
 msgid "Filter by target model type"
 msgstr "Фильтр по типу модели"
 
-#: src/tables/settings/ImportSessionTable.tsx:118
+#: src/tables/settings/ImportSessionTable.tsx:119
 msgid "Filter by import session status"
 msgstr "Показать по статусу сессии импорта"
 
@@ -12189,8 +12222,12 @@ msgid "Designates whether this user should be treated as active. Unselect this i
 msgstr "Указывает, следует ли рассматривать этого пользователя как активного. Отмените этот выбор вместо удаления учетных записей."
 
 #: src/tables/settings/UserTable.tsx:183
-msgid "Is Staff"
-msgstr "Сотрудник"
+msgid "Is Administrator"
+msgstr ""
+
+#: src/tables/settings/UserTable.tsx:183
+#~ msgid "Is Staff"
+#~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:184
 msgid "Designates whether the user can log into the django admin site."
@@ -12216,71 +12253,75 @@ msgstr "Группы пользователей"
 #~ msgid "Edit user"
 #~ msgstr "Edit user"
 
-#: src/tables/settings/UserTable.tsx:332
+#: src/tables/settings/UserTable.tsx:333
 msgid "Lock user"
 msgstr "Заблокировать пользователя"
 
-#: src/tables/settings/UserTable.tsx:342
+#: src/tables/settings/UserTable.tsx:343
 msgid "Unlock user"
 msgstr "Разблокировать пользователя"
 
-#: src/tables/settings/UserTable.tsx:358
+#: src/tables/settings/UserTable.tsx:359
 msgid "Delete user"
 msgstr "Удалить пользователя"
 
-#: src/tables/settings/UserTable.tsx:359
+#: src/tables/settings/UserTable.tsx:360
 msgid "User deleted"
 msgstr "Пользователь удалён"
 
-#: src/tables/settings/UserTable.tsx:362
+#: src/tables/settings/UserTable.tsx:363
 msgid "Are you sure you want to delete this user?"
 msgstr "Вы уверены, что хотите удалить этого пользователя?"
 
-#: src/tables/settings/UserTable.tsx:372
+#: src/tables/settings/UserTable.tsx:373
 msgid "Set Password"
 msgstr "Установить пароль"
 
-#: src/tables/settings/UserTable.tsx:377
+#: src/tables/settings/UserTable.tsx:378
 msgid "Password updated"
 msgstr "Пароль обновлён"
 
-#: src/tables/settings/UserTable.tsx:388
+#: src/tables/settings/UserTable.tsx:389
 msgid "Add user"
 msgstr "Создать пользователя"
 
-#: src/tables/settings/UserTable.tsx:401
+#: src/tables/settings/UserTable.tsx:402
 msgid "Show active users"
 msgstr "Показать активных пользователей"
 
 #: src/tables/settings/UserTable.tsx:406
-msgid "Show staff users"
-msgstr "Показать сотрудников"
+#~ msgid "Show staff users"
+#~ msgstr "Show staff users"
 
-#: src/tables/settings/UserTable.tsx:411
+#: src/tables/settings/UserTable.tsx:407
+msgid "Show administrators"
+msgstr ""
+
+#: src/tables/settings/UserTable.tsx:412
 msgid "Show superusers"
 msgstr "Показать суперпользователей"
 
-#: src/tables/settings/UserTable.tsx:430
+#: src/tables/settings/UserTable.tsx:431
 msgid "Edit User"
 msgstr "Редактировать пользователя"
 
-#: src/tables/settings/UserTable.tsx:463
+#: src/tables/settings/UserTable.tsx:464
 msgid "Add User"
 msgstr "Создать пользователя"
 
-#: src/tables/settings/UserTable.tsx:471
+#: src/tables/settings/UserTable.tsx:472
 msgid "Added user"
 msgstr "Пользователь добавлен"
 
-#: src/tables/settings/UserTable.tsx:481
+#: src/tables/settings/UserTable.tsx:482
 msgid "User updated"
 msgstr "Пользователь обновлён"
 
-#: src/tables/settings/UserTable.tsx:482
+#: src/tables/settings/UserTable.tsx:483
 msgid "User updated successfully"
 msgstr "Пользователь успешно обновлён"
 
-#: src/tables/settings/UserTable.tsx:488
+#: src/tables/settings/UserTable.tsx:489
 msgid "Error updating user"
 msgstr "Ошибка обновления пользователя"
 

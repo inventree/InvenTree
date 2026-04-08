@@ -128,8 +128,9 @@ export function useReturnOrderLineItemFields({
           part_detail: true
         }
       },
-      quantity: {},
+      line: {},
       reference: {},
+      quantity: {},
       outcome: {
         hidden: create == true
       },

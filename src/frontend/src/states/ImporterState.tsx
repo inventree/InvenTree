@@ -6,15 +6,18 @@
  * The `useImporterState` hook can be used to access and manipulate the importer state from any component, while the `openGlobalImporter` and `closeGlobalImporter` functions provide convenient ways to control the importer from outside of React components.
  */
 
+import type { ApiFormFieldSet } from '@lib/index';
 import { create } from 'zustand';
 
 export interface ImporterOpenOptions {
+  fields?: ApiFormFieldSet | null;
   onClose?: () => void;
 }
 
 interface ImporterStateProps {
   isOpen: boolean;
   sessionId: number | null;
+  customFields?: ApiFormFieldSet | null;
   onCloseCallback?: () => void;
   openImporter: (sessionId: number, options?: ImporterOpenOptions) => void;
   closeImporter: () => void;
@@ -23,12 +26,14 @@ interface ImporterStateProps {
 export const useImporterState = create<ImporterStateProps>()((set, get) => ({
   isOpen: false,
   sessionId: null,
+  customFields: null,
   onCloseCallback: undefined,
 
   openImporter: (sessionId: number, options?: ImporterOpenOptions) => {
     set({
       sessionId,
       isOpen: true,
+      customFields: options?.fields ?? null,
       onCloseCallback: options?.onClose
     });
   },
@@ -39,6 +44,7 @@ export const useImporterState = create<ImporterStateProps>()((set, get) => ({
     set({
       sessionId: null,
       isOpen: false,
+      customFields: null,
       onCloseCallback: undefined
     });
 
