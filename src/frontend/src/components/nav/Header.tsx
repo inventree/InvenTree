@@ -4,6 +4,7 @@ import {
   Container,
   Group,
   Indicator,
+  Paper,
   Tabs,
   Text,
   Tooltip,
@@ -14,7 +15,7 @@ import {
   useDocumentVisibility,
   useHotkeys
 } from '@mantine/hooks';
-import { IconBell, IconSearch } from '@tabler/icons-react';
+import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
@@ -58,8 +59,6 @@ export function Header() {
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
-  const [elevatedAlertClosed, setElevatedAlertClosed] =
-    useState<boolean>(false);
 
   useHotkeys([
     [
@@ -130,12 +129,14 @@ export function Header() {
     else closeNavDrawer();
   }, [navigationOpen]);
 
+  const [showSuperuserAlert, setShowSuperuserAlert] = useState<boolean>(true);
+
   const showElevated = useMemo(
     () =>
-      (user?.is_staff || user?.is_superuser || false) &&
-      !elevatedAlertClosed &&
-      !window.INVENTREE_SETTINGS.dangerous_hide_evelevated_alert,
-    [user, elevatedAlertClosed]
+      (user?.is_superuser || false) &&
+      showSuperuserAlert &&
+      !window.INVENTREE_SETTINGS.dangerous_hide_elevated_alert,
+    [user, showSuperuserAlert]
   );
 
   const headerStyle: any = useMemo(() => {
@@ -210,18 +211,21 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {showElevated && user && (
-        <Alert
-          color={user.is_superuser ? 'red' : 'orange'}
-          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
-          withCloseButton
-          onClose={() => setElevatedAlertClosed(true)}
-        >
-          <Text>
-            {t`The current user has elevated privileges and should not be used for regular usage.`}
-            {errorCodeLink('INVE-W14')}
-          </Text>
-        </Alert>
+      {showElevated && user?.is_superuser && (
+        <Paper p='sm'>
+          <Alert
+            icon={<IconUserBolt />}
+            color={'red'}
+            title={t`Superuser Mode`}
+            withCloseButton
+            onClose={() => setShowSuperuserAlert(false)}
+          >
+            <Text>
+              {t`The current user has elevated privileges and should not be used for regular usage.`}{' '}
+              {errorCodeLink('INVE-W14')}
+            </Text>
+          </Alert>
+        </Paper>
       )}
     </div>
   );
