@@ -692,12 +692,15 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.isNull(s))
 
     def testStaticUrl(self):
-        """Test static url helpers."""
+        """Test static URL helpers."""
         self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
         self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
         self.assertEqual(
             helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png'
         )
+
+        self.assertFalse(helpers.checkStaticFile('dummy', 'dir', 'test.jpg'))
+        self.assertTrue(helpers.checkStaticFile('img', 'blank_image.png'))
 
     def testMediaUrl(self):
         """Test getMediaUrl."""
