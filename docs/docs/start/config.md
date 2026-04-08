@@ -185,7 +185,6 @@ Proxy configuration can be complex, and any configuration beyond the basic setup
 
 Refer to the [proxy server documentation](./processes.md#proxy-server) for more information.
 
-
 ## Admin Site
 
 Django provides a powerful [administrator interface]({% include "django.html" %}/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, and available at the `/admin/` URL.
@@ -468,6 +467,17 @@ The login-experience can be altered with the following settings:
 
 Custom authentication backends can be used by specifying them here. These can for example be used to add [LDAP / AD login](https://django-auth-ldap.readthedocs.io/en/latest/) to InvenTree
 
+## Background Worker Options
+
+The following options are available for configuring the InvenTree [background worker process](./processes.md#background-worker):
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_BACKGROUND_WORKERS | background.workers | Number of background worker processes | 1 |
+| INVENTREE_BACKGROUND_TIMEOUT | background.timeout | Timeout for background worker tasks (seconds) | 90 |
+| INVENTREE_BACKGROUND_RETRY | background.retry | Time to wait before retrying a background task (seconds) | 300 |
+| INVENTREE_BACKGROUND_MAX_ATTEMPTS | background.max_attempts | Maximum number of attempts for a background task | 5 |
+
 ## Sentry Integration
 
 The InvenTree server can be integrated with the [sentry.io](https://sentry.io) monitoring service, for error logging and performance tracking.
@@ -525,6 +535,7 @@ Set the `INVENTREE_FRONTEND_SETTINGS` Environment variable to a JSON object or u
 | `url_compatibility` | Support compatibility with "legacy" URLs? | `true` |
 | `sentry_dsn` | Set a Sentry DSN url | *Not specified* |
 | `mobile_mode` | Controls if InvenTree web UI can be used by mobile devices. There are 3 options: `default` - does not allow mobile devices; `allow-ignore` - shows a mobile device detected banner with a button to ignore this warning AT THE USERS OWN RISK; `allow-always` - skips the mobile check and allows mobile devices always (of course at the server admins OWN RISK) | `default` |
+| `dangerous_hide_evelevated_alert` | Hides the elevated permissions alert in the UI. This is a dangerous option as using the UI with elevated permissions is against the threat model. | `false` |
 
 E.g. to allow mobile devices to ignore the mobile check, use the following Environment variable:
 
@@ -554,4 +565,4 @@ To override global settings, provide a "dictionary" of settings overrides in the
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |
+| INVENTREE_GLOBAL_SETTINGS | global_settings | JSON object containing global settings overrides | *Not specified* |

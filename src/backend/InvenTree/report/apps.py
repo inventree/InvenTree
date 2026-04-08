@@ -49,6 +49,9 @@ class ReportConfig(AppConfig):
         if not InvenTree.ready.canAppAccessDatabase(allow_test=False):
             return  # pragma: no cover
 
+        if InvenTree.ready.isReadOnlyCommand():
+            return  # pragma: no cover
+
         with maintenance_mode_on():
             try:
                 self.create_default_labels()

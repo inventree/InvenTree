@@ -27,24 +27,22 @@ When creating a new revision of a part, there are some restrictions which must b
 
 * **Circular References**: A part cannot be a revision of itself. This would create a circular reference which is not allowed.
 * **Unique Revisions**: A part cannot have two revisions with the same revision number. Each revision (of a given part) must have a unique revision code.
-* **Revisions of Revisions**: A single part can have multiple revisions, but a revision cannot have its own revision. This restriction is in place to prevent overly complex part relationships.
 * **Template Revisions**: A part which is a [template part](./template.md) cannot have revisions. This is because the template part is used to create variants, and allowing revisions of templates would create disallowed relationship states in the database. However, variant parts are allowed to have revisions.
 * **Template References**: A part which is a revision of a variant part must point to the same template as the original part. This is to ensure that the revision is correctly linked to the original part.
 
 ## Revision Settings
 
-The following options are available to control the behavior of part revisions.
+The following [global settings](../settings/global.md) are available to control the behavior of part revisions:
 
-Note that these options can be changed in the InvenTree settings:
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PART_ENABLE_REVISION") }}
+{{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 
-{{ image("part/part_revision_settings.png", "Part revision settings") }}
-
-* **Enable Revisions**: If this setting is enabled, parts can have revisions. If this setting is disabled, parts cannot have revisions.
-* **Assembly Revisions Only**: If this setting is enabled, only assembly parts can have revisions. This is useful if you only want to track revisions of assemblies, and not individual parts.
 
 ## Create a Revision
 
-To create a new revision for a given part, navigate to the part detail page, and click on the "Revisions" tab.
+To create a new revision for a given part, navigate to the part detail page, and click on the part actions menu (three vertical dots on the top right of the page).
 
 Select the "Duplicate Part" action, to create a new copy of the selected part. This will open the "Duplicate Part" form:
 
@@ -67,4 +65,5 @@ When multiple revisions exist for a particular part, you can navigate between re
 
 {{ image("part/part_revision_select.png", "Select part revision") }}
 
-Note that this revision selector is only visible when multiple revisions exist for the part.
+!!! info "Revision Selector Visibility"
+    Note that this revision selector is only visible when multiple revisions exist for the part.

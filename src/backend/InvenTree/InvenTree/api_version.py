@@ -1,19 +1,36 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 470
+INVENTREE_API_VERSION = 475
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v470 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/10715
+v475 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+
+v474 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11693
+    - Adds DataImportMixin to the ManufacturerPartList API endpoint
+
+v473 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11692
+    - Adds "line" field to PurchaseOrderLineItem and PurchaseOrderExtraLineItem API endpoints
+    - Adds "line" field to SalesOrderLineItem and SalesOrderExtraLineItem API endpoints
+    - Adds "line" field to ReturnOrderLineItem and ReturnOrderExtraLineItem API endpoints
+
+v472 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/xxxx
+    - Fixes writable fields on the user detail endpoint
+
+v471 -> 2026-04-07 : https://github.com/inventree/InvenTree/pull/11685
+    - Adds data importer support for the "SalesOrderShipment" model
+
+v470 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/11659
+    - Renames "is_staff" field to "is_admin" and updates help texts accordingly to highlight current security boundaries
 
 v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
     - Adds parameter support to the SalesOrderShipment model and API endpoints
 
 v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
-    - Add ordering to contetype related fields - no functional changes
+    - Add ordering to contentype related fields - no functional changes
 
 v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
     - Fix definition for the "parent" field on the StockItemSerializer

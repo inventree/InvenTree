@@ -82,6 +82,30 @@ test('Purchasing - Index', async ({ browser }) => {
     .waitFor();
 });
 
+test('Purchasing - Manufacturer Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/index/manufacturer-parts'
+  });
+
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('CPF0402B100KE1');
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'CPF0402B100KE1' }).waitFor();
+
+  // Check data exporter
+  await page.getByRole('button', { name: 'table-export-data' }).click();
+  await page.getByText('Select export plugin').waitFor();
+  await page
+    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .fill('CSV');
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  await loadTab(page, 'Manufacturers');
+  await page.getByText('Murata Electronics').waitFor();
+});
+
 test('Purchase Orders - General', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 

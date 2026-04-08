@@ -2,6 +2,14 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.10.1 - April 2026
+
+Allows plugins to specify custom model rendering functions within the data import wizard, allowing import of data models not defined in the core InvenTree codebase.
+
+### 0.10.0 - April 2026
+
+Exposes the `importer` object to the plugin context, allow plugins to initialize a data import session using the data importer wizard.
+
 ### 0.9.0 - March 2026
 
 Exposes the `useMonitorBackgroundTask` hook, which allows plugins to monitor the status of a background task and display notifications when the task is complete. This is useful for plugins that offload long-running tasks to the background and want to provide feedback to the user when the task is complete.

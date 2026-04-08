@@ -2,7 +2,6 @@
 
 import base64
 import logging
-import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -11,7 +10,6 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
-from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
@@ -292,7 +290,7 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
 
     # In debug mode, return a web URL to the asset file (rather than a local file path)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
-        return str(Path(settings.MEDIA_URL, 'report', 'assets', filename))
+        return default_storage.url(str(full_path))
 
     storage_path = default_storage.path(str(full_path))
 
@@ -368,8 +366,9 @@ def uploaded_image(
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
         if exists:
-            return os.path.join(settings.MEDIA_URL, filename)
-        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+            return default_storage.url(filename)
+
+        return staticfiles_storage.url(str(Path('img', replacement_file)))
 
     if img_data:
         img = Image.open(BytesIO(img_data))
@@ -474,10 +473,10 @@ def parameter(
 
     Arguments:
         instance: A Model object
-        parameter_name: The name of the parameter to retrieve
+        parameter_name: The name of the parameter to retrieve (case insensitive)
 
     Returns:
-        A Parameter object, or None if not found
+        A Parameter object, or the provided default value if not found
     """
     if instance is None:
         raise ValueError('parameter tag requires a valid Model instance')
@@ -485,12 +484,46 @@ def parameter(
     if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
         raise TypeError("parameter tag requires a Model with 'parameters' attribute")
 
-    return (
-        instance.parameters
+    # First try with exact match
+    if (
+        parameter := instance.parameters
         .prefetch_related('template')
         .filter(template__name=parameter_name)
         .first()
-    )
+    ):
+        return parameter
+
+    # Next, try with case-insensitive match
+    if (
+        parameter := instance.parameters
+        .prefetch_related('template')
+        .filter(template__name__iexact=parameter_name)
+        .first()
+    ):
+        return parameter
+
+    return None
+
+
+@register.simple_tag()
+def parameter_value(
+    instance: Model, parameter_name: str, backup_value: Optional[Any] = None
+) -> str:
+    """Return the value of a Parameter for the given part and parameter name.
+
+    Arguments:
+        instance: A Model object
+        parameter_name: The name of the parameter to retrieve (case insensitive)
+        backup_value: A backup value to return if the parameter is not found
+
+    Returns:
+        The value of the Parameter, or the backup_value if not found
+    """
+    if param := parameter(instance, parameter_name):
+        return param.data
+
+    # If the matching parameter is not found, return the backup value
+    return backup_value
 
 
 @register.simple_tag()

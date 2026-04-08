@@ -24,7 +24,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
-from InvenTree.ready import isImportingData
+from InvenTree.ready import isImportingData, isReadOnlyCommand
 
 from .ruleset import RULESET_CHOICES, get_ruleset_models
 
@@ -463,7 +463,7 @@ class Owner(models.Model):
 def create_owner(sender, instance, **kwargs):
     """Callback function to create a new owner instance after either a new group or user instance is saved."""
     # Ignore during data import process to avoid data duplication
-    if not isImportingData():
+    if not isReadOnlyCommand() and not isImportingData():
         Owner.create(obj=instance)
 
 
@@ -600,8 +600,8 @@ class UserProfile(InvenTree.models.MetadataMixin):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     """Create or update user profile when user is saved."""
-    # Disable profile creation if importing data from file
-    if isImportingData():
+    # Disable profile creation if importing data from file or running a read-only command
+    if isReadOnlyCommand() or isImportingData():
         return
 
     if created:
