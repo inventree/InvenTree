@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 472
+INVENTREE_API_VERSION = 473
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v473 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11692
+    - Adds "line" field to PurchaseOrderLineItem and PurchaseOrderExtraLineItem API endpoints
+    - Adds "line" field to SalesOrderLineItem and SalesOrderExtraLineItem API endpoints
+    - Adds "line" field to ReturnOrderLineItem and ReturnOrderExtraLineItem API endpoints
 
 v472 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/xxxx
     - Fixes writable fields on the user detail endpoint
