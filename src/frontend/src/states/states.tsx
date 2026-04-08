@@ -1,6 +1,7 @@
 import type { PluginProps } from '@lib/types/Plugins';
 import { removeTraceId, setApiDefaults, setTraceId } from '../App';
 import { useGlobalStatusState } from './GlobalStatusState';
+import { useGuideState } from './GuideState';
 import { useIconState } from './IconState';
 import { useServerApiState } from './ServerApiState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsStates';
@@ -59,7 +60,8 @@ export async function fetchGlobalStates() {
     useUserSettingsState.getState().fetchSettings(),
     useGlobalSettingsState.getState().fetchSettings(),
     useGlobalStatusState.getState().fetchStatus(),
-    useIconState.getState().fetchIcons()
+    useIconState.getState().fetchIcons(),
+    useGuideState.getState().fetchGuides()
   ]);
   removeTraceId(traceId);
 }
