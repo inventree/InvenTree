@@ -36,11 +36,11 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useImporterState } from '../../states/ImporterState';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   LocationColumn,
   NoteColumn,
@@ -74,7 +74,6 @@ export function PurchaseOrderLineItemTable({
 }>) {
   const table = useTable('purchase-order-line-item');
 
-  const globalSettings = useGlobalSettingsState();
   const navigate = useNavigate();
   const user = useUserState();
   const openImporter = useImporterState((state) => state.openImporter);
@@ -134,6 +133,7 @@ export function PurchaseOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       PartColumn({
         part: 'part_detail',
         ordering: 'part_name'
@@ -435,6 +435,7 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          defaultSortColumn: 'line',
           params: {
             ...params,
             order: orderId,

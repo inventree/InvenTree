@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.10.1 - April 2026
+
+Allows plugins to specify custom model rendering functions within the data import wizard, allowing import of data models not defined in the core InvenTree codebase.
+
 ### 0.10.0 - April 2026
 
 Exposes the `importer` object to the plugin context, allow plugins to initialize a data import session using the data importer wizard.

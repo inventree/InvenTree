@@ -276,6 +276,7 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'link',
             'notes',
             'order',
@@ -309,6 +310,7 @@ class AbstractExtraLineSerializer(
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'description',
             'link',
             'notes',
