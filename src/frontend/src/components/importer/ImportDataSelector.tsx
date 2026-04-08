@@ -81,6 +81,8 @@ function ImporterDataCell({
           return (
             <RenderRemoteInstance
               model={fieldDef.model}
+              modelRenderer={fieldDef.modelRenderer}
+              modelUrl={fieldDef.api_url}
               pk={row.data[column.field]}
             />
           );
@@ -97,7 +99,7 @@ function ImporterDataCell({
     }
 
     return value;
-  }, [row.data, column.field, session.availableFields]);
+  }, [fieldDef, row.data, column.field, session.availableFields]);
 
   const cellValid: boolean = useMemo(
     () => cellErrors.length == 0,
@@ -343,7 +345,10 @@ export default function ImporterDataSelector({
                 column={column}
                 row={row}
                 onEdit={() => editCell(row, column)}
-                fieldDef={session.availableFields[column.field]}
+                fieldDef={{
+                  ...session.availableFields[column.field],
+                  ...customFields?.[column.field]
+                }}
               />
             );
           }
@@ -352,7 +357,7 @@ export default function ImporterDataSelector({
     ];
 
     return columns;
-  }, [session]);
+  }, [session, customFields]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
