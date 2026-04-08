@@ -8,6 +8,7 @@ import json
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -34,9 +35,6 @@ from InvenTree.sanitizer import (
     DEFAULT_PROTOCOLS,
     DEFAULT_TAGS,
 )
-
-from .setting.storages import StorageBackends
-from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
 
@@ -189,9 +187,8 @@ def getMediaUrl(
         )
     if name is not None:
         file = regenerate_imagefile(file, name)
-    if settings.STORAGE_TARGET == StorageBackends.S3:
-        return str(file.url)
-    return os.path.join(MEDIA_URL, str(file.url))
+
+    return default_storage.url(file.name)
 
 
 def regenerate_imagefile(_file, _name: str):
@@ -229,7 +226,7 @@ def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
 
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
-    return os.path.join(STATIC_URL, str(filename))
+    return StaticFilesStorage().url(filename)
 
 
 def TestIfImage(img) -> bool:
@@ -261,8 +258,8 @@ def getBlankThumbnail():
 def checkStaticFile(*args) -> bool:
     """Check if a file exists in the static storage."""
     static_storage = StaticFilesStorage()
-    fn = os.path.join(*args)
-    return static_storage.exists(fn)
+    fn = Path(*args)
+    return static_storage.exists(str(fn))
 
 
 def getLogoImage(as_file=False, custom=True):
