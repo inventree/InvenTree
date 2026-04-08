@@ -467,14 +467,13 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 @register.simple_tag()
 def parameter(
-    instance: Model, parameter_name: str, default_value: Optional[Any] = None
+    instance: Model, parameter_name: str
 ) -> Optional[common.models.Parameter]:
     """Return a Parameter object for the given part and parameter name.
 
     Arguments:
         instance: A Model object
         parameter_name: The name of the parameter to retrieve (case insensitive)
-        default_value: The value to return if the parameter is not found
 
     Returns:
         A Parameter object, or the provided default value if not found
@@ -503,7 +502,28 @@ def parameter(
     ):
         return parameter
 
-    return default_value
+    return None
+
+
+@register.simple_tag()
+def parameter_value(
+    instance: Model, parameter_name: str, backup_value: Optional[Any] = None
+) -> str:
+    """Return the value of a Parameter for the given part and parameter name.
+
+    Arguments:
+        instance: A Model object
+        parameter_name: The name of the parameter to retrieve (case insensitive)
+        backup_value: A backup value to return if the parameter is not found
+
+    Returns:
+        The value of the Parameter, or the backup_value if not found
+    """
+    if param := parameter(instance, parameter_name):
+        return param.data
+
+    # If the matching parameter is not found, return the backup value
+    return backup_value
 
 
 @register.simple_tag()
