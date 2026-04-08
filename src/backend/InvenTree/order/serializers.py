@@ -27,13 +27,7 @@ from company.serializers import (
 )
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
-from InvenTree.helpers import (
-    current_date,
-    extract_serial_numbers,
-    hash_barcode,
-    normalize,
-    str2bool,
-)
+from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     FilterableSerializerMixin,
@@ -282,6 +276,7 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'link',
             'notes',
             'order',
@@ -315,6 +310,7 @@ class AbstractExtraLineSerializer(
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'description',
             'link',
             'notes',
@@ -1303,7 +1299,10 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
-    FilterableSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
 
@@ -1326,6 +1325,7 @@ class SalesOrderShipmentSerializer(
             'link',
             'notes',
             # Extra detail fields
+            'parameters',
             'checked_by_detail',
             'customer_detail',
             'order_detail',
@@ -1380,6 +1380,8 @@ class SalesOrderShipmentSerializer(
         True,
         prefetch_fields=['shipment_address'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
 
 class SalesOrderAllocationSerializer(
@@ -1500,35 +1502,6 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         shipment.check_can_complete(raise_error=True)
 
         return data
-
-    def save(self):
-        """Save the serializer to complete the SalesOrderShipment."""
-        shipment = self.context.get('shipment', None)
-
-        if not shipment:
-            return
-
-        data = self.validated_data
-
-        request = self.context.get('request')
-        user = request.user if request else None
-
-        # Extract shipping date (defaults to today's date)
-        now = current_date()
-        shipment_date = data.get('shipment_date', now)
-        if shipment_date is None:
-            # Shipment date should not be None - check above only
-            # checks if shipment_date exists in data
-            shipment_date = now
-
-        shipment.complete_shipment(
-            user,
-            tracking_number=data.get('tracking_number', shipment.tracking_number),
-            invoice_number=data.get('invoice_number', shipment.invoice_number),
-            link=data.get('link', shipment.link),
-            shipment_date=shipment_date,
-            delivery_date=data.get('delivery_date', shipment.delivery_date),
-        )
 
 
 class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):

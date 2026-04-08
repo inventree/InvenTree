@@ -82,6 +82,30 @@ test('Purchasing - Index', async ({ browser }) => {
     .waitFor();
 });
 
+test('Purchasing - Manufacturer Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/index/manufacturer-parts'
+  });
+
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('CPF0402B100KE1');
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'CPF0402B100KE1' }).waitFor();
+
+  // Check data exporter
+  await page.getByRole('button', { name: 'table-export-data' }).click();
+  await page.getByText('Select export plugin').waitFor();
+  await page
+    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .fill('CSV');
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  await loadTab(page, 'Manufacturers');
+  await page.getByText('Murata Electronics').waitFor();
+});
+
 test('Purchase Orders - General', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
@@ -498,6 +522,39 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
     .getByRole('textbox', { name: 'table-search-input' })
     .fill('my-batch-code');
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
+});
+
+test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/19'
+  });
+
+  // Duplicate this order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+
+  // Issue the new order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Receive the line item
+  await loadTab(page, 'Line Items');
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-receive-items' })
+    .click();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByText('Factory/Storage Room A').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // 1/1 items received
+  await page.getByText('1 / 1', { exact: true }).waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

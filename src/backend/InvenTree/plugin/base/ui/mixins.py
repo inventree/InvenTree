@@ -83,7 +83,7 @@ class UserInterfaceMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)  # type: ignore
+        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)
 
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request, **kwargs

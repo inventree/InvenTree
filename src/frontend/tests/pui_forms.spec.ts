@@ -1,5 +1,5 @@
 /** Unit tests for form validation, rendering, etc */
-import test from 'playwright/test';
+import { expect, test } from 'playwright/test';
 import { stevenuser } from './defaults';
 import { navigate } from './helpers';
 import { doCachedLogin } from './login';
@@ -133,4 +133,38 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   // Is prevented, due to uniqueness requirements
   await page.getByText('Form Error').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Forms - Keep form open option', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'stock/location/index/sublocations'
+  });
+  await page.waitForURL('**/stock/location/index/**');
+
+  await page.getByLabel('action-button-add-stock-location').click();
+
+  // Generate unique location name
+  const locationName = `New Sublocation ${new Date().getTime()}`;
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(locationName);
+
+  // Check keep form open switch and submit
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Location should be created, form should remain opened
+  await page.getByText('Item Created').waitFor();
+  await expect(page.getByRole('dialog')).toBeVisible();
+
+  // Create another location and uncheck this option
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill(`Another ${locationName}`);
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Location should be created, and the form (modal) should disappear
+  await page.getByText('Item Created').waitFor();
+  await expect(page.getByRole('dialog')).toBeHidden();
 });

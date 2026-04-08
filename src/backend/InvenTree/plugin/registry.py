@@ -222,13 +222,18 @@ class PluginsRegistry:
         import InvenTree.ready
         from plugin.models import PluginConfig
 
-        if InvenTree.ready.isImportingData():
-            return None
+        # Under certain circumstances, we want to avoid creating new PluginConfig instances in the database
+        can_create = (
+            InvenTree.ready.canAppAccessDatabase(
+                allow_plugins=False, allow_shell=True, allow_test=True
+            )
+            and not InvenTree.ready.isReadOnlyCommand()
+        )
 
         try:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
-            if not cfg:
+            if not cfg and can_create:
                 logger.debug(
                     "get_plugin_config: Creating new PluginConfig for '%s'", slug
                 )
@@ -781,9 +786,9 @@ class PluginsRegistry:
                     f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
                 )
                 if v := plg_i.MIN_VERSION:
-                    _msg += _(f'Plugin requires at least version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at least version {v}')  # ty:ignore[unsupported-operator]
                 if v := plg_i.MAX_VERSION:
-                    _msg += _(f'Plugin requires at most version {v}')  # type: ignore[unsupported-operator]
+                    _msg += _(f'Plugin requires at most version {v}')  # ty:ignore[unsupported-operator]
                 # Log to error stack
                 log_registry_error(_msg, reference=f'{p}:init_plugin')
             else:
