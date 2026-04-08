@@ -473,7 +473,7 @@ def parameter(
 
     Arguments:
         instance: A Model object
-        parameter_name: The name of the parameter to retrieve
+        parameter_name: The name of the parameter to retrieve (case insensitive)
 
     Returns:
         A Parameter object, or None if not found
@@ -484,12 +484,23 @@ def parameter(
     if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
         raise TypeError("parameter tag requires a Model with 'parameters' attribute")
 
-    return (
-        instance.parameters
+    # First try with exact match
+    if (
+        parameter := instance.parameters
         .prefetch_related('template')
         .filter(template__name=parameter_name)
         .first()
-    )
+    ):
+        return parameter
+
+    # Next, try with case-insensitive match
+    if (
+        parameter := instance.parameters
+        .prefetch_related('template')
+        .filter(template__name__iexact=parameter_name)
+        .first()
+    ):
+        return parameter
 
 
 @register.simple_tag()
