@@ -450,7 +450,7 @@ common_router.register('news', NewsFeedViewSet, basename='api-news')
     )
 )
 class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
-    """A simple ViewSet for all accessed configurations."""
+    """All accessed/in-use configurations."""
 
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
@@ -1209,7 +1209,7 @@ common_router.register('data-output', DataOutputViewSet, basename='api-data-outp
 
 
 class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
-    """A simple ViewSet for viewing and editing email accounts."""
+    """Backend E-Mail management for administrative purposes."""
 
     queryset = common.models.EmailMessage.objects.all()
     serializer_class = common.serializers.EmailMessageSerializer
