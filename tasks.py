@@ -1286,7 +1286,6 @@ def validate_import_metadata(
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
         'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
-        'retain_temp': 'Retain temporary files at end of process (default = False)',
         'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
         'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
@@ -1299,7 +1298,6 @@ def import_records(
     c,
     filename='data.json',
     clear: bool = False,
-    retain_temp: bool = False,
     strict: bool = False,
     exclude_plugins: bool = False,
     ignore_nonexistent: bool = False,
@@ -1423,8 +1421,8 @@ def import_records(
     if not exclude_plugins:
         load_data('plugins', plugin_data, app='plugin')
 
-        # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
-        if not skip_migrations:
+        if len(plugin_data) > 0 and not skip_migrations:
+            # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
             migrate(c)
 
     # Run validation again - ensure that the plugin apps have been loaded correctly
