@@ -27,6 +27,8 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
 {{ globalsetting("INVENTREE_INSTANCE_ID", default="Randomly generated value") }}
 {{ globalsetting("INVENTREE_ANNOUNCE_ID") }}
+{{ globalsetting("INVENTREE_SHOW_SUPERUSER_BANNER") }}
+{{ globalsetting("INVENTREE_SHOW_ADMIN_BANNER") }}
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}

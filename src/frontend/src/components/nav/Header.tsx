@@ -131,13 +131,23 @@ export function Header() {
 
   const [showSuperuserAlert, setShowSuperuserAlert] = useState<boolean>(true);
 
-  const showElevated = useMemo(
-    () =>
-      (user?.is_superuser || false) &&
-      showSuperuserAlert &&
-      !window.INVENTREE_SETTINGS.dangerous_hide_elevated_alert,
-    [user, showSuperuserAlert]
-  );
+  const showElevated = useMemo(() => {
+    if (
+      user?.is_superuser &&
+      globalSettings.isSet('INVENTREE_SHOW_SUPERUSER_BANNER', true)
+    ) {
+      return true;
+    }
+
+    if (
+      user?.is_staff &&
+      globalSettings.isSet('INVENTREE_SHOW_ADMIN_BANNER', true)
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [user, showSuperuserAlert, globalSettings]);
 
   const headerStyle: any = useMemo(() => {
     const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
@@ -211,16 +221,17 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {showElevated && user?.is_superuser && (
-        <Paper p='sm'>
+      {showElevated && (user?.is_superuser || user?.is_staff) && (
+        <Paper p={0} m={5}>
           <Alert
             icon={<IconUserBolt />}
-            color={'red'}
-            title={t`Superuser Mode`}
+            color={user.is_superuser ? 'red' : 'orange'}
+            title={user.is_superuser ? t`Superuser Mode` : t`Admin Mode`}
             withCloseButton
             onClose={() => setShowSuperuserAlert(false)}
+            p={5}
           >
-            <Text>
+            <Text p={0}>
               {t`The current user has elevated privileges and should not be used for regular usage.`}{' '}
               {errorCodeLink('INVE-W14')}
             </Text>
