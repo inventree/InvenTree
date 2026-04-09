@@ -420,10 +420,13 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     })
     .catch(() => {});
 
-  await page.getByRole('button', { name: 'Selection Lists' }).click();
   // Allow time for the table to load
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Selection Lists' }).click();
   await page.waitForLoadState('networkidle');
+
+  // Check for expected entry
+  await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
+  await page.getByText('Various animals and descriptions thereof').waitFor();
 
   // Clean old list data if exists
   await page
