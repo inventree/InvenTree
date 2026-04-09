@@ -71,7 +71,20 @@ export function RenderSelectionList({
     instance && (
       <RenderInlineModel
         primary={instance.name}
-        secondary={instance.description}
+        suffix={instance.description}
+      />
+    )
+  );
+}
+
+export function RenderSelectionEntry({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    instance && (
+      <RenderInlineModel
+        primary={instance.label}
+        suffix={instance.description}
       />
     )
   );
