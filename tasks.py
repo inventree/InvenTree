@@ -1123,7 +1123,7 @@ def update(
         # Note: frontend has already been compiled if required
         static(c, frontend=False)
 
-    success('InvenTree update complete!')
+    success('InvenTree update complete')
 
 
 # Data tasks
