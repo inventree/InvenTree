@@ -31,6 +31,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -110,6 +111,7 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       PartColumn({
         part: 'part_detail',
         ordering: 'part'
@@ -267,6 +269,7 @@ export default function ReturnOrderLineItemTable({
             item_detail: true,
             order_detail: true
           },
+          defaultSortColumn: 'line',
           enableSelection:
             inProgress && user.hasChangeRole(UserRoles.return_order),
           tableActions: tableActions,

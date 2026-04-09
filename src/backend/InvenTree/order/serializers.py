@@ -276,6 +276,7 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'link',
             'notes',
             'order',
@@ -309,6 +310,7 @@ class AbstractExtraLineSerializer(
         """Construct a set of fields for this serializer."""
         return [
             'pk',
+            'line',
             'description',
             'link',
             'notes',
@@ -1297,7 +1299,10 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
-    FilterableSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
 

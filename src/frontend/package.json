@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.9.0",
+    "version": "0.10.1",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -130,7 +130,7 @@
         "rollup": "^4.59.0",
         "rollup-plugin-license": "^3.7.0",
         "typescript": "^5.9.3",
-        "vite": "7.1.11",
+        "vite": "7.3.2",
         "vite-plugin-babel-macros": "^1.0.6",
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-externals": "^0.6.2",

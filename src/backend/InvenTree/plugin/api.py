@@ -210,6 +210,7 @@ class PluginInstall(CreateAPI):
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
 
     def create(self, request, *args, **kwargs):
         """Install a plugin via the API."""
