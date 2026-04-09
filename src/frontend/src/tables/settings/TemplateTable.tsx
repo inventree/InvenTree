@@ -238,7 +238,15 @@ export function TemplateTable({
       {
         accessor: 'filters',
         sortable: false,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
+      },
+      {
+        accessor: 'filename_pattern',
+        title: t`Filename`,
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
