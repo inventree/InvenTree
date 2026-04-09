@@ -395,10 +395,16 @@ class NotificationMessageViewSet(
         queryset = queryset.filter(user=request.user)
         return queryset
 
-    # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope])  # TODO: re-enable permission override
+    def get_permissions(self):
+        """Override permissions for list view."""
+        if self.action == 'list':
+            return [IsAuthenticatedOrReadScope()]
+        else:
+            return super().get_permissions()
 
     def list(self, request, *args, **kwargs):
         """List view for all notifications of the current user."""
+        # TODO @matmair permissions for this are currently being overwritten in get_permissions - this should be moved to a dedicated endpoint
         return super().list(request, *args, **kwargs)
 
     # TODO @matmair this should really be a POST
