@@ -207,8 +207,9 @@ class ReportTemplateBase(
 
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved."""
-        # Increment revision number
-        self.revision += 1
+        if kwargs.pop('increment_revision', True):
+            # Increment revision number
+            self.revision += 1
 
         super().save()
 
