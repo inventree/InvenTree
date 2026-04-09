@@ -367,7 +367,7 @@ def content_excludes(
 
     # Optionally exclude user auth data
     if not allow_auth:
-        excludes.extend(['auth.group', 'auth.user'])
+        excludes.extend(['auth.group', 'auth.user', 'users.userprofile'])
 
     # Optionally exclude user token information
     if not allow_tokens:

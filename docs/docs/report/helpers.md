@@ -547,14 +547,18 @@ You can add asset images to the reports and labels by using the `{% raw %}{% ass
 
 ## Parameters
 
-If you need to load a parameter value for a particular model instance, within the context of your template, you can use the `parameter` template tag:
+If you need to reference a parameter for a particular model instance, within the context of your template, you can use the `parameter` template tag:
+
+### parameter
+
+This returns a [Parameter](../concepts/parameters.md) object which contains the value of the parameter, as well as any associated metadata (e.g. units, description, etc).
 
 ::: report.templatetags.report.parameter
     options:
         show_docstring_description: false
         show_source: False
 
-### Example
+#### Example
 
 The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
@@ -579,6 +583,27 @@ A [Parameter](../concepts/parameters.md) has the following available attributes:
 | Data | The *value* of the parameter (e.g. "123.4") |
 | Units | The *units* of the parameter (e.g. "km") |
 | Template | A reference to a [ParameterTemplate](../concepts/parameters.md#parameter-templates) |
+
+### parameter_value
+
+To access just the value of a parameter, use the `parameter_value` template tag:
+
+::: report.templatetags.report.parameter_value
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+```
+{% raw %}
+{% load report %}
+
+{% parameter_value part "length" backup_value="3"as length_value %}
+Part: {{ part.name }}<br>
+Length: {{ length_value }}
+{% endraw %}
+```
 
 ## Rendering Markdown
 
