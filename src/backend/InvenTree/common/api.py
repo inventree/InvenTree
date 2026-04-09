@@ -1172,6 +1172,8 @@ class SelectionEntryList(EntryMixin, ListCreateAPI):
 
     search_fields = ['label', 'description']
 
+    filterset_fields = ['active', 'value', 'list']
+
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
