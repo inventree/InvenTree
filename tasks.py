@@ -631,12 +631,11 @@ def check_file_existence(filename: Path, overwrite: bool = False):
             sys.exit(1)
 
 
-@task
+@task(help={'verbose': 'Print verbose output from the command'})
 @state_logger
-def wait(c):
+def wait(c, verbose: bool = False):
     """Wait until the database connection is ready."""
-    info('Waiting for database connection...')
-    return manage(c, 'wait_for_db')
+    return manage(c, 'wait_for_db', verbose=verbose)
 
 
 # Install tasks
@@ -659,7 +658,7 @@ def plugins(c, uv: bool = False, verbose: bool = False):
     )
 
     # Collect plugin static files
-    manage(c, 'collectplugins')
+    manage(c, 'collectplugins', verbose=verbose)
 
 
 @task(
@@ -678,13 +677,24 @@ def install(
     dev: bool = False,
     verbose: bool = False,
 ):
-    """Installs required python packages."""
+    """Install required python packages for InvenTree.
+
+    Arguments:
+        c: Command line context.
+        uv: Use UV package manager (experimental) instead of pip. Default is False.
+        skip_plugins: Skip plugin installation. Default is False.
+        dev: Install development requirements instead of production requirements. Default is False.
+        verbose: Print verbose output from pip install commands. Default is False.
+    """
+    info('Installing required python packages...')
+
     if dev:
         run_install(
             c,
             uv,
             local_dir().joinpath('src/backend/requirements-dev.txt'),
             version_check=True,
+            verbose=verbose,
         )
         success('Dependency installation complete')
         return
@@ -700,7 +710,7 @@ def install(
 
     # Run plugins install
     if not skip_plugins:
-        plugins(c, uv=uv)
+        plugins(c, uv=uv, verbose=verbose)
 
     # Compile license information
     lic_path = manage_py_dir().joinpath('InvenTree', 'licenses.txt')
@@ -712,24 +722,26 @@ def install(
     success('Dependency installation complete')
 
 
-@task(help={'tests': 'Set up test dataset at the end'})
-def setup_dev(c, tests=False):
+@task(
+    help={
+        'tests': 'Set up test dataset at the end',
+        'verbose': 'Print verbose output from commands',
+    }
+)
+def setup_dev(c, tests: bool = False, verbose: bool = False):
     """Sets up everything needed for the dev environment."""
     # Install required Python packages with PIP
-    install(c, uv=False, skip_plugins=True, dev=True)
+    install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
     run(c, 'pre-commit install')
-
-    # Update all the hooks
     run(c, 'pre-commit autoupdate')
-
     success('pre-commit set up complete')
 
     # Set up test-data if flag is set
     if tests:
-        setup_test(c)
+        setup_test(c, verbose=verbose)
 
 
 # Setup / maintenance tasks
@@ -1701,6 +1713,7 @@ def test(
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone (default = main)',
+        'verbose': 'Print verbose output from management commands',
     }
 )
 def setup_test(
@@ -1709,6 +1722,7 @@ def setup_test(
     dev=False,
     validate_files=False,
     use_ssh=False,
+    verbose=False,
     path='inventree-demo-dataset',
     branch='main',
 ):
@@ -1718,7 +1732,7 @@ def setup_test(
     )
 
     if not ignore_update:
-        update(c)
+        update(c, verbose=verbose)
 
     template_dir = local_dir().joinpath(path)
 
@@ -1739,11 +1753,16 @@ def setup_test(
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
-        migrate(c)
+        migrate(c, verbose=verbose)
 
     # Load data
     info('Loading database records ...')
-    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
+    import_records(
+        c,
+        filename=template_dir.joinpath('inventree_data.json'),
+        clear=True,
+        verbose=verbose,
+    )
 
     # Copy media files
     src = template_dir.joinpath('media')
@@ -1779,7 +1798,7 @@ def setup_test(
 
     # Set up development setup if flag is set
     if dev:
-        setup_dev(c)
+        setup_dev(c, verbose=verbose)
 
 
 @task(
