@@ -221,6 +221,12 @@ export function useParameterFields({
           fieldType === 'related field' && selectionListId
             ? apiUrl(ApiEndpoints.selectionentry_list, selectionListId)
             : undefined,
+        filters:
+          fieldType === 'related field'
+            ? {
+                active: true
+              }
+            : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
 
