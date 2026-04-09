@@ -520,9 +520,9 @@ defusedxml==0.7.1 \
     # via
     #   -c src/backend/requirements.txt
     #   python3-openid
-django==5.2.12 \
-    --hash=sha256:4853482f395c3a151937f6991272540fcbf531464f254a347bf7c89f53c8cff7 \
-    --hash=sha256:6b809af7165c73eff5ce1c87fdae75d4da6520d6667f86401ecf55b681eb1eeb
+django==5.2.13 \
+    --hash=sha256:5788fce61da23788a8ce6f02583765ab060d396720924789f97fa42119d37f7a \
+    --hash=sha256:a31589db5188d074c63f0945c3888fad104627dfcc236fb2b97f71f89da33bc4
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -1027,9 +1027,9 @@ jsonschema-specifications==2025.9.1 \
     # via
     #   -c src/backend/requirements.txt
     #   jsonschema
-jwcrypto==1.5.6 \
-    --hash=sha256:150d2b0ebbdb8f40b77f543fb44ffd2baeff48788be71f67f03566692fd55789 \
-    --hash=sha256:771a87762a0c081ae6166958a954f80848820b2ab066937dc8b8379d65b1b039
+jwcrypto==1.5.7 \
+    --hash=sha256:70204d7cca406eda8c82352e3c41ba2d946610dafd19e54403f0a1f4f18633c6 \
+    --hash=sha256:729463fefe28b6de5cf1ebfda3e94f1a1b41d2799148ef98a01cb9678ebe2bb0
     # via
     #   -c src/backend/requirements.txt
     #   django-oauth-toolkit
