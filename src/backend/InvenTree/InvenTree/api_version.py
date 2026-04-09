@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 474
+INVENTREE_API_VERSION = 475
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v475 -> 2026-04-09 : https://github.com/inventree/InvenTree/pull/11702
+    - Adds "updated" and "updated_by" fields to the LabelTemplate and ReportTemplate API endpoints
 
 v474 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11693
     - Adds DataImportMixin to the ManufacturerPartList API endpoint
