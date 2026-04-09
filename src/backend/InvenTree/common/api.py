@@ -1166,6 +1166,12 @@ class EntryMixin:
 class SelectionEntryList(EntryMixin, ListCreateAPI):
     """List view for SelectionEntry objects."""
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['list', 'label', 'active']
+
+    search_fields = ['label', 'description']
+
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
