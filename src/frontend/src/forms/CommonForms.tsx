@@ -2,7 +2,7 @@ import { IconUsers } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
@@ -220,7 +220,7 @@ export function useParameterFields({
             : undefined,
         model:
           fieldType === 'related field' && selectionListId
-            ? 'selectionentry'
+            ? ModelType.selectionentry
             : undefined,
         api_url:
           fieldType === 'related field' && selectionListId
