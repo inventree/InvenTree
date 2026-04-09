@@ -39,7 +39,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
 
         instance = super().save(**kwargs)
         instance.updated_by = user
-        instance.save()
+        instance.save(increment_revision=False)
 
         return instance
 
