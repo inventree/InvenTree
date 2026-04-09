@@ -28,6 +28,21 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         if len(self.fields['model_type'].choices) == 0:
             self.fields['model_type'].choices = report.helpers.report_model_options()
 
+    def save(self, **kwargs):
+        """Override the save method to capture the user information."""
+        user = self.context.get('request').user
+
+        if not user or not user.is_authenticated:
+            raise PermissionError(
+                _('User must be authenticated to save report templates')
+            )
+
+        instance = super().save(**kwargs)
+        instance.updated_by = user
+        instance.save()
+
+        return instance
+
     @staticmethod
     def base_fields():
         """Base serializer field set."""
