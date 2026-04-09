@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from functools import wraps
 from pathlib import Path
 from platform import python_version
@@ -200,9 +201,13 @@ def state_logger(fn=None, method_name=None):
             do_log = is_debug_environment()
             if do_log:
                 info(f'# task | {func.method_name} | start')
+
+            t1 = time.time()
             func(c, *args, **kwargs)
+            t2 = time.time()
+
             if do_log:
-                info(f'# task | {func.method_name} | done')
+                info(f'# task | {func.method_name} | done | elapsed: {t2 - t1:.2f}s')
 
         return wrapped
 
@@ -464,7 +469,7 @@ def run(
     return result
 
 
-def manage(c, cmd, pty: bool = False, env=None, **kwargs):
+def manage(c, cmd, pty: bool = False, env=None, verbose: bool = False, **kwargs):
     """Runs a given command against django's "manage.py" script.
 
     Args:
@@ -472,7 +477,14 @@ def manage(c, cmd, pty: bool = False, env=None, **kwargs):
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
+        verbose (bool, optional): Print verbose output from the command. Defaults to False.
     """
+    if verbose:
+        info(f'Running command: python3 manage.py {cmd}')
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
     return run(
         c, f'python3 manage.py {cmd}', manage_py_dir(), pty=pty, env=env, **kwargs
     )
@@ -499,8 +511,19 @@ def run_install(
     run_preflight=True,
     version_check=False,
     pinned=True,
+    verbose: bool = False,
 ):
-    """Run the installation of python packages from a requirements file."""
+    """Run the installation of python packages from a requirements file.
+
+    Arguments:
+        c: Command line context.
+        uv: Whether to use UV (experimental package manager) instead of pip.
+        install_file: Path to the requirements file to install from.
+        run_preflight: Whether to run the preflight installation step (installing pip/uv itself). Default is True.
+        version_check: Whether to check for a version-specific requirements file. Default is False.
+        pinned: Whether to use the --require-hashes option when installing packages. Default is True.
+        verbose: Whether to print verbose output from pip install commands. Default is False.
+    """
     if version_check:
         # Test if there is a version specific requirements file
         sys_ver_s = python_version().split('.')
@@ -518,25 +541,28 @@ def run_install(
 
     # Install required Python packages with PIP
     if not uv:
+        # Optionally run preflight first
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools {"" if verbose else "--quiet"}',
             )
+            info('Installed package manager')
+
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
     else:
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools {"" if verbose else "--quiet"}',
             )
             info('Installed package manager')
         run(
             c,
-            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
 
 
@@ -615,15 +641,22 @@ def wait(c):
 
 # Install tasks
 # region tasks
-@task(help={'uv': 'Use UV (experimental package manager)'})
+@task(
+    help={
+        'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
+    }
+)
 @state_logger
-def plugins(c, uv=False):
+def plugins(c, uv: bool = False, verbose: bool = False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_plugin_file,
     )
 
-    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
+    run_install(
+        c, uv, get_plugin_file(), run_preflight=False, pinned=False, verbose=verbose
+    )
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -634,10 +667,17 @@ def plugins(c, uv=False):
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
         'dev': 'Install development requirements instead of production requirements',
+        'verbose': 'Print verbose output from pip install commands',
     }
 )
 @state_logger
-def install(c, uv=False, skip_plugins=False, dev=False):
+def install(
+    c,
+    uv: bool = False,
+    skip_plugins: bool = False,
+    dev: bool = False,
+    verbose: bool = False,
+):
     """Installs required python packages."""
     if dev:
         run_install(
@@ -651,7 +691,11 @@ def install(c, uv=False, skip_plugins=False, dev=False):
 
     # Ensure path is relative to *this* directory
     run_install(
-        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
+        c,
+        uv,
+        local_dir().joinpath('src/backend/requirements.txt'),
+        version_check=True,
+        verbose=verbose,
     )
 
     # Run plugins install
@@ -725,7 +769,7 @@ def rebuild_thumbnails(c):
 @state_logger
 def clean_settings(c):
     """Clean the setting tables of old settings."""
-    info('Cleaning old settings from the database')
+    info('Cleaning old settings from the database...')
     manage(c, 'clean_settings')
     success('Settings cleaned successfully')
 
@@ -797,12 +841,12 @@ def translate(c, ignore_static=False, no_frontend=False):
     success('Translation files built successfully')
 
 
-@task
+@task(help={'verbose': 'Print verbose output'})
 @state_logger('backend_trans')
-def backend_trans(c):
+def backend_trans(c, verbose: bool = False):
     """Compile backend Django translation files."""
-    info('Compiling backend translations')
-    manage(c, 'compilemessages')
+    info('Compiling backend translations...')
+    manage(c, 'compilemessages', verbose=verbose)
     success('Backend translations compiled successfully')
 
 
@@ -944,9 +988,13 @@ def listbackups(c):
     manage(c, 'listbackups')
 
 
-@task(pre=[wait], post=[rebuild_models, rebuild_thumbnails])
+@task(
+    pre=[wait],
+    post=[rebuild_models, rebuild_thumbnails],
+    help={'verbose': 'Print verbose output from migration commands'},
+)
 @state_logger
-def migrate(c):
+def migrate(c, verbose: bool = False):
     """Performs database migrations.
 
     This is a critical step if the database schema have been altered!
@@ -954,10 +1002,15 @@ def migrate(c):
     info('Running InvenTree database migrations...')
 
     # Run custom management command which wraps migrations in "maintenance mode"
-    manage(c, 'makemigrations')
-    manage(c, 'runmigrations', pty=True)
-    manage(c, 'migrate --run-syncdb')
-    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
+    manage(c, 'makemigrations', verbose=verbose)
+    manage(c, 'runmigrations', pty=True, verbose=verbose)
+    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(
+        c,
+        'remove_stale_contenttypes --include-stale-apps --no-input',
+        pty=True,
+        verbose=verbose,
+    )
 
     success('InvenTree database migrations completed')
 
@@ -977,6 +1030,7 @@ def showmigrations(c, app=''):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
+        'verbose': 'Print verbose output from installation commands',
         'uv': 'Use UV (experimental package manager)',
     },
 )
@@ -989,6 +1043,7 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
+    verbose: bool = False,
     uv: bool = False,
 ):
     """Update InvenTree installation.
@@ -1009,7 +1064,7 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv)
+    install(c, uv=uv, verbose=verbose)
 
     # Skip backend translation compilation on docker, unless explicitly requested.
     # Users can also forcefully disable the step via `--no-backend`.
@@ -1019,7 +1074,7 @@ def update(
         else:
             info('Skipping backend translation compilation (INVENTREE_DOCKER flag set)')
     else:
-        backend_trans(c)
+        backend_trans(c, verbose=verbose)
 
     if not skip_backup:
         backup(c)
@@ -1066,6 +1121,7 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
+        'verbose': 'Print verbose output from management commands',
     },
     pre=[wait],
 )
@@ -1079,6 +1135,7 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    verbose: bool = False,
 ):
     """Export all database records to a file."""
     # Get an absolute path to the file
@@ -1104,7 +1161,7 @@ def export_records(
         cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
 
         # Dump data to temporary file
-        manage(c, cmd, pty=True)
+        manage(c, cmd, pty=True, verbose=verbose)
 
         info('Running data post-processing step...')
 
@@ -1217,6 +1274,7 @@ def validate_import_metadata(
         'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
         'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
@@ -1230,6 +1288,7 @@ def import_records(
     exclude_plugins: bool = False,
     ignore_nonexistent: bool = False,
     skip_migrations: bool = False,
+    verbose: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1243,10 +1302,10 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True, migrate=True)
+        delete_data(c, force=True, migrate=True, verbose=verbose)
 
     if not skip_migrations:
-        migrate(c)
+        migrate(c, verbose=verbose)
 
     info(f"Importing database records from '{target}'")
 
@@ -1274,6 +1333,7 @@ def import_records(
     ) -> tempfile.NamedTemporaryFile:
         """Helper function to save data to a temporary file, and then load into the database."""
         nonlocal ignore_nonexistent
+        nonlocal verbose
         nonlocal c
 
         # Skip if there is no data to load
@@ -1299,7 +1359,7 @@ def import_records(
         if excludes:
             cmd += f' -i {excludes}'
 
-        manage(c, cmd, pty=True)
+        manage(c, cmd, pty=True, verbose=verbose)
 
     # Iterate through each entry in the provided data file, and separate out into different categories based on the model type
     for entry in data:
@@ -1363,9 +1423,10 @@ def import_records(
     help={
         'force': 'Force deletion of all data without confirmation',
         'migrate': 'Run migrations before deleting data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     }
 )
-def delete_data(c, force: bool = False, migrate: bool = False):
+def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
@@ -1373,12 +1434,12 @@ def delete_data(c, force: bool = False, migrate: bool = False):
     info('Deleting all data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb')
+        manage(c, 'migrate --run-syncdb', verbose=verbose)
 
     if force:
-        manage(c, 'flush --noinput')
+        manage(c, 'flush --noinput', verbose=verbose)
     else:
-        manage(c, 'flush')
+        manage(c, 'flush', verbose=verbose)
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
@@ -1929,7 +1990,7 @@ def frontend_build(c):
     Args:
         c: Context variable
     """
-    info('Building frontend')
+    info('Building frontend...')
     yarn(c, 'yarn run build')
 
     def write_info(path: Path, content: str):
@@ -1956,6 +2017,8 @@ def frontend_build(c):
         )
     except Exception:
         warning('Failed to write frontend version marker')
+
+    success('Frontend build complete')
 
 
 @task
