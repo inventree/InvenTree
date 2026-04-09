@@ -1134,8 +1134,7 @@ def update(
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
         'verbose': 'Print verbose output from management commands',
-    },
-    pre=[wait],
+    }
 )
 def export_records(
     c,
@@ -1157,6 +1156,8 @@ def export_records(
 
     info(f"Exporting database records to file '{target}'")
 
+    wait(c, verbose=verbose)
+
     check_file_existence(target, overwrite)
 
     excludes = content_excludes(
@@ -1174,7 +1175,6 @@ def export_records(
 
         # Dump data to temporary file
         manage(c, cmd, pty=True, verbose=verbose)
-
         info('Running data post-processing step...')
 
         # Post-process the file, to remove any "permissions" specified for a user or group
@@ -1443,15 +1443,14 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
 
     Warning: This will REALLY delete all records in the database!!
     """
-    info('Deleting all data from InvenTree database...')
+    info('Deleting existing data from InvenTree database...')
 
     if migrate:
         manage(c, 'migrate --run-syncdb', verbose=verbose)
 
-    if force:
-        manage(c, 'flush --noinput', verbose=verbose)
-    else:
-        manage(c, 'flush', verbose=verbose)
+    manage(c, f'flush{" --noinput" if force else ""}', verbose=verbose)
+
+    success('Existing data deleted')
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
