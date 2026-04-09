@@ -1003,18 +1003,22 @@ def listbackups(c):
 @task(
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
-    help={'verbose': 'Print verbose output from migration commands'},
+    help={
+        'verbose': 'Print verbose output from migration commands',
+        'detect': 'Detect and create new migrations based on changes to models',
+    },
 )
 @state_logger
-def migrate(c, verbose: bool = False):
+def migrate(c, detect: bool = True, verbose: bool = False):
     """Performs database migrations.
 
     This is a critical step if the database schema have been altered!
     """
     info('Running InvenTree database migrations...')
 
-    # Run custom management command which wraps migrations in "maintenance mode"
-    manage(c, 'makemigrations', verbose=verbose)
+    if detect:
+        manage(c, 'makemigrations', verbose=verbose)
+
     manage(c, 'runmigrations', pty=True, verbose=verbose)
     manage(c, 'migrate --run-syncdb', verbose=verbose)
     manage(
@@ -1042,8 +1046,8 @@ def showmigrations(c, app=''):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
-        'verbose': 'Print verbose output from installation commands',
         'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
     },
 )
 @state_logger
@@ -1055,8 +1059,8 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
-    verbose: bool = False,
     uv: bool = False,
+    verbose: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -1737,7 +1741,6 @@ def setup_test(
 
     # Remove old data directory
     if template_dir.exists():
-        info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
     URL = 'https://github.com/inventree/demo-dataset'
