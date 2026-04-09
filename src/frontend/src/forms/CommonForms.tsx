@@ -106,18 +106,21 @@ export function useParameterFields({
 }): ApiFormFieldSet {
   const api = useApi();
 
+  const [selectionListId, setSelectionListId] = useState<number | null>(null);
+
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 
   // Field type for "data" input
-  const [fieldType, setFieldType] = useState<'string' | 'boolean' | 'choice'>(
-    'string'
-  );
+  const [fieldType, setFieldType] = useState<
+    'string' | 'boolean' | 'choice' | 'related field'
+  >('string');
 
   const [data, setData] = useState<string>('');
 
   // Reset the field type and choices when the model changes
   useEffect(() => {
+    setSelectionListId(null);
     setFieldType('string');
     setChoices([]);
     setData('');
@@ -139,6 +142,8 @@ export function useParameterFields({
           enabled: true
         },
         onValueChange: (value: any, record: any) => {
+          setSelectionListId(record?.selectionlist || null);
+
           // Adjust the type of the "data" field based on the selected template
           if (record?.checkbox) {
             // This is a "checkbox" field
@@ -162,36 +167,29 @@ export function useParameterFields({
               setFieldType('string');
             }
           } else if (record?.selectionlist) {
-            api
-              .get(
-                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
-              )
-              .then((res) => {
-                setChoices(
-                  res.data.choices.map((item: any) => {
-                    return {
-                      value: item.value,
-                      display_name: item.label
-                    };
-                  })
-                );
-                setFieldType('choice');
-              });
-          } else {
-            setChoices([]);
-            setFieldType('string');
+            setFieldType('related field');
           }
         }
       },
       data: {
         value: data,
-        onValueChange: (value: any) => {
+        onValueChange: (value: any, record: any) => {
           setData(value);
         },
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
         default: fieldType === 'boolean' ? false : undefined,
+        pk_field:
+          fieldType === 'related field' && selectionListId ? 'id' : undefined,
+        model:
+          fieldType === 'related field' && selectionListId
+            ? 'selectionentry'
+            : undefined,
+        api_url:
+          fieldType === 'related field' && selectionListId
+            ? apiUrl(ApiEndpoints.selectionentry_list, selectionListId)
+            : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
 
@@ -208,5 +206,5 @@ export function useParameterFields({
       },
       note: {}
     };
-  }, [data, modelType, fieldType, choices, modelId]);
+  }, [data, modelType, fieldType, choices, modelId, selectionListId]);
 }
