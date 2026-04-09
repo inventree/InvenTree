@@ -11,6 +11,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
 )
+from users.serializers import UserSerializer
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -41,6 +42,9 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'enabled',
             'revision',
             'attach_to_model',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
 
     template = InvenTreeAttachmentSerializerField(required=True)
@@ -54,6 +58,10 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         required=True,
         allow_blank=False,
         allow_null=False,
+    )
+
+    updated_by_detail = UserSerializer(
+        source='updated_by', read_only=True, allow_null=True, many=False
     )
 
 

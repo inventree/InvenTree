@@ -224,22 +224,26 @@ class LabelPrint(GenericAPIView):
         return Response(DataOutputSerializer(output).data, status=201)
 
 
-class LabelTemplateList(TemplatePermissionMixin, ListCreateAPI):
+class LabelTemplateMixin:
+    """Mixin class for label template API views."""
+
+    queryset = report.models.LabelTemplate.objects.all().prefetch_related('updated_by')
+    serializer_class = report.serializers.LabelTemplateSerializer
+
+
+class LabelTemplateList(TemplatePermissionMixin, LabelTemplateMixin, ListCreateAPI):
     """API endpoint for viewing list of LabelTemplate objects."""
 
-    queryset = report.models.LabelTemplate.objects.all()
-    serializer_class = report.serializers.LabelTemplateSerializer
     filterset_class = LabelFilter
     filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'enabled']
 
 
-class LabelTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+class LabelTemplateDetail(
+    TemplatePermissionMixin, LabelTemplateMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for label template model."""
-
-    queryset = report.models.LabelTemplate.objects.all()
-    serializer_class = report.serializers.LabelTemplateSerializer
 
 
 class ReportPrint(GenericAPIView):
@@ -300,22 +304,26 @@ class ReportPrint(GenericAPIView):
         return Response(DataOutputSerializer(output).data, status=201)
 
 
-class ReportTemplateList(TemplatePermissionMixin, ListCreateAPI):
+class ReportTemplateMixin:
+    """Mixin class for report template API views."""
+
+    queryset = report.models.ReportTemplate.objects.all().prefetch_related('updated_by')
+    serializer_class = report.serializers.ReportTemplateSerializer
+
+
+class ReportTemplateList(TemplatePermissionMixin, ReportTemplateMixin, ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
 
-    queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportTemplateSerializer
     filterset_class = ReportFilter
     filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'enabled']
 
 
-class ReportTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+class ReportTemplateDetail(
+    TemplatePermissionMixin, ReportTemplateMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for report template model."""
-
-    queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportTemplateSerializer
 
 
 class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
