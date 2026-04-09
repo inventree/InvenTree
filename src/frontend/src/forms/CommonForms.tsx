@@ -1,12 +1,11 @@
 import { IconUsers } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { useQuery } from '@tanstack/react-query';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -120,32 +119,28 @@ export function useParameterFields({
   // Memoized value for the "data" field
   const [data, setData] = useState<string>('');
 
-  // If there is a selection list associated with this parameter, we need to lookup the PK for the selected item
-  const selectedEntry = useQuery({
-    enabled: fieldType === 'related field' && !!selectionListId && !!data,
-    queryKey: ['selectionentry', selectionListId, data],
-    queryFn: async () => {
-      if (!selectionListId || !data) {
+  const fetchSelectionEntry = useCallback(
+    (value: any) => {
+      if (!value || !selectionListId) {
         return null;
       }
 
-      const url = apiUrl(ApiEndpoints.selectionentry_list, selectionListId);
-
       return api
-        .get(url, {
+        .get(apiUrl(ApiEndpoints.selectionentry_list, selectionListId), {
           params: {
-            value: data
+            value: value
           }
         })
         .then((response) => {
           if (response.data && response.data.length == 1) {
-            return response.data[0]?.id;
+            return response.data[0];
           } else {
             return null;
           }
         });
-    }
-  });
+    },
+    [selectionListId]
+  );
 
   // Reset the field type and choices when the model changes
   useEffect(() => {
@@ -220,7 +215,7 @@ export function useParameterFields({
             : undefined,
         model:
           fieldType === 'related field' && selectionListId
-            ? 'selectionentry'
+            ? ModelType.selectionentry
             : undefined,
         api_url:
           fieldType === 'related field' && selectionListId
@@ -238,7 +233,8 @@ export function useParameterFields({
           }
 
           return v;
-        }
+        },
+        singleFetchFunction: fetchSelectionEntry
       },
       note: {}
     };
