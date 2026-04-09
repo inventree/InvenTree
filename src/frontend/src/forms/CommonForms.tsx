@@ -6,6 +6,7 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
+import { useQuery } from '@tanstack/react-query';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -116,7 +117,35 @@ export function useParameterFields({
     'string' | 'boolean' | 'choice' | 'related field'
   >('string');
 
+  // Memoized value for the "data" field
   const [data, setData] = useState<string>('');
+
+  // If there is a selection list associated with this parameter, we need to lookup the PK for the selected item
+  const selectedEntry = useQuery({
+    enabled: fieldType === 'related field' && !!selectionListId && !!data,
+    queryKey: ['selectionentry', selectionListId, data],
+    queryFn: async () => {
+      if (!selectionListId || !data) {
+        return null;
+      }
+
+      const url = apiUrl(ApiEndpoints.selectionentry_list, selectionListId);
+
+      return api
+        .get(url, {
+          params: {
+            value: data
+          }
+        })
+        .then((response) => {
+          if (response.data && response.data.length == 1) {
+            return response.data[0]?.id;
+          } else {
+            return null;
+          }
+        });
+    }
+  });
 
   // Reset the field type and choices when the model changes
   useEffect(() => {
@@ -174,14 +203,21 @@ export function useParameterFields({
       data: {
         value: data,
         onValueChange: (value: any, record: any) => {
-          setData(value);
+          if (fieldType === 'related field' && selectionListId) {
+            // For related fields, we need to store the selected primary key value (not the string representation)
+            setData(record?.value ?? value);
+          } else {
+            setData(value);
+          }
         },
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
         default: fieldType === 'boolean' ? false : undefined,
         pk_field:
-          fieldType === 'related field' && selectionListId ? 'id' : undefined,
+          fieldType === 'related field' && selectionListId
+            ? 'value'
+            : undefined,
         model:
           fieldType === 'related field' && selectionListId
             ? 'selectionentry'
