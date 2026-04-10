@@ -72,6 +72,7 @@ export function RelatedPartTable({
         accessor: 'ipn',
         title: t`IPN`,
         switchable: true,
+        copyable: true,
         render: (record: any) => {
           const part = getPart(record);
           return part.IPN;

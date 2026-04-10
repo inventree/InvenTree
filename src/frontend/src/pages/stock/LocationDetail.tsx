@@ -277,7 +277,7 @@ export default function Stock() {
         choices: deleteOptions
       },
       delete_sub_locations: {
-        label: t`Locations Action`,
+        label: t`Location Actions`,
         required: true,
         description: t`Action for child locations in this location`,
         field_type: 'choice',
@@ -307,6 +307,7 @@ export default function Stock() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     enabled: true,
+    changeBatch: false,
     delete: false,
     merge: false,
     assign: false
@@ -380,15 +381,15 @@ export default function Stock() {
           perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
-              name: 'Scan in stock items',
+              name: t`Scan in stock items`,
               icon: <InvenTreeIcon icon='stock' />,
-              tooltip: 'Scan item into this location',
+              tooltip: t`Scan item into this location`,
               onClick: scanInStockItem.open
             },
             {
-              name: 'Scan in container',
+              name: t`Scan in container`,
               icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: 'Scan container into this location',
+              tooltip: t`Scan container into this location`,
               onClick: scanInStockLocation.open
             }
           ]}

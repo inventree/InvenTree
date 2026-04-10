@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import cast
+from typing import TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -427,7 +427,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class PartReportContext(report.mixins.BaseReportContext):
+class PartReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Part model.
 
     Attributes:
@@ -776,18 +776,12 @@ class Part(
                     'revision_of': _('Part cannot be a revision of itself')
                 })
 
-            # Part cannot be a revision of a part which is itself a revision
-            if self.revision_of.revision_of:
-                raise ValidationError({
-                    'revision_of': _(
-                        'Cannot make a revision of a part which is already a revision'
-                    )
-                })
-
             # If this part is a revision, it must have a revision code
             if not self.revision:
                 raise ValidationError({
-                    'revision': _('Revision code must be specified')
+                    'revision': _(
+                        'Revision code must be specified for a part marked as a revision'
+                    )
                 })
 
             if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
@@ -2582,21 +2576,22 @@ class Part(
         Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
+        from order.models import PurchaseOrderLineItem
+
         quantity = 0
 
-        # Iterate through all supplier parts
-        for sp in self.supplier_parts.all():
-            # Look at any incomplete line item for open orders
-            lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatusGroups.OPEN,
-                quantity__gt=F('received'),
-            )
+        # Find all outstanding PurchaseOrderLineItem objects which reference this part
+        lines = PurchaseOrderLineItem.objects.filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
+            part__part_id=self.pk,
+            quantity__gt=F('received'),
+        ).prefetch_related('part')
 
-            for line in lines:
-                remaining = line.quantity - line.received
+        for line in lines:
+            remaining = line.quantity - line.received
 
-                if remaining > 0:
-                    quantity += sp.base_quantity(remaining)
+            if remaining > 0:
+                quantity += line.part.base_quantity(remaining)
 
         return quantity
 
@@ -4215,7 +4210,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if n <= 0:
             return 0.0
 
-        return int(available_stock / n)
+        return int(Decimal(available_stock) / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity.

@@ -741,6 +741,7 @@ export function useAllocateStockToBuildForm({
     preFormContent: preFormContent,
     successMessage: t`Stock items allocated`,
     onFormSuccess: onFormSuccess,
+    keepOpenOption: true,
     initialData: {
       items: lineItems
         .filter((item) => {
@@ -853,7 +854,7 @@ export function useConsumeBuildItemsForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items scheduled to be consumed`,
+    successMessage: null,
     onFormSuccess: onFormSuccess,
     size: '80%',
     fields: consumeFields,
@@ -954,7 +955,7 @@ export function useConsumeBuildLinesForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items scheduled to be consumed`,
+    successMessage: null,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
     initialData: {

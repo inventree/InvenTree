@@ -75,42 +75,55 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 250);
 
+  // Response to fetching a single instance
+  const fetchSingleCallback = useCallback(
+    (instance: any) => {
+      const pk_field = definition.pk_field ?? 'pk';
+
+      if (instance?.[pk_field]) {
+        // Convert the response into the format expected by the select field
+        const value = {
+          value: instance[pk_field],
+          data: instance
+        };
+
+        // Run custom callback for this field (if provided)
+        if (definition.onValueChange) {
+          definition.onValueChange(instance[pk_field], instance);
+        }
+
+        setInitialData(value);
+        dataRef.current = [value];
+        setPk(instance[pk_field]);
+      }
+    },
+    [definition.pk_field, definition.onValueChange, setInitialData, setPk]
+  );
+
   // Fetch a single field by primary key, using the provided API filters
   const fetchSingleField = useCallback(
-    (pk: number) => {
-      if (!definition?.api_url) {
-        return;
-      }
-
-      const params = definition?.filters ?? {};
-      const url = `${definition.api_url}${pk}/`;
-
-      api
-        .get(url, {
-          params: params
-        })
-        .then((response) => {
-          const pk_field = definition.pk_field ?? 'pk';
-          if (response.data?.[pk_field]) {
-            const value = {
-              value: response.data[pk_field],
-              data: response.data
-            };
-
-            // Run custom callback for this field (if provided)
-            if (definition.onValueChange) {
-              definition.onValueChange(response.data[pk_field], response.data);
-            }
-
-            setInitialData(value);
-            dataRef.current = [value];
-            setPk(response.data[pk_field]);
-          }
+    (pk: number | string) => {
+      if (definition.singleFetchFunction) {
+        definition.singleFetchFunction(pk)?.then((instance: any) => {
+          fetchSingleCallback(instance);
         });
+      } else if (!!definition.api_url) {
+        const params = definition?.filters ?? {};
+        const url = `${definition.api_url}${pk}/`;
+        api.get(url, { params: params }).then((response) => {
+          const instance = response.data;
+          fetchSingleCallback(instance);
+        });
+      } else {
+        console.error(
+          `No API URL provided for related field ${fieldName}, cannot fetch data`
+        );
+      }
     },
     [
       definition.api_url,
       definition.filters,
+      definition.singleFetchFunction,
       definition.onValueChange,
       definition.pk_field,
       setValue,
@@ -380,6 +393,7 @@ export function RelatedModelField({
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
+      allow_null: undefined,
       read_only: undefined
     };
   }, [definition]);

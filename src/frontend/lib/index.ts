@@ -73,4 +73,11 @@ export {
 } from './components/RowActions';
 
 // Shared hooks
-export { default as monitorDataOutput } from './hooks/MonitorDataOutput';
+export {
+  default as useMonitorDataOutput,
+  type MonitorDataOutputProps
+} from './hooks/MonitorDataOutput';
+export {
+  default as useMonitorBackgroundTask,
+  type MonitorBackgroundTaskProps
+} from './hooks/MonitorBackgroundTask';

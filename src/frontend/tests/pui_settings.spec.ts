@@ -1,5 +1,7 @@
+import type { Page } from '@playwright/test';
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
+import { adminuser, allaccessuser, stevenuser } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -34,8 +36,7 @@ import { setPluginState, setSettingState } from './settings.js';
 
 test('Settings - User theme', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits'
+    user: allaccessuser
   });
 
   await page.waitForLoadState('networkidle');
@@ -82,8 +83,7 @@ test('Settings - User theme', async ({ browser }) => {
 
 test('Settings - User', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/user/'
   });
 
@@ -136,8 +136,7 @@ test('Settings - User', async ({ browser }) => {
 
 test('Settings - Global', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/system/'
   });
 
@@ -214,8 +213,7 @@ test('Settings - Global', async ({ browser }) => {
 test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // User settings
@@ -317,11 +315,33 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+test('Settings - Admin - Background Tasks', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/background'
+  });
+
+  // Background worker should be running, and idle
+  await page.getByText('Background worker running').waitFor();
+  await page.getByText('Failed Tasks0').waitFor();
+  await page.getByText('Pending Tasks0').waitFor();
+
+  // Expand the "scheduled tasks" view
+  await page.getByRole('button', { name: 'Scheduled Tasks' }).click();
+
+  // Check for some expected values
+  await page
+    .getByRole('cell', { name: 'InvenTree.tasks.delete_successful_tasks' })
+    .waitFor();
+  await page
+    .getByRole('cell', { name: 'InvenTree.tasks.check_for_migrations' })
+    .waitFor();
+});
+
 test('Settings - Admin - Barcode History', async ({ browser }) => {
   // Login with admin credentials
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that the "save scans" setting is enabled
@@ -375,20 +395,19 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
 test('Settings - Admin - Parameter', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
 
   await loadTab(page, 'Parameters', true);
 
-  await page.waitForTimeout(1000);
   await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1000);
 
   // Clean old template data if exists
   await page
-    .getByRole('cell', { name: 'my custom parameter' })
+    .getByRole('cell', { name: 'my custom parameter', exact: true })
     .waitFor({ timeout: 500 })
     .then(async (cell) => {
       await page
@@ -401,10 +420,13 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     })
     .catch(() => {});
 
-  await page.getByRole('button', { name: 'Selection Lists' }).click();
   // Allow time for the table to load
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Selection Lists' }).click();
   await page.waitForLoadState('networkidle');
+
+  // Check for expected entry
+  await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
+  await page.getByText('Various animals and descriptions thereof').waitFor();
 
   // Clean old list data if exists
   await page
@@ -426,6 +448,19 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
   await page.getByLabel('text-field-description').fill('Listdescription');
+
+  // Add an entry to the selection list
+  await page.getByRole('button', { name: 'action-button-add-new-row' }).click();
+  await page.getByRole('textbox', { name: 'text-field-value' }).fill('HW');
+  await page
+    .getByRole('textbox', { name: 'text-field-label' })
+    .fill('Hardwood');
+  await page
+    .getByRole('row', { name: 'boolean-field-active action-' })
+    .getByLabel('text-field-description')
+    .fill('Hardwood materials');
+  await page.getByRole('cell', { name: 'boolean-field-active' }).click();
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'some list' }).waitFor();
 
@@ -475,16 +510,24 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     .filter({ hasText: /^Search\.\.\.$/ })
     .locator('input')
     .fill('my custom parameter');
+
   await page.getByRole('option', { name: 'my custom parameter' }).click();
-  await page.getByLabel('choice-field-data').fill('2');
+
+  // Finally, select value from the SelectionList data
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('wood');
+  await page
+    .getByRole('option', { name: 'Hardwood Hardwood materials' })
+    .click();
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the expected value
+  await page.getByRole('cell', { name: 'HW', exact: true }).waitFor();
 });
 
 test('Settings - Admin - Unauthorized', async ({ browser }) => {
   // Try to access "admin" page with a non-staff user
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/admin/'
   });
 
@@ -516,8 +559,7 @@ test('Settings - Admin - Unauthorized', async ({ browser }) => {
 // Test for user auth configuration
 test('Settings - Auth - Email', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits',
+    user: allaccessuser,
     url: 'settings/user/'
   });
 
@@ -536,10 +578,33 @@ test('Settings - Auth - Email', async ({ browser }) => {
   await page.getByText('Currently no email addresses are registered').waitFor();
 });
 
-async function testColorPicker(page, ref: string) {
+async function testColorPicker(page: Page, ref: string) {
   const element = page.getByLabel(ref);
   await element.click();
   const box = (await element.boundingBox())!;
   await page.mouse.click(box.x + box.width / 2, box.y + box.height + 25);
   await page.getByText('Color Mode').click();
 }
+
+test('Settings - Auth - Tokens', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: allaccessuser,
+    url: 'settings/user/'
+  });
+
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Access Tokens' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-generate-token' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('testtoken');
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page.getByText('Tokens are only shown once').waitFor();
+  await page
+    .getByTestId('generated-api-token')
+    .locator('.mantine-CloseButton-root')
+    .click();
+  await page.getByRole('cell', { name: 'testtoken' }).waitFor();
+});

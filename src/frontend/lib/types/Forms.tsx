@@ -68,6 +68,7 @@ export type ApiFormFieldHeader = {
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  * @param addRow : Callback function to add a new row to a table field
  * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
+ * @param singleFetchFunction : Optional function to fetch a single value for this field (used for fetching the initial value when editing an existing object)
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -126,6 +127,7 @@ export type ApiFormFieldType = {
   addRow?: () => any;
   headers?: ApiFormFieldHeader[];
   depends_on?: string[];
+  singleFetchFunction?: (value: any) => Promise<any> | null;
 };
 
 export type ApiFormFieldSet = Record<string, ApiFormFieldType>;
@@ -180,6 +182,8 @@ export interface ApiFormProps {
   follow?: boolean;
   actions?: ApiFormAction[];
   timeout?: number;
+  keepOpenOption?: boolean;
+  onKeepOpenChange?: (keepOpen: boolean) => void;
 }
 
 /**

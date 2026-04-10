@@ -144,7 +144,7 @@ export default function ParametricDataTable({
     refetchOnMount: true
   });
 
-  /* Store filters against selected part parameters.
+  /* Store filters against selected parameters.
    * These are stored in the format:
    * {
    *   parameter_1: {

@@ -24,11 +24,11 @@ class DataImportSerializerMixin:
         Determine if the serializer is being used for data import,
         and if so, adjust the serializer fields accordingly.
         """
-        importing = kwargs.pop('importing', False)
+        self._is_importing = kwargs.pop('importing', False)
 
         super().__init__(*args, **kwargs)
 
-        if importing:
+        if self._is_importing:
             # Exclude any fields which are not able to be imported
             importable_field_names = list(self.get_importable_fields().keys())
             field_names = list(self.fields.keys())

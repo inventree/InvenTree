@@ -55,18 +55,11 @@ The admin interface allows *staff* users the ability to directly view / add / ed
 
 #### Access Backend Admin Interface
 
-To access the admin interface, select the "Admin" option from the drop-down user menu in the top-right corner of the screen.
-
-
-!!! info "Staff Only"
-    Only users with staff access will be able to see the "Admin" option
+To directly access the admin interface, append /admin/ to the InvenTree site URL - e.g. http://localhost:8000/admin/.
 
 An administration panel will be presented as shown below:
 
 {{ image("admin/admin.png", "Admin panel") }}
-
-!!! info "Admin URL"
-    To directly access the admin interface, append /admin/ to the InvenTree site URL - e.g. http://localhost:8000/admin/
 
 #### View Database Objects
 
