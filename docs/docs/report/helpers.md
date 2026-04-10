@@ -599,7 +599,7 @@ To access just the value of a parameter, use the `parameter_value` template tag:
 {% raw %}
 {% load report %}
 
-{% parameter_value part "length" as length_value %}
+{% parameter_value part "length" backup_value="3"as length_value %}
 Part: {{ part.name }}<br>
 Length: {{ length_value }}
 {% endraw %}

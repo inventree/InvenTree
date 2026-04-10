@@ -36,7 +36,6 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
       mobile_mode?: 'default' | 'allow-ignore' | 'allow-always';
-      dangerous_hide_evelevated_alert?: boolean;
     };
     react: typeof React;
     React: typeof React;

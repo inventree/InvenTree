@@ -4,6 +4,7 @@ import {
   Container,
   Group,
   Indicator,
+  Paper,
   Tabs,
   Text,
   Tooltip,
@@ -14,7 +15,7 @@ import {
   useDocumentVisibility,
   useHotkeys
 } from '@mantine/hooks';
-import { IconBell, IconSearch } from '@tabler/icons-react';
+import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
@@ -58,8 +59,6 @@ export function Header() {
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
-  const [elevatedAlertClosed, setElevatedAlertClosed] =
-    useState<boolean>(false);
 
   useHotkeys([
     [
@@ -130,13 +129,25 @@ export function Header() {
     else closeNavDrawer();
   }, [navigationOpen]);
 
-  const showElevated = useMemo(
-    () =>
-      (user?.is_staff || user?.is_superuser || false) &&
-      !elevatedAlertClosed &&
-      !window.INVENTREE_SETTINGS.dangerous_hide_evelevated_alert,
-    [user, elevatedAlertClosed]
-  );
+  const [showSuperuserAlert, setShowSuperuserAlert] = useState<boolean>(true);
+
+  const showElevated = useMemo(() => {
+    if (
+      user?.is_superuser &&
+      globalSettings.isSet('INVENTREE_SHOW_SUPERUSER_BANNER', true)
+    ) {
+      return true;
+    }
+
+    if (
+      user?.is_staff &&
+      globalSettings.isSet('INVENTREE_SHOW_ADMIN_BANNER', true)
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [user, showSuperuserAlert, globalSettings]);
 
   const headerStyle: any = useMemo(() => {
     const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
@@ -210,18 +221,22 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {showElevated && user && (
-        <Alert
-          color={user.is_superuser ? 'red' : 'orange'}
-          title={user.is_superuser ? t`Superuser Mode` : t`Administrator Mode`}
-          withCloseButton
-          onClose={() => setElevatedAlertClosed(true)}
-        >
-          <Text>
-            {t`The current user has elevated privileges and should not be used for regular usage.`}
-            {errorCodeLink('INVE-W14')}
-          </Text>
-        </Alert>
+      {showElevated && (user?.is_superuser || user?.is_staff) && (
+        <Paper p={0} m={5}>
+          <Alert
+            icon={<IconUserBolt />}
+            color={user.is_superuser ? 'red' : 'orange'}
+            title={user.is_superuser ? t`Superuser Mode` : t`Admin Mode`}
+            withCloseButton
+            onClose={() => setShowSuperuserAlert(false)}
+            p={5}
+          >
+            <Text p={0}>
+              {t`The current user has elevated privileges and should not be used for regular usage.`}{' '}
+              {errorCodeLink('INVE-W14')}
+            </Text>
+          </Alert>
+        </Paper>
       )}
     </div>
   );

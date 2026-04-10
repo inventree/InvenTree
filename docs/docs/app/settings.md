@@ -77,7 +77,7 @@ The *Part Settings* view allows you to configure various options governing what 
 
 | Option | Description |
 | --- | --- |
-| Parameters | Enable display of part parameters in the part detail view |
+| Parameters | Enable display of parameters in the part detail view |
 | BOM | Enable bill of materials display in the part detail view |
 | Stock History | Enable display of stock history in the stock detail view |
 | Test Results | Enable display of test results in the stock detail view |

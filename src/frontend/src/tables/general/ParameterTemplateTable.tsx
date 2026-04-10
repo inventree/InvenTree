@@ -38,7 +38,11 @@ export default function ParameterTemplateTable() {
       model_type: {},
       choices: {},
       checkbox: {},
-      selectionlist: {},
+      selectionlist: {
+        filters: {
+          active: true
+        }
+      },
       enabled: {}
     };
   }, []);

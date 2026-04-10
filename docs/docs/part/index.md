@@ -81,7 +81,7 @@ Parts can be locked to prevent them from being modified. This is useful for part
 
 - Locked parts cannot be deleted
 - BOM items cannot be created, edited, or deleted when they are part of a locked assembly
-- Part parameters linked to a locked part cannot be created, edited or deleted
+- Parameters linked to a locked part cannot be created, edited or deleted
 
 ## Active Parts
 
