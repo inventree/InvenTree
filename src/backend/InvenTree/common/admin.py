@@ -43,7 +43,7 @@ class SelectionListEntryInlineAdmin(admin.StackedInline):
 class SelectionListAdmin(admin.ModelAdmin):
     """Admin interface for SelectionList objects."""
 
-    list_display = ('name', 'description')
+    list_display = ('name', 'description', 'active', 'locked')
     search_fields = ('name', 'description')
     list_filter = ('active', 'locked')
 
