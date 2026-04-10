@@ -165,19 +165,19 @@ msgstr "数据包含禁止的 markdown 内容"
 
 #: InvenTree/helpers_model.py:109
 msgid "Invalid URL: no hostname"
-msgstr ""
+msgstr "无效 URL：无主机名"
 
 #: InvenTree/helpers_model.py:114
 msgid "Invalid URL: hostname could not be resolved"
-msgstr ""
+msgstr "无效 URL：无法解析主机名"
 
 #: InvenTree/helpers_model.py:120
 msgid "URL points to a private or reserved IP address"
-msgstr ""
+msgstr "URL 指向私有或保留 IP 地址"
 
 #: InvenTree/helpers_model.py:195
 msgid "Too many redirects"
-msgstr ""
+msgstr "重定向次数过多"
 
 #: InvenTree/helpers_model.py:200
 msgid "Connection error"
@@ -5063,11 +5063,11 @@ msgstr "项目数量"
 
 #: order/models.py:1801
 msgid "Line Number"
-msgstr ""
+msgstr "行号"
 
 #: order/models.py:1802
 msgid "Line number for this item (optional)"
-msgstr ""
+msgstr "此项目的行号（可选）"
 
 #: order/models.py:1809
 msgid "Line item reference"
@@ -7625,7 +7625,7 @@ msgstr "作为‘TME’的供应商"
 #: plugin/installer.py:240 plugin/installer.py:344 plugin/serializers.py:169
 #: plugin/serializers.py:275
 msgid "Only superuser accounts can administer plugins"
-msgstr ""
+msgstr "只有超级用户账户才能管理插件"
 
 #: plugin/installer.py:243
 msgid "Plugin installation is disabled"
@@ -7633,11 +7633,11 @@ msgstr "插件安装已禁用"
 
 #: plugin/installer.py:273
 msgid "No package name or URL provided for installation"
-msgstr ""
+msgstr "未提供安装所需的包名或 URL"
 
 #: plugin/installer.py:277
 msgid "Invalid characters in package name or URL"
-msgstr ""
+msgstr "包名或 URL 中存在无效字符"
 
 #: plugin/installer.py:287
 msgid "Installed plugin successfully"
@@ -9606,11 +9606,11 @@ msgstr "用户的电子邮件地址"
 
 #: users/serializers.py:244
 msgid "User must be authenticated"
-msgstr ""
+msgstr "用户必须经过身份验证"
 
 #: users/serializers.py:253
 msgid "Only a superuser can create a token for another user"
-msgstr ""
+msgstr "只有超级用户才能为其他用户创建令牌"
 
 #: users/serializers.py:322
 msgid "Administrator"
@@ -9654,11 +9654,11 @@ msgstr "覆盖有关密码规则的警告"
 
 #: users/serializers.py:410
 msgid "Staff"
-msgstr ""
+msgstr "职员"
 
 #: users/serializers.py:411
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "此用户是否具有职员权限"
 
 #: users/serializers.py:461
 msgid "You do not have permission to create users"

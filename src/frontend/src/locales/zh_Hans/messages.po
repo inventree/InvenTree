@@ -1,5 +1,5 @@
 msgid ""
-msgstr ""
+msgstr "空字符串"
 "POT-Creation-Date: 2023-06-09 22:10+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9117,7 +9117,7 @@ msgstr "已分配的项目"
 
 #: src/tables/ColumnRenderers.tsx:774
 msgid "Line Item"
-msgstr ""
+msgstr "明细项"
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
