@@ -1036,3 +1036,126 @@ def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """
 
     return mark_safe(icon_class + '\n'.join(fonts))
+
+
+@register.simple_tag()
+def lower(value: str) -> str:
+    """Convert a string to lowercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).lower()
+
+
+@register.simple_tag()
+def upper(value: str) -> str:
+    """Convert a string to uppercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).upper()
+
+
+@register.simple_tag()
+def strip(value: str) -> str:
+    """Strip leading and trailing whitespace from a string.
+
+    Arguments:
+        value: The string to be stripped
+    """
+    if not value:
+        return ''
+    return str(value).strip()
+
+
+@register.simple_tag()
+def split(value: str, separator: str = ',') -> list:
+    """Split a string into a list, using the provided separator (default = ',').
+
+    Arguments:
+        value: The string to be split
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return []
+    return [v.strip() for v in str(value).split(separator)]
+
+
+@register.simple_tag()
+def join(value: list, separator: str = ',') -> str:
+    """Join a list of items into a string, using the provided separator (default = ',').
+
+    Arguments:
+        value: The list of items to be joined
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return ''
+    return separator.join(str(v) for v in value)
+
+
+@register.simple_tag()
+def length(value: Any) -> int:
+    """Return the length of a list or string.
+
+    Arguments:
+        value: The value to be measured (e.g. a list or string)
+    """
+    if value is None:
+        return 0
+    try:
+        return len(value)
+    except TypeError:
+        return 0
+
+
+@register.simple_tag()
+def replace(value: str, old: str, new: str = '') -> str:
+    """Replace occurrences of a substring within a string with a new value.
+
+    Arguments:
+        value: The original string
+        old: The substring to be replaced
+        new: The value to replace the old substring with (default = "")
+    """
+    if not value:
+        return ''
+    return str(value).replace(old, new)
+
+
+@register.simple_tag()
+def first(value: list, default: Any = None) -> Any:
+    """Return the first item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the first item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[0]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def last(value: list, default: Any = None) -> Any:
+    """Return the last item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the last item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[-1]
+    except (IndexError, TypeError):
+        return default
