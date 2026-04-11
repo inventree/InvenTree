@@ -22,7 +22,6 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
-import common.models
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -1628,6 +1627,7 @@ class BomItemSerializer(
             'part',
             'sub_part',
             'reference',
+            'raw_amount',
             'quantity',
             'allow_variants',
             'inherited',
@@ -1662,7 +1662,7 @@ class BomItemSerializer(
             'category_detail',
         ]
 
-    quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
+    quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 
     setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 
@@ -1671,25 +1671,6 @@ class BomItemSerializer(
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
     )
-
-    def validate_quantity(self, quantity):
-        """Perform validation for the BomItem quantity field."""
-        allow_zero_qty = common.models.InvenTreeSetting.get_setting(
-            'PART_BOM_ALLOW_ZERO_QUANTITY', False
-        )
-
-        if allow_zero_qty:
-            if quantity < 0:
-                raise serializers.ValidationError(
-                    _('Quantity must be greater than or equal to zero')
-                )
-        else:
-            if quantity <= 0:
-                raise serializers.ValidationError(
-                    _('Quantity must be greater than zero')
-                )
-
-        return quantity
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.filter(assembly=True),
@@ -1802,6 +1783,19 @@ class BomItemSerializer(
     available_variant_stock = serializers.FloatField(read_only=True, allow_null=True)
 
     external_stock = serializers.FloatField(read_only=True, allow_null=True)
+
+    def validate(self, data):
+        """Validate the supplied data.
+
+        Here, for legacy support, we intercept the 'quantity' field
+        (if the 'raw_amount' field is not provided)
+        """
+        qty = data.pop('quantity', None)
+
+        if 'raw_amount' not in data:
+            data['raw_amount'] = qty
+
+        return super().validate(data)
 
     @staticmethod
     def annotate_queryset(queryset):
