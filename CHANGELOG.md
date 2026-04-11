@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#11702](https://github.com/inventree/InvenTree/pull/11702) adds "last updated" and "updated by" fields for label and report templates, allowing users to track when a template was last modified and by whom.
+- [#11685](https://github.com/inventree/InvenTree/pull/11685) exposes the data importer wizard to the plugin interface, allowing plugins to trigger the data importer wizard and perform custom data imports from the UI.
+- [#11692](https://github.com/inventree/InvenTree/pull/11692) adds line item numbering for external orders (purchase, sales and return orders). This allows users to specify a line number for each line item on the order, which can be used for reference purposes. The line number is optional, and can be left blank if not required. The line number is stored as a string, to allow for more flexible formatting (e.g. "1", "1.1", "A", etc).
+- [#11641](https://github.com/inventree/InvenTree/pull/11641) adds support for custom parameters against the SalesOrderShipment model.
 - [#11527](https://github.com/inventree/InvenTree/pull/11527) adds a new API endpoint for monitoring the status of a particular background task. This endpoint allows clients to check the status of a background task and receive updates when the task is complete. This is useful for long-running tasks that may take some time to complete, allowing clients to provide feedback to users about the progress of the task.
 - [#11405](https://github.com/inventree/InvenTree/pull/11405) adds default table filters, which hide inactive items by default. The default table filters are overridden by user filter selection, and only apply to the table view initially presented to the user. This means that users can still view inactive items if they choose to, but they will not be shown by default.
 - [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
@@ -24,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11074](https://github.com/inventree/InvenTree/pull/11074) adds "Keep form open" option on create form which leaves dialog with form opened after form submitting.
 
 ### Changed
+
+- [#11648](https://github.com/inventree/InvenTree/pull/11648) improves the import/export process, allowing data records defined by plugins to be loaded when importing a database from a file.
+- [#11630](https://github.com/inventree/InvenTree/pull/11630) enhances the `import_records` and `export_records` system commands, by adding a metadata entry to the exported data file to allow for compatibility checks during data import.
 
 ### Removed
 

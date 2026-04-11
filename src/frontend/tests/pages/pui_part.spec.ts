@@ -667,7 +667,37 @@ test('Parts - Parameters by Category', async ({ browser }) => {
 });
 
 test('Parts - Parameters', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
+  const page = await doCachedLogin(browser, { url: 'part/915/parameters' });
+
+  // Edit parameter defined with a SelectionListEntry
+  const animalCell = await page.getByRole('cell', {
+    name: 'Animal',
+    exact: true
+  });
+  await clickOnRowMenu(animalCell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Check the data field, which should be populated with the options defined in the "Animal" parameter template
+  // If both values are present, we know that the correct SelectionListEntry has been loaded
+  await page
+    .getByText('Data *Parameter')
+    .getByText(/Armadillo/i)
+    .waitFor();
+  await page
+    .getByText('Data *Parameter')
+    .getByText(/A mammal known for/i)
+    .waitFor();
+
+  // Check for other values
+  await page
+    .getByRole('combobox', { name: 'related-field-data' })
+    .fill('horse');
+  await page.getByText('The offspring of a male donkey').waitFor();
+  await page.getByText('A small marine fish with a head').waitFor();
+  await page.getByText('Zebra').click();
+
+  // Close the edit dialog
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // check that "is polarized" parameter is not already present - if it is, delete it before proceeding with the rest of the test
   await page
@@ -745,13 +775,12 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(page, name);
     await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
-    // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
@@ -764,7 +793,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText(/\/ 42\d/).waitFor();
+  await page.getByText(/\/ 43\d/).waitFor();
 });
 
 test('Parts - Test Results', async ({ browser }) => {
@@ -804,20 +833,26 @@ test('Parts - 404', async ({ browser }) => {
   await page.evaluate(() => console.clear());
 });
 
-test('Parts - Revision', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/906/details' });
+test('Parts - Revisions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/917/details' });
 
-  await page.getByText('Revision of').waitFor();
+  await page.getByText('ENCAB | Encabulator | C').first().waitFor();
   await page.getByText('Select Part Revision').waitFor();
+
+  // Link to the "revision_of" part
+  await page.getByRole('cell', { name: 'ENCAB | Encabulator | B' }).waitFor();
+
+  // Select a revision
+  await page.getByText('ENCAB | Encabulator | CNo').click();
   await page
-    .getByText('Green Round Table (revision B) | B', { exact: true })
-    .click();
-  await page
-    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
+    .getByRole('option', {
+      name: 'Thumbnail ENCAB | Encabulator | C4 No stock'
+    })
     .click();
 
-  await page.waitForURL('**/web/part/101/**');
-  await page.getByText('Select Part Revision').waitFor();
+  await page.waitForURL('**/web/part/920/**');
+  await page.getByText('Part: ENCAB | Encabulator | C4').first().waitFor();
+  await page.getByRole('link', { name: 'ENCAB | Encabulator | C' }).waitFor();
 });
 
 test('Parts - Bulk Edit', async ({ browser }) => {

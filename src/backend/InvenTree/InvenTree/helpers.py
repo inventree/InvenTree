@@ -8,6 +8,7 @@ import json
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -21,19 +22,19 @@ from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-import bleach
-import bleach.css_sanitizer
-import bleach.sanitizer
+import nh3
 import structlog
-from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-
-from .setting.storages import StorageBackends
-from .settings import MEDIA_URL, STATIC_URL
+from InvenTree.sanitizer import (
+    DEAFAULT_ATTRS,
+    DEFAULT_CSS,
+    DEFAULT_PROTOCOLS,
+    DEFAULT_TAGS,
+)
 
 logger = structlog.get_logger('inventree')
 
@@ -186,9 +187,8 @@ def getMediaUrl(
         )
     if name is not None:
         file = regenerate_imagefile(file, name)
-    if settings.STORAGE_TARGET == StorageBackends.S3:
-        return str(file.url)
-    return os.path.join(MEDIA_URL, str(file.url))
+
+    return default_storage.url(file.name)
 
 
 def regenerate_imagefile(_file, _name: str):
@@ -226,7 +226,7 @@ def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
 
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
-    return os.path.join(STATIC_URL, str(filename))
+    return StaticFilesStorage().url(filename)
 
 
 def TestIfImage(img) -> bool:
@@ -258,8 +258,8 @@ def getBlankThumbnail():
 def checkStaticFile(*args) -> bool:
     """Check if a file exists in the static storage."""
     static_storage = StaticFilesStorage()
-    fn = os.path.join(*args)
-    return static_storage.exists(fn)
+    fn = Path(*args)
+    return static_storage.exists(str(fn))
 
 
 def getLogoImage(as_file=False, custom=True):
@@ -895,13 +895,13 @@ def clean_decimal(number):
 
 
 def strip_html_tags(value: str, raise_error=True, field_name=None):
-    """Strip HTML tags from an input string using the bleach library.
+    """Strip HTML tags from an input string using the nh3 library.
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
     value = str(value).strip()
 
-    cleaned = clean(value, strip=True, tags=[], attributes=[])
+    cleaned = nh3.clean(value, tags=frozenset())
 
     # Add escaped characters back in
     replacements = {'&gt;': '>', '&lt;': '<', '&amp;': '&'}
@@ -961,34 +961,32 @@ def clean_markdown(value: str) -> str:
         output_format='html',
     )
 
-    # Bleach settings
-    whitelist_tags = markdownify_settings.get(
-        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
-    )
-    whitelist_attrs = markdownify_settings.get(
-        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
-    )
-    whitelist_styles = markdownify_settings.get(
-        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
-    )
+    # nh3 sanitizer settings
+    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
+    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
+    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
     whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
+        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
     )
-    strip = markdownify_settings.get('STRIP', True)
 
-    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
-        allowed_css_properties=whitelist_styles
-    )
-    cleaner = bleach.Cleaner(
-        tags=whitelist_tags,
-        attributes=whitelist_attrs,
-        css_sanitizer=css_sanitizer,
-        protocols=whitelist_protocols,
-        strip=strip,
-    )
+    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
+    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
+        attrs_dict = {'*': set(whitelist_attrs)}
+    elif isinstance(whitelist_attrs, dict):
+        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
+    else:
+        attrs_dict = None
 
     # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = cleaner.clean(html)
+    clean_html = nh3.clean(
+        html,
+        tags=set(whitelist_tags),
+        attributes=attrs_dict,
+        url_schemes=set(whitelist_protocols),
+        filter_style_properties=set(whitelist_styles),
+        link_rel=None,
+        strip_comments=True,
+    )
 
     if html != clean_html:
         raise ValidationError(_('Data contains prohibited markdown content'))

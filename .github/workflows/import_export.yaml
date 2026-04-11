@@ -1,0 +1,120 @@
+# Ensure that data import / export functionality works as expected.
+# - Create a dataset in a Postgres database (including plugin data)
+# - Export the dataset to an agnostic format (JSON)
+# - Import the dataset into a Sqlite database
+
+name: Import / Export
+
+on:
+  push:
+    branches-ignore: ["l10*"]
+  pull_request:
+    branches-ignore: ["l10*"]
+
+permissions:
+  contents: read
+
+env:
+  python_version: 3.11
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  INVENTREE_DEBUG: false
+  INVENTREE_LOG_LEVEL: WARNING
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+  INVENTREE_SITE_URL: http://localhost:8000
+
+  INVENTREE_PLUGINS_ENABLED: true
+  INVENTREE_AUTO_UPDATE: true
+  INVENTREE_PLUGINS_MANDATORY: "dummy-app-plugin"
+  INVENTREE_GLOBAL_SETTINGS: '{"ENABLE_PLUGINS_APP": true}'
+
+  DATA_FILE: /home/runner/work/InvenTree/test_inventree_data.json
+
+  INVENTREE_DB_ENGINE: postgresql
+  INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_USER: inventree
+  INVENTREE_DB_PASSWORD: password
+  INVENTREE_DB_HOST: "127.0.0.1"
+  INVENTREE_DB_PORT: 5432
+
+jobs:
+
+  paths-filter:
+    name: filter
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
+        id: filter
+        with:
+          filters: |
+            server:
+              - .github/workflows/import_export.yaml
+              - .github/scripts/check_exported_data.py
+              - 'src/backend/**'
+              - 'tasks.py'
+  test:
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          update: true
+          static: false
+      - name: Setup Postgres Database
+        run: |
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Create Plugin Data
+        run: |
+          pip install -U inventree-dummy-app-plugin
+          invoke migrate
+          cd src/backend/InvenTree && python manage.py create_dummy_data
+      - name: Export Postgres Dataset
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
+          invoke dev.delete-data --force
+      - name: Update Environment Variables for Sqlite
+        run: |
+          echo "Updating environment variables for Sqlite"
+          echo "INVENTREE_DB_ENGINE=sqlite" >> $GITHUB_ENV
+          echo "INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3" >> $GITHUB_ENV
+      - name: Setup Sqlite Database
+        run: |
+          invoke migrate
+          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
+      - name: Import Sqlite Dataset
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }} --strict
+          cd src/backend/InvenTree && python manage.py check_dummy_data
+      - name: Export Sqlite Dataset
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}

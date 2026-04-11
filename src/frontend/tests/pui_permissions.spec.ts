@@ -18,6 +18,10 @@ test('Permissions - Admin', async ({ browser }) => {
     url: '/settings/admin/'
   });
 
+  // Check for superuser banner
+  await page.getByText('Superuser Mode').waitFor();
+  await page.getByText('The current user has elevated').waitFor();
+
   // Check for expected tabs
   await loadTab(page, 'Machines');
   await loadTab(page, 'Plugins');
