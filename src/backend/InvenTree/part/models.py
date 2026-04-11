@@ -3780,7 +3780,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         raw_amount: Raw amount of 'sub_part' consumed to produce one 'part' (can be fractional, or use an associated unit)
-        quantity: Quantity of 'sub_parts' consumed to produce one 'part'
+        quantity: Numerical quantity of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
@@ -3990,6 +3990,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         verbose_name=_('Raw Amount'),
         help_text=_('Raw amount of sub-part consumed to produce one part'),
         blank=False,
+        null=False,
     )
 
     # Native quantity required

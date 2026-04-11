@@ -37,6 +37,8 @@ def set_default_raw_amount(apps, schema_editor):
 
     assert updated_count == N_BOM_ITEMS, f"Expected to update {N_BOM_ITEMS} BomItem records, but updated {updated_count} records instead."
 
+    assert BomItem.objects.filter(raw_amount="").count() == 0, "There are BomItem records with an empty 'raw_amount' field after migration."
+
     if updated_count > 0:
         print(f"Initialized 'raw_amount' field for {updated_count} BomItem records.")
 
@@ -59,6 +61,7 @@ class Migration(migrations.Migration):
             name="raw_amount",
             field=models.CharField(
                 blank=True,
+                null=False,
                 help_text="Raw amount of sub-part consumed to produce one part",
                 max_length=25,
                 verbose_name="Raw Amount",
@@ -69,6 +72,8 @@ class Migration(migrations.Migration):
             model_name="bomitem",
             name="raw_amount",
             field=models.CharField(
+                blank=False,
+                null=False,
                 help_text="Raw amount of sub-part consumed to produce one part",
                 max_length=25,
                 verbose_name="Raw Amount",
