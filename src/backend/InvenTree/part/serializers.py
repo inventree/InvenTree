@@ -24,6 +24,7 @@ import common.currency
 import common.filters
 import common.serializers
 import company.models
+import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
 import part.filters as part_filters
@@ -1661,6 +1662,26 @@ class BomItemSerializer(
             'sub_part_detail',
             'category_detail',
         ]
+
+    raw_amount = serializers.CharField(
+        label=_('Raw Amount'),
+        help_text=_('Raw amount required for this item (can include units)'),
+        required=False,
+    )
+
+    def validate_raw_amount(self, value):
+        """Validate the raw_amount field."""
+        # Check for null values
+        if value is None or value.strip() == '':
+            raise ValidationError(_('Quantity cannot be empty'))
+
+        try:
+            # Check that the value is acceptable to the unit registry
+            InvenTree.conversion.convert_value(value)
+        except Exception:
+            raise ValidationError(_('Invalid quantity format'))
+
+        return value
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 

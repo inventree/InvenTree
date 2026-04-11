@@ -184,7 +184,7 @@ def from_engineering_notation(value):
     return value
 
 
-def convert_value(value, unit):
+def convert_value(value, unit=None):
     """Attempt to convert a value to a specified unit.
 
     Arguments:

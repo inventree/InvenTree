@@ -3919,7 +3919,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         try:
             self.quantity = Decimal(self.quantity)
         except InvalidOperation:
-            raise ValidationError({'quantity': _('Must be a valid number')})
+            msg = _('Invalid quantity provided')
+            raise ValidationError({'quantity': msg, 'raw_amount': msg})
 
     def delete(self):
         """Check if this item can be deleted."""
