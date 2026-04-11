@@ -203,7 +203,14 @@ def state_logger(fn=None, method_name=None):
                 info(f'# task | {func.method_name} | start')
 
             t1 = time.time()
-            func(c, *args, **kwargs)
+            try:
+                func(c, *args, **kwargs)
+            except KeyboardInterrupt:
+                error('INVE-W15: Process interrupted by user.')
+                sys.exit(1)
+            except UnexpectedExit:
+                error(f"Task '{func.method_name}' failed with an error.")
+                raise
             t2 = time.time()
 
             if do_log:
