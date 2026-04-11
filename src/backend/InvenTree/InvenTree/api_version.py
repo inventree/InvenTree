@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 477
+INVENTREE_API_VERSION = 478
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v478 -> 2026-04-12 : https://github.com/inventree/InvenTree/pull/11631
+    - Adds "raw_amount" field to the BomItem API endpoint
 
 v477 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11617
     - Non-functional refactor, adaptations of descriptions
