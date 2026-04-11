@@ -7,6 +7,7 @@ import {
   Anchor,
   Center,
   Checkbox,
+  Divider,
   Drawer,
   Group,
   Loader,
@@ -162,18 +163,28 @@ function QueryResultGroup({
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        <Stack aria-label={`search-group-results-${query.model}`}>
-          {query.results.results.map((result: any) => (
-            <Anchor
-              underline='never'
-              href={getDetailUrl(query.model, result.pk, true)}
-              onClick={(event: any) =>
-                onResultClick(query.model, result.pk, event)
-              }
-              key={`result-${query.model}-${result.pk}`}
-            >
-              <RenderInstance instance={result} model={query.model} />
-            </Anchor>
+        <Stack gap={'xs'} aria-label={`search-group-results-${query.model}`}>
+          {query.results.results.map((result: any, index: number) => (
+            <>
+              <Anchor
+                underline='never'
+                href={getDetailUrl(query.model, result.pk, true)}
+                onClick={(event: any) =>
+                  onResultClick(query.model, result.pk, event)
+                }
+                key={`result-${query.model}-${result.pk}`}
+              >
+                <RenderInstance instance={result} model={query.model} />
+              </Anchor>
+              {index < query.results.results.length - 1 && (
+                <Divider
+                  p={0}
+                  m={0}
+                  variant='dashed'
+                  key={`divider-${query.model}-${result.pk}`}
+                />
+              )}
+            </>
           ))}
         </Stack>
       </Accordion.Panel>
