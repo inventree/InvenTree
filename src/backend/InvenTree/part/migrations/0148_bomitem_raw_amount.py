@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
 
     1. Add a new 'raw_amount' field to the BomItem model, which is a CharField that can store a raw amount of sub-part consumed to produce one part. This field can be used to store fractional amounts or amounts with associated units (e.g. '10 hours', '5 kg', etc.).
     2. Run a data migration to initialize the 'raw_amount' field for existing BomItem records, by copying the value from the existing 'quantity' field and converting it to a string.
-    3. Mark the 'raw_amount' field as blank=False, to allow for existing records that may not have a valid raw amount (e.g. if the quantity is not a simple number).
+    3. Mark the 'raw_amount' field as blank=False, now that the quantity values have been copied across
     """
 
     dependencies = [
