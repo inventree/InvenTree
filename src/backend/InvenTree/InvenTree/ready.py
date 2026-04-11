@@ -91,25 +91,41 @@ def isCollectingPlugins():
     return 'collectplugins' in sys.argv
 
 
+# This variable is used to cache the result of the isGeneratingSchema function, to prevent multiple executions of the same checks
+_IS_GENERATING_SCHEMA: bool | None = None
+
+
+def _setGeneratingSchema(value: bool):
+    """Set the value of the isGeneratingSchema variable."""
+    global _IS_GENERATING_SCHEMA
+    _IS_GENERATING_SCHEMA = value
+    return value
+
+
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
+    global _IS_GENERATING_SCHEMA
+
+    if _IS_GENERATING_SCHEMA is not None:
+        return _IS_GENERATING_SCHEMA
+
     if isInServerThread() or isInWorkerThread():
-        return False
+        return _setGeneratingSchema(False)
 
     if isRunningMigrations() or isRunningBackup() or isRebuildingData():
-        return False
+        return _setGeneratingSchema(False)
 
     if isImportingData():
-        return False
+        return _setGeneratingSchema(False)
 
     if isInTestMode():
-        return False
+        return _setGeneratingSchema(False)
 
     if isWaitingForDatabase():
-        return False
+        return _setGeneratingSchema(False)
 
     if isCollectingPlugins():
-        return False
+        return _setGeneratingSchema(False)
 
     # Additional set of commands which should not trigger schema generation
     excluded_commands = [
@@ -129,7 +145,7 @@ def isGeneratingSchema():
     ]
 
     if any(cmd in sys.argv for cmd in excluded_commands):
-        return False
+        return _setGeneratingSchema(False)
 
     included_commands = [
         'schema',
@@ -142,14 +158,14 @@ def isGeneratingSchema():
     ]
 
     if any(cmd in sys.argv for cmd in included_commands):
-        return True
+        return _setGeneratingSchema(True)
 
     # This is a very inefficient call - so we only use it as a last resort
     result = any('drf_spectacular' in frame.filename for frame in inspect.stack())
 
     if not result:
         # We should only get here if we *are* generating schema
-        # Raise a warning, so that deevlopers can add extra checks above
+        # Raise a warning, so that developers can add extra checks above
 
         if settings.DEBUG:
             logger.warning(
@@ -157,7 +173,7 @@ def isGeneratingSchema():
             )
             logger.warning('sys.argv: %s', sys.argv)
 
-    return result
+    return _setGeneratingSchema(result)
 
 
 def isInWorkerThread():
