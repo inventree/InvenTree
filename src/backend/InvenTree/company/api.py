@@ -185,6 +185,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
 
 
 class ManufacturerPartList(
+    DataExportViewMixin,
     ManufacturerPartMixin,
     SerializerContextMixin,
     OutputOptionsMixin,

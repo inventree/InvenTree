@@ -144,6 +144,7 @@ export function usePurchaseOrderLineItemFields({
           };
         }
       },
+      line: {},
       reference: {},
       quantity: {
         onValueChange: (value) => {

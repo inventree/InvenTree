@@ -207,6 +207,14 @@ def readOnlyCommands():
 
 def isReadOnlyCommand():
     """Return True if the current command is a read-only command, which should not trigger any database writes."""
+    if (
+        isImportingData()
+        or isRunningMigrations()
+        or isRebuildingData()
+        or isRunningBackup()
+    ):
+        return True
+
     return any(cmd in sys.argv for cmd in readOnlyCommands())
 
 
