@@ -2,12 +2,16 @@
 
 # InvenTree API version
 # Increment this API version number whenever there is a significant change to the API that any clients need to know about.
-INVENTREE_API_VERSION = 477
+INVENTREE_API_VERSION = 478
 
 INVENTREE_API_TEXT = """
 
-v477 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11073
+v478 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11073
     - Add OptionalField class for cleaner handling of optional fields in serializers
+
+
+v477 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11617
+    - Non-functional refactor, adaptations of descriptions
 
 v476 -> 2026-04-09 : https://github.com/inventree/InvenTree/pull/11705
     - Adds sorting / filtering / searching functionality to the SelectionListEntry API endpoint
