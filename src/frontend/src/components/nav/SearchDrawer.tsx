@@ -38,7 +38,11 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
-import { eventModified, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { useUserSettingsState } from '../../states/SettingsStates';
@@ -162,6 +166,7 @@ function QueryResultGroup({
           {query.results.results.map((result: any) => (
             <Anchor
               underline='never'
+              href={getDetailUrl(query.model, result.pk, true)}
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
