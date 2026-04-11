@@ -241,6 +241,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.strip('  hello world  ', chars=' hd'), 'ello worl')  # noqa: B005
         self.assertEqual(report_tags.strip('xxhelloxx', chars='xy'), 'hello')  # noqa: B005
 
+        self.assertEqual(report_tags.lstrip('  hello world  '), 'hello world  ')  # noqa: B005
+        self.assertEqual(report_tags.rstrip('  hello world  ', chars=' dl'), '  wor')  # noqa: B005
+
         self.assertEqual(report_tags.split('a,b,c', separator=','), ['a', 'b', 'c'])
         self.assertEqual(report_tags.split('a,|,b|c', separator='|'), ['a,', ',b', 'c'])
 

@@ -235,6 +235,24 @@ Return a string with leading and trailing whitespace removed:
         show_source: False
 
 
+### lstrip
+
+Return a string with leading whitespace removed:
+
+::: report.templatetags.report.lstrip
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### rstrip
+
+Return a string with trailing whitespace removed:
+
+::: report.templatetags.report.rstrip
+    options:
+        show_docstring_description: false
+        show_source: False
+
 ### split
 
 Return a list of substrings by splitting a string based on a specified separator:

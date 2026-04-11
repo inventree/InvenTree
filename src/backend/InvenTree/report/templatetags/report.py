@@ -1080,11 +1080,37 @@ def strip(value: str, chars: Optional[str] = ' ') -> str:
 
     Arguments:
         value: The string to be stripped
-        chars: The characters to strip from the string (default = whitespace)
+        chars: The set of characters to strip from the string (default = whitespace)
     """
     if not value:
         return ''
     return str(value).strip(chars)
+
+
+@register.simple_tag()
+def lstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).lstrip(chars)
+
+
+@register.simple_tag()
+def rstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).rstrip(chars)
 
 
 @register.simple_tag()
