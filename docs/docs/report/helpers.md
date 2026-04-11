@@ -214,6 +214,15 @@ Return a list (or list-like) data structure in reverse order:
         show_docstring_description: false
         show_source: False
 
+### truncate
+
+Return a truncated version of a list (or list-like) data structure, containing only the first N elements:
+
+::: report.templatetags.report.truncate
+    options:
+        show_docstring_description: false
+        show_source: False
+
 ## String Formatting
 
 ### strip
@@ -253,24 +262,32 @@ Return a string where occurrences of a specified substring are replaced with ano
         show_docstring_description: false
         show_source: False
 
-### lower
+### lowercase
 
 Return a string with all characters converted to lowercase:
 
-::: report.templatetags.report.lower
+::: report.templatetags.report.lowercase
     options:
         show_docstring_description: false
         show_source: False
 
-### upper
+### uppercase
 
 Return a string with all characters converted to uppercase:
 
-::: report.templatetags.report.upper
+::: report.templatetags.report.uppercase
     options:
         show_docstring_description: false
         show_source: False
 
+### titlecase
+
+Return a string with the first character of each word converted to uppercase and the remaining characters converted to lowercase:
+
+::: report.templatetags.report.titlecase
+    options:
+        show_docstring_description: false
+        show_source: False
 
 ## Number Formatting
 

@@ -1039,7 +1039,7 @@ def include_icon_fonts(ttf: bool = False, woff: bool = False):
 
 
 @register.simple_tag()
-def lower(value: str) -> str:
+def lowercase(value: str) -> str:
     """Convert a string to lowercase.
 
     Arguments:
@@ -1051,7 +1051,7 @@ def lower(value: str) -> str:
 
 
 @register.simple_tag()
-def upper(value: str) -> str:
+def uppercase(value: str) -> str:
     """Convert a string to uppercase.
 
     Arguments:
@@ -1063,15 +1063,28 @@ def upper(value: str) -> str:
 
 
 @register.simple_tag()
-def strip(value: str) -> str:
-    """Strip leading and trailing whitespace from a string.
+def titlecase(value: str) -> str:
+    """Convert a string to title case.
 
     Arguments:
-        value: The string to be stripped
+        value: The string to be converted
     """
     if not value:
         return ''
-    return str(value).strip()
+    return str(value).title()
+
+
+@register.simple_tag()
+def strip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading and trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).strip(chars)
 
 
 @register.simple_tag()
@@ -1172,5 +1185,21 @@ def reverse(value: list) -> list:
         return []
     try:
         return value[::-1]
+    except TypeError:
+        return []
+
+
+@register.simple_tag()
+def truncate(value: list, length: int) -> list:
+    """Return a truncated version of the provided list.
+
+    Arguments:
+        value: The list to be truncated
+        length: The maximum length of the returned list
+    """
+    if not value:
+        return []
+    try:
+        return value[:length]
     except TypeError:
         return []
