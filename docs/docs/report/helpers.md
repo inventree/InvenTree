@@ -173,7 +173,143 @@ Generate a list of all active customers:
 
 More advanced database filtering should be achieved using a [report plugin](../plugins/mixins/report.md), and adding custom context data to the report template.
 
+## List Helpers
+
+The following helper functions are available for working with list (or list-like) data structures:
+
+### length
+
+Return the length of a list (or list-like) data structure. Note that this will also work for other data structures which support the `len()` function, such as strings, dictionaries or querysets:
+
+::: report.templatetags.report.length
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### first
+
+Return the first element of a list (or list-like) data structure:
+
+::: report.templatetags.report.first
+    options:
+        show_docstring_description: false
+        show_source: False
+
+
+### last
+
+Return the last element of a list (or list-like) data structure:
+
+::: report.templatetags.report.last
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### reverse
+
+Return a list (or list-like) data structure in reverse order:
+
+::: report.templatetags.report.reverse
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### truncate
+
+Return a truncated version of a list (or list-like) data structure, containing only the first N elements:
+
+::: report.templatetags.report.truncate
+    options:
+        show_docstring_description: false
+        show_source: False
+
+## String Formatting
+
+### strip
+
+Return a string with leading and trailing whitespace removed:
+
+::: report.templatetags.report.strip
+    options:
+        show_docstring_description: false
+        show_source: False
+
+
+### lstrip
+
+Return a string with leading whitespace removed:
+
+::: report.templatetags.report.lstrip
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### rstrip
+
+Return a string with trailing whitespace removed:
+
+::: report.templatetags.report.rstrip
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### split
+
+Return a list of substrings by splitting a string based on a specified separator:
+
+::: report.templatetags.report.split
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### join
+
+Return a string by joining a list of strings into a single string, using a specified separator:
+
+::: report.templatetags.report.join
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### replace
+
+Return a string where occurrences of a specified substring are replaced with another substring:
+
+::: report.templatetags.report.replace
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### lowercase
+
+Return a string with all characters converted to lowercase:
+
+::: report.templatetags.report.lowercase
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### uppercase
+
+Return a string with all characters converted to uppercase:
+
+::: report.templatetags.report.uppercase
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### titlecase
+
+Return a string with the first character of each word converted to uppercase and the remaining characters converted to lowercase:
+
+::: report.templatetags.report.titlecase
+    options:
+        show_docstring_description: false
+        show_source: False
+
 ## Number Formatting
+
+A number of helper functions are available for formatting numbers in a particular way. These can be used to format numbers according to a particular number of decimal places, or to add leading zeros, for example.
 
 ### format_number
 

@@ -82,6 +82,52 @@ test('Purchasing - Index', async ({ browser }) => {
     .waitFor();
 });
 
+test('Purchasing - Parameters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/11/parameters'
+  });
+
+  // Create a new parameter against this purchase order
+  // We will use a "SelectionList" to choose the value here
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
+
+  // Select the template
+  await page
+    .getByRole('combobox', { name: 'related-field-template' })
+    .fill('animal');
+  await page.getByRole('option', { name: 'Animal Select an animal' }).click();
+
+  // Select an animal
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('cat');
+  await page.getByRole('option', { name: 'Caracal' }).click();
+
+  // Add a note and submit the form
+  await page
+    .getByRole('textbox', { name: 'text-field-note' })
+    .fill('The caracal is an interesting beast');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Let's edit this parameter to ensure the "edit" form works as expected
+  await clickOnRowMenu(await page.getByRole('cell', { name: 'Caracal' }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('ox');
+  await page.getByRole('option', { name: 'Fennec Fox' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Finally, delete the parameter
+  await clickOnRowMenu(await page.getByRole('cell', { name: 'Fennec Fox' }));
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+});
+
 test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'purchasing/index/manufacturer-parts'

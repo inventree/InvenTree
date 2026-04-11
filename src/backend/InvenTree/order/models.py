@@ -537,6 +537,19 @@ class Order(
         related_name='+',
     )
 
+    @property
+    def company(self):
+        """Return the company associated with this order.
+
+        This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
+        """
+        raise NotImplementedError(f'company() method not implemented for {__class__}')
+
+    @property
+    def order_address(self):
+        """Return the Address associated with this order."""
+        return self.address or self.company.primary_address
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -2388,9 +2401,16 @@ class SalesOrderShipment(
     def address(self) -> Address:
         """Return the shipping address for this shipment.
 
-        If no specific shipment address is assigned, return the address from the order.
+        Lookup priority:
+        - Specific address assigned to this shipment
+        - Address assigned to the order
+        - Primary address of the customer
         """
-        return self.shipment_address or self.order.address
+        return (
+            self.shipment_address
+            or self.order.address
+            or self.order.customer.primary_address
+        )
 
     def is_checked(self) -> bool:
         """Return True if this shipment has been checked."""

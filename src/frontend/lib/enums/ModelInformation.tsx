@@ -287,6 +287,13 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.selectionlist_list,
     icon: 'list_details'
   },
+  selectionentry: {
+    label: () => t`Selection Entry`,
+    label_multiple: () => t`Selection Entries`,
+    url_overview: '/settings/admin/part-parameters',
+    api_endpoint: ApiEndpoints.selectionentry_list,
+    icon: 'list_details'
+  },
   error: {
     label: () => t`Error`,
     label_multiple: () => t`Errors`,

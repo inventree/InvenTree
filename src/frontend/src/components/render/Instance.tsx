@@ -39,6 +39,7 @@ import {
   RenderParameter,
   RenderParameterTemplate,
   RenderProjectCode,
+  RenderSelectionEntry,
   RenderSelectionList
 } from './Generic';
 import {
@@ -95,6 +96,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
+  [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError
 };
 

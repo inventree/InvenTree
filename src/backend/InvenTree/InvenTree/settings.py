@@ -865,6 +865,16 @@ BACKGROUND_WORKER_ATTEMPTS = int(
     get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
 )
 
+# Check if '--sync' was passed in the command line
+if '--sync' in sys.argv and '--noreload' in sys.argv and DEBUG:
+    SYNC_TASKS = True
+else:
+    SYNC_TASKS = False
+
+# Clean up sys.argv so Django doesn't complain about an unknown argument
+if SYNC_TASKS:
+    sys.argv.remove('--sync')
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
@@ -879,7 +889,7 @@ Q_CLUSTER = {
     'bulk': 10,
     'orm': 'default',
     'cache': 'default',
-    'sync': False,
+    'sync': SYNC_TASKS,
     'poll': 1.5,
 }
 

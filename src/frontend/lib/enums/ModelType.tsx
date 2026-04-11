@@ -35,5 +35,6 @@ export enum ModelType {
   pluginconfig = 'pluginconfig',
   contenttype = 'contenttype',
   selectionlist = 'selectionlist',
+  selectionentry = 'selectionentry',
   error = 'error'
 }
