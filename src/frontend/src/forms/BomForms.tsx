@@ -32,7 +32,10 @@ export function bomItemFields({
         component: true
       }
     },
-    quantity: {},
+    raw_amount: {
+      label: t`Quantity`,
+      description: t`Raw quantity of the required part`
+    },
     reference: {},
     setup_quantity: {},
     attrition: {},
