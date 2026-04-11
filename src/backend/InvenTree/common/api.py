@@ -1247,7 +1247,6 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
         'thread_id_key',
     ]
 
-    @extend_schema(responses={201: common.serializers.TestEmailSerializer})
     @action(
         detail=False,
         methods=['post'],
@@ -1269,8 +1268,7 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
-        # TODO @matmair - breaking change: this should be a 200
-        return Response(serializer.data, status=201)
+        return Response(serializer.data)
 
 
 admin_router.register('email', EmailViewSet, basename='api-email')
