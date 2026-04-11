@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-08 05:40\n"
+"PO-Revision-Date: 2026-04-11 03:27\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -68,8 +68,8 @@ msgid "Actions"
 msgstr "Дії"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:480
-#: src/components/nav/Header.tsx:179
+#: src/components/forms/fields/RelatedModelField.tsx:493
+#: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
@@ -133,7 +133,7 @@ msgstr "Частина"
 #: lib/enums/Roles.tsx:35
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:197
+#: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/CategoryDetail.tsx:135
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:340
@@ -159,7 +159,7 @@ msgstr "Параметр"
 #: src/components/panels/ParametersPanel.tsx:21
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
-#: src/pages/Index/Settings/SystemSettings.tsx:191
+#: src/pages/Index/Settings/SystemSettings.tsx:193
 #: src/pages/part/PartDetail.tsx:920
 msgid "Parameters"
 msgstr "Параметри"
@@ -273,7 +273,7 @@ msgid "Stock Location Types"
 msgstr ""
 
 #: lib/enums/ModelInformation.tsx:114
-#: src/pages/Index/Settings/SystemSettings.tsx:255
+#: src/pages/Index/Settings/SystemSettings.tsx:257
 #: src/pages/part/PartDetail.tsx:877
 msgid "Stock History"
 msgstr ""
@@ -348,7 +348,7 @@ msgstr "Замовлення на купівлю"
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/SystemSettings.tsx:301
+#: src/pages/Index/Settings/SystemSettings.tsx:303
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:841
@@ -381,7 +381,7 @@ msgstr "Замовлення на купівлю"
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:116
-#: src/pages/Index/Settings/SystemSettings.tsx:317
+#: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:853
 #: src/pages/sales/SalesIndex.tsx:53
@@ -406,7 +406,7 @@ msgstr ""
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:334
+#: src/pages/Index/Settings/SystemSettings.tsx:336
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:860
 #: src/pages/sales/SalesIndex.tsx:99
@@ -546,6 +546,14 @@ msgid "Selection Lists"
 msgstr ""
 
 #: lib/enums/ModelInformation.tsx:291
+msgid "Selection Entry"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:292
+msgid "Selection Entries"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:298
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:281
@@ -553,13 +561,13 @@ msgstr ""
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/forms/fields/ApiFormField.tsx:251
 #: src/components/forms/fields/TableField.tsx:45
-#: src/components/importer/ImportDataSelector.tsx:192
-#: src/components/importer/ImporterColumnSelector.tsx:261
-#: src/components/importer/ImporterDrawer.tsx:88
+#: src/components/importer/ImportDataSelector.tsx:215
+#: src/components/importer/ImporterColumnSelector.tsx:278
+#: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:211
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:572
+#: src/components/nav/SearchDrawer.tsx:588
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
@@ -581,7 +589,7 @@ msgstr ""
 msgid "Error"
 msgstr "Помилка"
 
-#: lib/enums/ModelInformation.tsx:292
+#: lib/enums/ModelInformation.tsx:299
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
@@ -593,7 +601,7 @@ msgstr "Адмін"
 
 #: lib/enums/Roles.tsx:33
 #: src/defaults/actions.tsx:146
-#: src/pages/Index/Settings/SystemSettings.tsx:282
+#: src/pages/Index/Settings/SystemSettings.tsx:284
 #: src/pages/build/BuildIndex.tsx:67
 #: src/pages/part/PartDetail.tsx:870
 #: src/pages/sales/SalesOrderDetail.tsx:431
@@ -1894,11 +1902,11 @@ msgid "Plugins"
 msgstr "Плагіни"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:153
-#: src/tables/general/ParameterTemplateTable.tsx:188
+#: src/tables/general/ParameterTemplateTable.tsx:157
+#: src/tables/general/ParameterTemplateTable.tsx:192
 #: src/tables/part/PartTestTemplateTable.tsx:117
-#: src/tables/settings/TemplateTable.tsx:251
-#: src/tables/settings/TemplateTable.tsx:362
+#: src/tables/settings/TemplateTable.tsx:285
+#: src/tables/settings/TemplateTable.tsx:396
 #: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Enabled"
 msgstr "Увімкнено"
@@ -1960,13 +1968,13 @@ msgstr "Вибрати пакет"
 msgid "{0} icons"
 msgstr "Значки {0}"
 
-#: src/components/forms/fields/RelatedModelField.tsx:481
+#: src/components/forms/fields/RelatedModelField.tsx:494
 #: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Завантаження"
 
-#: src/components/forms/fields/RelatedModelField.tsx:483
+#: src/components/forms/fields/RelatedModelField.tsx:496
 msgid "No results found"
 msgstr "Результатів не знайдено"
 
@@ -1990,66 +1998,66 @@ msgstr ""
 msgid "Thumbnail"
 msgstr "Мініатюра"
 
-#: src/components/importer/ImportDataSelector.tsx:175
+#: src/components/importer/ImportDataSelector.tsx:198
 msgid "Importing Rows"
 msgstr "Імпортування рядків"
 
-#: src/components/importer/ImportDataSelector.tsx:176
+#: src/components/importer/ImportDataSelector.tsx:199
 msgid "Please wait while the data is imported"
 msgstr "Будь ласка, зачекайте поки дані імпортуються"
 
-#: src/components/importer/ImportDataSelector.tsx:193
+#: src/components/importer/ImportDataSelector.tsx:216
 msgid "An error occurred while importing data"
 msgstr "Сталася помилка під час імпортування даних"
 
-#: src/components/importer/ImportDataSelector.tsx:214
+#: src/components/importer/ImportDataSelector.tsx:237
 msgid "Edit Data"
 msgstr "Змінити дані"
 
-#: src/components/importer/ImportDataSelector.tsx:246
+#: src/components/importer/ImportDataSelector.tsx:269
 msgid "Delete Row"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:280
+#: src/components/importer/ImportDataSelector.tsx:303
 msgid "Row"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:298
+#: src/components/importer/ImportDataSelector.tsx:321
 msgid "Row contains errors"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:339
+#: src/components/importer/ImportDataSelector.tsx:366
 msgid "Accept"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:372
+#: src/components/importer/ImportDataSelector.tsx:399
 msgid "Valid"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:373
+#: src/components/importer/ImportDataSelector.tsx:400
 msgid "Filter by row validation status"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:378
+#: src/components/importer/ImportDataSelector.tsx:405
 #: src/components/wizards/WizardDrawer.tsx:113
 #: src/tables/build/BuildOutputTable.tsx:582
 msgid "Complete"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:379
+#: src/components/importer/ImportDataSelector.tsx:406
 msgid "Filter by row completion status"
 msgstr ""
 
-#: src/components/importer/ImportDataSelector.tsx:397
+#: src/components/importer/ImportDataSelector.tsx:424
 msgid "Import selected rows"
 msgstr "Імпортувати вибрані рядки"
 
-#: src/components/importer/ImportDataSelector.tsx:412
+#: src/components/importer/ImportDataSelector.tsx:439
 msgid "Processing Data"
 msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:56
-#: src/components/importer/ImporterColumnSelector.tsx:230
+#: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:397
@@ -2072,55 +2080,55 @@ msgstr ""
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:236
+#: src/components/importer/ImporterColumnSelector.tsx:253
 msgid "Ignore this field"
 msgstr ""
 
-#: src/components/importer/ImporterColumnSelector.tsx:250
+#: src/components/importer/ImporterColumnSelector.tsx:267
 msgid "Mapping data columns to database fields"
 msgstr ""
 
-#: src/components/importer/ImporterColumnSelector.tsx:255
+#: src/components/importer/ImporterColumnSelector.tsx:272
 msgid "Accept Column Mapping"
 msgstr ""
 
-#: src/components/importer/ImporterColumnSelector.tsx:268
+#: src/components/importer/ImporterColumnSelector.tsx:285
 msgid "Database Field"
 msgstr ""
 
-#: src/components/importer/ImporterColumnSelector.tsx:269
+#: src/components/importer/ImporterColumnSelector.tsx:286
 msgid "Field Description"
 msgstr "Опис поля"
 
-#: src/components/importer/ImporterColumnSelector.tsx:270
+#: src/components/importer/ImporterColumnSelector.tsx:287
 msgid "Imported Column"
 msgstr "Імпортований стовпець"
 
-#: src/components/importer/ImporterColumnSelector.tsx:271
+#: src/components/importer/ImporterColumnSelector.tsx:288
 msgid "Default Value"
 msgstr "Значення за замовчуванням"
 
-#: src/components/importer/ImporterDrawer.tsx:43
+#: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
 msgstr "Вивантажити файли"
 
-#: src/components/importer/ImporterDrawer.tsx:44
+#: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
 msgstr "Стовпці мапи"
 
-#: src/components/importer/ImporterDrawer.tsx:45
+#: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Rows"
 msgstr ""
 
-#: src/components/importer/ImporterDrawer.tsx:46
+#: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
 msgstr "Обробити дані"
 
-#: src/components/importer/ImporterDrawer.tsx:47
+#: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
 msgstr "Завершити імпорт"
 
-#: src/components/importer/ImporterDrawer.tsx:89
+#: src/components/importer/ImporterDrawer.tsx:92
 msgid "Failed to fetch import session data"
 msgstr ""
 
@@ -2128,15 +2136,15 @@ msgstr ""
 #~ msgid "Cancel import session"
 #~ msgstr "Cancel import session"
 
-#: src/components/importer/ImporterDrawer.tsx:104
+#: src/components/importer/ImporterDrawer.tsx:114
 msgid "Import Complete"
 msgstr "Імпорт завершено"
 
-#: src/components/importer/ImporterDrawer.tsx:107
+#: src/components/importer/ImporterDrawer.tsx:117
 msgid "Data has been imported successfully"
 msgstr "Дані успішно імпортовано"
 
-#: src/components/importer/ImporterDrawer.tsx:109
+#: src/components/importer/ImporterDrawer.tsx:119
 #: src/components/modals/AboutInvenTreeModal.tsx:200
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
@@ -2149,7 +2157,7 @@ msgstr "Закрити"
 #~ msgid "Import session has unknown status"
 #~ msgstr "Import session has unknown status"
 
-#: src/components/importer/ImporterDrawer.tsx:128
+#: src/components/importer/ImporterDrawer.tsx:138
 msgid "Importing Data"
 msgstr ""
 
@@ -2594,10 +2602,10 @@ msgstr ""
 msgid "Learn more about {code}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:198
+#: src/components/nav/Header.tsx:209
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:122
+#: src/pages/Index/Settings/SystemSettings.tsx:124
 #: src/pages/Index/Settings/UserSettings.tsx:107
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
@@ -2605,14 +2613,18 @@ msgid "Notifications"
 msgstr "Сповіщення"
 
 #: src/components/nav/Header.tsx:216
+#~ msgid "Administrator Mode"
+#~ msgstr "Administrator Mode"
+
+#: src/components/nav/Header.tsx:231
+msgid "Admin Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:231
 msgid "Superuser Mode"
 msgstr ""
 
-#: src/components/nav/Header.tsx:216
-msgid "Administrator Mode"
-msgstr ""
-
-#: src/components/nav/Header.tsx:221
+#: src/components/nav/Header.tsx:237
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr ""
 
@@ -2659,8 +2671,8 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:366
-#: src/pages/Index/Settings/SystemSettings.tsx:371
+#: src/pages/Index/Settings/SystemSettings.tsx:368
+#: src/pages/Index/Settings/SystemSettings.tsx:373
 msgid "System Settings"
 msgstr "Налаштування системи"
 
@@ -2710,7 +2722,7 @@ msgstr "Вихід"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:803
-#: src/pages/Index/Settings/SystemSettings.tsx:231
+#: src/pages/Index/Settings/SystemSettings.tsx:233
 #: src/pages/part/PartDetail.tsx:770
 #: src/pages/stock/LocationDetail.tsx:427
 #: src/pages/stock/LocationDetail.tsx:457
@@ -2776,27 +2788,27 @@ msgstr "У вас немає непрочитаних сповіщень."
 msgid "Error loading notifications."
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:106
+#: src/components/nav/SearchDrawer.tsx:111
 msgid "No Overview Available"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:107
+#: src/components/nav/SearchDrawer.tsx:112
 msgid "No overview available for this model type"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:125
+#: src/components/nav/SearchDrawer.tsx:130
 msgid "View all results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:145
 msgid "results"
 msgstr "результати"
 
-#: src/components/nav/SearchDrawer.tsx:144
+#: src/components/nav/SearchDrawer.tsx:149
 msgid "Remove search group"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:288
+#: src/components/nav/SearchDrawer.tsx:304
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/part/PartDetail.tsx:828
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -2804,13 +2816,13 @@ msgstr ""
 msgid "Suppliers"
 msgstr "Постачальники"
 
-#: src/components/nav/SearchDrawer.tsx:298
+#: src/components/nav/SearchDrawer.tsx:314
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:150
 msgid "Manufacturers"
 msgstr "Виробники"
 
-#: src/components/nav/SearchDrawer.tsx:308
+#: src/components/nav/SearchDrawer.tsx:324
 #: src/pages/sales/SalesIndex.tsx:133
 msgid "Customers"
 msgstr "Замовники"
@@ -2819,41 +2831,41 @@ msgstr "Замовники"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:477
+#: src/components/nav/SearchDrawer.tsx:493
 msgid "Enter search text"
 msgstr "Введіть текст для пошуку"
 
-#: src/components/nav/SearchDrawer.tsx:488
+#: src/components/nav/SearchDrawer.tsx:504
 msgid "Refresh search results"
 msgstr "Оновити результати пошуку"
 
-#: src/components/nav/SearchDrawer.tsx:499
-#: src/components/nav/SearchDrawer.tsx:506
+#: src/components/nav/SearchDrawer.tsx:515
+#: src/components/nav/SearchDrawer.tsx:522
 msgid "Search Options"
 msgstr "Параметри пошуку"
 
-#: src/components/nav/SearchDrawer.tsx:509
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:518
+#: src/components/nav/SearchDrawer.tsx:534
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:527
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Notes search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:575
+#: src/components/nav/SearchDrawer.tsx:591
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:586
+#: src/components/nav/SearchDrawer.tsx:602
 #: src/tables/part/PartTestTemplateTable.tsx:82
 msgid "No Results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:589
+#: src/components/nav/SearchDrawer.tsx:605
 msgid "No results available for search query"
 msgstr ""
 
@@ -2985,7 +2997,7 @@ msgstr ""
 
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
-#: src/pages/Index/Settings/SystemSettings.tsx:349
+#: src/pages/Index/Settings/SystemSettings.tsx:351
 #: src/pages/Index/Settings/UserSettings.tsx:129
 msgid "Plugin Settings"
 msgstr ""
@@ -3047,7 +3059,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:247
+#: src/components/render/Instance.tsx:259
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -6731,7 +6743,7 @@ msgid "Data Management"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:270
-#: src/pages/Index/Settings/SystemSettings.tsx:176
+#: src/pages/Index/Settings/SystemSettings.tsx:178
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Reporting"
 msgstr ""
@@ -6937,11 +6949,11 @@ msgstr ""
 msgid "The settings below are specific to each available plugin"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:78
+#: src/pages/Index/Settings/SystemSettings.tsx:80
 msgid "Authentication"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:104
+#: src/pages/Index/Settings/SystemSettings.tsx:106
 msgid "Barcodes"
 msgstr ""
 
@@ -6953,28 +6965,28 @@ msgstr ""
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:128
+#: src/pages/Index/Settings/SystemSettings.tsx:130
 #: src/pages/Index/Settings/UserSettings.tsx:113
 msgid "The settings below are specific to each available notification method"
-msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:134
-msgid "Pricing"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:135
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:170
+#: src/pages/Index/Settings/SystemSettings.tsx:136
+msgid "Pricing"
+msgstr ""
+
+#: src/pages/Index/Settings/SystemSettings.tsx:172
 msgid "Labels"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:262
 msgid "Part Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:271
+#: src/pages/Index/Settings/SystemSettings.tsx:273
 #: src/pages/part/PartStockHistoryDetail.tsx:296
 #: src/pages/stock/StockDetail.tsx:532
 msgid "Stock Tracking"
@@ -8326,6 +8338,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/general/ParameterTable.tsx:101
+#: src/tables/settings/TemplateTable.tsx:250
 #: src/tables/stock/StockItemTable.tsx:154
 msgid "Last Updated"
 msgstr ""
@@ -10394,6 +10407,7 @@ msgstr ""
 
 #: src/tables/general/ParameterTable.tsx:108
 #: src/tables/general/ParameterTable.tsx:123
+#: src/tables/settings/TemplateTable.tsx:262
 msgid "Updated By"
 msgstr ""
 
@@ -10442,59 +10456,59 @@ msgstr ""
 msgid "Import parameters from a file"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:48
-#: src/tables/general/ParameterTemplateTable.tsx:197
+#: src/tables/general/ParameterTemplateTable.tsx:52
+#: src/tables/general/ParameterTemplateTable.tsx:201
 msgid "Add Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:64
+#: src/tables/general/ParameterTemplateTable.tsx:68
 msgid "Duplicate Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:78
+#: src/tables/general/ParameterTemplateTable.tsx:82
 msgid "Delete Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:85
+#: src/tables/general/ParameterTemplateTable.tsx:89
 msgid "Edit Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:138
+#: src/tables/general/ParameterTemplateTable.tsx:142
 msgid "Checkbox"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:139
+#: src/tables/general/ParameterTemplateTable.tsx:143
 msgid "Show checkbox templates"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:143
+#: src/tables/general/ParameterTemplateTable.tsx:147
 msgid "Has choices"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:144
+#: src/tables/general/ParameterTemplateTable.tsx:148
 msgid "Show templates with choices"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:152
 #: src/tables/part/PartTable.tsx:246
 msgid "Has Units"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:149
+#: src/tables/general/ParameterTemplateTable.tsx:153
 msgid "Show templates with units"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:154
+#: src/tables/general/ParameterTemplateTable.tsx:158
 msgid "Show enabled templates"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:158
+#: src/tables/general/ParameterTemplateTable.tsx:162
 #: src/tables/settings/ImportSessionTable.tsx:112
-#: src/tables/settings/TemplateTable.tsx:368
+#: src/tables/settings/TemplateTable.tsx:402
 msgid "Model Type"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:159
+#: src/tables/general/ParameterTemplateTable.tsx:163
 msgid "Filter by model type"
 msgstr ""
 
@@ -12072,7 +12086,7 @@ msgid "Imported Rows"
 msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:113
-#: src/tables/settings/TemplateTable.tsx:369
+#: src/tables/settings/TemplateTable.tsx:403
 msgid "Filter by target model type"
 msgstr ""
 
@@ -12140,11 +12154,11 @@ msgstr ""
 #~ msgid "actions"
 #~ msgstr "actions"
 
-#: src/tables/settings/TemplateTable.tsx:165
+#: src/tables/settings/TemplateTable.tsx:171
 msgid "Template not found"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:167
+#: src/tables/settings/TemplateTable.tsx:173
 msgid "An error occurred while fetching template details"
 msgstr ""
 
@@ -12156,32 +12170,36 @@ msgstr ""
 #~ msgid "Create new"
 #~ msgstr "Create new"
 
-#: src/tables/settings/TemplateTable.tsx:261
+#: src/tables/settings/TemplateTable.tsx:272
+msgid "Filename"
+msgstr ""
+
+#: src/tables/settings/TemplateTable.tsx:295
 msgid "Modify"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:262
+#: src/tables/settings/TemplateTable.tsx:296
 msgid "Modify template file"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:313
-#: src/tables/settings/TemplateTable.tsx:381
+#: src/tables/settings/TemplateTable.tsx:347
+#: src/tables/settings/TemplateTable.tsx:415
 msgid "Edit Template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:321
+#: src/tables/settings/TemplateTable.tsx:355
 msgid "Delete template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:327
+#: src/tables/settings/TemplateTable.tsx:361
 msgid "Add Template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:340
+#: src/tables/settings/TemplateTable.tsx:374
 msgid "Add template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:363
+#: src/tables/settings/TemplateTable.tsx:397
 msgid "Filter by enabled status"
 msgstr ""
 
