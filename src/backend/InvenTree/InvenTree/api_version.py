@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 477
+INVENTREE_API_VERSION = 478
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v478 -> 2026-04-11 : TFB
+    - POST /api//notifications/readall/ now requires a POST action
+    - POST /api/admin/email/test/ - now returns a 200 on. a successful test
+    - GET /api/notifications/ - now uses user-centric permissions, not a general read
 
 v477 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11617
     - Non-functional refactor, adaptations of descriptions
