@@ -407,9 +407,8 @@ class NotificationMessageViewSet(
         # TODO @matmair permissions for this are currently being overwritten in get_permissions - this should be moved to a dedicated endpoint
         return super().list(request, *args, **kwargs)
 
-    # TODO @matmair this should really be a POST
     @action(
-        detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope]
+        detail=False, methods=['post'], permission_classes=[IsAuthenticatedOrReadScope]
     )
     def readall(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
