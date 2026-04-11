@@ -1159,3 +1159,18 @@ def last(value: list, default: Any = None) -> Any:
         return value[-1]
     except (IndexError, TypeError):
         return default
+
+
+@register.simple_tag()
+def reverse(value: list) -> list:
+    """Return a reversed version of the provided list.
+
+    Arguments:
+        value: The list to be reversed
+    """
+    if not value:
+        return []
+    try:
+        return value[::-1]
+    except TypeError:
+        return []
