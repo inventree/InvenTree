@@ -3876,6 +3876,51 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def recalculate_quantity(self):
+        """Recalculate the 'quantity' field based on the 'raw_amount' field."""
+        if self.raw_amount in [None, '']:
+            self.raw_amount = self.quantity
+
+        # Convert from the "raw amount" to a numerical quantity, using the associated unit (if specified)
+        try:
+            quantity = InvenTree.conversion.convert_physical_value(
+                self.raw_amount, self.sub_part.units, strip_units=False
+            )
+
+            if not self.sub_part.units and not InvenTree.conversion.is_dimensionless(
+                quantity
+            ):
+                raise ValidationError({
+                    'raw_amount': _('Invalid quantity - no units specified for part')
+                })
+
+            allow_zero_qty = get_global_setting('PART_BOM_ALLOW_ZERO_QUANTITY', False)
+
+            if allow_zero_qty:
+                if float(quantity.magnitude) < 0:
+                    raise ValidationError({
+                        'raw_amount': _(
+                            'Quantity must be greater than or equal to zero'
+                        )
+                    })
+
+            else:
+                if float(quantity.magnitude) <= 0:
+                    raise ValidationError({
+                        'raw_amount': _('Quantity must be greater than zero')
+                    })
+
+            self.quantity = Decimal(quantity.magnitude)
+
+        except ValidationError as e:
+            raise ValidationError({'raw_amount': e.messages})
+
+        # Ensure that the raw_amount is converted to a Decimal value
+        try:
+            self.quantity = Decimal(self.quantity)
+        except InvalidOperation:
+            raise ValidationError({'quantity': _('Must be a valid number')})
+
     def delete(self):
         """Check if this item can be deleted."""
         import part.tasks as part_tasks
@@ -4171,10 +4216,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         super().clean()
 
-        try:
-            self.quantity = Decimal(self.quantity)
-        except InvalidOperation:
-            raise ValidationError({'quantity': _('Must be a valid number')})
+        # Recalculate the 'quantity' field based on the 'raw_amount' field
+        self.recalculate_quantity()
 
         try:
             # Check for circular BOM references
