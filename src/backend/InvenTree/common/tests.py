@@ -1332,7 +1332,7 @@ class NotificationTest(InvenTreeAPITestCase):
         self.assertEqual(len(self.get(url, expected_code=200).data), 1)
 
         # Read with readall endpoint
-        self.get(reverse('api-notifications-readall'), {}, expected_code=200)
+        self.post(reverse('api-notifications-readall'), {}, expected_code=200)
 
         self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 1)
         self.assertEqual(len(self.get(url, expected_code=200).data), 1)
