@@ -221,23 +221,25 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      {showElevated && (user?.is_superuser || user?.is_staff) && (
-        <Paper p={0} m={5}>
-          <Alert
-            icon={<IconUserBolt />}
-            color={user.is_superuser ? 'red' : 'orange'}
-            title={user.is_superuser ? t`Superuser Mode` : t`Admin Mode`}
-            withCloseButton
-            onClose={() => setShowSuperuserAlert(false)}
-            p={5}
-          >
-            <Text p={0}>
-              {t`The current user has elevated privileges and should not be used for regular usage.`}{' '}
-              {errorCodeLink('INVE-W14')}
-            </Text>
-          </Alert>
-        </Paper>
-      )}
+      {showSuperuserAlert &&
+        showElevated &&
+        (user?.is_superuser || user?.is_staff) && (
+          <Paper p={0} m={5}>
+            <Alert
+              icon={<IconUserBolt />}
+              color={user.is_superuser ? 'red' : 'orange'}
+              title={user.is_superuser ? t`Superuser Mode` : t`Admin Mode`}
+              withCloseButton
+              onClose={() => setShowSuperuserAlert(false)}
+              p={5}
+            >
+              <Text p={0}>
+                {t`The current user has elevated privileges and should not be used for regular usage.`}{' '}
+                {errorCodeLink('INVE-W14')}
+              </Text>
+            </Alert>
+          </Paper>
+        )}
     </div>
   );
 }
