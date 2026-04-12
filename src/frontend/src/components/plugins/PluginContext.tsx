@@ -44,7 +44,7 @@ import {
   openGlobalImporter
 } from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
+import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
@@ -87,7 +87,7 @@ export const useInvenTreeContext = () => {
       },
       tables: {
         renderTable: (props: InvenTreeTableRenderProps<any>) => (
-          <InvenTreeTable {...props} />
+          <InvenTreeTableInternal {...props} />
         )
       },
       forms: {

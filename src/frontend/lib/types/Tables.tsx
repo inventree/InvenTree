@@ -1,4 +1,5 @@
 import type { MantineStyleProp } from '@mantine/core';
+import type { AxiosInstance } from 'axios';
 import type {
   DataTableCellClickHandler,
   DataTableRowExpansionProps
@@ -226,4 +227,6 @@ export type InvenTreeTableRenderProps<T extends Record<string, any>> = {
   tableData?: T[];
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
+  api: AxiosInstance;
+  navigate: NavigateFunction;
 };

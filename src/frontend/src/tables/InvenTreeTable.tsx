@@ -13,7 +13,8 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type {
   InvenTreeTableProps,
-  InvenTreeTableRenderProps
+  InvenTreeTableRenderProps,
+  TableState
 } from '@lib/types/Tables';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
@@ -66,13 +67,23 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
+ *
+ * This component is not used directly - instead, the "InvenTreeTable" component is a wrapper,
+ * which provides the necessary context and state management for this internal component.
+ *
+ * This function is also provided to the plugin context, and when used by external plugins,
+ * it must be supplied with with following additional context items:
+ * - api: AxiosInstance - The API instance for making requests to the server
+ * - navigate: NavigateFunction - The navigation function for navigating to different pages
  */
-export function InvenTreeTable<T extends Record<string, any>>({
+export function InvenTreeTableInternal<T extends Record<string, any>>({
   url,
   tableState,
   tableData,
   columns,
-  props
+  props,
+  api,
+  navigate
 }: Readonly<InvenTreeTableRenderProps<T>>) {
   const { userTheme } = useLocalState();
 
@@ -89,8 +100,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
-  const api = useApi();
-  const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
 
   const userSettings = useUserSettingsState();
@@ -870,5 +879,44 @@ export function InvenTreeTable<T extends Record<string, any>>({
         </Boundary>
       </Stack>
     </>
+  );
+}
+
+/**
+ * This is an internal wrapper function for the InvenTreeTableInternal component,
+ * which provides the necessary context management for the table to function correctly.
+ *
+ * In addition to the provided table props, this wrapper provides context for:
+ *
+ * - api: The API instance for making requests to the server
+ * - navigate: The navigation function for navigating to different pages
+ *
+ */
+export function InvenTreeTable<T extends Record<string, any>>({
+  url,
+  tableState,
+  tableData,
+  columns,
+  props
+}: Readonly<{
+  url?: string;
+  tableState: TableState;
+  tableData?: T[];
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
+}>) {
+  const api = useApi();
+  const navigate = useNavigate();
+
+  return (
+    <InvenTreeTableInternal
+      url={url}
+      tableState={tableState}
+      tableData={tableData}
+      columns={columns}
+      props={props}
+      api={api}
+      navigate={navigate}
+    />
   );
 }
