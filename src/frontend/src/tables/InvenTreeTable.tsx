@@ -1,3 +1,4 @@
+import { Boundary } from '@lib/components/Boundary';
 import { RowActions } from '@lib/components/RowActions';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
@@ -27,7 +28,6 @@ import {
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';

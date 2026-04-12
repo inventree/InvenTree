@@ -82,30 +82,6 @@ export function extractAvailableFields(
   return processFields(actions[method]);
 }
 
-export type NestedDict = { [key: string]: string | number | NestedDict };
-export function mapFields(
-  fields: ApiFormFieldSet,
-  fieldFunction: (path: string, value: ApiFormFieldType, key: string) => any,
-  _path?: string
-): NestedDict {
-  const res: NestedDict = {};
-
-  for (const [k, v] of Object.entries(fields)) {
-    const path = _path ? `${_path}.${k}` : k;
-    let value: any;
-
-    if (v.field_type === 'nested object' && v.children) {
-      value = mapFields(v.children, fieldFunction, path);
-    } else {
-      value = fieldFunction(path, v, k);
-    }
-
-    if (value !== undefined) res[k] = value;
-  }
-
-  return res;
-}
-
 /*
  * Build a complete field definition based on the provided data
  */

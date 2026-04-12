@@ -22,6 +22,7 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { isTrue } from '@lib/functions/Conversion';
 import {
   type NestedDict,
@@ -40,7 +41,6 @@ import {
   invalidResponse,
   showTimeoutNotification
 } from '../../functions/notifications';
-import { Boundary } from '../Boundary';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
 import { ApiFormField } from './fields/ApiFormField';
 

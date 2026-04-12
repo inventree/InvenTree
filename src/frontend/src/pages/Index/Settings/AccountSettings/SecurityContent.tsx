@@ -30,7 +30,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { DefaultFallback } from '../../../../components/Boundary';
+import { DefaultFallback } from '../../../../../lib/components/Boundary';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';

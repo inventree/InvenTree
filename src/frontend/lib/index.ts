@@ -70,6 +70,7 @@ export {
   type ActionButtonProps
 } from './components/ActionButton';
 export { AddItemButton } from './components/AddItemButton';
+export { Boundary, DefaultFallback } from './components/Boundary';
 export { ButtonMenu } from './components/ButtonMenu';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
