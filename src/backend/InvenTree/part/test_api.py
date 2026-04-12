@@ -1005,7 +1005,9 @@ class PartAPITest(PartAPITestBase):
         sub_part.refresh_from_db()
 
         # Link the sub part to the assembly via a BOM
-        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=10)
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=sub_part, raw_amount='10', quantity=10
+        )
 
         filters = {'active': True, 'assembly': True, 'bom_valid': True}
 
@@ -1023,14 +1025,14 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(response.data[0]['pk'], assembly.pk)
 
         # Adjust the 'quantity' of the BOM item to make it invalid
-        bom_item.quantity = 15
+        bom_item.set_quantity(15)
         bom_item.save()
 
         response = self.get(url, filters)
         self.assertEqual(len(response.data), 0)
 
         # Adjust it back again - should be valid again
-        bom_item.quantity = 10
+        bom_item.set_quantity(10)
         bom_item.save()
 
         response = self.get(url, filters)
@@ -1046,7 +1048,7 @@ class PartAPITest(PartAPITestBase):
         self.assertIsNotNone(data['bom_checked_date'])
 
         # Now, let's try to validate and invalidate the assembly BOM via the API
-        bom_item.quantity = 99
+        bom_item.raw_amount = '  99'
         bom_item.save()
 
         data = self.get(bom_url, expected_code=200).data
