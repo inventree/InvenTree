@@ -7,6 +7,7 @@ import { mapFields } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { hashString } from '@lib/functions/String';
+import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { InvenTreeTableProps, TableState } from '@lib/types/Tables';
@@ -33,7 +34,6 @@ import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
-import { useStoredTableState } from '../states/StoredTableState';
 import { CopyableCell } from './CopyableCell';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 

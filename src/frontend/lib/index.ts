@@ -101,3 +101,9 @@ export {
   default as useTable,
   type TableStateExtraProps
 } from './hooks/UseTable';
+
+// State management
+export {
+  type StoredTableStateProps,
+  useStoredTableState
+} from './states/StoredTableState';
