@@ -507,6 +507,8 @@ class ManufacturerTest(InvenTreeAPITestCase):
         """Tests for the ManufacturerPart detail endpoint."""
         mp = ManufacturerPart.objects.first()
 
+        self.assertIsNotNone(mp)
+
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
         response = self.get(url)
