@@ -74,7 +74,6 @@ class PartImageTestMixin:
                 {'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/part_images/part_image'))
         return image_name
@@ -111,7 +110,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-category-list')
 
         # star categories manually for tests as it is not possible with fixures
-        # because the current user is not fixured itself and throws an invalid
+        # because the current user is not fixtured itself and throws an invalid
         # foreign key constraint
         for pk in [3, 4]:
             PartCategory.objects.get(pk=pk).set_starred(self.user, True)
@@ -277,7 +276,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
-    def test_bleach(self):
+    def test_sanitizer(self):
         """Test that the data cleaning functionality is working.
 
         This helps to protect against XSS injection
@@ -812,8 +811,13 @@ class PartAPITest(PartAPITestBase):
 
         # Children of PartCategory<1>, do not cascade
         response = self.get(url, {'parent': 1, 'cascade': 'false'})
-
         self.assertEqual(len(response.data), 3)
+
+        # Children of PartCategory<7>, with or without cascade
+        # Only 1 child in either case
+        for cascade in ['true', 'false']:
+            response = self.get(url, {'parent': 7, 'cascade': cascade})
+            self.assertEqual(len(response.data), 1)
 
     def test_add_categories(self):
         """Check that we can add categories."""
@@ -1402,6 +1406,53 @@ class PartAPITest(PartAPITestBase):
             assert_subset=True,
         )
 
+    def test_pricing_info(self):
+        """Test annotation of 'pricing' detail against a Part instance."""
+        part = Part.objects.first()
+        url = reverse('api-part-detail', kwargs={'pk': part.pk})
+
+        pricing_fields = ['pricing_min', 'pricing_max', 'pricing_updated']
+
+        for included in [True, False]:
+            response = self.get(url, {'pricing': included}, expected_code=200)
+
+            for field in pricing_fields:
+                if included:
+                    self.assertIn(field, response.data)
+                else:
+                    self.assertNotIn(field, response.data)
+
+    def test_parameters_info(self):
+        """Test annotation of 'parameters' detail against a Part instance."""
+        part = Part.objects.first()
+        url = reverse('api-part-detail', kwargs={'pk': part.pk})
+
+        for included in [True, False]:
+            response = self.get(url, {'parameters': included}, expected_code=200)
+
+            if included:
+                self.assertIn('parameters', response.data)
+            else:
+                self.assertNotIn('parameters', response.data)
+
+    def test_category_detail(self):
+        """Test annotation of 'category_detail' against a Part instance."""
+        part = Part.objects.get(pk=1)
+        url = reverse('api-part-detail', kwargs={'pk': part.pk})
+
+        for included in [True, False]:
+            response = self.get(url, {'category_detail': included}, expected_code=200)
+
+            if not included:
+                self.assertNotIn('category_detail', response.data)
+                continue
+
+            self.assertIn('category_detail', response.data)
+            category = response.data['category_detail']
+
+            for field in ['name', 'description', 'structural']:
+                self.assertIn(field, category)
+
 
 class PartCreationTests(PartAPITestBase):
     """Tests for creating new Part instances via the API."""
@@ -1644,7 +1695,7 @@ class PartCreationTests(PartAPITestBase):
 
         self.assertEqual(cat.parameter_templates.count(), 3)
 
-        # Creat a new Part, without copying category parameters
+        # Create a new Part, without copying category parameters
         data = self.post(
             reverse('api-part-list'),
             {
@@ -1833,7 +1884,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         # Part should not have an image!
         with self.assertRaises(ValueError):
-            print(p.image.file)
+            _x = p.image.file
 
         # Try to upload a non-image file
         test_path = get_testfolder_dir() / 'dummy_image'
@@ -2314,7 +2365,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['allocated_to_build_orders'], 0)
         self.assertEqual(data['allocated_to_sales_orders'], 0)
 
-        # The unallocated stock count should equal the 'in stock' coutn
+        # The unallocated stock count should equal the 'in stock' count
         in_stock = data['in_stock']
         self.assertEqual(in_stock, 126)
         self.assertEqual(data['unallocated_stock'], in_stock)
@@ -2703,8 +2754,28 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
-        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
+        from part.models import BomItemSubstitute
 
+        bom_item = BomItem.objects.get(pk=3)
+
+        # Create some substitutes for this BomItem
+        substitute_parts = Part.objects.filter(component=True).exclude(
+            pk=bom_item.sub_part.pk
+        )[:3]
+
+        for part in substitute_parts:
+            BomItemSubstitute.objects.create(bom_item=bom_item, part=part)
+
+        self.assertEqual(bom_item.substitutes.count(), 3)
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk})
+
+        # First, get without substitutes
+        response = self.get(url, expected_code=200)
+
+        self.assertNotIn('substitutes', response.data)
+
+        # Now, get with substitutes
         response = self.get(url, {'substitutes': True}, expected_code=200)
 
         expected_values = [
@@ -2730,6 +2801,15 @@ class BomItemTest(InvenTreeAPITestCase):
             self.assertIn(key, response.data)
 
         self.assertEqual(int(float(response.data['quantity'])), 25)
+
+        # Look at the substitutes data
+        subs = response.data['substitutes']
+
+        self.assertEqual(len(subs), 3)
+
+        for sub in subs:
+            for field in ['pk', 'part', 'bom_item', 'part_detail']:
+                self.assertIn(field, sub)
 
         # Increase the quantity
         data = response.data

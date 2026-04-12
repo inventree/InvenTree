@@ -21,6 +21,7 @@ import {
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
+import GlobalImporterDrawer from '../importer/GlobalImporterDrawer';
 import { ApiIcon } from '../items/ApiIcon';
 import { useInvenTreeContext } from '../plugins/PluginContext';
 import { callExternalPluginFunction } from '../plugins/PluginSource';
@@ -118,31 +119,34 @@ export default function LayoutComponent() {
 
   return (
     <ProtectedRoute>
-      <Flex direction='column' mih='100vh'>
-        <Header />
-        <Container className={classes.layoutContent} size='100%'>
-          <Boundary label={'layout'}>
-            <Outlet />
-          </Boundary>
-          {/* </ErrorBoundary> */}
-        </Container>
-        <Space h='xl' />
-        <Footer />
-        {userSettings.isSet('SHOW_SPOTLIGHT') && (
-          <Spotlight
-            actions={actions}
-            store={firstStore}
-            highlightQuery
-            scrollable
-            searchProps={{
-              leftSection: <IconSearch size='1.2rem' />,
-              placeholder: t`Search...`
-            }}
-            shortcut={['mod + K']}
-            nothingFound={t`Nothing found...`}
-          />
-        )}
-      </Flex>
+      <>
+        <Flex direction='column' mih='100vh'>
+          <Header />
+          <Container className={classes.layoutContent} size='100%'>
+            <Boundary label={'layout'}>
+              <Outlet />
+            </Boundary>
+            {/* </ErrorBoundary> */}
+          </Container>
+          <Space h='xl' />
+          <Footer />
+          {userSettings.isSet('SHOW_SPOTLIGHT') && (
+            <Spotlight
+              actions={actions}
+              store={firstStore}
+              highlightQuery
+              scrollable
+              searchProps={{
+                leftSection: <IconSearch size='1.2rem' />,
+                placeholder: t`Search...`
+              }}
+              shortcut={['mod + K']}
+              nothingFound={t`Nothing found...`}
+            />
+          )}
+        </Flex>
+        <GlobalImporterDrawer />
+      </>
     </ProtectedRoute>
   );
 }

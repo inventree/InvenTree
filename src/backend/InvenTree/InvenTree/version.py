@@ -17,7 +17,7 @@ from django.conf import settings
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.3.0 dev'
+INVENTREE_SW_VERSION = '1.4.0 dev'
 
 # Minimum supported Python version
 MIN_PYTHON_VERSION = (3, 11)
@@ -289,8 +289,10 @@ def inventreeBranch():
         return ' '.join(branch.splitlines())
 
     if main_branch is None:
-        return None
-    return main_branch.decode('utf-8')
+        return None  # pragma: no cover - branch information may not be available in all environments
+    return main_branch.decode(
+        'utf-8'
+    )  # pragma: no cover - branch information may not be available in all environments
 
 
 def inventreeTarget():

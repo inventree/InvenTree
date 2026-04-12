@@ -28,7 +28,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
-    enable_filter,
+    OptionalField,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
@@ -42,7 +42,7 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
+    def to_representation(self, instance: common_models.InvenTreeSetting):
         """Return the value of the setting.
 
         Protected settings are returned as '***'
@@ -381,7 +381,7 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance[instance]}
+        return {'key': instance, **self.instance.get(instance)}
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):
@@ -457,7 +457,7 @@ class FlagSerializer(serializers.Serializer):
         data = {'key': instance, 'state': flag_state(instance, request=request)}
 
         if request and request.user.is_superuser:
-            data['conditions'] = self.instance[instance]
+            data['conditions'] = self.instance.get(instance)
 
         return data
 
@@ -857,6 +857,7 @@ class ParameterSerializer(
             'note',
             'updated',
             'updated_by',
+            # Optional fields
             'template_detail',
             'updated_by_detail',
         ]
@@ -906,17 +907,22 @@ class ParameterSerializer(
         allow_null=False,
     )
 
-    updated_by_detail = enable_filter(
-        UserSerializer(
-            source='updated_by', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
         prefetch_fields=['updated_by'],
     )
 
-    template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False),
-        True,
+    template_detail = OptionalField(
+        serializer_class=ParameterTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'read_only': True, 'many': False},
+        default_include=True,
         prefetch_fields=['template', 'template__model_type'],
     )
 

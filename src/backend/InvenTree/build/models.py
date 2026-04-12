@@ -1,7 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-from typing import Optional
+from typing import Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -50,7 +50,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class BuildReportContext(report.mixins.BaseReportContext):
+class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the Build model.
 
     Attributes:
@@ -1039,7 +1039,7 @@ class Build(
         lines = lines.exclude(bom_item__consumable=True)
         lines = lines.annotate(allocated=annotate_allocated_quantity())
 
-        for build_line in lines:  # type: ignore[non-iterable]
+        for build_line in lines:
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
@@ -1512,10 +1512,10 @@ class Build(
                             unallocated_quantity -= quantity
 
                         except (ValidationError, serializers.ValidationError) as exc:
-                            # Catch model errors and re-throw as DRF errors
+                            # Re-raise with a Django-compatible validation payload
                             raise ValidationError(
-                                exc.message, detail=serializers.as_serializer_error(exc)
-                            )
+                                serializers.as_serializer_error(exc)
+                            ) from exc
 
                     if unallocated_quantity <= 0:
                         # We have now fully-allocated this BomItem - no need to continue!
@@ -1695,7 +1695,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
-class BuildLineReportContext(report.mixins.BaseReportContext):
+class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the BuildLine model.
 
     Attributes:
@@ -1745,6 +1745,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
+    # type
     def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {

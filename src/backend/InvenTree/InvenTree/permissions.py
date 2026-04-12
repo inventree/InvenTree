@@ -376,7 +376,7 @@ def auth_exempt(view_func):
     def wrapped_view(*args, **kwargs):
         return view_func(*args, **kwargs)
 
-    wrapped_view.auth_exempt = True  # type:ignore[unresolved-attribute]
+    wrapped_view.auth_exempt = True
     return wraps(view_func)(wrapped_view)
 
 

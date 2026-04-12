@@ -194,9 +194,17 @@ PLUGINS_MANDATORY = get_setting(
     'INVENTREE_PLUGINS_MANDATORY', 'plugins_mandatory', typecast=list, default_value=[]
 )
 
+if PLUGINS_MANDATORY:
+    logger.info('Mandatory plugins: %s', PLUGINS_MANDATORY)
+
 PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
+
+if not PLUGINS_ENABLED:
+    PLUGINS_INSTALL_DISABLED = (
+        True  # If plugins are disabled, also disable installation
+    )
 
 PLUGIN_FILE = config.get_plugin_file()
 
@@ -372,6 +380,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
 
@@ -483,7 +492,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -519,7 +528,7 @@ if LDAP_AUTH:  # pragma: no cover
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
+        ldap.SCOPE_SUBTREE,
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
@@ -830,10 +839,15 @@ GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
-_q_worker_timeout = int(
+BACKGROUND_WORKER_TIMEOUT = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
 
+# Set the retry time for background workers to be slightly longer than the worker timeout, to ensure that workers have time to timeout before being retried
+BACKGROUND_WORKER_RETRY = max(
+    int(get_setting('INVENTREE_BACKGROUND_RETRY', 'background.retry', 300)),
+    BACKGROUND_WORKER_TIMEOUT + 120,
+)
 
 # Prevent running multiple background workers if global cache is disabled
 # This is to prevent scheduling conflicts due to the lack of a shared cache
@@ -847,23 +861,35 @@ BACKGROUND_WORKER_COUNT = (
 if 'sqlite' in DB_ENGINE:
     BACKGROUND_WORKER_COUNT = 1
 
+BACKGROUND_WORKER_ATTEMPTS = int(
+    get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
+)
+
+# Check if '--sync' was passed in the command line
+if '--sync' in sys.argv and '--noreload' in sys.argv and DEBUG:
+    SYNC_TASKS = True
+else:
+    SYNC_TASKS = False
+
+# Clean up sys.argv so Django doesn't complain about an unknown argument
+if SYNC_TASKS:
+    sys.argv.remove('--sync')
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
     'workers': BACKGROUND_WORKER_COUNT,
-    'timeout': _q_worker_timeout,
-    'retry': max(120, _q_worker_timeout + 30),
-    'max_attempts': int(
-        get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
-    ),
+    'timeout': BACKGROUND_WORKER_TIMEOUT,
+    'retry': BACKGROUND_WORKER_RETRY,
+    'max_attempts': BACKGROUND_WORKER_ATTEMPTS,
     'save_limit': 1000,
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
     'orm': 'default',
     'cache': 'default',
-    'sync': False,
+    'sync': SYNC_TASKS,
     'poll': 1.5,
 }
 

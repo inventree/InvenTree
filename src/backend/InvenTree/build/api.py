@@ -17,6 +17,7 @@ from rest_framework.response import Response
 import build.models as build_models
 import build.serializers
 import common.models
+import common.serializers
 import part.models as part_models
 import stock.models as stock_models
 import stock.serializers

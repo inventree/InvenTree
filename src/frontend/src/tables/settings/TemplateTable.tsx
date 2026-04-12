@@ -38,6 +38,7 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
+import { formatDate } from '../../defaults/formatters';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -48,8 +49,13 @@ import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  UserColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 export type TemplateI = {
   pk: number;
@@ -233,12 +239,40 @@ export function TemplateTable({
       {
         accessor: 'revision',
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <Group gap='xs' justify='space-between'>
+              <Text size='sm'>{record.revision}</Text>
+              {record.updated && (
+                <TableHoverCard
+                  value=''
+                  title={t`Last Updated`}
+                  extra={<Text size='xs'>{formatDate(record.updated)}</Text>}
+                />
+              )}
+            </Group>
+          );
+        }
       },
+      UserColumn({
+        accessor: 'updated_by_detail',
+        sortable: false,
+        defaultVisible: false,
+        title: t`Updated By`
+      }),
       {
         accessor: 'filters',
         sortable: false,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
+      },
+      {
+        accessor: 'filename_pattern',
+        title: t`Filename`,
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,

@@ -1,8 +1,29 @@
+import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
 import { activateTableView, loadTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
+
+// Test for the label editing interface
+test('Printing - Label Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/labels'
+  });
+
+  // Open a particular label template for editing
+  await page.getByRole('cell', { name: 'Sample build line label' }).click();
+
+  // Await expected entries
+  await page.getByRole('tab', { name: 'PDF Preview' }).waitFor();
+  await page.getByText('This is an example template').waitFor();
+  await page
+    .locator('div')
+    .filter({ hasText: /^BO\d+$/ })
+    .first()
+    .waitFor();
+});
 
 /*
  * Test for label printing.
@@ -96,6 +117,14 @@ test('Printing - Report Editing', async ({ browser }) => {
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();
+
+  // check that styles are applied correctly
+  await expect(page.getByText('{% block style %}')).toBeVisible();
+  const element: Locator = page.getByText('block').first();
+  const color = await element.evaluate((el) => {
+    return window.getComputedStyle(el).getPropertyValue('color');
+  });
+  expect(color).toBe('rgb(78, 201, 176)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();

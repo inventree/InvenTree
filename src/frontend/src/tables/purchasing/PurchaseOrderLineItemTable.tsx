@@ -21,7 +21,6 @@ import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
 import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -36,11 +35,12 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   LocationColumn,
   NoteColumn,
@@ -74,15 +74,9 @@ export function PurchaseOrderLineItemTable({
 }>) {
   const table = useTable('purchase-order-line-item');
 
-  const globalSettings = useGlobalSettingsState();
   const navigate = useNavigate();
   const user = useUserState();
-
-  // Data import
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -115,8 +109,9 @@ export function PurchaseOrderLineItemTable({
     title: t`Import Line Items`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
@@ -138,6 +133,7 @@ export function PurchaseOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       PartColumn({
         part: 'part_detail',
         ordering: 'part_name'
@@ -439,6 +435,7 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          defaultSortColumn: 'line',
           params: {
             ...params,
             order: orderId,
@@ -450,15 +447,6 @@ export function PurchaseOrderLineItemTable({
           tableFilters: tableFilters,
           modelType: ModelType.supplierpart,
           modelField: 'part'
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

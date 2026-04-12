@@ -1304,11 +1304,40 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertEqual(
             response.data['description'],
-            'List view for all notifications of the current user.',
+            'Notifications for the current user.\n\n- User can only view / delete their own notification objects',
         )
 
         # POST action should fail (not allowed)
         response = self.post(url, {}, expected_code=405)
+
+    def test_api_read(self):
+        """Test that NotificationMessage can be marked as read."""
+        # Create a notification message
+        NotificationMessage.objects.create(
+            user=self.user,
+            category='test',
+            message='This is a test notification',
+            target_object=self.user,
+        )
+        user2 = get_user_model().objects.get(pk=2)
+        NotificationMessage.objects.create(
+            user=user2,
+            category='test',
+            message='This is a second test notification',
+            target_object=user2,
+        )
+
+        url = reverse('api-notifications-list')
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 0)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+
+        # Read with readall endpoint
+        self.get(reverse('api-notifications-readall'), {}, expected_code=200)
+
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 1)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+        # filtered by read status should be 0
+        self.assertEqual(len(self.get(url, {'read': False}, expected_code=200).data), 0)
 
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications."""
@@ -1352,12 +1381,18 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Now, let's bulk delete all 'unread' notifications via the API,
         # but only associated with the logged in user
-        response = self.delete(url, {'filters': {'read': False}}, expected_code=200)
+        read_notifications = NotificationMessage.objects.filter(read=True)
+        response = self.delete(
+            url, {'items': [ntf.pk for ntf in read_notifications]}, expected_code=200
+        )
 
-        # Only 7 notifications should have been deleted,
+        # Only 3 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
-        self.assertEqual(NotificationMessage.objects.count(), 13)
-        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
+        self.assertEqual(NotificationMessage.objects.count(), 17)
+        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 7)
+        self.assertEqual(
+            NotificationMessage.objects.filter(user=self.user, read=True).count(), 0
+        )
 
     def test_simple(self):
         """Test that a simple notification can be created."""
@@ -1569,9 +1604,14 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(
-                reverse('api-currency-refresh'), expected_code=200, max_query_time=30
-            )
+            try:
+                self.post(
+                    reverse('api-currency-refresh'),
+                    expected_code=200,
+                    max_query_time=30,
+                )
+            except Exception:
+                continue
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():
@@ -1824,7 +1864,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
 
     def test_api(self):
         """Test the CustomUnit API."""
-        response = self.get(reverse('api-all-unit-list'))
+        response = self.get(reverse('api-custom-unit-all'))
         self.assertIn('default_system', response.data)
         self.assertIn('available_systems', response.data)
         self.assertIn('available_units', response.data)

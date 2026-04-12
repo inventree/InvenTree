@@ -49,7 +49,8 @@ def validate_part_name_format(value):
                 })
 
     # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
+    # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated
+    p = Part(pk=1, name='test part', description='some test part')
 
     try:
         SandboxedEnvironment().from_string(value).render({'part': p})
@@ -231,6 +232,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'INVENTREE_RESTRICT_ABOUT': {
         'name': _('Restrict showing `about`'),
         'description': _('Show the `about` modal only to superusers'),
+        'validator': bool,
+        'default': False,
+    },
+    'INVENTREE_SHOW_SUPERUSER_BANNER': {
+        'name': _('Show superuser banner'),
+        'description': _('Show a warning banner in the UI when logged in as superuser'),
+        'validator': bool,
+        'default': True,
+    },
+    'INVENTREE_SHOW_ADMIN_BANNER': {
+        'name': _('Show admin banner'),
+        'description': _('Show a warning banner in the UI when logged in as admin'),
         'validator': bool,
         'default': False,
     },

@@ -321,7 +321,8 @@ export function useCreateStockItem() {
     url: ApiEndpoints.stock_item_list,
     fields: fields,
     modalId: 'create-stock-item',
-    title: t`Add Stock Item`
+    title: t`Add Stock Item`,
+    keepOpenOption: true
   });
 }
 
