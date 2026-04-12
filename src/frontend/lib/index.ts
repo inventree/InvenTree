@@ -53,6 +53,11 @@ export {
   formatFileSize
 } from './functions/Formatting';
 
+export {
+  shortenString,
+  hashString
+} from './functions/String';
+
 // Common UI components
 export {
   ActionButton,
