@@ -23,6 +23,11 @@ import {
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { isTrue } from '@lib/functions/Conversion';
+import {
+  type NestedDict,
+  constructFormUrl,
+  mapFields
+} from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormFieldSet,
@@ -30,13 +35,7 @@ import type {
   ApiFormProps
 } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
-import {
-  type NestedDict,
-  constructField,
-  constructFormUrl,
-  extractAvailableFields,
-  mapFields
-} from '../../functions/forms';
+import { constructField, extractAvailableFields } from '../../functions/forms';
 import {
   invalidResponse,
   showTimeoutNotification

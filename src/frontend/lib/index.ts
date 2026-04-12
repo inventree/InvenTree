@@ -54,6 +54,12 @@ export {
 } from './functions/Formatting';
 
 export {
+  constructFormUrl,
+  mapFields,
+  type NestedDict
+} from './functions/Forms';
+
+export {
   shortenString,
   hashString
 } from './functions/String';

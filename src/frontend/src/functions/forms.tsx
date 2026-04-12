@@ -1,28 +1,6 @@
-import type { AxiosResponse } from 'axios';
-
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import type { PathParams } from '@lib/types/Core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import type { AxiosResponse } from 'axios';
 import { invalidResponse, permissionDenied } from './notifications';
-
-/**
- * Construct an API url from the provided ApiFormProps object
- */
-export function constructFormUrl(
-  url: ApiEndpoints | string,
-  pk?: string | number,
-  pathParams?: PathParams,
-  queryParams?: URLSearchParams
-): string {
-  let formUrl = apiUrl(url, pk, pathParams);
-
-  if (queryParams) {
-    formUrl += `?${queryParams.toString()}`;
-  }
-
-  return formUrl;
-}
 
 /**
  * Extract the available fields (for a given method) from the response object
