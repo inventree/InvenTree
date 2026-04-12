@@ -1,4 +1,5 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { CopyButton } from '@lib/components/CopyButton';
 import type { RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -11,7 +12,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
-import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';

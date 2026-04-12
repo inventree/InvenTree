@@ -80,6 +80,8 @@ export {
 export { AddItemButton } from './components/AddItemButton';
 export { Boundary, DefaultFallback } from './components/Boundary';
 export { ButtonMenu } from './components/ButtonMenu';
+export { CopyButton } from './components/CopyButton';
+export { CopyableCell } from './components/CopyableCell';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
 export { SearchInput } from './components/SearchInput';

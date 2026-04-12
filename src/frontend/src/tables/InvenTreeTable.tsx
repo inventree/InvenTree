@@ -1,4 +1,5 @@
 import { Boundary } from '@lib/components/Boundary';
+import { CopyableCell } from '@lib/components/CopyableCell';
 import { RowActions } from '@lib/components/RowActions';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
@@ -34,7 +35,6 @@ import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
-import { CopyableCell } from './CopyableCell';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
