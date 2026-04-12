@@ -15,10 +15,20 @@ export { UserRoles, UserPermissions } from './enums/Roles';
 export type {
   InvenTreePluginContext,
   InvenTreeFormsContext,
+  InvenTreeTablesContext,
+  ImporterDrawerContext,
   PluginVersion,
   StockAdjustmentFormsContext
 } from './types/Plugins';
-export type { RowAction, RowViewProps } from './types/Tables';
+
+export type {
+  RowAction,
+  RowViewProps,
+  TableColumn,
+  TableColumnProps,
+  InvenTreeTableProps,
+  InvenTreeTableRenderProps
+} from './types/Tables';
 
 export type {
   ApiFormFieldChoice,

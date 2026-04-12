@@ -17,6 +17,7 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import type { InvenTreeTableRenderProps } from '@lib/types/Tables';
 import { i18n } from '@lingui/core';
 import { defaultLocale } from '../../contexts/LanguageContext';
 import {
@@ -43,6 +44,7 @@ import {
   openGlobalImporter
 } from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
@@ -82,6 +84,11 @@ export const useInvenTreeContext = () => {
         close: () => closeGlobalImporter(),
         isOpen: () => getGlobalImporterState().isOpen,
         sessionId: () => getGlobalImporterState().sessionId
+      },
+      tables: {
+        renderTable: (props: InvenTreeTableRenderProps<any>) => (
+          <InvenTreeTable {...props} />
+        )
       },
       forms: {
         bulkEdit: useBulkEditApiFormModal,

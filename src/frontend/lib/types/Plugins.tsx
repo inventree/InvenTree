@@ -13,6 +13,7 @@ import type {
 import type { UseModalReturn } from './Modals';
 import type { RenderInstanceProps } from './Rendering';
 import type { SettingsStateProps } from './Settings';
+import type { InvenTreeTableRenderProps } from './Tables';
 import type { UserStateProps } from './User';
 
 export interface PluginProps {
@@ -48,6 +49,10 @@ export type InvenTreeFormsContext = {
   stockActions: StockAdjustmentFormsContext;
 };
 
+export type InvenTreeTablesContext<T extends Record<string, any>> = {
+  renderTable: (props: InvenTreeTableRenderProps<T>) => React.ReactNode;
+};
+
 export type ImporterDrawerContext = {
   open: (sessionId: number, options?: { onClose?: () => void }) => void;
   close: () => void;
@@ -67,6 +72,7 @@ export type ImporterDrawerContext = {
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
+ * @param tables - A set of functions for rendering API tables
  * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  * @param host - The current host URL
@@ -96,6 +102,7 @@ export type InvenTreePluginContext = {
   navigate: NavigateFunction;
   theme: MantineTheme;
   forms: InvenTreeFormsContext;
+  tables: InvenTreeTablesContext<any>;
   importer: ImporterDrawerContext;
   colorScheme: MantineColorScheme;
   model?: ModelType | string;

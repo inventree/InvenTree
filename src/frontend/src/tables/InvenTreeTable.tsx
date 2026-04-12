@@ -11,7 +11,10 @@ import { hashString } from '@lib/functions/String';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { InvenTreeTableProps, TableState } from '@lib/types/Tables';
+import type {
+  InvenTreeTableProps,
+  InvenTreeTableRenderProps
+} from '@lib/types/Tables';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Box, Stack } from '@mantine/core';
@@ -70,13 +73,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   tableData,
   columns,
   props
-}: Readonly<{
-  url?: string;
-  tableState: TableState;
-  tableData?: any[];
-  columns: TableColumn<T>[];
-  props: InvenTreeTableProps<T>;
-}>) {
+}: Readonly<InvenTreeTableRenderProps<T>>) {
   const { userTheme } = useLocalState();
 
   const {

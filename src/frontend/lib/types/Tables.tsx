@@ -219,3 +219,11 @@ export type InvenTreeTableProps<T = any> = {
   minHeight?: number;
   noHeader?: boolean;
 };
+
+export type InvenTreeTableRenderProps<T extends Record<string, any>> = {
+  url?: string;
+  tableState: TableState;
+  tableData?: T[];
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
+};
