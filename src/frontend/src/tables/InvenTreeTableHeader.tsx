@@ -26,6 +26,7 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { Boundary } from '@lib/components/Boundary';
 import { ButtonMenu } from '@lib/components/ButtonMenu';
 import { SearchInput } from '@lib/components/SearchInput';
+import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
@@ -35,7 +36,6 @@ import { PrintingActions } from '../components/buttons/PrintingActions';
 import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableColumnSelect } from './ColumnSelect';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**

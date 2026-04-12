@@ -30,6 +30,10 @@ import {
   mapFields
 } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import {
+  invalidResponse,
+  showTimeoutNotification
+} from '@lib/functions/Notification';
 import type {
   ApiFormFieldSet,
   ApiFormFieldType,
@@ -37,10 +41,6 @@ import type {
 } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import { constructField, extractAvailableFields } from '../../functions/forms';
-import {
-  invalidResponse,
-  showTimeoutNotification
-} from '../../functions/notifications';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
 import { ApiFormField } from './fields/ApiFormField';
 

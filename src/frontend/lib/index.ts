@@ -42,6 +42,14 @@ export {
   getDetailUrl,
   navigateToLink
 } from './functions/Navigation';
+
+export {
+  notYetImplemented,
+  permissionDenied,
+  invalidResponse,
+  showTimeoutNotification
+} from './functions/Notification';
+
 export {
   checkPluginVersion,
   initPlugin
@@ -75,6 +83,7 @@ export { ButtonMenu } from './components/ButtonMenu';
 export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
 export { SearchInput } from './components/SearchInput';
+export { TableColumnSelect } from './components/TableColumnSelect';
 export {
   RowViewAction,
   RowDuplicateAction,
