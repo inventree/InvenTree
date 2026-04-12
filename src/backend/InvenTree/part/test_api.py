@@ -2788,6 +2788,7 @@ class BomItemTest(InvenTreeAPITestCase):
             'rounding_multiple',
             'pk',
             'part',
+            'raw_amount',
             'quantity',
             'reference',
             'sub_part',
@@ -2813,6 +2814,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Increase the quantity
         data = response.data
+        del data['raw_amount']
         data['quantity'] = 57
         data['note'] = 'Added a note'
 
@@ -2820,6 +2822,14 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+        # Provide a conflicting "raw_amount" and "quantity" field
+        data['raw_amount'] = '   123.45  '
+        data['quantity'] = 99.99
+        response = self.patch(url, data, expected_code=200)
+
+        self.assertEqual(response.data['raw_amount'], '123.45')
+        self.assertAlmostEqual(response.data['quantity'], 123.45, places=2)
 
     def test_output_options(self):
         """Test that various output options work as expected."""

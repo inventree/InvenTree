@@ -3878,7 +3878,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     def recalculate_quantity(self):
         """Recalculate the 'quantity' field based on the 'raw_amount' field."""
-        if self.raw_amount is None or self.raw_amount.strip() == '':
+        if self.raw_amount is None or self.raw_amount == '':
             self.raw_amount = self.quantity
 
         # Convert from the "raw amount" to a numerical quantity, using the associated unit (if specified)
