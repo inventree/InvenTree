@@ -3876,6 +3876,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def set_quantity(self, quantity: Decimal | str | float):
+        """Update the 'quantity' for this BomItem."""
+        self.raw_amount = quantity
+        self.recalculate_quantity()
+
     def recalculate_quantity(self):
         """Recalculate the 'quantity' field based on the 'raw_amount' field."""
         if self.raw_amount is None or self.raw_amount == '':
