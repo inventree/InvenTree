@@ -2,9 +2,9 @@ import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import useFilterSet from '@lib/hooks/UseFilterSet';
 import type { FilterSetState, TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
-import { useFilterSet } from './UseFilterSet';
 
 export type TableStateExtraProps = {
   idAccessor?: string;
