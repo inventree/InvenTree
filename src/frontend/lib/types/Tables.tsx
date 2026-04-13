@@ -1,10 +1,12 @@
 import type { MantineStyleProp } from '@mantine/core';
+import type { AxiosInstance } from 'axios';
+import type { ShowContextMenuFunction } from 'mantine-contextmenu';
 import type {
   DataTableCellClickHandler,
   DataTableRowExpansionProps
 } from 'mantine-datatable';
 import type { ReactNode } from 'react';
-import type { NavigateFunction, SetURLSearchParams } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router-dom';
 import type { ModelType } from '../enums/ModelType';
 import type { FilterSetState, TableFilter } from './Filters';
 import type { ApiFormFieldType } from './Forms';
@@ -17,9 +19,6 @@ import type { ApiFormFieldType } from './Forms';
  * isLoading: A boolean flag to indicate if the table is currently loading data
  * setIsLoading: A function to set the isLoading flag
  * filterSet: A group of active filters
- * queryFilters: A map of query filters (e.g. ?active=true&overdue=false) passed in the URL
- * setQueryFilters: A function to set the query filters
- * clearQueryFilters: A function to clear all query filters
  * expandedRecords: An array of expanded records (rows) in the table
  * setExpandedRecords: A function to set the expanded records
  * isRowExpanded: A function to determine if a record is expanded
@@ -49,9 +48,6 @@ export type TableState = {
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   filterSet: FilterSetState;
-  queryFilters: URLSearchParams;
-  setQueryFilters: SetURLSearchParams;
-  clearQueryFilters: () => void;
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
   isRowExpanded: (pk: number) => boolean;
@@ -218,4 +214,19 @@ export type InvenTreeTableProps<T = any> = {
   onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
   noHeader?: boolean;
+};
+
+export type InvenTreeTableRenderProps<T extends Record<string, any>> = {
+  url?: string;
+  tableState: TableState;
+  tableData?: T[];
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
+  api: AxiosInstance;
+  navigate: NavigateFunction;
+
+  // The following attributes are for internal use only (plugins should not use these directly)
+  showContextMenu?: ShowContextMenuFunction;
+  searchParams?: URLSearchParams;
+  setSearchParams?: (params: URLSearchParams) => void;
 };

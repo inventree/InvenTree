@@ -10,8 +10,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-
-import { InvenTreeIcon } from '../../functions/icons';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 import type { JSX } from 'react';
 
@@ -62,11 +61,7 @@ export function CopyButton({
             variant={copied ? 'transparent' : (variant ?? 'transparent')}
             size={size ?? 'sm'}
           >
-            {copied ? (
-              <InvenTreeIcon icon='check' />
-            ) : (
-              <InvenTreeIcon icon='copy' />
-            )}
+            {copied ? <IconCheck /> : <IconCopy />}
             {content}
             {label && (
               <Text p={size ?? 'sm'} size={size ?? 'sm'}>

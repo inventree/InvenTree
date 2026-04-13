@@ -1,10 +1,9 @@
 import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
-import type { FilterSetState, TableFilter } from '@lib/types/Filters';
-import type { TableState } from '@lib/types/Tables';
-import { useFilterSet } from './UseFilterSet';
+import type { FilterSetState, TableFilter } from '../types/Filters';
+import type { TableState } from '../types/Tables';
+import useFilterSet from './UseFilterSet';
 
 export type TableStateExtraProps = {
   idAccessor?: string;
@@ -17,7 +16,7 @@ export type TableStateExtraProps = {
  * Refer to the TableState type definition for more information.
  */
 
-export function useTable(
+export default function useTable(
   tableName: string,
   tableProps: TableStateExtraProps = {
     idAccessor: 'pk',
@@ -28,13 +27,6 @@ export function useTable(
   function generateTableName() {
     return `${tableName.replaceAll('-', '')}-${randomId()}`;
   }
-
-  // Extract URL query parameters (e.g. ?active=true&overdue=false)
-  const [queryFilters, setQueryFilters] = useSearchParams();
-
-  const clearQueryFilters = useCallback(() => {
-    setQueryFilters({});
-  }, []);
 
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
@@ -133,9 +125,6 @@ export function useTable(
     isLoading,
     setIsLoading,
     filterSet,
-    queryFilters,
-    setQueryFilters,
-    clearQueryFilters,
     expandedRecords,
     setExpandedRecords,
     isRowExpanded,

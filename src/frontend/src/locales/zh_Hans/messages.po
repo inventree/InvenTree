@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-08 05:40\n"
+"PO-Revision-Date: 2026-04-11 03:27\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -68,8 +68,8 @@ msgid "Actions"
 msgstr "操作"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:480
-#: src/components/nav/Header.tsx:179
+#: src/components/forms/fields/RelatedModelField.tsx:493
+#: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
@@ -133,7 +133,7 @@ msgstr "零件"
 #: lib/enums/Roles.tsx:35
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:197
+#: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/CategoryDetail.tsx:135
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:340
@@ -159,7 +159,7 @@ msgstr "参数"
 #: src/components/panels/ParametersPanel.tsx:21
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
-#: src/pages/Index/Settings/SystemSettings.tsx:191
+#: src/pages/Index/Settings/SystemSettings.tsx:193
 #: src/pages/part/PartDetail.tsx:920
 msgid "Parameters"
 msgstr "参数"
@@ -273,7 +273,7 @@ msgid "Stock Location Types"
 msgstr "库存地点类型"
 
 #: lib/enums/ModelInformation.tsx:114
-#: src/pages/Index/Settings/SystemSettings.tsx:255
+#: src/pages/Index/Settings/SystemSettings.tsx:257
 #: src/pages/part/PartDetail.tsx:877
 msgid "Stock History"
 msgstr "库存历史记录"
@@ -348,7 +348,7 @@ msgstr "采购订单"
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/SystemSettings.tsx:301
+#: src/pages/Index/Settings/SystemSettings.tsx:303
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:841
@@ -381,7 +381,7 @@ msgstr "销售订单"
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:116
-#: src/pages/Index/Settings/SystemSettings.tsx:317
+#: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:853
 #: src/pages/sales/SalesIndex.tsx:53
@@ -406,7 +406,7 @@ msgstr "退货订单"
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:334
+#: src/pages/Index/Settings/SystemSettings.tsx:336
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:860
 #: src/pages/sales/SalesIndex.tsx:99
@@ -546,6 +546,14 @@ msgid "Selection Lists"
 msgstr "选择列表"
 
 #: lib/enums/ModelInformation.tsx:291
+msgid "Selection Entry"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:292
+msgid "Selection Entries"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:298
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:281
@@ -553,13 +561,13 @@ msgstr "选择列表"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/forms/fields/ApiFormField.tsx:251
 #: src/components/forms/fields/TableField.tsx:45
-#: src/components/importer/ImportDataSelector.tsx:192
-#: src/components/importer/ImporterColumnSelector.tsx:261
-#: src/components/importer/ImporterDrawer.tsx:88
+#: src/components/importer/ImportDataSelector.tsx:215
+#: src/components/importer/ImporterColumnSelector.tsx:278
+#: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:211
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:572
+#: src/components/nav/SearchDrawer.tsx:588
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
@@ -581,7 +589,7 @@ msgstr "选择列表"
 msgid "Error"
 msgstr "错误"
 
-#: lib/enums/ModelInformation.tsx:292
+#: lib/enums/ModelInformation.tsx:299
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
@@ -593,7 +601,7 @@ msgstr "管理员"
 
 #: lib/enums/Roles.tsx:33
 #: src/defaults/actions.tsx:146
-#: src/pages/Index/Settings/SystemSettings.tsx:282
+#: src/pages/Index/Settings/SystemSettings.tsx:284
 #: src/pages/build/BuildIndex.tsx:67
 #: src/pages/part/PartDetail.tsx:870
 #: src/pages/sales/SalesOrderDetail.tsx:431
@@ -1894,11 +1902,11 @@ msgid "Plugins"
 msgstr "插件"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:153
-#: src/tables/general/ParameterTemplateTable.tsx:188
+#: src/tables/general/ParameterTemplateTable.tsx:157
+#: src/tables/general/ParameterTemplateTable.tsx:192
 #: src/tables/part/PartTestTemplateTable.tsx:117
-#: src/tables/settings/TemplateTable.tsx:251
-#: src/tables/settings/TemplateTable.tsx:362
+#: src/tables/settings/TemplateTable.tsx:285
+#: src/tables/settings/TemplateTable.tsx:396
 #: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Enabled"
 msgstr "已启用"
@@ -1960,13 +1968,13 @@ msgstr "选择包"
 msgid "{0} icons"
 msgstr "{0} 个图标"
 
-#: src/components/forms/fields/RelatedModelField.tsx:481
+#: src/components/forms/fields/RelatedModelField.tsx:494
 #: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "正在加载"
 
-#: src/components/forms/fields/RelatedModelField.tsx:483
+#: src/components/forms/fields/RelatedModelField.tsx:496
 msgid "No results found"
 msgstr "未找到结果"
 
@@ -1990,66 +1998,66 @@ msgstr "添加新行"
 msgid "Thumbnail"
 msgstr "缩略图"
 
-#: src/components/importer/ImportDataSelector.tsx:175
+#: src/components/importer/ImportDataSelector.tsx:198
 msgid "Importing Rows"
 msgstr "导入行"
 
-#: src/components/importer/ImportDataSelector.tsx:176
+#: src/components/importer/ImportDataSelector.tsx:199
 msgid "Please wait while the data is imported"
 msgstr "请稍候，数据正在导入"
 
-#: src/components/importer/ImportDataSelector.tsx:193
+#: src/components/importer/ImportDataSelector.tsx:216
 msgid "An error occurred while importing data"
 msgstr "导入数据时发生错误"
 
-#: src/components/importer/ImportDataSelector.tsx:214
+#: src/components/importer/ImportDataSelector.tsx:237
 msgid "Edit Data"
 msgstr "编辑数据"
 
-#: src/components/importer/ImportDataSelector.tsx:246
+#: src/components/importer/ImportDataSelector.tsx:269
 msgid "Delete Row"
 msgstr "删除行"
 
-#: src/components/importer/ImportDataSelector.tsx:280
+#: src/components/importer/ImportDataSelector.tsx:303
 msgid "Row"
 msgstr "行"
 
-#: src/components/importer/ImportDataSelector.tsx:298
+#: src/components/importer/ImportDataSelector.tsx:321
 msgid "Row contains errors"
 msgstr "行包含错误"
 
-#: src/components/importer/ImportDataSelector.tsx:339
+#: src/components/importer/ImportDataSelector.tsx:366
 msgid "Accept"
 msgstr "同意"
 
-#: src/components/importer/ImportDataSelector.tsx:372
+#: src/components/importer/ImportDataSelector.tsx:399
 msgid "Valid"
 msgstr "有效"
 
-#: src/components/importer/ImportDataSelector.tsx:373
+#: src/components/importer/ImportDataSelector.tsx:400
 msgid "Filter by row validation status"
 msgstr "按行验证状态筛选"
 
-#: src/components/importer/ImportDataSelector.tsx:378
+#: src/components/importer/ImportDataSelector.tsx:405
 #: src/components/wizards/WizardDrawer.tsx:113
 #: src/tables/build/BuildOutputTable.tsx:582
 msgid "Complete"
 msgstr "完成"
 
-#: src/components/importer/ImportDataSelector.tsx:379
+#: src/components/importer/ImportDataSelector.tsx:406
 msgid "Filter by row completion status"
 msgstr "按行完成状态筛选"
 
-#: src/components/importer/ImportDataSelector.tsx:397
+#: src/components/importer/ImportDataSelector.tsx:424
 msgid "Import selected rows"
 msgstr "导入选定的行"
 
-#: src/components/importer/ImportDataSelector.tsx:412
+#: src/components/importer/ImportDataSelector.tsx:439
 msgid "Processing Data"
 msgstr "处理数据中"
 
 #: src/components/importer/ImporterColumnSelector.tsx:56
-#: src/components/importer/ImporterColumnSelector.tsx:230
+#: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:397
@@ -2072,55 +2080,55 @@ msgstr "选择列，或留空忽略此字段。"
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:236
+#: src/components/importer/ImporterColumnSelector.tsx:253
 msgid "Ignore this field"
 msgstr "忽略该字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:250
+#: src/components/importer/ImporterColumnSelector.tsx:267
 msgid "Mapping data columns to database fields"
 msgstr "将数据列映射到数据库字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:255
+#: src/components/importer/ImporterColumnSelector.tsx:272
 msgid "Accept Column Mapping"
 msgstr "接受列映射"
 
-#: src/components/importer/ImporterColumnSelector.tsx:268
+#: src/components/importer/ImporterColumnSelector.tsx:285
 msgid "Database Field"
 msgstr "数据库字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:269
+#: src/components/importer/ImporterColumnSelector.tsx:286
 msgid "Field Description"
 msgstr "字段描述"
 
-#: src/components/importer/ImporterColumnSelector.tsx:270
+#: src/components/importer/ImporterColumnSelector.tsx:287
 msgid "Imported Column"
 msgstr "导入列"
 
-#: src/components/importer/ImporterColumnSelector.tsx:271
+#: src/components/importer/ImporterColumnSelector.tsx:288
 msgid "Default Value"
 msgstr "默认值"
 
-#: src/components/importer/ImporterDrawer.tsx:43
+#: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
 msgstr "上传文件"
 
-#: src/components/importer/ImporterDrawer.tsx:44
+#: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
 msgstr "映射列"
 
-#: src/components/importer/ImporterDrawer.tsx:45
+#: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Rows"
 msgstr "导入行"
 
-#: src/components/importer/ImporterDrawer.tsx:46
+#: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
 msgstr "处理数据"
 
-#: src/components/importer/ImporterDrawer.tsx:47
+#: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
 msgstr "完成导入"
 
-#: src/components/importer/ImporterDrawer.tsx:89
+#: src/components/importer/ImporterDrawer.tsx:92
 msgid "Failed to fetch import session data"
 msgstr "导入会话数据获取失败"
 
@@ -2128,15 +2136,15 @@ msgstr "导入会话数据获取失败"
 #~ msgid "Cancel import session"
 #~ msgstr "Cancel import session"
 
-#: src/components/importer/ImporterDrawer.tsx:104
+#: src/components/importer/ImporterDrawer.tsx:114
 msgid "Import Complete"
 msgstr "导入完毕"
 
-#: src/components/importer/ImporterDrawer.tsx:107
+#: src/components/importer/ImporterDrawer.tsx:117
 msgid "Data has been imported successfully"
 msgstr "数据已成功导入"
 
-#: src/components/importer/ImporterDrawer.tsx:109
+#: src/components/importer/ImporterDrawer.tsx:119
 #: src/components/modals/AboutInvenTreeModal.tsx:200
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
@@ -2149,7 +2157,7 @@ msgstr "关闭"
 #~ msgid "Import session has unknown status"
 #~ msgstr "Import session has unknown status"
 
-#: src/components/importer/ImporterDrawer.tsx:128
+#: src/components/importer/ImporterDrawer.tsx:138
 msgid "Importing Data"
 msgstr "正在导入数据"
 
@@ -2594,10 +2602,10 @@ msgstr "存在待处理的数据库迁移。"
 msgid "Learn more about {code}"
 msgstr "了解更多关于{code}的信息"
 
-#: src/components/nav/Header.tsx:198
+#: src/components/nav/Header.tsx:209
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:122
+#: src/pages/Index/Settings/SystemSettings.tsx:124
 #: src/pages/Index/Settings/UserSettings.tsx:107
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
@@ -2605,14 +2613,18 @@ msgid "Notifications"
 msgstr "通知"
 
 #: src/components/nav/Header.tsx:216
+#~ msgid "Administrator Mode"
+#~ msgstr "Administrator Mode"
+
+#: src/components/nav/Header.tsx:231
+msgid "Admin Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:231
 msgid "Superuser Mode"
 msgstr "超级用户模式"
 
-#: src/components/nav/Header.tsx:216
-msgid "Administrator Mode"
-msgstr "管理员模式"
-
-#: src/components/nav/Header.tsx:221
+#: src/components/nav/Header.tsx:237
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "当前用户拥有提升权限，不应用于日常常规操作。"
 
@@ -2659,8 +2671,8 @@ msgstr "用户设置"
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:366
-#: src/pages/Index/Settings/SystemSettings.tsx:371
+#: src/pages/Index/Settings/SystemSettings.tsx:368
+#: src/pages/Index/Settings/SystemSettings.tsx:373
 msgid "System Settings"
 msgstr "系统设置"
 
@@ -2710,7 +2722,7 @@ msgstr "登出"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:803
-#: src/pages/Index/Settings/SystemSettings.tsx:231
+#: src/pages/Index/Settings/SystemSettings.tsx:233
 #: src/pages/part/PartDetail.tsx:770
 #: src/pages/stock/LocationDetail.tsx:427
 #: src/pages/stock/LocationDetail.tsx:457
@@ -2776,27 +2788,27 @@ msgstr "您没有未读通知"
 msgid "Error loading notifications."
 msgstr "通知加载错误。"
 
-#: src/components/nav/SearchDrawer.tsx:106
+#: src/components/nav/SearchDrawer.tsx:111
 msgid "No Overview Available"
 msgstr "暂无概述"
 
-#: src/components/nav/SearchDrawer.tsx:107
+#: src/components/nav/SearchDrawer.tsx:112
 msgid "No overview available for this model type"
 msgstr "此模型类型暂无概述"
 
-#: src/components/nav/SearchDrawer.tsx:125
+#: src/components/nav/SearchDrawer.tsx:130
 msgid "View all results"
 msgstr "查看所有结果"
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:145
 msgid "results"
 msgstr "结果"
 
-#: src/components/nav/SearchDrawer.tsx:144
+#: src/components/nav/SearchDrawer.tsx:149
 msgid "Remove search group"
 msgstr "移除搜索组"
 
-#: src/components/nav/SearchDrawer.tsx:288
+#: src/components/nav/SearchDrawer.tsx:304
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/part/PartDetail.tsx:828
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -2804,13 +2816,13 @@ msgstr "移除搜索组"
 msgid "Suppliers"
 msgstr "供应商"
 
-#: src/components/nav/SearchDrawer.tsx:298
+#: src/components/nav/SearchDrawer.tsx:314
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:150
 msgid "Manufacturers"
 msgstr "制造商"
 
-#: src/components/nav/SearchDrawer.tsx:308
+#: src/components/nav/SearchDrawer.tsx:324
 #: src/pages/sales/SalesIndex.tsx:133
 msgid "Customers"
 msgstr "客户"
@@ -2819,41 +2831,41 @@ msgstr "客户"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:477
+#: src/components/nav/SearchDrawer.tsx:493
 msgid "Enter search text"
 msgstr "输入搜索文本"
 
-#: src/components/nav/SearchDrawer.tsx:488
+#: src/components/nav/SearchDrawer.tsx:504
 msgid "Refresh search results"
 msgstr "刷新搜索结果"
 
-#: src/components/nav/SearchDrawer.tsx:499
-#: src/components/nav/SearchDrawer.tsx:506
+#: src/components/nav/SearchDrawer.tsx:515
+#: src/components/nav/SearchDrawer.tsx:522
 msgid "Search Options"
 msgstr "搜索选项"
 
-#: src/components/nav/SearchDrawer.tsx:509
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Whole word search"
 msgstr "全词搜索"
 
-#: src/components/nav/SearchDrawer.tsx:518
+#: src/components/nav/SearchDrawer.tsx:534
 msgid "Regex search"
 msgstr "正则表达式搜索"
 
-#: src/components/nav/SearchDrawer.tsx:527
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Notes search"
 msgstr "备注搜索"
 
-#: src/components/nav/SearchDrawer.tsx:575
+#: src/components/nav/SearchDrawer.tsx:591
 msgid "An error occurred during search query"
 msgstr "搜索查询时发生错误"
 
-#: src/components/nav/SearchDrawer.tsx:586
+#: src/components/nav/SearchDrawer.tsx:602
 #: src/tables/part/PartTestTemplateTable.tsx:82
 msgid "No Results"
 msgstr "无结果"
 
-#: src/components/nav/SearchDrawer.tsx:589
+#: src/components/nav/SearchDrawer.tsx:605
 msgid "No results available for search query"
 msgstr "没有可供搜索查询的结果"
 
@@ -2985,7 +2997,7 @@ msgstr "软件包"
 
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
-#: src/pages/Index/Settings/SystemSettings.tsx:349
+#: src/pages/Index/Settings/SystemSettings.tsx:351
 #: src/pages/Index/Settings/UserSettings.tsx:129
 msgid "Plugin Settings"
 msgstr "插件设置"
@@ -3047,7 +3059,7 @@ msgstr "加载插件内容时出错"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:247
+#: src/components/render/Instance.tsx:259
 msgid "Unknown model: {model_name}"
 msgstr "未知模型: {model_name}"
 
@@ -6731,7 +6743,7 @@ msgid "Data Management"
 msgstr "数据管理"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:270
-#: src/pages/Index/Settings/SystemSettings.tsx:176
+#: src/pages/Index/Settings/SystemSettings.tsx:178
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Reporting"
 msgstr "报告"
@@ -6937,11 +6949,11 @@ msgstr "令牌"
 msgid "The settings below are specific to each available plugin"
 msgstr "以下设置项为各插件的专属配置"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:78
+#: src/pages/Index/Settings/SystemSettings.tsx:80
 msgid "Authentication"
 msgstr "身份验证"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:104
+#: src/pages/Index/Settings/SystemSettings.tsx:106
 msgid "Barcodes"
 msgstr "条形码"
 
@@ -6953,28 +6965,28 @@ msgstr "条形码"
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:128
+#: src/pages/Index/Settings/SystemSettings.tsx:130
 #: src/pages/Index/Settings/UserSettings.tsx:113
 msgid "The settings below are specific to each available notification method"
 msgstr "以下设置专属于每种可用的通知方式"
-
-#: src/pages/Index/Settings/SystemSettings.tsx:134
-msgid "Pricing"
-msgstr "定价"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:135
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:170
+#: src/pages/Index/Settings/SystemSettings.tsx:136
+msgid "Pricing"
+msgstr "定价"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:172
 msgid "Labels"
 msgstr "标签"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:262
 msgid "Part Stocktake"
 msgstr "零件盘点"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:271
+#: src/pages/Index/Settings/SystemSettings.tsx:273
 #: src/pages/part/PartStockHistoryDetail.tsx:296
 #: src/pages/stock/StockDetail.tsx:532
 msgid "Stock Tracking"
@@ -8326,6 +8338,7 @@ msgstr "采购价格"
 #: src/pages/sales/SalesOrderDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/general/ParameterTable.tsx:101
+#: src/tables/settings/TemplateTable.tsx:250
 #: src/tables/stock/StockItemTable.tsx:154
 msgid "Last Updated"
 msgstr "最近更新"
@@ -9117,7 +9130,7 @@ msgstr "已分配的项目"
 
 #: src/tables/ColumnRenderers.tsx:774
 msgid "Line Item"
-msgstr ""
+msgstr "行项目"
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
@@ -10394,6 +10407,7 @@ msgstr "内部单位"
 
 #: src/tables/general/ParameterTable.tsx:108
 #: src/tables/general/ParameterTable.tsx:123
+#: src/tables/settings/TemplateTable.tsx:262
 msgid "Updated By"
 msgstr "更新人"
 
@@ -10442,59 +10456,59 @@ msgstr "创建一个新参数"
 msgid "Import parameters from a file"
 msgstr "从文件导入参数"
 
-#: src/tables/general/ParameterTemplateTable.tsx:48
-#: src/tables/general/ParameterTemplateTable.tsx:197
+#: src/tables/general/ParameterTemplateTable.tsx:52
+#: src/tables/general/ParameterTemplateTable.tsx:201
 msgid "Add Parameter Template"
 msgstr "添加参数模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:64
+#: src/tables/general/ParameterTemplateTable.tsx:68
 msgid "Duplicate Parameter Template"
 msgstr "重复参数模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:78
+#: src/tables/general/ParameterTemplateTable.tsx:82
 msgid "Delete Parameter Template"
 msgstr "删除零件参数模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:85
+#: src/tables/general/ParameterTemplateTable.tsx:89
 msgid "Edit Parameter Template"
 msgstr "编辑参数模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:138
+#: src/tables/general/ParameterTemplateTable.tsx:142
 msgid "Checkbox"
 msgstr "勾选框"
 
-#: src/tables/general/ParameterTemplateTable.tsx:139
+#: src/tables/general/ParameterTemplateTable.tsx:143
 msgid "Show checkbox templates"
 msgstr "显示复选框模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:143
+#: src/tables/general/ParameterTemplateTable.tsx:147
 msgid "Has choices"
 msgstr "有选项"
 
-#: src/tables/general/ParameterTemplateTable.tsx:144
+#: src/tables/general/ParameterTemplateTable.tsx:148
 msgid "Show templates with choices"
 msgstr "显示有选项的模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:152
 #: src/tables/part/PartTable.tsx:246
 msgid "Has Units"
 msgstr "有单位"
 
-#: src/tables/general/ParameterTemplateTable.tsx:149
+#: src/tables/general/ParameterTemplateTable.tsx:153
 msgid "Show templates with units"
 msgstr "显示有单位的模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:154
+#: src/tables/general/ParameterTemplateTable.tsx:158
 msgid "Show enabled templates"
 msgstr "显示已启用的模板"
 
-#: src/tables/general/ParameterTemplateTable.tsx:158
+#: src/tables/general/ParameterTemplateTable.tsx:162
 #: src/tables/settings/ImportSessionTable.tsx:112
-#: src/tables/settings/TemplateTable.tsx:368
+#: src/tables/settings/TemplateTable.tsx:402
 msgid "Model Type"
 msgstr "型号类型"
 
-#: src/tables/general/ParameterTemplateTable.tsx:159
+#: src/tables/general/ParameterTemplateTable.tsx:163
 msgid "Filter by model type"
 msgstr "按型号类型筛选"
 
@@ -12072,7 +12086,7 @@ msgid "Imported Rows"
 msgstr "导入的行"
 
 #: src/tables/settings/ImportSessionTable.tsx:113
-#: src/tables/settings/TemplateTable.tsx:369
+#: src/tables/settings/TemplateTable.tsx:403
 msgid "Filter by target model type"
 msgstr "按目标型号筛选"
 
@@ -12140,11 +12154,11 @@ msgstr "下一次运行"
 #~ msgid "actions"
 #~ msgstr "actions"
 
-#: src/tables/settings/TemplateTable.tsx:165
+#: src/tables/settings/TemplateTable.tsx:171
 msgid "Template not found"
 msgstr "找不到模板"
 
-#: src/tables/settings/TemplateTable.tsx:167
+#: src/tables/settings/TemplateTable.tsx:173
 msgid "An error occurred while fetching template details"
 msgstr "获取插件详细信息时出错"
 
@@ -12156,32 +12170,36 @@ msgstr "获取插件详细信息时出错"
 #~ msgid "Create new"
 #~ msgstr "Create new"
 
-#: src/tables/settings/TemplateTable.tsx:261
+#: src/tables/settings/TemplateTable.tsx:272
+msgid "Filename"
+msgstr ""
+
+#: src/tables/settings/TemplateTable.tsx:295
 msgid "Modify"
 msgstr "修改"
 
-#: src/tables/settings/TemplateTable.tsx:262
+#: src/tables/settings/TemplateTable.tsx:296
 msgid "Modify template file"
 msgstr "报告模板文件"
 
-#: src/tables/settings/TemplateTable.tsx:313
-#: src/tables/settings/TemplateTable.tsx:381
+#: src/tables/settings/TemplateTable.tsx:347
+#: src/tables/settings/TemplateTable.tsx:415
 msgid "Edit Template"
 msgstr "编辑模板"
 
-#: src/tables/settings/TemplateTable.tsx:321
+#: src/tables/settings/TemplateTable.tsx:355
 msgid "Delete template"
 msgstr "删除模板"
 
-#: src/tables/settings/TemplateTable.tsx:327
+#: src/tables/settings/TemplateTable.tsx:361
 msgid "Add Template"
 msgstr "添加模板"
 
-#: src/tables/settings/TemplateTable.tsx:340
+#: src/tables/settings/TemplateTable.tsx:374
 msgid "Add template"
 msgstr "添加模板"
 
-#: src/tables/settings/TemplateTable.tsx:363
+#: src/tables/settings/TemplateTable.tsx:397
 msgid "Filter by enabled status"
 msgstr "按启用状态筛选"
 

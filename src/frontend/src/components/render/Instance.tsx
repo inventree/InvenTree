@@ -21,8 +21,8 @@ import type {
   RenderInstanceProps
 } from '@lib/types/Rendering';
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
+import { shortenString } from '@lib/functions/String';
 import { useApi } from '../../contexts/ApiContext';
-import { shortenString } from '../../functions/tables';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -39,6 +39,7 @@ import {
   RenderParameter,
   RenderParameterTemplate,
   RenderProjectCode,
+  RenderSelectionEntry,
   RenderSelectionList
 } from './Generic';
 import {
@@ -95,6 +96,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
+  [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError
 };
 

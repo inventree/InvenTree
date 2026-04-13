@@ -231,6 +231,47 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             logo = report_tags.logo_image()
             self.assertIn('inventree.png', logo)
 
+    def test_string_tags(self):
+        """Simple tests for the string manipulation tags."""
+        self.assertEqual(report_tags.uppercase('hello world'), 'HELLO WORLD')
+        self.assertEqual(report_tags.lowercase('HELLO WORLD'), 'hello world')
+        self.assertEqual(report_tags.titlecase('hello world'), 'Hello World')
+
+        self.assertEqual(report_tags.strip('  hello world  '), 'hello world')  # noqa: B005
+        self.assertEqual(report_tags.strip('  hello world  ', chars=' hd'), 'ello worl')  # noqa: B005
+        self.assertEqual(report_tags.strip('xxhelloxx', chars='xy'), 'hello')  # noqa: B005
+
+        self.assertEqual(report_tags.lstrip('  hello world  '), 'hello world  ')  # noqa: B005
+        self.assertEqual(report_tags.rstrip('  world  ', chars=' dl'), '  wor')  # noqa: B005
+
+        self.assertEqual(report_tags.split('a,b,c', separator=','), ['a', 'b', 'c'])
+        self.assertEqual(report_tags.split('a,|,b|c', separator='|'), ['a,', ',b', 'c'])
+
+        self.assertEqual(report_tags.join(['a', 'b', 'c'], separator=','), 'a,b,c')
+        self.assertEqual(report_tags.join(['a', 'b', 'c'], separator='|'), 'a|b|c')
+        self.assertEqual(report_tags.join(None, separator=','), '')
+
+        self.assertEqual(report_tags.replace('hello world', 'world'), 'hello ')
+        self.assertEqual(
+            report_tags.replace('hello world', 'world', 'there'), 'hello there'
+        )
+
+        self.assertEqual(report_tags.first('hello world'), 'h')
+        self.assertEqual(report_tags.last('hello world'), 'd')
+        self.assertEqual(report_tags.length('hello world'), 11)
+        self.assertEqual(report_tags.truncate('hello world', length=3), 'hel')
+        self.assertEqual(report_tags.reverse('hello world'), 'dlrow olleh')
+
+    def test_list_tags(self):
+        """Simple tests for list manipulation tags."""
+        self.assertEqual(report_tags.first([1, 2, 3]), 1)
+        self.assertEqual(report_tags.last([1, 2, 3]), 3)
+        self.assertEqual(report_tags.length([1, 2, 3]), 3)
+        self.assertEqual(report_tags.reverse([1, 2, 3]), [3, 2, 1])
+        self.assertEqual(report_tags.truncate([1, 2, 3], 2), [1, 2])
+        self.assertEqual(report_tags.join([1, 2, 3], separator=','), '1,2,3')
+        self.assertEqual(report_tags.join(None, separator=','), '')
+
     def test_maths_tags(self):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)

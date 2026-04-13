@@ -8,7 +8,7 @@ Support for real-world "physical" units of measure is implemented using the [pin
 
 - Ensures consistent use of real units for your inventory management
 - Convert between compatible units of measure from suppliers
-- Enforce use of compatible units when creating part parameters
+- Enforce use of compatible units when creating parameters
 - Enable custom units as required
 
 ### Unit Conversion
@@ -61,7 +61,7 @@ The [supplier part](../part/index.md/#supplier-parts) model uses real-world unit
 
 ### Parameter
 
-The [parameter template](../concepts/parameters.md#parameter-templates) model can specify units of measure, and part parameters can be specified against these templates with compatible units
+The [parameter template](../concepts/parameters.md#parameter-templates) model can specify units of measure, and parameters can be specified against these templates with compatible units
 
 ## Custom Units
 

@@ -50,6 +50,11 @@ def cache_user():
     return cache_setting('user', None)
 
 
+def cache_db():
+    """Return the cache database index."""
+    return cache_setting('db', 0, typecast=int)
+
+
 def is_global_cache_enabled() -> bool:
     """Check if the global cache is enabled.
 
@@ -95,9 +100,11 @@ def get_cache_config(global_cache: bool) -> dict:
         user = cache_user() or ''
 
         if password:
-            redis_url = f'redis://{user}:{password}@{cache_host()}:{cache_port()}/0'
+            redis_url = (
+                f'redis://{user}:{password}@{cache_host()}:{cache_port()}/{cache_db()}'
+            )
         else:
-            redis_url = f'redis://{cache_host()}:{cache_port()}/0'
+            redis_url = f'redis://{cache_host()}:{cache_port()}/{cache_db()}'
 
         keepalive_options = {
             'TCP_KEEPCNT': cache_setting('keepalive_count', 5, typecast=int),

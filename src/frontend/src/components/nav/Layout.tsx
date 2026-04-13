@@ -9,6 +9,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { identifierString } from '@lib/functions/Conversion';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +21,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import GlobalImporterDrawer from '../importer/GlobalImporterDrawer';
 import { ApiIcon } from '../items/ApiIcon';
 import { useInvenTreeContext } from '../plugins/PluginContext';

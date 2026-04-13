@@ -17,7 +17,9 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import type { InvenTreeTableRenderProps } from '@lib/types/Tables';
 import { i18n } from '@lingui/core';
+import { useContextMenu } from 'mantine-contextmenu';
 import { defaultLocale } from '../../contexts/LanguageContext';
 import {
   useAddStockItem,
@@ -43,6 +45,7 @@ import {
   openGlobalImporter
 } from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
@@ -54,6 +57,7 @@ export const useInvenTreeContext = () => {
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+  const { showContextMenu } = useContextMenu();
 
   const contextData = useMemo<InvenTreePluginContext>(() => {
     return {
@@ -82,6 +86,14 @@ export const useInvenTreeContext = () => {
         close: () => closeGlobalImporter(),
         isOpen: () => getGlobalImporterState().isOpen,
         sessionId: () => getGlobalImporterState().sessionId
+      },
+      tables: {
+        renderTable: (props: InvenTreeTableRenderProps<any>) => (
+          <InvenTreeTableInternal
+            {...props}
+            showContextMenu={showContextMenu}
+          />
+        )
       },
       forms: {
         bulkEdit: useBulkEditApiFormModal,

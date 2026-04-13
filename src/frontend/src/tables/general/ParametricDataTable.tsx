@@ -1,4 +1,5 @@
 import { cancelEvent } from '@lib/functions/Events';
+import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   type ApiFormFieldSet,
@@ -25,7 +26,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -144,7 +144,7 @@ export default function ParametricDataTable({
     refetchOnMount: true
   });
 
-  /* Store filters against selected part parameters.
+  /* Store filters against selected parameters.
    * These are stored in the format:
    * {
    *   parameter_1: {

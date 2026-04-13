@@ -13,9 +13,9 @@ import {
 import { IconCamera, IconScan } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { Boundary } from '@lib/components/Boundary';
 import { useLocalStorage } from '@mantine/hooks';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { Boundary } from '../Boundary';
 import BarcodeCameraInput from './BarcodeCameraInput';
 import BarcodeKeyboardInput from './BarcodeKeyboardInput';
 

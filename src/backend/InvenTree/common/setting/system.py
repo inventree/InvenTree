@@ -235,6 +235,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': False,
     },
+    'INVENTREE_SHOW_SUPERUSER_BANNER': {
+        'name': _('Show superuser banner'),
+        'description': _('Show a warning banner in the UI when logged in as superuser'),
+        'validator': bool,
+        'default': True,
+    },
+    'INVENTREE_SHOW_ADMIN_BANNER': {
+        'name': _('Show admin banner'),
+        'description': _('Show a warning banner in the UI when logged in as admin'),
+        'validator': bool,
+        'default': False,
+    },
     'INVENTREE_COMPANY_NAME': {
         'name': _('Company name'),
         'description': _('Internal company name'),

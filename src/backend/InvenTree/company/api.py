@@ -179,6 +179,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('supplier_parts')
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 

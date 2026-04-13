@@ -321,6 +321,7 @@ The following cache settings are available:
 | INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
 | INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
 | INVENTREE_CACHE_USER | cache.user | Cache server username | none |
+| INVENTREE_CACHE_DB | cache.db | Cache server database index | 0 |
 | INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
 | INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
 | INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
@@ -535,7 +536,6 @@ Set the `INVENTREE_FRONTEND_SETTINGS` Environment variable to a JSON object or u
 | `url_compatibility` | Support compatibility with "legacy" URLs? | `true` |
 | `sentry_dsn` | Set a Sentry DSN url | *Not specified* |
 | `mobile_mode` | Controls if InvenTree web UI can be used by mobile devices. There are 3 options: `default` - does not allow mobile devices; `allow-ignore` - shows a mobile device detected banner with a button to ignore this warning AT THE USERS OWN RISK; `allow-always` - skips the mobile check and allows mobile devices always (of course at the server admins OWN RISK) | `default` |
-| `dangerous_hide_evelevated_alert` | Hides the elevated permissions alert in the UI. This is a dangerous option as using the UI with elevated permissions is against the threat model. | `false` |
 
 E.g. to allow mobile devices to ignore the mobile check, use the following Environment variable:
 
