@@ -137,7 +137,7 @@ export function NotificationDrawer({
 
   const markAllAsRead = useCallback(() => {
     api
-      .get(apiUrl(ApiEndpoints.notifications_readall), {
+      .post(apiUrl(ApiEndpoints.notifications_readall), {
         params: {
           read: false
         }
