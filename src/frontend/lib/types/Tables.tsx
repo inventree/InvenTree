@@ -223,4 +223,6 @@ export type InvenTreeTableRenderProps<T extends Record<string, any>> = {
   props: InvenTreeTableProps<T>;
   api: AxiosInstance;
   navigate: NavigateFunction;
+  searchParams?: URLSearchParams;
+  setSearchParams?: (params: URLSearchParams) => void;
 };

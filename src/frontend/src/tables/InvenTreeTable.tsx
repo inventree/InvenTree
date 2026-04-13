@@ -83,7 +83,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   columns,
   props,
   api,
-  navigate
+  navigate,
+  searchParams,
+  setSearchParams
 }: Readonly<InvenTreeTableRenderProps<T>>) {
   const { userTheme } = useLocalState();
 
@@ -103,9 +105,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   const { showContextMenu } = useContextMenu();
 
   const userSettings = useUserSettingsState();
-
-  // Extract URL query parameters (e.g. ?active=true&overdue=false)
-  const [queryFilters, setQueryFilters] = useSearchParams();
 
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
@@ -398,7 +397,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   useEffect(() => {
     tableState.setPage(1);
     tableState.clearSelectedRecords();
-  }, [tableState.searchTerm, tableState.filterSet.activeFilters, queryFilters]);
+  }, [tableState.searchTerm, tableState.filterSet.activeFilters, searchParams]);
 
   // Account for invalid page offsets
   useEffect(() => {
@@ -432,9 +431,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (queryFilters && queryFilters.size > 0) {
+      if (searchParams && searchParams.size > 0) {
         // Allow override of filters based on URL query parameters
-        for (const [key, value] of queryFilters) {
+        for (const [key, value] of searchParams) {
           queryParams[key] = value;
         }
       } else if (tableState.filterSet.activeFilters) {
@@ -473,7 +472,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
-      queryFilters,
+      searchParams,
       tableState.searchTerm,
       getOrderingTerm
     ]
@@ -615,7 +614,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [queryFilters]);
+  }, [searchParams]);
 
   useEffect(() => {
     const loading: boolean =
@@ -831,8 +830,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               hasSwitchableColumns={hasSwitchableColumns}
               columns={dataColumns}
               filters={filters}
-              queryFilters={queryFilters}
-              clearQueryFilters={() => setQueryFilters({})}
+              queryFilters={searchParams}
+              clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
               toggleColumn={toggleColumn}
             />
           </Boundary>
@@ -909,6 +908,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const api = useApi();
   const navigate = useNavigate();
 
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  // Note: These can only be used internally (i.e *not in plugin context)
+  const [searchParams, setSearchParams] = useSearchParams();
+
   return (
     <InvenTreeTableInternal
       url={url}
@@ -918,6 +921,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
       props={props}
       api={api}
       navigate={navigate}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
     />
   );
 }
