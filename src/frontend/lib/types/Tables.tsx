@@ -1,5 +1,6 @@
 import type { MantineStyleProp } from '@mantine/core';
 import type { AxiosInstance } from 'axios';
+import type { ShowContextMenuFunction } from 'mantine-contextmenu';
 import type {
   DataTableCellClickHandler,
   DataTableRowExpansionProps
@@ -223,6 +224,9 @@ export type InvenTreeTableRenderProps<T extends Record<string, any>> = {
   props: InvenTreeTableProps<T>;
   api: AxiosInstance;
   navigate: NavigateFunction;
+
+  // The following attributes are for internal use only (plugins should not use these directly)
+  showContextMenu?: ShowContextMenuFunction;
   searchParams?: URLSearchParams;
   setSearchParams?: (params: URLSearchParams) => void;
 };

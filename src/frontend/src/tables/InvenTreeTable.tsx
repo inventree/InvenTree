@@ -84,6 +84,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   props,
   api,
   navigate,
+  showContextMenu,
   searchParams,
   setSearchParams
 }: Readonly<InvenTreeTableRenderProps<T>>) {
@@ -101,8 +102,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   } = useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
-
-  const { showContextMenu } = useContextMenu();
 
   const userSettings = useUserSettingsState();
 
@@ -710,7 +709,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     const empty = () => {};
     let items: ContextMenuItemOptions[] = [];
 
-    if (props.rowActions) {
+    if (!!props.rowActions) {
       items = props.rowActions(record).map((action) => ({
         key: action.title ?? '',
         title: action.title ?? '',
@@ -748,7 +747,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       });
     }
 
-    return showContextMenu(items)(event);
+    return showContextMenu?.(items)(event);
   };
 
   // Pagination refresh table if pageSize changes
@@ -908,6 +907,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const api = useApi();
   const navigate = useNavigate();
 
+  const { showContextMenu } = useContextMenu();
+
   // Extract URL query parameters (e.g. ?active=true&overdue=false)
   // Note: These can only be used internally (i.e *not in plugin context)
   const [searchParams, setSearchParams] = useSearchParams();
@@ -923,6 +924,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       navigate={navigate}
       searchParams={searchParams}
       setSearchParams={setSearchParams}
+      showContextMenu={showContextMenu}
     />
   );
 }

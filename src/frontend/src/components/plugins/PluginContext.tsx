@@ -19,6 +19,7 @@ import {
 } from '@lib/types/Plugins';
 import type { InvenTreeTableRenderProps } from '@lib/types/Tables';
 import { i18n } from '@lingui/core';
+import { useContextMenu } from 'mantine-contextmenu';
 import { defaultLocale } from '../../contexts/LanguageContext';
 import {
   useAddStockItem,
@@ -56,6 +57,7 @@ export const useInvenTreeContext = () => {
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+  const { showContextMenu } = useContextMenu();
 
   const contextData = useMemo<InvenTreePluginContext>(() => {
     return {
@@ -87,7 +89,10 @@ export const useInvenTreeContext = () => {
       },
       tables: {
         renderTable: (props: InvenTreeTableRenderProps<any>) => (
-          <InvenTreeTableInternal {...props} />
+          <InvenTreeTableInternal
+            {...props}
+            showContextMenu={showContextMenu}
+          />
         )
       },
       forms: {
