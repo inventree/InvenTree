@@ -13,13 +13,13 @@ import {
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
+import { CopyButton } from '@lib/components/CopyButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
-import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
 import type { JSX } from 'react';

@@ -2,6 +2,14 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.11.1 - April 2026
+
+Fixes dependency issues for the `InvenTreeTable` component, which were introduced in `0.11.0`. This ensures that the component works correctly and does not cause issues with plugin builds.
+
+### 0.11.0 - April 2026
+
+Adds the `InvenTreeTable` component, which provides plugins with a method of implementing an API-driven data table which is consistent with the rest of the InvenTree UI. This component supports features such as pagination, sorting, and filtering, and can be used to display data from the InvenTree API in a tabular format.
+
 ### 0.10.1 - April 2026
 
 Allows plugins to specify custom model rendering functions within the data import wizard, allowing import of data models not defined in the core InvenTree codebase.
