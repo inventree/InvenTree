@@ -33,7 +33,7 @@ import {
 } from 'mantine-datatable';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
@@ -103,6 +103,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   const { showContextMenu } = useContextMenu();
 
   const userSettings = useUserSettingsState();
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  const [queryFilters, setQueryFilters] = useSearchParams();
 
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
@@ -395,11 +398,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   useEffect(() => {
     tableState.setPage(1);
     tableState.clearSelectedRecords();
-  }, [
-    tableState.searchTerm,
-    tableState.filterSet.activeFilters,
-    tableState.queryFilters
-  ]);
+  }, [tableState.searchTerm, tableState.filterSet.activeFilters, queryFilters]);
 
   // Account for invalid page offsets
   useEffect(() => {
@@ -433,9 +432,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (tableState.queryFilters && tableState.queryFilters.size > 0) {
+      if (queryFilters && queryFilters.size > 0) {
         // Allow override of filters based on URL query parameters
-        for (const [key, value] of tableState.queryFilters) {
+        for (const [key, value] of queryFilters) {
           queryParams[key] = value;
         }
       } else if (tableState.filterSet.activeFilters) {
@@ -474,7 +473,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
-      tableState.queryFilters,
+      queryFilters,
       tableState.searchTerm,
       getOrderingTerm
     ]
@@ -616,7 +615,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [tableState.queryFilters]);
+  }, [queryFilters]);
 
   useEffect(() => {
     const loading: boolean =
@@ -832,6 +831,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               hasSwitchableColumns={hasSwitchableColumns}
               columns={dataColumns}
               filters={filters}
+              queryFilters={queryFilters}
+              clearQueryFilters={() => setQueryFilters({})}
               toggleColumn={toggleColumn}
             />
           </Boundary>

@@ -48,6 +48,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns,
   columns,
   filters,
+  queryFilters,
+  clearQueryFilters,
   toggleColumn
 }: Readonly<{
   tableUrl?: string;
@@ -56,6 +58,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns: boolean;
   columns: any;
   filters: TableFilter[];
+  queryFilters?: URLSearchParams;
+  clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
 }>) {
   // Filter list visibility
@@ -80,8 +84,8 @@ export default function InvenTreeTableHeader({
     }
 
     // Allow overriding of query parameters
-    if (tableState.queryFilters) {
-      for (const [key, value] of tableState.queryFilters) {
+    if (queryFilters) {
+      for (const [key, value] of queryFilters) {
         if (value != undefined) {
           filters[key] = value;
         }
@@ -89,7 +93,7 @@ export default function InvenTreeTableHeader({
     }
 
     return filters;
-  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
+  }, [tableProps.params, tableState.filterSet, queryFilters]);
 
   const exportModal = useDataExport({
     url: tableUrl ?? '',
@@ -139,12 +143,12 @@ export default function InvenTreeTableHeader({
   });
 
   const hasCustomSearch = useMemo(() => {
-    return tableState.queryFilters.has('search');
-  }, [tableState.queryFilters]);
+    return queryFilters?.has('search');
+  }, [queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    return (tableState?.queryFilters?.size ?? 0) > 0;
-  }, [tableState.queryFilters]);
+    return (queryFilters?.size ?? 0) > 0;
+  }, [queryFilters]);
 
   // Extract ID values for label and report printing
   const printingIdValues = useMemo(() => {
@@ -174,7 +178,7 @@ export default function InvenTreeTableHeader({
           color='yellow'
           withCloseButton
           title={t`Custom table filters are active`}
-          onClose={() => tableState.clearQueryFilters()}
+          onClose={() => clearQueryFilters()}
         />
       )}
       <Group justify='apart' grow wrap='nowrap'>
