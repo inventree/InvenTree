@@ -1,3 +1,4 @@
+import useTable from '@lib/hooks/UseTable';
 import {
   AddItemButton,
   ApiEndpoints,
@@ -18,7 +19,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

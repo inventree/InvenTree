@@ -13,6 +13,7 @@ import type {
 import type { UseModalReturn } from './Modals';
 import type { RenderInstanceProps } from './Rendering';
 import type { SettingsStateProps } from './Settings';
+import type { InvenTreeTableRenderProps } from './Tables';
 import type { UserStateProps } from './User';
 
 export interface PluginProps {
@@ -48,6 +49,10 @@ export type InvenTreeFormsContext = {
   stockActions: StockAdjustmentFormsContext;
 };
 
+export type InvenTreeTablesContext<T extends Record<string, any>> = {
+  renderTable: (props: InvenTreeTableRenderProps<T>) => React.ReactNode;
+};
+
 export type ImporterDrawerContext = {
   open: (sessionId: number, options?: { onClose?: () => void }) => void;
   close: () => void;
@@ -61,20 +66,22 @@ export type ImporterDrawerContext = {
  *
  * @param version - The version of the running InvenTree software stack
  * @param api - The Axios API instance (see ../states/ApiState.tsx)
+ * @param queryClient - The Tanstack QueryClient instance (see ../states/QueryState.tsx)
  * @param user - The current user instance (see ../states/UserState.tsx)
  * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
  * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
- * @param navigate - The navigation function (see react-router-dom)
- * @param theme - The current Mantine theme
- * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
- * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
- * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param modelInformation - A dictionary of available model information
+ * @param renderInstance - A component function for rendering a model instance
  * @param host - The current host URL
  * @param i18n - The i18n instance for translations (from @lingui/core)
  * @param locale - The current locale string (e.g. 'en' / 'de')
+ * @param navigate - The navigation function (see react-router-dom)
+ * @param theme - The current Mantine theme
+ * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
+ * @param tables - A set of functions for rendering API tables
+ * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
  * @param model - The model type associated with the rendered component (if applicable)
- * @param modelInformation - A dictionary of available model information
- * @param renderInstance - A component function for rendering a model instance
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
  * @param reloadContent - A function which can be called to reload the plugin content
@@ -95,9 +102,10 @@ export type InvenTreePluginContext = {
   locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
-  forms: InvenTreeFormsContext;
-  importer: ImporterDrawerContext;
   colorScheme: MantineColorScheme;
+  forms: InvenTreeFormsContext;
+  tables: InvenTreeTablesContext<any>;
+  importer: ImporterDrawerContext;
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;

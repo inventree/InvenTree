@@ -3,11 +3,11 @@ import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
 
+import { useStoredTableState } from '@lib/states/StoredTableState';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
-import { useStoredTableState } from '../states/StoredTableState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';
