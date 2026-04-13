@@ -1,6 +1,5 @@
 import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import type { FilterSetState, TableFilter } from '../types/Filters';
 import type { TableState } from '../types/Tables';
@@ -28,13 +27,6 @@ export default function useTable(
   function generateTableName() {
     return `${tableName.replaceAll('-', '')}-${randomId()}`;
   }
-
-  // Extract URL query parameters (e.g. ?active=true&overdue=false)
-  const [queryFilters, setQueryFilters] = useSearchParams();
-
-  const clearQueryFilters = useCallback(() => {
-    setQueryFilters({});
-  }, []);
 
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
@@ -133,9 +125,6 @@ export default function useTable(
     isLoading,
     setIsLoading,
     filterSet,
-    queryFilters,
-    setQueryFilters,
-    clearQueryFilters,
     expandedRecords,
     setExpandedRecords,
     isRowExpanded,
