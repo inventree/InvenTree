@@ -2,6 +2,15 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.11.2 - April 2026
+
+Exposes additional type definitions related to tables and filters:
+
+- TableFilterChoice
+- TableFilterType
+- TableFilter
+- FilterSetState
+
 ### 0.11.1 - April 2026
 
 Fixes dependency issues for the `InvenTreeTable` component, which were introduced in `0.11.0`. This ensures that the component works correctly and does not cause issues with plugin builds.

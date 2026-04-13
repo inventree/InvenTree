@@ -31,6 +31,13 @@ export type {
 } from './types/Tables';
 
 export type {
+  TableFilterChoice,
+  TableFilterType,
+  TableFilter,
+  FilterSetState
+} from './types/Filters';
+
+export type {
   ApiFormFieldChoice,
   ApiFormFieldHeader,
   ApiFormFieldType,
