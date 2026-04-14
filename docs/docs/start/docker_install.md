@@ -241,7 +241,7 @@ By default, the Dockerized InvenTree web server binds to all available network i
 This can be adjusted using the following environment variables:
 
 | Environment Variable | Default |
-| --- | --- | --- | --- |
+| --- | --- |
 | INVENTREE_WEB_ADDR | 0.0.0.0 |
 | INVENTREE_WEB_PORT | 8000 |
 
