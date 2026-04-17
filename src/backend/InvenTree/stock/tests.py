@@ -812,7 +812,7 @@ class StockTest(StockTestBase):
 
         part = Part.objects.filter(virtual=False).first()
 
-        for currency in ['AUD', 'USD', 'JPY']:
+        for currency in ['AUD', 'USD', 'JPY','BRL']:
             set_global_setting('INVENTREE_DEFAULT_CURRENCY', currency)
             self.assertEqual(currency_code_default(), currency)
 
@@ -825,7 +825,13 @@ class StockTest(StockTestBase):
                 part=part, quantity=10, purchase_price=Money(5, 'GBP')
             )
             self.assertEqual(item.purchase_price_currency, 'GBP')
-
+            if currency == 'BRL':
+                item = StockItem.objects.create(
+                    part=part,
+                    quantity=10,
+                    purchase_price=Money(5, 'BRL')
+                )
+                self.assertEqual(item.purchase_price_currency, 'BRL')
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app."""

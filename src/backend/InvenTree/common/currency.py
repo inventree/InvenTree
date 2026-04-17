@@ -49,7 +49,7 @@ def all_currency_codes() -> list:
 
 def currency_codes_default_list() -> str:
     """Return a comma-separated list of default currency codes."""
-    return 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'
+    return 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD,BRL'
 
 
 def currency_codes() -> list:

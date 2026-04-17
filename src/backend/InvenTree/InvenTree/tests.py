@@ -617,6 +617,10 @@ class FormatTest(TestCase):
             (Money(0.585787, 'USD'), 1, True, '$0.6'),
             (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),
             (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
+            (Money(0.916530, 'BRL'), 1, True, 'R$0.9'),
+            (Money(7587.849178, 'BRL'), 0, True, 'R$7,588'),
+            (Money(0.585787, 'BRL'), 1, True, 'R$0.6')
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
