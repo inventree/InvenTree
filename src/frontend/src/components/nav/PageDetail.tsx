@@ -1,8 +1,8 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 
+import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { shortenString } from '../../functions/tables';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';

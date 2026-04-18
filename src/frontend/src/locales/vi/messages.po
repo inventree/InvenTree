@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-31 23:36\n"
+"PO-Revision-Date: 2026-04-13 10:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -18,9 +18,25 @@ msgstr ""
 "X-Crowdin-File: /src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 252\n"
 
+#: lib/components/Boundary.tsx:14
+msgid "Error rendering component"
+msgstr "Lỗi khi hiển thị thành phần"
+
+#: lib/components/Boundary.tsx:16
+msgid "An error occurred while rendering this component. Refer to the console for more information."
+msgstr "Một lỗi đã xảy ra trong quá trình hiển thị thành phần này. Vui lòng tham khảo bảng điều khiển để biết thêm thông tin."
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copied"
+msgstr "Đã sao chép"
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copy"
+msgstr "Sao chép"
+
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:64
+#: src/pages/Index/Scan.tsx:62
 msgid "Duplicate"
 msgstr "Nhân bản"
 
@@ -30,12 +46,12 @@ msgid "Edit"
 msgstr "Sửa"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:770
+#: src/components/forms/ApiForm.tsx:769
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:170
 #: src/pages/Notifications.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:249
+#: src/tables/plugin/PluginListTable.tsx:247
 msgid "Delete"
 msgstr "Xóa"
 
@@ -56,7 +72,7 @@ msgstr "Hủy bỏ"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:890
+#: src/forms/PurchaseOrderForms.tsx:891
 #: src/forms/StockForms.tsx:805
 #: src/forms/StockForms.tsx:852
 #: src/forms/StockForms.tsx:905
@@ -68,14 +84,19 @@ msgid "Actions"
 msgstr "Chức năng"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:480
-#: src/components/nav/Header.tsx:169
+#: src/components/forms/fields/RelatedModelField.tsx:493
+#: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
-#: src/pages/part/PartDetail.tsx:1201
+#: src/pages/part/PartDetail.tsx:1168
 msgid "Search"
 msgstr "Tìm kiếm"
+
+#: lib/components/TableColumnSelect.tsx:16
+#: lib/components/TableColumnSelect.tsx:23
+msgid "Select Columns"
+msgstr "Chọn cột"
 
 #: lib/components/YesNoButton.tsx:20
 msgid "Pass"
@@ -105,9 +126,9 @@ msgstr "Không"
 #: src/forms/BuildForms.tsx:669
 #: src/forms/BuildForms.tsx:833
 #: src/forms/BuildForms.tsx:936
-#: src/forms/PurchaseOrderForms.tsx:886
-#: src/forms/ReturnOrderForms.tsx:243
-#: src/forms/SalesOrderForms.tsx:428
+#: src/forms/PurchaseOrderForms.tsx:887
+#: src/forms/ReturnOrderForms.tsx:244
+#: src/forms/SalesOrderForms.tsx:429
 #: src/forms/StockForms.tsx:368
 #: src/forms/StockForms.tsx:800
 #: src/forms/StockForms.tsx:847
@@ -119,7 +140,7 @@ msgstr "Không"
 #: src/forms/StockForms.tsx:1143
 #: src/forms/StockForms.tsx:1187
 #: src/pages/build/BuildDetail.tsx:219
-#: src/pages/part/PartDetail.tsx:1253
+#: src/pages/part/PartDetail.tsx:1220
 #: src/tables/ColumnRenderers.tsx:91
 #: src/tables/build/BuildOrderParametricTable.tsx:26
 #: src/tables/part/PartTestResultTable.tsx:247
@@ -133,12 +154,12 @@ msgstr "Phụ kiện"
 #: lib/enums/Roles.tsx:35
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:197
+#: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/CategoryDetail.tsx:135
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:340
 #: src/pages/part/CategoryDetail.tsx:371
-#: src/pages/part/PartDetail.tsx:989
+#: src/pages/part/PartDetail.tsx:956
 msgid "Parts"
 msgstr "Phụ tùng"
 
@@ -159,8 +180,8 @@ msgstr ""
 #: src/components/panels/ParametersPanel.tsx:21
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
-#: src/pages/Index/Settings/SystemSettings.tsx:191
-#: src/pages/part/PartDetail.tsx:953
+#: src/pages/Index/Settings/SystemSettings.tsx:193
+#: src/pages/part/PartDetail.tsx:920
 msgid "Parameters"
 msgstr "Thông số"
 
@@ -222,7 +243,7 @@ msgstr "Danh mục phụ kiện"
 #: lib/enums/Roles.tsx:37
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:362
-#: src/pages/part/PartDetail.tsx:1242
+#: src/pages/part/PartDetail.tsx:1209
 msgid "Part Categories"
 msgstr "Danh mục phụ kiện"
 
@@ -230,7 +251,7 @@ msgstr "Danh mục phụ kiện"
 #: src/forms/BuildForms.tsx:512
 #: src/forms/BuildForms.tsx:672
 #: src/forms/BuildForms.tsx:834
-#: src/forms/SalesOrderForms.tsx:430
+#: src/forms/SalesOrderForms.tsx:431
 #: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/ColumnRenderers.tsx:129
 #: src/tables/part/PartTestResultTable.tsx:256
@@ -273,8 +294,8 @@ msgid "Stock Location Types"
 msgstr "Phân loại vị trí kho hàng"
 
 #: lib/enums/ModelInformation.tsx:114
-#: src/pages/Index/Settings/SystemSettings.tsx:255
-#: src/pages/part/PartDetail.tsx:910
+#: src/pages/Index/Settings/SystemSettings.tsx:257
+#: src/pages/part/PartDetail.tsx:877
 msgid "Stock History"
 msgstr "Lịch sử kho hàng"
 
@@ -348,10 +369,10 @@ msgstr "Đơn đặt mua"
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/SystemSettings.tsx:301
+#: src/pages/Index/Settings/SystemSettings.tsx:303
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
-#: src/pages/part/PartDetail.tsx:874
+#: src/pages/part/PartDetail.tsx:841
 #: src/pages/purchasing/PurchasingIndex.tsx:66
 msgid "Purchase Orders"
 msgstr "Đơn hàng mua"
@@ -381,9 +402,9 @@ msgstr "Đơn đặt bán"
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:116
-#: src/pages/Index/Settings/SystemSettings.tsx:317
+#: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/company/CompanyDetail.tsx:224
-#: src/pages/part/PartDetail.tsx:886
+#: src/pages/part/PartDetail.tsx:853
 #: src/pages/sales/SalesIndex.tsx:53
 msgid "Sales Orders"
 msgstr "Đơn hàng bán"
@@ -406,9 +427,9 @@ msgstr "Đơn hàng trả lại"
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:334
+#: src/pages/Index/Settings/SystemSettings.tsx:336
 #: src/pages/company/CompanyDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:893
+#: src/pages/part/PartDetail.tsx:860
 #: src/pages/sales/SalesIndex.tsx:99
 msgid "Return Orders"
 msgstr "Đơn hàng trả lại"
@@ -464,7 +485,7 @@ msgstr "Chủ sở hữu"
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:77
+#: src/tables/settings/ImportSessionTable.tsx:78
 #: src/tables/stock/StockTrackingTable.tsx:225
 #: src/tables/stock/StockTrackingTable.tsx:273
 msgid "User"
@@ -546,6 +567,14 @@ msgid "Selection Lists"
 msgstr "Danh sách chọn"
 
 #: lib/enums/ModelInformation.tsx:291
+msgid "Selection Entry"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:292
+msgid "Selection Entries"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:298
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:281
@@ -553,13 +582,13 @@ msgstr "Danh sách chọn"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/forms/fields/ApiFormField.tsx:251
 #: src/components/forms/fields/TableField.tsx:45
-#: src/components/importer/ImportDataSelector.tsx:192
-#: src/components/importer/ImporterColumnSelector.tsx:261
-#: src/components/importer/ImporterDrawer.tsx:88
+#: src/components/importer/ImportDataSelector.tsx:215
+#: src/components/importer/ImporterColumnSelector.tsx:278
+#: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:211
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:572
+#: src/components/nav/SearchDrawer.tsx:588
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
@@ -574,14 +603,14 @@ msgstr "Danh sách chọn"
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTableHeader.tsx:124
-#: src/tables/bom/BomTable.tsx:561
+#: src/tables/InvenTreeTableHeader.tsx:128
+#: src/tables/bom/BomTable.tsx:557
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
 msgid "Error"
 msgstr "Lỗi"
 
-#: lib/enums/ModelInformation.tsx:292
+#: lib/enums/ModelInformation.tsx:299
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
@@ -593,12 +622,45 @@ msgstr "Quản trị"
 
 #: lib/enums/Roles.tsx:33
 #: src/defaults/actions.tsx:146
-#: src/pages/Index/Settings/SystemSettings.tsx:282
+#: src/pages/Index/Settings/SystemSettings.tsx:284
 #: src/pages/build/BuildIndex.tsx:67
-#: src/pages/part/PartDetail.tsx:903
+#: src/pages/part/PartDetail.tsx:870
 #: src/pages/sales/SalesOrderDetail.tsx:431
 msgid "Build Orders"
 msgstr "Đơn đặt bản dựng"
+
+#: lib/functions/Notification.tsx:11
+msgid "Not implemented"
+msgstr "Chưa triển khai"
+
+#: lib/functions/Notification.tsx:12
+msgid "This feature is not yet implemented"
+msgstr "Tính năng này vẫn chưa được triển khai"
+
+#: lib/functions/Notification.tsx:23
+#: src/components/errors/PermissionDenied.tsx:8
+msgid "Permission Denied"
+msgstr "Từ chối phân quyền"
+
+#: lib/functions/Notification.tsx:24
+msgid "You do not have permission to perform this action"
+msgstr "Bạn không có quyền thực hiện hành động này"
+
+#: lib/functions/Notification.tsx:35
+msgid "Invalid Return Code"
+msgstr "Mã trả hàng không hợp lệ"
+
+#: lib/functions/Notification.tsx:36
+msgid "Server returned status {returnCode}"
+msgstr "Mã phản hồi của máy chủ {returnCode}"
+
+#: lib/functions/Notification.tsx:46
+msgid "Timeout"
+msgstr ""
+
+#: lib/functions/Notification.tsx:47
+msgid "The request timed out"
+msgstr ""
 
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
@@ -608,14 +670,6 @@ msgstr ""
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
 msgstr ""
-
-#: src/components/Boundary.tsx:14
-msgid "Error rendering component"
-msgstr "Lỗi khi hiển thị thành phần"
-
-#: src/components/Boundary.tsx:16
-msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr "Một lỗi đã xảy ra trong quá trình hiển thị thành phần này. Vui lòng tham khảo bảng điều khiển để biết thêm thông tin."
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
@@ -680,8 +734,8 @@ msgstr "Nhập dữ liệu mã vạch"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:27
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:506
-#: src/forms/PurchaseOrderForms.tsx:647
+#: src/forms/PurchaseOrderForms.tsx:507
+#: src/forms/PurchaseOrderForms.tsx:648
 msgid "Scan Barcode"
 msgstr "Quét mã vạch"
 
@@ -696,11 +750,11 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:496
+#: src/components/forms/ApiForm.tsx:495
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:552
+#: src/tables/bom/BomTable.tsx:548
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Thành công"
@@ -710,7 +764,7 @@ msgid "Failed to handle barcode"
 msgstr ""
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:129
+#: src/pages/Index/Scan.tsx:127
 msgid "Failed to scan barcode"
 msgstr "Quét mã vạch thất bại"
 
@@ -751,7 +805,7 @@ msgid "Failed to link barcode"
 msgstr "Liên kết với mã vạch thất bại"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetail.tsx:538
+#: src/pages/part/PartDetail.tsx:498
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:223
 #: src/pages/sales/ReturnOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderDetail.tsx:182
@@ -766,7 +820,7 @@ msgstr "Thao tác này sẽ xóa liên kết đến mã vạch được liên k�
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:192
-#: src/forms/PurchaseOrderForms.tsx:637
+#: src/forms/PurchaseOrderForms.tsx:638
 msgid "Unlink Barcode"
 msgstr "Gỡ liên kết mã vạch"
 
@@ -777,14 +831,6 @@ msgstr "Mở trong giao diện quản trị"
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
 #~ msgstr "Copy to clipboard"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copied"
-msgstr "Đã sao chép"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copy"
-msgstr "Sao chép"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Labels"
@@ -922,7 +968,7 @@ msgstr ""
 #~ msgstr "Download data"
 
 #: src/components/calendar/Calendar.tsx:194
-#: src/tables/InvenTreeTableHeader.tsx:288
+#: src/tables/InvenTreeTableHeader.tsx:292
 msgid "Export data"
 msgstr ""
 
@@ -1252,16 +1298,25 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
 #: src/pages/core/UserDetail.tsx:93
 #: src/pages/core/UserDetail.tsx:203
-#: src/tables/settings/UserTable.tsx:410
+#: src/tables/settings/UserTable.tsx:411
 msgid "Superuser"
+msgstr ""
+
+#: src/components/details/Details.tsx:130
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+#: src/pages/core/UserDetail.tsx:87
+#: src/pages/core/UserDetail.tsx:200
+#: src/tables/settings/UserTable.tsx:285
+#: src/tables/settings/UserTable.tsx:406
+msgid "Administrator"
 msgstr ""
 
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
 #: src/tables/settings/UserTable.tsx:405
-msgid "Staff"
-msgstr ""
+#~ msgid "Staff"
+#~ msgstr "Staff"
 
 #: src/components/details/Details.tsx:131
 msgid "Email: "
@@ -1334,7 +1389,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #: src/components/details/DetailsImage.tsx:306
-#: src/components/forms/ApiForm.tsx:712
+#: src/components/forms/ApiForm.tsx:711
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
@@ -1570,11 +1625,6 @@ msgstr "Không tìm thấy trang"
 msgid "This page does not exist"
 msgstr "Trang không tồn tại"
 
-#: src/components/errors/PermissionDenied.tsx:8
-#: src/functions/notifications.tsx:25
-msgid "Permission Denied"
-msgstr "Từ chối phân quyền"
-
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
 msgstr "Bạn không có quyền xem trang này"
@@ -1587,8 +1637,8 @@ msgstr "Lỗi máy chủ"
 msgid "A server error occurred"
 msgstr "Xảy ra lỗi máy chủ"
 
-#: src/components/forms/ApiForm.tsx:108
-#: src/components/forms/ApiForm.tsx:624
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:623
 msgid "Form Error"
 msgstr "Lỗi form"
 
@@ -1596,11 +1646,11 @@ msgstr "Lỗi form"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:634
+#: src/components/forms/ApiForm.tsx:633
 msgid "Errors exist for one or more form fields"
 msgstr "Lỗi nhập liệu"
 
-#: src/components/forms/ApiForm.tsx:750
+#: src/components/forms/ApiForm.tsx:749
 #: src/hooks/UseForm.tsx:139
 #: src/tables/plugin/PluginListTable.tsx:210
 msgid "Update"
@@ -1791,7 +1841,7 @@ msgstr "Host"
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:91
-#: src/pages/part/PartDetail.tsx:463
+#: src/pages/part/PartDetail.tsx:421
 #: src/pages/stock/LocationDetail.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
@@ -1871,7 +1921,7 @@ msgid "Version"
 msgstr "Phiên bản"
 
 #: src/components/forms/InstanceOptions.tsx:137
-#: src/components/modals/AboutInvenTreeModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:119
 #: src/components/modals/ServerInfoModal.tsx:34
 msgid "API Version"
 msgstr "Phiên bản API"
@@ -1885,11 +1935,11 @@ msgid "Plugins"
 msgstr "Plugins"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:153
-#: src/tables/general/ParameterTemplateTable.tsx:188
+#: src/tables/general/ParameterTemplateTable.tsx:157
+#: src/tables/general/ParameterTemplateTable.tsx:192
 #: src/tables/part/PartTestTemplateTable.tsx:117
-#: src/tables/settings/TemplateTable.tsx:251
-#: src/tables/settings/TemplateTable.tsx:362
+#: src/tables/settings/TemplateTable.tsx:285
+#: src/tables/settings/TemplateTable.tsx:396
 #: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Enabled"
 msgstr ""
@@ -1932,7 +1982,7 @@ msgid "Uncategorized"
 msgstr "Chưa có danh mục"
 
 #: src/components/forms/fields/IconField.tsx:211
-#: src/components/nav/Layout.tsx:139
+#: src/components/nav/Layout.tsx:141
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "Tìm kiếm..."
@@ -1951,13 +2001,13 @@ msgstr "Chọn gói"
 msgid "{0} icons"
 msgstr "{0} icons"
 
-#: src/components/forms/fields/RelatedModelField.tsx:481
-#: src/components/modals/AboutInvenTreeModal.tsx:96
+#: src/components/forms/fields/RelatedModelField.tsx:494
+#: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Đang tải"
 
-#: src/components/forms/fields/RelatedModelField.tsx:483
+#: src/components/forms/fields/RelatedModelField.tsx:496
 msgid "No results found"
 msgstr "Không có kết quả nào được tìm thấy"
 
@@ -1981,66 +2031,66 @@ msgstr ""
 msgid "Thumbnail"
 msgstr "Ảnh thu nhỏ"
 
-#: src/components/importer/ImportDataSelector.tsx:175
+#: src/components/importer/ImportDataSelector.tsx:198
 msgid "Importing Rows"
 msgstr "Nhập theo hàng"
 
-#: src/components/importer/ImportDataSelector.tsx:176
+#: src/components/importer/ImportDataSelector.tsx:199
 msgid "Please wait while the data is imported"
 msgstr "Vui lòng đợi trong khi dữ liệu được cập nhật"
 
-#: src/components/importer/ImportDataSelector.tsx:193
+#: src/components/importer/ImportDataSelector.tsx:216
 msgid "An error occurred while importing data"
 msgstr "Xảy ra lỗi khi nhập dữ liệu"
 
-#: src/components/importer/ImportDataSelector.tsx:214
+#: src/components/importer/ImportDataSelector.tsx:237
 msgid "Edit Data"
 msgstr "Sửa dữ liệu"
 
-#: src/components/importer/ImportDataSelector.tsx:246
+#: src/components/importer/ImportDataSelector.tsx:269
 msgid "Delete Row"
 msgstr "Xoá hàng"
 
-#: src/components/importer/ImportDataSelector.tsx:280
+#: src/components/importer/ImportDataSelector.tsx:303
 msgid "Row"
 msgstr "Hàng"
 
-#: src/components/importer/ImportDataSelector.tsx:298
+#: src/components/importer/ImportDataSelector.tsx:321
 msgid "Row contains errors"
 msgstr "Hàng"
 
-#: src/components/importer/ImportDataSelector.tsx:339
+#: src/components/importer/ImportDataSelector.tsx:366
 msgid "Accept"
 msgstr "Chấp nhận"
 
-#: src/components/importer/ImportDataSelector.tsx:372
+#: src/components/importer/ImportDataSelector.tsx:399
 msgid "Valid"
 msgstr "Hợp lệ"
 
-#: src/components/importer/ImportDataSelector.tsx:373
+#: src/components/importer/ImportDataSelector.tsx:400
 msgid "Filter by row validation status"
 msgstr "Lọc theo tình trạng xác thực"
 
-#: src/components/importer/ImportDataSelector.tsx:378
+#: src/components/importer/ImportDataSelector.tsx:405
 #: src/components/wizards/WizardDrawer.tsx:113
 #: src/tables/build/BuildOutputTable.tsx:582
 msgid "Complete"
 msgstr "Hoàn thành"
 
-#: src/components/importer/ImportDataSelector.tsx:379
+#: src/components/importer/ImportDataSelector.tsx:406
 msgid "Filter by row completion status"
 msgstr "Lọc theo trạng thái hoàn thành"
 
-#: src/components/importer/ImportDataSelector.tsx:397
+#: src/components/importer/ImportDataSelector.tsx:424
 msgid "Import selected rows"
 msgstr "Nhập các hàng đã chọn"
 
-#: src/components/importer/ImportDataSelector.tsx:412
+#: src/components/importer/ImportDataSelector.tsx:439
 msgid "Processing Data"
 msgstr "Đang xử lý dữ liệu"
 
 #: src/components/importer/ImporterColumnSelector.tsx:56
-#: src/components/importer/ImporterColumnSelector.tsx:230
+#: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:397
@@ -2063,55 +2113,55 @@ msgstr "Chọn cột hoặc để trống để bỏ qua trường này."
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:236
+#: src/components/importer/ImporterColumnSelector.tsx:253
 msgid "Ignore this field"
 msgstr "Bỏ qua trường này"
 
-#: src/components/importer/ImporterColumnSelector.tsx:250
+#: src/components/importer/ImporterColumnSelector.tsx:267
 msgid "Mapping data columns to database fields"
 msgstr "Đang ánh xạ các cột vào các trường cơ sở dữ liệu"
 
-#: src/components/importer/ImporterColumnSelector.tsx:255
+#: src/components/importer/ImporterColumnSelector.tsx:272
 msgid "Accept Column Mapping"
 msgstr "Chấp nhận ánh xạ cột"
 
-#: src/components/importer/ImporterColumnSelector.tsx:268
+#: src/components/importer/ImporterColumnSelector.tsx:285
 msgid "Database Field"
 msgstr "Trường cơ sở dữ liệu"
 
-#: src/components/importer/ImporterColumnSelector.tsx:269
+#: src/components/importer/ImporterColumnSelector.tsx:286
 msgid "Field Description"
 msgstr "Mô tả trường"
 
-#: src/components/importer/ImporterColumnSelector.tsx:270
+#: src/components/importer/ImporterColumnSelector.tsx:287
 msgid "Imported Column"
 msgstr "Cột nhập khẩu"
 
-#: src/components/importer/ImporterColumnSelector.tsx:271
+#: src/components/importer/ImporterColumnSelector.tsx:288
 msgid "Default Value"
 msgstr "Giá trị mặc định"
 
-#: src/components/importer/ImporterDrawer.tsx:43
+#: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
 msgstr "Tải file"
 
-#: src/components/importer/ImporterDrawer.tsx:44
+#: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
 msgstr "Ánh xạ cột"
 
-#: src/components/importer/ImporterDrawer.tsx:45
+#: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Rows"
 msgstr ""
 
-#: src/components/importer/ImporterDrawer.tsx:46
+#: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
 msgstr "Truy cập dữ liệu"
 
-#: src/components/importer/ImporterDrawer.tsx:47
+#: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
 msgstr "Hoàn thành nhập dữ liệu"
 
-#: src/components/importer/ImporterDrawer.tsx:89
+#: src/components/importer/ImporterDrawer.tsx:92
 msgid "Failed to fetch import session data"
 msgstr ""
 
@@ -2119,16 +2169,16 @@ msgstr ""
 #~ msgid "Cancel import session"
 #~ msgstr "Cancel import session"
 
-#: src/components/importer/ImporterDrawer.tsx:104
+#: src/components/importer/ImporterDrawer.tsx:114
 msgid "Import Complete"
 msgstr "Nhập dữ liệu thành công"
 
-#: src/components/importer/ImporterDrawer.tsx:107
+#: src/components/importer/ImporterDrawer.tsx:117
 msgid "Data has been imported successfully"
 msgstr "Dữ liệu đã được nhập thành công"
 
-#: src/components/importer/ImporterDrawer.tsx:109
-#: src/components/modals/AboutInvenTreeModal.tsx:205
+#: src/components/importer/ImporterDrawer.tsx:119
+#: src/components/modals/AboutInvenTreeModal.tsx:200
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:137
@@ -2140,7 +2190,7 @@ msgstr "Đóng"
 #~ msgid "Import session has unknown status"
 #~ msgstr "Import session has unknown status"
 
-#: src/components/importer/ImporterDrawer.tsx:128
+#: src/components/importer/ImporterDrawer.tsx:138
 msgid "Importing Data"
 msgstr "Đang nhập dữ liệu"
 
@@ -2165,8 +2215,8 @@ msgstr ""
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:171
-#: src/tables/InvenTreeTableHeader.tsx:192
-#: src/tables/InvenTreeTableHeader.tsx:193
+#: src/tables/InvenTreeTableHeader.tsx:196
+#: src/tables/InvenTreeTableHeader.tsx:197
 msgid "Barcode Actions"
 msgstr "Chức năng mã vạch"
 
@@ -2254,8 +2304,12 @@ msgstr ""
 
 #: src/components/items/OnlyStaff.tsx:10
 #: src/components/modals/AboutInvenTreeModal.tsx:50
-msgid "This information is only available for staff users"
-msgstr "Thông tin này chỉ khả dụng với nhân viên"
+#~ msgid "This information is only available for staff users"
+#~ msgstr "This information is only available for staff users"
+
+#: src/components/items/OnlyStaff.tsx:11
+msgid "This information is only available for administrative users"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2323,7 +2377,7 @@ msgstr ""
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:1024
+#: src/pages/part/PartDetail.tsx:991
 #: src/pages/stock/StockDetail.tsx:265
 #: src/pages/stock/StockDetail.tsx:944
 #: src/tables/ColumnRenderers.tsx:243
@@ -2342,31 +2396,31 @@ msgstr ""
 #~ msgid "Your InvenTree version status is"
 #~ msgstr "Your InvenTree version status is"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:118
+#: src/components/modals/AboutInvenTreeModal.tsx:113
 msgid "InvenTree Version"
 msgstr "Phiên bản InvenTree"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:130
+#: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "Python Version"
 msgstr "Phiên bản Python"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:135
+#: src/components/modals/AboutInvenTreeModal.tsx:130
 msgid "Django Version"
 msgstr "Phiên bản Django"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:144
+#: src/components/modals/AboutInvenTreeModal.tsx:139
 msgid "Commit Hash"
 msgstr "Commit Hash"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:149
+#: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Commit Date"
 msgstr "Ngày commit"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:154
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Commit Branch"
 msgstr "Nhánh commit"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:165
+#: src/components/modals/AboutInvenTreeModal.tsx:160
 msgid "Version Information"
 msgstr "Thông tin phiên bản"
 
@@ -2379,28 +2433,28 @@ msgstr "Thông tin phiên bản"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-#~ msgid "View Code on GitHub"
-#~ msgstr "View Code on GitHub"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:174
 msgid "Links"
 msgstr "Liên kết"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:180
+#: src/components/modals/AboutInvenTreeModal.tsx:169
+#~ msgid "View Code on GitHub"
+#~ msgstr "View Code on GitHub"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:175
 #: src/components/nav/NavigationDrawer.tsx:208
 #: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Tài liệu"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:181
+#: src/components/modals/AboutInvenTreeModal.tsx:176
 msgid "Source Code"
 msgstr ""
 
-#: src/components/modals/AboutInvenTreeModal.tsx:182
+#: src/components/modals/AboutInvenTreeModal.tsx:177
 msgid "Mobile App"
 msgstr "Ứng dụng di động"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:183
+#: src/components/modals/AboutInvenTreeModal.tsx:178
 msgid "Submit Bug Report"
 msgstr "Gửi báo cáo lỗi"
 
@@ -2409,19 +2463,19 @@ msgstr "Gửi báo cáo lỗi"
 #~ msgid "Dismiss"
 #~ msgstr "Dismiss"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:195
+#: src/components/modals/AboutInvenTreeModal.tsx:190
 msgid "Copy version information"
 msgstr "Sao chép thông tin phiên bản"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:215
+#: src/components/modals/AboutInvenTreeModal.tsx:210
 msgid "Development Version"
 msgstr "Phiên bản phát triển"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:217
+#: src/components/modals/AboutInvenTreeModal.tsx:212
 msgid "Up to Date"
 msgstr "Mới nhất"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:219
+#: src/components/modals/AboutInvenTreeModal.tsx:214
 msgid "Update Available"
 msgstr "Có bản cập nhật mới"
 
@@ -2581,17 +2635,33 @@ msgstr ""
 msgid "Learn more about {code}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:188
+#: src/components/nav/Header.tsx:209
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:122
+#: src/pages/Index/Settings/SystemSettings.tsx:124
 #: src/pages/Index/Settings/UserSettings.tsx:107
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
 msgstr "Thông báo"
 
-#: src/components/nav/Layout.tsx:142
+#: src/components/nav/Header.tsx:216
+#~ msgid "Administrator Mode"
+#~ msgstr "Administrator Mode"
+
+#: src/components/nav/Header.tsx:231
+msgid "Superuser Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:231
+msgid "Admin Mode"
+msgstr ""
+
+#: src/components/nav/Header.tsx:237
+msgid "The current user has elevated privileges and should not be used for regular usage."
+msgstr ""
+
+#: src/components/nav/Layout.tsx:144
 msgid "Nothing found..."
 msgstr "Không tìm thấy..."
 
@@ -2634,8 +2704,8 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:366
-#: src/pages/Index/Settings/SystemSettings.tsx:371
+#: src/pages/Index/Settings/SystemSettings.tsx:368
+#: src/pages/Index/Settings/SystemSettings.tsx:373
 msgid "System Settings"
 msgstr "Thiết lập hệ thống"
 
@@ -2685,8 +2755,8 @@ msgstr "Đăng xuất"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:803
-#: src/pages/Index/Settings/SystemSettings.tsx:231
-#: src/pages/part/PartDetail.tsx:803
+#: src/pages/Index/Settings/SystemSettings.tsx:233
+#: src/pages/part/PartDetail.tsx:770
 #: src/pages/stock/LocationDetail.tsx:427
 #: src/pages/stock/LocationDetail.tsx:457
 #: src/pages/stock/StockDetail.tsx:643
@@ -2751,41 +2821,41 @@ msgstr "Bạn chưa có thông báo mới."
 msgid "Error loading notifications."
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:106
+#: src/components/nav/SearchDrawer.tsx:111
 msgid "No Overview Available"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:107
+#: src/components/nav/SearchDrawer.tsx:112
 msgid "No overview available for this model type"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:125
+#: src/components/nav/SearchDrawer.tsx:130
 msgid "View all results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:145
 msgid "results"
 msgstr "kết quả"
 
-#: src/components/nav/SearchDrawer.tsx:144
+#: src/components/nav/SearchDrawer.tsx:149
 msgid "Remove search group"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:288
+#: src/components/nav/SearchDrawer.tsx:304
 #: src/pages/company/ManufacturerPartDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:861
+#: src/pages/part/PartDetail.tsx:828
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:100
 msgid "Suppliers"
 msgstr "Nhà cung cấp"
 
-#: src/components/nav/SearchDrawer.tsx:298
+#: src/components/nav/SearchDrawer.tsx:314
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:150
 msgid "Manufacturers"
 msgstr "Nhà sản xuất"
 
-#: src/components/nav/SearchDrawer.tsx:308
+#: src/components/nav/SearchDrawer.tsx:324
 #: src/pages/sales/SalesIndex.tsx:133
 msgid "Customers"
 msgstr "Khách hàng"
@@ -2794,41 +2864,41 @@ msgstr "Khách hàng"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:477
+#: src/components/nav/SearchDrawer.tsx:493
 msgid "Enter search text"
 msgstr "Nhập văn bản tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:488
+#: src/components/nav/SearchDrawer.tsx:504
 msgid "Refresh search results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:499
-#: src/components/nav/SearchDrawer.tsx:506
+#: src/components/nav/SearchDrawer.tsx:515
+#: src/components/nav/SearchDrawer.tsx:522
 msgid "Search Options"
 msgstr "Tùy chọn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:509
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Whole word search"
 msgstr "Tìm phù hợp toàn bộ từ"
 
-#: src/components/nav/SearchDrawer.tsx:518
+#: src/components/nav/SearchDrawer.tsx:534
 msgid "Regex search"
 msgstr "Tìm kiếm regex"
 
-#: src/components/nav/SearchDrawer.tsx:527
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Notes search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:575
+#: src/components/nav/SearchDrawer.tsx:591
 msgid "An error occurred during search query"
 msgstr "Lỗi trong quá trình truy vấn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:586
+#: src/components/nav/SearchDrawer.tsx:602
 #: src/tables/part/PartTestTemplateTable.tsx:82
 msgid "No Results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:589
+#: src/components/nav/SearchDrawer.tsx:605
 msgid "No results available for search query"
 msgstr "Không có kết quả nào được tìm thấy với truy vấn tìm kiếm"
 
@@ -2883,7 +2953,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:146
 #: src/pages/part/CategoryDetail.tsx:111
-#: src/pages/part/PartDetail.tsx:477
+#: src/pages/part/PartDetail.tsx:435
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
@@ -2913,7 +2983,7 @@ msgstr "Ngày"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
-#: src/pages/part/PartDetail.tsx:632
+#: src/pages/part/PartDetail.tsx:592
 #: src/tables/bom/UsedInTable.tsx:95
 #: src/tables/company/CompanyTable.tsx:66
 #: src/tables/company/CompanyTable.tsx:101
@@ -2923,11 +2993,11 @@ msgstr "Ngày"
 #: src/tables/part/PartTable.tsx:198
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
-#: src/tables/plugin/PluginListTable.tsx:418
+#: src/tables/plugin/PluginListTable.tsx:420
 #: src/tables/purchasing/SupplierPartTable.tsx:135
 #: src/tables/purchasing/SupplierPartTable.tsx:249
 #: src/tables/settings/ApiTokenTable.tsx:63
-#: src/tables/settings/UserTable.tsx:400
+#: src/tables/settings/UserTable.tsx:401
 #: src/tables/stock/StockItemTable.tsx:176
 msgid "Active"
 msgstr "Hoạt động"
@@ -2950,7 +3020,7 @@ msgstr ""
 #: src/tables/machine/MachineTypeTable.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:291
 #: src/tables/plugin/PluginListTable.tsx:101
-#: src/tables/plugin/PluginListTable.tsx:423
+#: src/tables/plugin/PluginListTable.tsx:425
 msgid "Builtin"
 msgstr "Gắn liền"
 
@@ -2960,7 +3030,7 @@ msgstr ""
 
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
-#: src/pages/Index/Settings/SystemSettings.tsx:349
+#: src/pages/Index/Settings/SystemSettings.tsx:351
 #: src/pages/Index/Settings/UserSettings.tsx:129
 msgid "Plugin Settings"
 msgstr "Thiết lập phần bổ sung"
@@ -3022,7 +3092,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:247
+#: src/components/render/Instance.tsx:259
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -3053,7 +3123,7 @@ msgstr "Lô hàng"
 #: src/pages/company/CompanyDetail.tsx:330
 #: src/pages/company/SupplierPartDetail.tsx:379
 #: src/pages/core/UserDetail.tsx:211
-#: src/pages/part/PartDetail.tsx:1069
+#: src/pages/part/PartDetail.tsx:1036
 #: src/tables/ColumnRenderers.tsx:614
 msgid "Inactive"
 msgstr "Không hoạt động"
@@ -3065,7 +3135,7 @@ msgid "Virtual"
 msgstr "Ảo"
 
 #: src/components/render/Part.tsx:34
-#: src/tables/bom/BomTable.tsx:306
+#: src/tables/bom/BomTable.tsx:301
 #: src/tables/part/PartTable.tsx:153
 msgid "No stock"
 msgstr "Hết hàng"
@@ -3074,8 +3144,8 @@ msgstr "Hết hàng"
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:400
-#: src/pages/part/PartDetail.tsx:1051
-#: src/tables/bom/BomTable.tsx:448
+#: src/pages/part/PartDetail.tsx:1018
+#: src/tables/bom/BomTable.tsx:443
 #: src/tables/build/BuildLineTable.tsx:228
 #: src/tables/part/PartTable.tsx:109
 msgid "On Order"
@@ -3083,8 +3153,8 @@ msgstr "On Order"
 
 #: src/components/render/Part.tsx:55
 #: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/part/PartDetail.tsx:604
-#: src/pages/part/PartDetail.tsx:1057
+#: src/pages/part/PartDetail.tsx:564
+#: src/pages/part/PartDetail.tsx:1024
 #: src/pages/stock/StockDetail.tsx:927
 #: src/tables/part/PartTestResultTable.tsx:306
 #: src/tables/stock/StockItemTable.tsx:213
@@ -3098,7 +3168,7 @@ msgstr "Chi tiết"
 
 #: src/components/render/Part.tsx:112
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/part/PartDetail.tsx:504
+#: src/pages/part/PartDetail.tsx:464
 #: src/tables/ColumnRenderers.tsx:414
 #: src/tables/ColumnRenderers.tsx:423
 #: src/tables/notifications/NotificationTable.tsx:32
@@ -3110,7 +3180,7 @@ msgstr "Danh mục"
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:835
-#: src/forms/PurchaseOrderForms.tsx:680
+#: src/forms/PurchaseOrderForms.tsx:681
 #: src/forms/StockForms.tsx:801
 #: src/forms/StockForms.tsx:848
 #: src/forms/StockForms.tsx:901
@@ -3143,9 +3213,9 @@ msgstr "Số sê-ri"
 #: src/forms/BuildForms.tsx:267
 #: src/forms/BuildForms.tsx:673
 #: src/forms/BuildForms.tsx:837
-#: src/forms/PurchaseOrderForms.tsx:889
-#: src/forms/ReturnOrderForms.tsx:244
-#: src/forms/SalesOrderForms.tsx:431
+#: src/forms/PurchaseOrderForms.tsx:890
+#: src/forms/ReturnOrderForms.tsx:245
+#: src/forms/SalesOrderForms.tsx:432
 #: src/forms/StockForms.tsx:850
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
@@ -3158,8 +3228,8 @@ msgstr "Số sê-ri"
 #: src/tables/build/BuildLineTable.tsx:86
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:277
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:175
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:206
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:202
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
 #: src/tables/stock/StockTrackingTable.tsx:104
 msgid "Quantity"
@@ -3761,8 +3831,8 @@ msgid "Next"
 msgstr ""
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:1091
-#: src/tables/part/PartTable.tsx:415
+#: src/pages/part/PartDetail.tsx:1058
+#: src/tables/part/PartTable.tsx:411
 msgid "Edit Part"
 msgstr "Sửa phụ kiện"
 
@@ -3854,8 +3924,8 @@ msgstr ""
 #: src/forms/StockForms.tsx:1190
 #: src/pages/company/SupplierPartDetail.tsx:191
 #: src/pages/company/SupplierPartDetail.tsx:384
-#: src/pages/part/PartDetail.tsx:551
-#: src/pages/part/PartDetail.tsx:1014
+#: src/pages/part/PartDetail.tsx:511
+#: src/pages/part/PartDetail.tsx:981
 #: src/tables/Filter.tsx:134
 #: src/tables/purchasing/SupplierPartTable.tsx:269
 msgid "In Stock"
@@ -3955,8 +4025,8 @@ msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:587
 #: src/tables/build/BuildLineTable.tsx:844
-#: src/tables/part/PartTable.tsx:529
-#: src/tables/sales/SalesOrderLineItemTable.tsx:366
+#: src/tables/part/PartTable.tsx:525
+#: src/tables/sales/SalesOrderLineItemTable.tsx:368
 msgid "Order Parts"
 msgstr ""
 
@@ -4485,9 +4555,9 @@ msgstr ""
 #: src/forms/BuildForms.tsx:368
 #: src/forms/BuildForms.tsx:445
 #: src/forms/BuildForms.tsx:514
-#: src/forms/PurchaseOrderForms.tsx:805
-#: src/forms/ReturnOrderForms.tsx:198
-#: src/forms/ReturnOrderForms.tsx:245
+#: src/forms/PurchaseOrderForms.tsx:806
+#: src/forms/ReturnOrderForms.tsx:199
+#: src/forms/ReturnOrderForms.tsx:246
 #: src/forms/StockForms.tsx:721
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:241
@@ -4501,11 +4571,11 @@ msgstr ""
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:318
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:135
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:173
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:137
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:175
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
-#: src/tables/settings/ImportSessionTable.tsx:117
+#: src/tables/settings/ImportSessionTable.tsx:118
 #: src/tables/stock/StockItemTable.tsx:181
 #: src/tables/stock/StockTrackingTable.tsx:82
 msgid "Status"
@@ -4569,7 +4639,7 @@ msgstr "Xây dựng đầu ra đã bị hủy"
 #: src/pages/build/BuildDetail.tsx:226
 #: src/pages/company/ManufacturerPartDetail.tsx:84
 #: src/pages/company/SupplierPartDetail.tsx:97
-#: src/pages/part/PartDetail.tsx:470
+#: src/pages/part/PartDetail.tsx:428
 #: src/pages/stock/StockDetail.tsx:153
 #: src/tables/ColumnRenderers.tsx:116
 #: src/tables/part/RelatedPartTable.tsx:73
@@ -4579,40 +4649,40 @@ msgstr "IPN"
 #: src/forms/BuildForms.tsx:671
 #: src/forms/BuildForms.tsx:836
 #: src/forms/BuildForms.tsx:937
-#: src/forms/SalesOrderForms.tsx:429
-#: src/pages/part/PartDetail.tsx:1039
+#: src/forms/SalesOrderForms.tsx:430
+#: src/pages/part/PartDetail.tsx:1006
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
-#: src/tables/sales/SalesOrderLineItemTable.tsx:338
+#: src/tables/sales/SalesOrderLineItemTable.tsx:340
 #: src/tables/stock/StockItemTable.tsx:192
 msgid "Allocated"
 msgstr ""
 
 #: src/forms/BuildForms.tsx:706
-#: src/forms/SalesOrderForms.tsx:418
+#: src/forms/SalesOrderForms.tsx:419
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:345
 msgid "Source Location"
 msgstr "Vị trí nguồn cung"
 
 #: src/forms/BuildForms.tsx:707
-#: src/forms/SalesOrderForms.tsx:419
+#: src/forms/SalesOrderForms.tsx:420
 msgid "Select the source location for the stock allocation"
 msgstr ""
 
 #: src/forms/BuildForms.tsx:739
-#: src/forms/SalesOrderForms.tsx:460
+#: src/forms/SalesOrderForms.tsx:461
 #: src/tables/build/BuildLineTable.tsx:587
 #: src/tables/build/BuildLineTable.tsx:760
 #: src/tables/build/BuildLineTable.tsx:859
 #: src/tables/build/BuildOutputTable.tsx:233
-#: src/tables/sales/SalesOrderLineItemTable.tsx:376
-#: src/tables/sales/SalesOrderLineItemTable.tsx:402
+#: src/tables/sales/SalesOrderLineItemTable.tsx:378
+#: src/tables/sales/SalesOrderLineItemTable.tsx:404
 msgid "Allocate Stock"
 msgstr "Phân kho"
 
 #: src/forms/BuildForms.tsx:742
-#: src/forms/SalesOrderForms.tsx:465
+#: src/forms/SalesOrderForms.tsx:466
 msgid "Stock items allocated"
 msgstr ""
 
@@ -4647,10 +4717,10 @@ msgstr ""
 msgid "Consumed"
 msgstr ""
 
-#: src/forms/CommonForms.tsx:92
-#: src/forms/PurchaseOrderForms.tsx:172
-#: src/forms/ReturnOrderForms.tsx:139
-#: src/forms/SalesOrderForms.tsx:190
+#: src/forms/CommonForms.tsx:93
+#: src/forms/PurchaseOrderForms.tsx:173
+#: src/forms/ReturnOrderForms.tsx:140
+#: src/forms/SalesOrderForms.tsx:191
 msgid "Select project code for this line item"
 msgstr ""
 
@@ -4659,9 +4729,9 @@ msgstr ""
 #~ msgstr "Company updated"
 
 #: src/forms/PartForms.tsx:101
-#: src/forms/PartForms.tsx:231
+#: src/forms/PartForms.tsx:230
 #: src/pages/part/CategoryDetail.tsx:127
-#: src/pages/part/PartDetail.tsx:685
+#: src/pages/part/PartDetail.tsx:645
 #: src/tables/part/PartCategoryTable.tsx:96
 #: src/tables/part/PartTable.tsx:322
 msgid "Subscribed"
@@ -4679,11 +4749,11 @@ msgstr ""
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:217
+#: src/forms/PartForms.tsx:216
 msgid "Parent part category"
 msgstr "Danh mục phụ kiện cha"
 
-#: src/forms/PartForms.tsx:232
+#: src/forms/PartForms.tsx:231
 msgid "Subscribe to notifications for this category"
 msgstr ""
 
@@ -4700,35 +4770,35 @@ msgstr ""
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:453
+#: src/forms/PurchaseOrderForms.tsx:454
 msgid "Choose Location"
 msgstr "Chọn vị trí"
 
-#: src/forms/PurchaseOrderForms.tsx:461
+#: src/forms/PurchaseOrderForms.tsx:462
 msgid "Item Destination selected"
 msgstr "Đã chọn đích đến của mặt hàng"
 
-#: src/forms/PurchaseOrderForms.tsx:471
+#: src/forms/PurchaseOrderForms.tsx:472
 msgid "Part category default location selected"
 msgstr "Vị trí mặc định danh mục đã được chọn"
 
-#: src/forms/PurchaseOrderForms.tsx:481
+#: src/forms/PurchaseOrderForms.tsx:482
 msgid "Received stock location selected"
 msgstr "Vị trí kho hàng nhận đã được chọn"
 
-#: src/forms/PurchaseOrderForms.tsx:489
+#: src/forms/PurchaseOrderForms.tsx:490
 msgid "Default location selected"
 msgstr "Vị trí mặc định đã chọn"
 
-#: src/forms/PurchaseOrderForms.tsx:536
-#: src/pages/part/PartDetail.tsx:680
-#: src/pages/part/PartDetail.tsx:1075
-#: src/tables/bom/BomTable.tsx:149
-#: src/tables/bom/BomTable.tsx:438
+#: src/forms/PurchaseOrderForms.tsx:537
+#: src/pages/part/PartDetail.tsx:640
+#: src/pages/part/PartDetail.tsx:1042
+#: src/tables/bom/BomTable.tsx:144
+#: src/tables/bom/BomTable.tsx:433
 msgid "Virtual Part"
 msgstr "Nguyên liệu ảo"
 
-#: src/forms/PurchaseOrderForms.tsx:537
+#: src/forms/PurchaseOrderForms.tsx:538
 msgid "This part is virtual, no physical stock will be received."
 msgstr ""
 
@@ -4736,11 +4806,11 @@ msgstr ""
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:572
+#: src/forms/PurchaseOrderForms.tsx:573
 msgid "Set Location"
 msgstr "Cài đặt vị trí"
 
-#: src/forms/PurchaseOrderForms.tsx:581
+#: src/forms/PurchaseOrderForms.tsx:582
 msgid "Assign Batch Code"
 msgstr ""
 
@@ -4748,26 +4818,26 @@ msgstr ""
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:591
+#: src/forms/PurchaseOrderForms.tsx:592
 msgid "Assign Serial Numbers"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:603
+#: src/forms/PurchaseOrderForms.tsx:604
 msgid "Set Expiry Date"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:612
+#: src/forms/PurchaseOrderForms.tsx:613
 #: src/forms/StockForms.tsx:702
 msgid "Adjust Packaging"
 msgstr "Điều chỉnh bao bì"
 
-#: src/forms/PurchaseOrderForms.tsx:621
+#: src/forms/PurchaseOrderForms.tsx:622
 #: src/forms/StockForms.tsx:693
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Thay đổi trạng thái"
 
-#: src/forms/PurchaseOrderForms.tsx:628
+#: src/forms/PurchaseOrderForms.tsx:629
 msgid "Add Note"
 msgstr "Thêm ghi chú"
 
@@ -4775,19 +4845,19 @@ msgstr "Thêm ghi chú"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:695
+#: src/forms/PurchaseOrderForms.tsx:696
 msgid "Store at default location"
 msgstr "Cửa hàng ở vị trí mặc định"
 
-#: src/forms/PurchaseOrderForms.tsx:710
+#: src/forms/PurchaseOrderForms.tsx:711
 msgid "Store at line item destination "
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/PurchaseOrderForms.tsx:723
 msgid "Store with already received stock"
 msgstr "Cửa hàng đã nhận hàng"
 
-#: src/forms/PurchaseOrderForms.tsx:746
+#: src/forms/PurchaseOrderForms.tsx:747
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/stock/StockDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:954
@@ -4800,121 +4870,121 @@ msgstr "Cửa hàng đã nhận hàng"
 msgid "Batch Code"
 msgstr "Mã lô hàng"
 
-#: src/forms/PurchaseOrderForms.tsx:747
+#: src/forms/PurchaseOrderForms.tsx:748
 msgid "Enter batch code for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:760
+#: src/forms/PurchaseOrderForms.tsx:761
 #: src/forms/StockForms.tsx:224
 msgid "Serial Numbers"
 msgstr "Số sê-ri"
 
-#: src/forms/PurchaseOrderForms.tsx:761
+#: src/forms/PurchaseOrderForms.tsx:762
 msgid "Enter serial numbers for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:778
+#: src/forms/PurchaseOrderForms.tsx:779
 #: src/pages/stock/StockDetail.tsx:382
 #: src/tables/stock/StockItemTable.tsx:148
 msgid "Expiry Date"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:779
+#: src/forms/PurchaseOrderForms.tsx:780
 msgid "Enter an expiry date for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:791
+#: src/forms/PurchaseOrderForms.tsx:792
 #: src/forms/StockForms.tsx:737
 #: src/pages/company/SupplierPartDetail.tsx:173
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/stock/StockDetail.tsx:419
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:227
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:223
 msgid "Packaging"
 msgstr "Đóng gói"
 
-#: src/forms/PurchaseOrderForms.tsx:815
+#: src/forms/PurchaseOrderForms.tsx:816
 #: src/pages/company/SupplierPartDetail.tsx:121
 #: src/tables/ColumnRenderers.tsx:517
 msgid "Note"
 msgstr "Ghi chú"
 
-#: src/forms/PurchaseOrderForms.tsx:887
+#: src/forms/PurchaseOrderForms.tsx:888
 #: src/pages/company/SupplierPartDetail.tsx:139
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:888
+#: src/forms/PurchaseOrderForms.tsx:889
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
 msgid "Received"
 msgstr "Đã nhận"
 
-#: src/forms/PurchaseOrderForms.tsx:905
+#: src/forms/PurchaseOrderForms.tsx:906
 msgid "Receive Line Items"
 msgstr "Nhận hạng mục"
 
-#: src/forms/PurchaseOrderForms.tsx:911
+#: src/forms/PurchaseOrderForms.tsx:912
 msgid "Items received"
 msgstr ""
 
-#: src/forms/ReturnOrderForms.tsx:258
+#: src/forms/ReturnOrderForms.tsx:259
 msgid "Receive Items"
 msgstr ""
 
-#: src/forms/ReturnOrderForms.tsx:265
+#: src/forms/ReturnOrderForms.tsx:266
 msgid "Item received into stock"
 msgstr ""
 
 #. placeholder {0}: salePrice ? `; suggested: (${salePrice})` : '.'
-#: src/forms/SalesOrderForms.tsx:182
+#: src/forms/SalesOrderForms.tsx:183
 msgid "Price based on part and quantity differs{0}"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:213
-#: src/forms/SalesOrderForms.tsx:215
+#: src/forms/SalesOrderForms.tsx:214
+#: src/forms/SalesOrderForms.tsx:216
 #: src/tables/sales/SalesOrderShipmentTable.tsx:210
 msgid "Check Shipment"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:216
+#: src/forms/SalesOrderForms.tsx:217
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:226
+#: src/forms/SalesOrderForms.tsx:227
 msgid "Shipment marked as checked"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:241
-#: src/forms/SalesOrderForms.tsx:243
+#: src/forms/SalesOrderForms.tsx:242
+#: src/forms/SalesOrderForms.tsx:244
 #: src/tables/sales/SalesOrderShipmentTable.tsx:223
 msgid "Uncheck Shipment"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:244
+#: src/forms/SalesOrderForms.tsx:245
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:254
+#: src/forms/SalesOrderForms.tsx:255
 msgid "Shipment marked as unchecked"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:272
+#: src/forms/SalesOrderForms.tsx:273
 msgid "Completing shipment"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:273
+#: src/forms/SalesOrderForms.tsx:274
 msgid "Shipment completed successfully"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:280
+#: src/forms/SalesOrderForms.tsx:281
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
 msgid "Complete Shipment"
 msgstr ""
 
-#: src/forms/SalesOrderForms.tsx:526
+#: src/forms/SalesOrderForms.tsx:527
 msgid "Leave blank to use the order address"
 msgstr ""
 
@@ -4970,7 +5040,7 @@ msgid "Return"
 msgstr ""
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:182
+#: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Đếm"
 
@@ -5314,37 +5384,9 @@ msgstr ""
 #~ msgid "method parameter not supplied"
 #~ msgstr "method parameter not supplied"
 
-#: src/functions/notifications.tsx:13
-msgid "Not implemented"
-msgstr "Chưa triển khai"
-
-#: src/functions/notifications.tsx:14
-msgid "This feature is not yet implemented"
-msgstr "Tính năng này vẫn chưa được triển khai"
-
 #: src/functions/notifications.tsx:24
 #~ msgid "Permission denied"
 #~ msgstr "Permission denied"
-
-#: src/functions/notifications.tsx:26
-msgid "You do not have permission to perform this action"
-msgstr "Bạn không có quyền thực hiện hành động này"
-
-#: src/functions/notifications.tsx:37
-msgid "Invalid Return Code"
-msgstr "Mã trả hàng không hợp lệ"
-
-#: src/functions/notifications.tsx:38
-msgid "Server returned status {returnCode}"
-msgstr "Mã phản hồi của máy chủ {returnCode}"
-
-#: src/functions/notifications.tsx:48
-msgid "Timeout"
-msgstr ""
-
-#: src/functions/notifications.tsx:49
-msgid "The request timed out"
-msgstr ""
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
@@ -5435,7 +5477,7 @@ msgid "Delete selected stock items"
 msgstr ""
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:1183
+#: src/pages/part/PartDetail.tsx:1150
 msgid "Stock Actions"
 msgstr "Thao tác kho"
 
@@ -5774,53 +5816,57 @@ msgstr "Đã xảy ra lỗi không mong muốn."
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:65
+#: src/pages/Index/Scan.tsx:63
 msgid "Item already scanned"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:82
+#: src/pages/Index/Scan.tsx:80
 msgid "API Error"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:83
+#: src/pages/Index/Scan.tsx:81
 msgid "Failed to fetch instance data"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:130
+#: src/pages/Index/Scan.tsx:128
 msgid "Scan Error"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:162
+#: src/pages/Index/Scan.tsx:160
 msgid "Selected elements are not known"
 msgstr "Chọn phần tử chưa được biết đến"
 
-#: src/pages/Index/Scan.tsx:169
+#: src/pages/Index/Scan.tsx:167
 msgid "Multiple object types selected"
 msgstr "Đã chọn nhiều loại đối tượng"
+
+#: src/pages/Index/Scan.tsx:175
+msgid "Actions ... "
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:177
-msgid "Actions ... "
-msgstr ""
-
-#: src/pages/Index/Scan.tsx:194
-#: src/pages/Index/Scan.tsx:198
+#: src/pages/Index/Scan.tsx:192
+#: src/pages/Index/Scan.tsx:196
 msgid "Barcode Scanning"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:207
+#: src/pages/Index/Scan.tsx:205
 msgid "Barcode Input"
 msgstr ""
 
-#: src/pages/Index/Scan.tsx:214
+#: src/pages/Index/Scan.tsx:212
 msgid "Action"
 msgstr "Thao tác"
 
-#: src/pages/Index/Scan.tsx:217
+#: src/pages/Index/Scan.tsx:215
 msgid "No Items Selected"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:216
+msgid "Scan and select items to perform actions"
 msgstr ""
 
 #: src/pages/Index/Scan.tsx:217
@@ -5828,19 +5874,15 @@ msgstr ""
 #~ msgstr "Manual input"
 
 #: src/pages/Index/Scan.tsx:218
-msgid "Scan and select items to perform actions"
-msgstr ""
-
-#: src/pages/Index/Scan.tsx:218
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
 #. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:223
+#: src/pages/Index/Scan.tsx:221
 msgid "{0} items selected"
 msgstr "đã chọn {0} mục"
 
-#: src/pages/Index/Scan.tsx:235
+#: src/pages/Index/Scan.tsx:233
 msgid "Scanned Items"
 msgstr ""
 
@@ -6006,8 +6048,8 @@ msgstr ""
 #~ msgstr "Last name:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-msgid "Staff Access"
-msgstr ""
+#~ msgid "Staff Access"
+#~ msgstr "Staff Access"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
 #: src/pages/core/UserDetail.tsx:119
@@ -6047,7 +6089,7 @@ msgid "Edit Account"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
-#: src/tables/settings/UserTable.tsx:322
+#: src/tables/settings/UserTable.tsx:323
 msgid "Change Password"
 msgstr ""
 
@@ -6706,7 +6748,7 @@ msgid "Data Management"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:270
-#: src/pages/Index/Settings/SystemSettings.tsx:176
+#: src/pages/Index/Settings/SystemSettings.tsx:178
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Reporting"
 msgstr "Báo cáo"
@@ -6912,11 +6954,11 @@ msgstr ""
 msgid "The settings below are specific to each available plugin"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:78
+#: src/pages/Index/Settings/SystemSettings.tsx:80
 msgid "Authentication"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:104
+#: src/pages/Index/Settings/SystemSettings.tsx:106
 msgid "Barcodes"
 msgstr "Mã vạch"
 
@@ -6928,28 +6970,28 @@ msgstr "Mã vạch"
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:128
+#: src/pages/Index/Settings/SystemSettings.tsx:130
 #: src/pages/Index/Settings/UserSettings.tsx:113
 msgid "The settings below are specific to each available notification method"
 msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:134
-msgid "Pricing"
-msgstr "Giá bán"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:135
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:170
+#: src/pages/Index/Settings/SystemSettings.tsx:136
+msgid "Pricing"
+msgstr "Giá bán"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:172
 msgid "Labels"
 msgstr "Nhãn"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:262
 msgid "Part Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:271
+#: src/pages/Index/Settings/SystemSettings.tsx:273
 #: src/pages/part/PartStockHistoryDetail.tsx:296
 #: src/pages/stock/StockDetail.tsx:532
 msgid "Stock Tracking"
@@ -7052,7 +7094,7 @@ msgstr ""
 #~ msgstr "Delete build order"
 
 #: src/pages/build/BuildDetail.tsx:234
-#: src/pages/part/PartDetail.tsx:497
+#: src/pages/part/PartDetail.tsx:457
 #: src/pages/stock/StockDetail.tsx:161
 #: src/tables/bom/UsedInTable.tsx:49
 #: src/tables/build/BuildOrderTable.tsx:87
@@ -7097,9 +7139,9 @@ msgid "Build Quantity"
 msgstr "Số lượng đơn vị"
 
 #: src/pages/build/BuildDetail.tsx:294
-#: src/pages/part/PartDetail.tsx:615
-#: src/tables/bom/BomTable.tsx:364
-#: src/tables/bom/BomTable.tsx:406
+#: src/pages/part/PartDetail.tsx:575
+#: src/tables/bom/BomTable.tsx:359
+#: src/tables/bom/BomTable.tsx:401
 msgid "Can Build"
 msgstr "Có thể dựng"
 
@@ -7115,7 +7157,7 @@ msgid "Issued By"
 msgstr "Cấp bởi"
 
 #: src/pages/build/BuildDetail.tsx:328
-#: src/pages/part/PartDetail.tsx:708
+#: src/pages/part/PartDetail.tsx:668
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:262
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:233
@@ -7165,14 +7207,14 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:266
 #: src/tables/ColumnRenderers.tsx:699
 #: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:151
-#: src/tables/sales/SalesOrderLineItemTable.tsx:128
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:153
+#: src/tables/sales/SalesOrderLineItemTable.tsx:130
 msgid "Target Date"
 msgstr "Ngày mục tiêu"
 
 #: src/pages/build/BuildDetail.tsx:393
 #: src/tables/build/BuildOrderTable.tsx:97
-#: src/tables/sales/SalesOrderLineItemTable.tsx:343
+#: src/tables/sales/SalesOrderLineItemTable.tsx:345
 msgid "Completed"
 msgstr "Đã hoàn thành"
 
@@ -7208,7 +7250,7 @@ msgid "Child Build Orders"
 msgstr "Đơn đặt bản dựng con"
 
 #: src/pages/build/BuildDetail.tsx:534
-#: src/pages/part/PartDetail.tsx:936
+#: src/pages/part/PartDetail.tsx:903
 #: src/pages/stock/StockDetail.tsx:587
 #: src/tables/build/BuildOutputTable.tsx:704
 #: src/tables/stock/StockItemTestResultTable.tsx:173
@@ -7347,7 +7389,7 @@ msgstr "Hủy đơn hàng"
 #: src/pages/stock/StockDetail.tsx:344
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:157
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:153
 #: src/tables/stock/StockTrackingTable.tsx:141
 msgid "Build Order"
 msgstr "Xây dựng đơn hàng"
@@ -7497,7 +7539,7 @@ msgstr "Liên kết Ngoài"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:147
 #: src/pages/company/SupplierPartDetail.tsx:233
-#: src/pages/part/PartDetail.tsx:797
+#: src/pages/part/PartDetail.tsx:764
 msgid "Part Details"
 msgstr "Chi tiết"
 
@@ -7547,8 +7589,8 @@ msgstr "Mô tả sản phẩm"
 
 #: src/pages/company/SupplierPartDetail.tsx:180
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:191
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:187
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:229
 #: src/tables/purchasing/SupplierPartTable.tsx:169
 msgid "Pack Quantity"
 msgstr "Số lượng gói"
@@ -7596,7 +7638,7 @@ msgid "Add Supplier Part"
 msgstr "Thêm sản phẩm nhà cung cấp"
 
 #: src/pages/company/SupplierPartDetail.tsx:394
-#: src/pages/part/PartDetail.tsx:1033
+#: src/pages/part/PartDetail.tsx:1000
 msgid "No Stock"
 msgstr "Hết hàng"
 
@@ -7640,8 +7682,12 @@ msgid "User Details"
 msgstr ""
 
 #: src/pages/core/UserDetail.tsx:206
-msgid "Basic user"
+msgid "Normal user"
 msgstr ""
+
+#: src/pages/core/UserDetail.tsx:206
+#~ msgid "Basic user"
+#~ msgstr "Basic user"
 
 #: src/pages/part/CategoryDetail.tsx:103
 #: src/pages/stock/LocationDetail.tsx:103
@@ -7735,11 +7781,11 @@ msgstr "Phân bổ đơn hàng bản dựng"
 msgid "Sales Order Allocations"
 msgstr "Phân bổ đơn hàng bán"
 
-#: src/pages/part/PartDetail.tsx:176
+#: src/pages/part/PartDetail.tsx:177
 msgid "Validating BOM"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:177
+#: src/pages/part/PartDetail.tsx:178
 msgid "BOM validated"
 msgstr ""
 
@@ -7747,42 +7793,42 @@ msgstr ""
 #~ msgid "Bill of materials scheduled for validation"
 #~ msgstr "Bill of materials scheduled for validation"
 
-#: src/pages/part/PartDetail.tsx:192
-#: src/pages/part/PartDetail.tsx:195
-#: src/pages/part/PartDetail.tsx:244
+#: src/pages/part/PartDetail.tsx:193
+#: src/pages/part/PartDetail.tsx:196
+#: src/pages/part/PartDetail.tsx:245
 msgid "Validate BOM"
 msgstr "Xác minh BOM"
 
-#: src/pages/part/PartDetail.tsx:196
+#: src/pages/part/PartDetail.tsx:197
 msgid "Do you want to validate the bill of materials for this assembly?"
 msgstr "Bạn có muốn xác minh BOM?"
 
-#: src/pages/part/PartDetail.tsx:222
+#: src/pages/part/PartDetail.tsx:223
 msgid "BOM Validated"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:223
+#: src/pages/part/PartDetail.tsx:224
 msgid "The Bill of Materials for this part has been validated"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:227
-#: src/pages/part/PartDetail.tsx:232
+#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:233
 msgid "BOM Not Validated"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:229
 msgid "The Bill of Materials for this part has previously been checked, but requires revalidation"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:233
+#: src/pages/part/PartDetail.tsx:234
 msgid "The Bill of Materials for this part has not yet been validated"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:264
+#: src/pages/part/PartDetail.tsx:265
 msgid "Validated On"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:269
+#: src/pages/part/PartDetail.tsx:270
 msgid "Validated By"
 msgstr ""
 
@@ -7802,110 +7848,110 @@ msgstr ""
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:483
+#: src/pages/part/PartDetail.tsx:441
 msgid "Variant of"
 msgstr "Biến thể của"
 
-#: src/pages/part/PartDetail.tsx:490
+#: src/pages/part/PartDetail.tsx:449
 msgid "Revision of"
 msgstr "Sửa đổi của"
 
-#: src/pages/part/PartDetail.tsx:510
+#: src/pages/part/PartDetail.tsx:470
 #: src/tables/ColumnRenderers.tsx:390
 #: src/tables/ColumnRenderers.tsx:399
 msgid "Default Location"
 msgstr "Vị trí mặc định"
 
-#: src/pages/part/PartDetail.tsx:510
-#~ msgid "Stocktake By"
-#~ msgstr "Stocktake By"
-
-#: src/pages/part/PartDetail.tsx:517
+#: src/pages/part/PartDetail.tsx:477
 msgid "Category Default Location"
 msgstr "Vị trí danh mục mặc định"
 
-#: src/pages/part/PartDetail.tsx:524
+#: src/pages/part/PartDetail.tsx:484
 msgid "Units"
 msgstr "Đơn vị"
 
-#: src/pages/part/PartDetail.tsx:531
+#: src/pages/part/PartDetail.tsx:491
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "Từ khóa"
 
-#: src/pages/part/PartDetail.tsx:559
-#: src/tables/bom/BomTable.tsx:443
+#: src/pages/part/PartDetail.tsx:510
+#~ msgid "Stocktake By"
+#~ msgstr "Stocktake By"
+
+#: src/pages/part/PartDetail.tsx:519
+#: src/tables/bom/BomTable.tsx:438
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTable.tsx:316
-#: src/tables/sales/SalesOrderLineItemTable.tsx:132
+#: src/tables/sales/SalesOrderLineItemTable.tsx:134
 msgid "Available Stock"
 msgstr "Số hàng tồn"
 
-#: src/pages/part/PartDetail.tsx:565
-#: src/tables/bom/BomTable.tsx:340
+#: src/pages/part/PartDetail.tsx:525
+#: src/tables/bom/BomTable.tsx:335
 #: src/tables/build/BuildLineTable.tsx:273
-#: src/tables/sales/SalesOrderLineItemTable.tsx:174
+#: src/tables/sales/SalesOrderLineItemTable.tsx:176
 msgid "On order"
 msgstr "Đang đặt hàng"
 
-#: src/pages/part/PartDetail.tsx:572
+#: src/pages/part/PartDetail.tsx:532
 msgid "Required for Orders"
 msgstr "Yêu cầu cho đơn hàng"
 
-#: src/pages/part/PartDetail.tsx:583
+#: src/pages/part/PartDetail.tsx:543
 msgid "Allocated to Build Orders"
 msgstr "Đã phân bổ đơn hàng"
 
-#: src/pages/part/PartDetail.tsx:595
+#: src/pages/part/PartDetail.tsx:555
 msgid "Allocated to Sales Orders"
 msgstr "Đã phân bổ đơn hàng"
 
-#: src/pages/part/PartDetail.tsx:613
-#~ msgid "Scheduling"
-#~ msgstr "Scheduling"
-
-#: src/pages/part/PartDetail.tsx:622
+#: src/pages/part/PartDetail.tsx:582
 msgid "Minimum Stock"
 msgstr "Kho tối thiểu"
 
-#: src/pages/part/PartDetail.tsx:637
+#: src/pages/part/PartDetail.tsx:597
 #: src/tables/part/ParametricPartTable.tsx:24
 #: src/tables/part/PartTable.tsx:204
 msgid "Locked"
 msgstr "Khóa"
 
-#: src/pages/part/PartDetail.tsx:643
+#: src/pages/part/PartDetail.tsx:603
 msgid "Template Part"
 msgstr "Nguyên liệu mẫu"
 
-#: src/pages/part/PartDetail.tsx:648
-#: src/tables/bom/BomTable.tsx:433
+#: src/pages/part/PartDetail.tsx:608
+#: src/tables/bom/BomTable.tsx:428
 msgid "Assembled Part"
 msgstr "Đã lắp ráp"
 
-#: src/pages/part/PartDetail.tsx:653
+#: src/pages/part/PartDetail.tsx:613
 msgid "Component Part"
 msgstr "Thành phần"
 
-#: src/pages/part/PartDetail.tsx:658
-#: src/tables/bom/BomTable.tsx:418
+#: src/pages/part/PartDetail.tsx:613
+#~ msgid "Scheduling"
+#~ msgstr "Scheduling"
+
+#: src/pages/part/PartDetail.tsx:618
+#: src/tables/bom/BomTable.tsx:413
 msgid "Testable Part"
 msgstr "Có thể kiểm"
 
-#: src/pages/part/PartDetail.tsx:664
-#: src/tables/bom/BomTable.tsx:423
+#: src/pages/part/PartDetail.tsx:624
+#: src/tables/bom/BomTable.tsx:418
 msgid "Trackable Part"
 msgstr "Có thể theo dõi"
 
-#: src/pages/part/PartDetail.tsx:669
+#: src/pages/part/PartDetail.tsx:629
 msgid "Purchaseable Part"
 msgstr "Có thể đặt"
 
-#: src/pages/part/PartDetail.tsx:675
+#: src/pages/part/PartDetail.tsx:635
 msgid "Saleable Part"
 msgstr "Có thể bán"
 
-#: src/pages/part/PartDetail.tsx:695
+#: src/pages/part/PartDetail.tsx:655
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:272
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:243
@@ -7913,128 +7959,128 @@ msgstr "Có thể bán"
 msgid "Creation Date"
 msgstr "Ngày tạo"
 
-#: src/pages/part/PartDetail.tsx:698
-#~ msgid "Default Supplier"
-#~ msgstr "Default Supplier"
-
-#: src/pages/part/PartDetail.tsx:700
+#: src/pages/part/PartDetail.tsx:660
 #: src/tables/ColumnRenderers.tsx:639
 #: src/tables/Filter.tsx:433
 msgid "Created By"
 msgstr "Tạo bởi"
 
-#: src/pages/part/PartDetail.tsx:714
+#: src/pages/part/PartDetail.tsx:674
 msgid "Default Expiry"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:719
+#: src/pages/part/PartDetail.tsx:679
 msgid "days"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:729
+#: src/pages/part/PartDetail.tsx:689
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:180
 msgid "Price Range"
 msgstr "Khoảng giá"
 
-#: src/pages/part/PartDetail.tsx:739
+#: src/pages/part/PartDetail.tsx:698
+#~ msgid "Default Supplier"
+#~ msgstr "Default Supplier"
+
+#: src/pages/part/PartDetail.tsx:699
 msgid "Latest Serial Number"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:767
+#: src/pages/part/PartDetail.tsx:732
 msgid "Select Part Revision"
 msgstr "Chọn lịch sử nguyên liệu"
 
-#: src/pages/part/PartDetail.tsx:822
+#: src/pages/part/PartDetail.tsx:789
 msgid "Variants"
 msgstr "Biến thể"
 
-#: src/pages/part/PartDetail.tsx:829
+#: src/pages/part/PartDetail.tsx:796
 #: src/pages/stock/StockDetail.tsx:542
 msgid "Allocations"
 msgstr "Phân bổ"
 
-#: src/pages/part/PartDetail.tsx:836
+#: src/pages/part/PartDetail.tsx:803
 msgid "Bill of Materials"
 msgstr "Hóa đơn nguyên vật liệu"
 
-#: src/pages/part/PartDetail.tsx:848
+#: src/pages/part/PartDetail.tsx:815
 msgid "Used In"
 msgstr "Sử dụng trong"
 
-#: src/pages/part/PartDetail.tsx:855
+#: src/pages/part/PartDetail.tsx:822
 msgid "Part Pricing"
 msgstr "Giá"
 
-#: src/pages/part/PartDetail.tsx:925
+#: src/pages/part/PartDetail.tsx:892
 msgid "Test Templates"
 msgstr "Mẫu thử nghiệm"
 
-#: src/pages/part/PartDetail.tsx:947
+#: src/pages/part/PartDetail.tsx:914
 msgid "Related Parts"
 msgstr "Phụ kiện liên quan"
+
+#: src/pages/part/PartDetail.tsx:926
+#: src/tables/ColumnRenderers.tsx:73
+#: src/tables/bom/BomTable.tsx:657
+#: src/tables/part/PartTestTemplateTable.tsx:258
+msgid "Part is Locked"
+msgstr "Nguyên liệu bị khoá"
+
+#: src/pages/part/PartDetail.tsx:931
+msgid "Part parameters cannot be edited, as the part is locked"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:956
 #~ msgid "Count part stock"
 #~ msgstr "Count part stock"
 
-#: src/pages/part/PartDetail.tsx:959
-#: src/tables/ColumnRenderers.tsx:73
-#: src/tables/bom/BomTable.tsx:661
-#: src/tables/part/PartTestTemplateTable.tsx:258
-msgid "Part is Locked"
-msgstr "Nguyên liệu bị khoá"
-
-#: src/pages/part/PartDetail.tsx:964
-msgid "Part parameters cannot be edited, as the part is locked"
-msgstr ""
-
 #: src/pages/part/PartDetail.tsx:967
 #~ msgid "Transfer part stock"
 #~ msgstr "Transfer part stock"
 
-#: src/pages/part/PartDetail.tsx:1045
+#: src/pages/part/PartDetail.tsx:1012
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:405
 msgid "Required"
 msgstr "Bắt buộc"
 
-#: src/pages/part/PartDetail.tsx:1063
+#: src/pages/part/PartDetail.tsx:1030
 msgid "Deficit"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1103
-#: src/tables/part/PartTable.tsx:402
-#: src/tables/part/PartTable.tsx:456
+#: src/pages/part/PartDetail.tsx:1070
+#: src/tables/part/PartTable.tsx:398
+#: src/tables/part/PartTable.tsx:452
 msgid "Add Part"
 msgstr "Thêm nguyên liệu"
 
-#: src/pages/part/PartDetail.tsx:1117
+#: src/pages/part/PartDetail.tsx:1084
 msgid "Delete Part"
 msgstr "Xoá nguyên liệu"
 
-#: src/pages/part/PartDetail.tsx:1126
+#: src/pages/part/PartDetail.tsx:1093
 msgid "Deleting this part cannot be reversed"
 msgstr "Không thể khôi phục việc xóa nguyên liệu này"
 
-#: src/pages/part/PartDetail.tsx:1189
+#: src/pages/part/PartDetail.tsx:1156
 #: src/pages/stock/StockDetail.tsx:885
 msgid "Order"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1190
+#: src/pages/part/PartDetail.tsx:1157
 #: src/pages/stock/StockDetail.tsx:886
 #: src/tables/build/BuildLineTable.tsx:790
 msgid "Order Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1202
+#: src/pages/part/PartDetail.tsx:1169
 msgid "Search by serial number"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1210
-#: src/tables/part/PartTable.tsx:513
+#: src/pages/part/PartDetail.tsx:1177
+#: src/tables/part/PartTable.tsx:509
 msgid "Part Actions"
 msgstr "Thao tác"
 
@@ -8167,12 +8213,12 @@ msgstr ""
 #: src/pages/part/pricing/BomPricingPanel.tsx:57
 #: src/pages/part/pricing/BomPricingPanel.tsx:135
 #: src/tables/ColumnRenderers.tsx:767
-#: src/tables/bom/BomTable.tsx:281
-#: src/tables/general/ExtraLineItemTable.tsx:72
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:263
+#: src/tables/bom/BomTable.tsx:276
+#: src/tables/general/ExtraLineItemTable.tsx:74
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
 #: src/tables/purchasing/PurchaseOrderTable.tsx:155
 #: src/tables/sales/ReturnOrderTable.tsx:160
-#: src/tables/sales/SalesOrderLineItemTable.tsx:118
+#: src/tables/sales/SalesOrderLineItemTable.tsx:120
 #: src/tables/sales/SalesOrderTable.tsx:197
 msgid "Total Price"
 msgstr "Tổng tiền"
@@ -8210,9 +8256,9 @@ msgstr "Giá cao nhất"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
 #: src/pages/stock/StockDetail.tsx:390
-#: src/tables/bom/BomTable.tsx:271
-#: src/tables/general/ExtraLineItemTable.tsx:64
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
+#: src/tables/bom/BomTable.tsx:266
+#: src/tables/general/ExtraLineItemTable.tsx:66
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:113
 msgid "Unit Price"
@@ -8297,6 +8343,7 @@ msgstr "Giá mua"
 #: src/pages/sales/SalesOrderDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/general/ParameterTable.tsx:101
+#: src/tables/settings/TemplateTable.tsx:250
 #: src/tables/stock/StockItemTable.tsx:154
 msgid "Last Updated"
 msgstr "Cập nhật lần cuối"
@@ -8391,7 +8438,7 @@ msgid "Completed Line Items"
 msgstr "Những mục hoàn thành"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:197
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:274
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:270
 msgid "Destination"
 msgstr "Đích đến"
 
@@ -9066,7 +9113,7 @@ msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:252
 #: src/tables/build/BuildLineTable.tsx:308
-#: src/tables/sales/SalesOrderLineItemTable.tsx:154
+#: src/tables/sales/SalesOrderLineItemTable.tsx:156
 msgid "No stock available"
 msgstr ""
 
@@ -9075,9 +9122,9 @@ msgid "This stock item has been depleted"
 msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:283
-#: src/tables/bom/BomTable.tsx:357
+#: src/tables/bom/BomTable.tsx:352
 #: src/tables/part/PartTable.tsx:172
-#: src/tables/sales/SalesOrderLineItemTable.tsx:183
+#: src/tables/sales/SalesOrderLineItemTable.tsx:185
 msgid "Stock Information"
 msgstr "Thông tin kho"
 
@@ -9086,10 +9133,9 @@ msgstr "Thông tin kho"
 msgid "Allocated Lines"
 msgstr ""
 
-#: src/tables/ColumnSelect.tsx:16
-#: src/tables/ColumnSelect.tsx:23
-msgid "Select Columns"
-msgstr "Chọn cột"
+#: src/tables/ColumnRenderers.tsx:774
+msgid "Line Item"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
@@ -9377,7 +9423,7 @@ msgid "Filter"
 msgstr "Bộ lọc"
 
 #: src/tables/FilterSelectDrawer.tsx:354
-#: src/tables/InvenTreeTableHeader.tsx:259
+#: src/tables/InvenTreeTableHeader.tsx:263
 msgid "Table Filters"
 msgstr "Bộ lọc bảng"
 
@@ -9389,12 +9435,12 @@ msgstr "Thêm bộ lọc"
 msgid "Clear Filters"
 msgstr "Xóa bộ lọc"
 
-#: src/tables/InvenTreeTable.tsx:47
-#: src/tables/InvenTreeTable.tsx:522
+#: src/tables/InvenTreeTable.tsx:52
+#: src/tables/InvenTreeTable.tsx:526
 msgid "No records found"
 msgstr "Không tìm thấy biểu ghi"
 
-#: src/tables/InvenTreeTable.tsx:154
+#: src/tables/InvenTreeTable.tsx:162
 msgid "Error loading table options"
 msgstr ""
 
@@ -9422,7 +9468,7 @@ msgstr ""
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:567
+#: src/tables/InvenTreeTable.tsx:571
 msgid "Server returned incorrect data type"
 msgstr "Máy chủ trả chưa đúng dữ liệu"
 
@@ -9431,7 +9477,7 @@ msgstr "Máy chủ trả chưa đúng dữ liệu"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:600
+#: src/tables/InvenTreeTable.tsx:604
 msgid "Error loading table data"
 msgstr ""
 
@@ -9448,49 +9494,49 @@ msgstr ""
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTable.tsx:729
+#: src/tables/InvenTreeTable.tsx:733
 msgid "View details"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:732
+#: src/tables/InvenTreeTable.tsx:736
 msgid "View {model}"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:103
+#: src/tables/InvenTreeTableHeader.tsx:107
 msgid "Delete Selected Items"
 msgstr "Xóa mục đã chọn"
 
-#: src/tables/InvenTreeTableHeader.tsx:107
+#: src/tables/InvenTreeTableHeader.tsx:111
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Bạn muốn xóa các mục đã chọn?"
 
-#: src/tables/InvenTreeTableHeader.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:322
+#: src/tables/InvenTreeTableHeader.tsx:113
+#: src/tables/plugin/PluginListTable.tsx:320
 msgid "This action cannot be undone"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:120
+#: src/tables/InvenTreeTableHeader.tsx:124
 msgid "Items deleted"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:125
+#: src/tables/InvenTreeTableHeader.tsx:129
 msgid "Failed to delete items"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:176
+#: src/tables/InvenTreeTableHeader.tsx:180
 msgid "Custom table filters are active"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:202
+#: src/tables/InvenTreeTableHeader.tsx:206
 #: src/tables/general/BarcodeScanTable.tsx:93
 msgid "Delete selected records"
 msgstr "Xóa bản ghi được chọn"
 
-#: src/tables/InvenTreeTableHeader.tsx:222
+#: src/tables/InvenTreeTableHeader.tsx:226
 msgid "Refresh data"
 msgstr "Làm mới dữ liệu"
 
-#: src/tables/InvenTreeTableHeader.tsx:271
+#: src/tables/InvenTreeTableHeader.tsx:275
 msgid "Active Filters"
 msgstr ""
 
@@ -9502,26 +9548,26 @@ msgstr ""
 #~ msgid "Upload Data"
 #~ msgstr "Upload Data"
 
-#: src/tables/bom/BomTable.tsx:103
+#: src/tables/bom/BomTable.tsx:98
 msgid "This BOM item is defined for a different parent"
 msgstr "BOM này đã được định nghĩa"
 
-#: src/tables/bom/BomTable.tsx:119
+#: src/tables/bom/BomTable.tsx:114
 msgid "Part Information"
 msgstr "Thông tin nguyên liệu"
 
-#: src/tables/bom/BomTable.tsx:122
+#: src/tables/bom/BomTable.tsx:117
 msgid "This BOM item has not been validated"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:239
+#: src/tables/bom/BomTable.tsx:234
 msgid "Substitutes"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:301
-#: src/tables/sales/SalesOrderLineItemTable.tsx:135
-#: src/tables/sales/SalesOrderLineItemTable.tsx:193
-#: src/tables/sales/SalesOrderLineItemTable.tsx:210
+#: src/tables/bom/BomTable.tsx:296
+#: src/tables/sales/SalesOrderLineItemTable.tsx:137
+#: src/tables/sales/SalesOrderLineItemTable.tsx:195
+#: src/tables/sales/SalesOrderLineItemTable.tsx:212
 msgid "Virtual part"
 msgstr ""
 
@@ -9529,24 +9575,24 @@ msgstr ""
 #~ msgid "Create BOM Item"
 #~ msgstr "Create BOM Item"
 
-#: src/tables/bom/BomTable.tsx:310
-#~ msgid "Show asssmbled items"
-#~ msgstr "Show asssmbled items"
-
-#: src/tables/bom/BomTable.tsx:314
+#: src/tables/bom/BomTable.tsx:309
 #: src/tables/build/BuildLineTable.tsx:282
 #: src/tables/part/PartTable.tsx:146
 msgid "External stock"
 msgstr "Kho ngoài"
 
-#: src/tables/bom/BomTable.tsx:322
+#: src/tables/bom/BomTable.tsx:310
+#~ msgid "Show asssmbled items"
+#~ msgstr "Show asssmbled items"
+
+#: src/tables/bom/BomTable.tsx:317
 #: src/tables/build/BuildLineTable.tsx:245
 msgid "Includes substitute stock"
 msgstr "Bao gồm kho thay thế"
 
-#: src/tables/bom/BomTable.tsx:331
+#: src/tables/bom/BomTable.tsx:326
 #: src/tables/build/BuildLineTable.tsx:255
-#: src/tables/sales/SalesOrderLineItemTable.tsx:160
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
 msgid "Includes variant stock"
 msgstr "Bao gồm kho biến thể"
 
@@ -9558,7 +9604,7 @@ msgstr "Bao gồm kho biến thể"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:348
+#: src/tables/bom/BomTable.tsx:343
 #: src/tables/part/PartTable.tsx:115
 msgid "Building"
 msgstr "Đang dựng"
@@ -9579,178 +9625,178 @@ msgstr "Đang dựng"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:398
+#: src/tables/bom/BomTable.tsx:393
 #: src/tables/build/BuildLineTable.tsx:498
 #: src/tables/build/BuildLineTable.tsx:539
 msgid "Consumable item"
 msgstr "Vật tư tiêu hao"
 
-#: src/tables/bom/BomTable.tsx:401
+#: src/tables/bom/BomTable.tsx:396
 msgid "No available stock"
 msgstr "Không khả dụng"
 
-#: src/tables/bom/BomTable.tsx:419
+#: src/tables/bom/BomTable.tsx:414
 #: src/tables/build/BuildLineTable.tsx:219
 msgid "Show testable items"
 msgstr "Hiển thị items có thể kiểm"
 
-#: src/tables/bom/BomTable.tsx:424
+#: src/tables/bom/BomTable.tsx:419
 msgid "Show trackable items"
 msgstr "Hiển thị items có thể theo dõi"
 
-#: src/tables/bom/BomTable.tsx:428
+#: src/tables/bom/BomTable.tsx:423
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:42
 #: src/tables/purchasing/ManufacturerPartTable.tsx:154
 #: src/tables/purchasing/SupplierPartTable.tsx:259
 msgid "Active Part"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:429
+#: src/tables/bom/BomTable.tsx:424
 msgid "Show active items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:434
+#: src/tables/bom/BomTable.tsx:429
 #: src/tables/build/BuildLineTable.tsx:214
 msgid "Show assembled items"
 msgstr "Hiện items đã lắp ráp"
 
-#: src/tables/bom/BomTable.tsx:439
+#: src/tables/bom/BomTable.tsx:434
 msgid "Show virtual items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:444
+#: src/tables/bom/BomTable.tsx:439
 msgid "Show items with available stock"
 msgstr "Hiện items còn trong kho"
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:444
 msgid "Show items on order"
 msgstr "Hiện items theo thứ tự"
 
-#: src/tables/bom/BomTable.tsx:453
+#: src/tables/bom/BomTable.tsx:448
 msgid "Validated"
 msgstr "Đã xác minh"
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:449
 msgid "Show validated items"
 msgstr "Hiện items đã xác minh"
 
-#: src/tables/bom/BomTable.tsx:458
+#: src/tables/bom/BomTable.tsx:453
 #: src/tables/bom/UsedInTable.tsx:85
 msgid "Inherited"
 msgstr "Được kế thừa"
 
-#: src/tables/bom/BomTable.tsx:459
+#: src/tables/bom/BomTable.tsx:454
 #: src/tables/bom/UsedInTable.tsx:86
 msgid "Show inherited items"
 msgstr "Hiện items được kế thừa"
 
-#: src/tables/bom/BomTable.tsx:463
+#: src/tables/bom/BomTable.tsx:458
 msgid "Allow Variants"
 msgstr "Cho phép biến thể"
 
-#: src/tables/bom/BomTable.tsx:464
+#: src/tables/bom/BomTable.tsx:459
 msgid "Show items which allow variant substitution"
 msgstr "Hiện items có biến thể con"
 
-#: src/tables/bom/BomTable.tsx:468
+#: src/tables/bom/BomTable.tsx:463
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/build/BuildLineTable.tsx:208
 msgid "Optional"
 msgstr "Tuỳ chọn"
 
-#: src/tables/bom/BomTable.tsx:469
+#: src/tables/bom/BomTable.tsx:464
 #: src/tables/bom/UsedInTable.tsx:91
 msgid "Show optional items"
 msgstr "Hiện items tuỳ chọn"
 
-#: src/tables/bom/BomTable.tsx:473
+#: src/tables/bom/BomTable.tsx:468
 #: src/tables/build/BuildLineTable.tsx:203
 msgid "Consumable"
 msgstr "Vật tư tiêu hao"
 
-#: src/tables/bom/BomTable.tsx:474
+#: src/tables/bom/BomTable.tsx:469
 msgid "Show consumable items"
 msgstr "Hiện items tiêu hao"
 
-#: src/tables/bom/BomTable.tsx:478
+#: src/tables/bom/BomTable.tsx:473
 #: src/tables/part/PartTable.tsx:310
 msgid "Has Pricing"
 msgstr "Có định giá"
 
-#: src/tables/bom/BomTable.tsx:479
+#: src/tables/bom/BomTable.tsx:474
 msgid "Show items with pricing"
 msgstr "Hiện items định giá"
 
-#: src/tables/bom/BomTable.tsx:501
+#: src/tables/bom/BomTable.tsx:496
 msgid "Import BOM Data"
 msgstr "Nhập dữ liệu BOM"
 
-#: src/tables/bom/BomTable.tsx:511
-#: src/tables/bom/BomTable.tsx:635
+#: src/tables/bom/BomTable.tsx:507
+#: src/tables/bom/BomTable.tsx:631
 msgid "Add BOM Item"
 msgstr "Thêm BOM item"
 
-#: src/tables/bom/BomTable.tsx:516
+#: src/tables/bom/BomTable.tsx:512
 msgid "BOM item created"
 msgstr "BOM item đã tạo"
 
-#: src/tables/bom/BomTable.tsx:523
+#: src/tables/bom/BomTable.tsx:519
 #: src/tables/bom/UsedInTable.tsx:111
 msgid "Edit BOM Item"
 msgstr "Sửa BOM item"
 
-#: src/tables/bom/BomTable.tsx:525
+#: src/tables/bom/BomTable.tsx:521
 #: src/tables/bom/UsedInTable.tsx:115
 msgid "BOM item updated"
 msgstr "Đã cập nhật BOM item"
 
-#: src/tables/bom/BomTable.tsx:532
+#: src/tables/bom/BomTable.tsx:528
 msgid "Delete BOM Item"
 msgstr "Xoá BOM item"
 
-#: src/tables/bom/BomTable.tsx:533
+#: src/tables/bom/BomTable.tsx:529
 msgid "BOM item deleted"
 msgstr "Đã xoá BOM item"
 
-#: src/tables/bom/BomTable.tsx:553
+#: src/tables/bom/BomTable.tsx:549
 msgid "BOM item validated"
 msgstr "Đã xác minh item BOM"
 
-#: src/tables/bom/BomTable.tsx:562
+#: src/tables/bom/BomTable.tsx:558
 msgid "Failed to validate BOM item"
 msgstr "Lỗi xác minh BOM item"
 
-#: src/tables/bom/BomTable.tsx:574
+#: src/tables/bom/BomTable.tsx:570
 msgid "View BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:585
+#: src/tables/bom/BomTable.tsx:581
 msgid "Validate BOM Line"
 msgstr "Xác minh BOM line"
 
-#: src/tables/bom/BomTable.tsx:604
+#: src/tables/bom/BomTable.tsx:600
 msgid "Edit Substitutes"
 msgstr "Sửa vật tư thay thế"
 
-#: src/tables/bom/BomTable.tsx:629
+#: src/tables/bom/BomTable.tsx:625
 msgid "Add BOM Items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:637
+#: src/tables/bom/BomTable.tsx:633
 msgid "Add a single BOM item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:641
-#: src/tables/general/ParameterTable.tsx:206
-#: src/tables/part/PartTable.tsx:553
+#: src/tables/bom/BomTable.tsx:637
+#: src/tables/general/ParameterTable.tsx:202
+#: src/tables/part/PartTable.tsx:549
 msgid "Import from File"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:643
+#: src/tables/bom/BomTable.tsx:639
 msgid "Import BOM items from a file"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:666
+#: src/tables/bom/BomTable.tsx:662
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "Không thể sửa BOM, do nguyên liệu bị khoá"
 
@@ -9904,7 +9950,7 @@ msgid "Show items with stock on order"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:264
-#: src/tables/sales/SalesOrderLineItemTable.tsx:166
+#: src/tables/sales/SalesOrderLineItemTable.tsx:168
 msgid "In production"
 msgstr ""
 
@@ -9942,7 +9988,7 @@ msgid "Fully allocated"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:565
-#: src/tables/sales/SalesOrderLineItemTable.tsx:307
+#: src/tables/sales/SalesOrderLineItemTable.tsx:309
 msgid "Create Build Order"
 msgstr ""
 
@@ -10001,7 +10047,7 @@ msgid "Build Stock"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:813
-#: src/tables/sales/SalesOrderLineItemTable.tsx:483
+#: src/tables/sales/SalesOrderLineItemTable.tsx:485
 msgid "View Part"
 msgstr ""
 
@@ -10327,31 +10373,31 @@ msgstr ""
 msgid "View Item"
 msgstr ""
 
-#: src/tables/general/ExtraLineItemTable.tsx:95
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:302
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:408
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:84
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:184
-#: src/tables/sales/SalesOrderLineItemTable.tsx:246
-#: src/tables/sales/SalesOrderLineItemTable.tsx:353
+#: src/tables/general/ExtraLineItemTable.tsx:97
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:298
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:404
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:85
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:186
+#: src/tables/sales/SalesOrderLineItemTable.tsx:248
+#: src/tables/sales/SalesOrderLineItemTable.tsx:355
 msgid "Add Line Item"
 msgstr "Thêm hạng mục"
 
-#: src/tables/general/ExtraLineItemTable.tsx:108
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:325
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:97
-#: src/tables/sales/SalesOrderLineItemTable.tsx:265
+#: src/tables/general/ExtraLineItemTable.tsx:110
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:321
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:98
+#: src/tables/sales/SalesOrderLineItemTable.tsx:267
 msgid "Edit Line Item"
 msgstr "Sửa hạng mục"
 
-#: src/tables/general/ExtraLineItemTable.tsx:117
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:334
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:106
-#: src/tables/sales/SalesOrderLineItemTable.tsx:274
+#: src/tables/general/ExtraLineItemTable.tsx:119
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:330
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:107
+#: src/tables/sales/SalesOrderLineItemTable.tsx:276
 msgid "Delete Line Item"
 msgstr ""
 
-#: src/tables/general/ExtraLineItemTable.tsx:155
+#: src/tables/general/ExtraLineItemTable.tsx:157
 msgid "Add Extra Line Item"
 msgstr ""
 
@@ -10361,6 +10407,7 @@ msgstr ""
 
 #: src/tables/general/ParameterTable.tsx:108
 #: src/tables/general/ParameterTable.tsx:123
+#: src/tables/settings/TemplateTable.tsx:262
 msgid "Updated By"
 msgstr ""
 
@@ -10372,96 +10419,96 @@ msgstr ""
 msgid "Filter by user who last updated the parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:154
+#: src/tables/general/ParameterTable.tsx:149
 msgid "Import Parameters"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:164
+#: src/tables/general/ParameterTable.tsx:160
 #: src/tables/general/ParametricDataTable.tsx:271
 #: src/tables/general/ParametricDataTable.tsx:402
 msgid "Add Parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:175
-#: src/tables/general/ParameterTable.tsx:222
+#: src/tables/general/ParameterTable.tsx:171
+#: src/tables/general/ParameterTable.tsx:218
 #: src/tables/general/ParametricDataTable.tsx:295
 msgid "Edit Parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:183
-#: src/tables/general/ParameterTable.tsx:230
+#: src/tables/general/ParameterTable.tsx:179
+#: src/tables/general/ParameterTable.tsx:226
 msgid "Delete Parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:191
+#: src/tables/general/ParameterTable.tsx:187
 msgid "Add Parameters"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:197
+#: src/tables/general/ParameterTable.tsx:193
 msgid "Create Parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:199
+#: src/tables/general/ParameterTable.tsx:195
 msgid "Create a new parameter"
 msgstr ""
 
-#: src/tables/general/ParameterTable.tsx:208
+#: src/tables/general/ParameterTable.tsx:204
 msgid "Import parameters from a file"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:48
-#: src/tables/general/ParameterTemplateTable.tsx:197
+#: src/tables/general/ParameterTemplateTable.tsx:52
+#: src/tables/general/ParameterTemplateTable.tsx:201
 msgid "Add Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:64
+#: src/tables/general/ParameterTemplateTable.tsx:68
 msgid "Duplicate Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:78
+#: src/tables/general/ParameterTemplateTable.tsx:82
 msgid "Delete Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:85
+#: src/tables/general/ParameterTemplateTable.tsx:89
 msgid "Edit Parameter Template"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:138
+#: src/tables/general/ParameterTemplateTable.tsx:142
 msgid "Checkbox"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:139
+#: src/tables/general/ParameterTemplateTable.tsx:143
 msgid "Show checkbox templates"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:143
+#: src/tables/general/ParameterTemplateTable.tsx:147
 msgid "Has choices"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:144
+#: src/tables/general/ParameterTemplateTable.tsx:148
 msgid "Show templates with choices"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:152
 #: src/tables/part/PartTable.tsx:246
 msgid "Has Units"
 msgstr "Có đơn vị"
 
-#: src/tables/general/ParameterTemplateTable.tsx:149
+#: src/tables/general/ParameterTemplateTable.tsx:153
 msgid "Show templates with units"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:154
+#: src/tables/general/ParameterTemplateTable.tsx:158
 msgid "Show enabled templates"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:158
-#: src/tables/settings/ImportSessionTable.tsx:111
-#: src/tables/settings/TemplateTable.tsx:368
+#: src/tables/general/ParameterTemplateTable.tsx:162
+#: src/tables/settings/ImportSessionTable.tsx:112
+#: src/tables/settings/TemplateTable.tsx:402
 msgid "Model Type"
 msgstr ""
 
-#: src/tables/general/ParameterTemplateTable.tsx:159
+#: src/tables/general/ParameterTemplateTable.tsx:163
 msgid "Filter by model type"
 msgstr ""
 
@@ -10747,7 +10794,7 @@ msgid "Required Stock"
 msgstr ""
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:386
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:382
 msgid "View Build Order"
 msgstr ""
 
@@ -10828,7 +10875,7 @@ msgstr ""
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:79
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:197
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:193
 msgid "Total Quantity"
 msgstr "Tổng số lượng"
 
@@ -10985,44 +11032,44 @@ msgstr ""
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:383
+#: src/tables/part/PartTable.tsx:378
 msgid "Import Parts"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:471
-#: src/tables/part/PartTable.tsx:519
+#: src/tables/part/PartTable.tsx:467
+#: src/tables/part/PartTable.tsx:515
 msgid "Set Category"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:521
+#: src/tables/part/PartTable.tsx:517
 msgid "Set category for selected parts"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:531
+#: src/tables/part/PartTable.tsx:527
 msgid "Order selected parts"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:541
+#: src/tables/part/PartTable.tsx:537
 msgid "Add Parts"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:547
+#: src/tables/part/PartTable.tsx:543
 msgid "Create Part"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:549
+#: src/tables/part/PartTable.tsx:545
 msgid "Create a new part"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:555
+#: src/tables/part/PartTable.tsx:551
 msgid "Import parts from a file"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:560
+#: src/tables/part/PartTable.tsx:556
 msgid "Import from Supplier"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:562
+#: src/tables/part/PartTable.tsx:558
 msgid "Import parts from a supplier plugin"
 msgstr ""
 
@@ -11231,7 +11278,7 @@ msgstr "Phần bổ sung"
 #~ msgstr "An error occurred while fetching plugin details"
 
 #: src/tables/plugin/PluginListTable.tsx:106
-#: src/tables/plugin/PluginListTable.tsx:428
+#: src/tables/plugin/PluginListTable.tsx:430
 msgid "Mandatory"
 msgstr ""
 
@@ -11301,28 +11348,28 @@ msgstr ""
 msgid "Update selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:230
+#: src/tables/plugin/PluginListTable.tsx:229
 #: src/tables/stock/InstalledItemsTable.tsx:98
 msgid "Uninstall"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:231
+#: src/tables/plugin/PluginListTable.tsx:230
 msgid "Uninstall selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:250
+#: src/tables/plugin/PluginListTable.tsx:248
 msgid "Delete selected plugin configuration"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:266
+#: src/tables/plugin/PluginListTable.tsx:264
 msgid "Activate Plugin"
 msgstr "Kích hoạt phần bổ sung"
 
-#: src/tables/plugin/PluginListTable.tsx:273
+#: src/tables/plugin/PluginListTable.tsx:271
 msgid "The plugin was activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:274
+#: src/tables/plugin/PluginListTable.tsx:272
 msgid "The plugin was deactivated"
 msgstr ""
 
@@ -11330,20 +11377,20 @@ msgstr ""
 #~ msgid "Install plugin"
 #~ msgstr "Install plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:287
-#: src/tables/plugin/PluginListTable.tsx:374
+#: src/tables/plugin/PluginListTable.tsx:285
+#: src/tables/plugin/PluginListTable.tsx:377
 msgid "Install Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:300
+#: src/tables/plugin/PluginListTable.tsx:298
 msgid "Install"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:301
+#: src/tables/plugin/PluginListTable.tsx:299
 msgid "Plugin installed successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:306
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "Uninstall Plugin"
 msgstr ""
 
@@ -11351,23 +11398,23 @@ msgstr ""
 #~ msgid "This action cannot be undone."
 #~ msgstr "This action cannot be undone."
 
-#: src/tables/plugin/PluginListTable.tsx:318
+#: src/tables/plugin/PluginListTable.tsx:316
 msgid "Confirm plugin uninstall"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:321
+#: src/tables/plugin/PluginListTable.tsx:319
 msgid "The selected plugin will be uninstalled."
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:326
+#: src/tables/plugin/PluginListTable.tsx:324
 msgid "Plugin uninstalled successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:334
+#: src/tables/plugin/PluginListTable.tsx:332
 msgid "Delete Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:335
+#: src/tables/plugin/PluginListTable.tsx:333
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr ""
 
@@ -11375,11 +11422,11 @@ msgstr ""
 #~ msgid "Deactivate Plugin"
 #~ msgstr "Deactivate Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:348
+#: src/tables/plugin/PluginListTable.tsx:346
 msgid "Plugins reloaded"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:349
+#: src/tables/plugin/PluginListTable.tsx:347
 msgid "Plugins were reloaded successfully"
 msgstr ""
 
@@ -11391,7 +11438,7 @@ msgstr ""
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:367
+#: src/tables/plugin/PluginListTable.tsx:370
 msgid "Reload Plugins"
 msgstr ""
 
@@ -11403,23 +11450,23 @@ msgstr ""
 #~ msgid "Deactivating plugin"
 #~ msgstr "Deactivating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:391
-msgid "Plugin Detail"
-msgstr ""
-
 #: src/tables/plugin/PluginListTable.tsx:392
 #~ msgid "Plugin updated"
 #~ msgstr "Plugin updated"
+
+#: src/tables/plugin/PluginListTable.tsx:393
+msgid "Plugin Detail"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:403
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:433
+#: src/tables/plugin/PluginListTable.tsx:435
 msgid "Sample"
 msgstr "Mẫu"
 
-#: src/tables/plugin/PluginListTable.tsx:438
+#: src/tables/plugin/PluginListTable.tsx:440
 #: src/tables/stock/StockItemTable.tsx:226
 msgid "Installed"
 msgstr "Đã cài đặt"
@@ -11477,24 +11524,24 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this manufacturer part?"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:115
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:398
 msgid "Import Line Items"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:237
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
 msgid "Supplier Code"
 msgstr "Mã nhà cung cấp"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:241
 msgid "Supplier Link"
 msgstr "Liên kết nhà cung cấp"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:252
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:248
 msgid "Manufacturer Code"
 msgstr "Mã nhà sản xuất"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:286
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
 msgid "Show line items which have been received"
 msgstr ""
 
@@ -11504,11 +11551,11 @@ msgstr ""
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:355
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:351
 msgid "Receive line item"
 msgstr "Nhận hạng mục"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:419
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:415
 msgid "Receive items"
 msgstr "Nhận hàng hóa"
 
@@ -11560,23 +11607,23 @@ msgstr ""
 msgid "Show supplier parts with stock"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:155
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:157
 msgid "Received Date"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:169
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:171
 msgid "Show items which have been received"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:174
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
 msgid "Filter by line item status"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:192
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:194
 msgid "Receive selected items"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:227
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:229
 msgid "Receive Item"
 msgstr ""
 
@@ -11636,7 +11683,7 @@ msgstr ""
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:287
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
 msgid "Allocate Serial Numbers"
 msgstr ""
 
@@ -11644,27 +11691,27 @@ msgstr ""
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:295
+#: src/tables/sales/SalesOrderLineItemTable.tsx:297
 msgid "Stock allocated successfully"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:339
+#: src/tables/sales/SalesOrderLineItemTable.tsx:341
 msgid "Show lines which are fully allocated"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:344
+#: src/tables/sales/SalesOrderLineItemTable.tsx:346
 msgid "Show lines which are completed"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:417
+#: src/tables/sales/SalesOrderLineItemTable.tsx:419
 msgid "Allocate serials"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:435
+#: src/tables/sales/SalesOrderLineItemTable.tsx:437
 msgid "Build stock"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:453
+#: src/tables/sales/SalesOrderLineItemTable.tsx:455
 msgid "Order stock"
 msgstr ""
 
@@ -11989,7 +12036,7 @@ msgstr ""
 #~ msgstr "Permission set"
 
 #: src/tables/settings/GroupTable.tsx:170
-#: src/tables/settings/UserTable.tsx:315
+#: src/tables/settings/UserTable.tsx:316
 msgid "Open Profile"
 msgstr ""
 
@@ -12021,29 +12068,29 @@ msgstr ""
 msgid "Add Group"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:38
+#: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:129
+#: src/tables/settings/ImportSessionTable.tsx:43
+#: src/tables/settings/ImportSessionTable.tsx:130
 msgid "Create Import Session"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:72
+#: src/tables/settings/ImportSessionTable.tsx:73
 msgid "Uploaded"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:83
+#: src/tables/settings/ImportSessionTable.tsx:84
 msgid "Imported Rows"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:112
-#: src/tables/settings/TemplateTable.tsx:369
+#: src/tables/settings/ImportSessionTable.tsx:113
+#: src/tables/settings/TemplateTable.tsx:403
 msgid "Filter by target model type"
 msgstr ""
 
-#: src/tables/settings/ImportSessionTable.tsx:118
+#: src/tables/settings/ImportSessionTable.tsx:119
 msgid "Filter by import session status"
 msgstr ""
 
@@ -12107,11 +12154,11 @@ msgstr ""
 #~ msgid "actions"
 #~ msgstr "actions"
 
-#: src/tables/settings/TemplateTable.tsx:165
+#: src/tables/settings/TemplateTable.tsx:171
 msgid "Template not found"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:167
+#: src/tables/settings/TemplateTable.tsx:173
 msgid "An error occurred while fetching template details"
 msgstr ""
 
@@ -12123,32 +12170,36 @@ msgstr ""
 #~ msgid "Create new"
 #~ msgstr "Create new"
 
-#: src/tables/settings/TemplateTable.tsx:261
+#: src/tables/settings/TemplateTable.tsx:272
+msgid "Filename"
+msgstr ""
+
+#: src/tables/settings/TemplateTable.tsx:295
 msgid "Modify"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:262
+#: src/tables/settings/TemplateTable.tsx:296
 msgid "Modify template file"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:313
-#: src/tables/settings/TemplateTable.tsx:381
+#: src/tables/settings/TemplateTable.tsx:347
+#: src/tables/settings/TemplateTable.tsx:415
 msgid "Edit Template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:321
+#: src/tables/settings/TemplateTable.tsx:355
 msgid "Delete template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:327
+#: src/tables/settings/TemplateTable.tsx:361
 msgid "Add Template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:340
+#: src/tables/settings/TemplateTable.tsx:374
 msgid "Add template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:363
+#: src/tables/settings/TemplateTable.tsx:397
 msgid "Filter by enabled status"
 msgstr ""
 
@@ -12189,8 +12240,12 @@ msgid "Designates whether this user should be treated as active. Unselect this i
 msgstr ""
 
 #: src/tables/settings/UserTable.tsx:183
-msgid "Is Staff"
+msgid "Is Administrator"
 msgstr ""
+
+#: src/tables/settings/UserTable.tsx:183
+#~ msgid "Is Staff"
+#~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:184
 msgid "Designates whether the user can log into the django admin site."
@@ -12216,71 +12271,75 @@ msgstr ""
 #~ msgid "Edit user"
 #~ msgstr "Edit user"
 
-#: src/tables/settings/UserTable.tsx:332
+#: src/tables/settings/UserTable.tsx:333
 msgid "Lock user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:342
+#: src/tables/settings/UserTable.tsx:343
 msgid "Unlock user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:358
+#: src/tables/settings/UserTable.tsx:359
 msgid "Delete user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:359
+#: src/tables/settings/UserTable.tsx:360
 msgid "User deleted"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:362
+#: src/tables/settings/UserTable.tsx:363
 msgid "Are you sure you want to delete this user?"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:372
+#: src/tables/settings/UserTable.tsx:373
 msgid "Set Password"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:377
+#: src/tables/settings/UserTable.tsx:378
 msgid "Password updated"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:388
+#: src/tables/settings/UserTable.tsx:389
 msgid "Add user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:401
+#: src/tables/settings/UserTable.tsx:402
 msgid "Show active users"
 msgstr ""
 
 #: src/tables/settings/UserTable.tsx:406
-msgid "Show staff users"
+#~ msgid "Show staff users"
+#~ msgstr "Show staff users"
+
+#: src/tables/settings/UserTable.tsx:407
+msgid "Show administrators"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:411
+#: src/tables/settings/UserTable.tsx:412
 msgid "Show superusers"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:430
+#: src/tables/settings/UserTable.tsx:431
 msgid "Edit User"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:463
+#: src/tables/settings/UserTable.tsx:464
 msgid "Add User"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:471
+#: src/tables/settings/UserTable.tsx:472
 msgid "Added user"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:481
+#: src/tables/settings/UserTable.tsx:482
 msgid "User updated"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:482
+#: src/tables/settings/UserTable.tsx:483
 msgid "User updated successfully"
 msgstr ""
 
-#: src/tables/settings/UserTable.tsx:488
+#: src/tables/settings/UserTable.tsx:489
 msgid "Error updating user"
 msgstr ""
 

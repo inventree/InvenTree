@@ -11,11 +11,14 @@ from typing import Optional
 from unittest import mock
 from unittest.mock import patch
 
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
+from plugin.installer import install_plugin
 from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
@@ -326,6 +329,9 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_broken_samples(self):
         """Test that the broken samples trigger reloads."""
+        # Reset the registry to a known state
+        registry.errors = {}
+
         # In the base setup there are no errors
         self.assertEqual(len(registry.errors), 0)
 
@@ -686,3 +692,40 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         self.assertTrue(cfg.is_builtin())
         self.assertFalse(cfg.is_package())
         self.assertFalse(cfg.is_sample())
+
+
+class InstallerTests(TestCase):
+    """Tests for the plugin installer code."""
+
+    def test_plugin_install_errors(self):
+        """Test error handling for plugin installation."""
+        # No data provided
+        with self.assertRaises(ValidationError) as e:
+            install_plugin()
+
+        self.assertIn(
+            'No package name or URL provided for installation', str(e.exception)
+        )
+
+        # Invalid package name
+        for pkg in [
+            'invalid;name',
+            'invalid&name',
+            'invalid|name',
+            'invalid`name',
+            'invalid$(name)',
+        ]:
+            with self.assertRaises(ValidationError) as e:
+                install_plugin(packagename=pkg)
+
+            self.assertIn('Invalid characters in package name or URL', str(e.exception))
+
+        # Non superuser account
+        user = User.objects.create(username='my-user', is_superuser=False)
+
+        with self.assertRaises(ValidationError) as e:
+            install_plugin(user=user, packagename='some-package')
+
+        self.assertIn(
+            'Only superuser accounts can administer plugins', str(e.exception)
+        )

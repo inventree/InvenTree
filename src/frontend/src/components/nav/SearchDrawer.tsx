@@ -7,6 +7,7 @@ import {
   Anchor,
   Center,
   Checkbox,
+  Divider,
   Drawer,
   Group,
   Loader,
@@ -32,18 +33,22 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
-import { eventModified, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { getModelInfo } from '../render/ModelType';
 
@@ -158,17 +163,28 @@ function QueryResultGroup({
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        <Stack aria-label={`search-group-results-${query.model}`}>
-          {query.results.results.map((result: any) => (
-            <Anchor
-              underline='never'
-              onClick={(event: any) =>
-                onResultClick(query.model, result.pk, event)
-              }
-              key={`result-${query.model}-${result.pk}`}
-            >
-              <RenderInstance instance={result} model={query.model} />
-            </Anchor>
+        <Stack gap={'xs'} aria-label={`search-group-results-${query.model}`}>
+          {query.results.results.map((result: any, index: number) => (
+            <>
+              <Anchor
+                underline='never'
+                href={getDetailUrl(query.model, result.pk, true)}
+                onClick={(event: any) =>
+                  onResultClick(query.model, result.pk, event)
+                }
+                key={`result-${query.model}-${result.pk}`}
+              >
+                <RenderInstance instance={result} model={query.model} />
+              </Anchor>
+              {index < query.results.results.length - 1 && (
+                <Divider
+                  p={0}
+                  m={0}
+                  variant='dashed'
+                  key={`divider-${query.model}-${result.pk}`}
+                />
+              )}
+            </>
           ))}
         </Stack>
       </Accordion.Panel>

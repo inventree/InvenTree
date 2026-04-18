@@ -402,12 +402,12 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
 
   await loadTab(page, 'Parameters', true);
 
-  await page.waitForTimeout(1000);
   await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1000);
 
   // Clean old template data if exists
   await page
-    .getByRole('cell', { name: 'my custom parameter' })
+    .getByRole('cell', { name: 'my custom parameter', exact: true })
     .waitFor({ timeout: 500 })
     .then(async (cell) => {
       await page
@@ -420,10 +420,13 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     })
     .catch(() => {});
 
-  await page.getByRole('button', { name: 'Selection Lists' }).click();
   // Allow time for the table to load
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Selection Lists' }).click();
   await page.waitForLoadState('networkidle');
+
+  // Check for expected entry
+  await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
+  await page.getByText('Various animals and descriptions thereof').waitFor();
 
   // Clean old list data if exists
   await page
@@ -445,6 +448,19 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
   await page.getByLabel('text-field-description').fill('Listdescription');
+
+  // Add an entry to the selection list
+  await page.getByRole('button', { name: 'action-button-add-new-row' }).click();
+  await page.getByRole('textbox', { name: 'text-field-value' }).fill('HW');
+  await page
+    .getByRole('textbox', { name: 'text-field-label' })
+    .fill('Hardwood');
+  await page
+    .getByRole('row', { name: 'boolean-field-active action-' })
+    .getByLabel('text-field-description')
+    .fill('Hardwood materials');
+  await page.getByRole('cell', { name: 'boolean-field-active' }).click();
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'some list' }).waitFor();
 
@@ -494,9 +510,18 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     .filter({ hasText: /^Search\.\.\.$/ })
     .locator('input')
     .fill('my custom parameter');
+
   await page.getByRole('option', { name: 'my custom parameter' }).click();
-  await page.getByLabel('choice-field-data').fill('2');
+
+  // Finally, select value from the SelectionList data
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('wood');
+  await page
+    .getByRole('option', { name: 'Hardwood Hardwood materials' })
+    .click();
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the expected value
+  await page.getByRole('cell', { name: 'HW', exact: true }).waitFor();
 });
 
 test('Settings - Admin - Unauthorized', async ({ browser }) => {

@@ -1,3 +1,4 @@
+import { Boundary } from '@lib/components/Boundary';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -16,7 +17,6 @@ import {
   IconCircleCheck
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo } from 'react';
-import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 
 /**

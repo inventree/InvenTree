@@ -312,6 +312,7 @@ The following cache settings are available:
 {{ configsetting("INVENTREE_CACHE_PORT") }} Cache server port |
 {{ configsetting("INVENTREE_CACHE_PASSWORD") }} Cache server password |
 {{ configsetting("INVENTREE_CACHE_USER") }} Cache server username |
+{{ configsetting("INVENTREE_CACHE_DB") }} Cache server database index |
 {{ configsetting("INVENTREE_CACHE_CONNECT_TIMEOUT") }} Cache connection timeout (seconds) |
 {{ configsetting("INVENTREE_CACHE_TIMEOUT") }} Cache timeout (seconds) |
 {{ configsetting("INVENTREE_CACHE_TCP_KEEPALIVE") }} Cache TCP keepalive |
@@ -319,6 +320,7 @@ The following cache settings are available:
 {{ configsetting("INVENTREE_CACHE_KEEPALIVE_IDLE") }} Cache keepalive idle |
 {{ configsetting("INVENTREE_CACHE_KEEPALIVE_INTERVAL") }} Cache keepalive interval |
 {{ configsetting("INVENTREE_CACHE_USER_TIMEOUT") }} Cache user timeout |
+
 
 !!! tip "Cache Password"
     The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.

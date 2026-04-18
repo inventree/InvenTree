@@ -23,6 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -32,7 +33,6 @@ import { getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -137,7 +137,7 @@ export function NotificationDrawer({
 
   const markAllAsRead = useCallback(() => {
     api
-      .get(apiUrl(ApiEndpoints.notifications_readall), {
+      .post(apiUrl(ApiEndpoints.notifications_readall), {
         params: {
           read: false
         }
