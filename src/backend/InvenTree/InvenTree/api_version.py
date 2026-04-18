@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 479
+INVENTREE_API_VERSION = 480
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
+v480 -> 2026-03-25 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
+
 v479 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11723
-    - POST /api//notifications/readall/ now requires a POST action
+    - POST /api/notifications/readall/ now requires a POST action
     - POST /api/admin/email/test/ - now returns a 200 on. a successful test
     - GET /api/notifications/ - now uses user-centric permissions, not a general read
 
