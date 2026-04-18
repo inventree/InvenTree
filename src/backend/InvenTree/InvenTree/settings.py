@@ -753,8 +753,9 @@ CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 # Background task processing with django-q
 Q_CLUSTER = worker.get_worker_config(
     DB_ENGINE,
-    GLOBAL_CACHE_ENABLED,
-    SENTRY_DSN if SENTRY_ENABLED and SENTRY_DSN else None,
+    global_cache=GLOBAL_CACHE_ENABLED,
+    sentry_dsn=SENTRY_DSN if SENTRY_ENABLED and SENTRY_DSN else None,
+    debug=DEBUG,
 )
 
 SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']

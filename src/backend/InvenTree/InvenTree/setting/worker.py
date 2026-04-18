@@ -1,15 +1,23 @@
 """Configuration settings for the InvenTree background worker process."""
 
+import sys
+
 from InvenTree.config import get_setting
 
 
-def get_worker_config(db_engine: str, global_cache: bool, sentry_dsn: str) -> dict:
+def get_worker_config(
+    db_engine: str,
+    global_cache: bool = False,
+    sentry_dsn: str = '',
+    debug: bool = False,
+) -> dict:
     """Return a dictionary of configuration settings for the background worker.
 
     Arguments:
         db_engine: The database engine being used (e.g. 'sqlite', 'postgresql', 'mysql')
         global_cache: Whether a global redis cache is enabled
         sentry_dsn: The DSN for sentry.io integration (if enabled)
+        debug: Whether the application is running in debug mode
 
     Ref: https://django-q2.readthedocs.io/en/master/configure.html
     """
@@ -41,6 +49,16 @@ def get_worker_config(db_engine: str, global_cache: bool, sentry_dsn: str) -> di
     if 'sqlite' in db_engine:
         BACKGROUND_WORKER_COUNT = 1
 
+    # Check if '--sync' was passed in the command line
+    if '--sync' in sys.argv and '--noreload' in sys.argv and debug:
+        SYNC_TASKS = True
+    else:
+        SYNC_TASKS = False
+
+    # Clean up sys.argv so Django doesn't complain about an unknown argument
+    if SYNC_TASKS:
+        sys.argv.remove('--sync')
+
     # django-q background worker configuration
     config = {
         'name': 'InvenTree',
@@ -55,7 +73,7 @@ def get_worker_config(db_engine: str, global_cache: bool, sentry_dsn: str) -> di
         'bulk': 10,
         'orm': 'default',
         'cache': 'default',
-        'sync': False,
+        'sync': SYNC_TASKS,
         'poll': 1.5,
     }
 
