@@ -482,13 +482,10 @@ The InvenTree server can be integrated with the [sentry.io](https://sentry.io) m
 
 The logo and custom messages can be changed/set:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CUSTOM_LOGO | customize.logo | Path to custom logo in the static files directory | *Not specified* |
-| INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.site_header | Custom site header in the Django admin | InvenTree Admin |
-| INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_CUSTOM_LOGO") }} Path to custom logo in the static files directory |
+{{ configsetting("INVENTREE_CUSTOM_SPLASH") }} Path to custom splash screen in the static files directory |
+{{ configsetting("INVENTREE_CUSTOMIZE") }} JSON object containing custom messages for the login page, navbar, and Django admin site |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
 the wanted values. Example:

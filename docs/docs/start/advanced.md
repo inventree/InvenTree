@@ -85,7 +85,7 @@ This can be used to track usage and performance of the InvenTree backend and con
 {{ configsetting("INVENTREE_TRACING_ENABLED") }} Enable OpenTelemetry |
 {{ configsetting("INVENTREE_TRACING_ENDPOINT") }} General endpoint for information (not specific trace/log url) |
 {{ configsetting("INVENTREE_TRACING_HEADERS") }} HTTP headers that should be send with every request (often used for authentication). Format as a dict. |
-{{ configsetting("INVENTREE_TRACING_AUTH_BASIC") }} Auth headers that should be send with every requests (will be encoded to b64 and overwrite auth headers) |
+{{ configsetting("INVENTREE_TRACING_AUTH") }} Auth headers that should be send with every requests (will be encoded to b64 and overwrite auth headers) |
 {{ configsetting("INVENTREE_TRACING_IS_HTTP") }} Are the endpoints HTTP (True, default) or gRPC (False) |
 {{ configsetting("INVENTREE_TRACING_APPEND_HTTP") }} Append default url routes (v1) to `tracing.endpoint` |
 {{ configsetting("INVENTREE_TRACING_CONSOLE") }} Print out all exports (additionally) to the console for debugging. Do not use in production |

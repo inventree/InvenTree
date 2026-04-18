@@ -32,7 +32,15 @@ from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import db_backend, locales, markdown, spectacular, storages, worker
+from .setting import (
+    db_backend,
+    locales,
+    markdown,
+    spectacular,
+    storages,
+    tracing,
+    worker,
+)
 
 try:
     import django_stubs_ext
@@ -687,63 +695,14 @@ if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
-TRACING_ENABLED = get_boolean_setting(
-    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
+TRACING_ENABLED = (
+    get_boolean_setting('INVENTREE_TRACING_ENABLED', 'tracing.enabled', False)
+    and not isRunningBackup()
 )
-TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
-    from InvenTree.tracing import setup_instruments, setup_tracing
-
-    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
-    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
-
-    if _t_headers is None:
-        _t_headers = {}
-
-    if _t_endpoint:
-        logger.info('OpenTelemetry tracing enabled')
-
-        TRACING_DETAILS = (
-            TRACING_DETAILS
-            if TRACING_DETAILS
-            else {
-                'endpoint': _t_endpoint,
-                'headers': _t_headers,
-                'resources_input': {
-                    **{'inventree.env.' + k: v for k, v in inventree_tags.items()},
-                    **get_setting(
-                        'INVENTREE_TRACING_RESOURCES',
-                        'tracing.resources',
-                        default_value=None,
-                        typecast=dict,
-                    ),
-                },
-                'console': get_boolean_setting(
-                    'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
-                ),
-                'auth': get_setting(
-                    'INVENTREE_TRACING_AUTH',
-                    'tracing.auth',
-                    default_value=None,
-                    typecast=dict,
-                ),
-                'is_http': get_setting(
-                    'INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True
-                ),
-                'append_http': get_boolean_setting(
-                    'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
-                ),
-            }
-        )
-
-        # Run tracing/logging instrumentation
-        setup_tracing(**TRACING_DETAILS)
-        setup_instruments(DB_ENGINE)
-    else:
-        logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
-
-# endregion
+TRACING_DETAILS: Optional[dict] = tracing.configure_tracing(
+    DB_ENGINE, TRACING_ENABLED, inventree_tags
+)
 
 # Cache configuration
 GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
