@@ -23,6 +23,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { notYetImplemented } from '@lib/functions/Notification';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { api } from '../../App';
@@ -30,10 +31,7 @@ import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { StylishText } from '../../components/items/StylishText';
 import PageTitle from '../../components/nav/PageTitle';
-import {
-  notYetImplemented,
-  showApiErrorMessage
-} from '../../functions/notifications';
+import { showApiErrorMessage } from '../../functions/notifications';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {

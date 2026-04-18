@@ -1,8 +1,8 @@
 import { IconUsers } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
@@ -83,6 +83,7 @@ export function extraLineItemFields(): ApiFormFieldSet {
     order: {
       hidden: true
     },
+    line: {},
     reference: {},
     description: {},
     quantity: {},
@@ -105,18 +106,45 @@ export function useParameterFields({
 }): ApiFormFieldSet {
   const api = useApi();
 
+  const [selectionListId, setSelectionListId] = useState<number | null>(null);
+
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 
   // Field type for "data" input
-  const [fieldType, setFieldType] = useState<'string' | 'boolean' | 'choice'>(
-    'string'
-  );
+  const [fieldType, setFieldType] = useState<
+    'string' | 'boolean' | 'choice' | 'related field'
+  >('string');
 
+  // Memoized value for the "data" field
   const [data, setData] = useState<string>('');
+
+  const fetchSelectionEntry = useCallback(
+    (value: any) => {
+      if (!value || !selectionListId) {
+        return null;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.selectionentry_list, selectionListId), {
+          params: {
+            value: value
+          }
+        })
+        .then((response) => {
+          if (response.data && response.data.length == 1) {
+            return response.data[0];
+          } else {
+            return null;
+          }
+        });
+    },
+    [selectionListId]
+  );
 
   // Reset the field type and choices when the model changes
   useEffect(() => {
+    setSelectionListId(null);
     setFieldType('string');
     setChoices([]);
     setData('');
@@ -138,6 +166,8 @@ export function useParameterFields({
           enabled: true
         },
         onValueChange: (value: any, record: any) => {
+          setSelectionListId(record?.selectionlist || null);
+
           // Adjust the type of the "data" field based on the selected template
           if (record?.checkbox) {
             // This is a "checkbox" field
@@ -161,36 +191,42 @@ export function useParameterFields({
               setFieldType('string');
             }
           } else if (record?.selectionlist) {
-            api
-              .get(
-                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
-              )
-              .then((res) => {
-                setChoices(
-                  res.data.choices.map((item: any) => {
-                    return {
-                      value: item.value,
-                      display_name: item.label
-                    };
-                  })
-                );
-                setFieldType('choice');
-              });
-          } else {
-            setChoices([]);
-            setFieldType('string');
+            setFieldType('related field');
           }
         }
       },
       data: {
         value: data,
-        onValueChange: (value: any) => {
-          setData(value);
+        onValueChange: (value: any, record: any) => {
+          if (fieldType === 'related field' && selectionListId) {
+            // For related fields, we need to store the selected primary key value (not the string representation)
+            setData(record?.value ?? value);
+          } else {
+            setData(value);
+          }
         },
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
         default: fieldType === 'boolean' ? false : undefined,
+        pk_field:
+          fieldType === 'related field' && selectionListId
+            ? 'value'
+            : undefined,
+        model:
+          fieldType === 'related field' && selectionListId
+            ? ModelType.selectionentry
+            : undefined,
+        api_url:
+          fieldType === 'related field' && selectionListId
+            ? apiUrl(ApiEndpoints.selectionentry_list, selectionListId)
+            : undefined,
+        filters:
+          fieldType === 'related field'
+            ? {
+                active: true
+              }
+            : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
 
@@ -203,9 +239,10 @@ export function useParameterFields({
           }
 
           return v;
-        }
+        },
+        singleFetchFunction: fetchSelectionEntry
       },
       note: {}
     };
-  }, [data, modelType, fieldType, choices, modelId]);
+  }, [data, modelType, fieldType, choices, modelId, selectionListId]);
 }

@@ -1,6 +1,7 @@
 import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useFilterSet from '@lib/hooks/UseFilterSet';
 import type { FilterSetState } from '@lib/types/Filters';
 import type { UseModalReturn } from '@lib/types/Modals';
 import type { DateValue } from '@mantine/dates';
@@ -10,7 +11,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { api } from '../App';
 import { showApiErrorMessage } from '../functions/notifications';
 import useDataExport from './UseDataExport';
-import { useFilterSet } from './UseFilterSet';
 
 /*
  * Type definition for representing the state of a calendar:

@@ -767,3 +767,13 @@ export function TotalPriceColumn(): TableColumn {
     title: t`Total Price`
   });
 }
+
+export function LineItemColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'line',
+    title: t`Line Item`,
+    sortable: true,
+    switchable: true,
+    ...props
+  };
+}

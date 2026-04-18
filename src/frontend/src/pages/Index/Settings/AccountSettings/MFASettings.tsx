@@ -1,4 +1,5 @@
 import { create } from '@github/webauthn-json/browser-ponyfill';
+import { CopyButton } from '@lib/components/CopyButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { FlowEnum } from '@lib/types/Auth';
@@ -31,7 +32,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../../../App';
-import { CopyButton } from '../../../../components/buttons/CopyButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { authApi, doLogout } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';

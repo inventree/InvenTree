@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -625,12 +625,8 @@ class ParameterListMixin:
         return queryset
 
 
-class BulkDeleteMixin(BulkOperationMixin):
-    """Mixin class for enabling 'bulk delete' operations for various models.
-
-    Bulk delete allows for multiple items to be deleted in a single API query,
-    rather than using multiple API calls to the various detail endpoints.
-    """
+class CommonBulkDeleteMixin(BulkOperationMixin):
+    """Helper for creating bulk delete operation on classic cbv and viewsets."""
 
     def validate_delete(self, queryset, request) -> None:
         """Perform validation right before deletion.
@@ -655,7 +651,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         return queryset
 
     @extend_schema(request=BulkRequestSerializer)
-    def delete(self, request, *args, **kwargs):
+    def _delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
         Note that the typical DRF list endpoint does not support DELETE,
@@ -677,6 +673,37 @@ class BulkDeleteMixin(BulkOperationMixin):
                 item.delete()
 
         return Response({'success': f'Deleted {n_deleted} items'}, status=200)
+
+
+class BulkDeleteMixin(CommonBulkDeleteMixin):
+    """Mixin class for enabling 'bulk delete' operations for various models.
+
+    Bulk delete allows for multiple items to be deleted in a single API query,
+    rather than using multiple API calls to the various detail endpoints.
+    """
+
+    @extend_schema(request=BulkRequestSerializer)
+    def delete(self, request, *args, **kwargs):
+        """Perform a DELETE operation against this list endpoint.
+
+        Note that the typical DRF list endpoint does not support DELETE,
+        so this method is provided as a custom implementation.
+        """
+        return self._delete(request, *args, **kwargs)
+
+
+class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
+    """Mixin class for enabling 'bulk delete' operations for viewsets."""
+
+    @extend_schema(request=BulkRequestSerializer)
+    def bulk_delete(self, request, *args, **kwargs):
+        """Perform a bulk delete operation.
+
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+        """
+        return self._delete(request, *args, **kwargs)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
