@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import {
   ActionButton,
   AddItemButton,
@@ -39,7 +40,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
@@ -343,7 +343,7 @@ export default function TransferOrderLineItemTable({
         color='green'
         onClick={() => {
           setSelectedItems(
-            table.selectedRecords.filter((r) => r.allocated < r.quantity)
+            table.selectedRecords.filter((r: any) => r.allocated < r.quantity)
           );
           allocateStock.open();
         }}
