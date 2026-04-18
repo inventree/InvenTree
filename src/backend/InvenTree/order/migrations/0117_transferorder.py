@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("common", "0041_auto_20251203_1244"),
         ("company", "0077_delete_manufacturerpartparameter"),
-        ("order", "0115_purchaseorder_updated_at_returnorder_updated_at_and_more"),
+        ("order", "0116_purchaseorderextraline_line_and_more"),
         ("part", "0146_auto_20251203_1241"),
         ("stock", "0116_alter_stockitem_link"),
         ("users", "0015_alter_userprofile_type"),
@@ -273,6 +273,15 @@ class Migration(migrations.Migration):
                         verbose_name="Source Location",
                     ),
                 ),
+                (
+                    "updated_at",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="Timestamp of last update",
+                        null=True,
+                        verbose_name="Updated At",
+                    ),
+                )
             ],
             options={
                 "verbose_name": "Transfer Order",
@@ -398,6 +407,16 @@ class Migration(migrations.Migration):
                         verbose_name="transferred",
                     ),
                 ),
+                (
+                    "line",
+                    models.CharField(
+                        blank=True,
+                        default="",
+                        help_text="Line number for this item (optional)",
+                        max_length=20,
+                        verbose_name="Line Number",
+                    ),
+                )
             ],
             options={
                 "verbose_name": "Transfer Order Line Item",
