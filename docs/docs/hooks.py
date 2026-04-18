@@ -280,7 +280,14 @@ def on_post_build(*args, **kwargs):
     ignored_settings = {
         'global': ['SERVER_RESTART_REQUIRED'],
         'user': ['LAST_USED_PRINTING_MACHINES'],
-        'config': ['INVENTREE_DOCKER'],
+        'config': [
+            'INVENTREE_DB_TCP_KEEPALIVES',
+            'INVENTREE_DB_TCP_KEEPALIVES_IDLE',
+            'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
+            'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
+            'INVENTREE_DB_ISOLATION_SERIALIZABLE',
+            'INVENTREE_DOCKER',
+        ],
     }
 
     for group in ['global', 'user', 'config']:

@@ -255,7 +255,7 @@ The following database options can be configured:
 {{ configsetting("INVENTREE_DB_PASSWORD") }} Database password (if required) |
 {{ configsetting("INVENTREE_DB_HOST") }} Database host address (if required) |
 {{ configsetting("INVENTREE_DB_PORT") }} Database host port (if required) |
-
+{{ configsetting("INVENTREE_DB_OPTIONS") }} Additional database options (as a JSON object) |
 
 !!! tip "Database Password"
     The value specified for `INVENTREE_DB_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the database may fail.
@@ -485,6 +485,7 @@ The logo and custom messages can be changed/set:
 {{ configtable() }}
 {{ configsetting("INVENTREE_CUSTOM_LOGO") }} Path to custom logo in the static files directory |
 {{ configsetting("INVENTREE_CUSTOM_SPLASH") }} Path to custom splash screen in the static files directory |
+{{ configsetting("INVENTREE_SITE_HEADER") }} Custom header text for the django admin page |
 {{ configsetting("INVENTREE_CUSTOMIZE") }} JSON object containing custom messages for the login page, navbar, and Django admin site |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
@@ -534,7 +535,8 @@ The following [plugin](../plugins/index.md) configuration options are available:
 {{ configsetting("INVENTREE_PLUGINS_ENABLED") }} Enable plugin support |
 {{ configsetting("INVENTREE_PLUGIN_NOINSTALL") }} Disable Plugin installation via API |
 {{ configsetting("INVENTREE_PLUGIN_FILE") }} Location of plugin installation file |
-| `INVENTREE_PLUGIN_DIR` | `plugin_dir` | *Not specified* | Location of external plugin directory |
+{{ configsetting("INVENTREE_PLUGIN_DIR") }} Location of external plugin directory |
+{{ configsetting("INVENTREE_PLUGIN_RETRY") }} Number of tries to attempt loading a plugin before giving up |
 {{ configsetting("INVENTREE_PLUGINS_MANDATORY") }} List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) |
 {{ configsetting("INVENTREE_PLUGIN_DEV_SLUG") }} Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) |
 {{ configsetting("INVENTREE_PLUGIN_DEV_HOST") }} Specify host for development mode plugin |

@@ -547,13 +547,14 @@ def get_frontend_settings(debug=True):
         'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
     )
 
+    base_url = get_setting(
+        'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web', typecast=str
+    )
+
     # Set the base URL for the user interface
     # This is the UI path e.g. '/web/'
     if 'base_url' not in frontend_settings:
-        frontend_settings['base_url'] = (
-            get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web')
-            or 'web'
-        )
+        frontend_settings['base_url'] = base_url
 
     # If provided, specify the API host
     api_host = frontend_settings.get('api_host', None) or get_setting(
