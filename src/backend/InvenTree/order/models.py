@@ -383,6 +383,7 @@ class Order(
         # Check that the referenced 'contact' matches the correct 'company'
         if (
             hasattr(self, 'company')
+            and hasattr(self, 'contact')
             and self.company
             and self.contact
             and (self.contact.company != self.company)
@@ -3276,6 +3277,11 @@ class TransferOrder(Order):
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed'),
     )
+
+    @property
+    def company(self) -> None:
+        """Required accessor helper for Order base class."""
+        return None
 
     @property
     def is_pending(self) -> bool:
