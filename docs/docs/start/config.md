@@ -137,6 +137,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | `INVENTREE_SESSION_COOKIE_SECURE` | `cookie.secure` | False | Enforce secure session cookies |
 {{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
 
+
 ### Debug Mode
 
 Note that in [debug mode](./index.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
@@ -265,7 +266,7 @@ The following database options can be configured:
 If running with a PostgreSQL database backend, the following additional options are available:
 
 {{ configtable() }}
-| INVENTREE_DB_TIMEOUT | database.timeout | 2 | Database connection timeout (s) |
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="2") }} Database connection timeout (s) |
 | INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | 1 | TCP keepalive |
 | INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
 | INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | 1| TCP keepalive interval |
@@ -287,7 +288,7 @@ If running with a MySQL database backend, the following additional options are a
 If running with a SQLite database backend, the following additional options are available:
 
 {{ configtable() }}
-| INVENTREE_DB_TIMEOUT | database.timeout | 10 | Database connection timeout (s) |
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | INVENTREE_DB_WAL_MODE | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
 
 ## Caching
@@ -430,6 +431,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 {{ configtable() }}
 {{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
 {{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
+{{ configsetting("INVENTREE_USE_JWT") }} Enable support for JSON Web Tokens (JWT) for authentication |
 
 ### Single Sign On
 
@@ -549,3 +551,10 @@ To override global settings, provide a "dictionary" of settings overrides in the
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_GLOBAL_SETTINGS") }} JSON object containing global settings overrides |
+
+## Other Settings
+
+Other available settings, not categorized above, are detailed in the table below:
+
+{{ configtable() }}
+{{ configsetting("INVENTREE_EXTRA_URL_SCHEMES") }} Allow additional URL schemes for URL validation |

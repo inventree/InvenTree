@@ -287,6 +287,14 @@ def on_post_build(*args, **kwargs):
             'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
             'INVENTREE_DB_ISOLATION_SERIALIZABLE',
             'INVENTREE_DOCKER',
+            'INVENTREE_FLAGS',
+            'INVENTREE_REMOTE_LOGIN',
+            'INVENTREE_REMOTE_LOGIN_HEADER',
+            'TEST_TRANSLATIONS',
+            'INVENTREE_FRONTEND_URL_BASE',
+            'INVENTREE_FRONTEND_API_HOST',
+            'INVENTREE_FRONTEND_SETTINGS',
+            'INVENTREE_LOGOUT_REDIRECT_URL',
         ],
     }
 
