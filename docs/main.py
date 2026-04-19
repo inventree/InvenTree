@@ -405,7 +405,7 @@ def define_env(env):
         if default is None:
             default = '*Not Specified*'
 
-        return f'| <div title="{key}">`{key}`</div> | {cfg_key} | {default} |'
+        return f'| <span title="{key}" style="white-space: nowrap;"><code>{key}</code></span> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():
