@@ -101,7 +101,7 @@ The following debugging / logging options are available:
 {{ configsetting("INVENTREE_SCHEMA_LEVEL") }} Set level of added schema extensions detail (0-3) 0 = including no additional detail |
 {{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
 {{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
-| INVENTREE_DEBUG_SILK_PROFILING | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
+| `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
 
 ### Debug Mode
 
@@ -267,18 +267,18 @@ If running with a PostgreSQL database backend, the following additional options 
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_DB_TIMEOUT", default="2") }} Database connection timeout (s) |
-| INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | 1 | TCP keepalive |
-| INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | 1| TCP keepalive interval |
-| INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | 5 | TCP keepalive count |
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_TCP_KEEPALIVES` | database.tcp_keepalives | 1 | TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 1| TCP keepalive interval |
+| `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### MySQL Settings
 
 If running with a MySQL database backend, the following additional options are available:
 
 {{ configtable() }}
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
 
@@ -289,7 +289,7 @@ If running with a SQLite database backend, the following additional options are 
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
-| INVENTREE_DB_WAL_MODE | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
+| `INVENTREE_DB_WAL_MODE` | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
 
 ## Caching
 
@@ -403,26 +403,26 @@ It is also possible to use alternative storage backends for static and media fil
 
 | Environment Variable | Configuration File | Default | Description |
 | --- | --- | --- | --- |
-| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | *Not specified* | Access key |
-| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | *Not specified* | Secret key |
-| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | *Not specified* | Bucket name, required by most providers |
-| INVENTREE_S3_REGION_NAME | storage.s3.region_name | *Not specified* | S3 region name |
-| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | *Not specified* | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
-| INVENTREE_S3_LOCATION | storage.s3.location | inventree-server | Sub-Location that should be used |
-| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | *Not specified* | Default ACL for uploaded files, defaults to provider default if not set |
-| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | True | Verify SSL certificate for S3 endpoint |
-| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | False | Overwrite existing files in S3 bucket |
-| INVENTREE_S3_VIRTUAL | storage.s3.virtual | False | Use virtual addressing style - by default False -> `path` style, `virtual` style if True |
+| `INVENTREE_S3_ACCESS_KEY` | storage.s3.access_key | *Not specified* | Access key |
+| `INVENTREE_S3_SECRET_KEY` | storage.s3.secret_key | *Not specified* | Secret key |
+| `INVENTREE_S3_BUCKET_NAME` | storage.s3.bucket_name | *Not specified* | Bucket name, required by most providers |
+| `INVENTREE_S3_REGION_NAME` | storage.s3.region_name | *Not specified* | S3 region name |
+| `INVENTREE_S3_ENDPOINT_URL` | storage.s3.endpoint_url | *Not specified* | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
+| `INVENTREE_S3_LOCATION` | storage.s3.location | inventree-server | Sub-Location that should be used |
+| `INVENTREE_S3_DEFAULT_ACL` | storage.s3.default_acl | *Not specified* | Default ACL for uploaded files, defaults to provider default if not set |
+| `INVENTREE_S3_VERIFY_SSL` | storage.s3.verify_ssl | True | Verify SSL certificate for S3 endpoint |
+| `INVENTREE_S3_OVERWRITE` | storage.s3.overwrite | False | Overwrite existing files in S3 bucket |
+| `INVENTREE_S3_VIRTUAL` | storage.s3.virtual | False | Use virtual addressing style - by default False -> `path` style, `virtual` style if True |
 
 #### SFTP
 
 | Environment Variable | Configuration File | Default | Description |
 | --- | --- | --- | --- |
-| INVENTREE_SFTP_HOST | storage.sftp.host | *Not specified* | SFTP host |
-| INVENTREE_SFTP_PARAMS | storage.sftp.params | *Not specified* | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` |
-| INVENTREE_SFTP_UID | storage.sftp.uid | *Not specified* | SFTP user ID - not required |
-| INVENTREE_SFTP_GID | storage.sftp.gid | *Not specified* | SFTP group ID - not required |
-| INVENTREE_SFTP_LOCATION | storage.sftp.location | inventree-server | Sub-Location that should be used |
+| `INVENTREE_SFTP_HOST` | storage.sftp.host | *Not specified* | SFTP host |
+| `INVENTREE_SFTP_PARAMS` | storage.sftp.params | *Not specified* | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` |
+| `INVENTREE_SFTP_UID` | storage.sftp.uid | *Not specified* | SFTP user ID - not required |
+| `INVENTREE_SFTP_GID` | storage.sftp.gid | *Not specified* | SFTP group ID - not required |
+| `INVENTREE_SFTP_LOCATION` | storage.sftp.location | inventree-server | Sub-Location that should be used |
 
 ## Authentication
 
