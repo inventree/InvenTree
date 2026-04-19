@@ -134,7 +134,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 {{ configsetting("INVENTREE_USE_X_FORWARDED_PORT") }} Use forwarded port header |
 {{ configsetting("INVENTREE_USE_X_FORWARDED_PROTO") }} Use forwarded protocol header |
 | `INVENTREE_X_FORWARDED_PROTO_NAME` | `x_forwarded_proto_name` | `HTTP_X_FORWARDED_PROTO` | Name of the header to use for forwarded protocol information |
-| `INVENTREE_SESSION_COOKIE_SECURE` | `cookie.secure` | False | Enforce secure session cookies |
+{{ configsetting("INVENTREE_SESSION_COOKIE_SECURE") }} Enforce secure session cookies |
 {{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
 
 
@@ -401,8 +401,7 @@ It is also possible to use alternative storage backends for static and media fil
 
 #### S3
 
-| Environment Variable | Configuration File | Default | Description |
-| --- | --- | --- | --- |
+{{ configtable() }}
 | `INVENTREE_S3_ACCESS_KEY` | storage.s3.access_key | *Not specified* | Access key |
 | `INVENTREE_S3_SECRET_KEY` | storage.s3.secret_key | *Not specified* | Secret key |
 | `INVENTREE_S3_BUCKET_NAME` | storage.s3.bucket_name | *Not specified* | Bucket name, required by most providers |
@@ -416,8 +415,7 @@ It is also possible to use alternative storage backends for static and media fil
 
 #### SFTP
 
-| Environment Variable | Configuration File | Default | Description |
-| --- | --- | --- | --- |
+{{ configtable() }}
 | `INVENTREE_SFTP_HOST` | storage.sftp.host | *Not specified* | SFTP host |
 | `INVENTREE_SFTP_PARAMS` | storage.sftp.params | *Not specified* | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` |
 | `INVENTREE_SFTP_UID` | storage.sftp.uid | *Not specified* | SFTP user ID - not required |

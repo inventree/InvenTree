@@ -860,15 +860,13 @@ LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 - Otherwise, use the value specified in the configuration file (or env var)
 """
 COOKIE_SECURE = (
-    False
-    if DEBUG
-    else (
-        SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting(
-            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
-        )
-    )
+    get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False)
+    or SESSION_COOKIE_SAMESITE == 'None'
 )
+
+# Override COOKIE_SECURE value in DEBUG mode
+if DEBUG:
+    COOKIE_SECURE = False
 
 CSRF_COOKIE_SECURE = COOKIE_SECURE
 SESSION_COOKIE_SECURE = COOKIE_SECURE
