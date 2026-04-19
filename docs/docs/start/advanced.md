@@ -53,7 +53,7 @@ Next you can start configuring the connection. Either use the config file or set
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_LDAP_ENABLED") }} Enable LDAP support |
-| `INVENTREE_LDAP_DEBUG` | `ldap.debug` | Set this to `True` to activate debug mode, useful for troubleshooting ldap configurations. |
+{{ configsetting("INVENTREE_LDAP_DEBUG") }} Set this to `True` to activate debug mode, useful for troubleshooting ldap configurations. |
 | `INVENTREE_LDAP_SERVER_URI` | `ldap.server_uri` | LDAP Server URI, e.g. `ldaps://example.org` |
 | `INVENTREE_LDAP_START_TLS` | `ldap.start_tls` | Enable TLS encryption over the standard LDAP port, [see](https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls). (You can set TLS options via `ldap.global_options`) |
 | `INVENTREE_LDAP_BIND_DN` | `ldap.bind_dn` | LDAP bind dn, e.g. `cn=admin,dc=example,dc=org` |

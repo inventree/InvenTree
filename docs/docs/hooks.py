@@ -286,6 +286,8 @@ def on_post_build(*args, **kwargs):
             'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
             'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
             'INVENTREE_DB_ISOLATION_SERIALIZABLE',
+            'INVENTREE_DB_WAL_MODE',
+            'INVENTREE_PLUGIN_DIR',
             'INVENTREE_DOCKER',
             'INVENTREE_FLAGS',
             'INVENTREE_REMOTE_LOGIN',
