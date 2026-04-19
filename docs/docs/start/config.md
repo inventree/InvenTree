@@ -239,7 +239,7 @@ If not specified via environment variables, the fallback files (automatically ge
 {{ configsetting("INVENTREE_SECRET_KEY") }} Raw secret key value |
 {{ configsetting("INVENTREE_SECRET_KEY_FILE") }} File containing secret key value |
 {{ configsetting("INVENTREE_OIDC_PRIVATE_KEY") }} Raw private key value |
-{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY_FILE") }} File containing private key value in PEM format |
+{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY_FILE", default="oidc.pem") }} File containing private key value in PEM format |
 
 ## Database Options
 
