@@ -1,13 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 479
+INVENTREE_API_VERSION = 480
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v479 -> 2026-04-12 : https://github.com/inventree/InvenTree/pull/11631
+v480 -> 2026-04-19 : https://github.com/inventree/InvenTree/pull/11631
     - Adds "raw_amount" field to the BomItem API endpoint
+
+v479 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11723
+    - POST /api//notifications/readall/ now requires a POST action
+    - POST /api/admin/email/test/ - now returns a 200 on. a successful test
+    - GET /api/notifications/ - now uses user-centric permissions, not a general read
 
 v478 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11073
     - Add OptionalField class for cleaner handling of optional fields in serializers

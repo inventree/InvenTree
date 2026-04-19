@@ -23,19 +23,19 @@ import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { Boundary } from '@lib/components/Boundary';
 import { ButtonMenu } from '@lib/components/ButtonMenu';
 import { SearchInput } from '@lib/components/SearchInput';
+import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
-import { Boundary } from '../components/Boundary';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableColumnSelect } from './ColumnSelect';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**
@@ -48,6 +48,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns,
   columns,
   filters,
+  queryFilters,
+  clearQueryFilters,
   toggleColumn
 }: Readonly<{
   tableUrl?: string;
@@ -56,6 +58,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns: boolean;
   columns: any;
   filters: TableFilter[];
+  queryFilters?: URLSearchParams;
+  clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
 }>) {
   // Filter list visibility
@@ -80,8 +84,8 @@ export default function InvenTreeTableHeader({
     }
 
     // Allow overriding of query parameters
-    if (tableState.queryFilters) {
-      for (const [key, value] of tableState.queryFilters) {
+    if (queryFilters) {
+      for (const [key, value] of queryFilters) {
         if (value != undefined) {
           filters[key] = value;
         }
@@ -89,7 +93,7 @@ export default function InvenTreeTableHeader({
     }
 
     return filters;
-  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
+  }, [tableProps.params, tableState.filterSet, queryFilters]);
 
   const exportModal = useDataExport({
     url: tableUrl ?? '',
@@ -139,12 +143,12 @@ export default function InvenTreeTableHeader({
   });
 
   const hasCustomSearch = useMemo(() => {
-    return tableState.queryFilters.has('search');
-  }, [tableState.queryFilters]);
+    return queryFilters?.has('search');
+  }, [queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    return (tableState?.queryFilters?.size ?? 0) > 0;
-  }, [tableState.queryFilters]);
+    return (queryFilters?.size ?? 0) > 0;
+  }, [queryFilters]);
 
   // Extract ID values for label and report printing
   const printingIdValues = useMemo(() => {
@@ -174,7 +178,7 @@ export default function InvenTreeTableHeader({
           color='yellow'
           withCloseButton
           title={t`Custom table filters are active`}
-          onClose={() => tableState.clearQueryFilters()}
+          onClose={() => clearQueryFilters()}
         />
       )}
       <Group justify='apart' grow wrap='nowrap'>

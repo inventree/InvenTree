@@ -363,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@1c8ae4843586d3ba879736b7f6b7b0c990757fab # pin@v4
+        uses: CodSpeedHQ/action@db35df748deb45fdef0960669f57d627c1956c30 # pin@v4
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -454,7 +454,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@1c8ae4843586d3ba879736b7f6b7b0c990757fab # pin@v4
+        uses: CodSpeedHQ/action@db35df748deb45fdef0960669f57d627c1956c30 # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest

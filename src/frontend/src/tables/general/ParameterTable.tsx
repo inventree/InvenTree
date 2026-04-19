@@ -1,3 +1,4 @@
+import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   ModelType,
@@ -20,7 +21,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import {

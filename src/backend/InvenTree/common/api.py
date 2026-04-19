@@ -395,21 +395,8 @@ class NotificationMessageViewSet(
         queryset = queryset.filter(user=request.user)
         return queryset
 
-    def get_permissions(self):
-        """Override permissions for list view."""
-        if self.action == 'list':
-            return [IsAuthenticatedOrReadScope()]
-        else:
-            return super().get_permissions()
-
-    def list(self, request, *args, **kwargs):
-        """List view for all notifications of the current user."""
-        # TODO @matmair permissions for this are currently being overwritten in get_permissions - this should be moved to a dedicated endpoint
-        return super().list(request, *args, **kwargs)
-
-    # TODO @matmair this should really be a POST
     @action(
-        detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadScope]
+        detail=False, methods=['post'], permission_classes=[IsAuthenticatedOrReadScope]
     )
     def readall(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
@@ -1248,7 +1235,6 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
         'thread_id_key',
     ]
 
-    @extend_schema(responses={201: common.serializers.TestEmailSerializer})
     @action(
         detail=False,
         methods=['post'],
@@ -1270,8 +1256,7 @@ class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
-        # TODO @matmair - breaking change: this should be a 200
-        return Response(serializer.data, status=201)
+        return Response(serializer.data)
 
 
 admin_router.register('email', EmailViewSet, basename='api-email')
