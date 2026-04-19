@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
@@ -26,11 +27,11 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
@@ -110,6 +111,7 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       PartColumn({
         part: 'part_detail',
         ordering: 'part'
@@ -267,6 +269,7 @@ export default function ReturnOrderLineItemTable({
             item_detail: true,
             order_detail: true
           },
+          defaultSortColumn: 'line',
           enableSelection:
             inProgress && user.hasChangeRole(UserRoles.return_order),
           tableActions: tableActions,

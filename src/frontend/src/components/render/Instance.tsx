@@ -21,8 +21,8 @@ import type {
   RenderInstanceProps
 } from '@lib/types/Rendering';
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
+import { shortenString } from '@lib/functions/String';
 import { useApi } from '../../contexts/ApiContext';
-import { shortenString } from '../../functions/tables';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -39,6 +39,7 @@ import {
   RenderParameter,
   RenderParameterTemplate,
   RenderProjectCode,
+  RenderSelectionEntry,
   RenderSelectionList
 } from './Generic';
 import {
@@ -101,6 +102,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
+  [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError
 };
 
@@ -125,9 +127,13 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
 
 export function RenderRemoteInstance({
   model,
+  modelUrl,
+  modelRenderer,
   pk
 }: Readonly<{
   model: ModelType;
+  modelUrl?: string;
+  modelRenderer?: (instance: any) => ReactNode;
   pk: number;
 }>): ReactNode {
   const api = useApi();
@@ -135,7 +141,9 @@ export function RenderRemoteInstance({
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
-      const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
+      const url = modelUrl
+        ? apiUrl(modelUrl, pk)
+        : apiUrl(ModelInformationDict[model].api_endpoint, pk);
 
       return api.get(url).then((response) => response.data);
     }
@@ -151,6 +159,10 @@ export function RenderRemoteInstance({
         {model}: {pk}
       </Text>
     );
+  }
+
+  if (!!modelRenderer) {
+    return modelRenderer({ instance: data });
   }
 
   return <RenderInstance model={model} instance={data} />;

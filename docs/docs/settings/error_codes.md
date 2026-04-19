@@ -210,6 +210,17 @@ The environment in which the backup was taken does not match the current environ
 
 This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
 
+#### INVE-W14
+**Elevated privileges - Backend**
+
+A user is logged in with elevated privileges. This might be a superuser or a administrator user. These types of users have elevated permissions and should not be used for regular usage.
+Use separate accounts for administrative tasks and regular usage to reduce risk. Make sure to review the [permission documentation](../settings/permissions.md#dangerous-user-flags).
+
+#### INVE-W15
+**Process interrupted by user - Backend**
+
+A process was interrupted by the user, likely by a keyboard interrupt. This might lead to issues with the process that was interrupted, as it might not have completed its task. This is especially relevant for processes that are not idempotent or that do not have a good rollback mechanism.
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
@@ -223,7 +234,7 @@ See [Override global settings](../settings/global.md#override-global-settings) f
 #### INVE-I2
 **Issue with filtering serializer or decorator - Backend**
 
-An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
+An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of OptionalField, FilterableSerializerField or FilterableSerializerMixin.
 
 This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
 

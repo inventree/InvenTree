@@ -15,7 +15,7 @@ Parameters can be associated with various InvenTree models.
 
 Any model which supports parameters will have a "Parameters" tab on its detail page. This tab displays all parameters associated with that object:
 
-{{ image("concepts/parameter-tab.png", "Part Parameters Example") }}
+{{ image("concepts/parameter-tab.png", "Parameters Example") }}
 
 ## Parameter Templates
 
@@ -40,9 +40,9 @@ Parameter templates are created and edited via the [admin interface](../settings
 To create a template:
 
 - Navigate to the "Settings" page
-- Click on the "Part Parameters" tab
+- Click on the "Parameters" tab
 - Click on the "New Parameter" button
-- Fill out the `Create Part Parameter Template` form: `Name` (required) and `Units` (optional) fields
+- Fill out the `Create Parameter Template` form: `Name` (required) and `Units` (optional) fields
 - Click on the "Submit" button.
 
 An existing template can be edited by clicking on the "Edit" button associated with that template:
@@ -53,9 +53,9 @@ An existing template can be edited by clicking on the "Edit" button associated w
 
 After [creating a template](#create-template) or using the existing templates, you can add parameters to any part.
 
-To add a parameter, navigate to a specific part detail page, click on the "Parameters" tab then click on the "New Parameters" button, the `Create Part Parameter` form will be displayed:
+To add a parameter, navigate to a specific part detail page, click on the "Parameters" tab then click on the "New Parameters" button, the `Create Parameter` form will be displayed:
 
-{{ image("part/create_part_parameter.png", "Create Part Parameter Form") }}
+{{ image("part/create_part_parameter.png", "Create Parameter Form") }}
 
 Select the parameter `Template` you would like to use for this parameter, fill-out the `Data` field (value of this specific parameter) and click the "Submit" button.
 
@@ -132,7 +132,7 @@ The in-built conversion functionality means that parameter values can be input i
 
 ### Incompatible Units
 
-If a part parameter is created with a value which is incompatible with the units specified for the template, it will be rejected:
+If a parameter is created with a value which is incompatible with the units specified for the template, it will be rejected:
 
 {{ image("part/part_invalid_units.png", "Invalid Parameter Units") }}
 
@@ -151,4 +151,4 @@ Selection Lists can be used to add a large number of predefined values to a para
 It is possible that plugins lock selection lists to ensure a known state.
 
 
-Administration of lists can be done through the Part Parameter section in the [Admin Center](../settings/admin.md#admin-center) or via the API.
+Administration of lists can be done through the `Parameter` section in the [Admin Center](../settings/admin.md#admin-center) or via the API.
