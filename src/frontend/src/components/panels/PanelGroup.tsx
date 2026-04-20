@@ -176,7 +176,7 @@ function BasePanelGroup({
 
       // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
       if (isDirty) {
-        const confirm = window.confirm(
+        const confirm = globalThis.confirm(
           t`You have unsaved changes, are you sure you want to navigate away from this panel?`
         );
         if (!confirm) {
@@ -384,7 +384,7 @@ function getPanelContent(
 
   // pass setIsDirty callback to content if supported
   if (
-    panel.supportsDirty == true &&
+    panel.supportsDirty &&
     typeof content === 'object' &&
     'props' in content &&
     setIsDirty
