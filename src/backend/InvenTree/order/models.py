@@ -272,6 +272,27 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     customer: Optional[Company]
 
 
+class TransferOrderReportContext(report.mixins.BaseReportContext, TypedDict):
+    """Context for the transfer order model.
+
+    Attributes:
+        description: The description field of the TransferOrder
+        reference: The reference field of the TransferOrder
+        title: The title (string representation) of the TransferOrder
+        lines: Query set of all line items associated with the TransferOrder
+        order: The TransferOrder instance itself
+    """
+
+    description: str
+    reference: str
+    title: str
+    lines: report.mixins.QuerySet['TransferOrderLineItem']
+    order: 'TransferOrder'
+    take_from: 'stock.models.StockLocation'
+    destination: 'stock.models.StockLocation'
+    consume: bool
+
+
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
@@ -3162,10 +3183,14 @@ class TransferOrder(Order):
 
         verbose_name = _('Transfer Order')
 
-    # TODO:
-    # def report_context(self) -> TransferOrderReportContext:
-    #     """Return report context data for this TransferOrder."""
-    #     return {**super().report_context(), 'supplier': self.supplier}
+    def report_context(self) -> TransferOrderReportContext:
+        """Return report context data for this TransferOrder."""
+        return {
+            **super().report_context(),
+            'take_from': self.take_from,
+            'destination': self.destination,
+            'consume': self.consume,
+        }
 
     def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
@@ -3202,12 +3227,11 @@ class TransferOrder(Order):
         """
         subscribed_users = set()
 
-        # TODO: add these when I implement line items for the Transfer Order
-        # for line in self.lines.all():
-        #     if line.part and line.part.part:
-        #         # Add the part to the list of subscribed users
-        #         for user in line.part.part.get_subscribers():
-        #             subscribed_users.add(user)
+        for line in self.lines.all():
+            if line.part and line.part.part:
+                # Add the part to the list of subscribed users
+                for user in line.part.part.get_subscribers():
+                    subscribed_users.add(user)
 
         return list(subscribed_users)
 
