@@ -173,6 +173,17 @@ function BasePanelGroup({
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
       cancelEvent(event);
+
+      // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
+      if (isDirty) {
+        const confirm = window.confirm(
+          t`You have unsaved changes, are you sure you want to navigate away from this panel?`
+        );
+        if (!confirm) {
+          return;
+        }
+      }
+
       if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
         navigateToLink(url, navigate, event);
@@ -186,6 +197,9 @@ function BasePanelGroup({
       if (targetPanel && onPanelChange) {
         onPanelChange(targetPanel);
       }
+
+      // change dirty state
+      setIsDirty(false);
     },
     [activePanels, navigate, location, onPanelChange]
   );
@@ -205,6 +219,8 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  const [isDirty, setIsDirty] = useState(false);
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
@@ -341,7 +357,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content}
+                      {getPanelContent(panel.content, panel, setIsDirty)}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>
@@ -351,6 +367,36 @@ function BasePanelGroup({
       </Paper>
     </Boundary>
   );
+}
+
+function getPanelContent(
+  content: ReactNode,
+  panel: PanelType,
+  setIsDirty?: (dirty: boolean) => void
+): ReactNode {
+  if (content === null) {
+    return null;
+  }
+
+  // pass setIsDirty callback to content if supported
+  if (
+    panel.supportsDirty == true &&
+    typeof content === 'object' &&
+    'props' in content &&
+    setIsDirty
+  ) {
+    // check if content takes prop setDirtyCallback
+    return {
+      ...content,
+      props: {
+        ...content.props,
+        setDirtyCallback: setIsDirty
+      }
+    };
+  }
+
+  // normal content, just return as is
+  return content;
 }
 
 function IndexPanelComponent({
