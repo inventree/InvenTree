@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#11772](https://github.com/inventree/InvenTree/pull/11772) the UI now warns if you navigate away from a note panel with unsaved changes
+
 ### Changed
 
 ### Removed
