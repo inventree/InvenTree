@@ -212,6 +212,10 @@ export const doLogout = async (navigate: NavigateFunction) => {
     await authApi(apiUrl(ApiEndpoints.auth_session), undefined, 'delete').catch(
       () => {}
     );
+    // remove MFA token (mfa_trusted)
+    document.cookie =
+      'mfa_trusted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
     showLoginNotification({
       title: t`Logged Out`,
       message: t`Successfully logged out`
