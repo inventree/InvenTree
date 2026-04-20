@@ -369,6 +369,10 @@ function BasePanelGroup({
   );
 }
 
+/*
+ * Helper function to inject the setIsDirty callback into panel content if supported
+ * This allows panels to mark themselves as dirty when changes are made, which will trigger a confirmation prompt when navigating away from the panel
+ */
 function getPanelContent(
   content: ReactNode,
   panel: PanelType,
@@ -385,11 +389,10 @@ function getPanelContent(
     'props' in content &&
     setIsDirty
   ) {
-    // check if content takes prop setDirtyCallback
     return {
       ...content,
       props: {
-        ...content.props,
+        ...(content.props || {}),
         setDirtyCallback: setIsDirty
       }
     };
