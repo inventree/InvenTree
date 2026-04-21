@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 00:32+0000\n"
-"PO-Revision-Date: 2026-04-13 00:35\n"
+"POT-Creation-Date: 2026-04-21 02:25+0000\n"
+"PO-Revision-Date: 2026-04-21 02:27\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -269,7 +269,7 @@ msgstr "Scelta non valida"
 
 #: InvenTree/models.py:1022 common/models.py:1438 common/models.py:1865
 #: common/models.py:2126 common/models.py:2251 common/models.py:2548
-#: common/serializers.py:638 generic/states/serializers.py:20
+#: common/serializers.py:647 generic/states/serializers.py:20
 #: machine/models.py:25 part/models.py:1101 plugin/models.py:54
 #: report/models.py:219 stock/models.py:86
 msgid "Name"
@@ -536,11 +536,11 @@ msgstr "Cinese (Semplificato)"
 msgid "Chinese (Traditional)"
 msgstr "Cinese (Tradizionale)"
 
-#: InvenTree/tasks.py:678
+#: InvenTree/tasks.py:677
 msgid "Update Available"
 msgstr "Aggiornamento disponibile"
 
-#: InvenTree/tasks.py:679
+#: InvenTree/tasks.py:678
 msgid "An update for InvenTree is available"
 msgstr "È disponibile un aggiornamento per InvenTree"
 
@@ -1849,7 +1849,7 @@ msgstr "Dimensione file"
 msgid "File size in bytes"
 msgstr "Dimensioni file in byte"
 
-#: common/models.py:2081 common/serializers.py:787
+#: common/models.py:2081 common/serializers.py:796
 msgid "Invalid model type specified for attachment"
 msgstr "Tipo di modello specificato per l'allegato non valido"
 
@@ -2126,7 +2126,7 @@ msgstr "Parametri"
 msgid "Invalid choice for parameter value"
 msgstr "Scelta non valida per il valore del parametro"
 
-#: common/models.py:2752 common/serializers.py:883
+#: common/models.py:2752 common/serializers.py:892
 msgid "Invalid model type specified for parameter"
 msgstr "Tipo di modello specificato per parametro non valido"
 
@@ -2391,85 +2391,85 @@ msgstr "Indica se l'impostazione è sovrascritta da una variabile ambiente"
 msgid "Override"
 msgstr "Sovrascrivi"
 
-#: common/serializers.py:601
+#: common/serializers.py:610
 msgid "Is Running"
 msgstr "In Esecuzione"
 
-#: common/serializers.py:607
+#: common/serializers.py:616
 msgid "Pending Tasks"
 msgstr "Attività in sospeso"
 
-#: common/serializers.py:613
+#: common/serializers.py:622
 msgid "Scheduled Tasks"
 msgstr "Attività pianificate"
 
-#: common/serializers.py:619
+#: common/serializers.py:628
 msgid "Failed Tasks"
 msgstr "Attività Fallite"
 
-#: common/serializers.py:634
+#: common/serializers.py:643
 msgid "Task ID"
 msgstr "ID Attività"
 
-#: common/serializers.py:634
+#: common/serializers.py:643
 msgid "Unique task ID"
 msgstr "ID attività univoco"
 
-#: common/serializers.py:636
+#: common/serializers.py:645
 msgid "Lock"
 msgstr "Blocco"
 
-#: common/serializers.py:636
+#: common/serializers.py:645
 msgid "Lock time"
 msgstr "Tempo di blocco"
 
-#: common/serializers.py:638
+#: common/serializers.py:647
 msgid "Task name"
 msgstr "Nome attività"
 
-#: common/serializers.py:640
+#: common/serializers.py:649
 msgid "Function"
 msgstr "Funzione"
 
-#: common/serializers.py:640
+#: common/serializers.py:649
 msgid "Function name"
 msgstr "Nome della funzione"
 
-#: common/serializers.py:642
+#: common/serializers.py:651
 msgid "Arguments"
 msgstr "Argomenti"
 
-#: common/serializers.py:642
+#: common/serializers.py:651
 msgid "Task arguments"
 msgstr "Argomenti attività"
 
-#: common/serializers.py:645
+#: common/serializers.py:654
 msgid "Keyword Arguments"
 msgstr "Argomenti Parole Chiave"
 
-#: common/serializers.py:645
+#: common/serializers.py:654
 msgid "Task keyword arguments"
 msgstr "Argomenti parole chiave attività"
 
-#: common/serializers.py:755
+#: common/serializers.py:764
 msgid "Filename"
 msgstr "Nome del file"
 
-#: common/serializers.py:762 common/serializers.py:829
-#: common/serializers.py:905 importer/models.py:90 report/api.py:41
+#: common/serializers.py:771 common/serializers.py:838
+#: common/serializers.py:914 importer/models.py:90 report/api.py:41
 #: report/models.py:296 report/serializers.py:71
 msgid "Model Type"
 msgstr "Tipo di modello"
 
-#: common/serializers.py:790
+#: common/serializers.py:799
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "L'utente non ha il permesso di creare o modificare allegati per questo modello"
 
-#: common/serializers.py:886
+#: common/serializers.py:895
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "L'utente non ha il permesso di creare o modificare parametri per questo modello"
 
-#: common/serializers.py:961 common/serializers.py:1064
+#: common/serializers.py:970 common/serializers.py:1073
 msgid "Selection list is locked"
 msgstr "Lista di selezione bloccata"
 
