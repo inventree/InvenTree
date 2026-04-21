@@ -29,10 +29,10 @@ The first step is to ensure that the required provider modules are installed, vi
 
 There are two variables in the configuration file which define the operation of SSO:
 
-| Environment Variable |Configuration File | Description | More Info |
-| --- | --- | --- | --- |
-| INVENTREE_SOCIAL_BACKENDS | `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://docs.allauth.org/en/latest/installation/quickstart.html) |
-| INVENTREE_SOCIAL_PROVIDERS | `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SOCIAL_BACKENDS") }} A *list* of [social provider backends](https://docs.allauth.org/en/latest/installation/quickstart.html) enabled for the InvenTree instance |
+{{ configsetting("INVENTREE_SOCIAL_PROVIDERS") }} A *dict* of settings specific to the [installed providers](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) |
+
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 

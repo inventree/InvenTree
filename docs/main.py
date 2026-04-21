@@ -34,6 +34,7 @@ for key in [
     print(f' - {key}: {val}')
 
 # Cached settings dict values
+global CONFIG_SETTINGS
 global GLOBAL_SETTINGS
 global USER_SETTINGS
 global TAGS
@@ -64,6 +65,7 @@ with open(settings_file, encoding='utf-8') as sf:
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+    CONFIG_SETTINGS = settings['config']
 
 # Tags
 with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
@@ -376,6 +378,34 @@ def define_env(env):
             observe_setting(key, 'user')
 
         return rendersetting(key, setting, short=short)
+
+    @env.macro
+    def configtable():
+        """Generate a header for the configuration settings table."""
+        return '| Environment Variable | Configuration File | Default | Description |\n| --- | --- | --- | --- |'
+
+    @env.macro
+    def configsetting(key: str, default: Optional[str] = None):
+        """Extract information on a particular configuration setting.
+
+        Arguments:
+            key: The name of the configuration setting to extract information for.
+            default: An optional default value to override the setting's default display value.
+        """
+        global CONFIG_SETTINGS
+        setting = CONFIG_SETTINGS[key]
+
+        observe_setting(key, 'config')
+
+        cfg_key = setting.get('config_key', None)
+        cfg_key = f'`{cfg_key}`' if cfg_key else '-'
+
+        default = default or setting.get('default_value', None)
+
+        if default is None:
+            default = '*Not Specified*'
+
+        return f'| <span title="{key}" style="white-space: nowrap;"><code>{key}</code></span> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():

@@ -94,51 +94,51 @@ def get_cache_config(global_cache: bool) -> dict:
     Returns:
         A dictionary containing the cache configuration options.
     """
-    if global_cache:
-        # Build Redis URL with optional password
-        password = cache_password()
-        user = cache_user() or ''
+    # Build Redis URL with optional password
+    password = cache_password()
+    user = cache_user() or ''
+    host = cache_host()
+    port = cache_port()
+    db = cache_db()
 
-        if password:
-            redis_url = (
-                f'redis://{user}:{password}@{cache_host()}:{cache_port()}/{cache_db()}'
-            )
-        else:
-            redis_url = f'redis://{cache_host()}:{cache_port()}/{cache_db()}'
+    if password:
+        redis_url = f'redis://{user}:{password}@{host}:{port}/{db}'
+    else:
+        redis_url = f'redis://{host}:{port}/{db}'
 
-        keepalive_options = {
-            'TCP_KEEPCNT': cache_setting('keepalive_count', 5, typecast=int),
-            'TCP_KEEPIDLE': cache_setting('keepalive_idle', 1, typecast=int),
-            'TCP_KEEPINTVL': cache_setting('keepalive_interval', 1, typecast=int),
-            'TCP_USER_TIMEOUT': cache_setting('user_timeout', 1000, typecast=int),
-        }
+    keepalive_options = {
+        'TCP_KEEPCNT': cache_setting('keepalive_count', 5, typecast=int),
+        'TCP_KEEPIDLE': cache_setting('keepalive_idle', 1, typecast=int),
+        'TCP_KEEPINTVL': cache_setting('keepalive_interval', 1, typecast=int),
+        'TCP_USER_TIMEOUT': cache_setting('user_timeout', 1000, typecast=int),
+    }
 
-        return {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': redis_url,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                'SOCKET_CONNECT_TIMEOUT': cache_setting(
-                    'connect_timeout', 5, typecast=int
-                ),
-                'SOCKET_TIMEOUT': cache_setting('timeout', 3, typecast=int),
-                'CONNECTION_POOL_KWARGS': {
-                    'socket_keepalive': cache_setting(
-                        'tcp_keepalive', True, typecast=bool
-                    ),
-                    'socket_keepalive_options': {
-                        # Only include options which are available on this platform
-                        # e.g. MacOS does not have TCP_KEEPIDLE and TCP_USER_TIMEOUT
-                        getattr(socket, key): value
-                        for key, value in keepalive_options.items()
-                        if hasattr(socket, key)
-                    },
+    global_cache_config = {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': redis_url,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SOCKET_CONNECT_TIMEOUT': cache_setting('connect_timeout', 5, typecast=int),
+            'SOCKET_TIMEOUT': cache_setting('timeout', 3, typecast=int),
+            'CONNECTION_POOL_KWARGS': {
+                'socket_keepalive': cache_setting('tcp_keepalive', True, typecast=bool),
+                'socket_keepalive_options': {
+                    # Only include options which are available on this platform
+                    # e.g. MacOS does not have TCP_KEEPIDLE and TCP_USER_TIMEOUT
+                    getattr(socket, key): value
+                    for key, value in keepalive_options.items()
+                    if hasattr(socket, key)
                 },
             },
-        }
+        },
+    }
 
-    # Default: Use django local memory cache
-    return {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
+    if global_cache:
+        # Only return the global cache configuration if the global cache is enabled
+        return global_cache_config
+    else:
+        # Default: Use django local memory cache
+        return {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
 
 
 def create_session_cache(request) -> None:
