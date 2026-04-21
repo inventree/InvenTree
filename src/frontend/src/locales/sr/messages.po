@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-11 03:27\n"
+"PO-Revision-Date: 2026-04-13 10:40\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -18,9 +18,25 @@ msgstr ""
 "X-Crowdin-File: /src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 252\n"
 
+#: lib/components/Boundary.tsx:14
+msgid "Error rendering component"
+msgstr "Greška u renderovanju komponente"
+
+#: lib/components/Boundary.tsx:16
+msgid "An error occurred while rendering this component. Refer to the console for more information."
+msgstr "Desila se greška prilikom renderovanja ovde komponente. Pogledajte konzolu za više informacija"
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copied"
+msgstr "Iskopirano"
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copy"
+msgstr "Kopiraj"
+
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:64
+#: src/pages/Index/Scan.tsx:62
 msgid "Duplicate"
 msgstr "Dupliciraj"
 
@@ -30,7 +46,7 @@ msgid "Edit"
 msgstr "Izmeni"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:770
+#: src/components/forms/ApiForm.tsx:769
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:170
@@ -76,6 +92,11 @@ msgstr "Akcije"
 #: src/pages/part/PartDetail.tsx:1168
 msgid "Search"
 msgstr "Pretraga"
+
+#: lib/components/TableColumnSelect.tsx:16
+#: lib/components/TableColumnSelect.tsx:23
+msgid "Select Columns"
+msgstr "Izaberi kolone"
 
 #: lib/components/YesNoButton.tsx:20
 msgid "Pass"
@@ -582,7 +603,7 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTableHeader.tsx:124
+#: src/tables/InvenTreeTableHeader.tsx:128
 #: src/tables/bom/BomTable.tsx:557
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
@@ -608,6 +629,39 @@ msgstr ""
 msgid "Build Orders"
 msgstr "Nalozi za izradu"
 
+#: lib/functions/Notification.tsx:11
+msgid "Not implemented"
+msgstr "Nije implementirano"
+
+#: lib/functions/Notification.tsx:12
+msgid "This feature is not yet implemented"
+msgstr "Ovo svojstvo još nije implementirano"
+
+#: lib/functions/Notification.tsx:23
+#: src/components/errors/PermissionDenied.tsx:8
+msgid "Permission Denied"
+msgstr "Dozvola odbijena"
+
+#: lib/functions/Notification.tsx:24
+msgid "You do not have permission to perform this action"
+msgstr "Nemate ovlašćenje za ovu aktivnost"
+
+#: lib/functions/Notification.tsx:35
+msgid "Invalid Return Code"
+msgstr "Neispravan povratni kod"
+
+#: lib/functions/Notification.tsx:36
+msgid "Server returned status {returnCode}"
+msgstr "Server je vratio status {returnCode}"
+
+#: lib/functions/Notification.tsx:46
+msgid "Timeout"
+msgstr "Isteklo je vreme"
+
+#: lib/functions/Notification.tsx:47
+msgid "The request timed out"
+msgstr "Isteklo je vreme zahteva"
+
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
 msgid "Process failed"
@@ -616,14 +670,6 @@ msgstr ""
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
 msgstr ""
-
-#: src/components/Boundary.tsx:14
-msgid "Error rendering component"
-msgstr "Greška u renderovanju komponente"
-
-#: src/components/Boundary.tsx:16
-msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr "Desila se greška prilikom renderovanja ovde komponente. Pogledajte konzolu za više informacija"
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
@@ -704,7 +750,7 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:496
+#: src/components/forms/ApiForm.tsx:495
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -718,7 +764,7 @@ msgid "Failed to handle barcode"
 msgstr ""
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:129
+#: src/pages/Index/Scan.tsx:127
 msgid "Failed to scan barcode"
 msgstr "Greška pri skeniranju bar koda"
 
@@ -785,14 +831,6 @@ msgstr "Otvori u administratorskom interfejsu"
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
 #~ msgstr "Copy to clipboard"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copied"
-msgstr "Iskopirano"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copy"
-msgstr "Kopiraj"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Labels"
@@ -930,7 +968,7 @@ msgstr ""
 #~ msgstr "Download data"
 
 #: src/components/calendar/Calendar.tsx:194
-#: src/tables/InvenTreeTableHeader.tsx:288
+#: src/tables/InvenTreeTableHeader.tsx:292
 msgid "Export data"
 msgstr ""
 
@@ -1351,7 +1389,7 @@ msgid "Clear"
 msgstr "Obriši"
 
 #: src/components/details/DetailsImage.tsx:306
-#: src/components/forms/ApiForm.tsx:712
+#: src/components/forms/ApiForm.tsx:711
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
@@ -1587,11 +1625,6 @@ msgstr "Stranica nije nađena"
 msgid "This page does not exist"
 msgstr "Tražena stranica ne postoji"
 
-#: src/components/errors/PermissionDenied.tsx:8
-#: src/functions/notifications.tsx:25
-msgid "Permission Denied"
-msgstr "Dozvola odbijena"
-
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
 msgstr "Nemate dozvolu da pristupite traženoj stranici"
@@ -1604,8 +1637,8 @@ msgstr "Greška na serveru"
 msgid "A server error occurred"
 msgstr "Desila se greška na serverskoj strani"
 
-#: src/components/forms/ApiForm.tsx:108
-#: src/components/forms/ApiForm.tsx:624
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:623
 msgid "Form Error"
 msgstr "Greška Obrasca"
 
@@ -1613,11 +1646,11 @@ msgstr "Greška Obrasca"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:634
+#: src/components/forms/ApiForm.tsx:633
 msgid "Errors exist for one or more form fields"
 msgstr "Postoje greške na jednom ili više polja na obrascu"
 
-#: src/components/forms/ApiForm.tsx:750
+#: src/components/forms/ApiForm.tsx:749
 #: src/hooks/UseForm.tsx:139
 #: src/tables/plugin/PluginListTable.tsx:210
 msgid "Update"
@@ -2182,8 +2215,8 @@ msgstr "Opcije"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:171
-#: src/tables/InvenTreeTableHeader.tsx:192
-#: src/tables/InvenTreeTableHeader.tsx:193
+#: src/tables/InvenTreeTableHeader.tsx:196
+#: src/tables/InvenTreeTableHeader.tsx:197
 msgid "Barcode Actions"
 msgstr "Akcije Barkoda"
 
@@ -2617,11 +2650,11 @@ msgstr "Obaveštenja"
 #~ msgstr "Administrator Mode"
 
 #: src/components/nav/Header.tsx:231
-msgid "Admin Mode"
+msgid "Superuser Mode"
 msgstr ""
 
 #: src/components/nav/Header.tsx:231
-msgid "Superuser Mode"
+msgid "Admin Mode"
 msgstr ""
 
 #: src/components/nav/Header.tsx:237
@@ -5007,7 +5040,7 @@ msgid "Return"
 msgstr "Vrati"
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:182
+#: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Računaj"
 
@@ -5351,37 +5384,9 @@ msgstr "Lozinka promenjena"
 #~ msgid "method parameter not supplied"
 #~ msgstr "method parameter not supplied"
 
-#: src/functions/notifications.tsx:13
-msgid "Not implemented"
-msgstr "Nije implementirano"
-
-#: src/functions/notifications.tsx:14
-msgid "This feature is not yet implemented"
-msgstr "Ovo svojstvo još nije implementirano"
-
 #: src/functions/notifications.tsx:24
 #~ msgid "Permission denied"
 #~ msgstr "Permission denied"
-
-#: src/functions/notifications.tsx:26
-msgid "You do not have permission to perform this action"
-msgstr "Nemate ovlašćenje za ovu aktivnost"
-
-#: src/functions/notifications.tsx:37
-msgid "Invalid Return Code"
-msgstr "Neispravan povratni kod"
-
-#: src/functions/notifications.tsx:38
-msgid "Server returned status {returnCode}"
-msgstr "Server je vratio status {returnCode}"
-
-#: src/functions/notifications.tsx:48
-msgid "Timeout"
-msgstr "Isteklo je vreme"
-
-#: src/functions/notifications.tsx:49
-msgid "The request timed out"
-msgstr "Isteklo je vreme zahteva"
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
@@ -5811,73 +5816,73 @@ msgstr "Desila se greška"
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:65
+#: src/pages/Index/Scan.tsx:63
 msgid "Item already scanned"
 msgstr "Stavka već skenirana"
 
-#: src/pages/Index/Scan.tsx:82
+#: src/pages/Index/Scan.tsx:80
 msgid "API Error"
 msgstr "API greška"
 
-#: src/pages/Index/Scan.tsx:83
+#: src/pages/Index/Scan.tsx:81
 msgid "Failed to fetch instance data"
 msgstr "Greška pri prikupljanju podataka instance"
 
-#: src/pages/Index/Scan.tsx:130
+#: src/pages/Index/Scan.tsx:128
 msgid "Scan Error"
 msgstr "Greška skeniranja"
 
-#: src/pages/Index/Scan.tsx:162
+#: src/pages/Index/Scan.tsx:160
 msgid "Selected elements are not known"
 msgstr "Izabrani elementi nisu poznati"
 
-#: src/pages/Index/Scan.tsx:169
+#: src/pages/Index/Scan.tsx:167
 msgid "Multiple object types selected"
 msgstr "Višestruki tipovi selektovani"
+
+#: src/pages/Index/Scan.tsx:175
+msgid "Actions ... "
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:177
-msgid "Actions ... "
-msgstr ""
-
-#: src/pages/Index/Scan.tsx:194
-#: src/pages/Index/Scan.tsx:198
+#: src/pages/Index/Scan.tsx:192
+#: src/pages/Index/Scan.tsx:196
 msgid "Barcode Scanning"
 msgstr "Skeniranje barkoda"
 
-#: src/pages/Index/Scan.tsx:207
+#: src/pages/Index/Scan.tsx:205
 msgid "Barcode Input"
 msgstr "Unos bar kodom"
 
-#: src/pages/Index/Scan.tsx:214
+#: src/pages/Index/Scan.tsx:212
 msgid "Action"
 msgstr "Akcija"
 
-#: src/pages/Index/Scan.tsx:217
+#: src/pages/Index/Scan.tsx:215
 msgid "No Items Selected"
 msgstr "Nema izabranih stavki"
+
+#: src/pages/Index/Scan.tsx:216
+msgid "Scan and select items to perform actions"
+msgstr "Skeniraj i izaberi stavke za akcije"
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
 #~ msgstr "Manual input"
 
 #: src/pages/Index/Scan.tsx:218
-msgid "Scan and select items to perform actions"
-msgstr "Skeniraj i izaberi stavke za akcije"
-
-#: src/pages/Index/Scan.tsx:218
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
 #. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:223
+#: src/pages/Index/Scan.tsx:221
 msgid "{0} items selected"
 msgstr "{0} stavki selektovano"
 
-#: src/pages/Index/Scan.tsx:235
+#: src/pages/Index/Scan.tsx:233
 msgid "Scanned Items"
 msgstr "Skenirane stavke"
 
@@ -9132,11 +9137,6 @@ msgstr "Alocirane linije"
 msgid "Line Item"
 msgstr ""
 
-#: src/tables/ColumnSelect.tsx:16
-#: src/tables/ColumnSelect.tsx:23
-msgid "Select Columns"
-msgstr "Izaberi kolone"
-
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
 #~ msgstr "Excel"
@@ -9423,7 +9423,7 @@ msgid "Filter"
 msgstr "Filter"
 
 #: src/tables/FilterSelectDrawer.tsx:354
-#: src/tables/InvenTreeTableHeader.tsx:259
+#: src/tables/InvenTreeTableHeader.tsx:263
 msgid "Table Filters"
 msgstr "Filteri tabele"
 
@@ -9435,12 +9435,12 @@ msgstr "Dodaj filter"
 msgid "Clear Filters"
 msgstr "Očisti filtere"
 
-#: src/tables/InvenTreeTable.tsx:47
-#: src/tables/InvenTreeTable.tsx:522
+#: src/tables/InvenTreeTable.tsx:52
+#: src/tables/InvenTreeTable.tsx:526
 msgid "No records found"
 msgstr "Nema pronađenih zapisa"
 
-#: src/tables/InvenTreeTable.tsx:154
+#: src/tables/InvenTreeTable.tsx:162
 msgid "Error loading table options"
 msgstr ""
 
@@ -9468,7 +9468,7 @@ msgstr ""
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:567
+#: src/tables/InvenTreeTable.tsx:571
 msgid "Server returned incorrect data type"
 msgstr "Server je vratio neispravan tip podataka"
 
@@ -9477,7 +9477,7 @@ msgstr "Server je vratio neispravan tip podataka"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:600
+#: src/tables/InvenTreeTable.tsx:604
 msgid "Error loading table data"
 msgstr ""
 
@@ -9494,49 +9494,49 @@ msgstr ""
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTable.tsx:729
+#: src/tables/InvenTreeTable.tsx:733
 msgid "View details"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:732
+#: src/tables/InvenTreeTable.tsx:736
 msgid "View {model}"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:103
+#: src/tables/InvenTreeTableHeader.tsx:107
 msgid "Delete Selected Items"
 msgstr "Obriši izabrane stavke"
 
-#: src/tables/InvenTreeTableHeader.tsx:107
+#: src/tables/InvenTreeTableHeader.tsx:111
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Da li ste sigurni da želite da obrišete ove izabrane stavke?"
 
-#: src/tables/InvenTreeTableHeader.tsx:109
+#: src/tables/InvenTreeTableHeader.tsx:113
 #: src/tables/plugin/PluginListTable.tsx:320
 msgid "This action cannot be undone"
 msgstr "Ova akcija se ne može poništiti"
 
-#: src/tables/InvenTreeTableHeader.tsx:120
+#: src/tables/InvenTreeTableHeader.tsx:124
 msgid "Items deleted"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:125
+#: src/tables/InvenTreeTableHeader.tsx:129
 msgid "Failed to delete items"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:176
+#: src/tables/InvenTreeTableHeader.tsx:180
 msgid "Custom table filters are active"
 msgstr "Prilagođeni filteri tabele su aktivni"
 
-#: src/tables/InvenTreeTableHeader.tsx:202
+#: src/tables/InvenTreeTableHeader.tsx:206
 #: src/tables/general/BarcodeScanTable.tsx:93
 msgid "Delete selected records"
 msgstr "Obriši izabrane zapise"
 
-#: src/tables/InvenTreeTableHeader.tsx:222
+#: src/tables/InvenTreeTableHeader.tsx:226
 msgid "Refresh data"
 msgstr "Osveži podatke"
 
-#: src/tables/InvenTreeTableHeader.tsx:271
+#: src/tables/InvenTreeTableHeader.tsx:275
 msgid "Active Filters"
 msgstr ""
 

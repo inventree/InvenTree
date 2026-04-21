@@ -20,6 +20,7 @@ import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -29,7 +30,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { useTable } from '../../hooks/UseTable';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RenderRemoteInstance } from '../render/Instance';
 

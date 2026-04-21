@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-11 03:27\n"
+"PO-Revision-Date: 2026-04-13 10:40\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -18,9 +18,25 @@ msgstr ""
 "X-Crowdin-File: /src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 252\n"
 
+#: lib/components/Boundary.tsx:14
+msgid "Error rendering component"
+msgstr "Errore nel renderizzare il componente"
+
+#: lib/components/Boundary.tsx:16
+msgid "An error occurred while rendering this component. Refer to the console for more information."
+msgstr "Si è verificato un errore durante il rendering di questo componente. Fare riferimento alla console per maggiori informazioni."
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copied"
+msgstr "Copiato"
+
+#: lib/components/CopyButton.tsx:49
+msgid "Copy"
+msgstr "Copia"
+
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:64
+#: src/pages/Index/Scan.tsx:62
 msgid "Duplicate"
 msgstr "Duplica"
 
@@ -30,7 +46,7 @@ msgid "Edit"
 msgstr "Modifica"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:770
+#: src/components/forms/ApiForm.tsx:769
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:170
@@ -76,6 +92,11 @@ msgstr "Azioni"
 #: src/pages/part/PartDetail.tsx:1168
 msgid "Search"
 msgstr "Ricerca"
+
+#: lib/components/TableColumnSelect.tsx:16
+#: lib/components/TableColumnSelect.tsx:23
+msgid "Select Columns"
+msgstr "Seleziona Colonne"
 
 #: lib/components/YesNoButton.tsx:20
 msgid "Pass"
@@ -582,7 +603,7 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTableHeader.tsx:124
+#: src/tables/InvenTreeTableHeader.tsx:128
 #: src/tables/bom/BomTable.tsx:557
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
@@ -608,6 +629,39 @@ msgstr "Admin"
 msgid "Build Orders"
 msgstr "Ordini di Produzione"
 
+#: lib/functions/Notification.tsx:11
+msgid "Not implemented"
+msgstr "Non implementato"
+
+#: lib/functions/Notification.tsx:12
+msgid "This feature is not yet implemented"
+msgstr "Questa funzione non è ancora stata implementata"
+
+#: lib/functions/Notification.tsx:23
+#: src/components/errors/PermissionDenied.tsx:8
+msgid "Permission Denied"
+msgstr "Permesso negato"
+
+#: lib/functions/Notification.tsx:24
+msgid "You do not have permission to perform this action"
+msgstr "Non disponi dell'autorizzazione per eseguire quest'azione"
+
+#: lib/functions/Notification.tsx:35
+msgid "Invalid Return Code"
+msgstr "Codice di Ritorno Non Valido"
+
+#: lib/functions/Notification.tsx:36
+msgid "Server returned status {returnCode}"
+msgstr "Il server ha restituito lo stato {returnCode}"
+
+#: lib/functions/Notification.tsx:46
+msgid "Timeout"
+msgstr "Timeout"
+
+#: lib/functions/Notification.tsx:47
+msgid "The request timed out"
+msgstr "La richiesta è scaduta"
+
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
 msgid "Process failed"
@@ -616,14 +670,6 @@ msgstr "Processo fallito"
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
 msgstr "Operazione completata con successo"
-
-#: src/components/Boundary.tsx:14
-msgid "Error rendering component"
-msgstr "Errore nel renderizzare il componente"
-
-#: src/components/Boundary.tsx:16
-msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr "Si è verificato un errore durante il rendering di questo componente. Fare riferimento alla console per maggiori informazioni."
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
@@ -704,7 +750,7 @@ msgstr "Il codice a barre non corrisponde al tipo di modello previsto"
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:496
+#: src/components/forms/ApiForm.tsx:495
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -718,7 +764,7 @@ msgid "Failed to handle barcode"
 msgstr "Gestione del codice a barre non riuscita"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:129
+#: src/pages/Index/Scan.tsx:127
 msgid "Failed to scan barcode"
 msgstr "Scansione del codice a barre non riuscita"
 
@@ -785,14 +831,6 @@ msgstr "Apri nell'interfaccia di amministrazione"
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
 #~ msgstr "Copy to clipboard"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copied"
-msgstr "Copiato"
-
-#: src/components/buttons/CopyButton.tsx:50
-msgid "Copy"
-msgstr "Copia"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Labels"
@@ -930,7 +968,7 @@ msgstr "Mese successivo"
 #~ msgstr "Download data"
 
 #: src/components/calendar/Calendar.tsx:194
-#: src/tables/InvenTreeTableHeader.tsx:288
+#: src/tables/InvenTreeTableHeader.tsx:292
 msgid "Export data"
 msgstr ""
 
@@ -1351,7 +1389,7 @@ msgid "Clear"
 msgstr "Elimina"
 
 #: src/components/details/DetailsImage.tsx:306
-#: src/components/forms/ApiForm.tsx:712
+#: src/components/forms/ApiForm.tsx:711
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
@@ -1587,11 +1625,6 @@ msgstr "Pagina Non Trovata"
 msgid "This page does not exist"
 msgstr "Questa pagina non esiste"
 
-#: src/components/errors/PermissionDenied.tsx:8
-#: src/functions/notifications.tsx:25
-msgid "Permission Denied"
-msgstr "Permesso negato"
-
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
 msgstr "Non ha i permessi per visualizzare questa pagina."
@@ -1604,8 +1637,8 @@ msgstr "Errore del server"
 msgid "A server error occurred"
 msgstr "Si è verificato un errore del server"
 
-#: src/components/forms/ApiForm.tsx:108
-#: src/components/forms/ApiForm.tsx:624
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:623
 msgid "Form Error"
 msgstr "Errore Modulo"
 
@@ -1613,11 +1646,11 @@ msgstr "Errore Modulo"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:634
+#: src/components/forms/ApiForm.tsx:633
 msgid "Errors exist for one or more form fields"
 msgstr "Esistono errori per uno o più campi del modulo"
 
-#: src/components/forms/ApiForm.tsx:750
+#: src/components/forms/ApiForm.tsx:749
 #: src/hooks/UseForm.tsx:139
 #: src/tables/plugin/PluginListTable.tsx:210
 msgid "Update"
@@ -2182,8 +2215,8 @@ msgstr "Opzioni"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:171
-#: src/tables/InvenTreeTableHeader.tsx:192
-#: src/tables/InvenTreeTableHeader.tsx:193
+#: src/tables/InvenTreeTableHeader.tsx:196
+#: src/tables/InvenTreeTableHeader.tsx:197
 msgid "Barcode Actions"
 msgstr "Azioni Codice A Barre"
 
@@ -2617,11 +2650,11 @@ msgstr "Notifiche"
 #~ msgstr "Administrator Mode"
 
 #: src/components/nav/Header.tsx:231
-msgid "Admin Mode"
+msgid "Superuser Mode"
 msgstr ""
 
 #: src/components/nav/Header.tsx:231
-msgid "Superuser Mode"
+msgid "Admin Mode"
 msgstr ""
 
 #: src/components/nav/Header.tsx:237
@@ -5007,7 +5040,7 @@ msgid "Return"
 msgstr "Reso"
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:182
+#: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Conta"
 
@@ -5351,37 +5384,9 @@ msgstr "Password cambiata"
 #~ msgid "method parameter not supplied"
 #~ msgstr "method parameter not supplied"
 
-#: src/functions/notifications.tsx:13
-msgid "Not implemented"
-msgstr "Non implementato"
-
-#: src/functions/notifications.tsx:14
-msgid "This feature is not yet implemented"
-msgstr "Questa funzione non è ancora stata implementata"
-
 #: src/functions/notifications.tsx:24
 #~ msgid "Permission denied"
 #~ msgstr "Permission denied"
-
-#: src/functions/notifications.tsx:26
-msgid "You do not have permission to perform this action"
-msgstr "Non disponi dell'autorizzazione per eseguire quest'azione"
-
-#: src/functions/notifications.tsx:37
-msgid "Invalid Return Code"
-msgstr "Codice di Ritorno Non Valido"
-
-#: src/functions/notifications.tsx:38
-msgid "Server returned status {returnCode}"
-msgstr "Il server ha restituito lo stato {returnCode}"
-
-#: src/functions/notifications.tsx:48
-msgid "Timeout"
-msgstr "Timeout"
-
-#: src/functions/notifications.tsx:49
-msgid "The request timed out"
-msgstr "La richiesta è scaduta"
 
 #: src/hooks/UseDataExport.tsx:34
 msgid "Exporting Data"
@@ -5811,73 +5816,73 @@ msgstr "Si è verificato un errore imprevisto"
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:65
+#: src/pages/Index/Scan.tsx:63
 msgid "Item already scanned"
 msgstr "Articolo già scansionato"
 
-#: src/pages/Index/Scan.tsx:82
+#: src/pages/Index/Scan.tsx:80
 msgid "API Error"
 msgstr "Errore API"
 
-#: src/pages/Index/Scan.tsx:83
+#: src/pages/Index/Scan.tsx:81
 msgid "Failed to fetch instance data"
 msgstr "Recupero dati istanza non riuscito"
 
-#: src/pages/Index/Scan.tsx:130
+#: src/pages/Index/Scan.tsx:128
 msgid "Scan Error"
 msgstr "Errore Di Scansione"
 
-#: src/pages/Index/Scan.tsx:162
+#: src/pages/Index/Scan.tsx:160
 msgid "Selected elements are not known"
 msgstr "Gli elementi selezionati non sono noti"
 
-#: src/pages/Index/Scan.tsx:169
+#: src/pages/Index/Scan.tsx:167
 msgid "Multiple object types selected"
 msgstr "Più tipi di oggetti selezionati"
+
+#: src/pages/Index/Scan.tsx:175
+msgid "Actions ... "
+msgstr "Azioni ... "
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:177
-msgid "Actions ... "
-msgstr "Azioni ... "
-
-#: src/pages/Index/Scan.tsx:194
-#: src/pages/Index/Scan.tsx:198
+#: src/pages/Index/Scan.tsx:192
+#: src/pages/Index/Scan.tsx:196
 msgid "Barcode Scanning"
 msgstr "Scansione Codice A Barre"
 
-#: src/pages/Index/Scan.tsx:207
+#: src/pages/Index/Scan.tsx:205
 msgid "Barcode Input"
 msgstr "Inserimento codice a barre"
 
-#: src/pages/Index/Scan.tsx:214
+#: src/pages/Index/Scan.tsx:212
 msgid "Action"
 msgstr "Azione"
 
-#: src/pages/Index/Scan.tsx:217
+#: src/pages/Index/Scan.tsx:215
 msgid "No Items Selected"
 msgstr "Nessun articolo selezionato"
+
+#: src/pages/Index/Scan.tsx:216
+msgid "Scan and select items to perform actions"
+msgstr "Scansiona e seleziona gli articoli per eseguire azioni"
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
 #~ msgstr "Manual input"
 
 #: src/pages/Index/Scan.tsx:218
-msgid "Scan and select items to perform actions"
-msgstr "Scansiona e seleziona gli articoli per eseguire azioni"
-
-#: src/pages/Index/Scan.tsx:218
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
 #. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:223
+#: src/pages/Index/Scan.tsx:221
 msgid "{0} items selected"
 msgstr "{0} elementi selezionati"
 
-#: src/pages/Index/Scan.tsx:235
+#: src/pages/Index/Scan.tsx:233
 msgid "Scanned Items"
 msgstr "Articoli Scansionati"
 
@@ -9132,11 +9137,6 @@ msgstr "Elementi Assegnati"
 msgid "Line Item"
 msgstr ""
 
-#: src/tables/ColumnSelect.tsx:16
-#: src/tables/ColumnSelect.tsx:23
-msgid "Select Columns"
-msgstr "Seleziona Colonne"
-
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
 #~ msgstr "Excel"
@@ -9423,7 +9423,7 @@ msgid "Filter"
 msgstr "Filtro"
 
 #: src/tables/FilterSelectDrawer.tsx:354
-#: src/tables/InvenTreeTableHeader.tsx:259
+#: src/tables/InvenTreeTableHeader.tsx:263
 msgid "Table Filters"
 msgstr "Filtri tabella"
 
@@ -9435,12 +9435,12 @@ msgstr "Aggiungi filtro"
 msgid "Clear Filters"
 msgstr "Rimuovi filtri"
 
-#: src/tables/InvenTreeTable.tsx:47
-#: src/tables/InvenTreeTable.tsx:522
+#: src/tables/InvenTreeTable.tsx:52
+#: src/tables/InvenTreeTable.tsx:526
 msgid "No records found"
 msgstr "Nessun record trovato"
 
-#: src/tables/InvenTreeTable.tsx:154
+#: src/tables/InvenTreeTable.tsx:162
 msgid "Error loading table options"
 msgstr "Errore nel caricare le opzioni della tabella"
 
@@ -9468,7 +9468,7 @@ msgstr "Errore nel caricare le opzioni della tabella"
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:567
+#: src/tables/InvenTreeTable.tsx:571
 msgid "Server returned incorrect data type"
 msgstr "Il server ha restituito un tipo di dati errato"
 
@@ -9477,7 +9477,7 @@ msgstr "Il server ha restituito un tipo di dati errato"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:600
+#: src/tables/InvenTreeTable.tsx:604
 msgid "Error loading table data"
 msgstr "Errore nel caricare i dati della tabella"
 
@@ -9494,49 +9494,49 @@ msgstr "Errore nel caricare i dati della tabella"
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTable.tsx:729
+#: src/tables/InvenTreeTable.tsx:733
 msgid "View details"
 msgstr "Mostra dettagli"
 
-#: src/tables/InvenTreeTable.tsx:732
+#: src/tables/InvenTreeTable.tsx:736
 msgid "View {model}"
 msgstr "Visualizza {model}"
 
-#: src/tables/InvenTreeTableHeader.tsx:103
+#: src/tables/InvenTreeTableHeader.tsx:107
 msgid "Delete Selected Items"
 msgstr "Elimina elementi selezionati"
 
-#: src/tables/InvenTreeTableHeader.tsx:107
+#: src/tables/InvenTreeTableHeader.tsx:111
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Sei sicuro di voler eliminare gli elementi selezionati?"
 
-#: src/tables/InvenTreeTableHeader.tsx:109
+#: src/tables/InvenTreeTableHeader.tsx:113
 #: src/tables/plugin/PluginListTable.tsx:320
 msgid "This action cannot be undone"
 msgstr "Questa azione non può essere annullata"
 
-#: src/tables/InvenTreeTableHeader.tsx:120
+#: src/tables/InvenTreeTableHeader.tsx:124
 msgid "Items deleted"
 msgstr "Elementi eliminati"
 
-#: src/tables/InvenTreeTableHeader.tsx:125
+#: src/tables/InvenTreeTableHeader.tsx:129
 msgid "Failed to delete items"
 msgstr "Eliminazione degli elementi non riuscita"
 
-#: src/tables/InvenTreeTableHeader.tsx:176
+#: src/tables/InvenTreeTableHeader.tsx:180
 msgid "Custom table filters are active"
 msgstr "I filtri tabella personalizzati sono attivi"
 
-#: src/tables/InvenTreeTableHeader.tsx:202
+#: src/tables/InvenTreeTableHeader.tsx:206
 #: src/tables/general/BarcodeScanTable.tsx:93
 msgid "Delete selected records"
 msgstr "Cancella record selezionati"
 
-#: src/tables/InvenTreeTableHeader.tsx:222
+#: src/tables/InvenTreeTableHeader.tsx:226
 msgid "Refresh data"
 msgstr "Ricarica dati"
 
-#: src/tables/InvenTreeTableHeader.tsx:271
+#: src/tables/InvenTreeTableHeader.tsx:275
 msgid "Active Filters"
 msgstr "Filtri attivi"
 
