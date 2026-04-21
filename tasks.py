@@ -1864,7 +1864,12 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+
     base_path = Path(basedir, 'generated').resolve()
+
+    if not base_path.exists():
+        info(f'Creating export directory: {base_path}')
+        base_path.mkdir(parents=True, exist_ok=True)
 
     filenames = [
         base_path.joinpath('inventree_settings.json'),
@@ -2298,12 +2303,19 @@ def doc_schema(c):
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
         'compile_schema': 'Compile the API schema documentation first (default: False)',
+        'export_settings': 'Export settings definitions before starting the server (default: True)',
     }
 )
-def docs_server(c, address='localhost:8080', compile_schema=False):
+def docs_server(
+    c,
+    address='localhost:8080',
+    compile_schema: bool = False,
+    export_settings: bool = True,
+):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    export_definitions(c, basedir='docs')
+    if export_settings:
+        export_definitions(c, basedir='docs')
 
     if compile_schema:
         doc_schema(c)
