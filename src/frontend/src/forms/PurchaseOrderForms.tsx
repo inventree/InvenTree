@@ -142,6 +142,12 @@ export function usePurchaseOrderLineItemFields({
             ...adjust.filters,
             supplier: supplierId
           };
+        },
+        addCreateFields: {
+          part: {},
+          SKU: {},
+          description: {},
+          supplier: { hidden: true }
         }
       },
       line: {},
