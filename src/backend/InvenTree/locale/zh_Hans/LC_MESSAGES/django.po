@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 00:32+0000\n"
-"PO-Revision-Date: 2026-04-13 00:35\n"
+"POT-Creation-Date: 2026-04-21 02:25+0000\n"
+"PO-Revision-Date: 2026-04-21 02:27\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -269,7 +269,7 @@ msgstr "无效选项"
 
 #: InvenTree/models.py:1022 common/models.py:1438 common/models.py:1865
 #: common/models.py:2126 common/models.py:2251 common/models.py:2548
-#: common/serializers.py:638 generic/states/serializers.py:20
+#: common/serializers.py:647 generic/states/serializers.py:20
 #: machine/models.py:25 part/models.py:1101 plugin/models.py:54
 #: report/models.py:219 stock/models.py:86
 msgid "Name"
@@ -536,11 +536,11 @@ msgstr "中文 (简体)"
 msgid "Chinese (Traditional)"
 msgstr "中文 (繁体)"
 
-#: InvenTree/tasks.py:678
+#: InvenTree/tasks.py:677
 msgid "Update Available"
 msgstr "有可用更新"
 
-#: InvenTree/tasks.py:679
+#: InvenTree/tasks.py:678
 msgid "An update for InvenTree is available"
 msgstr "InvenTree有可用更新"
 
@@ -1849,7 +1849,7 @@ msgstr "文件大小"
 msgid "File size in bytes"
 msgstr "文件大小，以字节为单位"
 
-#: common/models.py:2081 common/serializers.py:787
+#: common/models.py:2081 common/serializers.py:796
 msgid "Invalid model type specified for attachment"
 msgstr "为附件指定的模型类型无效"
 
@@ -2126,7 +2126,7 @@ msgstr "参数"
 msgid "Invalid choice for parameter value"
 msgstr "无效的参数值选择"
 
-#: common/models.py:2752 common/serializers.py:883
+#: common/models.py:2752 common/serializers.py:892
 msgid "Invalid model type specified for parameter"
 msgstr "为附件指定的模型类型无效"
 
@@ -2391,85 +2391,85 @@ msgstr "表示设置是否被环境变量覆盖"
 msgid "Override"
 msgstr "覆盖"
 
-#: common/serializers.py:601
+#: common/serializers.py:610
 msgid "Is Running"
 msgstr "正在运行"
 
-#: common/serializers.py:607
+#: common/serializers.py:616
 msgid "Pending Tasks"
 msgstr "等待完成的任务"
 
-#: common/serializers.py:613
+#: common/serializers.py:622
 msgid "Scheduled Tasks"
 msgstr "预定的任务"
 
-#: common/serializers.py:619
+#: common/serializers.py:628
 msgid "Failed Tasks"
 msgstr "失败的任务"
 
-#: common/serializers.py:634
+#: common/serializers.py:643
 msgid "Task ID"
 msgstr "任务ID"
 
-#: common/serializers.py:634
+#: common/serializers.py:643
 msgid "Unique task ID"
 msgstr "唯一任务ID"
 
-#: common/serializers.py:636
+#: common/serializers.py:645
 msgid "Lock"
 msgstr "锁定"
 
-#: common/serializers.py:636
+#: common/serializers.py:645
 msgid "Lock time"
 msgstr "锁定时间"
 
-#: common/serializers.py:638
+#: common/serializers.py:647
 msgid "Task name"
 msgstr "任务名称"
 
-#: common/serializers.py:640
+#: common/serializers.py:649
 msgid "Function"
 msgstr "功能"
 
-#: common/serializers.py:640
+#: common/serializers.py:649
 msgid "Function name"
 msgstr "功能名称"
 
-#: common/serializers.py:642
+#: common/serializers.py:651
 msgid "Arguments"
 msgstr "参数"
 
-#: common/serializers.py:642
+#: common/serializers.py:651
 msgid "Task arguments"
 msgstr "任务参数"
 
-#: common/serializers.py:645
+#: common/serializers.py:654
 msgid "Keyword Arguments"
 msgstr "关键字参数"
 
-#: common/serializers.py:645
+#: common/serializers.py:654
 msgid "Task keyword arguments"
 msgstr "任务关键词参数"
 
-#: common/serializers.py:755
+#: common/serializers.py:764
 msgid "Filename"
 msgstr "文件名"
 
-#: common/serializers.py:762 common/serializers.py:829
-#: common/serializers.py:905 importer/models.py:90 report/api.py:41
+#: common/serializers.py:771 common/serializers.py:838
+#: common/serializers.py:914 importer/models.py:90 report/api.py:41
 #: report/models.py:296 report/serializers.py:71
 msgid "Model Type"
 msgstr "模型类型"
 
-#: common/serializers.py:790
+#: common/serializers.py:799
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "用户无权为此模式创建或编辑附件"
 
-#: common/serializers.py:886
+#: common/serializers.py:895
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "用户没有权限为此模型创建或编辑参数"
 
-#: common/serializers.py:961 common/serializers.py:1064
+#: common/serializers.py:970 common/serializers.py:1073
 msgid "Selection list is locked"
 msgstr "选择列表已锁定"
 
