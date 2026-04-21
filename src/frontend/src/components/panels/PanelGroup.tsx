@@ -39,6 +39,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
+import { useWindowEvent } from '@mantine/hooks';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
@@ -221,6 +222,11 @@ function BasePanelGroup({
   }, [activePanels, panel]);
 
   const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
