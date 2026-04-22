@@ -34,9 +34,9 @@ export function bomItemFields({
     sub_part: {
       filters: {
         active: true, // Only show active parts when creating a new BOM item
-        component: true,
-        createAdd: newPartFields
-      }
+        component: true
+      },
+      addCreateFields: newPartFields
     },
     quantity: {},
     reference: {},
