@@ -587,6 +587,7 @@ function InlineCreateButton({
     <>
       {create_modal.modal}
       <ActionButton
+        tooltip={t`Create new ${model}`}
         onClick={() => {
           create_modal.open();
         }}
