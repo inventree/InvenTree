@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
-import { readeruser } from '../defaults.ts';
+import { readeruser, stevenuser } from '../defaults.ts';
 import {
   activateCalendarView,
   activateTableView,
@@ -84,11 +84,11 @@ test('Purchasing - Index', async ({ browser }) => {
 
 test('Purchasing - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'purchasing/purchase-order/11/parameters'
+    url: 'purchasing/purchase-order/11/parameters',
+    user: stevenuser
   });
 
   // Create a new parameter against this purchase order
-  // We will use a "SelectionList" to choose the value here
   await page
     .getByRole('button', { name: 'action-menu-add-parameters' })
     .click();
@@ -97,6 +97,25 @@ test('Purchasing - Parameters', async ({ browser }) => {
       name: 'action-menu-add-parameters-create-parameter'
     })
     .click();
+
+  // Check for button to add a new template
+  await page
+    .getByRole('button', {
+      name: 'action-button-create-new-parameter-template'
+    })
+    .click();
+  await page
+    .getByText('Create New Parameter Template', { exact: true })
+    .first()
+    .waitFor();
+  await page.getByRole('textbox', { name: 'text-field-description' }).waitFor();
+  await page.getByRole('textbox', { name: 'text-field-choices' }).waitFor();
+  await page
+    .getByLabel('Create New Parameter Template')
+    .getByRole('button', { name: 'Cancel' })
+    .click();
+
+  // We will use a "SelectionList" to choose the value here
 
   // Select the template
   await page

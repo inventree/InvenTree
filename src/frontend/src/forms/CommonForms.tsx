@@ -126,7 +126,7 @@ export function useParameterFields({
 }): ApiFormFieldSet {
   const api = useApi();
 
-  const user = useUserState();
+  const user = useUserState.getState();
 
   const templateCreateFields = useParameterTemplateFields();
 
@@ -218,9 +218,7 @@ export function useParameterFields({
             setFieldType('related field');
           }
         },
-        addCreateFields: user.hasAddPermission(ModelType.parametertemplate)
-          ? templateCreateFields
-          : undefined
+        addCreateFields: user.isStaff() ? templateCreateFields : undefined
       },
       data: {
         value: data,
