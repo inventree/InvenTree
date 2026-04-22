@@ -33,7 +33,7 @@ import {
 } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
@@ -68,12 +68,13 @@ export type PanelProps = {
   groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
-  model?: ModelType | string;
+  model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
   pluginSupportOnBare?: boolean;
+  pluginKey?: PluginPanelKey;
 };
 
 function BasePanelGroup({
@@ -87,7 +88,8 @@ function BasePanelGroup({
   model,
   id,
   collapsible = true,
-  pluginSupportOnBare = false
+  pluginSupportOnBare = false,
+  pluginKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -98,13 +100,17 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
-  const pluginId = useMemo(() => {
+  const _pluginId = useMemo(() => {
     if (id === undefined && pluginSupportOnBare) return null;
     return id;
   }, [id, pluginSupportOnBare]);
+  const _pluginKey = useMemo(() => {
+    if (model === undefined && pluginSupportOnBare) return pluginKey;
+    return model;
+  }, [model, pluginSupportOnBare, pluginKey]);
   const pluginPanelSet = usePluginPanels({
-    id: pluginId,
-    model: model,
+    id: _pluginId,
+    model: _pluginKey,
     instance: instance,
     reloadFunc: reloadInstance
   });
