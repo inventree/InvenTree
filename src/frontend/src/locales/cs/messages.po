@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-13 10:40\n"
+"PO-Revision-Date: 2026-04-21 00:31\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -568,11 +568,11 @@ msgstr "Výběrová pole"
 
 #: lib/enums/ModelInformation.tsx:291
 msgid "Selection Entry"
-msgstr ""
+msgstr "Výběr záznamu"
 
 #: lib/enums/ModelInformation.tsx:292
 msgid "Selection Entries"
-msgstr ""
+msgstr "Výběr záznamů"
 
 #: lib/enums/ModelInformation.tsx:298
 #: src/components/barcodes/BarcodeInput.tsx:114
@@ -593,7 +593,7 @@ msgstr ""
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:74
-#: src/functions/auth.tsx:687
+#: src/functions/auth.tsx:691
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -927,11 +927,11 @@ msgstr "Odběr aktualizován"
 
 #: src/components/buttons/StarredToggleButton.tsx:38
 msgid "Subscription removed"
-msgstr ""
+msgstr "Odběr odstraněn"
 
 #: src/components/buttons/StarredToggleButton.tsx:38
 msgid "Subscription added"
-msgstr ""
+msgstr "Odběr přidán"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -1309,7 +1309,7 @@ msgstr "Superuser"
 #: src/tables/settings/UserTable.tsx:285
 #: src/tables/settings/UserTable.tsx:406
 msgid "Administrator"
-msgstr ""
+msgstr "Administrátor"
 
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
@@ -1352,11 +1352,11 @@ msgstr "Odstranit"
 
 #: src/components/details/DetailsImage.tsx:88
 msgid "Image removed"
-msgstr ""
+msgstr "Obrázek odstraněn"
 
 #: src/components/details/DetailsImage.tsx:89
 msgid "The image has been removed successfully"
-msgstr ""
+msgstr "Obrázek byl úspěšně odstraněn"
 
 #: src/components/details/DetailsImage.tsx:115
 #~ msgid "Drag and drop to upload"
@@ -1364,7 +1364,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:157
 msgid "Drag and drop to upload, or paste an image from the clipboard"
-msgstr ""
+msgstr "Přetažením nahrajete nebo vložte obrázek ze schránky"
 
 #: src/components/details/DetailsImage.tsx:162
 msgid "Click to select file(s)"
@@ -1694,12 +1694,12 @@ msgstr "Přihlášení se nezdařilo"
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:350
+#: src/functions/auth.tsx:354
 msgid "Check your input and try again."
 msgstr "Zkontrolujte vstup a zkuste to znovu."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:341
+#: src/functions/auth.tsx:345
 msgid "Mail delivery successful"
 msgstr "E-mail byl doručen úspěšně"
 
@@ -2093,7 +2093,7 @@ msgstr "Zpracovávání dat"
 #: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:397
+#: src/functions/auth.tsx:401
 msgid "An error occurred"
 msgstr "Vyskytla se chyba"
 
@@ -2309,7 +2309,7 @@ msgstr "Zvolit jazyk"
 
 #: src/components/items/OnlyStaff.tsx:11
 msgid "This information is only available for administrative users"
-msgstr ""
+msgstr "Tyto informace jsou k dispozici pouze pro administrativní uživatele"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2651,15 +2651,15 @@ msgstr "Notifikace"
 
 #: src/components/nav/Header.tsx:231
 msgid "Superuser Mode"
-msgstr ""
+msgstr "Režim superuživatele"
 
 #: src/components/nav/Header.tsx:231
 msgid "Admin Mode"
-msgstr ""
+msgstr "Režim administrátora"
 
 #: src/components/nav/Header.tsx:237
 msgid "The current user has elevated privileges and should not be used for regular usage."
-msgstr ""
+msgstr "Aktuální uživatel má vyšší oprávnění a neměl by být používán pro běžné používání."
 
 #: src/components/nav/Layout.tsx:144
 msgid "Nothing found..."
@@ -4312,15 +4312,15 @@ msgstr "Spravovat pluginy InvenTree"
 
 #: src/defaults/defaultHostList.tsx:10
 msgid "Local Server"
-msgstr ""
+msgstr "Místní server"
 
 #: src/defaults/defaultHostList.tsx:12
 msgid "InvenTree Demo"
-msgstr ""
+msgstr "Demo InvenTree"
 
 #: src/defaults/defaultHostList.tsx:14
 msgid "Current Server"
-msgstr ""
+msgstr "Aktuální server"
 
 #: src/defaults/links.tsx:17
 #~ msgid "GitHub"
@@ -4800,7 +4800,7 @@ msgstr "Virtuální díl"
 
 #: src/forms/PurchaseOrderForms.tsx:538
 msgid "This part is virtual, no physical stock will be received."
-msgstr ""
+msgstr "Tento díl je virtuální, žádné fyzické zásoby nebudou přijaty."
 
 #: src/forms/PurchaseOrderForms.tsx:566
 #~ msgid "Serial numbers"
@@ -4973,11 +4973,11 @@ msgstr "Zásilka označená jako nezkontrolována"
 
 #: src/forms/SalesOrderForms.tsx:273
 msgid "Completing shipment"
-msgstr ""
+msgstr "Dokončování zásilky"
 
 #: src/forms/SalesOrderForms.tsx:274
 msgid "Shipment completed successfully"
-msgstr ""
+msgstr "Zásilka byla úspěšně dokončena"
 
 #: src/forms/SalesOrderForms.tsx:281
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
@@ -5262,7 +5262,7 @@ msgstr "Interní chyba serveru"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:216
+#: src/functions/auth.tsx:220
 msgid "Logged Out"
 msgstr "Odhlášen(a)"
 
@@ -5290,81 +5290,81 @@ msgstr "MFA přihlášení úspěšné"
 msgid "MFA details were automatically provided in the browser"
 msgstr "Údaje o MFA byly automaticky poskytnuty v prohlížeči"
 
-#: src/functions/auth.tsx:217
+#: src/functions/auth.tsx:221
 msgid "Successfully logged out"
 msgstr "Úspěšně odhlášen/a"
 
-#: src/functions/auth.tsx:284
+#: src/functions/auth.tsx:288
 msgid "Language changed"
 msgstr "Jazyk změněn"
 
-#: src/functions/auth.tsx:285
+#: src/functions/auth.tsx:289
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "Váš aktivní jazyk byl změněn podle nastavení Vašeho profilu"
 
-#: src/functions/auth.tsx:306
+#: src/functions/auth.tsx:310
 msgid "Theme changed"
 msgstr "Motiv změněn"
 
-#: src/functions/auth.tsx:307
+#: src/functions/auth.tsx:311
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "Váš aktivní jazyk byl změněn podle nastavení Vašeho profilu"
 
-#: src/functions/auth.tsx:342
+#: src/functions/auth.tsx:346
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Zkontrolujte doručenou poštu pro odkaz pro obnovení. Funguje to pouze v případě, že máte účet. Zkontrolujte také ve spamu."
 
-#: src/functions/auth.tsx:349
-#: src/functions/auth.tsx:613
+#: src/functions/auth.tsx:353
+#: src/functions/auth.tsx:617
 msgid "Reset failed"
 msgstr "Obnovení selhalo"
 
-#: src/functions/auth.tsx:376
+#: src/functions/auth.tsx:380
 msgid "Already logged in"
 msgstr "Již přihlášeno!"
 
-#: src/functions/auth.tsx:377
+#: src/functions/auth.tsx:381
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "Vyskytl se konflikt relací na serveru pro tento prohlížeč, prosím nejdřív se odhlašte."
 
-#: src/functions/auth.tsx:433
+#: src/functions/auth.tsx:437
 msgid "Logged In"
 msgstr "Přihlášen"
 
-#: src/functions/auth.tsx:434
+#: src/functions/auth.tsx:438
 msgid "Successfully logged in"
 msgstr "Úspěšně přihlášen/a"
 
-#: src/functions/auth.tsx:568
+#: src/functions/auth.tsx:572
 msgid "Failed to set up MFA"
 msgstr "Nepodařilo se nastavit MFA"
 
-#: src/functions/auth.tsx:587
+#: src/functions/auth.tsx:591
 msgid "MFA Setup successful"
 msgstr "Nastavení MFA bylo úspěšné"
 
-#: src/functions/auth.tsx:588
+#: src/functions/auth.tsx:592
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "MFA přes TOTP bylo úspěšně nastaveno; budete se muset znovu přihlásit."
 
-#: src/functions/auth.tsx:603
+#: src/functions/auth.tsx:607
 msgid "Password set"
 msgstr "Nastavení hesla"
 
-#: src/functions/auth.tsx:604
-#: src/functions/auth.tsx:713
+#: src/functions/auth.tsx:608
+#: src/functions/auth.tsx:717
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "Heslo bylo úspěšně nastaveno. Nyní se můžete přihlásit s novým heslem"
 
-#: src/functions/auth.tsx:678
+#: src/functions/auth.tsx:682
 msgid "Password could not be changed"
 msgstr "Heslo nelze změnit"
 
-#: src/functions/auth.tsx:696
+#: src/functions/auth.tsx:700
 msgid "The two password fields didn’t match"
 msgstr "Dvě pole s hesly se neshodují"
 
-#: src/functions/auth.tsx:712
+#: src/functions/auth.tsx:716
 msgid "Password Changed"
 msgstr "Heslo bylo změněno"
 
@@ -6865,7 +6865,7 @@ msgstr "Připojit k modelu"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:32
 msgid "Background worker running"
-msgstr ""
+msgstr "Pracovník na pozadí běží"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 #~ msgid "Background Worker Not Running"
@@ -7683,7 +7683,7 @@ msgstr "Údaje o uživateli"
 
 #: src/pages/core/UserDetail.tsx:206
 msgid "Normal user"
-msgstr ""
+msgstr "Běžný uživatel"
 
 #: src/pages/core/UserDetail.tsx:206
 #~ msgid "Basic user"
@@ -7783,11 +7783,11 @@ msgstr "Přidělení prodejní objednávky"
 
 #: src/pages/part/PartDetail.tsx:177
 msgid "Validating BOM"
-msgstr ""
+msgstr "Ověřování kusovníku"
 
 #: src/pages/part/PartDetail.tsx:178
 msgid "BOM validated"
-msgstr ""
+msgstr "Kusovník ověřen"
 
 #: src/pages/part/PartDetail.tsx:187
 #~ msgid "Bill of materials scheduled for validation"
@@ -8838,19 +8838,19 @@ msgstr "Chyba při skenování skladové položky"
 
 #: src/pages/stock/LocationDetail.tsx:384
 msgid "Scan in stock items"
-msgstr ""
+msgstr "Skenovat skladové položky"
 
 #: src/pages/stock/LocationDetail.tsx:386
 msgid "Scan item into this location"
-msgstr ""
+msgstr "Skenovat položku do tohoto umístění"
 
 #: src/pages/stock/LocationDetail.tsx:390
 msgid "Scan in container"
-msgstr ""
+msgstr "Skenovat v kontejneru"
 
 #: src/pages/stock/LocationDetail.tsx:392
 msgid "Scan container into this location"
-msgstr ""
+msgstr "Skenovat kontejner do tohoto umístění"
 
 #: src/pages/stock/StockDetail.tsx:147
 msgid "Base Part"
@@ -9135,7 +9135,7 @@ msgstr "Přidělené řádky"
 
 #: src/tables/ColumnRenderers.tsx:774
 msgid "Line Item"
-msgstr ""
+msgstr "Řádková položka"
 
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
@@ -9882,12 +9882,12 @@ msgstr "Jste si jisti, že chcete odstranit tuto přiřazenou skladovou zásobu 
 #: src/tables/build/BuildAllocatedStockTable.tsx:199
 #: src/tables/build/BuildLineTable.tsx:690
 msgid "Consuming allocated stock"
-msgstr ""
+msgstr "Spotřebovat přidělené zásoby"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:200
 #: src/tables/build/BuildLineTable.tsx:691
 msgid "Stock consumed successfully"
-msgstr ""
+msgstr "Zásoby byly úspěšně spotřebovány"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:260
 msgid "Consume"
@@ -9995,12 +9995,12 @@ msgstr "Vytvořit výrobní příkaz"
 #: src/tables/build/BuildLineTable.tsx:577
 #: src/tables/build/BuildOutputTable.tsx:223
 msgid "Allocating stock to build order"
-msgstr ""
+msgstr "Přidělování zásob k sestavě"
 
 #: src/tables/build/BuildLineTable.tsx:578
 #: src/tables/build/BuildOutputTable.tsx:224
 msgid "Stock allocation complete"
-msgstr ""
+msgstr "Přidělování zásob dokončeno"
 
 #: src/tables/build/BuildLineTable.tsx:585
 #~ msgid "Auto allocation in progress"
@@ -11188,11 +11188,11 @@ msgstr "Šablony dílu nelze upravit, díl je uzamčen"
 
 #: src/tables/part/PartThumbTable.tsx:123
 msgid "Image updated"
-msgstr ""
+msgstr "Obrázek aktualizován"
 
 #: src/tables/part/PartThumbTable.tsx:124
 msgid "The image has been updated successfully"
-msgstr ""
+msgstr "Obrázek byl úspěšně aktualizován"
 
 #: src/tables/part/PartThumbTable.tsx:233
 msgid "Select"
@@ -11693,7 +11693,7 @@ msgstr "Přiřadit sériová čísla"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:297
 msgid "Stock allocated successfully"
-msgstr ""
+msgstr "Zásoby byly úspěšně přiděleny"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:341
 msgid "Show lines which are fully allocated"
@@ -11725,7 +11725,7 @@ msgstr "Vytvořit zásilku"
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:80
 msgid "Shipment created"
-msgstr ""
+msgstr "Zásilka vytvořena"
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:159
 msgid "Items"
@@ -12172,7 +12172,7 @@ msgstr "Při načítání podrobností šablony došlo k chybě"
 
 #: src/tables/settings/TemplateTable.tsx:272
 msgid "Filename"
-msgstr ""
+msgstr "Název souboru"
 
 #: src/tables/settings/TemplateTable.tsx:295
 msgid "Modify"
@@ -12241,7 +12241,7 @@ msgstr "Určuje, zda má být tento uživatel považován za aktivního. Zrušte
 
 #: src/tables/settings/UserTable.tsx:183
 msgid "Is Administrator"
-msgstr ""
+msgstr "Je administrátor"
 
 #: src/tables/settings/UserTable.tsx:183
 #~ msgid "Is Staff"
@@ -12313,7 +12313,7 @@ msgstr "Zobrazit aktivní uživatele"
 
 #: src/tables/settings/UserTable.tsx:407
 msgid "Show administrators"
-msgstr ""
+msgstr "Zobrazit administrátory"
 
 #: src/tables/settings/UserTable.tsx:412
 msgid "Show superusers"
@@ -12524,7 +12524,7 @@ msgstr "Zobrazit zásoby na externích lokacích"
 
 #: src/tables/stock/StockItemTable.tsx:420
 msgid "Stock item created"
-msgstr ""
+msgstr "Skladová položka vytvořena"
 
 #: src/tables/stock/StockItemTable.tsx:442
 msgid "Order items"

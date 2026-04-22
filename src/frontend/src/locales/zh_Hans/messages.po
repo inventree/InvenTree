@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-13 10:40\n"
+"PO-Revision-Date: 2026-04-21 00:31\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -593,7 +593,7 @@ msgstr ""
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:74
-#: src/functions/auth.tsx:687
+#: src/functions/auth.tsx:691
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -1694,12 +1694,12 @@ msgstr "登录失败"
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:350
+#: src/functions/auth.tsx:354
 msgid "Check your input and try again."
 msgstr "请检查您的输入并重试。"
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:341
+#: src/functions/auth.tsx:345
 msgid "Mail delivery successful"
 msgstr "邮件发送成功"
 
@@ -2093,7 +2093,7 @@ msgstr "处理数据中"
 #: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:397
+#: src/functions/auth.tsx:401
 msgid "An error occurred"
 msgstr "发生错误"
 
@@ -5262,7 +5262,7 @@ msgstr "服务内部错误"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:216
+#: src/functions/auth.tsx:220
 msgid "Logged Out"
 msgstr "已登出"
 
@@ -5290,81 +5290,81 @@ msgstr "MFA登录验证成功"
 msgid "MFA details were automatically provided in the browser"
 msgstr "浏览器自动提供了MFA验证信息"
 
-#: src/functions/auth.tsx:217
+#: src/functions/auth.tsx:221
 msgid "Successfully logged out"
 msgstr "已成功登出"
 
-#: src/functions/auth.tsx:284
+#: src/functions/auth.tsx:288
 msgid "Language changed"
 msgstr "语言已更改"
 
-#: src/functions/auth.tsx:285
+#: src/functions/auth.tsx:289
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "您的活动语言已被更改为您个人资料中设置的语言"
 
-#: src/functions/auth.tsx:306
+#: src/functions/auth.tsx:310
 msgid "Theme changed"
 msgstr "主题已更改"
 
-#: src/functions/auth.tsx:307
+#: src/functions/auth.tsx:311
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "您的活动主题已被更改为您个人资料中设置的主题"
 
-#: src/functions/auth.tsx:342
+#: src/functions/auth.tsx:346
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "查看收件箱中的重置链接。这只有在您有账户的情况下才会起作用。也请检查垃圾邮件。"
 
-#: src/functions/auth.tsx:349
-#: src/functions/auth.tsx:613
+#: src/functions/auth.tsx:353
+#: src/functions/auth.tsx:617
 msgid "Reset failed"
 msgstr "重置失败"
 
-#: src/functions/auth.tsx:376
+#: src/functions/auth.tsx:380
 msgid "Already logged in"
 msgstr "您已经登陆了"
 
-#: src/functions/auth.tsx:377
+#: src/functions/auth.tsx:381
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "此浏览器的服务器上存在冲突会话。请先登出该会话。"
 
-#: src/functions/auth.tsx:433
+#: src/functions/auth.tsx:437
 msgid "Logged In"
 msgstr "已登录"
 
-#: src/functions/auth.tsx:434
+#: src/functions/auth.tsx:438
 msgid "Successfully logged in"
 msgstr "已成功登入"
 
-#: src/functions/auth.tsx:568
+#: src/functions/auth.tsx:572
 msgid "Failed to set up MFA"
 msgstr "设置 MFA 失败"
 
-#: src/functions/auth.tsx:587
+#: src/functions/auth.tsx:591
 msgid "MFA Setup successful"
 msgstr "MFA 设置成功"
 
-#: src/functions/auth.tsx:588
+#: src/functions/auth.tsx:592
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "基于 TOTP 的多因素认证（MFA）设置成功；您需要重新登录。"
 
-#: src/functions/auth.tsx:603
+#: src/functions/auth.tsx:607
 msgid "Password set"
 msgstr "密码已设置"
 
-#: src/functions/auth.tsx:604
-#: src/functions/auth.tsx:713
+#: src/functions/auth.tsx:608
+#: src/functions/auth.tsx:717
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "密码设置成功。您现在可以使用新密码登录"
 
-#: src/functions/auth.tsx:678
+#: src/functions/auth.tsx:682
 msgid "Password could not be changed"
 msgstr "无法更改密码"
 
-#: src/functions/auth.tsx:696
+#: src/functions/auth.tsx:700
 msgid "The two password fields didn’t match"
 msgstr "两个密码不匹配"
 
-#: src/functions/auth.tsx:712
+#: src/functions/auth.tsx:716
 msgid "Password Changed"
 msgstr "密码已更改"
 

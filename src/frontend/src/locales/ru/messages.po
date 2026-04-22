@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-13 10:40\n"
+"PO-Revision-Date: 2026-04-21 00:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -593,7 +593,7 @@ msgstr ""
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:74
-#: src/functions/auth.tsx:687
+#: src/functions/auth.tsx:691
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -1694,12 +1694,12 @@ msgstr "Ошибка входа"
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:350
+#: src/functions/auth.tsx:354
 msgid "Check your input and try again."
 msgstr "Проверьте введенные данные и повторите попытку."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:341
+#: src/functions/auth.tsx:345
 msgid "Mail delivery successful"
 msgstr "Отправка почты прошла успешно"
 
@@ -2093,7 +2093,7 @@ msgstr "Обработка данных"
 #: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:397
+#: src/functions/auth.tsx:401
 msgid "An error occurred"
 msgstr "Произошла ошибка"
 
@@ -5262,7 +5262,7 @@ msgstr "Внутренняя ошибка сервера"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:216
+#: src/functions/auth.tsx:220
 msgid "Logged Out"
 msgstr "Выход"
 
@@ -5290,81 +5290,81 @@ msgstr "Успешный вход с помощью МФА"
 msgid "MFA details were automatically provided in the browser"
 msgstr "Данные МФА автоматически переданы в браузер"
 
-#: src/functions/auth.tsx:217
+#: src/functions/auth.tsx:221
 msgid "Successfully logged out"
 msgstr "Успешный выход из системы"
 
-#: src/functions/auth.tsx:284
+#: src/functions/auth.tsx:288
 msgid "Language changed"
 msgstr "Язык изменён"
 
-#: src/functions/auth.tsx:285
+#: src/functions/auth.tsx:289
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "Язык изменён на заданный в вашем профиле"
 
-#: src/functions/auth.tsx:306
+#: src/functions/auth.tsx:310
 msgid "Theme changed"
 msgstr "Тема изменена"
 
-#: src/functions/auth.tsx:307
+#: src/functions/auth.tsx:311
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "Тема интерфейса изменена на заданную в профиле"
 
-#: src/functions/auth.tsx:342
+#: src/functions/auth.tsx:346
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Проверьте свой почтовый ящик, чтобы получить ссылку на сброс. Это работает только в том случае, если у вас есть учетная запись. Проверьте также спам."
 
-#: src/functions/auth.tsx:349
-#: src/functions/auth.tsx:613
+#: src/functions/auth.tsx:353
+#: src/functions/auth.tsx:617
 msgid "Reset failed"
 msgstr "Сброс не удался"
 
-#: src/functions/auth.tsx:376
+#: src/functions/auth.tsx:380
 msgid "Already logged in"
 msgstr "Вход уже выполнен"
 
-#: src/functions/auth.tsx:377
+#: src/functions/auth.tsx:381
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "На сервере есть конфликтующие сессии для данного браузера. Пожалуйста, выйдите из системы."
 
-#: src/functions/auth.tsx:433
+#: src/functions/auth.tsx:437
 msgid "Logged In"
 msgstr "Войти в систему"
 
-#: src/functions/auth.tsx:434
+#: src/functions/auth.tsx:438
 msgid "Successfully logged in"
 msgstr "Вход выполнен успешно"
 
-#: src/functions/auth.tsx:568
+#: src/functions/auth.tsx:572
 msgid "Failed to set up MFA"
 msgstr "Не удалось настроить МФА"
 
-#: src/functions/auth.tsx:587
+#: src/functions/auth.tsx:591
 msgid "MFA Setup successful"
 msgstr "Многофакторная аутентификация настроена успешно"
 
-#: src/functions/auth.tsx:588
+#: src/functions/auth.tsx:592
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "Многофакторная аутентификация через TOTP настроена успешно; вам нужно авторизоваться повторно."
 
-#: src/functions/auth.tsx:603
+#: src/functions/auth.tsx:607
 msgid "Password set"
 msgstr "Пароль установлен"
 
-#: src/functions/auth.tsx:604
-#: src/functions/auth.tsx:713
+#: src/functions/auth.tsx:608
+#: src/functions/auth.tsx:717
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "Пароль был установлен успешно. Теперь вы можете войти в систему с новым паролем"
 
-#: src/functions/auth.tsx:678
+#: src/functions/auth.tsx:682
 msgid "Password could not be changed"
 msgstr "Пароль не может быть изменён"
 
-#: src/functions/auth.tsx:696
+#: src/functions/auth.tsx:700
 msgid "The two password fields didn’t match"
 msgstr "Пароли не совпадают"
 
-#: src/functions/auth.tsx:712
+#: src/functions/auth.tsx:716
 msgid "Password Changed"
 msgstr "Пароль изменен"
 

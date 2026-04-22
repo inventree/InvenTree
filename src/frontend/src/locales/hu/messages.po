@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-13 10:40\n"
+"PO-Revision-Date: 2026-04-21 00:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -593,7 +593,7 @@ msgstr ""
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:74
-#: src/functions/auth.tsx:687
+#: src/functions/auth.tsx:691
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -1694,12 +1694,12 @@ msgstr "Belépés sikertelen"
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:350
+#: src/functions/auth.tsx:354
 msgid "Check your input and try again."
 msgstr "Ellenőrizd amit beírtál és próbáld újra."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:341
+#: src/functions/auth.tsx:345
 msgid "Mail delivery successful"
 msgstr "Levél kézbesítése sikeres"
 
@@ -2093,7 +2093,7 @@ msgstr "Adatok feldolgozása"
 #: src/components/importer/ImporterColumnSelector.tsx:247
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:397
+#: src/functions/auth.tsx:401
 msgid "An error occurred"
 msgstr "Hiba történt"
 
@@ -5262,7 +5262,7 @@ msgstr "Belső szerverhiba"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:216
+#: src/functions/auth.tsx:220
 msgid "Logged Out"
 msgstr "Kijelentkezve"
 
@@ -5290,81 +5290,81 @@ msgstr "MFA alapú bejelentkezés sikeres"
 msgid "MFA details were automatically provided in the browser"
 msgstr "Az MFA adatok automatikusan megadásra kerültek a böngészőben"
 
-#: src/functions/auth.tsx:217
+#: src/functions/auth.tsx:221
 msgid "Successfully logged out"
 msgstr "Sikeresen kijelentkeztél"
 
-#: src/functions/auth.tsx:284
+#: src/functions/auth.tsx:288
 msgid "Language changed"
 msgstr "Nyelv megváltoztatva"
 
-#: src/functions/auth.tsx:285
+#: src/functions/auth.tsx:289
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "Az aktív nyelv megváltozott a profilban beállítottra"
 
-#: src/functions/auth.tsx:306
+#: src/functions/auth.tsx:310
 msgid "Theme changed"
 msgstr "A téma megváltoztatva"
 
-#: src/functions/auth.tsx:307
+#: src/functions/auth.tsx:311
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "Az aktív téma megváltozott a profilban beállítottra"
 
-#: src/functions/auth.tsx:342
+#: src/functions/auth.tsx:346
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Nézd meg a beérkező levelek mappájában a visszaállítási linket. Ez csak akkor működik, ha van fiókod. Ellenőrizd a spameket is."
 
-#: src/functions/auth.tsx:349
-#: src/functions/auth.tsx:613
+#: src/functions/auth.tsx:353
+#: src/functions/auth.tsx:617
 msgid "Reset failed"
 msgstr "Visszaállítás sikertelen"
 
-#: src/functions/auth.tsx:376
+#: src/functions/auth.tsx:380
 msgid "Already logged in"
 msgstr "Már bejelentkezett"
 
-#: src/functions/auth.tsx:377
+#: src/functions/auth.tsx:381
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "Egy ütköző munkamenet található a szerveren ehhez a böngészőhöz. Kérjük előbb jelentkezzen ki abból."
 
-#: src/functions/auth.tsx:433
+#: src/functions/auth.tsx:437
 msgid "Logged In"
 msgstr "Bejelentkezve"
 
-#: src/functions/auth.tsx:434
+#: src/functions/auth.tsx:438
 msgid "Successfully logged in"
 msgstr "Sikeres bejelentkezés"
 
-#: src/functions/auth.tsx:568
+#: src/functions/auth.tsx:572
 msgid "Failed to set up MFA"
 msgstr "MFA beállítása sikertelen"
 
-#: src/functions/auth.tsx:587
+#: src/functions/auth.tsx:591
 msgid "MFA Setup successful"
 msgstr ""
 
-#: src/functions/auth.tsx:588
+#: src/functions/auth.tsx:592
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr ""
 
-#: src/functions/auth.tsx:603
+#: src/functions/auth.tsx:607
 msgid "Password set"
 msgstr "Jelszó beállítva"
 
-#: src/functions/auth.tsx:604
-#: src/functions/auth.tsx:713
+#: src/functions/auth.tsx:608
+#: src/functions/auth.tsx:717
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "A jelszó beállítása sikeresen megtörtént. Most már bejelentkezhetsz az új jelszavaddal"
 
-#: src/functions/auth.tsx:678
+#: src/functions/auth.tsx:682
 msgid "Password could not be changed"
 msgstr "A jelszót nem lehet megváltoztatni"
 
-#: src/functions/auth.tsx:696
+#: src/functions/auth.tsx:700
 msgid "The two password fields didn’t match"
 msgstr "A két jelszó nem egyezett meg"
 
-#: src/functions/auth.tsx:712
+#: src/functions/auth.tsx:716
 msgid "Password Changed"
 msgstr "Jelszó megváltozott"
 

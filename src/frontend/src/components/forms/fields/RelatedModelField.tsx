@@ -8,17 +8,32 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {
   type FieldValues,
   type UseControllerReturn,
+  type UseFormReturn,
   useFormContext
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '@lib/enums/ModelInformation';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { IconPlus } from '@tabler/icons-react';
 import { useApi } from '../../../contexts/ApiContext';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -53,6 +68,10 @@ export function RelatedModelField({
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
+
+  function setValuefromPK(pk: number) {
+    fetchSingleField(pk);
+  }
 
   // Handle condition where the form is rebuilt dynamically
   useEffect(() => {
@@ -138,6 +157,17 @@ export function RelatedModelField({
     }
     return ModelInformationDict[definition.model];
   }, [definition.model]);
+
+  // Determine whether an add button should be added for this field
+  const addButton = useMemo(() => {
+    if (!modelInfo) {
+      return false;
+    }
+    if (definition.addCreateFields) {
+      return true;
+    }
+    return false;
+  }, [definition.addCreateFields, modelInfo]);
 
   // Determine whether a barcode field should be added
   const addBarcodeField: boolean = useMemo(() => {
@@ -296,15 +326,7 @@ export function RelatedModelField({
         return null;
       }
 
-      let _filters = definition.filters ?? {};
-
-      if (definition.adjustFilters) {
-        _filters =
-          definition.adjustFilters({
-            filters: _filters,
-            data: form.getValues()
-          }) ?? _filters;
-      }
+      const _filters = retrieveFilters(definition, form);
 
       // If the filters have changed, clear the data
       if (JSON.stringify(_filters) !== JSON.stringify(filters)) {
@@ -461,6 +483,9 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
+        {addButton &&
+          modelInfo &&
+          InlineCreateButton(definition, modelInfo, form, setValuefromPK)}
         <Expand>
           <Select
             id={fieldId}
@@ -523,5 +548,72 @@ export function RelatedModelField({
         )}
       </Group>
     </Input.Wrapper>
+  );
+}
+
+function InlineCreateButton(
+  definition: ApiFormFieldType,
+  modelInfo: TranslatableModelInformationInterface,
+  form: UseFormReturn<FieldValues, any, FieldValues>,
+  setValue: (value: number) => void
+): ReactNode {
+  const relatedInitialData = useMemo(
+    () => calculateModalData(definition, form),
+    [definition.filters, definition.addCreateFields, form]
+  );
+  const model = useMemo(() => modelInfo?.label() ?? '', [modelInfo]);
+
+  const create_modal = useCreateApiFormModal({
+    title: t`Create New ${model}`,
+    url: apiUrl(modelInfo.api_endpoint),
+    modelType: definition.model,
+    initialData: relatedInitialData,
+    fields: definition.addCreateFields,
+    onFormSuccess: (response: any) => {
+      setValue(response.pk);
+    }
+  });
+  return (
+    <>
+      {create_modal.modal}
+      <ActionButton
+        onClick={() => {
+          create_modal.open();
+        }}
+        color='green'
+        icon={<IconPlus />}
+      />
+    </>
+  );
+}
+
+function retrieveFilters(
+  definition: ApiFormFieldType,
+  form: UseFormReturn<FieldValues, any, FieldValues>
+) {
+  let _filters = definition.filters ?? {};
+
+  if (definition.adjustFilters) {
+    _filters =
+      definition.adjustFilters({
+        filters: _filters,
+        data: form.getValues()
+      }) ?? _filters;
+  }
+  return _filters;
+}
+
+function calculateModalData(
+  definition: ApiFormFieldType,
+  form: UseFormReturn<FieldValues, any, FieldValues>
+) {
+  if (!definition.addCreateFields) {
+    return {};
+  }
+  const fields = new Set(Object.keys(definition.addCreateFields));
+  return Object.fromEntries(
+    Object.entries(retrieveFilters(definition, form)).filter(([key]) =>
+      fields.has(key)
+    )
   );
 }
