@@ -275,7 +275,7 @@ def install_plugin(
     # Sanitize the package name for installation
     if any(c in package_ref for c in ';&|`$()'):
         raise ValidationError(_('Invalid characters in package name or URL'))
-    
+
     # Execute installation via pip
     cmd: list[str] = ['install', '-U', '--disable-pip-version-check']
     if index_url:
