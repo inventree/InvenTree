@@ -216,7 +216,7 @@ export default function PurchasingIndex() {
         pageKey='purchasing-index'
         panels={panels}
         model={'purchasing'}
-        id={null}
+        pluginSupportOnBare
       />
     </Stack>
   );

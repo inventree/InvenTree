@@ -155,7 +155,7 @@ export default function UserSettings() {
           pageKey='user-settings'
           panels={userSettingsPanels}
           model='usersettings'
-          id={null}
+          pluginSupportOnBare
         />
       </Stack>
     </>

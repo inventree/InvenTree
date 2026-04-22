@@ -304,7 +304,7 @@ export default function AdminCenter() {
             groups={grouping}
             collapsible={true}
             model='admincenter'
-            id={null}
+            pluginSupportOnBare
           />
         </Stack>
       ) : (

@@ -103,7 +103,7 @@ export default function BuildIndex() {
         pageKey='build-index'
         panels={panels}
         model='manufacturing'
-        id={null}
+        pluginSupportOnBare
       />
     </Stack>
   );

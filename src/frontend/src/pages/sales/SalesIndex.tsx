@@ -171,7 +171,7 @@ export default function SalesIndex() {
         pageKey='sales-index'
         panels={panels}
         model={'sales'}
-        id={null}
+        pluginSupportOnBare
       />
     </Stack>
   );

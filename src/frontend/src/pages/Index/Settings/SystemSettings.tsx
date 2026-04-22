@@ -377,7 +377,7 @@ export default function SystemSettings() {
             pageKey='system-settings'
             panels={systemSettingsPanels}
             model='systemsettings'
-            id={null}
+            pluginSupportOnBare
           />
         </Stack>
       ) : (
