@@ -561,9 +561,10 @@ function InlineCreateButton(
     () => calculateModalData(definition, form),
     [definition.filters, definition.addCreateFields, form]
   );
+  const model = useMemo(() => modelInfo?.label() ?? '', [modelInfo]);
 
   const create_modal = useCreateApiFormModal({
-    title: t`Create New ${modelInfo.label() ?? ''}`,
+    title: t`Create New ${model}`,
     url: apiUrl(modelInfo.api_endpoint),
     modelType: definition.model,
     initialData: relatedInitialData,
