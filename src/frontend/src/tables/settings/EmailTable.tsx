@@ -2,6 +2,7 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Alert, Badge, Group, HoverCard } from '@mantine/core';
 import { IconExclamationCircle, IconTestPipe } from '@tabler/icons-react';
@@ -10,7 +11,6 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

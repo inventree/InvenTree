@@ -13,7 +13,7 @@ const DEFAULT_PAGE_SIZE: number = 25;
  * - columnNames: An object mapping table keys to arrays of column names.
  * - sorting: An object mapping table keys to sorting configurations.
  */
-interface StoredTableStateProps {
+export interface StoredTableStateProps {
   pageSize: number;
   setPageSize: (size: number) => void;
   tableSorting: Record<string, any>;

@@ -667,7 +667,37 @@ test('Parts - Parameters by Category', async ({ browser }) => {
 });
 
 test('Parts - Parameters', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
+  const page = await doCachedLogin(browser, { url: 'part/915/parameters' });
+
+  // Edit parameter defined with a SelectionListEntry
+  const animalCell = await page.getByRole('cell', {
+    name: 'Animal',
+    exact: true
+  });
+  await clickOnRowMenu(animalCell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Check the data field, which should be populated with the options defined in the "Animal" parameter template
+  // If both values are present, we know that the correct SelectionListEntry has been loaded
+  await page
+    .getByText('Data *Parameter')
+    .getByText(/Armadillo/i)
+    .waitFor();
+  await page
+    .getByText('Data *Parameter')
+    .getByText(/A mammal known for/i)
+    .waitFor();
+
+  // Check for other values
+  await page
+    .getByRole('combobox', { name: 'related-field-data' })
+    .fill('horse');
+  await page.getByText('The offspring of a male donkey').waitFor();
+  await page.getByText('A small marine fish with a head').waitFor();
+  await page.getByText('Zebra').click();
+
+  // Close the edit dialog
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // check that "is polarized" parameter is not already present - if it is, delete it before proceeding with the rest of the test
   await page

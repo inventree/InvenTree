@@ -236,8 +236,8 @@ def install_plugin(
         url: Optional URL to install from
         version: Optional version specifier
     """
-    if not user or not user.is_staff:
-        raise ValidationError(_('Only staff users can administer plugins'))
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin installation is disabled'))
@@ -270,8 +270,12 @@ def install_plugin(
         if version:
             package_ref = f'{packagename}=={version}'
     else:
-        raise ValidationError(_('No package name or URL provided'))
+        raise ValidationError(_('No package name or URL provided for installation'))
 
+    # Sanitize the package name for installation
+    if any(c in package_ref for c in ';&|`$()'):
+        raise ValidationError(_('Invalid characters in package name or URL'))
+    
     # Execute installation via pip
     cmd: list[str] = ['install', '-U', '--disable-pip-version-check']
     if index_url:
@@ -336,6 +340,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         delete_config: If True, delete the plugin configuration from the database
     """
     from plugin.registry import registry
+
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin uninstalling is disabled'))

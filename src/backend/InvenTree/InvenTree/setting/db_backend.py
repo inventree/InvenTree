@@ -1,10 +1,68 @@
 """Configuration settings specific to a particular database backend."""
 
+from pathlib import Path
+
 import structlog
 
 from InvenTree.config import get_boolean_setting, get_setting
 
 logger = structlog.get_logger('inventree')
+
+
+def get_db_backend():
+    """Return the database backend configuration."""
+    db_config = {
+        'ENGINE': get_setting('INVENTREE_DB_ENGINE', 'database.engine', None),
+        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', None),
+        'USER': get_setting('INVENTREE_DB_USER', 'database.user', None),
+        'PASSWORD': get_setting('INVENTREE_DB_PASSWORD', 'database.password', None),
+        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', None),
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', 5432, typecast=int),
+        'OPTIONS': get_setting(
+            'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
+        )
+        or {},
+    }
+
+    # Check for required keys
+    required_keys = ['ENGINE', 'NAME']
+
+    for key in required_keys:
+        if not db_config[key]:
+            raise ValueError(
+                f'Missing required database configuration key: INVENTREE_DB_{key}'
+            )
+
+    DB_ENGINE = db_config['ENGINE'].lower()
+
+    # Correct common misspelling
+    if DB_ENGINE == 'sqlite':
+        DB_ENGINE = 'sqlite3'  # pragma: no cover
+
+    if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
+        # Prepend the required python module string
+        DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
+        db_config['ENGINE'] = DB_ENGINE
+
+    if 'sqlite' in DB_ENGINE:
+        db_name = str(Path(db_config['NAME']).resolve())
+        db_config['NAME'] = db_name
+
+    logger.info('DB_ENGINE: %s', DB_ENGINE)
+    logger.info('DB_NAME: %s', db_config['NAME'])
+    logger.info('DB_HOST: %s', db_config.get('HOST', "''"))
+
+    # Set testing options for the database
+    db_config['TEST'] = {'CHARSET': 'utf8'}
+
+    # Set collation option for mysql test database
+    if 'mysql' in DB_ENGINE:
+        db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
+
+    # Specify database specific configuration
+    set_db_options(DB_ENGINE, db_config['OPTIONS'])
+
+    return db_config
 
 
 def set_db_options(engine: str, db_options: dict):

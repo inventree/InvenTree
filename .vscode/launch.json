@@ -36,7 +36,9 @@
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": [
         "runserver",
-        "0.0.0.0:8000"
+        "0.0.0.0:8000",
+        // "--sync",// Synchronize worker tasks to foreground thread
+        // "--noreload", // disable auto-reload
       ],
       "django": true,
       "justMyCode": false
