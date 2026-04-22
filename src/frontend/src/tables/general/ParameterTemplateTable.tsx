@@ -13,6 +13,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
+import { useParameterTemplateFields } from '../../forms/CommonForms';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -30,22 +31,7 @@ export default function ParameterTemplateTable() {
   const table = useTable('parameter-templates');
   const user = useUserState();
 
-  const parameterTemplateFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      name: {},
-      description: {},
-      units: {},
-      model_type: {},
-      choices: {},
-      checkbox: {},
-      selectionlist: {
-        filters: {
-          active: true
-        }
-      },
-      enabled: {}
-    };
-  }, []);
+  const parameterTemplateFields: ApiFormFieldSet = useParameterTemplateFields();
 
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.parameter_template_list,
