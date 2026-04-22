@@ -483,9 +483,6 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
-        {addButton &&
-          modelInfo &&
-          InlineCreateButton(definition, modelInfo, form, setValueFromPK)}
         <Expand>
           <Select
             id={fieldId}
@@ -546,17 +543,30 @@ export function RelatedModelField({
             onScanSuccess={onBarcodeScan}
           />
         )}
+        {addButton && modelInfo && (
+          <InlineCreateButton
+            definition={definition}
+            modelInfo={modelInfo}
+            form={form}
+            setValue={setValueFromPK}
+          />
+        )}
       </Group>
     </Input.Wrapper>
   );
 }
 
-function InlineCreateButton(
-  definition: ApiFormFieldType,
-  modelInfo: TranslatableModelInformationInterface,
-  form: UseFormReturn<FieldValues, any, FieldValues>,
-  setValue: (value: number) => void
-): ReactNode {
+function InlineCreateButton({
+  definition,
+  modelInfo,
+  form,
+  setValue
+}: {
+  definition: ApiFormFieldType;
+  modelInfo: TranslatableModelInformationInterface;
+  form: UseFormReturn<FieldValues, any, FieldValues>;
+  setValue: (value: number) => void;
+}): ReactNode {
   const relatedInitialData = useMemo(
     () => calculateModalData(definition, form),
     [definition.filters, definition.addCreateFields, form]
