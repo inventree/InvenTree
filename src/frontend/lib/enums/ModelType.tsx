@@ -44,6 +44,8 @@ export enum PluginPanelKey {
   admincenter = 'admincenter',
   systemsettings = 'systemsettings',
   usersettings = 'usersettings',
+  // generic
+  core = 'core',
   // landing pages
   purchasing = 'purchasing',
   sales = 'sales',
