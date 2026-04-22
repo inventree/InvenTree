@@ -3923,8 +3923,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             assemblies = set()
 
             if db_instance:
-                # Find all assemblies which use this BomItem *after* we save
+                # Find all assemblies which use this BomItem *before* we save
                 assemblies.update(db_instance.get_assemblies())
+
+            # Update the set of assemblies to include those which use this BomItem *after* we save
+            assemblies.update(self.get_assemblies())
 
             for assembly in assemblies:
                 # Offload task to update the checksum for this assembly
