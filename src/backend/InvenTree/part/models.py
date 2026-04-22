@@ -2058,7 +2058,12 @@ class Part(
 
         Note: Does *NOT* delete inherited BOM items!
         """
+        import part.tasks as part_tasks
+
         self.bom_items.all().delete()
+
+        # Offload task to re-validate the BOM for this assembly
+        InvenTree.tasks.offload_task(part_tasks.check_bom_valid, self.pk, group='part')
 
     def getRequiredParts(self, recursive=False, parts=None):
         """Return a list of parts required to make this part (i.e. BOM items).
