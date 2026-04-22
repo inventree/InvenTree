@@ -69,7 +69,7 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
-  function setValuefromPK(pk: number) {
+  function setValueFromPK(pk: number) {
     fetchSingleField(pk);
   }
 
@@ -485,7 +485,7 @@ export function RelatedModelField({
       <Group justify='space-between' wrap='nowrap' gap={3}>
         {addButton &&
           modelInfo &&
-          InlineCreateButton(definition, modelInfo, form, setValuefromPK)}
+          InlineCreateButton(definition, modelInfo, form, setValueFromPK)}
         <Expand>
           <Select
             id={fieldId}
