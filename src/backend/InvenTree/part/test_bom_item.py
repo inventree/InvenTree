@@ -415,7 +415,7 @@ class BomItemTest(TestCase):
             validate_bom(assembly.pk, valid)
             check(valid)
 
-        self.assertFalse(assembly.bom_validated)
+        check(valid=False)
         validate()
 
         sub_part_1 = Part.objects.create(
@@ -426,10 +426,14 @@ class BomItemTest(TestCase):
             name='SubPart2', description='A sub-part', component=True
         )
 
+        # Still valid at this stage - we have not made any changes to the BOM
+        check(valid=True)
+
         # Creating a *new* BOM item should invalidate the bom_validated cache
         bom_item = BomItem.objects.create(
             part=assembly, sub_part=sub_part_1, quantity=1
         )
+
         check(valid=False)
 
         # Editing the BOM item should also invalidate the bom_validated cache
