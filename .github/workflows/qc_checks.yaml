@@ -215,7 +215,7 @@ jobs:
         run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
 
       - name: Check for differences in API Schema
-        if: needs.paths-filter.outputs.api == 'false'
+        if: needs.paths-filter.outputs.api == 'false' && github.base_ref != 'next-breaking'
         run: |
           diff --color -u src/backend/InvenTree/schema.yml api.yaml
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
