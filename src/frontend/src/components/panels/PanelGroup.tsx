@@ -60,6 +60,7 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ * @param pluginSupportOnBare - If true, the panel group will support plugin panels even with no id provided
  */
 export type PanelProps = {
   pageKey: string;
@@ -72,6 +73,7 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  pluginSupportOnBare?: boolean;
 };
 
 function BasePanelGroup({
@@ -84,7 +86,8 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true
+  collapsible = true,
+  pluginSupportOnBare = false
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -95,8 +98,12 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
+  const pluginId = useMemo(() => {
+    if (id === undefined && pluginSupportOnBare) return null;
+    return id;
+  }, [id, pluginSupportOnBare]);
   const pluginPanelSet = usePluginPanels({
-    id: id,
+    id: pluginId,
     model: model,
     instance: instance,
     reloadFunc: reloadInstance
