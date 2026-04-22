@@ -483,6 +483,14 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
+        {addButton && modelInfo && (
+          <InlineCreateButton
+            definition={definition}
+            modelInfo={modelInfo}
+            form={form}
+            setValue={setValueFromPK}
+          />
+        )}
         <Expand>
           <Select
             id={fieldId}
@@ -543,14 +551,6 @@ export function RelatedModelField({
             onScanSuccess={onBarcodeScan}
           />
         )}
-        {addButton && modelInfo && (
-          <InlineCreateButton
-            definition={definition}
-            modelInfo={modelInfo}
-            form={form}
-            setValue={setValueFromPK}
-          />
-        )}
       </Group>
     </Input.Wrapper>
   );
@@ -592,6 +592,7 @@ function InlineCreateButton({
       {create_modal.modal}
       <ActionButton
         tooltip={title}
+        tooltipAlignment='top-start'
         onClick={() => {
           create_modal.open();
         }}
