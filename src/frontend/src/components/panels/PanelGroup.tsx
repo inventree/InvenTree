@@ -39,6 +39,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
+import { useWindowEvent } from '@mantine/hooks';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
@@ -173,6 +174,17 @@ function BasePanelGroup({
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
       cancelEvent(event);
+
+      // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
+      if (isDirty) {
+        const confirm = globalThis.confirm(
+          t`You have unsaved changes, are you sure you want to navigate away from this panel?`
+        );
+        if (!confirm) {
+          return;
+        }
+      }
+
       if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
         navigateToLink(url, navigate, event);
@@ -186,6 +198,9 @@ function BasePanelGroup({
       if (targetPanel && onPanelChange) {
         onPanelChange(targetPanel);
       }
+
+      // change dirty state
+      setIsDirty(false);
     },
     [activePanels, navigate, location, onPanelChange]
   );
@@ -205,6 +220,13 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
@@ -341,7 +363,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content}
+                      {getPanelContent(panel.content, panel, setIsDirty)}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>
@@ -351,6 +373,39 @@ function BasePanelGroup({
       </Paper>
     </Boundary>
   );
+}
+
+/*
+ * Helper function to inject the setIsDirty callback into panel content if supported
+ * This allows panels to mark themselves as dirty when changes are made, which will trigger a confirmation prompt when navigating away from the panel
+ */
+function getPanelContent(
+  content: ReactNode,
+  panel: PanelType,
+  setIsDirty?: (dirty: boolean) => void
+): ReactNode {
+  if (content === null) {
+    return null;
+  }
+
+  // pass setIsDirty callback to content if supported
+  if (
+    panel.supportsDirty &&
+    typeof content === 'object' &&
+    'props' in content &&
+    setIsDirty
+  ) {
+    return {
+      ...content,
+      props: {
+        ...(content.props || {}),
+        setDirtyCallback: setIsDirty
+      }
+    };
+  }
+
+  // normal content, just return as is
+  return content;
 }
 
 function IndexPanelComponent({
