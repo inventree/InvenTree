@@ -571,10 +571,14 @@ function InlineCreateButton({
     () => calculateModalData(definition, form),
     [definition.filters, definition.addCreateFields, form]
   );
-  const model = useMemo(() => modelInfo?.label() ?? '', [modelInfo]);
+
+  const title: string = useMemo(() => {
+    const model = modelInfo?.label() ?? t`Item`;
+    return t`Create new ${model}`;
+  }, [modelInfo]);
 
   const create_modal = useCreateApiFormModal({
-    title: t`Create New ${model}`,
+    title: title,
     url: apiUrl(modelInfo.api_endpoint),
     modelType: definition.model,
     initialData: relatedInitialData,
@@ -587,7 +591,7 @@ function InlineCreateButton({
     <>
       {create_modal.modal}
       <ActionButton
-        tooltip={t`Create new ${model}`}
+        tooltip={title}
         onClick={() => {
           create_modal.open();
         }}
