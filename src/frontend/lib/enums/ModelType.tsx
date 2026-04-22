@@ -40,10 +40,12 @@ export enum ModelType {
 }
 
 export enum PluginPanelKey {
-  manufacturing = 'manufacturing',
+  // settings / admin
   admincenter = 'admincenter',
   systemsettings = 'systemsettings',
   usersettings = 'usersettings',
+  // landing pages
   purchasing = 'purchasing',
-  sales = 'sales'
+  sales = 'sales',
+  manufacturing = 'manufacturing'
 }
