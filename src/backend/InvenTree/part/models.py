@@ -4082,7 +4082,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         These fields are used to calculate the checksum hash of this BOM item.
         """
         return [
+            'part',
             'part_id',
+            'sub_part',
             'sub_part_id',
             'quantity',
             'setup_quantity',
