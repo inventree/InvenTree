@@ -2079,7 +2079,12 @@ class Part(
 
         Note: Does *NOT* delete inherited BOM items!
         """
+        import part.tasks as part_tasks
+
         self.bom_items.all().delete()
+
+        # Offload task to re-validate the BOM for this assembly
+        InvenTree.tasks.offload_task(part_tasks.check_bom_valid, self.pk, group='part')
 
     def getRequiredParts(self, recursive=False, parts=None):
         """Return a list of parts required to make this part (i.e. BOM items).
@@ -3936,16 +3941,21 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         super().save(*args, **kwargs)
 
+        hash_fields = [*self.hash_fields(), 'part', 'sub_part']
+
         # Do we need to recalculate the BOM hash for assemblies?
-        if not db_instance or any(f in deltas for f in self.hash_fields()):
+        if not db_instance or any(f in deltas for f in hash_fields):
             # If this is a new BomItem, or if any of the fields used to calculate the hash have changed,
             # then we need to recalculate the BOM checksum for all assemblies which use this BomItem
 
             assemblies = set()
 
             if db_instance:
-                # Find all assemblies which use this BomItem *after* we save
+                # Find all assemblies which use this BomItem *before* we save
                 assemblies.update(db_instance.get_assemblies())
+
+            # Update the set of assemblies to include those which use this BomItem *after* we save
+            assemblies.update(self.get_assemblies())
 
             for assembly in assemblies:
                 # Offload task to update the checksum for this assembly
