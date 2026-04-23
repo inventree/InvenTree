@@ -244,19 +244,3 @@ class ValidationMixin:
             ValidationError: If the proposed parameter value is objectionable
         """
         return None
-
-    def check_validate_bom(self, assembly: part.models.Part, user) -> Optional[bool]:
-        """Check if the Bill of Materials for a given assembly can be validated by the provided user.
-
-        - If the user is not allowed to validate the BOM, then this method should return False.
-        - If the user is allowed to validate the BOM, then this method should return True
-        - If the plugin does not wish to provide any opinion on the matter, then this method should return None
-
-        Arguments:
-            assembly: The Part instance which is an assembly, and for which the BOM is being validated
-            user: The user performing the validation
-
-        Returns:
-            None or True (refer to class docstring)
-        """
-        return None

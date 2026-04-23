@@ -187,10 +187,3 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             batch = f'{build.reference}-{batch}'
 
         return batch
-
-    def check_validate_bom(self, assembly, user):
-        """Check if the user has permission to validate the BOM for this part.
-
-        In this example, only staff users are allowed to validate the BOM.
-        """
-        return user.is_staff

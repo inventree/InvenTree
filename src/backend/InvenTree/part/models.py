@@ -2028,8 +2028,6 @@ class Part(
 
     def can_user_validate_bom(self, user) -> bool:
         """Determine if the provided user can validate the BOM for this part."""
-        from plugin import PluginMixinEnum, registry
-
         can_validate: bool = True
 
         if not user:
@@ -2042,19 +2040,6 @@ class Part(
                     can_validate = False
             except (ValueError, Group.DoesNotExist):
                 pass
-
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            if not can_validate:
-                break
-
-            if hasattr(plugin, 'check_validate_bom'):
-                try:
-                    result = plugin.check_validate_bom(self, user)
-
-                    if result is not None:
-                        can_validate = can_validate and bool(result)
-                except Exception:
-                    log_error('check_validate_bom', plugin=plugin.slug)
 
         return can_validate
 

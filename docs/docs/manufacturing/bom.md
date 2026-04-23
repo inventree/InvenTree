@@ -162,6 +162,14 @@ If the BOM requires revalidation, the status will be displayed as "Not Validated
 
 {{ image("build/bom_invalid.png", "BOM Not Validated") }}
 
+### BOM Validation Group
+
+By default, BOM validation can be performed by any user with the appropriate permissions to edit the part. It is also possible to restrict the ability to validate a BOM to users within a specified group, using the {{ globalsetting("PART_BOM_VALIDATE_GROUP", short=True) }} setting. If this is set, only users within the specified group will be able to validate a BOM.
+
+### Custom BOM Validation Requirements
+
+If additional permission checks are required, a [Validation Plugin](../plugins/mixins/validation.md) can be implemented to determine whether a particular user has the necessary permissions to validate a BOM.
+
 ## Required Quantity Calculation
 
 When a new [Build Order](./build.md) is created, the required production quantity of each component part is calculated based on the BOM line items defined for the assembly being built. To calculate the required production quantity of a component part, the following considerations are made:
