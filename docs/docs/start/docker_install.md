@@ -87,13 +87,7 @@ If you are creating the initial database, you need to create an admin (superuser
 docker compose run inventree-server invoke superuser
 ```
 
-Alternatively, admin account details can be specified in the `.env` file, removing the need for this manual step:
-
-| Variable | Description |
-| --- | --- |
-| INVENTREE_ADMIN_USER | Admin account username |
-| INVENTREE_ADMIN_PASSWORD | Admin account password |
-| INVENTREE_ADMIN_EMAIL | Admin account email address |
+Alternatively, admin account details can be specified using environment variables, or in the `.env` file, removing the need for this manual step. Refer to the [configuration documentation](./config.md#administrator-account) for more information.
 
 !!! warning "Scrub Account Data"
     Ensure that the admin account credentials are removed from the `.env` file after the first run, for security.
@@ -242,8 +236,8 @@ This can be adjusted using the following environment variables:
 
 | Environment Variable | Default |
 | --- | --- |
-| INVENTREE_WEB_ADDR | 0.0.0.0 |
-| INVENTREE_WEB_PORT | 8000 |
+| `INVENTREE_WEB_ADDR` | 0.0.0.0 |
+| `INVENTREE_WEB_PORT` | 8000 |
 
 These variables are combined in the [Dockerfile]({{ sourcefile("contrib/container/Dockerfile") }}) to build the bind string passed to the InvenTree server on startup.
 
