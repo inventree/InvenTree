@@ -12,7 +12,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
@@ -215,8 +215,8 @@ export default function PurchasingIndex() {
       <PanelGroup
         pageKey='purchasing-index'
         panels={panels}
-        model={'purchasing'}
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.purchasing}
       />
     </Stack>
   );

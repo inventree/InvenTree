@@ -33,7 +33,7 @@ import {
 } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
@@ -61,6 +61,8 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ * @param pluginPanelWithoutId - If true, the panel group will load plugin panels even with no id provided
+ * @param pluginPanelKey - The plugin panel key to use when loading plugin panels for this group from the backend
  */
 export type PanelProps = {
   pageKey: string;
@@ -68,11 +70,13 @@ export type PanelProps = {
   groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
-  model?: ModelType | string;
+  model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  pluginPanelWithoutId?: boolean;
+  pluginPanelKey?: PluginPanelKey;
 };
 
 function BasePanelGroup({
@@ -85,7 +89,9 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true
+  collapsible = true,
+  pluginPanelWithoutId = false,
+  pluginPanelKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -96,9 +102,17 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
+  const _pluginId = useMemo(() => {
+    if (id === undefined && pluginPanelWithoutId) return null;
+    return id;
+  }, [id, pluginPanelWithoutId]);
+  const _pluginKey = useMemo(() => {
+    if (model === undefined && pluginPanelWithoutId) return pluginPanelKey;
+    return model;
+  }, [model, pluginPanelWithoutId, pluginPanelKey]);
   const pluginPanelSet = usePluginPanels({
-    id: id,
-    model: model,
+    id: _pluginId,
+    model: _pluginKey,
     instance: instance,
     reloadFunc: reloadInstance
   });

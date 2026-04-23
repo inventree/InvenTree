@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-21 02:25+0000\n"
-"PO-Revision-Date: 2026-04-21 02:27\n"
+"POT-Creation-Date: 2026-04-22 12:46+0000\n"
+"PO-Revision-Date: 2026-04-22 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -336,11 +336,11 @@ msgstr "Server je zabležio grešku."
 msgid "Image"
 msgstr "Slika"
 
-#: InvenTree/serializers.py:361 part/models.py:4168
+#: InvenTree/serializers.py:361 part/models.py:4178
 msgid "Must be a valid number"
 msgstr "Mora biti važeći broj"
 
-#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3307
+#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3312
 msgid "Currency"
 msgstr "Valuta"
 
@@ -572,9 +572,9 @@ msgstr "Uključi varijante"
 #: order/api.py:309 order/api.py:313 order/api.py:940 order/api.py:1198
 #: order/api.py:1201 order/models.py:1991 order/models.py:2159
 #: order/models.py:2160 part/api.py:1132 part/api.py:1135 part/api.py:1348
-#: part/models.py:527 part/models.py:3318 part/models.py:3461
-#: part/models.py:3519 part/models.py:3540 part/models.py:3562
-#: part/models.py:3703 part/models.py:3965 part/models.py:4384
+#: part/models.py:527 part/models.py:3323 part/models.py:3466
+#: part/models.py:3524 part/models.py:3545 part/models.py:3567
+#: part/models.py:3708 part/models.py:3973 part/models.py:4394
 #: part/serializers.py:1336 part/serializers.py:1990
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -596,7 +596,7 @@ msgid "Part"
 msgstr "Deo"
 
 #: build/api.py:121 build/api.py:124 build/serializers.py:1496 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3590
+#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3595
 #: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
 msgid "Category"
 msgstr "Kategorija"
@@ -669,11 +669,11 @@ msgstr "Ne uključuj stablo"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Proizvod mora biti poništen pre nego što se izbriše"
 
-#: build/api.py:444 build/serializers.py:1423 part/models.py:3999
+#: build/api.py:444 build/serializers.py:1423 part/models.py:4007
 msgid "Consumable"
 msgstr "Potrošni materijal"
 
-#: build/api.py:447 build/serializers.py:1426 part/models.py:3993
+#: build/api.py:447 build/serializers.py:1426 part/models.py:4001
 msgid "Optional"
 msgstr "Opciono"
 
@@ -785,7 +785,7 @@ msgstr "Reference naloga za pravljenje"
 
 #: build/models.py:259 build/serializers.py:1420 order/models.py:641
 #: order/models.py:1350 order/models.py:1821 order/models.py:2764
-#: part/models.py:4039
+#: part/models.py:4047
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:35
 #: report/templates/report/inventree_return_order_report.html:26
@@ -1020,7 +1020,7 @@ msgstr "Objekat izgradnje"
 #: build/models.py:1777 build/models.py:2102 build/serializers.py:266
 #: build/serializers.py:315 build/serializers.py:1441 common/models.py:1368
 #: order/models.py:1795 order/models.py:2647 order/serializers.py:1783
-#: order/serializers.py:2232 part/models.py:3475 part/models.py:3987
+#: order/serializers.py:2232 part/models.py:3480 part/models.py:3995
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1412,12 +1412,12 @@ msgstr "Može da se prati"
 msgid "Inherited"
 msgstr "Nasleđen"
 
-#: build/serializers.py:1438 part/models.py:4072
+#: build/serializers.py:1438 part/models.py:4080
 msgid "Allow Variants"
 msgstr "Dozvoli varijante"
 
-#: build/serializers.py:1444 build/serializers.py:1450 part/models.py:3793
-#: part/models.py:4376 stock/api.py:881
+#: build/serializers.py:1444 build/serializers.py:1450 part/models.py:3798
+#: part/models.py:4386 stock/api.py:881
 msgid "BOM Item"
 msgstr "BOM stavka"
 
@@ -1617,7 +1617,7 @@ msgstr "Tekstualni ključ mora da bude jedinstven"
 #: common/models.py:1346 common/models.py:1347 common/models.py:1451
 #: common/models.py:1452 common/models.py:1697 common/models.py:1698
 #: common/models.py:2030 common/models.py:2031 common/models.py:2857
-#: importer/models.py:101 part/models.py:3569 part/models.py:3597
+#: importer/models.py:101 part/models.py:3574 part/models.py:3602
 #: plugin/models.py:355 plugin/models.py:356
 #: report/templates/report/inventree_test_report.html:105 users/models.py:124
 #: users/models.py:501
@@ -2058,7 +2058,7 @@ msgstr "Checkbox parametri ne mogu imati jedinice"
 msgid "Checkbox parameters cannot have choices"
 msgstr "Checkbox parametri ne mogu imati izbore"
 
-#: common/models.py:2504 part/models.py:3667
+#: common/models.py:2504 part/models.py:3672
 msgid "Choices must be unique"
 msgstr "Izbori moraju biti jedinstveni"
 
@@ -2094,7 +2094,7 @@ msgstr "Polje za potvrdu"
 msgid "Is this parameter a checkbox?"
 msgstr "Da li je ovaj parametar checkbox?"
 
-#: common/models.py:2576 part/models.py:3754
+#: common/models.py:2576 part/models.py:3759
 msgid "Choices"
 msgstr "Izbori"
 
@@ -2106,7 +2106,7 @@ msgstr "Validni izbori za ovaj parametar (razdvojeni zapetom)"
 msgid "Selection list for this parameter"
 msgstr "Lista izbora za ovaj parametar"
 
-#: common/models.py:2593 part/models.py:3729 report/models.py:290
+#: common/models.py:2593 part/models.py:3734 report/models.py:290
 msgid "Enabled"
 msgstr "Omogućen"
 
@@ -2157,7 +2157,7 @@ msgid "Parameter Value"
 msgstr "Vrednost parametra"
 
 #: common/models.py:2814 company/models.py:826 order/serializers.py:895
-#: order/serializers.py:2144 part/models.py:4047 part/models.py:4416
+#: order/serializers.py:2144 part/models.py:4055 part/models.py:4426
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
@@ -4282,11 +4282,11 @@ msgstr "URL za link dela eksternog dobavljača"
 msgid "Supplier part description"
 msgstr "Opis dela dobavljača"
 
-#: company/models.py:835 part/models.py:2295
+#: company/models.py:835 part/models.py:2300
 msgid "base cost"
 msgstr "osnovni trošak"
 
-#: company/models.py:836 part/models.py:2296
+#: company/models.py:836 part/models.py:2301
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimalna naplata (npr. taksa za slaganje)"
 
@@ -4307,7 +4307,7 @@ msgstr "Količina pakovanja"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Ukupna količina dostavljena u jednom pakovanju. Ostaviti prazno za pojedinačne stavke."
 
-#: company/models.py:870 part/models.py:2302
+#: company/models.py:870 part/models.py:2307
 msgid "multiple"
 msgstr "više"
 
@@ -6090,404 +6090,404 @@ msgstr "Korisnik koji je kreirao"
 msgid "Owner responsible for this part"
 msgstr "Vlasnik odgovoran za ovaj deo"
 
-#: part/models.py:2303
+#: part/models.py:2308
 msgid "Sell multiple"
 msgstr "Prodaj više"
 
-#: part/models.py:3308
+#: part/models.py:3313
 msgid "Currency used to cache pricing calculations"
 msgstr "Valuta korišćena za vršenje proračuna o cenama"
 
-#: part/models.py:3324
+#: part/models.py:3329
 msgid "Minimum BOM Cost"
 msgstr "Minimalna vrednost spiska materijala"
 
-#: part/models.py:3325
+#: part/models.py:3330
 msgid "Minimum cost of component parts"
 msgstr "Minimalna vrednost komponenti delova"
 
-#: part/models.py:3331
+#: part/models.py:3336
 msgid "Maximum BOM Cost"
 msgstr "Maksimalna vrednost spiska materijala"
 
-#: part/models.py:3332
+#: part/models.py:3337
 msgid "Maximum cost of component parts"
 msgstr "Maksimalna vrednost komponenti delova"
 
-#: part/models.py:3338
+#: part/models.py:3343
 msgid "Minimum Purchase Cost"
 msgstr "Minimalna kupovna vrednost"
 
-#: part/models.py:3339
+#: part/models.py:3344
 msgid "Minimum historical purchase cost"
 msgstr "Minimalna istorijska kupovna vrednost"
 
-#: part/models.py:3345
+#: part/models.py:3350
 msgid "Maximum Purchase Cost"
 msgstr "Maksimalna kupovna vrednost"
 
-#: part/models.py:3346
+#: part/models.py:3351
 msgid "Maximum historical purchase cost"
 msgstr "Maksimalna istorijska kupovna vrednost"
 
-#: part/models.py:3352
+#: part/models.py:3357
 msgid "Minimum Internal Price"
 msgstr "Minimalna interna cena"
 
-#: part/models.py:3353
+#: part/models.py:3358
 msgid "Minimum cost based on internal price breaks"
 msgstr "Minimalna cena bazirana na internim sniženjima cena"
 
-#: part/models.py:3359
+#: part/models.py:3364
 msgid "Maximum Internal Price"
 msgstr "Maksimalna interna cena"
 
-#: part/models.py:3360
+#: part/models.py:3365
 msgid "Maximum cost based on internal price breaks"
 msgstr "Maksimalna vrednost bazirana na internim sniženjima cena"
 
-#: part/models.py:3366
+#: part/models.py:3371
 msgid "Minimum Supplier Price"
 msgstr "Minimalna cena dobavljača"
 
-#: part/models.py:3367
+#: part/models.py:3372
 msgid "Minimum price of part from external suppliers"
 msgstr "Minimalna cena dela od eksternih dobavljača"
 
-#: part/models.py:3373
+#: part/models.py:3378
 msgid "Maximum Supplier Price"
 msgstr "Maksimalna cena dobavljača"
 
-#: part/models.py:3374
+#: part/models.py:3379
 msgid "Maximum price of part from external suppliers"
 msgstr "Maksimalna cena dela od eksternih dobavljača"
 
-#: part/models.py:3380
+#: part/models.py:3385
 msgid "Minimum Variant Cost"
 msgstr "Minimalna vrednost varijanti"
 
-#: part/models.py:3381
+#: part/models.py:3386
 msgid "Calculated minimum cost of variant parts"
 msgstr "Izračunata minimalna vrednost varijanti delova"
 
-#: part/models.py:3387
+#: part/models.py:3392
 msgid "Maximum Variant Cost"
 msgstr "Maksimalna vrednost varijanti"
 
-#: part/models.py:3388
+#: part/models.py:3393
 msgid "Calculated maximum cost of variant parts"
 msgstr "Izračunata maksimalna vrednost varijanti delova"
 
-#: part/models.py:3394 part/models.py:3408
+#: part/models.py:3399 part/models.py:3413
 msgid "Minimum Cost"
 msgstr "Minimalna vrednost"
 
-#: part/models.py:3395
+#: part/models.py:3400
 msgid "Override minimum cost"
 msgstr "Promeni minimalnu vrednost"
 
-#: part/models.py:3401 part/models.py:3415
+#: part/models.py:3406 part/models.py:3420
 msgid "Maximum Cost"
 msgstr "Maksimalna vrednost"
 
-#: part/models.py:3402
+#: part/models.py:3407
 msgid "Override maximum cost"
 msgstr "Promeni maksimalnu vrednost"
 
-#: part/models.py:3409
+#: part/models.py:3414
 msgid "Calculated overall minimum cost"
 msgstr "Ukupna izračunata minimalna vrednost"
 
-#: part/models.py:3416
+#: part/models.py:3421
 msgid "Calculated overall maximum cost"
 msgstr "Ukupna izračunata maksimalna vrednost"
 
-#: part/models.py:3422
+#: part/models.py:3427
 msgid "Minimum Sale Price"
 msgstr "Minimalna prodajna cena"
 
-#: part/models.py:3423
+#: part/models.py:3428
 msgid "Minimum sale price based on price breaks"
 msgstr "Minimalna prodajna cena bazirana na osnovu sniženja cena"
 
-#: part/models.py:3429
+#: part/models.py:3434
 msgid "Maximum Sale Price"
 msgstr "Maksimalna prodajna cena"
 
-#: part/models.py:3430
+#: part/models.py:3435
 msgid "Maximum sale price based on price breaks"
 msgstr "Maksimalna prodajna cena bazirana na osnovu sniženja cena"
 
-#: part/models.py:3436
+#: part/models.py:3441
 msgid "Minimum Sale Cost"
 msgstr "Minimalna prodajna vrednost"
 
-#: part/models.py:3437
+#: part/models.py:3442
 msgid "Minimum historical sale price"
 msgstr "Minimalna istorijska prodajna cena"
 
-#: part/models.py:3443
+#: part/models.py:3448
 msgid "Maximum Sale Cost"
 msgstr "Maksimalna prodajna vrednost"
 
-#: part/models.py:3444
+#: part/models.py:3449
 msgid "Maximum historical sale price"
 msgstr "Maksimalna istorijska prodajna cena"
 
-#: part/models.py:3462
+#: part/models.py:3467
 msgid "Part for stocktake"
 msgstr "Deo za popis"
 
-#: part/models.py:3467
+#: part/models.py:3472
 msgid "Item Count"
 msgstr "Broj stavki"
 
-#: part/models.py:3468
+#: part/models.py:3473
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "Broj individualnih unosa zaliha u vreme popisa"
 
-#: part/models.py:3476
+#: part/models.py:3481
 msgid "Total available stock at time of stocktake"
 msgstr "Ukupne dostupne zalihe za vreme popisa"
 
-#: part/models.py:3480 report/templates/report/inventree_test_report.html:106
+#: part/models.py:3485 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3105
 msgid "Date"
 msgstr "Datum"
 
-#: part/models.py:3481
+#: part/models.py:3486
 msgid "Date stocktake was performed"
 msgstr "Datum kada je izvršen popis"
 
-#: part/models.py:3488
+#: part/models.py:3493
 msgid "Minimum Stock Cost"
 msgstr "Minimalna vrednost zaliha"
 
-#: part/models.py:3489
+#: part/models.py:3494
 msgid "Estimated minimum cost of stock on hand"
 msgstr "Procenjena minimalna vrednost trenutnih zaliha"
 
-#: part/models.py:3495
+#: part/models.py:3500
 msgid "Maximum Stock Cost"
 msgstr "Maksimalna vrednost zaliha"
 
-#: part/models.py:3496
+#: part/models.py:3501
 msgid "Estimated maximum cost of stock on hand"
 msgstr "Procenjena maksimalna vrednost trenutnih zaliha"
 
-#: part/models.py:3506
+#: part/models.py:3511
 msgid "Part Sale Price Break"
 msgstr "Smanjenje prodajne cene dela"
 
-#: part/models.py:3620
+#: part/models.py:3625
 msgid "Part Test Template"
 msgstr "Šablon testa dela"
 
-#: part/models.py:3646
+#: part/models.py:3651
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "Nevažeći naziv šablona - mora da uključuje bar jedan alfanumerički karakter"
 
-#: part/models.py:3678
+#: part/models.py:3683
 msgid "Test templates can only be created for testable parts"
 msgstr "Test šabloni mogu biti kreirani samo za delove koje je moguće testirati"
 
-#: part/models.py:3692
+#: part/models.py:3697
 msgid "Test template with the same key already exists for part"
 msgstr "Test šablon sa istim ključem već postoji za ovaj deo"
 
-#: part/models.py:3709
+#: part/models.py:3714
 msgid "Test Name"
 msgstr "Naziv testa"
 
-#: part/models.py:3710
+#: part/models.py:3715
 msgid "Enter a name for the test"
 msgstr "Unesi naziv za ovaj test"
 
-#: part/models.py:3716
+#: part/models.py:3721
 msgid "Test Key"
 msgstr "Test ključ"
 
-#: part/models.py:3717
+#: part/models.py:3722
 msgid "Simplified key for the test"
 msgstr "Pojednostavljen ključ za test"
 
-#: part/models.py:3724
+#: part/models.py:3729
 msgid "Test Description"
 msgstr "Opis testa"
 
-#: part/models.py:3725
+#: part/models.py:3730
 msgid "Enter description for this test"
 msgstr "Unesi opis za ovaj test"
 
-#: part/models.py:3729
+#: part/models.py:3734
 msgid "Is this test enabled?"
 msgstr "Da li je ovaj test omogućen?"
 
-#: part/models.py:3734
+#: part/models.py:3739
 msgid "Required"
 msgstr "Neophodno"
 
-#: part/models.py:3735
+#: part/models.py:3740
 msgid "Is this test required to pass?"
 msgstr "Da li je neophodno da ovaj test prođe?"
 
-#: part/models.py:3740
+#: part/models.py:3745
 msgid "Requires Value"
 msgstr "Zahteva vrednost"
 
-#: part/models.py:3741
+#: part/models.py:3746
 msgid "Does this test require a value when adding a test result?"
 msgstr "Da li ovaj test zahteva vrednost prilikom dodavanja rezultata testa?"
 
-#: part/models.py:3746
+#: part/models.py:3751
 msgid "Requires Attachment"
 msgstr "Zahteva prilog"
 
-#: part/models.py:3748
+#: part/models.py:3753
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "Da li ovaj test zahteva fajl kao prilog prilikom dodavanja rezultata testa?"
 
-#: part/models.py:3755
+#: part/models.py:3760
 msgid "Valid choices for this test (comma-separated)"
 msgstr "Validni izbori za ovaj test (razdvojeni zapetom)"
 
-#: part/models.py:3949
+#: part/models.py:3957
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "Stavke sa spiska materijala se ne mogu modifikovati - sklapanje je zaključano"
 
-#: part/models.py:3956
+#: part/models.py:3964
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "Stavke sa spiska materijala se ne mogu modifikovati - sklapanje varijanti je zaključano"
 
-#: part/models.py:3966
+#: part/models.py:3974
 msgid "Select parent part"
 msgstr "Izaberi nadređeni deo"
 
-#: part/models.py:3976
+#: part/models.py:3984
 msgid "Sub part"
 msgstr "Pod-deo"
 
-#: part/models.py:3977
+#: part/models.py:3985
 msgid "Select part to be used in BOM"
 msgstr "Izaberi deo koji će biti korišćen u spisku materijala"
 
-#: part/models.py:3988
+#: part/models.py:3996
 msgid "BOM quantity for this BOM item"
 msgstr "Količina spiskova materijala za ovu stavku sa spiska materijala"
 
-#: part/models.py:3994
+#: part/models.py:4002
 msgid "This BOM item is optional"
 msgstr "Ova stavka sa spiska materijala je opciona"
 
-#: part/models.py:4000
+#: part/models.py:4008
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Ova stavka sa spiska materijala se može potrošiti (nije praćena u nalozima za izradu)"
 
-#: part/models.py:4008
+#: part/models.py:4016
 msgid "Setup Quantity"
 msgstr ""
 
-#: part/models.py:4009
+#: part/models.py:4017
 msgid "Extra required quantity for a build, to account for setup losses"
 msgstr ""
 
-#: part/models.py:4017
+#: part/models.py:4025
 msgid "Attrition"
 msgstr ""
 
-#: part/models.py:4019
+#: part/models.py:4027
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
 msgstr ""
 
-#: part/models.py:4030
+#: part/models.py:4038
 msgid "Rounding Multiple"
 msgstr ""
 
-#: part/models.py:4032
+#: part/models.py:4040
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr ""
 
-#: part/models.py:4040
+#: part/models.py:4048
 msgid "BOM item reference"
 msgstr "Referenca stavke sa spiska materijala"
 
-#: part/models.py:4048
+#: part/models.py:4056
 msgid "BOM item notes"
 msgstr "Beleške stavki sa spiska materijala"
 
-#: part/models.py:4054
+#: part/models.py:4062
 msgid "Checksum"
 msgstr "Suma"
 
-#: part/models.py:4055
+#: part/models.py:4063
 msgid "BOM line checksum"
 msgstr "Suma spiska materijala"
 
-#: part/models.py:4060
+#: part/models.py:4068
 msgid "Validated"
 msgstr "Validirano"
 
-#: part/models.py:4061
+#: part/models.py:4069
 msgid "This BOM item has been validated"
 msgstr "Ova stavka sa spiska materijala je validirana"
 
-#: part/models.py:4066
+#: part/models.py:4074
 msgid "Gets inherited"
 msgstr "Biva nasleđeno"
 
-#: part/models.py:4067
+#: part/models.py:4075
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Ova stavka sa spiska materijala je nasleđivana od spiska materijala za varijante delova"
 
-#: part/models.py:4073
+#: part/models.py:4081
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Stavke sa zaliha za varijante delova se mogu koristiti za ovu stavku sa spiska materijala"
 
-#: part/models.py:4180 stock/models.py:932
+#: part/models.py:4190 stock/models.py:932
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Količina mora biti ceo broj za delove koji se mogu pratiti"
 
-#: part/models.py:4190 part/models.py:4192
+#: part/models.py:4200 part/models.py:4202
 msgid "Sub part must be specified"
 msgstr "Zamenski deo mora biti određen"
 
-#: part/models.py:4343
+#: part/models.py:4353
 msgid "BOM Item Substitute"
 msgstr "Zamenska stavka sa spiska materijala"
 
-#: part/models.py:4364
+#: part/models.py:4374
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Zamenski deo ne može biti isti kao glavni deo"
 
-#: part/models.py:4377
+#: part/models.py:4387
 msgid "Parent BOM item"
 msgstr "Nadređena stavka sa spiska materijala"
 
-#: part/models.py:4385
+#: part/models.py:4395
 msgid "Substitute part"
 msgstr "Zamenski deo"
 
-#: part/models.py:4401
+#: part/models.py:4411
 msgid "Part 1"
 msgstr "Deo 1"
 
-#: part/models.py:4409
+#: part/models.py:4419
 msgid "Part 2"
 msgstr "Deo 2"
 
-#: part/models.py:4410
+#: part/models.py:4420
 msgid "Select Related Part"
 msgstr "Izaberi povezan deo"
 
-#: part/models.py:4417
+#: part/models.py:4427
 msgid "Note for this relationship"
 msgstr "Beleška za ovu relaciju"
 
-#: part/models.py:4436
+#: part/models.py:4446
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Relacija između delova ne može biti kreirana između jednog istog dela"
 
-#: part/models.py:4441
+#: part/models.py:4451
 msgid "Duplicate relationship already exists"
 msgstr "Identična veza već postoji"
 
