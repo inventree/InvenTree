@@ -157,7 +157,6 @@ Configuration of label printing:
 {{ globalsetting("PART_IPN_REGEX") }}
 {{ globalsetting("PART_ALLOW_DUPLICATE_IPN") }}
 {{ globalsetting("PART_ALLOW_EDIT_IPN") }}
-{{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
 {{ globalsetting("PART_ENABLE_REVISION") }}
 {{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 {{ globalsetting("PART_NAME_FORMAT") }}
@@ -172,11 +171,18 @@ Configuration of label printing:
 {{ globalsetting("PART_SALABLE") }}
 {{ globalsetting("PART_VIRTUAL") }}
 {{ globalsetting("PART_COPY_BOM") }}
-{{ globalsetting("PART_BOM_ALLOW_ZERO_QUANTITY") }}
 {{ globalsetting("PART_COPY_PARAMETERS") }}
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
+
+### BOM Settings
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PART_BOM_ALLOW_ZERO_QUANTITY") }}
+{{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
+{{ globalsetting("PART_BOM_VALIDATE_GROUP") }}
 
 #### Parameter Templates
 

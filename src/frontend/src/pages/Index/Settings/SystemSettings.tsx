@@ -199,33 +199,43 @@ export default function SystemSettings() {
         label: t`Parts`,
         icon: <IconCategory />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'PART_NAME_FORMAT',
-              'PART_IPN_REGEX',
-              'PART_ALLOW_DUPLICATE_IPN',
-              'PART_ALLOW_EDIT_IPN',
-              'PART_ALLOW_DELETE_FROM_ASSEMBLY',
-              'PART_ENABLE_REVISION',
-              'PART_REVISION_ASSEMBLY_ONLY',
-              'PART_SHOW_RELATED',
-              'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER',
-              'PART_TEMPLATE',
-              'PART_ASSEMBLY',
-              'PART_COMPONENT',
-              'PART_TRACKABLE',
-              'PART_PURCHASEABLE',
-              'PART_SALABLE',
-              'PART_VIRTUAL',
-              'PART_COPY_BOM',
-              'PART_BOM_ALLOW_ZERO_QUANTITY',
-              'PART_COPY_PARAMETERS',
-              'PART_COPY_TESTS',
-              'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              heading={t`Part Settings`}
+              keys={[
+                'PART_NAME_FORMAT',
+                'PART_IPN_REGEX',
+                'PART_ALLOW_DUPLICATE_IPN',
+                'PART_ALLOW_EDIT_IPN',
+                'PART_ENABLE_REVISION',
+                'PART_REVISION_ASSEMBLY_ONLY',
+                'PART_SHOW_RELATED',
+                'PART_CREATE_INITIAL',
+                'PART_CREATE_SUPPLIER',
+                'PART_TEMPLATE',
+                'PART_ASSEMBLY',
+                'PART_COMPONENT',
+                'PART_TRACKABLE',
+                'PART_PURCHASEABLE',
+                'PART_SALABLE',
+                'PART_VIRTUAL',
+                'PART_COPY_BOM',
+                'PART_COPY_PARAMETERS',
+                'PART_COPY_TESTS',
+                'PART_CATEGORY_PARAMETERS',
+                'PART_CATEGORY_DEFAULT_ICON'
+              ]}
+            />
+            <Divider />
+            <GlobalSettingList
+              heading={t`BOM Settings`}
+              keys={[
+                'PART_BOM_ALLOW_ZERO_QUANTITY',
+                'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+                'PART_BOM_VALIDATE_GROUP'
+              ]}
+            />
+          </Stack>
         )
       },
       {

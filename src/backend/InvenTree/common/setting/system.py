@@ -658,6 +658,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PART_BOM_VALIDATE_GROUP': {
+        'name': _('BOM Validation Group'),
+        'description': _(
+            'Only users in this group can validate the BOM for a part (empty means any user)'
+        ),
+        'model': 'auth.group',
+    },
     'LABEL_ENABLE': {
         'name': _('Enable label printing'),
         'description': _('Enable label printing from the web interface'),
