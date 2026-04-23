@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-21 02:25+0000\n"
-"PO-Revision-Date: 2026-04-21 02:27\n"
+"POT-Creation-Date: 2026-04-22 12:46+0000\n"
+"PO-Revision-Date: 2026-04-22 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -336,11 +336,11 @@ msgstr "サーバーによってエラーが記録されました。"
 msgid "Image"
 msgstr "画像"
 
-#: InvenTree/serializers.py:361 part/models.py:4168
+#: InvenTree/serializers.py:361 part/models.py:4178
 msgid "Must be a valid number"
 msgstr "有効な数字でなければなりません"
 
-#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3307
+#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3312
 msgid "Currency"
 msgstr "通貨"
 
@@ -572,9 +572,9 @@ msgstr "バリアントを含む"
 #: order/api.py:309 order/api.py:313 order/api.py:940 order/api.py:1198
 #: order/api.py:1201 order/models.py:1991 order/models.py:2159
 #: order/models.py:2160 part/api.py:1132 part/api.py:1135 part/api.py:1348
-#: part/models.py:527 part/models.py:3318 part/models.py:3461
-#: part/models.py:3519 part/models.py:3540 part/models.py:3562
-#: part/models.py:3703 part/models.py:3965 part/models.py:4384
+#: part/models.py:527 part/models.py:3323 part/models.py:3466
+#: part/models.py:3524 part/models.py:3545 part/models.py:3567
+#: part/models.py:3708 part/models.py:3973 part/models.py:4394
 #: part/serializers.py:1336 part/serializers.py:1990
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -596,7 +596,7 @@ msgid "Part"
 msgstr "パーツ"
 
 #: build/api.py:121 build/api.py:124 build/serializers.py:1496 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3590
+#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3595
 #: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
 msgid "Category"
 msgstr "カテゴリ"
@@ -669,11 +669,11 @@ msgstr "ツリーを除く"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "削除するには、ビルドをキャンセルする必要があります。"
 
-#: build/api.py:444 build/serializers.py:1423 part/models.py:3999
+#: build/api.py:444 build/serializers.py:1423 part/models.py:4007
 msgid "Consumable"
 msgstr "消耗品"
 
-#: build/api.py:447 build/serializers.py:1426 part/models.py:3993
+#: build/api.py:447 build/serializers.py:1426 part/models.py:4001
 msgid "Optional"
 msgstr "オプション"
 
@@ -785,7 +785,7 @@ msgstr "ビルド・オーダー・リファレンス"
 
 #: build/models.py:259 build/serializers.py:1420 order/models.py:641
 #: order/models.py:1350 order/models.py:1821 order/models.py:2764
-#: part/models.py:4039
+#: part/models.py:4047
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:35
 #: report/templates/report/inventree_return_order_report.html:26
@@ -1020,7 +1020,7 @@ msgstr "ビルドオブジェクト"
 #: build/models.py:1777 build/models.py:2102 build/serializers.py:266
 #: build/serializers.py:315 build/serializers.py:1441 common/models.py:1368
 #: order/models.py:1795 order/models.py:2647 order/serializers.py:1783
-#: order/serializers.py:2232 part/models.py:3475 part/models.py:3987
+#: order/serializers.py:2232 part/models.py:3480 part/models.py:3995
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1412,12 +1412,12 @@ msgstr "追跡可能"
 msgid "Inherited"
 msgstr "継承"
 
-#: build/serializers.py:1438 part/models.py:4072
+#: build/serializers.py:1438 part/models.py:4080
 msgid "Allow Variants"
 msgstr "バリアントを許可"
 
-#: build/serializers.py:1444 build/serializers.py:1450 part/models.py:3793
-#: part/models.py:4376 stock/api.py:881
+#: build/serializers.py:1444 build/serializers.py:1450 part/models.py:3798
+#: part/models.py:4386 stock/api.py:881
 msgid "BOM Item"
 msgstr "BOMアイテム"
 
@@ -1617,7 +1617,7 @@ msgstr "キー文字列は一意でなければなりません。"
 #: common/models.py:1346 common/models.py:1347 common/models.py:1451
 #: common/models.py:1452 common/models.py:1697 common/models.py:1698
 #: common/models.py:2030 common/models.py:2031 common/models.py:2857
-#: importer/models.py:101 part/models.py:3569 part/models.py:3597
+#: importer/models.py:101 part/models.py:3574 part/models.py:3602
 #: plugin/models.py:355 plugin/models.py:356
 #: report/templates/report/inventree_test_report.html:105 users/models.py:124
 #: users/models.py:501
@@ -2058,7 +2058,7 @@ msgstr "チェックボックスのパラメータに単位を指定すること
 msgid "Checkbox parameters cannot have choices"
 msgstr "チェックボックスパラメータに選択肢を持たせることはできません。"
 
-#: common/models.py:2504 part/models.py:3667
+#: common/models.py:2504 part/models.py:3672
 msgid "Choices must be unique"
 msgstr "選択肢はユニークでなければなりません"
 
@@ -2094,7 +2094,7 @@ msgstr "チェックボックス"
 msgid "Is this parameter a checkbox?"
 msgstr "このパラメータはチェックボックスですか？"
 
-#: common/models.py:2576 part/models.py:3754
+#: common/models.py:2576 part/models.py:3759
 msgid "Choices"
 msgstr "選択肢"
 
@@ -2106,7 +2106,7 @@ msgstr "このパラメータの有効な選択肢（カンマ区切り）"
 msgid "Selection list for this parameter"
 msgstr "このパラメータの選択リスト"
 
-#: common/models.py:2593 part/models.py:3729 report/models.py:290
+#: common/models.py:2593 part/models.py:3734 report/models.py:290
 msgid "Enabled"
 msgstr "有効"
 
@@ -2157,7 +2157,7 @@ msgid "Parameter Value"
 msgstr "パラメータ値"
 
 #: common/models.py:2814 company/models.py:826 order/serializers.py:895
-#: order/serializers.py:2144 part/models.py:4047 part/models.py:4416
+#: order/serializers.py:2144 part/models.py:4055 part/models.py:4426
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
@@ -4282,11 +4282,11 @@ msgstr "外部サプライヤー部品リンク用URL"
 msgid "Supplier part description"
 msgstr "サプライヤーの部品説明"
 
-#: company/models.py:835 part/models.py:2295
+#: company/models.py:835 part/models.py:2300
 msgid "base cost"
 msgstr "基本料金"
 
-#: company/models.py:836 part/models.py:2296
+#: company/models.py:836 part/models.py:2301
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "ミニマムチャージ（例：仕入れ手数料）"
 
@@ -4307,7 +4307,7 @@ msgstr "パック数量"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "1パックに供給される総量。単品の場合は空のままにしてください。"
 
-#: company/models.py:870 part/models.py:2302
+#: company/models.py:870 part/models.py:2307
 msgid "multiple"
 msgstr "複数"
 
@@ -5980,7 +5980,7 @@ msgstr "パーツカテゴリ"
 #: part/models.py:1150 part/serializers.py:831
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
-msgstr "即時支払通知"
+msgstr "IPN"
 
 #: part/models.py:1158
 msgid "Part revision or version number"
@@ -6090,404 +6090,404 @@ msgstr "作成ユーザー"
 msgid "Owner responsible for this part"
 msgstr "この部分の責任者"
 
-#: part/models.py:2303
+#: part/models.py:2308
 msgid "Sell multiple"
 msgstr "複数販売"
 
-#: part/models.py:3308
+#: part/models.py:3313
 msgid "Currency used to cache pricing calculations"
 msgstr "価格計算のキャッシュに使用される通貨"
 
-#: part/models.py:3324
+#: part/models.py:3329
 msgid "Minimum BOM Cost"
 msgstr "最小BOMコスト"
 
-#: part/models.py:3325
+#: part/models.py:3330
 msgid "Minimum cost of component parts"
 msgstr "構成部品の最低コスト"
 
-#: part/models.py:3331
+#: part/models.py:3336
 msgid "Maximum BOM Cost"
 msgstr "最大BOMコスト"
 
-#: part/models.py:3332
+#: part/models.py:3337
 msgid "Maximum cost of component parts"
 msgstr "構成部品の最大コスト"
 
-#: part/models.py:3338
+#: part/models.py:3343
 msgid "Minimum Purchase Cost"
 msgstr "最低購入価格"
 
-#: part/models.py:3339
+#: part/models.py:3344
 msgid "Minimum historical purchase cost"
 msgstr "過去の最低購入価額"
 
-#: part/models.py:3345
+#: part/models.py:3350
 msgid "Maximum Purchase Cost"
 msgstr "最大購入費用"
 
-#: part/models.py:3346
+#: part/models.py:3351
 msgid "Maximum historical purchase cost"
 msgstr "過去の最高購入価格"
 
-#: part/models.py:3352
+#: part/models.py:3357
 msgid "Minimum Internal Price"
 msgstr "最低社内価格"
 
-#: part/models.py:3353
+#: part/models.py:3358
 msgid "Minimum cost based on internal price breaks"
 msgstr "社内価格ブレークに基づく最低コスト"
 
-#: part/models.py:3359
+#: part/models.py:3364
 msgid "Maximum Internal Price"
 msgstr "社内最高価格"
 
-#: part/models.py:3360
+#: part/models.py:3365
 msgid "Maximum cost based on internal price breaks"
 msgstr "社内価格ブレークに基づく最大コスト"
 
-#: part/models.py:3366
+#: part/models.py:3371
 msgid "Minimum Supplier Price"
 msgstr "最低供給価格"
 
-#: part/models.py:3367
+#: part/models.py:3372
 msgid "Minimum price of part from external suppliers"
 msgstr "外部サプライヤーからの部品の最低価格"
 
-#: part/models.py:3373
+#: part/models.py:3378
 msgid "Maximum Supplier Price"
 msgstr "サプライヤー最高価格"
 
-#: part/models.py:3374
+#: part/models.py:3379
 msgid "Maximum price of part from external suppliers"
 msgstr "外部サプライヤーからの部品の最高価格"
 
-#: part/models.py:3380
+#: part/models.py:3385
 msgid "Minimum Variant Cost"
 msgstr "最小バリアントコスト"
 
-#: part/models.py:3381
+#: part/models.py:3386
 msgid "Calculated minimum cost of variant parts"
 msgstr "バリアントパーツの最小コストの計算"
 
-#: part/models.py:3387
+#: part/models.py:3392
 msgid "Maximum Variant Cost"
 msgstr "最大バリアントコスト"
 
-#: part/models.py:3388
+#: part/models.py:3393
 msgid "Calculated maximum cost of variant parts"
 msgstr "バリアント部品の最大コストの計算"
 
-#: part/models.py:3394 part/models.py:3408
+#: part/models.py:3399 part/models.py:3413
 msgid "Minimum Cost"
 msgstr "最低料金"
 
-#: part/models.py:3395
+#: part/models.py:3400
 msgid "Override minimum cost"
 msgstr "最低コストのオーバーライド"
 
-#: part/models.py:3401 part/models.py:3415
+#: part/models.py:3406 part/models.py:3420
 msgid "Maximum Cost"
 msgstr "最大コスト"
 
-#: part/models.py:3402
+#: part/models.py:3407
 msgid "Override maximum cost"
 msgstr "最大コストのオーバーライド"
 
-#: part/models.py:3409
+#: part/models.py:3414
 msgid "Calculated overall minimum cost"
 msgstr "総合的な最小コストの計算"
 
-#: part/models.py:3416
+#: part/models.py:3421
 msgid "Calculated overall maximum cost"
 msgstr "総合最大コストの計算"
 
-#: part/models.py:3422
+#: part/models.py:3427
 msgid "Minimum Sale Price"
 msgstr "最低販売価格"
 
-#: part/models.py:3423
+#: part/models.py:3428
 msgid "Minimum sale price based on price breaks"
 msgstr "価格破壊に基づく最低販売価格"
 
-#: part/models.py:3429
+#: part/models.py:3434
 msgid "Maximum Sale Price"
 msgstr "最高販売価格"
 
-#: part/models.py:3430
+#: part/models.py:3435
 msgid "Maximum sale price based on price breaks"
 msgstr "価格破壊に基づく最高販売価格"
 
-#: part/models.py:3436
+#: part/models.py:3441
 msgid "Minimum Sale Cost"
 msgstr "最低販売価格"
 
-#: part/models.py:3437
+#: part/models.py:3442
 msgid "Minimum historical sale price"
 msgstr "過去の最低売却価格"
 
-#: part/models.py:3443
+#: part/models.py:3448
 msgid "Maximum Sale Cost"
 msgstr "最大販売価格"
 
-#: part/models.py:3444
+#: part/models.py:3449
 msgid "Maximum historical sale price"
 msgstr "過去の最高売却価格"
 
-#: part/models.py:3462
+#: part/models.py:3467
 msgid "Part for stocktake"
 msgstr "ストックテイク用部品"
 
-#: part/models.py:3467
+#: part/models.py:3472
 msgid "Item Count"
 msgstr "個数"
 
-#: part/models.py:3468
+#: part/models.py:3473
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "棚卸時の個別在庫数"
 
-#: part/models.py:3476
+#: part/models.py:3481
 msgid "Total available stock at time of stocktake"
 msgstr "ストックテイク時の在庫可能量"
 
-#: part/models.py:3480 report/templates/report/inventree_test_report.html:106
+#: part/models.py:3485 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3105
 msgid "Date"
 msgstr "日付"
 
-#: part/models.py:3481
+#: part/models.py:3486
 msgid "Date stocktake was performed"
 msgstr "ストックテイク実施日"
 
-#: part/models.py:3488
+#: part/models.py:3493
 msgid "Minimum Stock Cost"
 msgstr "最低在庫コスト"
 
-#: part/models.py:3489
+#: part/models.py:3494
 msgid "Estimated minimum cost of stock on hand"
 msgstr "手元在庫の最低見積原価"
 
-#: part/models.py:3495
+#: part/models.py:3500
 msgid "Maximum Stock Cost"
 msgstr "最大在庫コスト"
 
-#: part/models.py:3496
+#: part/models.py:3501
 msgid "Estimated maximum cost of stock on hand"
 msgstr "手元在庫の最大見積原価"
 
-#: part/models.py:3506
+#: part/models.py:3511
 msgid "Part Sale Price Break"
 msgstr "パーツセール価格"
 
-#: part/models.py:3620
+#: part/models.py:3625
 msgid "Part Test Template"
 msgstr "部品試験テンプレート"
 
-#: part/models.py:3646
+#: part/models.py:3651
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "無効なテンプレート名 - 英数字を1文字以上含む必要があります。"
 
-#: part/models.py:3678
+#: part/models.py:3683
 msgid "Test templates can only be created for testable parts"
 msgstr "テストテンプレートは、テスト可能な部分に対してのみ作成できます。"
 
-#: part/models.py:3692
+#: part/models.py:3697
 msgid "Test template with the same key already exists for part"
 msgstr "同じキーを持つテスト・テンプレートがパートに既に存在します。"
 
-#: part/models.py:3709
+#: part/models.py:3714
 msgid "Test Name"
 msgstr "試験名"
 
-#: part/models.py:3710
+#: part/models.py:3715
 msgid "Enter a name for the test"
 msgstr "テストの名前を入力します。"
 
-#: part/models.py:3716
+#: part/models.py:3721
 msgid "Test Key"
 msgstr "テストキー"
 
-#: part/models.py:3717
+#: part/models.py:3722
 msgid "Simplified key for the test"
 msgstr "テストの簡易キー"
 
-#: part/models.py:3724
+#: part/models.py:3729
 msgid "Test Description"
 msgstr "試験内容"
 
-#: part/models.py:3725
+#: part/models.py:3730
 msgid "Enter description for this test"
 msgstr "このテストの説明を入力してください。"
 
-#: part/models.py:3729
+#: part/models.py:3734
 msgid "Is this test enabled?"
 msgstr "このテストは有効ですか？"
 
-#: part/models.py:3734
+#: part/models.py:3739
 msgid "Required"
 msgstr "必須"
 
-#: part/models.py:3735
+#: part/models.py:3740
 msgid "Is this test required to pass?"
 msgstr "このテストは合格するために必要ですか？"
 
-#: part/models.py:3740
+#: part/models.py:3745
 msgid "Requires Value"
 msgstr "価値が必要"
 
-#: part/models.py:3741
+#: part/models.py:3746
 msgid "Does this test require a value when adding a test result?"
 msgstr "このテストは、テスト結果を追加する際に値を必要としますか？"
 
-#: part/models.py:3746
+#: part/models.py:3751
 msgid "Requires Attachment"
 msgstr "アタッチメントが必要"
 
-#: part/models.py:3748
+#: part/models.py:3753
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "この試験では、試験結果を追加する際にファイルの添付が必要ですか。"
 
-#: part/models.py:3755
+#: part/models.py:3760
 msgid "Valid choices for this test (comma-separated)"
 msgstr "このテストで有効な選択肢（カンマ区切り）"
 
-#: part/models.py:3949
+#: part/models.py:3957
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "BOMアイテムは変更できません - アセンブリがロックされています。"
 
-#: part/models.py:3956
+#: part/models.py:3964
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "BOM アイテムは変更できません - バリアントアセンブリがロックされています。"
 
-#: part/models.py:3966
+#: part/models.py:3974
 msgid "Select parent part"
 msgstr "親部品を選択"
 
-#: part/models.py:3976
+#: part/models.py:3984
 msgid "Sub part"
 msgstr "サブパート"
 
-#: part/models.py:3977
+#: part/models.py:3985
 msgid "Select part to be used in BOM"
 msgstr "BOMで使用する部品を選択"
 
-#: part/models.py:3988
+#: part/models.py:3996
 msgid "BOM quantity for this BOM item"
 msgstr "このBOMアイテムのBOM数量"
 
-#: part/models.py:3994
+#: part/models.py:4002
 msgid "This BOM item is optional"
 msgstr "この部品表はオプションです。"
 
-#: part/models.py:4000
+#: part/models.py:4008
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "このBOMアイテムは消耗品です。"
 
-#: part/models.py:4008
+#: part/models.py:4016
 msgid "Setup Quantity"
 msgstr "設定数量"
 
-#: part/models.py:4009
+#: part/models.py:4017
 msgid "Extra required quantity for a build, to account for setup losses"
 msgstr "ビルドに必要な追加の必要量（セットアップ時の損失を考慮した分）"
 
-#: part/models.py:4017
+#: part/models.py:4025
 msgid "Attrition"
 msgstr "歩留まり損失"
 
-#: part/models.py:4019
+#: part/models.py:4027
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
 msgstr "ビルドにおける推定歩留まり率（0～100％で表されます）"
 
-#: part/models.py:4030
+#: part/models.py:4038
 msgid "Rounding Multiple"
 msgstr "丸め倍数"
 
-#: part/models.py:4032
+#: part/models.py:4040
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr "必要な生産数量を、この値の倍数に切り上げてください。"
 
-#: part/models.py:4040
+#: part/models.py:4048
 msgid "BOM item reference"
 msgstr "BOMアイテムリファレンス"
 
-#: part/models.py:4048
+#: part/models.py:4056
 msgid "BOM item notes"
 msgstr "BOMアイテムノート"
 
-#: part/models.py:4054
+#: part/models.py:4062
 msgid "Checksum"
 msgstr "チェックサムi"
 
-#: part/models.py:4055
+#: part/models.py:4063
 msgid "BOM line checksum"
 msgstr "BOMラインのチェックサム"
 
-#: part/models.py:4060
+#: part/models.py:4068
 msgid "Validated"
 msgstr "検証済み"
 
-#: part/models.py:4061
+#: part/models.py:4069
 msgid "This BOM item has been validated"
 msgstr "このBOMアイテムは検証済みです"
 
-#: part/models.py:4066
+#: part/models.py:4074
 msgid "Gets inherited"
 msgstr "継承"
 
-#: part/models.py:4067
+#: part/models.py:4075
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "この BOM アイテムは、バリアントパーツの BOM に継承されます。"
 
-#: part/models.py:4073
+#: part/models.py:4081
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "このBOMアイテムには、バリアントパーツのストックアイテムを使用できます。"
 
-#: part/models.py:4180 stock/models.py:932
+#: part/models.py:4190 stock/models.py:932
 msgid "Quantity must be integer value for trackable parts"
 msgstr "数量は追跡可能な部品の場合、整数値でなければなりません。"
 
-#: part/models.py:4190 part/models.py:4192
+#: part/models.py:4200 part/models.py:4202
 msgid "Sub part must be specified"
 msgstr "サブパーツの指定が必要"
 
-#: part/models.py:4343
+#: part/models.py:4353
 msgid "BOM Item Substitute"
 msgstr "BOMアイテム代替"
 
-#: part/models.py:4364
+#: part/models.py:4374
 msgid "Substitute part cannot be the same as the master part"
 msgstr "代用部品はマスター部品と同じにすることはできません。"
 
-#: part/models.py:4377
+#: part/models.py:4387
 msgid "Parent BOM item"
 msgstr "親BOMアイテム"
 
-#: part/models.py:4385
+#: part/models.py:4395
 msgid "Substitute part"
 msgstr "代用部品"
 
-#: part/models.py:4401
+#: part/models.py:4411
 msgid "Part 1"
 msgstr "パート #1"
 
-#: part/models.py:4409
+#: part/models.py:4419
 msgid "Part 2"
 msgstr "パート #2"
 
-#: part/models.py:4410
+#: part/models.py:4420
 msgid "Select Related Part"
 msgstr "関連部品を選択"
 
-#: part/models.py:4417
+#: part/models.py:4427
 msgid "Note for this relationship"
 msgstr "この関係について"
 
-#: part/models.py:4436
+#: part/models.py:4446
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "部品とそれ自身との間に部品関係を作ることはできません。"
 
-#: part/models.py:4441
+#: part/models.py:4451
 msgid "Duplicate relationship already exists"
 msgstr "重複する関係が既に存在します。"
 

@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-04-21 00:32\n"
+"PO-Revision-Date: 2026-04-23 02:58\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -72,7 +72,7 @@ msgstr "취소"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:891
+#: src/forms/PurchaseOrderForms.tsx:902
 #: src/forms/StockForms.tsx:805
 #: src/forms/StockForms.tsx:852
 #: src/forms/StockForms.tsx:905
@@ -84,7 +84,7 @@ msgid "Actions"
 msgstr "작업"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:493
+#: src/components/forms/fields/RelatedModelField.tsx:523
 #: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
@@ -126,9 +126,9 @@ msgstr "아니요"
 #: src/forms/BuildForms.tsx:669
 #: src/forms/BuildForms.tsx:833
 #: src/forms/BuildForms.tsx:936
-#: src/forms/PurchaseOrderForms.tsx:887
+#: src/forms/PurchaseOrderForms.tsx:898
 #: src/forms/ReturnOrderForms.tsx:244
-#: src/forms/SalesOrderForms.tsx:429
+#: src/forms/SalesOrderForms.tsx:434
 #: src/forms/StockForms.tsx:368
 #: src/forms/StockForms.tsx:800
 #: src/forms/StockForms.tsx:847
@@ -251,7 +251,7 @@ msgstr "부품 카테고리 목록"
 #: src/forms/BuildForms.tsx:512
 #: src/forms/BuildForms.tsx:672
 #: src/forms/BuildForms.tsx:834
-#: src/forms/SalesOrderForms.tsx:431
+#: src/forms/SalesOrderForms.tsx:436
 #: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/ColumnRenderers.tsx:129
 #: src/tables/part/PartTestResultTable.tsx:256
@@ -578,7 +578,7 @@ msgstr "선택 항목"
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:281
-#: src/components/editors/NotesEditor.tsx:74
+#: src/components/editors/NotesEditor.tsx:81
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/forms/fields/ApiFormField.tsx:251
 #: src/components/forms/fields/TableField.tsx:45
@@ -592,7 +592,7 @@ msgstr "선택 항목"
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
-#: src/forms/BomForms.tsx:74
+#: src/forms/BomForms.tsx:80
 #: src/functions/auth.tsx:691
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
@@ -734,8 +734,8 @@ msgstr "바코드 데이터 입력"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:27
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:507
-#: src/forms/PurchaseOrderForms.tsx:648
+#: src/forms/PurchaseOrderForms.tsx:518
+#: src/forms/PurchaseOrderForms.tsx:659
 msgid "Scan Barcode"
 msgstr "바코드 스캔하기"
 
@@ -748,8 +748,8 @@ msgid "Barcode does not match the expected model type"
 msgstr "바코드가 예상 모델 유형과 일치하지 않습니다."
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
-#: src/components/editors/NotesEditor.tsx:84
-#: src/components/editors/NotesEditor.tsx:118
+#: src/components/editors/NotesEditor.tsx:91
+#: src/components/editors/NotesEditor.tsx:125
 #: src/components/forms/ApiForm.tsx:495
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
@@ -820,7 +820,7 @@ msgstr "연결된 바코드 링크가 제거됩니다"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:192
-#: src/forms/PurchaseOrderForms.tsx:638
+#: src/forms/PurchaseOrderForms.tsx:649
 msgid "Unlink Barcode"
 msgstr "바코드 연결 해제"
 
@@ -1456,23 +1456,23 @@ msgstr "이미지가 성공적으로 다운로드되었습니다."
 #~ msgid "Part is virtual (not a physical part)"
 #~ msgstr "Part is virtual (not a physical part)"
 
-#: src/components/editors/NotesEditor.tsx:75
+#: src/components/editors/NotesEditor.tsx:82
 msgid "Image upload failed"
 msgstr "이미지 업로드 실패"
 
-#: src/components/editors/NotesEditor.tsx:85
+#: src/components/editors/NotesEditor.tsx:92
 msgid "Image uploaded successfully"
 msgstr "이미지가 성공적으로 업로드되었습니다."
 
-#: src/components/editors/NotesEditor.tsx:119
+#: src/components/editors/NotesEditor.tsx:126
 msgid "Notes saved successfully"
 msgstr "메모가 성공적으로 저장되었습니다."
 
-#: src/components/editors/NotesEditor.tsx:130
+#: src/components/editors/NotesEditor.tsx:138
 msgid "Failed to save notes"
 msgstr "메모를 저장하지 못했습니다."
 
-#: src/components/editors/NotesEditor.tsx:133
+#: src/components/editors/NotesEditor.tsx:141
 msgid "Error Saving Notes"
 msgstr "메모를 저장하는 중에 오류가 발생했습니다."
 
@@ -1480,15 +1480,15 @@ msgstr "메모를 저장하는 중에 오류가 발생했습니다."
 #~ msgid "Disable Editing"
 #~ msgstr "Disable Editing"
 
-#: src/components/editors/NotesEditor.tsx:153
+#: src/components/editors/NotesEditor.tsx:161
 msgid "Save Notes"
 msgstr "메모 저장"
 
-#: src/components/editors/NotesEditor.tsx:172
+#: src/components/editors/NotesEditor.tsx:180
 msgid "Close Editor"
 msgstr "Close Editor"
 
-#: src/components/editors/NotesEditor.tsx:179
+#: src/components/editors/NotesEditor.tsx:187
 msgid "Enable Editing"
 msgstr "편집 활성화"
 
@@ -1935,8 +1935,8 @@ msgid "Plugins"
 msgstr "플러그인"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:157
-#: src/tables/general/ParameterTemplateTable.tsx:192
+#: src/tables/general/ParameterTemplateTable.tsx:143
+#: src/tables/general/ParameterTemplateTable.tsx:178
 #: src/tables/part/PartTestTemplateTable.tsx:117
 #: src/tables/settings/TemplateTable.tsx:285
 #: src/tables/settings/TemplateTable.tsx:396
@@ -2001,15 +2001,24 @@ msgstr "패키지 선택"
 msgid "{0} icons"
 msgstr "{0} 아이콘"
 
-#: src/components/forms/fields/RelatedModelField.tsx:494
+#: src/components/forms/fields/RelatedModelField.tsx:524
 #: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "불러오는 중"
 
-#: src/components/forms/fields/RelatedModelField.tsx:496
+#: src/components/forms/fields/RelatedModelField.tsx:526
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
+
+#: src/components/forms/fields/RelatedModelField.tsx:576
+#: src/tables/general/BarcodeScanTable.tsx:35
+msgid "Item"
+msgstr "목"
+
+#: src/components/forms/fields/RelatedModelField.tsx:577
+msgid "Create New {model}"
+msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:46
 msgid "modelRenderer entry required for tables"
@@ -2181,7 +2190,7 @@ msgstr "데이터를 성공적으로 가져왔습니다."
 #: src/components/modals/AboutInvenTreeModal.tsx:200
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
-#: src/forms/BomForms.tsx:137
+#: src/forms/BomForms.tsx:143
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:687
 msgid "Close"
 msgstr "닫다"
@@ -2912,15 +2921,19 @@ msgstr "첨부파일"
 msgid "Notes"
 msgstr "메모"
 
-#: src/components/panels/PanelGroup.tsx:159
+#: src/components/panels/PanelGroup.tsx:160
 msgid "Plugin Provided"
 msgstr "플러그인 제공"
 
-#: src/components/panels/PanelGroup.tsx:293
+#: src/components/panels/PanelGroup.tsx:181
+msgid "You have unsaved changes, are you sure you want to navigate away from this panel?"
+msgstr ""
+
+#: src/components/panels/PanelGroup.tsx:315
 msgid "Collapse panels"
 msgstr "패널 축소"
 
-#: src/components/panels/PanelGroup.tsx:293
+#: src/components/panels/PanelGroup.tsx:315
 msgid "Expand panels"
 msgstr "패널 확장"
 
@@ -3180,7 +3193,7 @@ msgstr "카테고리"
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:835
-#: src/forms/PurchaseOrderForms.tsx:681
+#: src/forms/PurchaseOrderForms.tsx:692
 #: src/forms/StockForms.tsx:801
 #: src/forms/StockForms.tsx:848
 #: src/forms/StockForms.tsx:901
@@ -3213,9 +3226,9 @@ msgstr "시리얼 번호"
 #: src/forms/BuildForms.tsx:267
 #: src/forms/BuildForms.tsx:673
 #: src/forms/BuildForms.tsx:837
-#: src/forms/PurchaseOrderForms.tsx:890
+#: src/forms/PurchaseOrderForms.tsx:901
 #: src/forms/ReturnOrderForms.tsx:245
-#: src/forms/SalesOrderForms.tsx:432
+#: src/forms/SalesOrderForms.tsx:437
 #: src/forms/StockForms.tsx:850
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
@@ -4513,19 +4526,19 @@ msgstr "InvenTree 프로젝트 소개"
 #~ msgid "Are you sure you want to delete this attachment?"
 #~ msgstr "Are you sure you want to delete this attachment?"
 
-#: src/forms/BomForms.tsx:114
+#: src/forms/BomForms.tsx:120
 msgid "Substitute Part"
 msgstr "대체 부품"
 
-#: src/forms/BomForms.tsx:131
+#: src/forms/BomForms.tsx:137
 msgid "Edit BOM Substitutes"
 msgstr "BOM 대체 부품 편집"
 
-#: src/forms/BomForms.tsx:138
+#: src/forms/BomForms.tsx:144
 msgid "Add Substitute"
 msgstr "대체 부품 추가"
 
-#: src/forms/BomForms.tsx:139
+#: src/forms/BomForms.tsx:145
 msgid "Substitute added"
 msgstr "대체 부품이 추가되었습니다"
 
@@ -4555,7 +4568,7 @@ msgstr "완료할 수량"
 #: src/forms/BuildForms.tsx:368
 #: src/forms/BuildForms.tsx:445
 #: src/forms/BuildForms.tsx:514
-#: src/forms/PurchaseOrderForms.tsx:806
+#: src/forms/PurchaseOrderForms.tsx:817
 #: src/forms/ReturnOrderForms.tsx:199
 #: src/forms/ReturnOrderForms.tsx:246
 #: src/forms/StockForms.tsx:721
@@ -4649,7 +4662,7 @@ msgstr "품목 번호(IPN)"
 #: src/forms/BuildForms.tsx:671
 #: src/forms/BuildForms.tsx:836
 #: src/forms/BuildForms.tsx:937
-#: src/forms/SalesOrderForms.tsx:430
+#: src/forms/SalesOrderForms.tsx:435
 #: src/pages/part/PartDetail.tsx:1006
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
@@ -4659,19 +4672,19 @@ msgid "Allocated"
 msgstr "할당됨"
 
 #: src/forms/BuildForms.tsx:706
-#: src/forms/SalesOrderForms.tsx:419
+#: src/forms/SalesOrderForms.tsx:424
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:345
 msgid "Source Location"
 msgstr "원본 위치"
 
 #: src/forms/BuildForms.tsx:707
-#: src/forms/SalesOrderForms.tsx:420
+#: src/forms/SalesOrderForms.tsx:425
 msgid "Select the source location for the stock allocation"
 msgstr "재고 할당의 원본 위치를 선택하세요"
 
 #: src/forms/BuildForms.tsx:739
-#: src/forms/SalesOrderForms.tsx:461
+#: src/forms/SalesOrderForms.tsx:466
 #: src/tables/build/BuildLineTable.tsx:587
 #: src/tables/build/BuildLineTable.tsx:760
 #: src/tables/build/BuildLineTable.tsx:859
@@ -4682,7 +4695,7 @@ msgid "Allocate Stock"
 msgstr "재고 할당"
 
 #: src/forms/BuildForms.tsx:742
-#: src/forms/SalesOrderForms.tsx:466
+#: src/forms/SalesOrderForms.tsx:471
 msgid "Stock items allocated"
 msgstr "재고 품목이 할당되었습니다"
 
@@ -4717,10 +4730,10 @@ msgstr "완전히 소비됨"
 msgid "Consumed"
 msgstr "소비됨"
 
-#: src/forms/CommonForms.tsx:93
-#: src/forms/PurchaseOrderForms.tsx:173
+#: src/forms/CommonForms.tsx:94
+#: src/forms/PurchaseOrderForms.tsx:179
 #: src/forms/ReturnOrderForms.tsx:140
-#: src/forms/SalesOrderForms.tsx:191
+#: src/forms/SalesOrderForms.tsx:196
 msgid "Select project code for this line item"
 msgstr "이 품목의 프로젝트 코드를 선택하세요."
 
@@ -4770,27 +4783,27 @@ msgstr "이 카테고리의 알림을 구독"
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:454
+#: src/forms/PurchaseOrderForms.tsx:465
 msgid "Choose Location"
 msgstr "위치 선택"
 
-#: src/forms/PurchaseOrderForms.tsx:462
+#: src/forms/PurchaseOrderForms.tsx:473
 msgid "Item Destination selected"
 msgstr "항목 대상 위치가 선택되었습니다"
 
-#: src/forms/PurchaseOrderForms.tsx:472
+#: src/forms/PurchaseOrderForms.tsx:483
 msgid "Part category default location selected"
 msgstr "부품 카테고리 기본 위치가 선택되었습니다"
 
-#: src/forms/PurchaseOrderForms.tsx:482
+#: src/forms/PurchaseOrderForms.tsx:493
 msgid "Received stock location selected"
 msgstr "입고 재고 위치가 선택되었습니다"
 
-#: src/forms/PurchaseOrderForms.tsx:490
+#: src/forms/PurchaseOrderForms.tsx:501
 msgid "Default location selected"
 msgstr "기본 위치가 선택되었습니다"
 
-#: src/forms/PurchaseOrderForms.tsx:537
+#: src/forms/PurchaseOrderForms.tsx:548
 #: src/pages/part/PartDetail.tsx:640
 #: src/pages/part/PartDetail.tsx:1042
 #: src/tables/bom/BomTable.tsx:144
@@ -4798,7 +4811,7 @@ msgstr "기본 위치가 선택되었습니다"
 msgid "Virtual Part"
 msgstr "가상 부품"
 
-#: src/forms/PurchaseOrderForms.tsx:538
+#: src/forms/PurchaseOrderForms.tsx:549
 msgid "This part is virtual, no physical stock will be received."
 msgstr "이 부품은 가상이므로 실제 재고가 입고되지 않습니다"
 
@@ -4806,38 +4819,38 @@ msgstr "이 부품은 가상이므로 실제 재고가 입고되지 않습니다
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:573
-msgid "Set Location"
-msgstr "위치 설정"
-
-#: src/forms/PurchaseOrderForms.tsx:582
-msgid "Assign Batch Code"
-msgstr "배치 코드 지정"
-
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:592
+#: src/forms/PurchaseOrderForms.tsx:584
+msgid "Set Location"
+msgstr "위치 설정"
+
+#: src/forms/PurchaseOrderForms.tsx:593
+msgid "Assign Batch Code"
+msgstr "배치 코드 지정"
+
+#: src/forms/PurchaseOrderForms.tsx:603
 msgid "Assign Serial Numbers"
 msgstr "시리얼 번호 지정"
 
-#: src/forms/PurchaseOrderForms.tsx:604
+#: src/forms/PurchaseOrderForms.tsx:615
 msgid "Set Expiry Date"
 msgstr "만료일 설정"
 
-#: src/forms/PurchaseOrderForms.tsx:613
+#: src/forms/PurchaseOrderForms.tsx:624
 #: src/forms/StockForms.tsx:702
 msgid "Adjust Packaging"
 msgstr "포장 조정"
 
-#: src/forms/PurchaseOrderForms.tsx:622
+#: src/forms/PurchaseOrderForms.tsx:633
 #: src/forms/StockForms.tsx:693
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "상태 변경"
 
-#: src/forms/PurchaseOrderForms.tsx:629
+#: src/forms/PurchaseOrderForms.tsx:640
 msgid "Add Note"
 msgstr "메모 추가"
 
@@ -4845,19 +4858,19 @@ msgstr "메모 추가"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:696
+#: src/forms/PurchaseOrderForms.tsx:707
 msgid "Store at default location"
 msgstr "기본 위치에 저장"
 
-#: src/forms/PurchaseOrderForms.tsx:711
+#: src/forms/PurchaseOrderForms.tsx:722
 msgid "Store at line item destination "
 msgstr "항목 대상 위치에 보관"
 
-#: src/forms/PurchaseOrderForms.tsx:723
+#: src/forms/PurchaseOrderForms.tsx:734
 msgid "Store with already received stock"
 msgstr "이미 입고된 재고로 보관"
 
-#: src/forms/PurchaseOrderForms.tsx:747
+#: src/forms/PurchaseOrderForms.tsx:758
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/stock/StockDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:954
@@ -4870,30 +4883,30 @@ msgstr "이미 입고된 재고로 보관"
 msgid "Batch Code"
 msgstr "배치 코드"
 
-#: src/forms/PurchaseOrderForms.tsx:748
+#: src/forms/PurchaseOrderForms.tsx:759
 msgid "Enter batch code for received items"
 msgstr "입고된 항목의 배치 코드를 입력하세요"
 
-#: src/forms/PurchaseOrderForms.tsx:761
+#: src/forms/PurchaseOrderForms.tsx:772
 #: src/forms/StockForms.tsx:224
 msgid "Serial Numbers"
 msgstr "일련번호"
 
-#: src/forms/PurchaseOrderForms.tsx:762
+#: src/forms/PurchaseOrderForms.tsx:773
 msgid "Enter serial numbers for received items"
 msgstr "입고된 항목의 시리얼 번호를 입력하세요"
 
-#: src/forms/PurchaseOrderForms.tsx:779
+#: src/forms/PurchaseOrderForms.tsx:790
 #: src/pages/stock/StockDetail.tsx:382
 #: src/tables/stock/StockItemTable.tsx:148
 msgid "Expiry Date"
 msgstr "만료 날짜"
 
-#: src/forms/PurchaseOrderForms.tsx:780
+#: src/forms/PurchaseOrderForms.tsx:791
 msgid "Enter an expiry date for received items"
 msgstr "입고된 항목의 만료일을 입력하세요"
 
-#: src/forms/PurchaseOrderForms.tsx:792
+#: src/forms/PurchaseOrderForms.tsx:803
 #: src/forms/StockForms.tsx:737
 #: src/pages/company/SupplierPartDetail.tsx:173
 #: src/pages/company/SupplierPartDetail.tsx:237
@@ -4902,19 +4915,19 @@ msgstr "입고된 항목의 만료일을 입력하세요"
 msgid "Packaging"
 msgstr "포장"
 
-#: src/forms/PurchaseOrderForms.tsx:816
+#: src/forms/PurchaseOrderForms.tsx:827
 #: src/pages/company/SupplierPartDetail.tsx:121
 #: src/tables/ColumnRenderers.tsx:517
 msgid "Note"
 msgstr "메모"
 
-#: src/forms/PurchaseOrderForms.tsx:888
+#: src/forms/PurchaseOrderForms.tsx:899
 #: src/pages/company/SupplierPartDetail.tsx:139
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:889
+#: src/forms/PurchaseOrderForms.tsx:900
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
@@ -4922,11 +4935,11 @@ msgstr "SKU"
 msgid "Received"
 msgstr "받았다"
 
-#: src/forms/PurchaseOrderForms.tsx:906
+#: src/forms/PurchaseOrderForms.tsx:917
 msgid "Receive Line Items"
 msgstr "항목 입고"
 
-#: src/forms/PurchaseOrderForms.tsx:912
+#: src/forms/PurchaseOrderForms.tsx:923
 msgid "Items received"
 msgstr "받은 상품"
 
@@ -4939,52 +4952,52 @@ msgid "Item received into stock"
 msgstr "입고된 품목"
 
 #. placeholder {0}: salePrice ? `; suggested: (${salePrice})` : '.'
-#: src/forms/SalesOrderForms.tsx:183
+#: src/forms/SalesOrderForms.tsx:188
 msgid "Price based on part and quantity differs{0}"
 msgstr "부품과 수량 기준 가격이 다릅니다{0}"
 
-#: src/forms/SalesOrderForms.tsx:214
-#: src/forms/SalesOrderForms.tsx:216
+#: src/forms/SalesOrderForms.tsx:219
+#: src/forms/SalesOrderForms.tsx:221
 #: src/tables/sales/SalesOrderShipmentTable.tsx:210
 msgid "Check Shipment"
 msgstr "출하 확인"
 
-#: src/forms/SalesOrderForms.tsx:217
+#: src/forms/SalesOrderForms.tsx:222
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
 msgstr "출하를 확인됨으로 표시하면 이 출하에 포함된 모든 항목이 올바른지 검증했음을 의미합니다"
 
-#: src/forms/SalesOrderForms.tsx:227
+#: src/forms/SalesOrderForms.tsx:232
 msgid "Shipment marked as checked"
 msgstr "출하가 확인됨으로 표시되었습니다"
 
-#: src/forms/SalesOrderForms.tsx:242
-#: src/forms/SalesOrderForms.tsx:244
+#: src/forms/SalesOrderForms.tsx:247
+#: src/forms/SalesOrderForms.tsx:249
 #: src/tables/sales/SalesOrderShipmentTable.tsx:223
 msgid "Uncheck Shipment"
 msgstr "출하 확인 해제"
 
-#: src/forms/SalesOrderForms.tsx:245
+#: src/forms/SalesOrderForms.tsx:250
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
 msgstr "출하를 미확인으로 표시하면 추가 검증이 필요함을 의미합니다"
 
-#: src/forms/SalesOrderForms.tsx:255
+#: src/forms/SalesOrderForms.tsx:260
 msgid "Shipment marked as unchecked"
 msgstr "출하가 미확인으로 표시되었습니다"
 
-#: src/forms/SalesOrderForms.tsx:273
+#: src/forms/SalesOrderForms.tsx:278
 msgid "Completing shipment"
 msgstr "출하 완료 처리 중"
 
-#: src/forms/SalesOrderForms.tsx:274
+#: src/forms/SalesOrderForms.tsx:279
 msgid "Shipment completed successfully"
 msgstr "출하가 성공적으로 완료되었습니다"
 
-#: src/forms/SalesOrderForms.tsx:281
+#: src/forms/SalesOrderForms.tsx:286
 #: src/tables/sales/SalesOrderShipmentTable.tsx:233
 msgid "Complete Shipment"
 msgstr "출하 완료"
 
-#: src/forms/SalesOrderForms.tsx:527
+#: src/forms/SalesOrderForms.tsx:532
 msgid "Leave blank to use the order address"
 msgstr "주문 주소를 사용하려면 비워두세요."
 
@@ -10361,10 +10374,6 @@ msgstr "첨부파일이 없습니다."
 msgid "Drag attachment file here to upload"
 msgstr "첨부파일을 여기에 끌어다 놓아 업로드하세요"
 
-#: src/tables/general/BarcodeScanTable.tsx:35
-msgid "Item"
-msgstr "목"
-
 #: src/tables/general/BarcodeScanTable.tsx:50
 msgid "Model"
 msgstr "모델"
@@ -10456,59 +10465,59 @@ msgstr "새 매개변수 생성"
 msgid "Import parameters from a file"
 msgstr "파일에서 매개변수 가져오기"
 
-#: src/tables/general/ParameterTemplateTable.tsx:52
-#: src/tables/general/ParameterTemplateTable.tsx:201
+#: src/tables/general/ParameterTemplateTable.tsx:38
+#: src/tables/general/ParameterTemplateTable.tsx:187
 msgid "Add Parameter Template"
 msgstr "매개변수 템플릿 추가"
 
-#: src/tables/general/ParameterTemplateTable.tsx:68
+#: src/tables/general/ParameterTemplateTable.tsx:54
 msgid "Duplicate Parameter Template"
 msgstr "중복 매개변수 템플릿"
 
-#: src/tables/general/ParameterTemplateTable.tsx:82
+#: src/tables/general/ParameterTemplateTable.tsx:68
 msgid "Delete Parameter Template"
 msgstr "매개변수 템플릿 삭제"
 
-#: src/tables/general/ParameterTemplateTable.tsx:89
+#: src/tables/general/ParameterTemplateTable.tsx:75
 msgid "Edit Parameter Template"
 msgstr "매개변수 템플릿 편집"
 
-#: src/tables/general/ParameterTemplateTable.tsx:142
+#: src/tables/general/ParameterTemplateTable.tsx:128
 msgid "Checkbox"
 msgstr "체크박스"
 
-#: src/tables/general/ParameterTemplateTable.tsx:143
+#: src/tables/general/ParameterTemplateTable.tsx:129
 msgid "Show checkbox templates"
 msgstr "체크박스 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:147
+#: src/tables/general/ParameterTemplateTable.tsx:133
 msgid "Has choices"
 msgstr "선택권 있음"
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:134
 msgid "Show templates with choices"
 msgstr "선택 항목이 있는 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:152
+#: src/tables/general/ParameterTemplateTable.tsx:138
 #: src/tables/part/PartTable.tsx:246
 msgid "Has Units"
 msgstr "단위 있음"
 
-#: src/tables/general/ParameterTemplateTable.tsx:153
+#: src/tables/general/ParameterTemplateTable.tsx:139
 msgid "Show templates with units"
 msgstr "단위가 포함된 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:158
+#: src/tables/general/ParameterTemplateTable.tsx:144
 msgid "Show enabled templates"
 msgstr "활성화된 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:162
+#: src/tables/general/ParameterTemplateTable.tsx:148
 #: src/tables/settings/ImportSessionTable.tsx:112
 #: src/tables/settings/TemplateTable.tsx:402
 msgid "Model Type"
 msgstr "모델 유형"
 
-#: src/tables/general/ParameterTemplateTable.tsx:163
+#: src/tables/general/ParameterTemplateTable.tsx:149
 msgid "Filter by model type"
 msgstr "모델 유형으로 필터링"
 
