@@ -11,7 +11,7 @@ export function DefaultFallback({
     <Alert
       color='red'
       icon={<IconExclamationCircle />}
-      title={`${t`Error rendering component`}: ${title}`}
+      title={`INVE-E17: ${t`Error rendering component`}: ${title}`}
     >
       <Stack gap='xs'>
         {t`An error occurred while rendering this component. Refer to the console for more information.`}
