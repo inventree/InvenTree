@@ -10,6 +10,7 @@ from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import common.serializers
@@ -613,6 +614,16 @@ class PartValidateBOM(RetrieveUpdateAPI):
         we return information about the background task which is performing the validation.
         """
         part = self.get_object()
+
+        user = request.user if request and request.user else None
+
+        if not user:
+            raise ValidationError(_('User information is required to validate the BOM'))
+
+        if not part.can_user_validate_bom(user):
+            raise ValidationError(
+                _('User does not have permission to validate the BOM for this part')
+            )
 
         partial = kwargs.pop('partial', False)
 
