@@ -195,3 +195,14 @@ This means that either:
 - The docker user does not have write permission to the specified directory
 
 In either case, ensure that the directory is available *on your local machine* and the user account has the required permissions.
+
+
+## Error Rendering Component
+
+Sometimes, following a software update, you may find that certain components of the web interface are not rendering correctly, and presented with a message similar to the screenshow below:
+
+{{ image("faq/boundary.png", "Error Rendering Component") }}
+
+This is often due to a caching issue with your web browser. Try performing a hard refresh of the page to clear the cache, this should resolve the issue in most cases.
+
+If the problem persists, refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
