@@ -3941,6 +3941,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         super().save(*args, **kwargs)
 
+        # Fields which are used to calculate the BOM hash - if any of these change, then we need to recalculate the BOM hash for all assemblies which use this BomItem
+        # We also include the 'part' and 'sub_part' fields here, as changes to these fields will change the set of assemblies which use this BomItem
         hash_fields = [*self.hash_fields(), 'part', 'sub_part']
 
         # Do we need to recalculate the BOM hash for assemblies?
