@@ -3478,21 +3478,33 @@ class TransferOrder(Order):
         return self.status in TransferOrderStatusGroups.OPEN
 
     def _action_cancel(self, *args, **kwargs):
-        """Marks the TransferOrder as CANCELLED."""
-        if self.can_cancel:
-            self.status = TransferOrderStatus.CANCELLED.value
-            self.save()
+        """Cancel this TransferOrder (only if we're allowed to).
 
-            trigger_event(TransferOrderEvents.CANCELLED, id=self.pk)
+        Executes:
+        - Mark the order as 'cancelled'
+        - Delete any StockItems which have been allocated
+        """
+        if not self.can_cancel:
+            return False
 
-            # Notify users that the order has been canceled
-            notify_responsible(
-                self,
-                TransferOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.OrderCanceled,
-                extra_users=self.subscribed_users(),
-            )
+        self.status = TransferOrderStatus.CANCELLED.value
+        self.save()
+
+        # delete allocations
+        for line in self.lines.all():
+            for allocation in line.allocations.all():
+                allocation.delete()
+
+        trigger_event(TransferOrderEvents.CANCELLED, id=self.pk)
+
+        # Notify users that the order has been canceled
+        notify_responsible(
+            self,
+            TransferOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.subscribed_users(),
+        )
 
     # endregion
 
