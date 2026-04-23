@@ -164,7 +164,7 @@ export function SettingList({
     <>
       {editSettingModal.modal}
       <Stack gap='xs'>
-        {heading && <Title order={4}>{heading}</Title>}
+        {heading && <Title order={5}>{heading}</Title>}
         {heading && <Divider />}
         {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(

@@ -13,7 +13,7 @@ from decimal import Decimal, InvalidOperation
 from typing import TypedDict, cast
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -2035,7 +2035,18 @@ class Part(
         if not user:
             return False
 
+        if validate_group_id := get_global_setting('PART_BOM_VALIDATE_GROUP'):
+            try:
+                validate_group = Group.objects.get(pk=validate_group_id)
+                if not user.groups.filter(pk=validate_group.pk).exists():
+                    can_validate = False
+            except (ValueError, Group.DoesNotExist):
+                pass
+
         for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            if not can_validate:
+                break
+
             if hasattr(plugin, 'check_validate_bom'):
                 try:
                     result = plugin.check_validate_bom(self, user)
@@ -2044,9 +2055,6 @@ class Part(
                         can_validate = can_validate and bool(result)
                 except Exception:
                     log_error('check_validate_bom', plugin=plugin.slug)
-
-            if not can_validate:
-                break
 
         return can_validate
 

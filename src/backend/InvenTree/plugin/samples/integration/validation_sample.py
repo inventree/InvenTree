@@ -157,7 +157,7 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 sn += 1
 
             return str(sn)
-        except ValueError:
+        except (TypeError, ValueError):
             pass
 
         # Return "None" to defer to the next plugin or builtin functionality
