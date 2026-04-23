@@ -574,7 +574,7 @@ function InlineCreateButton({
 
   const title: string = useMemo(() => {
     const model = modelInfo?.label() ?? t`Item`;
-    return t`Create new ${model}`;
+    return t`Create New ${model}`;
   }, [modelInfo]);
 
   const create_modal = useCreateApiFormModal({
