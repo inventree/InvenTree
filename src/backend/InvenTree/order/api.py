@@ -2426,7 +2426,7 @@ class OrderCalendarExport(ICalFeed):
 
     def item_description(self, item):
         """Set the event description."""
-        if hasattr(item, 'company'):
+        if hasattr(item, 'company') and item.company:
             return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
         else:
             return (
