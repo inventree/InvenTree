@@ -304,8 +304,8 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            pluginSupportOnBare
-            pluginKey={PluginPanelKey.admincenter}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.admincenter}
           />
         </Stack>
       ) : (

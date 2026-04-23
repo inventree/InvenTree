@@ -60,7 +60,8 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
- * @param pluginSupportOnBare - If true, the panel group will support plugin panels even with no id provided
+ * @param pluginPanelWithoutId - If true, the panel group will load plugin panels even with no id provided
+ * @param pluginPanelKey - The plugin panel key to use when loading plugin panels for this group from the backend
  */
 export type PanelProps = {
   pageKey: string;
@@ -73,8 +74,8 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
-  pluginSupportOnBare?: boolean;
-  pluginKey?: PluginPanelKey;
+  pluginPanelWithoutId?: boolean;
+  pluginPanelKey?: PluginPanelKey;
 };
 
 function BasePanelGroup({
@@ -88,8 +89,8 @@ function BasePanelGroup({
   model,
   id,
   collapsible = true,
-  pluginSupportOnBare = false,
-  pluginKey
+  pluginPanelWithoutId = false,
+  pluginPanelKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -101,13 +102,13 @@ function BasePanelGroup({
 
   // Hook to load plugins for this panel
   const _pluginId = useMemo(() => {
-    if (id === undefined && pluginSupportOnBare) return null;
+    if (id === undefined && pluginPanelWithoutId) return null;
     return id;
-  }, [id, pluginSupportOnBare]);
+  }, [id, pluginPanelWithoutId]);
   const _pluginKey = useMemo(() => {
-    if (model === undefined && pluginSupportOnBare) return pluginKey;
+    if (model === undefined && pluginPanelWithoutId) return pluginPanelKey;
     return model;
-  }, [model, pluginSupportOnBare, pluginKey]);
+  }, [model, pluginPanelWithoutId, pluginPanelKey]);
   const pluginPanelSet = usePluginPanels({
     id: _pluginId,
     model: _pluginKey,

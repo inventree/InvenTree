@@ -155,8 +155,8 @@ export default function UserSettings() {
         <PanelGroup
           pageKey='user-settings'
           panels={userSettingsPanels}
-          pluginSupportOnBare
-          pluginKey={PluginPanelKey.usersettings}
+          pluginPanelWithoutId
+          pluginPanelKey={PluginPanelKey.usersettings}
         />
       </Stack>
     </>

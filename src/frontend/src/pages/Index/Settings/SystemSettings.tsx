@@ -377,8 +377,8 @@ export default function SystemSettings() {
           <PanelGroup
             pageKey='system-settings'
             panels={systemSettingsPanels}
-            pluginSupportOnBare
-            pluginKey={PluginPanelKey.systemsettings}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.systemsettings}
           />
         </Stack>
       ) : (

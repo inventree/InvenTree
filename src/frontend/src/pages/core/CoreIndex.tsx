@@ -48,8 +48,8 @@ export default function CoreIndex() {
       <PanelGroup
         pageKey='core-index'
         panels={panels}
-        pluginSupportOnBare
-        pluginKey={PluginPanelKey.core}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.core}
       />
     </Stack>
   );

@@ -170,8 +170,8 @@ export default function SalesIndex() {
       <PanelGroup
         pageKey='sales-index'
         panels={panels}
-        pluginSupportOnBare
-        pluginKey={PluginPanelKey.sales}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.sales}
       />
     </Stack>
   );

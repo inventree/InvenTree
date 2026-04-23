@@ -481,7 +481,7 @@ export default function Stock() {
             reloadInstance={refreshInstance}
             id={location?.pk}
             instance={location}
-            pluginSupportOnBare
+            pluginPanelWithoutId
           />
         </Stack>
         {stockAdjustActions.modals.map((modal) => modal.modal)}

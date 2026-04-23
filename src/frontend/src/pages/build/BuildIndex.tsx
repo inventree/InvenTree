@@ -102,8 +102,8 @@ export default function BuildIndex() {
       <PanelGroup
         pageKey='build-index'
         panels={panels}
-        pluginSupportOnBare
-        pluginKey={PluginPanelKey.manufacturing}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.manufacturing}
       />
     </Stack>
   );

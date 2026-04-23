@@ -215,8 +215,8 @@ export default function PurchasingIndex() {
       <PanelGroup
         pageKey='purchasing-index'
         panels={panels}
-        pluginSupportOnBare
-        pluginKey={PluginPanelKey.purchasing}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.purchasing}
       />
     </Stack>
   );
