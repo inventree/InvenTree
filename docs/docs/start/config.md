@@ -46,6 +46,9 @@ Environment variable settings generally use the `INVENTREE_` prefix, and are all
 !!! warning "Available Variables"
     Some configuration options cannot be set via environment variables. Refer to the documentation below.
 
+!!! info "Environment Variable Priority"
+    Note that a provided environment variable will override the value provided in the configuration file.
+
 #### List Values
 
 To specify a list value in an environment variable, use a comma-separated list. For example, to specify a list of trusted origins:
@@ -58,14 +61,13 @@ INVENTREE_TRUSTED_ORIGINS='https://inventree.example.com:8443,https://stock.exam
 
 The following basic options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
-| INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
-| INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
-| INVENTREE_LANGUAGE | language | Default language | en-us |
-| INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SITE_URL") }} Specify a fixed site URL |
+{{ configsetting("INVENTREE_TIMEZONE") }} Server timezone |
+{{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) |
+{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing [admin interface](../settings/admin.md) |
+{{ configsetting("INVENTREE_LANGUAGE") }} Default language |
+{{ configsetting("INVENTREE_AUTO_UPDATE") }} Database migrations will be run automatically |
 
 ### Site URL
 
@@ -89,18 +91,17 @@ With "auto update" enabled, the InvenTree server will automatically apply databa
 
 The following debugging / logging options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
-| INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
-| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
-| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
-| INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
-| INVENTREE_JSON_LOG | json_log | log as json | False |
-| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
-| INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
-| INVENTREE_SCHEMA_LEVEL | schema.level | Set level of added schema extensions detail (0-3) 0 = including no additional detail | 0 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DEBUG") }} Enable [debug mode](./index.md#debug-mode) |
+{{ configsetting("INVENTREE_DB_LOGGING") }} Enable logging of database messages |
+{{ configsetting("INVENTREE_LOG_LEVEL") }} Set level of logging to terminal |
+{{ configsetting("INVENTREE_JSON_LOG") }} Log messages as json |
+{{ configsetting("INVENTREE_WRITE_LOG") }} Enable writing of log messages to file at config base |
+{{ configsetting("INVENTREE_CONSOLE_LOG") }} Enable logging to console |
+{{ configsetting("INVENTREE_SCHEMA_LEVEL") }} Set level of added schema extensions detail (0-3) 0 = including no additional detail |
+{{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
+{{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
+| `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
 
 ### Debug Mode
 
@@ -118,26 +119,24 @@ Depending on how your InvenTree installation is configured, you will need to pay
 !!! danger "Not Secure"
     Allowing access from any host is not secure, and should be adjusted for your installation.
 
-!!! info "Environment Variables"
-    Note that a provided environment variable will override the value provided in the configuration file.
-
 !!! success "INVENTREE_SITE_URL"
     If you have specified the `INVENTREE_SITE_URL`, this will automatically be used as a trusted CSRF and CORS host (see below).
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ALLOWED_HOSTS | allowed_hosts | List of allowed hosts | `*` |
-| INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
-| INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | `False` |
-| INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
-| INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
-| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
-| INVENTREE_SITE_LAX_PROTOCOL | site_lax_protocol | Ignore protocol mismatches on INVE-E7 site checks | `True` |
-| INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
-| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
-| INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
-| INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
-| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ALLOWED_HOSTS") }} List of allowed hosts |
+{{ configsetting("INVENTREE_TRUSTED_ORIGINS", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) |
+{{ configsetting("INVENTREE_CORS_ORIGIN_ALLOW_ALL") }} Allow all remote URLS for CORS checks |
+{{ configsetting("INVENTREE_CORS_ORIGIN_WHITELIST", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) |
+{{ configsetting("INVENTREE_CORS_ORIGIN_REGEX") }} List of regular expressions for CORS whitelisted URL patterns |
+{{ configsetting("INVENTREE_CORS_ALLOW_CREDENTIALS") }} Allow cookies in cross-site requests |
+{{ configsetting("INVENTREE_SITE_LAX_PROTOCOL") }} Ignore protocol mismatches on INVE-E7 site checks |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_HOST") }} Use forwarded host header |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_PORT") }} Use forwarded port header |
+{{ configsetting("INVENTREE_USE_X_FORWARDED_PROTO") }} Use forwarded protocol header |
+| `INVENTREE_X_FORWARDED_PROTO_NAME` | `x_forwarded_proto_name` | `HTTP_X_FORWARDED_PROTO` | Name of the header to use for forwarded protocol information |
+{{ configsetting("INVENTREE_SESSION_COOKIE_SECURE") }} Enforce secure session cookies |
+{{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
+
 
 ### Debug Mode
 
@@ -191,10 +190,9 @@ Django provides a powerful [administrator interface]({% include "django.html" %}
 
 The following admin site configuration options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the django administrator interface | True |
-| INVENTREE_ADMIN_URL | admin_url | URL for accessing the admin interface | admin |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the django administrator interface |
+{{ configsetting("INVENTREE_ADMIN_URL") }} URL for accessing the admin interface |
 
 !!! warning "Security"
     Changing the admin URL is a simple way to improve security, but it is not a substitute for proper security practices.
@@ -203,12 +201,11 @@ The following admin site configuration options are available:
 
 An administrator account can be specified using the following environment variables:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_ADMIN_USER | admin_user | Admin account username | *Not specified* |
-| INVENTREE_ADMIN_PASSWORD | admin_password | Admin account password | *Not specified* |
-| INVENTREE_ADMIN_PASSWORD_FILE | admin_password_file | Admin account password file | *Not specified* |
-| INVENTREE_ADMIN_EMAIL | admin_email |Admin account email address | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_ADMIN_USER") }} Admin account username |
+{{ configsetting("INVENTREE_ADMIN_PASSWORD") }} Admin account password |
+{{ configsetting("INVENTREE_ADMIN_PASSWORD_FILE") }} Admin account password file |
+{{ configsetting("INVENTREE_ADMIN_EMAIL") }} Admin account email address |
 
 You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, or you can specify a file containing the password using `INVENTREE_ADMIN_PASSWORD_FILE` (this is useful for nix users).
 
@@ -238,12 +235,11 @@ A PEM-encoded file containing the oidc private key can be passed via the environ
 
 If not specified via environment variables, the fallback files (automatically generated as part of InvenTree installation) will be used.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SECRET_KEY | secret_key | Raw secret key value | *Not specified* |
-| INVENTREE_SECRET_KEY_FILE | secret_key_file | File containing secret key value | *Not specified* |
-| INVENTREE_OIDC_PRIVATE_KEY | oidc_private_key | Raw private key value | *Not specified* |
-| INVENTREE_OIDC_PRIVATE_KEY_FILE | oidc_private_key_file | File containing private key value in PEM format | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SECRET_KEY") }} Raw secret key value |
+{{ configsetting("INVENTREE_SECRET_KEY_FILE") }} File containing secret key value |
+{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY") }} Raw private key value |
+{{ configsetting("INVENTREE_OIDC_PRIVATE_KEY_FILE", default="oidc.pem") }} File containing private key value in PEM format |
 
 ## Database Options
 
@@ -253,14 +249,14 @@ Database options are specified under the *database* heading in the configuration
 
 The following database options can be configured:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_ENGINE | database.ENGINE | Database backend | *Not specified* |
-| INVENTREE_DB_NAME | database.NAME | Database name | *Not specified* |
-| INVENTREE_DB_USER | database.USER | Database username (if required) | *Not specified* |
-| INVENTREE_DB_PASSWORD | database.PASSWORD | Database password (if required) | *Not specified* |
-| INVENTREE_DB_HOST | database.HOST | Database host address (if required) | *Not specified* |
-| INVENTREE_DB_PORT | database.PORT | Database host port (if required) | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DB_ENGINE") }} Database backend |
+{{ configsetting("INVENTREE_DB_NAME") }} Database name |
+{{ configsetting("INVENTREE_DB_USER") }} Database username (if required) |
+{{ configsetting("INVENTREE_DB_PASSWORD") }} Database password (if required) |
+{{ configsetting("INVENTREE_DB_HOST") }} Database host address (if required) |
+{{ configsetting("INVENTREE_DB_PORT") }} Database host port (if required) |
+{{ configsetting("INVENTREE_DB_OPTIONS") }} Additional database options (as a JSON object) |
 
 !!! tip "Database Password"
     The value specified for `INVENTREE_DB_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the database may fail.
@@ -269,22 +265,20 @@ The following database options can be configured:
 
 If running with a PostgreSQL database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 2 |
-| INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | Idle TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | TCP keepalive interval | 1|
-| INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | TCP keepalive count | 5 |
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="2") }} Database connection timeout (s) |
+| `INVENTREE_DB_TCP_KEEPALIVES` | database.tcp_keepalives | 1 | TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 1| TCP keepalive interval |
+| `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### MySQL Settings
 
 If running with a MySQL database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+{{ configtable() }}
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
 
@@ -293,10 +287,9 @@ If running with a MySQL database backend, the following additional options are a
 
 If running with a SQLite database backend, the following additional options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
-| INVENTREE_DB_WAL_MODE | database.wal_mode | Enable Write-Ahead Logging (WAL) mode for SQLite databases | True |
+{{ configtable() }}
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
+| `INVENTREE_DB_WAL_MODE` | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
 
 ## Caching
 
@@ -314,21 +307,21 @@ Enabling global caching requires connection to a redis server (which is separate
 
 The following cache settings are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
-| INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
-| INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
-| INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
-| INVENTREE_CACHE_USER | cache.user | Cache server username | none |
-| INVENTREE_CACHE_DB | cache.db | Cache server database index | 0 |
-| INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
-| INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
-| INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
-| INVENTREE_CACHE_KEEPALIVE_COUNT | cache.keepalive_count | Cache keepalive count | 5 |
-| INVENTREE_CACHE_KEEPALIVE_IDLE | cache.keepalive_idle | Cache keepalive idle | 1 |
-| INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
-| INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_CACHE_ENABLED") }} Enable redis caching |
+{{ configsetting("INVENTREE_CACHE_HOST") }} Cache server host |
+{{ configsetting("INVENTREE_CACHE_PORT") }} Cache server port |
+{{ configsetting("INVENTREE_CACHE_PASSWORD") }} Cache server password |
+{{ configsetting("INVENTREE_CACHE_USER") }} Cache server username |
+{{ configsetting("INVENTREE_CACHE_DB") }} Cache server database index |
+{{ configsetting("INVENTREE_CACHE_CONNECT_TIMEOUT") }} Cache connection timeout (seconds) |
+{{ configsetting("INVENTREE_CACHE_TIMEOUT") }} Cache timeout (seconds) |
+{{ configsetting("INVENTREE_CACHE_TCP_KEEPALIVE") }} Cache TCP keepalive |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_COUNT") }} Cache keepalive count |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_IDLE") }} Cache keepalive idle |
+{{ configsetting("INVENTREE_CACHE_KEEPALIVE_INTERVAL") }} Cache keepalive interval |
+{{ configsetting("INVENTREE_CACHE_USER_TIMEOUT") }} Cache user timeout |
+
 
 !!! tip "Cache Password"
     The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.
@@ -339,17 +332,16 @@ To enable [email functionality](../settings/email.md), email settings must be co
 
 The following email settings are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | django.core.mail.backends.smtp.EmailBackend |
-| INVENTREE_EMAIL_HOST | email.host | Email server host | *Not specified* |
-| INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
-| INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
-| INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
-| INVENTREE_EMAIL_TLS | email.tls | Enable STARTTLS support (commonly port 567) | False |
-| INVENTREE_EMAIL_SSL | email.ssl | Enable legacy SSL/TLS support (commonly port 465) | False |
-| INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
-| INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+{{ configtable() }}
+{{ configsetting("INVENTREE_EMAIL_BACKEND") }} Email backend module |
+{{ configsetting("INVENTREE_EMAIL_HOST") }} Email server host |
+{{ configsetting("INVENTREE_EMAIL_PORT") }} Email server port |
+{{ configsetting("INVENTREE_EMAIL_USERNAME") }} Email account username |
+{{ configsetting("INVENTREE_EMAIL_PASSWORD") }} Email account password |
+{{ configsetting("INVENTREE_EMAIL_TLS") }} Enable STARTTLS support (commonly port 567) |
+{{ configsetting("INVENTREE_EMAIL_SSL") }} Enable legacy SSL/TLS support (commonly port 465) |
+{{ configsetting("INVENTREE_EMAIL_SENDER") }} Sending email address |
+{{ configsetting("INVENTREE_EMAIL_PREFIX") }} Prefix for subject text |
 
 ### Email Backend
 
@@ -366,11 +358,10 @@ The "sender" email address is the address from which InvenTree emails are sent (
 
 InvenTree requires some external directories for storing files:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_STATIC_ROOT | static_root | [Static files](./processes.md#static-files) directory | *Not specified* |
-| INVENTREE_MEDIA_ROOT | media_root | [Media files](./processes.md#media-files) directory | *Not specified* |
-| INVENTREE_BACKUP_DIR | backup_dir | Backup files directory | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_STATIC_ROOT") }} [Static files](./processes.md#static-files) directory |
+{{ configsetting("INVENTREE_MEDIA_ROOT") }} [Media files](./processes.md#media-files) directory |
+{{ configsetting("INVENTREE_BACKUP_DIR") }} Directory for backup files |
 
 !!! tip "Serving Files"
     Read the [proxy server documentation](./processes.md#proxy-server) for more information on hosting *static* and *media* files
@@ -404,43 +395,41 @@ Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` env
 
 It is also possible to use alternative storage backends for static and media files, at the moment there is direct provide direct support bundled for S3 and SFTP. Google cloud storage and Azure blob storage would also be supported by the [used library](https://django-storages.readthedocs.io), but require additional packages to be installed.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_STORAGE_TARGET | storage.target | Storage target to use for static and media files, valid options: local, s3, sftp | local |
+{{ configtable() }}
+{{ configsetting("INVENTREE_STORAGE_TARGET") }} Storage target to use for static and media files, valid options: local, s3, sftp |
+
 
 #### S3
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
-| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key | *Not specified* |
-| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers | *Not specified* |
-| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name | *Not specified* |
-| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set | *Not specified* |
-| INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
-| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
-| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
-| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
-| INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
+{{ configtable() }}
+| `INVENTREE_S3_ACCESS_KEY` | storage.s3.access_key | *Not specified* | Access key |
+| `INVENTREE_S3_SECRET_KEY` | storage.s3.secret_key | *Not specified* | Secret key |
+| `INVENTREE_S3_BUCKET_NAME` | storage.s3.bucket_name | *Not specified* | Bucket name, required by most providers |
+| `INVENTREE_S3_REGION_NAME` | storage.s3.region_name | *Not specified* | S3 region name |
+| `INVENTREE_S3_ENDPOINT_URL` | storage.s3.endpoint_url | *Not specified* | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
+| `INVENTREE_S3_LOCATION` | storage.s3.location | inventree-server | Sub-Location that should be used |
+| `INVENTREE_S3_DEFAULT_ACL` | storage.s3.default_acl | *Not specified* | Default ACL for uploaded files, defaults to provider default if not set |
+| `INVENTREE_S3_VERIFY_SSL` | storage.s3.verify_ssl | True | Verify SSL certificate for S3 endpoint |
+| `INVENTREE_S3_OVERWRITE` | storage.s3.overwrite | False | Overwrite existing files in S3 bucket |
+| `INVENTREE_S3_VIRTUAL` | storage.s3.virtual | False | Use virtual addressing style - by default False -> `path` style, `virtual` style if True |
 
 #### SFTP
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
-| INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
-| INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
-| INVENTREE_SFTP_GID | storage.sftp.gid | SFTP group ID - not required | *Not specified* |
-| INVENTREE_SFTP_LOCATION | storage.sftp.location | Sub-Location that should be used | inventree-server |
+{{ configtable() }}
+| `INVENTREE_SFTP_HOST` | storage.sftp.host | *Not specified* | SFTP host |
+| `INVENTREE_SFTP_PARAMS` | storage.sftp.params | *Not specified* | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` |
+| `INVENTREE_SFTP_UID` | storage.sftp.uid | *Not specified* | SFTP user ID - not required |
+| `INVENTREE_SFTP_GID` | storage.sftp.gid | *Not specified* | SFTP group ID - not required |
+| `INVENTREE_SFTP_LOCATION` | storage.sftp.location | inventree-server | Sub-Location that should be used |
 
 ## Authentication
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
-| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp,webauthn |
+{{ configtable() }}
+{{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
+{{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
+{{ configsetting("INVENTREE_USE_JWT") }} Enable support for JSON Web Tokens (JWT) for authentication |
 
 ### Single Sign On
 
@@ -455,11 +444,10 @@ There are multiple configuration parameters which must be specified (either in y
 
 The login-experience can be altered with the following settings:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_LOGIN_CONFIRM_DAYS | login_confirm_days | Duration for which confirmation links are valid | 3 |
-| INVENTREE_LOGIN_ATTEMPTS | login_attempts | Count of allowed login attempts before blocking user | 5 |
-| INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL | login_default_protocol | Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) | Uses the protocol specified in `INVENTREE_SITE_URL`, or defaults to *http* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_LOGIN_CONFIRM_DAYS") }} Duration for which confirmation links are valid |
+{{ configsetting("INVENTREE_LOGIN_ATTEMPTS") }} Count of allowed login attempts before blocking user |
+{{ configsetting("INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL", default="Uses the protocol specified in `INVENTREE_SITE_URL`, or defaults to *http*") }} Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) |
 
 !!! tip "Default Protocol"
     If you have specified `INVENTREE_SITE_URL`, the default protocol will be used from that setting. Otherwise, the default protocol will be *http*.
@@ -472,22 +460,20 @@ Custom authentication backends can be used by specifying them here. These can fo
 
 The following options are available for configuring the InvenTree [background worker process](./processes.md#background-worker):
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_BACKGROUND_WORKERS | background.workers | Number of background worker processes | 1 |
-| INVENTREE_BACKGROUND_TIMEOUT | background.timeout | Timeout for background worker tasks (seconds) | 90 |
-| INVENTREE_BACKGROUND_RETRY | background.retry | Time to wait before retrying a background task (seconds) | 300 |
-| INVENTREE_BACKGROUND_MAX_ATTEMPTS | background.max_attempts | Maximum number of attempts for a background task | 5 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_BACKGROUND_WORKERS") }} Number of background worker processes |
+{{ configsetting("INVENTREE_BACKGROUND_TIMEOUT") }} Timeout for background worker tasks (seconds) |
+{{ configsetting("INVENTREE_BACKGROUND_RETRY") }} Time to wait before retrying a background task (seconds) |
+{{ configsetting("INVENTREE_BACKGROUND_MAX_ATTEMPTS") }} Maximum number of attempts for a background task |
 
 ## Sentry Integration
 
 The InvenTree server can be integrated with the [sentry.io](https://sentry.io) monitoring service, for error logging and performance tracking.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SENTRY_ENABLED | sentry_enabled | Enable sentry.io integration | False |
-| INVENTREE_SENTRY_DSN | sentry_dsn | Sentry DSN (data source name) key | *Defaults to InvenTree developer key* |
-| INVENTREE_SENTRY_SAMPLE_RATE | sentry_sample_rate | How often to send data samples | 0.1 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SENTRY_ENABLED") }} Enable sentry.io integration |
+{{ configsetting("INVENTREE_SENTRY_DSN", default="Defaults to InvenTree developer key") }} Sentry DSN (data source name) key |
+{{ configsetting("INVENTREE_SENTRY_SAMPLE_RATE") }} How often to send data samples (seconds) |
 
 !!! info "Default DSN"
     If enabled with the default DSN, server errors will be logged to a sentry.io account monitored by the InvenTree developers.
@@ -496,13 +482,11 @@ The InvenTree server can be integrated with the [sentry.io](https://sentry.io) m
 
 The logo and custom messages can be changed/set:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CUSTOM_LOGO | customize.logo | Path to custom logo in the static files directory | *Not specified* |
-| INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.site_header | Custom site header in the Django admin | InvenTree Admin |
-| INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_CUSTOM_LOGO") }} Path to custom logo in the static files directory |
+{{ configsetting("INVENTREE_CUSTOM_SPLASH") }} Path to custom splash screen in the static files directory |
+{{ configsetting("INVENTREE_SITE_HEADER") }} Custom header text for the django admin page |
+{{ configsetting("INVENTREE_CUSTOMIZE") }} JSON object containing custom messages for the login page, navbar, and Django admin site |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
 the wanted values. Example:
@@ -547,15 +531,15 @@ INVENTREE_FRONTEND_SETTINGS='{"mobile_mode": "allow-ignore"}'
 
 The following [plugin](../plugins/index.md) configuration options are available:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_PLUGINS_ENABLED | plugins_enabled | Enable plugin support | False |
-| INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
-| INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
-| INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
-| INVENTREE_PLUGINS_MANDATORY | plugins_mandatory | List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) | *Not specified* |
-| INVENTREE_PLUGIN_DEV_SLUG | plugin_dev.slug | Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) | *Not specified* |
-| INVENTREE_PLUGIN_DEV_HOST | plugin_dev.host | Specify host for development mode plugin | http://localhost:5174 |
+{{ configtable() }}
+{{ configsetting("INVENTREE_PLUGINS_ENABLED") }} Enable plugin support |
+{{ configsetting("INVENTREE_PLUGIN_NOINSTALL") }} Disable Plugin installation via API |
+{{ configsetting("INVENTREE_PLUGIN_FILE") }} Location of plugin installation file |
+| `INVENTREE_PLUGIN_DIR` | `plugin_dir` | *Not specified* | Location of external plugin directory |
+{{ configsetting("INVENTREE_PLUGIN_RETRY") }} Number of tries to attempt loading a plugin before giving up |
+{{ configsetting("INVENTREE_PLUGINS_MANDATORY") }} List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) |
+{{ configsetting("INVENTREE_PLUGIN_DEV_SLUG") }} Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) |
+{{ configsetting("INVENTREE_PLUGIN_DEV_HOST") }} Specify host for development mode plugin |
 
 ## Override Global Settings
 
@@ -563,6 +547,12 @@ If required, [global settings values](../settings/global.md#override-global-sett
 
 To override global settings, provide a "dictionary" of settings overrides in the configuration file, or via an environment variable.
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_GLOBAL_SETTINGS | global_settings | JSON object containing global settings overrides | *Not specified* |
+{{ configtable() }}
+{{ configsetting("INVENTREE_GLOBAL_SETTINGS") }} JSON object containing global settings overrides |
+
+## Other Settings
+
+Other available settings, not categorized above, are detailed in the table below:
+
+{{ configtable() }}
+{{ configsetting("INVENTREE_EXTRA_URL_SCHEMES") }} Allow additional URL schemes for URL validation |

@@ -56,6 +56,11 @@ export function useSupplierPartFields({
         filters: {
           active: true,
           is_supplier: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       SKU: {
@@ -88,6 +93,11 @@ export function useManufacturerPartFields() {
         filters: {
           active: true,
           is_manufacturer: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_manufacturer: { value: true, hidden: true }
         }
       },
       MPN: {},

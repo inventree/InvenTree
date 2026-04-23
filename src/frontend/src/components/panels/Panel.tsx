@@ -13,6 +13,7 @@ export type PanelType = {
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;
+  supportsDirty?: boolean;
 };
 
 export type PanelGroupType = {
