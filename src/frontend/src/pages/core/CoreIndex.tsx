@@ -3,6 +3,7 @@ import { Stack } from '@mantine/core';
 import { IconUser, IconUsersGroup } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { PluginPanelKey } from '@lib/enums/ModelType';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
@@ -44,7 +45,12 @@ export default function CoreIndex() {
   return (
     <Stack>
       <PageDetail title={t`System Overview`} />
-      <PanelGroup pageKey='core-index' panels={panels} id={null} />
+      <PanelGroup
+        pageKey='core-index'
+        panels={panels}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.core}
+      />
     </Stack>
   );
 }

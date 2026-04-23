@@ -20,6 +20,7 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { PluginPanelKey } from '@lib/enums/ModelType';
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -376,8 +377,8 @@ export default function SystemSettings() {
           <PanelGroup
             pageKey='system-settings'
             panels={systemSettingsPanels}
-            model='systemsettings'
-            id={null}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.systemsettings}
           />
         </Stack>
       ) : (

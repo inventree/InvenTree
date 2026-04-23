@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { PluginPanelKey } from '@lib/enums/ModelType';
 import { useShallow } from 'zustand/react/shallow';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
@@ -154,8 +155,8 @@ export default function UserSettings() {
         <PanelGroup
           pageKey='user-settings'
           panels={userSettingsPanels}
-          model='usersettings'
-          id={null}
+          pluginPanelWithoutId
+          pluginPanelKey={PluginPanelKey.usersettings}
         />
       </Stack>
     </>
