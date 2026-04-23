@@ -2041,10 +2041,12 @@ class Part(
                     result = plugin.check_validate_bom(self, user)
 
                     if result is not None:
-                        can_validate = bool(result)
-                        break
+                        can_validate = can_validate and bool(result)
                 except Exception:
                     log_error('check_validate_bom', plugin=plugin.slug)
+
+            if not can_validate:
+                break
 
         return can_validate
 
