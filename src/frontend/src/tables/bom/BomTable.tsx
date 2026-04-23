@@ -13,12 +13,11 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
-  IconExclamationCircle,
   IconFileUpload,
   IconLock,
   IconPlus,
@@ -99,28 +98,28 @@ export function BomTable({
             );
           }
 
+          if (!record.validated) {
+            extra.push(
+              <Text key='not-validated' c='red'>
+                {t`This BOM item has not been validated`}
+              </Text>
+            );
+          }
+
           return (
             part && (
-              <Group gap='xs' justify='space-between' wrap='nowrap'>
-                <TableHoverCard
-                  value={
-                    <Thumbnail
-                      src={part.thumbnail || part.image}
-                      alt={part.description}
-                      text={part.full_name}
-                    />
-                  }
-                  extra={extra}
-                  title={t`Part Information`}
-                />
-                {!record.validated && (
-                  <Tooltip label={t`This BOM item has not been validated`}>
-                    <ActionIcon color='red' variant='transparent' size='sm'>
-                      <IconExclamationCircle />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </Group>
+              <TableHoverCard
+                value={
+                  <Thumbnail
+                    src={part.thumbnail || part.image}
+                    alt={part.description}
+                    text={part.full_name}
+                  />
+                }
+                iconColor={record.validated ? undefined : 'red'}
+                extra={extra}
+                title={t`Part Information`}
+              />
             )
           );
         }
