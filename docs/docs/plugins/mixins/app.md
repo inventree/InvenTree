@@ -29,3 +29,6 @@ class MyCustomModel(models.Model):
         # custom permission logic here
         return True  # or False
 ```
+
+!!! warning "Default Permissions"
+    By default, if the `check_user_permission` method is not implemented, the InvenTree permission system will return `False` for all permission checks against that model. This is to ensure that no permissions are granted by default, and that the plugin developer must explicitly define the required permissions for their custom models.
