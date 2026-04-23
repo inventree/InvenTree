@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#11778](https://github.com/inventree/InvenTree/pull/11778) adds inline supplier part creation to po line item addition dialog.
 - [#11772](https://github.com/inventree/InvenTree/pull/11772) the UI now warns if you navigate away from a note panel with unsaved changes
+- [#11788](https://github.com/inventree/InvenTree/pull/11788) adds support for custom permissions checks on database models defined in plugins. If a model defines a `check_user_permission` classmethod, this will be called to determine if a user has permission to view the model. This is required for plugin models which do not have the required ruleset definitions for the standard permission system.
 
 ### Changed
 

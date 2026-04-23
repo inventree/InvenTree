@@ -247,6 +247,11 @@ export function usePurchaseOrderFields({
         filters: {
           is_supplier: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       supplier_reference: {},

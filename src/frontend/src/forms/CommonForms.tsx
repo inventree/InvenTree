@@ -12,6 +12,7 @@ import type {
 } from '../components/render/StatusRenderer';
 import { useApi } from '../contexts/ApiContext';
 import { useGlobalStatusState } from '../states/GlobalStatusState';
+import { useUserState } from '../states/UserState';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {
@@ -97,6 +98,25 @@ export function extraLineItemFields(): ApiFormFieldSet {
   };
 }
 
+export function useParameterTemplateFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      name: {},
+      description: {},
+      units: {},
+      model_type: {},
+      choices: {},
+      checkbox: {},
+      selectionlist: {
+        filters: {
+          active: true
+        }
+      },
+      enabled: {}
+    };
+  }, []);
+}
+
 export function useParameterFields({
   modelType,
   modelId
@@ -105,6 +125,10 @@ export function useParameterFields({
   modelId: number;
 }): ApiFormFieldSet {
   const api = useApi();
+
+  const user = useUserState.getState();
+
+  const templateCreateFields = useParameterTemplateFields();
 
   const [selectionListId, setSelectionListId] = useState<number | null>(null);
 
@@ -193,7 +217,8 @@ export function useParameterFields({
           } else if (record?.selectionlist) {
             setFieldType('related field');
           }
-        }
+        },
+        addCreateFields: user.isStaff() ? templateCreateFields : undefined
       },
       data: {
         value: data,
@@ -244,5 +269,14 @@ export function useParameterFields({
       },
       note: {}
     };
-  }, [data, modelType, fieldType, choices, modelId, selectionListId]);
+  }, [
+    data,
+    modelType,
+    fieldType,
+    choices,
+    modelId,
+    selectionListId,
+    templateCreateFields,
+    user
+  ]);
 }

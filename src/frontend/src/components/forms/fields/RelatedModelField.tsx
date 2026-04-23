@@ -69,7 +69,7 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
-  function setValuefromPK(pk: number) {
+  function setValueFromPK(pk: number) {
     fetchSingleField(pk);
   }
 
@@ -483,9 +483,14 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
-        {addButton &&
-          modelInfo &&
-          InlineCreateButton(definition, modelInfo, form, setValuefromPK)}
+        {addButton && modelInfo && (
+          <InlineCreateButton
+            definition={definition}
+            modelInfo={modelInfo}
+            form={form}
+            setValue={setValueFromPK}
+          />
+        )}
         <Expand>
           <Select
             id={fieldId}
@@ -551,20 +556,29 @@ export function RelatedModelField({
   );
 }
 
-function InlineCreateButton(
-  definition: ApiFormFieldType,
-  modelInfo: TranslatableModelInformationInterface,
-  form: UseFormReturn<FieldValues, any, FieldValues>,
-  setValue: (value: number) => void
-): ReactNode {
+function InlineCreateButton({
+  definition,
+  modelInfo,
+  form,
+  setValue
+}: {
+  definition: ApiFormFieldType;
+  modelInfo: TranslatableModelInformationInterface;
+  form: UseFormReturn<FieldValues, any, FieldValues>;
+  setValue: (value: number) => void;
+}): ReactNode {
   const relatedInitialData = useMemo(
     () => calculateModalData(definition, form),
     [definition.filters, definition.addCreateFields, form]
   );
-  const model = useMemo(() => modelInfo?.label() ?? '', [modelInfo]);
+
+  const title: string = useMemo(() => {
+    const model = modelInfo?.label() ?? t`Item`;
+    return t`Create New ${model}`;
+  }, [modelInfo]);
 
   const create_modal = useCreateApiFormModal({
-    title: t`Create New ${model}`,
+    title: title,
     url: apiUrl(modelInfo.api_endpoint),
     modelType: definition.model,
     initialData: relatedInitialData,
@@ -577,6 +591,8 @@ function InlineCreateButton(
     <>
       {create_modal.modal}
       <ActionButton
+        tooltip={title}
+        tooltipAlignment='top-start'
         onClick={() => {
           create_modal.open();
         }}
