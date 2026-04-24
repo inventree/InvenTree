@@ -4,6 +4,7 @@ import {
   activateCalendarView,
   clearTableFilters,
   clickButtonIfVisible,
+  clickOnRowMenu,
   loadTab,
   navigate,
   openFilterDrawer,
@@ -600,6 +601,7 @@ test('Transfer Order - Reference', async ({ browser }) => {
 
   // create the transfer order
   await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
 
   // go back to stock page
   await page.getByRole('link', { name: 'Stock', exact: true }).click();
@@ -660,11 +662,32 @@ test('Transfer Order - Edit', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-// TODO:
+test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
-// add line items
-// allocations
-// complete order?
+  await navigate(page, 'stock/transfer-order/6/');
+
+  await loadTab(page, 'Line Items');
+
+  // allocate line item 1
+  const cell1 = await page.getByText('C_100pF_0402', { exact: true });
+  await clickOnRowMenu(cell1);
+  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // allocate line item 1
+  const cell2 = await page.getByText('R_2.2K_0603_1%', { exact: true });
+  await clickOnRowMenu(cell2);
+  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // complete order
+  await page.getByRole('button', { name: 'Complete Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // tab should have changed to Transferred Stock
+  await loadTab(page, 'Transferred Stock');
+});
 
 test('Transfer Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
