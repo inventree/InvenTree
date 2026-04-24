@@ -14,6 +14,7 @@ import {
   CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
+  LocationColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -99,6 +100,14 @@ export function TransferOrderTable({
     return [
       ReferenceColumn({}),
       DescriptionColumn({}),
+      LocationColumn({
+        accessor: 'take_from_detail',
+        title: t`Source Location`
+      }),
+      LocationColumn({
+        accessor: 'destination_detail',
+        title: t`Destination Location`
+      }),
       BooleanColumn({
         accessor: 'consume',
         title: t`Consume Stock`,
