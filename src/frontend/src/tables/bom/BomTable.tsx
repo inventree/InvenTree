@@ -710,7 +710,6 @@ export function BomTable({
             enableBulkDelete:
               isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
             enableDownload: true
-            // rowExpansion: rowExpansionProps
           }}
         />
       </Stack>
