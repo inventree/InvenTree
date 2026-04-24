@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
@@ -303,8 +304,8 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            model='admincenter'
-            id={null}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.admincenter}
           />
         </Stack>
       ) : (

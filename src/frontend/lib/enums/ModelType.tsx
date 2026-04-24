@@ -40,3 +40,16 @@ export enum ModelType {
   selectionentry = 'selectionentry',
   error = 'error'
 }
+
+export enum PluginPanelKey {
+  // settings / admin
+  admincenter = 'admincenter',
+  systemsettings = 'systemsettings',
+  usersettings = 'usersettings',
+  // generic
+  core = 'core',
+  // landing pages
+  purchasing = 'purchasing',
+  sales = 'sales',
+  manufacturing = 'manufacturing'
+}
