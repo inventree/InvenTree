@@ -627,7 +627,7 @@ export function BomTable({
         tooltip={t`Add BOM Items`}
         position='bottom-start'
         icon={<IconPlus />}
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
         actions={[
           {
             name: t`Add BOM Item`,
