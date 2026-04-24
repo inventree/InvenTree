@@ -1,5 +1,5 @@
 import type { PluginProps } from '@lib/types/Plugins';
-import { setApiDefaults } from '../App';
+import { removeTraceId, setApiDefaults, setTraceId } from '../App';
 import { useGlobalStatusState } from './GlobalStatusState';
 import { useIconState } from './IconState';
 import { useServerApiState } from './ServerApiState';
@@ -53,6 +53,7 @@ export async function fetchGlobalStates() {
   }
 
   setApiDefaults();
+  const traceId = setTraceId();
   await Promise.all([
     useServerApiState.getState().fetchServerApiState(),
     useUserSettingsState.getState().fetchSettings(),
@@ -60,4 +61,5 @@ export async function fetchGlobalStates() {
     useGlobalStatusState.getState().fetchStatus(),
     useIconState.getState().fetchIcons()
   ]);
+  removeTraceId(traceId);
 }

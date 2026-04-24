@@ -11,7 +11,7 @@ import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
@@ -179,11 +179,13 @@ class ManufacturerPartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('supplier_parts')
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 
 
 class ManufacturerPartList(
+    DataExportViewMixin,
     ManufacturerPartMixin,
     SerializerContextMixin,
     OutputOptionsMixin,
@@ -197,7 +199,7 @@ class ManufacturerPartList(
     """
 
     filterset_class = ManufacturerPartFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = ManufacturerOutputOptions
 
     ordering_fields = ['part', 'IPN', 'MPN', 'manufacturer']
@@ -248,6 +250,8 @@ class SupplierPartFilter(FilterSet):
         ]
 
     active = rest_filters.BooleanFilter(label=_('Supplier Part is Active'))
+
+    primary = rest_filters.BooleanFilter(label=_('Primary Supplier Part'))
 
     # Filter by 'active' status of linked part
     part_active = rest_filters.BooleanFilter(
@@ -358,7 +362,7 @@ class SupplierPartList(
     """
 
     filterset_class = SupplierPartFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SupplierPartOutputOptions
 
     ordering_fields = [
@@ -366,6 +370,7 @@ class SupplierPartList(
         'supplier',
         'manufacturer',
         'active',
+        'primary',
         'IPN',
         'MPN',
         'SKU',
@@ -472,7 +477,7 @@ class SupplierPriceBreakList(
     output_options = SupplierPriceBreakOutputOptions
 
     filterset_class = SupplierPriceBreakFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
     search_fields = ['part__SKU', 'part__supplier__name']

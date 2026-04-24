@@ -20,6 +20,7 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { PluginPanelKey } from '@lib/enums/ModelType';
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -50,10 +51,12 @@ export default function SystemSettings() {
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
-              'INVENTREE_INSTANCE_ID',
-              'INVENTREE_ANNOUNCE_ID',
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
+              'INVENTREE_INSTANCE_ID',
+              'INVENTREE_ANNOUNCE_ID',
+              'INVENTREE_SHOW_SUPERUSER_BANNER',
+              'INVENTREE_SHOW_ADMIN_BANNER',
               'INVENTREE_RESTRICT_ABOUT',
               'DISPLAY_FULL_NAMES',
               'DISPLAY_PROFILE_INFO',
@@ -199,13 +202,13 @@ export default function SystemSettings() {
         content: (
           <GlobalSettingList
             keys={[
+              'PART_NAME_FORMAT',
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
               'PART_ALLOW_DELETE_FROM_ASSEMBLY',
               'PART_ENABLE_REVISION',
               'PART_REVISION_ASSEMBLY_ONLY',
-              'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
               'PART_CREATE_SUPPLIER',
@@ -217,6 +220,7 @@ export default function SystemSettings() {
               'PART_SALABLE',
               'PART_VIRTUAL',
               'PART_COPY_BOM',
+              'PART_BOM_ALLOW_ZERO_QUANTITY',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
@@ -373,8 +377,8 @@ export default function SystemSettings() {
           <PanelGroup
             pageKey='system-settings'
             panels={systemSettingsPanels}
-            model='systemsettings'
-            id={null}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.systemsettings}
           />
         </Stack>
       ) : (

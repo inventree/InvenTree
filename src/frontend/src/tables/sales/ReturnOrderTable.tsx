@@ -6,11 +6,11 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   CompanyColumn,
@@ -19,12 +19,14 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UpdatedAtColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -45,7 +47,9 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -56,7 +60,18 @@ export function ReturnOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
+  const table = useTable(
+    !!partId ? 'returnorders-part' : 'returnorders-index',
+    {
+      initialFilters: [
+        {
+          name: 'outstanding',
+          value: 'true'
+        }
+      ]
+    }
+  );
+
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -87,6 +102,8 @@ export function ReturnOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
+      UpdatedBeforeFilter(),
+      UpdatedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
       ResponsibleFilter(),
@@ -112,7 +129,8 @@ export function ReturnOrderTable({
         )
       },
       {
-        accessor: 'customer_reference'
+        accessor: 'customer_reference',
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
@@ -133,6 +151,9 @@ export function ReturnOrderTable({
       CompletionDateColumn({
         accessor: 'complete_date'
       }),
+      UpdatedAtColumn({
+        defaultVisible: false
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -143,7 +164,8 @@ export function ReturnOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 
@@ -157,7 +179,8 @@ export function ReturnOrderTable({
       customer: customerId
     },
     follow: true,
-    modelType: ModelType.returnorder
+    modelType: ModelType.returnorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {

@@ -37,9 +37,8 @@ from InvenTree.api import (
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    ORDER_FILTER_ALIAS,
+    ORDER_FILTER,
     SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     NumberOrNullFilter,
 )
@@ -455,7 +454,7 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = ORDER_FILTER_ALIAS
+    filter_backends = ORDER_FILTER
 
     ordering_fields = ['level', 'name', 'sublocations']
 
@@ -686,8 +685,8 @@ class StockFilter(FilterSet):
             return queryset
 
         if str2bool(value):
-            return queryset.filter(StockItem.EXPIRED_FILTER)
-        return queryset.exclude(StockItem.EXPIRED_FILTER)
+            return queryset.filter(StockItem.get_expired_filter())
+        return queryset.exclude(StockItem.get_expired_filter())
 
     external = rest_filters.BooleanFilter(
         label=_('External Location'), method='filter_external'
@@ -1051,7 +1050,11 @@ class StockOutputOptions(OutputConfiguration):
 
 
 class StockList(
-    DataExportViewMixin, StockApiMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockApiMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of Stock objects.
 
@@ -1245,14 +1248,19 @@ class StockList(
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
-                item = serializer.save()
+                item = StockItem(**serializer.validated_data)
 
                 if status_value and not item.compare_status(status_value):
                     item.set_status(status_value)
 
                 item.save(user=user)
+                item.refresh_from_db()
 
-                response_data = [serializer.data]
+                response_data = [
+                    StockSerializers.StockItemSerializer(
+                        item, context=self.get_serializer_context()
+                    ).data
+                ]
 
         return Response(
             response_data,
@@ -1260,7 +1268,7 @@ class StockList(
             headers=self.get_success_headers(serializer.data),
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'part': 'part__name',
@@ -1278,6 +1286,7 @@ class StockList(
         'part__name',
         'part__IPN',
         'updated',
+        'purchase_price',
         'stocktake_date',
         'expiry_date',
         'packaging',

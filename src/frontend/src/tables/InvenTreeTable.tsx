@@ -1,12 +1,21 @@
+import { Boundary } from '@lib/components/Boundary';
+import { CopyableCell } from '@lib/components/CopyableCell';
 import { RowActions } from '@lib/components/RowActions';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
+import { mapFields } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
+import { hashString } from '@lib/functions/String';
+import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { InvenTreeTableProps, TableState } from '@lib/types/Tables';
+import type {
+  InvenTreeTableProps,
+  InvenTreeTableRenderProps,
+  TableState
+} from '@lib/types/Tables';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Box, Stack } from '@mantine/core';
@@ -24,15 +33,12 @@ import {
 } from 'mantine-datatable';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Boundary } from '../components/Boundary';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
-import { extractAvailableFields, mapFields } from '../functions/forms';
+import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
-import { hashString } from '../functions/tables';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
-import { useStoredTableState } from '../states/StoredTableState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -61,20 +67,27 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
+ *
+ * This component is not used directly - instead, the "InvenTreeTable" component is a wrapper,
+ * which provides the necessary context and state management for this internal component.
+ *
+ * This function is also provided to the plugin context, and when used by external plugins,
+ * it must be supplied with with following additional context items:
+ * - api: AxiosInstance - The API instance for making requests to the server
+ * - navigate: NavigateFunction - The navigation function for navigating to different pages
  */
-export function InvenTreeTable<T extends Record<string, any>>({
+export function InvenTreeTableInternal<T extends Record<string, any>>({
   url,
   tableState,
   tableData,
   columns,
-  props
-}: Readonly<{
-  url?: string;
-  tableState: TableState;
-  tableData?: any[];
-  columns: TableColumn<T>[];
-  props: InvenTreeTableProps<T>;
-}>) {
+  props,
+  api,
+  navigate,
+  showContextMenu,
+  searchParams,
+  setSearchParams
+}: Readonly<InvenTreeTableRenderProps<T>>) {
   const { userTheme } = useLocalState();
 
   const {
@@ -89,10 +102,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
   } = useStoredTableState();
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
-
-  const api = useApi();
-  const navigate = useNavigate();
-  const { showContextMenu } = useContextMenu();
 
   const userSettings = useUserSettingsState();
 
@@ -264,11 +273,40 @@ export function InvenTreeTable<T extends Record<string, any>>({
           ? false
           : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
+      // Wrap the render function with CopyableCell if copyable is enabled
+      const originalRender = col.render;
+      let wrappedRender = originalRender;
+
+      if (col.copyable) {
+        wrappedRender = (record: any, index?: number) => {
+          const content =
+            originalRender?.(record, index) ??
+            resolveItem(record, col.accessor);
+
+          // Determine the value to copy, ensuring it is always a string
+          let rawCopyValue: unknown;
+          if (typeof col.copyable === 'function') {
+            rawCopyValue = col.copyable(record);
+          } else {
+            const accessor = col.copyAccessor ?? col.accessor;
+            rawCopyValue = resolveItem(record, accessor);
+          }
+          const copyValue = rawCopyValue == null ? '' : String(rawCopyValue);
+
+          if (window.isSecureContext && !!copyValue) {
+            return <CopyableCell value={copyValue}>{content}</CopyableCell>;
+          } else {
+            return content;
+          }
+        };
+      }
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        render: wrappedRender,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -303,9 +341,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
-    const columnNames: string = cols.map((col) => col.accessor).join(',');
-    setColumnHash(hashString(columnNames));
-
     return cols;
   }, [
     columns,
@@ -314,6 +349,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
+
+  useEffect(() => {
+    const columnNames: string = dataColumns
+      .map((col: any) => col.accessor)
+      .join(',');
+    setColumnHash(hashString(columnNames));
+  }, [dataColumns]);
 
   // Callback when column visibility is toggled
   const toggleColumn = useCallback(
@@ -343,15 +385,18 @@ export function InvenTreeTable<T extends Record<string, any>>({
     getInitialValueInEffect: false
   });
 
+  // Reset column ordering and custom widths when the component is mounted
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759#issuecomment-4148942070
+  useEffect(() => {
+    tableColumns.resetColumnsOrder();
+    tableColumns.resetColumnsWidth();
+  }, []);
+
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
     tableState.clearSelectedRecords();
-  }, [
-    tableState.searchTerm,
-    tableState.filterSet.activeFilters,
-    tableState.queryFilters
-  ]);
+  }, [tableState.searchTerm, tableState.filterSet.activeFilters, searchParams]);
 
   // Account for invalid page offsets
   useEffect(() => {
@@ -385,9 +430,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (tableState.queryFilters && tableState.queryFilters.size > 0) {
+      if (searchParams && searchParams.size > 0) {
         // Allow override of filters based on URL query parameters
-        for (const [key, value] of tableState.queryFilters) {
+        for (const [key, value] of searchParams) {
           queryParams[key] = value;
         }
       } else if (tableState.filterSet.activeFilters) {
@@ -426,7 +471,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
-      tableState.queryFilters,
+      searchParams,
       tableState.searchTerm,
       getOrderingTerm
     ]
@@ -485,6 +530,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     (status: DataTableSortStatus<T>) => {
       tableState.setPage(1);
       setSortStatus(status);
+
+      if (!status.columnAccessor) {
+        console.error(`Invalid column accessor provided for table ${cacheKey}`);
+      }
 
       setTableSorting(cacheKey)(status);
     },
@@ -564,7 +613,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [tableState.queryFilters]);
+  }, [searchParams]);
 
   useEffect(() => {
     const loading: boolean =
@@ -660,7 +709,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     const empty = () => {};
     let items: ContextMenuItemOptions[] = [];
 
-    if (props.rowActions) {
+    if (!!props.rowActions) {
       items = props.rowActions(record).map((action) => ({
         key: action.title ?? '',
         title: action.title ?? '',
@@ -698,7 +747,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
-    return showContextMenu(items)(event);
+    return showContextMenu?.(items)(event);
   };
 
   // Pagination refresh table if pageSize changes
@@ -780,6 +829,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
               hasSwitchableColumns={hasSwitchableColumns}
               columns={dataColumns}
               filters={filters}
+              queryFilters={searchParams}
+              clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
               toggleColumn={toggleColumn}
             />
           </Boundary>
@@ -827,5 +878,53 @@ export function InvenTreeTable<T extends Record<string, any>>({
         </Boundary>
       </Stack>
     </>
+  );
+}
+
+/**
+ * This is an internal wrapper function for the InvenTreeTableInternal component,
+ * which provides the necessary context management for the table to function correctly.
+ *
+ * In addition to the provided table props, this wrapper provides context for:
+ *
+ * - api: The API instance for making requests to the server
+ * - navigate: The navigation function for navigating to different pages
+ *
+ */
+export function InvenTreeTable<T extends Record<string, any>>({
+  url,
+  tableState,
+  tableData,
+  columns,
+  props
+}: Readonly<{
+  url?: string;
+  tableState: TableState;
+  tableData?: T[];
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
+}>) {
+  const api = useApi();
+  const navigate = useNavigate();
+
+  const { showContextMenu } = useContextMenu();
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  // Note: These can only be used internally (i.e *not in plugin context)
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  return (
+    <InvenTreeTableInternal
+      url={url}
+      tableState={tableState}
+      tableData={tableData}
+      columns={columns}
+      props={props}
+      api={api}
+      navigate={navigate}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
+      showContextMenu={showContextMenu}
+    />
   );
 }

@@ -25,6 +25,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderPart } from '../../components/render/Part';
@@ -41,14 +42,16 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
+  LineItemColumn,
   LinkColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -75,6 +78,7 @@ export default function SalesOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       {
         accessor: 'part',
         sortable: true,
@@ -94,21 +98,11 @@ export default function SalesOrderLineItemTable({
           );
         }
       },
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true
-      },
+      IPNColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
-      {
-        accessor: 'reference',
-        sortable: false,
-        switchable: true
-      },
+      ReferenceColumn({}),
       ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',
@@ -300,6 +294,8 @@ export default function SalesOrderLineItemTable({
     ) : undefined,
     initialData: initialData,
     fields: allocateSerialFields,
+    successMessage: t`Stock allocated successfully`,
+    keepOpenOption: true,
     table: table
   });
 
@@ -545,6 +541,7 @@ export default function SalesOrderLineItemTable({
             order: orderId,
             part_detail: true
           },
+          defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

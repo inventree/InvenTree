@@ -1,6 +1,7 @@
 import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
@@ -8,7 +9,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { DateColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';

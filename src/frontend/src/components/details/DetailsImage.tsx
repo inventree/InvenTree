@@ -19,7 +19,7 @@ import {
 } from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import type { UserRoles } from '@lib/enums/Roles';
@@ -82,8 +82,14 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
     ),
     labels: { confirm: t`Remove`, cancel: t`Cancel` },
     onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
+      api.patch(apiPath, { image: null }).then(() => {
+        setImage(backup_image);
+        showNotification({
+          title: t`Image removed`,
+          message: t`The image has been removed successfully`,
+          color: 'green'
+        });
+      });
     }
   });
 
@@ -100,13 +106,57 @@ function UploadModal({
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const clipboardItems = event.clipboardData?.items;
+
+      if (!clipboardItems) {
+        return;
+      }
+
+      const imageItem = Array.from(clipboardItems).find((item) =>
+        item.type.startsWith('image/')
+      );
+
+      if (!imageItem) {
+        return;
+      }
+
+      const imageFile = imageItem.getAsFile();
+
+      if (!imageFile) {
+        return;
+      }
+
+      const fileExtension = imageFile.type.split('/')[1] || 'png';
+      const pastedFile = new File(
+        [imageFile],
+        `clipboard-image.${fileExtension}`,
+        {
+          type: imageFile.type
+        }
+      ) as FileWithPath;
+
+      setCurrentFile(pastedFile);
+      event.preventDefault();
+    };
+
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, []);
+
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
     <Group>
       <InvenTreeIcon icon='photo' iconProps={{ size: '3.2rem', stroke: 1.5 }} />
       <div>
         <Text size='xl' inline>
-          <Trans>Drag and drop to upload</Trans>
+          <Trans>
+            Drag and drop to upload, or paste an image from the clipboard
+          </Trans>
         </Text>
         <Text size='sm' c='dimmed' inline mt={7}>
           <Trans>Click to select file(s)</Trans>

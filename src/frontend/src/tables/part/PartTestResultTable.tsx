@@ -15,6 +15,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
+import useTable from '@lib/hooks/UseTable';
 import { AddItemButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -25,7 +26,6 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { LocationColumn, PartColumn } from '../ColumnRenderers';
 import {
   BatchFilter,
@@ -288,7 +288,8 @@ export default function PartTestResultTable({
         accessor: 'batch',
         title: t`Batch Code`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        copyable: true
       },
       LocationColumn({
         accessor: 'location_detail'

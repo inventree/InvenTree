@@ -12,20 +12,31 @@ import { RenderPart } from '../components/render/Part';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useUserState } from '../states/UserState';
+import { usePartFields } from './PartForms';
 
 /**
  * Field set for BomItem form
  */
-export function bomItemFields(): ApiFormFieldSet {
+export function bomItemFields({
+  showAssembly = false
+}: {
+  showAssembly?: boolean;
+}): ApiFormFieldSet {
+  const newPartFields = usePartFields({
+    create: true
+  });
+
   return {
     part: {
-      hidden: true
+      disabled: true,
+      hidden: !showAssembly
     },
     sub_part: {
       filters: {
         active: true, // Only show active parts when creating a new BOM item
         component: true
-      }
+      },
+      addCreateFields: newPartFields
     },
     quantity: {},
     reference: {},

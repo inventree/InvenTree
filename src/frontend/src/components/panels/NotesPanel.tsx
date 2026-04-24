@@ -34,6 +34,7 @@ export default function NotesPanel({
         />
       ) : (
         <Skeleton />
-      )
+      ),
+    supportsDirty: true
   };
 }

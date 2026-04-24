@@ -11,6 +11,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -25,10 +26,10 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -130,13 +131,9 @@ export default function SalesOrderAllocationTable({
         accessor: 'part_detail.description',
         hidden: showPartInfo != true
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        hidden: showPartInfo != true,
-        sortable: true,
-        ordering: 'IPN'
-      },
+      IPNColumn({
+        hidden: showPartInfo != true
+      }),
       {
         accessor: 'serial',
         title: t`Serial Number`,
@@ -149,7 +146,9 @@ export default function SalesOrderAllocationTable({
         title: t`Batch Code`,
         sortable: true,
         switchable: true,
-        render: (record: any) => record?.item_detail?.batch
+        render: (record: any) => record?.item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'item_detail.batch'
       },
       {
         accessor: 'available',

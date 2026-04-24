@@ -40,12 +40,14 @@ jobs:
       cicd: ${{ steps.filter.outputs.cicd }}
       requirements: ${{ steps.filter.outputs.requirements }}
       runner-perf: ${{ steps.runner-perf.outputs.runner }}
+      performance: ${{ steps.performance.outputs.force-performance }}
+      submit-performance: ${{ steps.runner-perf.outputs.submit-performance }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
         id: filter
         with:
           filters: |
@@ -75,10 +77,29 @@ jobs:
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
+      - name: Is performance testing being forced?
+        run: echo "force-performance=true" >> $GITHUB_OUTPUT
+        id: performance
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'performance-run')
       - name: Which runner to use?
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          PERFORMANCE: ${{ steps.performance.outputs.force-performance }}
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
+        run: |
+          is_main_push=false
+          if [[ '${{ github.event_name }}' == 'push' && "$GITHUB_REF" == 'refs/heads/master' ]]; then
+            is_main_push=true
+          fi
+          if [[ '${{ github.repository }}' == 'inventree/InvenTree' && ( "$is_main_push" == 'true' || "$PERFORMANCE" == 'true' ) ]]; then
+            echo "runner=codspeed-macro" >> "$GITHUB_OUTPUT"
+            echo "submit-performance=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "runner=ubuntu-24.04" >> "$GITHUB_OUTPUT"
+            echo "submit-performance=false" >> "$GITHUB_OUTPUT"
+          fi
 
   pre-commit:
     name: Style [pre-commit]
@@ -181,7 +202,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -201,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
+        uses: oasdiff/oasdiff-action/diff@f8cb9308b42121e793f835bd14c0b8090420430c # pin@main
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -230,17 +251,17 @@ jobs:
       - name: Extract settings / tags
         run: invoke int.export-definitions --basedir docs
       - name: Upload settings
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: inventree_settings.json
           path: docs/generated/inventree_settings.json
       - name: Upload tags
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: inventree_tags.yml
           path: docs/generated/inventree_tags.yml
       - name: Upload filters
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: inventree_filters.yml
           path: docs/generated/inventree_filters.yml
@@ -263,7 +284,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # pin@v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
         with:
           path: artifact
           merge-multiple: true
@@ -290,7 +311,7 @@ jobs:
     runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true' || needs.paths-filter.outputs.performance == 'true'
     permissions:
       contents: read
       id-token: write
@@ -320,6 +341,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
           npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
@@ -339,10 +361,11 @@ jobs:
           pip uninstall pytest-django -y
           cd ${WRAPPER_NAME}
           pip install .
+        if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@db35df748deb45fdef0960669f57d627c1956c30 # pin@v4
         # check if we are in inventree/inventree - reporting only works in that OIDC context
-        if: github.repository == 'inventree/InvenTree'
+        if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
           mode: walltime
           run: pytest ./src/performance --codspeed
@@ -376,6 +399,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          static: true
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
@@ -385,13 +409,13 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --check --coverage --translations
       - name: Upload raw coverage to artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: coverage
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -404,7 +428,7 @@ jobs:
 
     needs: ["pre-commit", "paths-filter"]
     # check if we are in inventree/inventree - reporting only works in that OIDC context
-    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree'
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
     permissions:
       contents: read
       id-token: write
@@ -430,7 +454,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        uses: CodSpeedHQ/action@db35df748deb45fdef0960669f57d627c1956c30 # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -478,6 +502,7 @@ jobs:
           pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -526,6 +551,7 @@ jobs:
           pip-dependency: mysqlclient
           dev-install: true
           update: true
+          static: true
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
@@ -571,7 +597,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -680,7 +706,7 @@ jobs:
           npm: true
           install: true
           update: true
-          apt-dependency: postgresql-client libpq-dev
+          apt-dependency: gettext postgresql-client libpq-dev
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
@@ -692,8 +718,14 @@ jobs:
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        run: |
+          cd src/frontend
+          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
+          invoke static
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" npx nyc playwright test --project=customization
+          npx nyc playwright test --project=chromium --project=firefox
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -702,7 +734,7 @@ jobs:
       - name: Report coverage
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -731,14 +763,14 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && yarn run compile && yarn run build
+        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
@@ -757,13 +789,13 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
-      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
+      - uses: hynek/setup-cached-uv@4300ec2180bc77d705e626a34e381b81a4772c51 # pin@v2
       - name: Run zizmor
         run: uvx zizmor --format sarif . > results.sarif
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # pin@v3
+        uses: github/codeql-action/upload-sarif@c10b8064de6f491fea524254123dbe5e09572f13 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

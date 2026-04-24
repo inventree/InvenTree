@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
         id: filter
         with:
           filters: |
@@ -168,13 +168,13 @@ jobs:
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # pin@v3.7.0
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # pin@v4.0.0
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # pin@v3.12.0
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # pin@v4.0.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # pin@v4.0.0
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # pin@v4.1.1
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |
@@ -185,14 +185,14 @@ jobs:
           fi
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # pin@v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # pin@v4.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # pin@v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # pin@v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -201,16 +201,16 @@ jobs:
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # pin@v5.10.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # pin@v6.0.0
         with:
           images: |
             inventree/inventree
             ghcr.io/${{ github.repository }}
-      - uses: depot/setup-action@b0b1ea4f69e92ebf5dea3f8713a1b0c37b2126a5 # pin@v1
+      - uses: depot/setup-action@15c09a5f77a0840ad4bce955686522a257853461 # pin@v1
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: depot/build-push-action@9785b135c3c76c33db102e45be96a25ab55cd507 # pin@v1
+        uses: depot/build-push-action@5f3b3c2e5a00f0093de47f657aeaefcedff27d18 # pin@v1
         with:
           project: jczzbjkk68
           context: .

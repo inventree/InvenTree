@@ -8,6 +8,7 @@ from rest_framework.serializers import SerializerMethodField
 
 import InvenTree.serializers
 from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin
+from InvenTree.serializers import OptionalField
 from InvenTree.unit_test import InvenTreeAPITestCase
 from InvenTree.urls import backendpatterns
 
@@ -25,21 +26,25 @@ class SampleSerializer(
         fields = ['field_a', 'field_b', 'field_c', 'field_d', 'field_e', 'id']
 
     field_a = SerializerMethodField(method_name='sample')
-    field_b = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample')
+    field_b = OptionalField(
+        serializer_class=SerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
     )
-    field_c = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
-        True,
+    field_c = OptionalField(
+        serializer_class=SerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
+        default_include=True,
         filter_name='crazy_name',
     )
-    field_d = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
-        True,
+    field_d = OptionalField(
+        serializer_class=SerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
+        default_include=True,
         filter_name='crazy_name',
     )
-    field_e = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
+    field_e = OptionalField(
+        serializer_class=SerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
         filter_name='field_e',
         filter_by_query=False,
     )
@@ -106,110 +111,3 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
             self.assertNotContains(response, 'field_e')
-
-    def test_failiure_enable_filter(self):
-        """Test sanity check for enable_filter."""
-        # Allowed usage
-        field_b = InvenTree.serializers.enable_filter(  # noqa: F841
-            InvenTree.serializers.FilterableSerializerMethodField(method_name='sample')
-        )
-
-        # Disallowed usage
-        with self.assertRaises(Exception) as cm:
-            field_a = InvenTree.serializers.enable_filter(  # noqa: F841
-                SerializerMethodField(method_name='sample')
-            )
-        self.assertIn(
-            'INVE-I2: `enable_filter` can only be applied to serializer fields',
-            str(cm.exception),
-        )
-
-    def test_failiure_FilterableSerializerMixin(self):
-        """Test failure case for FilteredSerializerMixin."""
-
-        class BadSerializer(
-            InvenTree.serializers.FilterableSerializerMixin,
-            InvenTree.serializers.InvenTreeModelSerializer,
-        ):
-            """Bad serializer for testing FilterableSerializerMixin."""
-
-            class Meta:
-                """Meta options."""
-
-                model = User
-                fields = ['field_a', 'id']
-
-            field_a = SerializerMethodField(method_name='sample')
-
-            def sample(self, obj):
-                """Sample method field."""
-                return 'sample'  # pragma: no cover
-
-        with self.assertRaises(Exception) as cm:
-            _ = BadSerializer()
-        self.assertIn(
-            'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`',
-            str(cm.exception),
-        )
-
-        # Test override
-        BadSerializer.no_filters = True
-        _ = BadSerializer()
-        self.assertTrue(True)  # Dummy assertion to ensure we reach here
-
-    def test_failure_OutputOptionsMixin(self):
-        """Test failure case for OutputOptionsMixin."""
-
-        class BadSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-            """Sample serializer."""
-
-            class Meta:
-                """Meta options."""
-
-                model = User
-                fields = ['id']
-
-            field_a = SerializerMethodField(method_name='sample')
-
-        # Bad implementation of OutputOptionsMixin
-        with self.assertRaises(Exception) as cm:
-
-            class BadList(OutputOptionsMixin, ListCreateAPI):
-                """Bad list endpoint for testing OutputOptionsMixin."""
-
-                serializer_class = BadSerializer
-                queryset = User.objects.all()
-                permission_classes = []
-
-            self.assertTrue(True)
-            _ = BadList()  # this should raise an exception
-        self.assertEqual(
-            str(cm.exception),
-            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
-        )
-
-        # More creative bad implementation
-        with self.assertRaises(Exception) as cm:
-
-            class BadList(OutputOptionsMixin, ListCreateAPI):
-                """Bad list endpoint for testing OutputOptionsMixin."""
-
-                queryset = User.objects.all()
-                permission_classes = []
-
-                def get_serializer(self, *args, **kwargs):
-                    """Get serializer override."""
-                    self.serializer_class = BadSerializer
-                    return super().get_serializer(*args, **kwargs)
-
-            view = BadList()
-            self.assertTrue(True)
-            # mock some stuff to allow get_serializer to run
-            view.request = self.client.request()
-            view.format_kwarg = {}
-            view.get_serializer()  # this should raise an exception
-
-        self.assertEqual(
-            str(cm.exception),
-            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
-        )

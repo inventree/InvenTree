@@ -10,24 +10,40 @@ def add_part_links(apps, schema_editor):
 
     history_entries = []
 
-    for tracking in StockItemTracking.objects.all():
+    N = StockItemTracking.objects.count()
+
+    if N > 0:
+        print(f"\nUpdating {N} StockItemTracking entries with part links...")
+
+    for tracking in StockItemTracking.objects.filter(part__isnull=True).select_related('item__part'):
 
         item = tracking.item
 
+        # No item link - skip
         if item is None:
             continue
 
         part = item.part
 
+        # No part link - skip
         if part is None:
+            continue
+
+        # Already linked to the correct part - skip
+        if tracking.part == part:
             continue
 
         tracking.part = part
         history_entries.append(tracking)
-    
+
+        # Process in batches to avoid issues with very large datasets
+        if len(history_entries) >= 100:
+            StockItemTracking.objects.bulk_update(history_entries, ['part'])
+            history_entries = []
+            print(".", end='', flush=True)
+
     if len(history_entries) > 0:
         StockItemTracking.objects.bulk_update(history_entries, ['part'])
-        print(f"\nUpdated {len(history_entries)} StockItemTracking entries with part links")
 
 
 def remove_null_items(apps, schema_editor):

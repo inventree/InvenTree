@@ -8,6 +8,7 @@ import {
   HoverCard,
   Loader,
   type MantineColor,
+  Paper,
   Skeleton,
   Stack,
   Text
@@ -81,6 +82,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -168,6 +170,17 @@ function BomValidationInformation({
       refetchOnMount: true
     });
 
+  const [taskId, setTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: taskId,
+    message: t`Validating BOM`,
+    successMessage: t`BOM validated`,
+    onComplete: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
   const validateBom = useApiFormModal({
     url: ApiEndpoints.bom_validate,
     method: 'PUT',
@@ -184,9 +197,14 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`Bill of materials scheduled for validation`,
-    onFormSuccess: () => {
-      bomInformationQuery.refetch();
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      // If the process has been offloaded to a background task
+      if (response.task_id) {
+        setTaskId(response.task_id);
+      } else {
+        bomInformationQuery.refetch();
+      }
     }
   });
 
@@ -308,55 +326,24 @@ export default function PartDetail() {
       refetchOnMount: true
     });
 
-  // Fetch information on part revision
+  const revisionsEnabled = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_REVISION'),
+    [globalSettings]
+  );
+
+  // Fetch information on parts which are revisions of *this* part
   const partRevisionQuery = useQuery({
     refetchOnMount: true,
-    queryKey: [
-      'part_revisions',
-      part.pk,
-      part.revision_of,
-      part.revision_count
-    ],
-    queryFn: async () => {
-      if (!part.revision_of && !part.revision_count) {
-        return [];
-      }
-
-      const revisions = [];
-
-      // First, fetch information for the top-level part
-      if (part.revision_of) {
-        await api
-          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
-          .then((response) => {
-            revisions.push(response.data);
-          });
-      } else {
-        revisions.push(part);
-      }
-
-      const url = apiUrl(ApiEndpoints.part_list);
-
-      await api
-        .get(url, {
+    enabled: revisionsEnabled && !!part && !!part.revision_count,
+    queryKey: ['part_revisions', part.pk, part.revision_count],
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.part_list), {
           params: {
-            revision_of: part.revision_of || part.pk
+            revision_of: part.pk
           }
         })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              response.data.forEach((r: any) => {
-                revisions.push(r);
-              });
-              break;
-            default:
-              break;
-          }
-        });
-
-      return revisions;
-    }
+        .then((response) => response.data)
   });
 
   const partRevisionOptions: any[] = useMemo(() => {
@@ -376,26 +363,14 @@ export default function PartDetail() {
       };
     });
 
-    // Add this part if not already available
-    if (!options.find((o) => o.value == part.pk)) {
-      options.push({
-        value: part.pk,
-        label: part.full_name,
-        part: part
-      });
-    }
-
     return options.sort((a, b) => {
       return `${a.part.revision}`.localeCompare(b.part.revision);
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
   const enableRevisionSelection: boolean = useMemo(() => {
-    return (
-      partRevisionOptions.length > 0 &&
-      globalSettings.isSet('PART_ENABLE_REVISION')
-    );
-  }, [partRevisionOptions, globalSettings]);
+    return partRevisionOptions.length > 0 && revisionsEnabled;
+  }, [partRevisionOptions, revisionsEnabled]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -465,6 +440,7 @@ export default function PartDetail() {
         name: 'variant_of',
         label: t`Variant of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.variant_of
       },
       {
@@ -472,6 +448,7 @@ export default function PartDetail() {
         name: 'revision_of',
         label: t`Revision of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.revision_of
       },
       {
@@ -693,16 +670,6 @@ export default function PartDetail() {
         hidden: !part.responsible
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.supplierpart,
-        model_formatter: (model: any) => {
-          return model.SKU;
-        },
-        hidden: !part.default_supplier
-      },
-      {
         name: 'default_expiry',
         label: t`Default Expiry`,
         hidden: !part.default_expiry,
@@ -756,10 +723,17 @@ export default function PartDetail() {
             </Grid.Col>
           </Grid>
           {enableRevisionSelection && (
-            <Stack gap='xs'>
-              <Text>{t`Select Part Revision`}</Text>
-              <RevisionSelector part={part} options={partRevisionOptions} />
-            </Stack>
+            <Paper p='sm' withBorder>
+              <Stack gap='xs'>
+                <Group gap='xs'>
+                  <ActionIcon variant='transparent'>
+                    <IconVersions />
+                  </ActionIcon>
+                  <Text>{t`Select Part Revision`}</Text>
+                </Group>
+                <RevisionSelector part={part} options={partRevisionOptions} />
+              </Stack>
+            </Paper>
           )}
         </Stack>
         <DetailsTable fields={tr} item={data} />
@@ -992,6 +966,10 @@ export default function PartDetail() {
       return [];
     }
 
+    const allocated =
+      partRequirements.allocated_to_build_orders +
+      partRequirements.allocated_to_sales_orders;
+
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
@@ -1025,6 +1003,12 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
+        label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        color='blue'
+        visible={allocated > 0}
+        key='allocated'
+      />,
+      <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
@@ -1037,9 +1021,9 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
-        visible={partRequirements.building > 0}
+        visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge
@@ -1128,6 +1112,7 @@ export default function PartDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     merge: false,
+    changeBatch: false,
     enabled: true
   });
 

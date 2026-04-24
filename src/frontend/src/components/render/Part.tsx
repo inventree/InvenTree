@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { shortenString } from '../../functions/tables';
+import { shortenString } from '@lib/functions/String';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';

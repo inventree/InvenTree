@@ -7,10 +7,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
@@ -18,6 +18,8 @@ import {
   CreationDateColumn,
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -64,7 +66,14 @@ export function BuildOrderTable({
   salesOrderId?: number;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -72,13 +81,7 @@ export function BuildOrderTable({
       PartColumn({
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true,
-        title: t`IPN`
-      },
+      IPNColumn({}),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
@@ -143,7 +146,8 @@ export function BuildOrderTable({
         ordering: 'issued_by',
         title: t`Issued By`
       }),
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, [parentBuildId, globalSettings]);
 
@@ -214,7 +218,8 @@ export function BuildOrderTable({
       parent: parentBuildId
     },
     follow: true,
-    modelType: ModelType.build
+    modelType: ModelType.build,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {

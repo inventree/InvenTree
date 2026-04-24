@@ -3,7 +3,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
-import { CompanyColumn, PartColumn } from '../ColumnRenderers';
+import { CompanyColumn, IPNColumn, PartColumn } from '../ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 
 export default function ManufacturerPartParametricTable({
@@ -16,12 +16,9 @@ export default function ManufacturerPartParametricTable({
       PartColumn({
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: false,
-        switchable: true
-      },
+      IPNColumn({
+        sortable: false
+      }),
       {
         accessor: 'manufacturer',
         sortable: true,
@@ -32,7 +29,8 @@ export default function ManufacturerPartParametricTable({
       {
         accessor: 'MPN',
         title: t`MPN`,
-        sortable: true
+        sortable: true,
+        copyable: true
       }
     ];
   }, []);

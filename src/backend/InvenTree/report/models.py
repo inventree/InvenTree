@@ -27,7 +27,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
-from common.models import DataOutput, RenderChoices
+from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -189,7 +189,9 @@ class ReportContextExtension(TypedDict):
     merge: bool
 
 
-class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
+class ReportTemplateBase(
+    MetadataMixin, UpdatedUserMixin, InvenTree.models.InvenTreeModel
+):
     """Base class for reports, labels."""
 
     class ModelChoices(RenderChoices):
@@ -205,8 +207,9 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved."""
-        # Increment revision number
-        self.revision += 1
+        if kwargs.pop('increment_revision', True):
+            # Increment revision number
+            self.revision += 1
 
         super().save()
 
@@ -704,7 +707,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
         base_context = super().get_context(instance, request, **kwargs)
-        label_context: LabelContextExtension = {  # type: ignore[invalid-assignment]
+        label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
             'page_style': None,

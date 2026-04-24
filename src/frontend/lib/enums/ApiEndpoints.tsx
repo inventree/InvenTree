@@ -64,7 +64,7 @@ export enum ApiEndpoints {
   content_type_list = 'contenttype/',
   icons = 'icons/',
   selectionlist_list = 'selection/',
-  selectionlist_detail = 'selection/:id/',
+  selectionentry_list = 'selection/:id/entry/',
 
   // Barcode API endpoints
   barcode = 'barcode/',
@@ -244,5 +244,8 @@ export enum ApiEndpoints {
   email_test = 'admin/email/test/',
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
-  parameter_template_list = 'parameter/template/'
+  parameter_template_list = 'parameter/template/',
+
+  // Internal system things
+  system_internal_trace_end = 'system-internal/observability/end'
 }

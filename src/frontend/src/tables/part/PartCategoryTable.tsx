@@ -10,6 +10,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -21,7 +22,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -39,6 +39,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         accessor: 'name',
         sortable: true,
         switchable: false,
+        copyable: true,
         render: (record: any) => (
           <Group gap='xs' wrap='nowrap' justify='space-between'>
             <Group gap='xs' wrap='nowrap'>
@@ -60,6 +61,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
+        copyable: true,
         sortable: true
       },
       {
@@ -109,7 +111,8 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     },
     follow: true,
     modelType: ModelType.partcategory,
-    table: table
+    table: table,
+    keepOpenOption: true
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);

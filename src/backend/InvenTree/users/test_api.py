@@ -37,13 +37,14 @@ class UserAPITests(InvenTreeAPITestCase):
             fields['is_active']['help_text'], 'Is this user account active'
         )
 
-        self.assertEqual(fields['is_staff']['label'], 'Staff')
+        self.assertEqual(fields['is_staff']['label'], 'Administrator')
         self.assertEqual(
-            fields['is_staff']['help_text'], 'Does this user have staff permissions'
+            fields['is_staff']['help_text'],
+            'Does this user have administrative permissions',
         )
 
     def test_api_url(self):
-        """Test the 'api_url attribute in related API endpoints.
+        """Test the 'api_url' attribute in related API endpoints.
 
         Ref: https://github.com/inventree/InvenTree/pull/10182
         """
@@ -128,6 +129,19 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertIn('Only a superuser can adjust this field', str(response.data))
 
+        # Try again, but with superuser access
+        self.user.is_superuser = True
+        self.user.save()
+
+        response = self.post(
+            url,
+            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['username'], 'Superuser')
+        self.assertEqual(response.data['is_superuser'], True)
+
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""
         user = User.objects.first()
@@ -142,7 +156,7 @@ class UserAPITests(InvenTreeAPITestCase):
         self.get(url, expected_code=200)
 
         # Let's try to update the user
-        data = {'is_active': False, 'is_staff': False}
+        data = {'is_active': True, 'is_staff': False}
 
         self.patch(url, data=data, expected_code=403)
 
@@ -156,6 +170,26 @@ class UserAPITests(InvenTreeAPITestCase):
         self.user.save()
 
         self.patch(url, data=data, expected_code=200)
+
+        # Try to change the "is_superuser" field - only a superuser can do this
+        data['is_superuser'] = True
+        response = self.patch(url, data=data, expected_code=403)
+
+        self.assertIn(
+            'You do not have permission to perform this action', str(response.data)
+        )
+
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save()
+
+        for val in [True, False]:
+            data['is_staff'] = True
+            data['is_superuser'] = val
+
+            response = self.patch(url, data=data, expected_code=200)
+            self.assertEqual(response.data['is_superuser'], val)
+            self.assertEqual(response.data['is_staff'], True)
 
         # Try again, but logged out - expect no access to the endpoint
         self.logout()
@@ -184,7 +218,10 @@ class UserAPITests(InvenTreeAPITestCase):
             expected_code=200,
         )
         self.assertIn('name', response.data)
+        self.assertIn('roles', response.data)
         self.assertIn('permissions', response.data)
+
+        self.assertGreater(len(response.data['roles']), 0)
 
     def test_login_redirect(self):
         """Test login redirect endpoint."""
@@ -228,6 +265,71 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
+    def test_me_endpoint(self):
+        """Test against the users /me/ endpoint."""
+        url = reverse('api-user-me')
+
+        # Test endpoint options
+        response = self.options(url, expected_code=200)
+
+        # Check that particular fields are present, and have the correct attributes
+        fields = response.data['actions']['PUT']
+
+        for name in [
+            'pk',
+            'username',
+            'email',
+            'groups',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]:
+            self.assertIn(name, fields)
+
+        for name in ['is_active', 'is_staff', 'is_superuser']:
+            self.assertTrue(fields[name]['read_only'])
+
+        # Perform a GET request against the endpoint
+        response = self.get(url, expected_code=200)
+
+        for field in [
+            'pk',
+            'username',
+            'email',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]:
+            self.assertIn(field, response.data)
+
+        # Change their own username
+        for name in ['Henry', 'Sally']:
+            response = self.patch(url, data={'username': name}, expected_code=200)
+            self.assertEqual(response.data['username'], name)
+
+        # Defined starting point for the user
+        for v in [True, False]:
+            self.user.is_staff = v
+            self.user.is_superuser = v
+            self.user.save()
+
+            for key in ['is_staff', 'is_superuser']:
+                for val in [True, False]:
+                    response = self.patch(url, data={key: val}, expected_code=200)
+
+                    # Check that the field was *NOT CHANGED*
+                    self.assertEqual(response.data[key], v)
+
+        # Ensure we cannot change the "is_active" field either
+        response = self.patch(url, data={'is_active': False}, expected_code=200)
+        self.assertEqual(response.data['is_active'], True)
+
+        self.user.is_active = False
+        self.user.save()
+
+        # User cannot fetch their own details if they are not active
+        response = self.get(url, expected_code=401)
+
 
 class SuperuserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints that require superuser rights."""
@@ -244,7 +346,7 @@ class SuperuserAPITests(InvenTreeAPITestCase):
         resp = self.put(url, {'password': 1}, expected_code=400)
         self.assertContains(resp, 'This password is too short', status_code=400)
 
-        # now with overwerite
+        # now with overwrite
         resp = self.put(
             url, {'password': 1, 'override_warning': True}, expected_code=200
         )
@@ -257,6 +359,8 @@ class SuperuserAPITests(InvenTreeAPITestCase):
 
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
+
+    fixtures = ['users']
 
     def test_token_generation(self):
         """Test user token generation."""
@@ -396,8 +500,30 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
 
+    def test_token_security(self):
+        """Test that token generation is only available to users with the correct permissions."""
+        url = reverse('api-token-list')
 
-class GroupDetialTests(InvenTreeAPITestCase):
+        # Try to generate a token for a different user (should fail)
+        response = self.post(url, data={'name': 'test', 'user': 1}, expected_code=400)
+        self.assertIn(
+            'Only a superuser can create a token for another user', str(response.data)
+        )
+
+        # there should be no tokens created
+        self.assertEqual(ApiToken.objects.count(), 0)
+
+        # now with superuser permissions
+        self.user.is_superuser = True
+        self.user.save()
+
+        response = self.post(url, data={'name': 'test', 'user': 1}, expected_code=201)
+        self.assertIn('token', response.data)
+
+        self.assertEqual(ApiToken.objects.count(), 1)
+
+
+class GroupDetailTests(InvenTreeAPITestCase):
     """Tests for the GroupDetail API endpoint."""
 
     fixtures = ['users']

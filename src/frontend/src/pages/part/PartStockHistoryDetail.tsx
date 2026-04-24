@@ -2,6 +2,7 @@ import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { AddItemButton } from '@lib/index';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
@@ -25,7 +26,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DateColumn, DecimalColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
@@ -242,7 +242,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
             rightYAxisLabel={t`Stock Value`}
             tooltipProps={{
               content: ({ label, payload }) => (
-                <ChartTooltip label={label} payload={payload} />
+                <ChartTooltip label={label} payload={payload as any} />
               )
             }}
             yAxisProps={{

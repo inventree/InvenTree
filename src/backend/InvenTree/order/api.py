@@ -18,10 +18,12 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
 import common.models
+import common.serializers
 import common.settings
 import company.models
 import stock.models as stock_models
@@ -35,12 +37,8 @@ from InvenTree.api import (
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import (
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-    InvenTreeDateFilter,
-)
-from InvenTree.helpers import str2bool
+from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
+from InvenTree.helpers import current_date, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -84,7 +82,7 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['quantity', 'notes', 'reference']
+    ordering_fields = ['quantity', 'notes', 'reference', 'line']
 
     search_fields = ['quantity', 'notes', 'reference', 'description']
 
@@ -226,6 +224,14 @@ class OrderFilter(FilterSet):
 
     target_date_after = InvenTreeDateFilter(
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
+    )
+
+    updated_before = InvenTreeDateFilter(
+        label=_('Updated Before'), field_name='updated_at', lookup_expr='lt'
+    )
+
+    updated_after = InvenTreeDateFilter(
+        label=_('Updated After'), field_name='updated_at', lookup_expr='gt'
     )
 
     min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
@@ -391,7 +397,7 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
 
     ordering_field_aliases = {
@@ -420,6 +426,7 @@ class PurchaseOrderList(
         'responsible',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     ordering = '-reference'
@@ -700,7 +707,7 @@ class PurchaseOrderLineItemList(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
@@ -710,6 +717,7 @@ class PurchaseOrderLineItemList(
         'order': 'order__reference',
         'status': 'order__status',
         'complete_date': 'order__complete_date',
+        'line': ['line', 'part__SKU'],
     }
 
     ordering_fields = [
@@ -726,6 +734,7 @@ class PurchaseOrderLineItemList(
         'order',
         'status',
         'complete_date',
+        'line',
     ]
 
     search_fields = [
@@ -859,7 +868,7 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -882,6 +891,7 @@ class SalesOrderList(
         'shipment_date',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1043,7 +1053,7 @@ class SalesOrderLineItemList(
 
     filterset_class = SalesOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = SalesOrderLineItemOutputOptions
 
@@ -1059,6 +1069,7 @@ class SalesOrderLineItemList(
         'reference',
         'sale_price',
         'target_date',
+        'line',
     ]
 
     ordering_field_aliases = {
@@ -1066,6 +1077,7 @@ class SalesOrderLineItemList(
         'part': 'part__name',
         'IPN': 'part__IPN',
         'order': 'order__reference',
+        'line': ['line', 'part__name'],
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1289,7 +1301,7 @@ class SalesOrderAllocationList(
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
 
     ordering_fields = [
@@ -1399,7 +1411,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
     search_fields = [
@@ -1420,19 +1432,45 @@ class SalesOrderShipmentComplete(CreateAPI):
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
+    def get_shipment(self):
+        """Return the shipment associated with this endpoint."""
+        try:
+            shipment = models.SalesOrderShipment.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except (ValueError, models.SalesOrderShipment.DoesNotExist):
+            raise NotFound(detail=_('Shipment not found'))
+
+        return shipment
+
     def get_serializer_context(self):
         """Pass the request object to the serializer."""
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
-
-        try:
-            ctx['shipment'] = models.SalesOrderShipment.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
-            pass
+        ctx['shipment'] = self.get_shipment()
 
         return ctx
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, request, *args, **kwargs):
+        """Override the post method to handle shipment completion."""
+        shipment = self.get_shipment()
+
+        serializer = self.get_serializer(shipment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        task_id = shipment.complete_shipment(
+            request.user,
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
+            invoice_number=data.get('invoice_number', shipment.invoice_number),
+            link=data.get('link', shipment.link),
+            shipment_date=data.get('shipment_date', None) or current_date(),
+            delivery_date=data.get('delivery_date', shipment.delivery_date),
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class ReturnOrderFilter(OrderFilter):
@@ -1528,7 +1566,7 @@ class ReturnOrderList(
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderOutputOptions
 
@@ -1549,6 +1587,7 @@ class ReturnOrderList(
         'target_date',
         'complete_date',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1674,7 +1713,7 @@ class ReturnOrderLineItemList(
 
     filterset_class = ReturnOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderLineItemOutputOptions
 
@@ -1685,9 +1724,11 @@ class ReturnOrderLineItemList(
         'reference',
         'target_date',
         'received_date',
+        'line',
     ]
 
     ordering_field_aliases = {
+        'line': ['line', 'item__part__name'],
         'part': 'item__part__name',
         'IPN': 'item__part__IPN',
         'stock': ['item__quantity', 'item__serial_int', 'item__serial'],

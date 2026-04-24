@@ -1,7 +1,9 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { CopyButton } from '@lib/components/CopyButton';
 import type { RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -10,11 +12,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
-import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { BooleanColumn, UserColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -26,7 +26,8 @@ export function ApiTokenTable({
   const [opened, { open, close }] = useDisclosure(false);
 
   const generateToken = useCreateApiFormModal({
-    url: ApiEndpoints.user_tokens,
+    url: ApiEndpoints.user_token,
+    method: 'GET',
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
@@ -48,7 +49,7 @@ export function ApiTokenTable({
     return [];
   }, [only_myself]);
 
-  const table = useTable('api-tokens', 'id');
+  const table = useTable('api-tokens', { idAccessor: 'id' });
 
   const tableColumns = useMemo(() => {
     const cols = [
@@ -178,6 +179,7 @@ export function ApiTokenTable({
             onClose={close}
             title={<StylishText size='xl'>{t`Token`}</StylishText>}
             centered
+            data-testid='generated-api-token'
           >
             <Text c='dimmed'>
               <Trans>

@@ -26,10 +26,10 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -41,12 +41,13 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CategoryColumn,
   DescriptionColumn,
+  IPNColumn,
   NoteColumn,
   ReferenceColumn,
   RenderPartColumn
@@ -87,13 +88,9 @@ export function BomTable({
   const table = useTable('bom');
   const navigate = useNavigate();
 
+  const openImporter = useImporterState((state) => state.openImporter);
+
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -104,13 +101,6 @@ export function BomTable({
         minWidth: 250,
         render: (record: any) => {
           const part = record.sub_part_detail;
-          const extra = [];
-
-          if (record.part != partId) {
-            extra.push(
-              <Text key='different-parent'>{t`This BOM item is defined for a different parent`}</Text>
-            );
-          }
 
           return (
             part && (
@@ -136,12 +126,9 @@ export function BomTable({
           );
         }
       },
-      {
-        accessor: 'sub_part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN'
-      },
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
+      }),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -511,15 +498,16 @@ export function BomTable({
     title: t`Import BOM Data`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     initialData: {
       part: partId
     },
@@ -531,7 +519,7 @@ export function BomTable({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
     title: t`Edit BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     successMessage: t`BOM item updated`,
     table: table
   });
@@ -748,15 +736,6 @@ export function BomTable({
           }}
         />
       </Stack>
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
-        }}
-      />
     </>
   );
 }
