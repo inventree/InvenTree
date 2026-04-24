@@ -1,11 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
   IconEdit,
-  IconExclamationCircle,
   IconFileUpload,
   IconLock,
   IconPlus,
@@ -29,7 +28,6 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -54,9 +52,7 @@ import {
 } from '../ColumnRenderers';
 import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
-import BomSubassemblyTable from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -102,26 +98,33 @@ export function BomTable({
         render: (record: any) => {
           const part = record.sub_part_detail;
 
+          const extra = [];
+
+          if (partId && record.part != partId) {
+            extra.push(
+              <Text
+                key='different-parent'
+                size='sm'
+              >{t`This BOM item is defined for a different parent`}</Text>
+            );
+          }
+
+          if (!record.validated) {
+            extra.push(
+              <Text key='not-validated' c='red' size='sm'>
+                {t`This BOM item has not been validated`}
+              </Text>
+            );
+          }
+
           return (
             part && (
-              <Group justify='space-between'>
-                <Group gap='xs' wrap='nowrap'>
-                  {false && !isEditing && part?.assembly && (
-                    <RowExpansionIcon
-                      enabled={part?.assembly}
-                      expanded={table.isRowExpanded(record.pk)}
-                    />
-                  )}
-                  <RenderPartColumn part={part} />
-                </Group>
-                {!record.validated && (
-                  <Tooltip label={t`This BOM item has not been validated`}>
-                    <ActionIcon color='red' variant='transparent' size='sm'>
-                      <IconExclamationCircle />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </Group>
+              <TableHoverCard
+                value={<RenderPartColumn part={part} />}
+                iconColor={record.validated ? undefined : 'red'}
+                extra={extra}
+                title={t`Part Information`}
+              />
             )
           );
         }
@@ -665,33 +668,6 @@ export function BomTable({
       />
     ];
   }, [isEditing, partLocked, user]);
-
-  // If not in "editing" mode, the BOM can be expanded to show subassemblies
-  // TODO: Row expansion needs to be implemented, there are currently issues with the underlying table implementation
-  // Ref: https://github.com/inventree/InvenTree/pull/10210
-  const rowExpansionProps: DataTableRowExpansionProps<any> | undefined =
-    useMemo(() => {
-      if (isEditing) {
-        return undefined;
-      }
-
-      const subassemblyColumns: any[] = tableColumns.filter(
-        (col) => !col.hidden && !table.hiddenColumns.includes(col.accessor)
-      );
-
-      return {
-        allowMultiple: true,
-        expandable: ({ record }: { record: any }) =>
-          table.isRowExpanded(record.pk) || record.sub_part_detail?.assembly,
-        content: ({ record }: { record: any }) => (
-          <BomSubassemblyTable
-            columns={subassemblyColumns}
-            partId={record.sub_part}
-            depth={0}
-          />
-        )
-      };
-    }, [isEditing, tableColumns, table.hiddenColumns, table.isRowExpanded]);
 
   return (
     <>
