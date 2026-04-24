@@ -106,7 +106,7 @@ export function BomTable({
             part && (
               <Group justify='space-between'>
                 <Group gap='xs' wrap='nowrap'>
-                  {!isEditing && part?.assembly && (
+                  {false && !isEditing && part?.assembly && (
                     <RowExpansionIcon
                       enabled={part?.assembly}
                       expanded={table.isRowExpanded(record.pk)}
@@ -667,6 +667,8 @@ export function BomTable({
   }, [isEditing, partLocked, user]);
 
   // If not in "editing" mode, the BOM can be expanded to show subassemblies
+  // TODO: Row expansion needs to be implemented, there are currently issues with the underlying table implementation
+  // Ref: https://github.com/inventree/InvenTree/pull/10210
   const rowExpansionProps: DataTableRowExpansionProps<any> | undefined =
     useMemo(() => {
       if (isEditing) {
@@ -731,8 +733,8 @@ export function BomTable({
             enableSelection: isEditing && !partLocked,
             enableBulkDelete:
               isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true,
-            rowExpansion: rowExpansionProps
+            enableDownload: true
+            // rowExpansion: rowExpansionProps
           }}
         />
       </Stack>
