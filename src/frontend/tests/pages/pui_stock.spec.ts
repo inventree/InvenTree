@@ -15,9 +15,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
 
   await page.waitForURL('**/web/stock/location/**');
 
-  await loadTab(page, 'Location Details');
-  await page.waitForURL('**/web/stock/location/index/details');
-
   await loadTab(page, 'Stock Items');
   await page.getByText('1551ABK').first().click();
 
@@ -62,7 +59,6 @@ test('Stock - Location Tree', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
-  await loadTab(page, 'Location Details');
 
   await page.getByLabel('nav-breadcrumb-action').click();
   await page.getByLabel('nav-tree-toggle-1}').click();
