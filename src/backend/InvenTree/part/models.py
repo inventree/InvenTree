@@ -2523,6 +2523,7 @@ class Part(
             category__in=categories
         ).order_by('-category__level')
 
+        template_ids = set()
         parameters = []
         content_type = ContentType.objects.get_for_model(Part)
 
@@ -2533,6 +2534,12 @@ class Part(
             ).exists():
                 continue
 
+            # Ensure we do not create duplicate parameters if multiple categories have the same template
+            if category_template.template.pk in template_ids:
+                continue
+
+            template_ids.add(category_template.template.pk)
+
             parameters.append(
                 Parameter(
                     template=category_template.template,
@@ -2542,8 +2549,7 @@ class Part(
                 )
             )
 
-        if len(parameters) > 0:
-            Parameter.objects.bulk_create(parameters)
+        Parameter.objects.bulk_create(parameters)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
