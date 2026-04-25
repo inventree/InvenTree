@@ -18,12 +18,3 @@ test('Customization - Splash', async ({ page }) => {
     page.locator('[style*="playwright_custom_splash.png"]')
   ).toBeVisible();
 });
-
-// TODO: Implement this test
-// test('Customization - Logo', async ({ page }) => {
-//   await doLogin(page, {
-//     user: noaccessuser
-//   });
-
-//   await page.waitForLoadState('networkidle');
-// });
