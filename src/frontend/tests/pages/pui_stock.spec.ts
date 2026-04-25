@@ -75,13 +75,14 @@ test('Stock - Location Delete', async ({ browser }) => {
     url: 'stock/location/38/sublocations'
   });
 
+  const loc_1 = `loc-1-${Math.floor(Math.random() * 1000)}`;
+  const loc_2 = `loc-2-${Math.floor(Math.random() * 1000)}`;
+
   // Create a sub-location
   await page
     .getByRole('button', { name: 'action-button-add-stock-location' })
     .click();
-  await page
-    .getByRole('textbox', { name: 'text-field-name' })
-    .fill('my-location-1');
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(loc_1);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Create a secondary sub-location
@@ -89,22 +90,20 @@ test('Stock - Location Delete', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-add-stock-location' })
     .click();
-  await page
-    .getByRole('textbox', { name: 'text-field-name' })
-    .fill('my-location-2');
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(loc_2);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Navigate up to parent
-  await page.getByRole('link', { name: 'breadcrumb-2-my-location-1' }).click();
+  await page.getByRole('link', { name: `breadcrumb-2-${loc_1}` }).click();
   await loadTab(page, 'Sublocations');
-  await page
-    .getByRole('cell', { name: 'my-location-2', exact: true })
-    .waitFor();
+  await page.getByRole('cell', { name: loc_2, exact: true }).waitFor();
 
   // Delete this location, and all child locations
   await page
     .locator('div')
-    .filter({ hasText: /^Stock>PCB Assembler>my-location-1Stock Location$/ })
+    .filter({
+      hasText: new RegExp(`^Stock>PCB Assembler>${loc_1}Stock Location$`)
+    })
     .getByLabel('action-menu-location-actions')
     .click();
   await page
