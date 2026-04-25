@@ -5,7 +5,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Group, Skeleton, Stack, Text } from '@mantine/core';
+import { Group, Skeleton, Stack } from '@mantine/core';
 import {
   IconInfoCircle,
   IconListDetails,
@@ -160,11 +160,7 @@ export default function Stock() {
 
     return (
       <ItemDetailsGrid>
-        {id && location?.pk ? (
-          <DetailsTable item={location} fields={left} />
-        ) : (
-          <Text>{t`Top level stock location`}</Text>
-        )}
+        {id && location?.pk && <DetailsTable item={location} fields={left} />}
         {id && location?.pk && <DetailsTable item={location} fields={right} />}
       </ItemDetailsGrid>
     );
@@ -178,7 +174,8 @@ export default function Stock() {
         name: 'details',
         label: t`Location Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: detailsPanel,
+        hidden: !location?.pk
       },
       SegmentedControlPanel({
         name: 'sublocations',
@@ -457,7 +454,7 @@ export default function Stock() {
             title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
             subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
-            actions={locationActions}
+            actions={location?.pk ? locationActions : undefined}
             editAction={editLocation.open}
             editEnabled={
               !!location?.pk &&
