@@ -12,12 +12,16 @@ logger = structlog.get_logger('inventree')
 def get_db_backend():
     """Return the database backend configuration."""
     db_config = {
-        'ENGINE': get_setting('INVENTREE_DB_ENGINE', 'database.engine', None),
-        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', None),
-        'USER': get_setting('INVENTREE_DB_USER', 'database.user', None),
-        'PASSWORD': get_setting('INVENTREE_DB_PASSWORD', 'database.password', None),
-        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', None),
-        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', 5432, typecast=int),
+        'ENGINE': get_setting(
+            'INVENTREE_DB_ENGINE', 'database.engine', '', typecast=str
+        ),
+        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str),
+        'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str),
+        'PASSWORD': get_setting(
+            'INVENTREE_DB_PASSWORD', 'database.password', '', typecast=str
+        ),
+        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str),
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str),
         'OPTIONS': get_setting(
             'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
         )
