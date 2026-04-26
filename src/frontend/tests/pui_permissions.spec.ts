@@ -65,7 +65,6 @@ test('Permissions - Reader', async ({ browser }) => {
     url: '/part/category/index/'
   });
 
-  await loadTab(page, 'Category Details');
   await loadTab(page, 'Parts');
 
   // Navigate to a specific part
