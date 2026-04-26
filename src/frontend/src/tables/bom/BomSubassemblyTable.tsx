@@ -1,7 +1,9 @@
 import { ApiEndpoints, ModelType, apiUrl, useTable } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
 import { Group, Paper } from '@mantine/core';
+import { IconCornerLeftUp } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import Expand from '../../components/items/Expand';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import {
   IPNColumn,
@@ -84,28 +86,33 @@ export default function BomSubassemblyTable({
 
   return (
     <Paper p={'xs'}>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.bom_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          modelType: ModelType.part,
-          modelField: 'sub_part',
-          onCellClick: () => {},
-          rowExpansion: rowExpansion,
-          enableSearch: false,
-          enableFilters: false,
-          enableColumnSwitching: false,
-          enableRefresh: false,
-          enableReports: false,
-          params: {
-            part: partId,
-            substitutes: false,
-            part_detail: true,
-            sub_part_detail: true
-          }
-        }}
-      />
+      <Group gap='xs' align='top' wrap={'nowrap'}>
+        <IconCornerLeftUp />
+        <Expand>
+          <InvenTreeTable
+            url={apiUrl(ApiEndpoints.bom_list)}
+            tableState={table}
+            columns={tableColumns}
+            props={{
+              modelType: ModelType.part,
+              modelField: 'sub_part',
+              onCellClick: () => {},
+              rowExpansion: rowExpansion,
+              enableSearch: false,
+              enableFilters: false,
+              enableColumnSwitching: false,
+              enableRefresh: false,
+              enableReports: false,
+              params: {
+                part: partId,
+                substitutes: false,
+                part_detail: true,
+                sub_part_detail: true
+              }
+            }}
+          />
+        </Expand>
+      </Group>
     </Paper>
   );
 }
