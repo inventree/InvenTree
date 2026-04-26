@@ -179,10 +179,15 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
-  const cell = await page.getByRole('cell', {
-    name: 'Small plastic enclosure, black',
-    exact: true
-  });
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
+  const cell = await page
+    .getByRole('cell', { name: 'Thumbnail 1551ABK' })
+    .first();
 
   await clickOnRowMenu(cell);
 
@@ -202,6 +207,12 @@ test('Parts - BOM', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
+
+  // Finish editing the BOM
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .click();
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).waitFor();
 });
 
 /**
@@ -211,8 +222,15 @@ test('Parts - BOM', async ({ browser }) => {
 test('Parts - BOM Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/107/bom' });
 
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
   // Edit line item, to ensure BOM is not valid
-  const cell = await page.getByRole('cell', { name: 'Red paint Red Paint' });
+  const cell = await page.getByRole('cell', { name: 'Thumbnail Red Paint' });
+
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
@@ -288,6 +306,13 @@ test('Parts - Locking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/bom' });
 
   await loadTab(page, 'Bill of Materials');
+
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
   await page
     .getByRole('button', { name: 'action-menu-add-bom-items' })
     .waitFor();
