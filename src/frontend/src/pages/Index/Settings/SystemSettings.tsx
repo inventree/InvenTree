@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { Divider, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
-  IconCategory,
-  IconClipboardList,
+  IconBox,
+  IconBuildingFactory2,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
@@ -13,10 +13,7 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconTag,
-  IconTools,
-  IconTruckDelivery,
-  IconTruckReturn
+  IconTruckDelivery
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
@@ -81,25 +78,32 @@ export default function SystemSettings() {
         label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'LOGIN_ENABLE_PWD_FORGOT',
-              'LOGIN_MAIL_REQUIRED',
-              'LOGIN_ENFORCE_MFA',
-              'LOGIN_ENABLE_REG',
-              'LOGIN_SIGNUP_MAIL_TWICE',
-              'LOGIN_SIGNUP_PWD_TWICE',
-              'SIGNUP_GROUP',
-              'LOGIN_SIGNUP_MAIL_RESTRICTION',
-              'LOGIN_ENABLE_SSO',
-              'LOGIN_ENABLE_SSO_REG',
-              'LOGIN_SIGNUP_SSO_AUTO',
-              'LOGIN_ENABLE_SSO_GROUP_SYNC',
-              'SSO_GROUP_MAP',
-              'SSO_GROUP_KEY',
-              'SSO_REMOVE_GROUPS'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              keys={[
+                'LOGIN_ENABLE_PWD_FORGOT',
+                'LOGIN_MAIL_REQUIRED',
+                'LOGIN_ENFORCE_MFA',
+                'LOGIN_ENABLE_REG',
+                'LOGIN_SIGNUP_MAIL_TWICE',
+                'LOGIN_SIGNUP_PWD_TWICE'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Single Sign-On (SSO) Settings`}
+              keys={[
+                'LOGIN_ENABLE_SSO',
+                'LOGIN_ENABLE_SSO_REG',
+                'LOGIN_SIGNUP_SSO_AUTO',
+                'LOGIN_ENABLE_SSO_GROUP_SYNC',
+                'SSO_GROUP_MAP',
+                'SSO_GROUP_KEY',
+                'SSO_REMOVE_GROUPS',
+                'SIGNUP_GROUP',
+                'LOGIN_SIGNUP_MAIL_RESTRICTION'
+              ]}
+            />
+          </Stack>
         )
       },
       {
@@ -169,12 +173,6 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'labels',
-        label: t`Labels`,
-        icon: <IconTag />,
-        content: <GlobalSettingList keys={['LABEL_ENABLE', 'LABEL_DPI']} />
-      },
-      {
         name: 'reporting',
         label: t`Reporting`,
         icon: <IconFileAnalytics />,
@@ -184,7 +182,9 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS'
+              'REPORT_LOG_ERRORS',
+              'LABEL_ENABLE',
+              'LABEL_DPI'
             ]}
           />
         )
@@ -198,35 +198,42 @@ export default function SystemSettings() {
       {
         name: 'parts',
         label: t`Parts`,
-        icon: <IconCategory />,
+        icon: <IconBox />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'PART_NAME_FORMAT',
-              'PART_IPN_REGEX',
-              'PART_ALLOW_DUPLICATE_IPN',
-              'PART_ALLOW_EDIT_IPN',
-              'PART_ALLOW_DELETE_FROM_ASSEMBLY',
-              'PART_ENABLE_REVISION',
-              'PART_REVISION_ASSEMBLY_ONLY',
-              'PART_SHOW_RELATED',
-              'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER',
-              'PART_TEMPLATE',
-              'PART_ASSEMBLY',
-              'PART_COMPONENT',
-              'PART_TRACKABLE',
-              'PART_PURCHASEABLE',
-              'PART_SALABLE',
-              'PART_VIRTUAL',
-              'PART_COPY_BOM',
-              'PART_BOM_ALLOW_ZERO_QUANTITY',
-              'PART_COPY_PARAMETERS',
-              'PART_COPY_TESTS',
-              'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              keys={[
+                'PART_NAME_FORMAT',
+                'PART_IPN_REGEX',
+                'PART_ALLOW_DUPLICATE_IPN',
+                'PART_ALLOW_EDIT_IPN',
+                'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+                'PART_ENABLE_REVISION',
+                'PART_REVISION_ASSEMBLY_ONLY',
+                'PART_SHOW_RELATED',
+                'PART_BOM_ALLOW_ZERO_QUANTITY',
+                'PART_CATEGORY_DEFAULT_ICON'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Part Creation`}
+              keys={[
+                'PART_CREATE_INITIAL',
+                'PART_CREATE_SUPPLIER',
+                'PART_TEMPLATE',
+                'PART_ASSEMBLY',
+                'PART_COMPONENT',
+                'PART_TRACKABLE',
+                'PART_PURCHASEABLE',
+                'PART_SALABLE',
+                'PART_VIRTUAL',
+                'PART_COPY_BOM',
+                'PART_COPY_PARAMETERS',
+                'PART_COPY_TESTS',
+                'PART_CATEGORY_PARAMETERS'
+              ]}
+            />
+          </Stack>
         )
       },
       {
@@ -234,31 +241,29 @@ export default function SystemSettings() {
         label: t`Stock`,
         icon: <IconPackages />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'SERIAL_NUMBER_GLOBALLY_UNIQUE',
-              'STOCK_DELETE_DEPLETED_DEFAULT',
-              'STOCK_BATCH_CODE_TEMPLATE',
-              'STOCK_ENABLE_EXPIRY',
-              'STOCK_STALE_DAYS',
-              'STOCK_ALLOW_EXPIRED_SALE',
-              'STOCK_ALLOW_EXPIRED_BUILD',
-              'STOCK_OWNERSHIP_CONTROL',
-              'STOCK_LOCATION_DEFAULT_ICON',
-              'STOCK_SHOW_INSTALLED_ITEMS',
-              'STOCK_ENFORCE_BOM_INSTALLATION',
-              'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
-              'TEST_STATION_DATA'
-            ]}
-          />
-        )
-      },
-      {
-        name: 'stock-history',
-        label: t`Stock History`,
-        icon: <IconClipboardList />,
-        content: (
           <Stack gap='xs'>
+            <GlobalSettingList
+              keys={[
+                'SERIAL_NUMBER_GLOBALLY_UNIQUE',
+                'STOCK_DELETE_DEPLETED_DEFAULT',
+                'STOCK_BATCH_CODE_TEMPLATE',
+                'STOCK_OWNERSHIP_CONTROL',
+                'STOCK_LOCATION_DEFAULT_ICON',
+                'STOCK_SHOW_INSTALLED_ITEMS',
+                'STOCK_ENFORCE_BOM_INSTALLATION',
+                'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
+                'TEST_STATION_DATA'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Stock Expiry`}
+              keys={[
+                'STOCK_ENABLE_EXPIRY',
+                'STOCK_STALE_DAYS',
+                'STOCK_ALLOW_EXPIRED_SALE',
+                'STOCK_ALLOW_EXPIRED_BUILD'
+              ]}
+            />
             <GlobalSettingList
               heading={t`Part Stocktake`}
               keys={[
@@ -269,7 +274,6 @@ export default function SystemSettings() {
                 'STOCKTAKE_DELETE_DAYS'
               ]}
             />
-            <Divider />
             <GlobalSettingList
               heading={t`Stock Tracking`}
               keys={[
@@ -281,11 +285,12 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'buildorders',
-        label: t`Build Orders`,
-        icon: <IconTools />,
+        name: 'manufacturing',
+        label: t`Manufacturing`,
+        icon: <IconBuildingFactory2 />,
         content: (
           <GlobalSettingList
+            heading={t`Build Orders`}
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
               'BUILDORDER_EXTERNAL_BUILDS',
@@ -300,11 +305,12 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'purchaseorders',
-        label: t`Purchase Orders`,
+        name: 'purchasing',
+        label: t`Purchasing`,
         icon: <IconShoppingCart />,
         content: (
           <GlobalSettingList
+            heading={t`Purchase Orders`}
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
@@ -316,40 +322,37 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'salesorders',
-        label: t`Sales Orders`,
+        name: 'sales',
+        label: t`Sales`,
         icon: <IconTruckDelivery />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'SALESORDER_REFERENCE_PATTERN',
-              'SALESORDER_REQUIRE_RESPONSIBLE',
-              'SALESORDER_DEFAULT_SHIPMENT',
-              'SALESORDER_EDIT_COMPLETED_ORDERS',
-              'SALESORDER_SHIP_COMPLETE',
-              'SALESORDER_SHIPMENT_REQUIRES_CHECK'
-            ]}
-          />
-        )
-      },
-      {
-        name: 'returnorders',
-        label: t`Return Orders`,
-        icon: <IconTruckReturn />,
-        content: (
-          <GlobalSettingList
-            keys={[
-              'RETURNORDER_ENABLED',
-              'RETURNORDER_REFERENCE_PATTERN',
-              'RETURNORDER_REQUIRE_RESPONSIBLE',
-              'RETURNORDER_EDIT_COMPLETED_ORDERS'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              heading={t`Sales Orders`}
+              keys={[
+                'SALESORDER_REFERENCE_PATTERN',
+                'SALESORDER_REQUIRE_RESPONSIBLE',
+                'SALESORDER_DEFAULT_SHIPMENT',
+                'SALESORDER_EDIT_COMPLETED_ORDERS',
+                'SALESORDER_SHIP_COMPLETE',
+                'SALESORDER_SHIPMENT_REQUIRES_CHECK'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Return Orders`}
+              keys={[
+                'RETURNORDER_ENABLED',
+                'RETURNORDER_REFERENCE_PATTERN',
+                'RETURNORDER_REQUIRE_RESPONSIBLE',
+                'RETURNORDER_EDIT_COMPLETED_ORDERS'
+              ]}
+            />
+          </Stack>
         )
       },
       {
         name: 'plugins',
-        label: t`Plugin Settings`,
+        label: t`Plugins`,
         icon: <IconPlugConnected />,
         content: <PluginSettingsGroup global={true} />
       }
