@@ -179,6 +179,11 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
+  // Test sub-assembly row expansion
+  await page.getByText('Widget Board (assembled)').click();
+  await page.getByText('R_10R_0402_1%').waitFor();
+  await page.getByText('MAX232IDR').waitFor();
+
   // Enable BOM editing
   await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
   await page
