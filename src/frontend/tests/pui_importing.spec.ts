@@ -76,6 +76,12 @@ test('Importing - BOM', async ({ browser }) => {
     url: 'part/109/bom'
   });
 
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
   // Open the BOM importer wizard
   await page.getByRole('button', { name: 'action-menu-add-bom-items' }).click();
 
