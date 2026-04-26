@@ -40,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useImporterState } from '../../states/ImporterState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
@@ -90,7 +91,11 @@ export function BomTable({
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  const userSettings = useUserSettingsState();
+
   const tableColumns: TableColumn[] = useMemo(() => {
+    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
+
     return [
       {
         accessor: 'sub_part',
@@ -126,7 +131,7 @@ export function BomTable({
               <TableHoverCard
                 value={
                   <Group gap='xs' justify='left'>
-                    {assembly && !isEditing && (
+                    {assembly && !isEditing && allowExpansion && (
                       <RowExpansionIcon
                         enabled
                         expanded={table.isRowExpanded(record.pk)}
@@ -423,7 +428,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [table.isRowExpanded, isEditing, partId, params]);
+  }, [table.isRowExpanded, isEditing, partId, params, userSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [

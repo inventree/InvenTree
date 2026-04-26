@@ -2,6 +2,7 @@ import { ApiEndpoints, ModelType, apiUrl, useTable } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
 import { Group, Paper } from '@mantine/core';
 import { useMemo } from 'react';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import {
   IPNColumn,
   ReferenceColumn,
@@ -15,7 +16,14 @@ export function subassemblyRowExpansion({
 }: {
   table: TableState;
 }) {
+  const userSettings = useUserSettingsState();
+
   return useMemo(() => {
+    // Display of sub-assemblies is optional
+    if (!userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS')) {
+      return undefined;
+    }
+
     return {
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
@@ -27,7 +35,7 @@ export function subassemblyRowExpansion({
         return <BomSubassemblyTable partId={record.sub_part} />;
       }
     };
-  }, [table.isRowExpanded]);
+  }, [table.isRowExpanded, userSettings]);
 }
 
 /**
@@ -42,14 +50,18 @@ export default function BomSubassemblyTable({
 
   const rowExpansion = subassemblyRowExpansion({ table: table });
 
+  const userSettings = useUserSettingsState();
+
   const tableColumns: TableColumn[] = useMemo(() => {
+    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
+
     return [
       {
         accessor: 'sub_part',
         render: (record: any) => {
           return (
             <Group gap='xs' justify='left' p={0}>
-              {record.sub_part_detail?.assembly && (
+              {record.sub_part_detail?.assembly && allowExpansion && (
                 <RowExpansionIcon
                   enabled
                   expanded={table.isRowExpanded(record.pk)}
@@ -68,7 +80,7 @@ export default function BomSubassemblyTable({
         accessor: 'quantity'
       }
     ];
-  }, [table.isRowExpanded]);
+  }, [table.isRowExpanded, userSettings]);
 
   return (
     <Paper p={'xs'}>
