@@ -48,7 +48,7 @@ export default function BomSubassemblyTable({
         accessor: 'sub_part',
         render: (record: any) => {
           return (
-            <Group gap='xs' justify='left'>
+            <Group gap='xs' justify='left' p={0}>
               {record.sub_part_detail?.assembly && (
                 <RowExpansionIcon
                   enabled
@@ -71,7 +71,7 @@ export default function BomSubassemblyTable({
   }, [table.isRowExpanded]);
 
   return (
-    <Paper p={'sm'}>
+    <Paper p={'xs'}>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.bom_list)}
         tableState={table}
