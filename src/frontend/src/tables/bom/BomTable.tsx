@@ -28,7 +28,6 @@ import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -55,7 +54,7 @@ import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
-import BomSubassemblyTable from './BomSubassemblyTable';
+import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -685,17 +684,7 @@ export function BomTable({
   }, [isEditing, partLocked, user]);
 
   // Row expansion (for displaying subassemblies)
-  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
-    return {
-      allowMultiple: true,
-      expandable: ({ record }: { record: any }) => {
-        return table.isRowExpanded(record.pk) || !!record.part_detail?.assembly;
-      },
-      content: ({ record }: { record: any }) => {
-        return <BomSubassemblyTable partId={record.sub_part} />;
-      }
-    };
-  }, [table.isRowExpanded]);
+  const rowExpansion = subassemblyRowExpansion({ table: table });
 
   return (
     <>
