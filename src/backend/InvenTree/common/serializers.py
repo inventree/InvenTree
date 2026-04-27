@@ -658,13 +658,6 @@ class InvenTreeImageSerializer(
     image = InvenTreeImageSerializerField(required=False)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    # # we accept the model name here
-    # content_type = serializers.ChoiceField(
-    #     choices=[],  # populated in __init__
-    #     write_only=True,
-    #     label=_('Content Type'),
-    # )
-
     model_type = ContentTypeField(
         mixin_class=InvenTreeImageMixin,
         choices=common.validators.image_model_options,

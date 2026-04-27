@@ -48,7 +48,7 @@ def forwards_migrate_part_images(apps, schema_editor):
             stored_name = storage.get_available_name(original_name)
 
             img = InvenTreeImage(
-                content_type_id=part_ct.id,
+                model_type=part_ct,
                 object_id=part.pk,
                 primary=True,
             )
@@ -60,7 +60,7 @@ def forwards_migrate_part_images(apps, schema_editor):
             stored_name = saved_files[file_hash]
 
             img = InvenTreeImage(
-                content_type_id=part_ct.id,
+                model_type=part_ct.id,
                 object_id=part.pk,
                 primary=True,
             )
@@ -76,7 +76,7 @@ def reverse_images(apps, schema_editor):
 
     part_ct, _created = ContentTypes.objects.get_or_create(app_label='part', model='part')
 
-    for img in InvenTreeImage.objects.filter(content_type=part_ct, primary=True):
+    for img in InvenTreeImage.objects.filter(model_type=part_ct, primary=True):
         try:
             part = Part.objects.get(pk=img.object_id)
             part.image = img.image

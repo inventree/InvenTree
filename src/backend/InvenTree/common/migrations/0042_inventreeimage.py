@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
         ('common', '0041_auto_20251203_1244'),
+        ('company', '0079_auto_20260212_1054'),
+        ('part', '0147_remove_part_default_supplier'),
     ]
 
     operations = [
@@ -21,7 +23,7 @@ class Migration(migrations.Migration):
                 ('object_id', models.PositiveIntegerField(help_text='The ID of the object this image is attached to', verbose_name='Object ID')),
                 ('primary', models.BooleanField(default=False)),
                 ('image', common.models.CustomStdImage(blank=True, force_min_size=False, null=True, upload_to='images', variations={'preview': (256, 256), 'thumbnail': (128, 128)}, verbose_name='Image')),
-                ('content_type', models.ForeignKey(help_text='The type of object this image is attached to', limit_choices_to=common.validators.limit_image_content_types, on_delete=django.db.models.deletion.CASCADE, related_name='inventree_images', to='contenttypes.contenttype', verbose_name='Content type')),
+                ('model_type', models.ForeignKey(help_text='The type of object this image is attached to', limit_choices_to=common.validators.limit_image_content_types, on_delete=django.db.models.deletion.CASCADE, related_name='inventree_images', to='contenttypes.contenttype', verbose_name='Model type')),
             ],
             options={
                 'verbose_name': 'InvenTree Image',

@@ -9,7 +9,7 @@ from pathlib import Path
 def forwards_migrate_company_images(apps, schema_editor):
     """
     For each Company that has an image file set:
-    1) Create a new InvenTreeImage with content_type=Company, object_id=company.pk
+    1) Create a new InvenTreeImage with model_type=Company, object_id=company.pk
     2) Copy the file reference into the new InvenTreeImage.image field
     3) Mark it as primary
     """
@@ -30,7 +30,7 @@ def forwards_migrate_company_images(apps, schema_editor):
             continue
         
         new_img = InvenTreeImage(
-            content_type_id=company_ct.id,
+            model_type=company_ct,
             object_id=comp.pk,
             primary=True,
         )
@@ -56,7 +56,7 @@ def reverse_images(apps, schema_editor):
     
     # Get all InvenTreeImages for Company objects
     company_images = InvenTreeImage.objects.filter(
-        content_type=company_ct,
+        model_type=company_ct,
         primary=True
     )
     
@@ -73,7 +73,7 @@ def reverse_images(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0075_company_tax_id'),
+        ('company', '0079_auto_20260212_1054'),
         ('common', '0043_migrate_part_images'),  
         ('contenttypes', '0002_remove_content_type_name'),
     ]
