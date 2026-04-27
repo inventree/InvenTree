@@ -35,8 +35,10 @@ export const layoutHeaderUser = style({
   [vars.lightSelector]: { color: vars.colors.black },
   [vars.darkSelector]: { color: vars.colors.dark[0] },
 
-  [vars.smallerThan('xs')]: {
-    display: 'none'
+  '@media': {
+    [vars.smallerThan('xs')]: {
+      display: 'none'
+    }
   }
 });
 
@@ -69,11 +71,13 @@ export const link = style({
   [vars.lightSelector]: { color: vars.colors.black },
   [vars.darkSelector]: { color: vars.colors.white },
 
-  [vars.smallerThan('sm')]: {
-    height: rem(42),
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%'
+  '@media': {
+    [vars.smallerThan('sm')]: {
+      height: rem(42),
+      display: 'flex',
+      alignItems: 'center',
+      width: '100%'
+    }
   },
 
   ':hover': {
@@ -92,8 +96,10 @@ export const layoutContent = style({
 });
 
 export const tabs = style({
-  [vars.smallerThan('sm')]: {
-    display: 'none'
+  '@media': {
+    [vars.smallerThan('sm')]: {
+      display: 'none'
+    }
   }
 });
 
