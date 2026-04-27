@@ -21,7 +21,8 @@ import {
   IconPackages,
   IconSearch,
   IconShoppingCart,
-  IconSitemap
+  IconSitemap,
+  IconTransform
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
@@ -33,7 +34,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
-import type { StockOperationProps } from '@lib/types/Forms';
+import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -665,6 +666,26 @@ export default function StockDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const convertStockItemFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part: {
+        filters: {
+          active: true,
+          convert_from: stockitem.part
+        }
+      }
+    };
+  }, [stockitem]);
+
+  const convertStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_convert,
+    pk: stockitem.pk,
+    title: t`Convert Stock Item`,
+    modalId: 'convert-stock-item',
+    fields: convertStockItemFields,
+    onFormSuccess: refreshInstance
+  });
+
   const duplicateStockItemFields = useStockFields({
     create: true,
     modalId: 'duplicate-stock-item'
@@ -824,22 +845,16 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
-    // Can this stock item be transferred to a different location?
-    const canTransfer =
-      user.hasChangeRole(UserRoles.stock) &&
-      !stockitem.sales_order &&
-      !stockitem.belongs_to &&
-      !stockitem.customer &&
-      !stockitem.consumed_by;
-
-    const isBuilding = stockitem.is_building;
-
     const serial = stockitem.serial;
     const serialized =
       serial != null &&
       serial != undefined &&
       serial != '' &&
       stockitem.quantity == 1;
+
+    const canConvert =
+      !!stockitem.part_detail?.variant_of ||
+      !!stockitem.part_detail?.is_template;
 
     return [
       <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
@@ -906,6 +921,13 @@ export default function StockDetail() {
             hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => editStockItem.open()
           }),
+          {
+            name: t`Convert`,
+            tooltip: t`Convert this stock item to a different part`,
+            hidden: !user.hasChangeRole(UserRoles.stock) || !canConvert,
+            icon: <IconTransform color='blue' />,
+            onClick: () => convertStockItem.open()
+          },
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.stock),
             onClick: () => deleteStockItem.open()
@@ -1037,8 +1059,9 @@ export default function StockDetail() {
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}
-      {duplicateStockItem.modal}
       {deleteStockItem.modal}
+      {convertStockItem.modal}
+      {duplicateStockItem.modal}
       {serializeStockItem.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       {orderPartsWizard.wizard}
