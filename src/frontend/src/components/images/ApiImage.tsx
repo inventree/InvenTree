@@ -11,6 +11,7 @@ import { useLocalState } from '../../states/LocalState';
 
 interface ApiImageProps extends ImageProps {
   onClick?: (event: any) => void;
+  thumbnail?: string;
 }
 
 /**
