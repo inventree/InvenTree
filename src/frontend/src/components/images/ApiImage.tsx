@@ -50,7 +50,7 @@ export function ApiImage(props: Readonly<ApiImageProps>) {
 
   return (
     <Stack>
-      {thumbnailUrl && (
+      {thumbnailUrl && !isLoaded && (
         <Image
           {...props}
           src={thumbnailUrl}
