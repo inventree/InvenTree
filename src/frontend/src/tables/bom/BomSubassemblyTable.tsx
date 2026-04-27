@@ -106,6 +106,8 @@ export default function BomSubassemblyTable({
               enableColumnSwitching: false,
               enableRefresh: false,
               enableReports: false,
+              height: 'auto',
+              minHeight: 150,
               params: {
                 part: partId,
                 substitutes: false,
