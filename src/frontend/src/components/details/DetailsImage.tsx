@@ -42,6 +42,7 @@ import { StylishText } from '../items/StylishText';
 export type DetailImageProps = {
   appRole?: UserRoles;
   src: string;
+  thumbnail?: string;
   apiPath: string;
   refresh?: () => void;
   imageActions?: DetailImageButtonProps;
@@ -465,7 +466,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   const expandImage = (event: any) => {
     cancelEvent(event);
     modals.open({
-      children: <ApiImage src={img} />,
+      children: <ApiImage src={img} thumbnail={props.thumbnail} />,
       withCloseButton: false
     });
   };
@@ -484,6 +485,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
           <>
             <ApiImage
               src={img}
+              thumbnail={props.thumbnail}
               mah={IMAGE_DIMENSION}
               maw={IMAGE_DIMENSION}
               onClick={expandImage}

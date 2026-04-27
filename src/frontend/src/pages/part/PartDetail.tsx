@@ -714,6 +714,7 @@ export default function PartDetail() {
                 deleteFile: true
               }}
               src={part.image}
+              thumbnail={part.thumbnail}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               refresh={refreshInstance}
               pk={part.pk}
@@ -1225,6 +1226,7 @@ export default function PartDetail() {
             }
             subtitle={part.description}
             imageUrl={part.image}
+            thumbnailUrl={part.thumbnail}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)
