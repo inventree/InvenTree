@@ -386,6 +386,20 @@ class BuildList(
         kwargs['create'] = True
         return super().get_serializer(*args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        """Save user information on order creation."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        build = serializer.save()
+        build.issued_by = request.user
+        build.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
 
 class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a Build object."""
