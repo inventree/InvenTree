@@ -77,9 +77,12 @@ export default function BomSubassemblyTable({
       IPNColumn({
         accessor: 'sub_part_detail.IPN'
       }),
-      ReferenceColumn({}),
+      ReferenceColumn({
+        width: 400
+      }),
       {
-        accessor: 'quantity'
+        accessor: 'quantity',
+        width: 250
       }
     ];
   }, [table.isRowExpanded, userSettings]);
@@ -103,6 +106,8 @@ export default function BomSubassemblyTable({
               enableColumnSwitching: false,
               enableRefresh: false,
               enableReports: false,
+              height: 'auto',
+              minHeight: 150,
               params: {
                 part: partId,
                 substitutes: false,

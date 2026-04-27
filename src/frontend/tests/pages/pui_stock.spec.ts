@@ -393,6 +393,39 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations-return').click();
 });
 
+// Test conversion between part variants
+test('Stock - Convert', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/242/details' });
+
+  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+
+  // Convert to widget.red.02
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-convert' })
+    .click();
+  await page.getByRole('combobox', { name: 'related-field-part' }).fill('red');
+  await page.getByText('widget.red.02 | Red Widget |').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('widget.red.02 | Red Widget |').waitFor();
+
+  // Convert to widget.red.00
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-convert' })
+    .click();
+  await page.getByRole('combobox', { name: 'related-field-part' }).fill('red');
+  await page.getByText('widget.red.00 | Red Widget |').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+});
+
 test('Stock - Return Items', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'sales/customer/32/assigned-stock'

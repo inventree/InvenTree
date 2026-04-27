@@ -54,12 +54,16 @@ class UserAPITests(InvenTreeAPITestCase):
         url = reverse('api-build-list')
         response = self.options(url)
         actions = response.data['actions']['POST']
-        issued_by = actions['issued_by']
 
-        self.assertEqual(issued_by['pk_field'], 'pk')
-        self.assertEqual(issued_by['model'], 'user')
-        self.assertEqual(issued_by['api_url'], reverse('api-user-list'))
-        self.assertEqual(issued_by['default'], self.user.pk)
+        issued_by = actions['issued_by']
+        self.assertTrue(issued_by['read_only'])
+
+        project_code = actions['project_code']
+        self.assertFalse(project_code['read_only'])
+        self.assertEqual(project_code['type'], 'related field')
+        self.assertEqual(project_code['model'], 'projectcode')
+        self.assertEqual(project_code['api_url'], reverse('api-project-code-list'))
+        self.assertEqual(project_code['pk_field'], 'pk')
 
     def test_user_api(self):
         """Tests for User API endpoints."""

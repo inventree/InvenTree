@@ -17,6 +17,7 @@ interface PageDetailInterface {
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   lastCrumb?: Breadcrumb[];
+  thumbnailUrl?: string;
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
   editAction?: () => void;
@@ -35,6 +36,7 @@ export function PageDetail({
   subtitle,
   badges,
   imageUrl,
+  thumbnailUrl,
   breadcrumbs,
   lastCrumb: last_crumb,
   breadcrumbAction,
@@ -108,6 +110,7 @@ export function PageDetail({
                 {imageUrl && (
                   <ApiImage
                     src={imageUrl}
+                    thumbnail={thumbnailUrl}
                     radius='sm'
                     miw={42}
                     mah={42}

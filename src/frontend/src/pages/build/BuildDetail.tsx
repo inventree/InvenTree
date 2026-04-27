@@ -5,6 +5,7 @@ import {
   IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
+  IconExclamationCircle,
   IconInfoCircle,
   IconList,
   IconListCheck,
@@ -88,6 +89,13 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: build?.part,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
+
   const buildLocation = useInstance({
     endpoint: ApiEndpoints.stock_location_list,
     pk: build?.take_from,
@@ -105,6 +113,16 @@ function BuildLinesPanel({
 
   return (
     <Stack gap='xs'>
+      {bomInformation?.isLoaded &&
+        bomInformation?.instance?.bom_validated == false && (
+          <Alert
+            color='orange'
+            icon={<IconExclamationCircle />}
+            title={t`BOM Not Validated`}
+          >
+            <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+          </Alert>
+        )}
       {buildLocation.instance.pk && (
         <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
           <RenderStockLocation instance={buildLocation.instance} />
