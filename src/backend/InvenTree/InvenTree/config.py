@@ -9,7 +9,7 @@ import shutil
 import string
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -254,7 +254,7 @@ def do_typecast(value, type, var_name=None):
     return value
 
 
-def get_config_value(config_key: str) -> Optional[any]:
+def get_config_value(config_key: str) -> Optional[Any]:
     """Helper function to retrieve a configuration value from the config file."""
     cfg_data = load_config_data()
 
