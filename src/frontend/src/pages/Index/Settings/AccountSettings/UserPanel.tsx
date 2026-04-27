@@ -13,7 +13,7 @@ export function AccountContent() {
         <Container w='100%'>
           <AccountDetailPanel />
         </Container>
-        <Grid gutter='md'>
+        <Grid gap='md'>
           <Grid.Col>
             <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
