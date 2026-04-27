@@ -607,14 +607,14 @@ export function BomTable({
           hidden:
             partLocked ||
             record.validated ||
-            !user.hasChangeRole(UserRoles.part),
+            !user.hasChangeRole(UserRoles.bom),
           icon: <IconCircleCheck />,
           onClick: () => {
             validateBomItem(record);
           }
         },
         RowEditAction({
-          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -623,7 +623,7 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasAddRole(UserRoles.part),
+          hidden: partLocked || !user.hasAddRole(UserRoles.bom),
           icon: <IconSwitch3 />,
           onClick: () => {
             setSelectedBomItem(record);
@@ -631,7 +631,7 @@ export function BomTable({
           }
         },
         RowDeleteAction({
-          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
+          hidden: partLocked || !user.hasDeleteRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             deleteBomItem.open();
@@ -649,7 +649,7 @@ export function BomTable({
         tooltip={t`Add BOM Items`}
         position='bottom-start'
         icon={<IconPlus />}
-        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.bom)}
         actions={[
           {
             name: t`Add BOM Item`,
@@ -667,7 +667,7 @@ export function BomTable({
       />,
       <ActionButton
         key='edit-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.part) || isEditing}
+        hidden={partLocked || !user.hasChangeRole(UserRoles.bom) || isEditing}
         tooltip={t`Edit BOM`}
         icon={<IconEdit />}
         onClick={() => {
@@ -731,7 +731,7 @@ export function BomTable({
             rowActions: isEditing ? rowActions : undefined,
             enableSelection: isEditing && !partLocked,
             enableBulkDelete:
-              isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
+              isEditing && !partLocked && user.hasDeleteRole(UserRoles.bom),
             enableDownload: true,
             rowExpansion: isEditing ? undefined : rowExpansion
           }}
