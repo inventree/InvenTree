@@ -26,6 +26,7 @@ export type {
   RowViewProps,
   TableColumn,
   TableColumnProps,
+  TableState,
   InvenTreeTableProps,
   InvenTreeTableRenderProps
 } from './types/Tables';

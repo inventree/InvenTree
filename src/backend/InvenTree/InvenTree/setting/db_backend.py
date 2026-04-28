@@ -4,27 +4,38 @@ from pathlib import Path
 
 import structlog
 
-from InvenTree.config import get_boolean_setting, get_setting
+from InvenTree.config import get_boolean_setting, get_config_value, get_setting
 
 logger = structlog.get_logger('inventree')
 
 
 def get_db_backend():
     """Return the database backend configuration."""
+    # For the core database configuration values, we test for UPPERCASE configuration values as a backup,
+    # due to legacy reasons (original config files were uppercase,
+    # but we moved to lowercase for consistency with other settings.
+
     db_config = {
         'ENGINE': get_setting(
             'INVENTREE_DB_ENGINE', 'database.engine', '', typecast=str
-        ),
-        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str),
-        'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str),
+        )
+        or get_config_value('database.ENGINE'),
+        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str)
+        or get_config_value('database.NAME'),
+        'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str)
+        or get_config_value('database.USER'),
         'PASSWORD': get_setting(
             'INVENTREE_DB_PASSWORD', 'database.password', '', typecast=str
-        ),
-        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str),
-        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str),
+        )
+        or get_config_value('database.PASSWORD'),
+        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str)
+        or get_config_value('database.HOST'),
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str)
+        or get_config_value('database.PORT'),
         'OPTIONS': get_setting(
             'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
         )
+        or get_config_value('database.OPTIONS')
         or {},
     }
 
