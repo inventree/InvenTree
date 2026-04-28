@@ -16,6 +16,7 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -34,7 +35,6 @@ import {
   TransferList,
   type TransferListItem
 } from '../../components/items/TransferList';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useApiFormModal,
