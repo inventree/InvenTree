@@ -6,8 +6,8 @@ import type { To } from 'react-router-dom';
 
 import type { UiSizeType } from '@lib/types/Core';
 import { useShallow } from 'zustand/react/shallow';
-import { StylishText } from '../../../src/components/items/StylishText';
 import { useLocalLibState } from '../../states/LocalLibState';
+import { StylishText } from '../StylishText';
 import * as classes from './DetailDrawer.css';
 
 /**

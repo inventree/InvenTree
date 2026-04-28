@@ -23,6 +23,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { StylishText } from '@lib/components/StylishText';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import {
   DetailDrawer,
@@ -42,7 +43,6 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
 import {
   StatusRenderer,

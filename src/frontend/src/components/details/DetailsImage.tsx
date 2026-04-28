@@ -22,6 +22,7 @@ import { modals } from '@mantine/modals';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
 import type { UserRoles } from '@lib/enums/Roles';
 import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
@@ -34,7 +35,6 @@ import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
 import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image
