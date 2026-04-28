@@ -1010,7 +1010,7 @@ class PartAPITest(PartAPITestBase):
         filters = {'active': True, 'assembly': True, 'bom_valid': True}
 
         # Initially, there are no parts with a valid BOM
-        response = self.get(url, filters)
+        response = self.get(url, filters, expected_code=200)
 
         self.assertEqual(len(response.data), 0)
 
@@ -1038,6 +1038,14 @@ class PartAPITest(PartAPITestBase):
 
         # Test the BOM validation API endpoint
         bom_url = reverse('api-part-bom-validate', kwargs={'pk': assembly.pk})
+
+        # Initially, we do not have the required role permissions
+        self.get(bom_url, expected_code=403)
+
+        # Add required role
+        self.assignRole('bom.add')
+
+        # Now we should be able to validate the BOM via the API
         data = self.get(bom_url, expected_code=200).data
 
         self.assertEqual(data['bom_validated'], True)
@@ -2912,6 +2920,12 @@ class BomItemTest(InvenTreeAPITestCase):
         # Initially we may have substitute parts
         # Count first, operate directly on Model
         countbefore = BomItemSubstitute.objects.count()
+
+        # Initially, the user does not have the required permissions
+        self.get(url, expected_code=403)
+
+        # Assign the permission to view the substitute list
+        self.assignRole('bom.add')
 
         # Now, make sure API returns the same count
         response = self.get(url, expected_code=200)

@@ -164,6 +164,8 @@ function BomValidationInformation({
   bomInformation: UseInstanceResult;
   partId: number;
 }) {
+  const user = useUserState();
+
   const [taskId, setTaskId] = useState<string>('');
 
   useBackgroundTask({
@@ -232,14 +234,15 @@ function BomValidationInformation({
     <>
       {validateBom.modal}
       <Group gap='xs' justify='flex-end'>
-        {!bomInformation.instance?.bom_validated && (
-          <ActionButton
-            icon={<IconCircleCheck />}
-            color='green'
-            tooltip={t`Validate BOM`}
-            onClick={validateBom.open}
-          />
-        )}
+        {!bomInformation.instance?.bom_validated &&
+          user.hasChangeRole(UserRoles.bom) && (
+            <ActionButton
+              icon={<IconCircleCheck />}
+              color='green'
+              tooltip={t`Validate BOM`}
+              onClick={validateBom.open}
+            />
+          )}
         <HoverCard position='bottom-end'>
           <HoverCard.Target>
             <ActionIcon
@@ -811,7 +814,7 @@ export default function PartDetail() {
           />
         ),
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),
         content: part?.pk ? (
           <Stack gap='xs'>
             {bomInformation.isLoaded &&

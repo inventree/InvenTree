@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-[#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
+- [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.
+- [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
 
 ### Removed
 
