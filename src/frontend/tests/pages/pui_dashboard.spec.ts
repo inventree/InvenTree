@@ -150,9 +150,7 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
       if (!layouts) return;
       Object.keys(layouts).forEach((bp) => {
         layouts[bp] = layouts[bp].map((item: any) =>
-          item?.i === 'ovr-so'
-            ? { ...item, w: targetW, h: targetH }
-            : item
+          item?.i === 'ovr-so' ? { ...item, w: targetW, h: targetH } : item
         );
       });
       localStorage.setItem(key, JSON.stringify(parsed));
@@ -170,7 +168,10 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
   expect(beforeAdd).not.toBeNull();
   for (const bp of Object.keys(beforeAdd!)) {
     const entry = beforeAdd![bp].find((item: any) => item?.i === 'ovr-so');
-    expect(entry, `pre-add: ovr-so missing from breakpoint ${bp}`).toBeDefined();
+    expect(
+      entry,
+      `pre-add: ovr-so missing from breakpoint ${bp}`
+    ).toBeDefined();
     expect(entry.w).toBe(TARGET_W);
     expect(entry.h).toBe(TARGET_H);
   }
@@ -191,7 +192,10 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
   expect(afterAdd).not.toBeNull();
   for (const bp of Object.keys(afterAdd!)) {
     const entry = afterAdd![bp].find((item: any) => item?.i === 'ovr-so');
-    expect(entry, `post-add: ovr-so missing from breakpoint ${bp}`).toBeDefined();
+    expect(
+      entry,
+      `post-add: ovr-so missing from breakpoint ${bp}`
+    ).toBeDefined();
     expect(
       entry.w,
       `breakpoint ${bp}: ovr-so width was reset (got ${entry.w}, expected ${TARGET_W})`
