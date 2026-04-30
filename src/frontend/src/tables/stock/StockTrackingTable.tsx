@@ -7,6 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderBuildOrder } from '../../components/render/Build';
@@ -23,8 +24,13 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { useTable } from '../../hooks/UseTable';
-import { DateColumn, DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DateColumn,
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  StockColumn
+} from '../ColumnRenderers';
 import {
   IncludeVariantsFilter,
   MaxDateFilter,
@@ -233,37 +239,20 @@ export function StockTrackingTable({
         switchable: true,
         hidden: !partId
       }),
-      {
-        title: t`IPN`,
-        accessor: 'part_detail.IPN',
-        sortable: true,
+      IPNColumn({
         defaultVisible: false,
-        switchable: true,
         hidden: !partId
-      },
-      {
-        accessor: 'item',
+      }),
+      StockColumn({
         title: t`Stock Item`,
+        accessor: 'item_detail',
+        nullMessage: (
+          <Text size='sm' c='red'>{t`Stock item no longer exists`}</Text>
+        ),
         sortable: false,
         switchable: false,
-        hidden: !partId,
-        render: (record: any) => {
-          const item = record.item_detail;
-          if (!item) {
-            return (
-              <Text
-                c='red'
-                size='xs'
-                fs='italic'
-              >{t`Stock item no longer exists`}</Text>
-            );
-          } else if (item.serial && item.quantity == 1) {
-            return `${t`Serial`} #${item.serial}`;
-          } else {
-            return `${t`Item ID`} ${item.pk}`;
-          }
-        }
-      },
+        hidden: !partId
+      }),
       DescriptionColumn({
         accessor: 'label'
       }),

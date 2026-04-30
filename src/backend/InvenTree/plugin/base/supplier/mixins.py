@@ -109,8 +109,8 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
         *,
         part: part_models.Part,
         manufacturer_part: company.models.ManufacturerPart,
-    ) -> part_models.SupplierPart:
-        """Import a supplier part using the provided data.
+    ) -> company.models.SupplierPart:
+        """Import a SupplierPart using the provided data.
 
         This may include:
           - Creating a new supplier part
@@ -161,7 +161,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
 
         # assign parent_part to root_part if root_part has no variant of already
         if root_part and not root_part.is_template and not root_part.variant_of:
-            root_part.variant_of = parent_part  # type: ignore
+            root_part.variant_of = parent_part
             root_part.save()
 
         return parent_part

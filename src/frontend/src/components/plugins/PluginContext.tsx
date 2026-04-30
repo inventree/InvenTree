@@ -17,7 +17,10 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import type { InvenTreeTableRenderProps } from '@lib/types/Tables';
 import { i18n } from '@lingui/core';
+import { useContextMenu } from 'mantine-contextmenu';
+import { defaultLocale } from '../../contexts/LanguageContext';
 import {
   useAddStockItem,
   useAssignStockItem,
@@ -35,16 +38,26 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import {
+  type ImporterOpenOptions,
+  closeGlobalImporter,
+  getGlobalImporterState,
+  openGlobalImporter
+} from '../../states/ImporterState';
+import { useServerApiState } from '../../states/ServerApiState';
+import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
+  const [server] = useServerApiState(useShallow((s) => [s.server]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+  const { showContextMenu } = useContextMenu();
 
   const contextData = useMemo<InvenTreePluginContext>(() => {
     return {
@@ -57,7 +70,7 @@ export const useInvenTreeContext = () => {
       user: user,
       host: host,
       i18n: i18n,
-      locale: locale,
+      locale: locale || server.default_locale || defaultLocale,
       api: api,
       queryClient: queryClient,
       navigate: navigate,
@@ -67,6 +80,21 @@ export const useInvenTreeContext = () => {
       renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
+      importer: {
+        open: (sessionId: number, options?: ImporterOpenOptions) =>
+          openGlobalImporter(sessionId, options),
+        close: () => closeGlobalImporter(),
+        isOpen: () => getGlobalImporterState().isOpen,
+        sessionId: () => getGlobalImporterState().sessionId
+      },
+      tables: {
+        renderTable: (props: InvenTreeTableRenderProps<any>) => (
+          <InvenTreeTableInternal
+            {...props}
+            showContextMenu={showContextMenu}
+          />
+        )
+      },
       forms: {
         bulkEdit: useBulkEditApiFormModal,
         create: useCreateApiFormModal,

@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@b4b468cffefb50bdd99dd83e5d2eaeb63c880380 # pin@v2
+        uses: crowdin/github-action@7ca9c452bfe9197d3bb7fa83a4d7e2b0c9ae835d # pin@v2
         with:
           upload_sources: true
           upload_translations: false

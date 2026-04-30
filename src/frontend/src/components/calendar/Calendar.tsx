@@ -5,6 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { Boundary } from '@lib/components/Boundary';
 import { SearchInput } from '@lib/components/SearchInput';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
@@ -29,10 +30,13 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import {
+  defaultLocale,
+  getPriorityLocale
+} from '../../contexts/LanguageContext';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
-import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
@@ -60,7 +64,19 @@ export default function Calendar({
   const [locale] = useLocalState(useShallow((s) => [s.language]));
 
   // Ensure underscore is replaced with dash
-  const calendarLocale = useMemo(() => locale.replace('_', '-'), [locale]);
+  const calendarLocale = useMemo(() => {
+    let _locale: string | null = locale;
+
+    if (!_locale) {
+      _locale = getPriorityLocale();
+    }
+
+    _locale = _locale || defaultLocale;
+
+    _locale = _locale.replace('_', '-');
+
+    return _locale;
+  }, [locale]);
 
   const selectMonth = useCallback(
     (date: DateValue) => {

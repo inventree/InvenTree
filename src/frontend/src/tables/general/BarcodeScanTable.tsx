@@ -1,5 +1,6 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { type RowAction, RowViewAction } from '@lib/components/RowActions';
+import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { IconTrash } from '@tabler/icons-react';
@@ -7,7 +8,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { RenderInstance } from '../../components/render/Instance';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -26,7 +26,7 @@ export default function BarcodeScanTable({
   const navigate = useNavigate();
   const user = useUserState();
 
-  const table = useTable('barcode-scan-results', 'id');
+  const table = useTable('barcode-scan-results', { idAccessor: 'id' });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

@@ -16,8 +16,6 @@ export function usePartFields({
   duplicatePartInstance?: any;
   create?: boolean;
 }): ApiFormFieldSet {
-  const settings = useGlobalSettingsState();
-
   const globalSettings = useGlobalSettingsState();
 
   const [virtual, setVirtual] = useState<boolean | undefined>(undefined);
@@ -38,8 +36,10 @@ export function usePartFields({
       revision: {},
       revision_of: {
         filters: {
-          is_revision: false,
-          is_template: false
+          is_template: false,
+          assembly: globalSettings.isSet('PART_REVISION_ASSEMBLY_ONLY')
+            ? true
+            : undefined
         }
       },
       variant_of: {
@@ -53,14 +53,6 @@ export function usePartFields({
       default_location: {
         filters: {
           structural: false
-        }
-      },
-      default_supplier: {
-        hidden: !partId || !purchaseable,
-        filters: {
-          part: partId,
-          part_detail: true,
-          supplier_detail: true
         }
       },
       default_expiry: {},
@@ -114,7 +106,7 @@ export function usePartFields({
     };
 
     // Additional fields for creation
-    if (create) {
+    if (create && !virtual) {
       fields.copy_category_parameters = {};
 
       if (virtual != false) {
@@ -163,14 +155,14 @@ export function usePartFields({
             value: true
           },
           copy_bom: {
-            value: settings.isSet('PART_COPY_BOM'),
+            value: globalSettings.isSet('PART_COPY_BOM'),
             hidden: !duplicatePartInstance?.assembly
           },
           copy_notes: {
             value: true
           },
           copy_parameters: {
-            value: settings.isSet('PART_COPY_PARAMETERS')
+            value: globalSettings.isSet('PART_COPY_PARAMETERS')
           },
           copy_tests: {
             value: true,
@@ -180,18 +172,18 @@ export function usePartFields({
       };
     }
 
-    if (settings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
+    if (globalSettings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
       fields.revision_of.filters['assembly'] = true;
     }
 
     // Pop 'revision' field if PART_ENABLE_REVISION is False
-    if (!settings.isSet('PART_ENABLE_REVISION')) {
+    if (!globalSettings.isSet('PART_ENABLE_REVISION')) {
       delete fields['revision'];
       delete fields['revision_of'];
     }
 
     // Pop 'expiry' field if expiry not enabled
-    if (!settings.isSet('STOCK_ENABLE_EXPIRY')) {
+    if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields['default_expiry'];
     }
 
@@ -206,8 +198,7 @@ export function usePartFields({
     purchaseable,
     create,
     globalSettings,
-    duplicatePartInstance,
-    settings
+    duplicatePartInstance
   ]);
 }
 

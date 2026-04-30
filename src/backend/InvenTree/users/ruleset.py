@@ -12,6 +12,7 @@ class RuleSetEnum(StringEnum):
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'
     PART = 'part'
+    BOM = 'bom'
     STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
     BUILD = 'build'
@@ -26,6 +27,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
     (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
+    (RuleSetEnum.BOM, _('Bills of Material')),
     (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
     (RuleSetEnum.BUILD, _('Build Orders')),
@@ -94,6 +96,18 @@ def get_ruleset_models() -> dict:
             'django_mailbox_messageattachment',
             'django_mailbox_message',
         ],
+        RuleSetEnum.BOM: ['part_bomitem', 'part_bomitemsubstitute'],
+        RuleSetEnum.BUILD: [
+            'part_part',
+            'part_partcategory',
+            'part_bomitem',
+            'part_bomitemsubstitute',
+            'build_build',
+            'build_builditem',
+            'build_buildline',
+            'stock_stockitem',
+            'stock_stocklocation',
+        ],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
             'part_partcategoryparametertemplate',
@@ -102,8 +116,6 @@ def get_ruleset_models() -> dict:
         RuleSetEnum.PART: [
             'part_part',
             'part_partpricing',
-            'part_bomitem',
-            'part_bomitemsubstitute',
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
             'part_parttesttemplate',
@@ -119,17 +131,6 @@ def get_ruleset_models() -> dict:
             'stock_stockitem',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
-        ],
-        RuleSetEnum.BUILD: [
-            'part_part',
-            'part_partcategory',
-            'part_bomitem',
-            'part_bomitemsubstitute',
-            'build_build',
-            'build_builditem',
-            'build_buildline',
-            'stock_stockitem',
-            'stock_stocklocation',
         ],
         RuleSetEnum.PURCHASE_ORDER: [
             'company_company',

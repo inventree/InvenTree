@@ -9,7 +9,7 @@ import shutil
 import string
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -191,7 +191,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
     if CONFIG_DATA is not None and not set_cache:
         return CONFIG_DATA
 
-    import yaml
+    import yaml.parser
 
     cfg_file = get_config_file()
 
@@ -254,6 +254,24 @@ def do_typecast(value, type, var_name=None):
     return value
 
 
+def get_config_value(config_key: str) -> Optional[Any]:
+    """Helper function to retrieve a configuration value from the config file."""
+    cfg_data = load_config_data()
+
+    result = None
+
+    # Hack to allow 'path traversal' in configuration file
+    for key in config_key.strip().split('.'):
+        if type(cfg_data) is not dict or key not in cfg_data:
+            result = None
+            break
+
+        result = cfg_data[key]
+        cfg_data = cfg_data[key]
+
+    return result
+
+
 def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
     """Helper function for retrieving a configuration setting value.
 
@@ -270,10 +288,13 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
     def set_metadata(source: str):
         """Set lookup metadata for the setting."""
+        global CONFIG_LOOKUPS
+
         key = env_var or config_key
         CONFIG_LOOKUPS[key] = {
             'env_var': env_var,
             'config_key': config_key,
+            'default_value': default_value,
             'source': source,
             'accessed': datetime.datetime.now(),
         }
@@ -288,18 +309,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
     # Next, try to load from configuration file
     if config_key is not None:
-        cfg_data = load_config_data()
-
-        result = None
-
-        # Hack to allow 'path traversal' in configuration file
-        for key in config_key.strip().split('.'):
-            if type(cfg_data) is not dict or key not in cfg_data:
-                result = None
-                break
-
-            result = cfg_data[key]
-            cfg_data = cfg_data[key]
+        result = get_config_value(config_key)
 
         if result is not None:
             set_metadata('yaml')
@@ -544,13 +554,14 @@ def get_frontend_settings(debug=True):
         'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
     )
 
+    base_url = get_setting(
+        'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web', typecast=str
+    )
+
     # Set the base URL for the user interface
     # This is the UI path e.g. '/web/'
     if 'base_url' not in frontend_settings:
-        frontend_settings['base_url'] = (
-            get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web')
-            or 'web'
-        )
+        frontend_settings['base_url'] = base_url
 
     # If provided, specify the API host
     api_host = frontend_settings.get('api_host', None) or get_setting(

@@ -82,21 +82,22 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconPointer size='1.2rem' />
       },
       {
-        id: 'scan',
-        label: t`Scan`,
-        description: t`Scan a barcode or QR code`,
-        onClick: () => openQrModal(navigate),
-        leftSection: <IconBarcode size='1.2rem' />
-      },
-      {
         id: 'user-settings',
         label: t`User Settings`,
-
         description: t`Go to your user settings`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
       }
     ];
+
+    user?.isStaff() &&
+      _actions.push({
+        id: 'data-import',
+        label: t`Import Data`,
+        description: t`Import data from a file`,
+        onClick: () => navigate('/settings/admin/import'),
+        leftSection: <IconPlug size='1.2rem' />
+      });
 
     // Page Actions
     user?.hasViewRole(UserRoles.purchase_order) &&
@@ -128,6 +129,15 @@ export function getActions(navigate: NavigateFunction) {
         onClick: () =>
           navigate(ModelInformationDict['returnorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
+      });
+
+    globalSettings.isSet('BARCODE_ENABLE') &&
+      _actions.push({
+        id: 'scan',
+        label: t`Scan`,
+        description: t`Scan a barcode or QR code`,
+        onClick: () => openQrModal(navigate),
+        leftSection: <IconBarcode size='1.2rem' />
       });
 
     user?.hasViewRole(UserRoles.build) &&
@@ -169,5 +179,5 @@ export function getActions(navigate: NavigateFunction) {
     return _actions;
   }, [navigate, setNavigationOpen, globalSettings, user]);
 
-  return actions;
+  return actions.sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''));
 }

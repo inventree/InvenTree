@@ -248,6 +248,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             tableName='assigned-stock'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{ customer: company.pk }}
           />
         ) : (

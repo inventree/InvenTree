@@ -11,11 +11,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from InvenTree.serializers import (
-    FilterableListSerializer,
-    FilterableSerializerMethodField,
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
-    enable_filter,
+    OptionalField,
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
@@ -56,7 +54,6 @@ class RuleSetSerializer(InvenTreeModelSerializer):
             'can_delete',
         ]
         read_only_fields = ['pk', 'name', 'label', 'group']
-        list_serializer_class = FilterableListSerializer
 
 
 class RoleSerializer(InvenTreeModelSerializer):
@@ -185,7 +182,6 @@ class UserSerializer(InvenTreeModelSerializer):
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
         read_only_fields = ['username', 'email']
-        list_serializer_class = FilterableListSerializer
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
 
@@ -238,8 +234,21 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
 
     def validate(self, data):
         """Validate the data for the serializer."""
+        request_user = self.context['request'].user
+        if not request_user:
+            raise serializers.ValidationError(
+                _('User must be authenticated')
+            )  # pragma: no cover
+
         if 'user' not in data:
-            data['user'] = self.context['request'].user
+            data['user'] = request_user
+
+        # Only superusers can create tokens for other users
+        if data['user'] != request_user and not request_user.is_superuser:
+            raise serializers.ValidationError(
+                _('Only a superuser can create a token for another user')
+            )
+
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
@@ -254,8 +263,9 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
-    permissions = enable_filter(
-        FilterableSerializerMethodField(allow_null=True, read_only=True),
+    permissions = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='permission_detail',
     )
 
@@ -263,16 +273,26 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = enable_filter(
-        RuleSetSerializer(
-            source='rule_sets', many=True, read_only=True, allow_null=True
-        ),
+    roles = OptionalField(
+        serializer_class=RuleSetSerializer,
+        serializer_kwargs={
+            'source': 'rule_sets',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='role_detail',
         prefetch_fields=['rule_sets'],
     )
 
-    users = enable_filter(
-        UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
+    users = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'user_set',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='user_detail',
         prefetch_fields=['user_set'],
     )
@@ -306,8 +326,8 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     is_staff = serializers.BooleanField(
-        label=_('Staff'),
-        help_text=_('Does this user have staff permissions'),
+        label=_('Administrator'),
+        help_text=_('Does this user have administrative permissions'),
         required=False,
     )
 
@@ -380,6 +400,9 @@ class MeUserSerializer(ExtendedUserSerializer):
         but ensures that certain fields are read-only.
         """
 
+        # Remove the 'group_ids' field, as this is not relevant for the 'me' endpoint
+        fields = [f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids']
+
         read_only_fields = [
             *ExtendedUserSerializer.Meta.read_only_fields,
             'is_active',
@@ -388,6 +411,28 @@ class MeUserSerializer(ExtendedUserSerializer):
         ]
 
     profile = UserProfileSerializer(many=False, read_only=True)
+
+    # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
+    is_staff = serializers.BooleanField(
+        label=_('Staff'),
+        help_text=_('Does this user have staff permissions'),
+        required=False,
+        read_only=True,
+    )
+
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'),
+        help_text=_('Is this user a superuser'),
+        required=False,
+        read_only=True,
+    )
+
+    is_active = serializers.BooleanField(
+        label=_('Active'),
+        help_text=_('Is this user account active'),
+        required=False,
+        read_only=True,
+    )
 
 
 def make_random_password(length=14):

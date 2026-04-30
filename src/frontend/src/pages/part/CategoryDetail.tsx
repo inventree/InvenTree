@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
@@ -167,11 +167,7 @@ export default function CategoryDetail() {
 
     return (
       <ItemDetailsGrid>
-        {id && category?.pk ? (
-          <DetailsTable item={category} fields={left} />
-        ) : (
-          <Text>{t`Top level part category`}</Text>
-        )}
+        {id && category?.pk && <DetailsTable item={category} fields={left} />}
         {id && category?.pk && <DetailsTable item={category} fields={right} />}
       </ItemDetailsGrid>
     );
@@ -272,7 +268,8 @@ export default function CategoryDetail() {
         name: 'details',
         label: t`Category Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: detailsPanel,
+        hidden: !id || !category?.pk
       },
       {
         name: 'subcategories',

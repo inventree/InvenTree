@@ -10,6 +10,7 @@ import json
 import math
 import os
 import uuid
+from collections import OrderedDict
 from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
@@ -85,8 +86,8 @@ class RenderMeta(enums.ChoicesType):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
-    """Class for creating enumerated string choices for schema rendering."""
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+    """Class for creating enumerated string choices for schema rendering."""  # ty:ignore[conflicting-metaclass]
 
 
 class MetaMixin(models.Model):
@@ -147,6 +148,8 @@ class UpdatedUserMixin(models.Model):
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    IMPORT_ID_FIELDS = ['code']
 
     class Meta:
         """Class options for the ProjectCode model."""
@@ -361,9 +364,15 @@ class BaseInvenTreeSetting(models.Model):
 
         # Specify any "default" values which are not in the database
         settings_definition = settings_definition or cls.SETTINGS
+
+        all_settings = OrderedDict()
+
         for key, setting in settings_definition.items():
-            if key.upper() not in settings:
-                settings[key.upper()] = cls(
+            # If the setting is already in the database, use that value
+            if key.upper() in settings:
+                all_settings[key] = settings[key.upper()]
+            else:
+                all_settings[key.upper()] = cls(
                     key=key.upper(),
                     value=cls.get_setting_default(key, **filters),
                     **filters,
@@ -371,10 +380,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # remove any hidden settings
             if exclude_hidden and setting.get('hidden', False):
-                del settings[key.upper()]
+                del all_settings[key.upper()]
 
         # format settings values and remove protected
-        for key, setting in settings.items():
+        for key, setting in all_settings.items():
             validator = cls.get_setting_validator(key, **filters)
 
             if cls.is_protected(key, **filters) and setting.value != '':
@@ -387,7 +396,7 @@ class BaseInvenTreeSetting(models.Model):
                 except ValueError:
                     setting.value = cls.get_setting_default(key, **filters)
 
-        return settings
+        return all_settings
 
     @classmethod
     def allValues(
@@ -1082,7 +1091,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.validator_is_bool(validator)
 
-    def as_bool(self):
+    def as_bool(self) -> bool:
         """Return the value of this setting converted to a boolean value.
 
         Warning: Only use on values where is_bool evaluates to true!
@@ -1216,7 +1225,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    SETTINGS: dict[str, InvenTreeSettingsKeyType]
+    from common.setting.system import SYSTEM_SETTINGS
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType] = SYSTEM_SETTINGS
 
     CHECK_SETTING_KEY = True
 
@@ -1282,9 +1293,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
-    from common.setting.system import SYSTEM_SETTINGS
-
-    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
@@ -1310,6 +1318,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     import common.setting.user
 
+    SETTINGS = common.setting.user.USER_SETTINGS
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1320,8 +1330,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
-
-    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
@@ -2312,10 +2320,38 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
         """Return the API URL associated with the SelectionList model."""
         return reverse('api-selectionlist-list')
 
-    def get_choices(self):
-        """Return the choices for the selection list."""
-        choices = self.entries.filter(active=True)
+    def get_choices(self, active: Optional[bool] = True):
+        """Return the choices for the selection list.
+
+        Arguments:
+            active: If specified, filter choices by active status
+
+        Returns:
+            List of choice values for this selection list
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
         return [c.value for c in choices]
+
+    def has_choice(self, value: str, active: Optional[bool] = None):
+        """Check if the selection list has a particular choice.
+
+        Arguments:
+            value: The value to check for
+            active: If specified, filter choices by active status
+
+        Returns:
+            True if the choice exists in the selection list, False otherwise
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
+        return choices.filter(value=value).exists()
 
 
 class SelectionListEntry(models.Model):
@@ -2396,6 +2432,8 @@ class ParameterTemplate(
         selectionlist: Optional link to a SelectionList for this template
         enabled: Is this template enabled?
     """
+
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass options for the ParameterTemplate model."""

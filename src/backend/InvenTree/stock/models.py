@@ -65,6 +65,8 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         icon: icon class
     """
 
+    IMPORT_ID_FIELDS = ['name']
+
     class Meta:
         """Metaclass defines extra model properties."""
 
@@ -134,8 +136,8 @@ class StockLocation(
     """
 
     ITEM_PARENT_KEY = 'location'
-
     EXTRA_PATH_FIELDS = ['icon']
+    IMPORT_ID_FIELDS = ['pathstring', 'name']
 
     objects = TreeManager()
 
@@ -434,6 +436,7 @@ class StockItem(
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
+    IMPORT_ID_FIELDS = ['serial']
     STATUS_CLASS = StockStatus
 
     class Meta:
@@ -518,12 +521,14 @@ class StockItem(
         status__in=StockStatusGroups.AVAILABLE_CODES,
     )
 
-    # A query filter which can be used to filter StockItem objects which have expired
-    EXPIRED_FILTER = (
-        IN_STOCK_FILTER
-        & ~Q(expiry_date=None)
-        & Q(expiry_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_expired_filter(cls):
+        """A query filter which can be used to filter StockItem objects which have expired."""
+        return (
+            cls.IN_STOCK_FILTER
+            & ~Q(expiry_date=None)
+            & Q(expiry_date__lt=InvenTree.helpers.current_date())
+        )
 
     @classmethod
     def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
@@ -3096,4 +3101,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('The timestamp of the test finish'),
     )
 
-    date = models.DateTimeField(auto_now_add=True, editable=False)
+    date = models.DateTimeField(
+        default=InvenTree.helpers.current_time, verbose_name=_('Date')
+    )
