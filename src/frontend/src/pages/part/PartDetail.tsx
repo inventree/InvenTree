@@ -89,7 +89,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
+import { type UseInstanceResult, useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -158,17 +158,13 @@ function RevisionSelector({
  * A hover-over component which displays information about the BOM validation for a given part
  */
 function BomValidationInformation({
+  bomInformation,
   partId
 }: {
+  bomInformation: UseInstanceResult;
   partId: number;
 }) {
-  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
-    useInstance({
-      endpoint: ApiEndpoints.bom_validate,
-      pk: partId,
-      hasPrimaryKey: true,
-      refetchOnMount: true
-    });
+  const user = useUserState();
 
   const [taskId, setTaskId] = useState<string>('');
 
@@ -177,7 +173,7 @@ function BomValidationInformation({
     message: t`Validating BOM`,
     successMessage: t`BOM validated`,
     onComplete: () => {
-      bomInformationQuery.refetch();
+      bomInformation.instanceQuery.refetch();
     }
   });
 
@@ -203,12 +199,12 @@ function BomValidationInformation({
       if (response.task_id) {
         setTaskId(response.task_id);
       } else {
-        bomInformationQuery.refetch();
+        bomInformation.instanceQuery.refetch();
       }
     }
   });
 
-  if (bomInformationQuery.isFetching) {
+  if (bomInformation.instanceQuery.isFetching) {
     return <Loader size='sm' />;
   }
 
@@ -217,12 +213,12 @@ function BomValidationInformation({
   let title = '';
   let description = '';
 
-  if (bomInformation?.bom_validated) {
+  if (bomInformation.instance?.bom_validated) {
     color = 'green';
     icon = <IconListCheck />;
     title = t`BOM Validated`;
     description = t`The Bill of Materials for this part has been validated`;
-  } else if (bomInformation?.bom_checked_date) {
+  } else if (bomInformation.instance?.bom_checked_date) {
     color = 'yellow';
     icon = <IconExclamationCircle />;
     title = t`BOM Not Validated`;
@@ -238,14 +234,15 @@ function BomValidationInformation({
     <>
       {validateBom.modal}
       <Group gap='xs' justify='flex-end'>
-        {!bomInformation.bom_validated && (
-          <ActionButton
-            icon={<IconCircleCheck />}
-            color='green'
-            tooltip={t`Validate BOM`}
-            onClick={validateBom.open}
-          />
-        )}
+        {!bomInformation.instance?.bom_validated &&
+          user.hasChangeRole(UserRoles.bom) && (
+            <ActionButton
+              icon={<IconCircleCheck />}
+              color='green'
+              tooltip={t`Validate BOM`}
+              onClick={validateBom.open}
+            />
+          )}
         <HoverCard position='bottom-end'>
           <HoverCard.Target>
             <ActionIcon
@@ -260,16 +257,17 @@ function BomValidationInformation({
             <Alert color={color} icon={icon} title={title}>
               <Stack gap='xs'>
                 <Text size='sm'>{description}</Text>
-                {bomInformation?.bom_checked_date && (
+                {bomInformation.instance?.bom_checked_date && (
                   <Text size='sm'>
-                    {t`Validated On`}: {bomInformation.bom_checked_date}
+                    {t`Validated On`}:{' '}
+                    {bomInformation.instance.bom_checked_date}
                   </Text>
                 )}
-                {bomInformation?.bom_checked_by_detail && (
+                {bomInformation.instance?.bom_checked_by_detail && (
                   <Group gap='xs'>
                     <Text size='sm'>{t`Validated By`}: </Text>
                     <RenderUser
-                      instance={bomInformation.bom_checked_by_detail}
+                      instance={bomInformation.instance.bom_checked_by_detail}
                     />
                   </Group>
                 )}
@@ -296,6 +294,13 @@ export default function PartDetail() {
 
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
 
   const { instance: serials } = useInstance({
     endpoint: ApiEndpoints.part_serial_numbers,
@@ -714,6 +719,7 @@ export default function PartDetail() {
                 deleteFile: true
               }}
               src={part.image}
+              thumbnail={part.thumbnail}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               refresh={refreshInstance}
               pk={part.pk}
@@ -801,11 +807,31 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        controls: <BomValidationInformation partId={part.pk ?? -1} />,
+        controls: (
+          <BomValidationInformation
+            bomInformation={bomInformation}
+            partId={part.pk ?? -1}
+          />
+        ),
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),
         content: part?.pk ? (
-          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+          <Stack gap='xs'>
+            {bomInformation.isLoaded &&
+              bomInformation.instance?.bom_validated === false && (
+                <Alert
+                  color='yellow'
+                  icon={<IconExclamationCircle />}
+                  title={t`BOM Not Validated`}
+                >
+                  <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+                </Alert>
+              )}
+            <BomTable
+              partId={part.pk ?? -1}
+              partLocked={part?.locked == true}
+            />
+          </Stack>
         ) : (
           <Skeleton />
         )
@@ -963,7 +989,15 @@ export default function PartDetail() {
         has_note: !!part?.notes
       })
     ];
-  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
+  }, [
+    id,
+    part,
+    user,
+    globalSettings,
+    userSettings,
+    detailsPanel,
+    bomInformation
+  ]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -1239,6 +1273,7 @@ export default function PartDetail() {
             }
             subtitle={part.description}
             imageUrl={part.image}
+            thumbnailUrl={part.thumbnail}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

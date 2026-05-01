@@ -251,6 +251,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_BOM_SUBASSEMBLY_LEVELS': {
+        'name': _('Show Subassemblies in BOM table'),
+        'description': _('Enable display of subassemblies in the BOM table'),
+        'default': True,
+        'validator': bool,
+    },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
         'description': _('Receive notifications for system errors'),

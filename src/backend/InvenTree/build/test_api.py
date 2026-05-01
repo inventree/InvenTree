@@ -568,6 +568,9 @@ class BuildTest(BuildAPITest):
 
         self.assertEqual(bo.children.count(), 0)
 
+        self.assertIsNotNone(bo.issued_by)
+        self.assertEqual(bo.issued_by, self.user)
+
 
 class BuildAllocationTest(BuildAPITest):
     """Unit tests for allocation of stock items against a build order.

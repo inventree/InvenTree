@@ -105,6 +105,11 @@ A potentially critical mismatch between the backup environment and the current r
 
 While using [invoke](../start/invoke.md), this can be overridden with the `--restore-allow-newer-version` flag.
 
+#### INVE-E17
+**Error rendering component**
+
+An error occurred while rendering a component in the frontend. Typically this is caused by a browser caching issue, and can be resolved by clearing the browser cache and refreshing the page. If the issue persists, check the browser console for more information about the error.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

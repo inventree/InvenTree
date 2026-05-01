@@ -1,10 +1,83 @@
 """Configuration settings specific to a particular database backend."""
 
+from pathlib import Path
+
 import structlog
 
-from InvenTree.config import get_boolean_setting, get_setting
+from InvenTree.config import get_boolean_setting, get_config_value, get_setting
 
 logger = structlog.get_logger('inventree')
+
+
+def get_db_backend():
+    """Return the database backend configuration."""
+    # For the core database configuration values, we test for UPPERCASE configuration values as a backup,
+    # due to legacy reasons (original config files were uppercase,
+    # but we moved to lowercase for consistency with other settings.
+
+    db_config = {
+        'ENGINE': get_setting(
+            'INVENTREE_DB_ENGINE', 'database.engine', '', typecast=str
+        )
+        or get_config_value('database.ENGINE'),
+        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str)
+        or get_config_value('database.NAME'),
+        'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str)
+        or get_config_value('database.USER'),
+        'PASSWORD': get_setting(
+            'INVENTREE_DB_PASSWORD', 'database.password', '', typecast=str
+        )
+        or get_config_value('database.PASSWORD'),
+        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str)
+        or get_config_value('database.HOST'),
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str)
+        or get_config_value('database.PORT'),
+        'OPTIONS': get_setting(
+            'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
+        )
+        or get_config_value('database.OPTIONS')
+        or {},
+    }
+
+    # Check for required keys
+    required_keys = ['ENGINE', 'NAME']
+
+    for key in required_keys:
+        if not db_config[key]:
+            raise ValueError(
+                f'Missing required database configuration key: INVENTREE_DB_{key}'
+            )
+
+    DB_ENGINE = db_config['ENGINE'].lower()
+
+    # Correct common misspelling
+    if DB_ENGINE == 'sqlite':
+        DB_ENGINE = 'sqlite3'  # pragma: no cover
+
+    if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
+        # Prepend the required python module string
+        DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
+        db_config['ENGINE'] = DB_ENGINE
+
+    if 'sqlite' in DB_ENGINE:
+        db_name = str(Path(db_config['NAME']).resolve())
+        db_config['NAME'] = db_name
+
+    logger.info('DB_ENGINE: %s', DB_ENGINE)
+    logger.info('DB_NAME: %s', db_config['NAME'])
+    logger.info('DB_HOST: %s', db_config.get('HOST', "''"))
+
+    # Set testing options for the database
+    db_config['TEST'] = {'CHARSET': 'utf8'}
+
+    # Set collation option for mysql test database
+    if 'mysql' in DB_ENGINE:
+        db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
+
+    # Specify database specific configuration
+    set_db_options(DB_ENGINE, db_config['OPTIONS'])
+
+    return db_config
 
 
 def set_db_options(engine: str, db_options: dict):

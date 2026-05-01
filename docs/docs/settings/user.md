@@ -27,6 +27,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("FORMS_CLOSE_USING_ESCAPE") }}
 {{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
 {{ usersetting("SHOW_FULL_CATEGORY_IN_TABLES")}}
+{{ usersetting("SHOW_BOM_SUBASSEMBLY_LEVELS")}}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
 {{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
 

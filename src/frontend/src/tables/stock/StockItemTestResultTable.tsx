@@ -305,7 +305,7 @@ export default function StockItemTestResultTable({
     pk: selectedTest,
     fields: useMemo(() => ({ ...editResultFields }), [editResultFields]),
     title: t`Edit Test Result`,
-    onFormSuccess: () => table.refreshTable,
+    table: table,
     successMessage: t`Test result updated`
   });
 

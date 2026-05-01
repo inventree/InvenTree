@@ -272,16 +272,13 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         <TableHoverCard
           value={
             <Group gap='xs' justify='left' wrap='nowrap'>
-              <Text c={color}>{text}</Text>
-              {part.units && (
-                <Text size='xs' c={color}>
-                  [{part.units}]
-                </Text>
-              )}
+              <Text>{text}</Text>
+              {part.units && <Text size='xs'>[{part.units}]</Text>}
             </Group>
           }
           title={t`Stock Information`}
           extra={extra}
+          iconColor={color}
         />
       );
     }

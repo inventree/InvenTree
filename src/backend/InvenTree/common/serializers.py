@@ -381,7 +381,16 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance.get(instance)}
+
+        data = {'key': instance}
+
+        for k, v in self.instance.get(instance, {}).items():
+            if k == 'default_value':
+                # Skip sensitive default values
+                continue
+            data[k] = v
+
+        return data
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):

@@ -11,6 +11,7 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -30,7 +31,6 @@ import type {
 } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   getPluginTemplateEditor,
   getPluginTemplatePreview

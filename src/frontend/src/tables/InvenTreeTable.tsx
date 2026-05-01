@@ -841,7 +841,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               style={{
                 stickyHeader: stickyTableHeader ? 'top' : undefined
               }}
-              height={stickyTableHeader ? '80vh' : undefined}
+              height={
+                tableProps.height ?? (stickyTableHeader ? '80vh' : undefined)
+              }
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
               striped

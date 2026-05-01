@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/types/Filters';
 import { useLocalStorage } from '@mantine/hooks';
@@ -102,8 +102,8 @@ export default function BuildIndex() {
       <PanelGroup
         pageKey='build-index'
         panels={panels}
-        model='manufacturing'
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.manufacturing}
       />
     </Stack>
   );

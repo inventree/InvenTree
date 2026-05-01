@@ -1,17 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 480
-
+INVENTREE_API_VERSION = 482
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v480 -> 2026-04-19 : https://github.com/inventree/InvenTree/pull/9928
-    - Refactor of "PartTestTemplate" models and API endpoints
+v482 -> 2026-05-02 : https://github.com/inventree/InvenTree/pull/9928
     - Add "PartTest" API endpoint
 
-v479 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11723
+v481 -> 2026-04-28 : https://github.com/inventree/InvenTree/pull/11825
+
+v480 -> 2026-04-27 : https://github.com/inventree/InvenTree/pull/11816
+    - The "issued_by" field on the Build API endpoint is now read-only, and is automatically set to the current user when a build is created
+
     - POST /api//notifications/readall/ now requires a POST action
     - POST /api/admin/email/test/ - now returns a 200 on. a successful test
     - GET /api/notifications/ - now uses user-centric permissions, not a general read
