@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("part", "0147_remove_part_default_supplier"),
+        ("users", "0014_userprofile")
     ]
 
     operations = [
