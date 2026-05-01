@@ -13,7 +13,7 @@ v480 -> 2026-04-27 : https://github.com/inventree/InvenTree/pull/11816
     - The "issued_by" field on the Build API endpoint is now read-only, and is automatically set to the current user when a build is created
 
 v479 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11723
-    - POST /api//notifications/readall/ now requires a POST action
+    - POST /api/notifications/readall/ now requires a POST action
     - POST /api/admin/email/test/ - now returns a 200 on. a successful test
     - GET /api/notifications/ - now uses user-centric permissions, not a general read
 
