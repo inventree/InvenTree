@@ -829,7 +829,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 test('Parts - Test Results', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
 
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(500);
 
   await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
   await page.getByText('Blue Paint Applied').waitFor();
