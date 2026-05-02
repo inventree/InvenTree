@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
@@ -170,6 +171,8 @@ export function BomCompareDrawer({
   partInstance: any;
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
+
+  const [searchParam, setSearchParams] = useSearchParams();
 
   // Fetch entire BOM for the part
   const primaryBom = useQuery({
@@ -346,6 +349,14 @@ export function BomCompareDrawer({
                   },
                   onValueChange: (value) => {
                     setSecondaryPartId(value);
+                    if (opened) {
+                      setSearchParams(
+                        {
+                          compare: value
+                        },
+                        { replace: true }
+                      );
+                    }
                   }
                 }}
               />
