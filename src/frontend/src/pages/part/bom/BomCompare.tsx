@@ -303,7 +303,7 @@ export function BomCompareDrawer({
       <Stack gap='xs'>
         <Divider />
         <Paper p='xs' withBorder>
-          <SimpleGrid cols={3}>
+          <SimpleGrid cols={{ base: 1, sm: 3 }}>
             <Stack gap='xs' justify='flex-start' align='stretch'>
               <Text size='sm'>{t`Primary Assembly`}</Text>
               <Text
@@ -346,7 +346,7 @@ export function BomCompareDrawer({
         </Paper>
         {secondaryPart?.pk ? (
           <SimpleGrid
-            cols={2}
+            cols={{ base: 1, sm: 2 }}
             type='container'
             spacing='xs'
             verticalSpacing='xs'
