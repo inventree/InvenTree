@@ -268,6 +268,23 @@ test('Parts - BOM Validation', async ({ browser }) => {
   await page.getByText('Validated By: allaccessAlly').waitFor();
 });
 
+test('Parts - BOM Comparison', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/bom' });
+
+  await page
+    .getByRole('button', { name: 'action-button-compare-bill-of' })
+    .click();
+  await page.getByText('Select an assembly to view').waitFor();
+  await page
+    .getByRole('combobox', { name: 'related-field-assembly' })
+    .fill('blue round table');
+  await page.getByText('Blue Round TableA round table').click();
+
+  await page.getByRole('columnheader', { name: 'Changes' }).first().waitFor();
+  await page.getByRole('columnheader', { name: 'Quantity' }).nth(1).waitFor();
+  await page.getByText('Setup Quantity3').waitFor();
+});
+
 test('Parts - Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/details' });
 

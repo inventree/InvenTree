@@ -32,10 +32,10 @@ import { BomCompareDrawer } from './BomCompare';
 export function BomActions({
   bomInformation,
   partInstance
-}: {
+}: Readonly<{
   bomInformation: UseInstanceResult;
   partInstance: any;
-}) {
+}>) {
   const user = useUserState();
 
   const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);

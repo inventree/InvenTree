@@ -61,10 +61,10 @@ function getBomDeltas(primary: any, secondary: any): string[] {
 function BomTableRow({
   item,
   primary
-}: {
+}: Readonly<{
   item: BomCompareRow;
   primary: boolean;
-}) {
+}>) {
   const hasPart = primary ? !!item.primary : !!item.secondary;
 
   const partMatch = !!item.primary && !!item.secondary;
@@ -134,10 +134,10 @@ function BomTableRow({
 function BomTable({
   items,
   primary
-}: {
+}: Readonly<{
   items: BomCompareRow[];
   primary: boolean;
-}) {
+}>) {
   return (
     <Paper p='xs' withBorder>
       <Table>
