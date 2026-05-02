@@ -18,7 +18,8 @@ import {
   IconGitCompare,
   IconListCheck
 } from '@tabler/icons-react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
@@ -39,6 +40,22 @@ export function BomActions({
   const user = useUserState();
 
   const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);
+
+  const [bomCompareId, setBomCompareId] = useState<string>('');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Open the BOM compare drawer if the URL contains the relevant query parameter
+  useEffect(() => {
+    if (
+      searchParams.has('compare') &&
+      !!searchParams.get('compare') &&
+      !bomCompareOpen
+    ) {
+      setBomCompareId(searchParams.get('compare') as string);
+      setBomCompareOpen(true);
+    }
+  }, [searchParams]);
 
   const [taskId, setTaskId] = useState<string>('');
 
@@ -158,8 +175,16 @@ export function BomActions({
       </Group>
       <BomCompareDrawer
         partInstance={partInstance}
+        compareId={bomCompareId}
         opened={bomCompareOpen}
-        onClosed={() => setBomCompareOpen(false)}
+        onClosed={() => {
+          setBomCompareId('');
+          setBomCompareOpen(false);
+          setSearchParams((params: URLSearchParams) => {
+            params.delete('compare');
+            return params;
+          });
+        }}
       />
     </>
   );

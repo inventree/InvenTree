@@ -161,10 +161,12 @@ function BomTable({
 export function BomCompareDrawer({
   opened,
   onClosed,
+  compareId,
   partInstance
 }: {
   opened: boolean;
   onClosed: () => void;
+  compareId?: string;
   partInstance: any;
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
@@ -185,22 +187,24 @@ export function BomCompareDrawer({
     }
   });
 
-  // Secondary part instance
-  const [secondaryPart, setSecondaryPart] = useState<any>({});
+  // Secondary part ID
+  const [secondaryPartId, setSecondaryPartId] = useState<string>(
+    compareId ?? ''
+  );
 
   useEffect(() => {
-    setSecondaryPart({});
+    setSecondaryPartId(compareId ?? '');
   }, [opened]);
 
   // Fetch BOM for the secondary part
   const secondaryBom = useQuery({
-    queryKey: ['bom-compare-secondary', secondaryPart.pk, opened],
-    enabled: opened && !!secondaryPart.pk,
+    queryKey: ['bom-compare-secondary', secondaryPartId, opened],
+    enabled: opened && !!secondaryPartId,
     queryFn: async () => {
       return api
         .get(apiUrl(ApiEndpoints.bom_list), {
           params: {
-            part: secondaryPart.pk,
+            part: secondaryPartId,
             sub_part_detail: true
           }
         })
@@ -312,6 +316,20 @@ export function BomCompareDrawer({
               >{t`Primary assembly for comparison`}</Text>
               <RenderPartColumn part={partInstance} />
             </Stack>
+            <Select
+              label={t`Display Mode`}
+              description={t`Select display mode for BOM comparison`}
+              defaultValue={'all'}
+              onChange={(value) => setDisplayMode(value as any)}
+              style={{
+                maxWidth: 350
+              }}
+              data={[
+                { value: 'all', label: t`Show all Parts` },
+                { value: 'different', label: t`Show different Parts` },
+                { value: 'common', label: t`Show common Parts` }
+              ]}
+            />
             <Expand>
               <StandaloneField
                 fieldName='assembly'
@@ -319,32 +337,22 @@ export function BomCompareDrawer({
                   description: t`Select assembly to compare`,
                   label: t`Secondary Assembly`,
                   field_type: 'related field',
+                  value: secondaryPartId,
                   api_url: apiUrl(ApiEndpoints.part_list),
                   model: ModelType.part,
                   required: true,
                   filters: {
                     assembly: true
                   },
-                  onValueChange: (value, instance) => {
-                    setSecondaryPart(instance);
+                  onValueChange: (value) => {
+                    setSecondaryPartId(value);
                   }
                 }}
               />
             </Expand>
-            <Select
-              label={t`Display Mode`}
-              description={t`Select display mode for BOM comparison`}
-              defaultValue={'all'}
-              onChange={(value) => setDisplayMode(value as any)}
-              data={[
-                { value: 'all', label: t`Show all Parts` },
-                { value: 'different', label: t`Show different Parts` },
-                { value: 'common', label: t`Show common Parts` }
-              ]}
-            />
           </SimpleGrid>
         </Paper>
-        {secondaryPart?.pk ? (
+        {secondaryPartId ? (
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             {primaryBom.isLoading ? (
               <Loader />
