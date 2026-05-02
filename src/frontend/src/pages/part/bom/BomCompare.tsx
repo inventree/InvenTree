@@ -1,6 +1,7 @@
 import { ApiEndpoints, ModelType, StylishText, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import {
+  Alert,
   Divider,
   Drawer,
   Group,
@@ -110,8 +111,8 @@ function BomTableRow({
           )}
         </Group>
       </Table.Td>
-      <Table.Td>
-        {partMatch && deltas.length > 0 ? (
+      {partMatch && deltas.length > 0 ? (
+        <Table.Td style={{ backgroundColor: MISMATCH_COLOR }}>
           <Stack gap='xs'>
             {deltas.map((delta, index) => (
               <Group key={delta.field} gap='xs' justify='space-between'>
@@ -120,10 +121,12 @@ function BomTableRow({
               </Group>
             ))}
           </Stack>
-        ) : (
+        </Table.Td>
+      ) : (
+        <Table.Td>
           <Text size='sm'>-</Text>
-        )}
-      </Table.Td>
+        </Table.Td>
+      )}
     </Table.Tr>
   );
 }
@@ -136,20 +139,22 @@ function BomTable({
   primary: boolean;
 }) {
   return (
-    <Table>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>{t`Part`}</Table.Th>
-          <Table.Th>{t`Quantity`}</Table.Th>
-          <Table.Th>{t`Changes`}</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {items.map((item: any, index) => (
-          <BomTableRow key={index} item={item} primary={primary} />
-        ))}
-      </Table.Tbody>
-    </Table>
+    <Paper p='xs' withBorder>
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>{t`Part`}</Table.Th>
+            <Table.Th>{t`Quantity`}</Table.Th>
+            <Table.Th>{t`Changes`}</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {items.map((item: any, index) => (
+            <BomTableRow key={index} item={item} primary={primary} />
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Paper>
   );
 }
 
@@ -328,7 +333,7 @@ export function BomCompareDrawer({
               defaultValue={'all'}
               onChange={(value) => setDisplayMode(value as any)}
               data={[
-                { value: 'all', label: t`Show All Parts` },
+                { value: 'all', label: t`Show all Parts` },
                 { value: 'different', label: t`Show different Parts` },
                 { value: 'common', label: t`Show common Parts` }
               ]}
@@ -343,8 +348,10 @@ export function BomCompareDrawer({
           )}
           {secondaryBom.isLoading ? (
             <Loader />
-          ) : (
+          ) : secondaryBom.data ? (
             <BomTable items={comparedItems} primary={false} />
+          ) : (
+            <Alert color='yellow'>{t`Select an assembly to view comparison`}</Alert>
           )}
         </SimpleGrid>
       </Stack>
