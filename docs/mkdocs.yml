@@ -150,6 +150,7 @@ nav:
     - Bill of Materials: manufacturing/bom.md
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
+    - Required Quantity: manufacturing/required.md
     - Allocating Stock: manufacturing/allocate.md
     - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md

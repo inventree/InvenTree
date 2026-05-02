@@ -345,12 +345,7 @@ export function BomCompareDrawer({
           </SimpleGrid>
         </Paper>
         {secondaryPart?.pk ? (
-          <SimpleGrid
-            cols={{ base: 1, sm: 2 }}
-            type='container'
-            spacing='xs'
-            verticalSpacing='xs'
-          >
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
             {primaryBom.isLoading ? (
               <Loader />
             ) : (
