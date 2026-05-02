@@ -194,7 +194,9 @@ export default function ReturnOrderLineItemTable({
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
         hidden={
-          !editable || inProgress || !user.hasChangeRole(UserRoles.return_order)
+          !editable ||
+          !inProgress ||
+          !user.hasChangeRole(UserRoles.return_order)
         }
         onClick={() => {
           setSelectedItems(
