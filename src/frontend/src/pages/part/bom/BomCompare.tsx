@@ -14,7 +14,7 @@ import {
   Text
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
@@ -188,6 +188,10 @@ export function BomCompareDrawer({
   // Secondary part instance
   const [secondaryPart, setSecondaryPart] = useState<any>({});
 
+  useEffect(() => {
+    setSecondaryPart({});
+  }, [opened]);
+
   // Fetch BOM for the secondary part
   const secondaryBom = useQuery({
     queryKey: ['bom-compare-secondary', secondaryPart.pk, opened],
@@ -340,20 +344,27 @@ export function BomCompareDrawer({
             />
           </SimpleGrid>
         </Paper>
-        <SimpleGrid cols={2} type='container' spacing='xs' verticalSpacing='xs'>
-          {primaryBom.isLoading ? (
-            <Loader />
-          ) : (
-            <BomTable items={comparedItems} primary />
-          )}
-          {secondaryBom.isLoading ? (
-            <Loader />
-          ) : secondaryBom.data ? (
-            <BomTable items={comparedItems} primary={false} />
-          ) : (
-            <Alert color='yellow'>{t`Select an assembly to view comparison`}</Alert>
-          )}
-        </SimpleGrid>
+        {secondaryPart?.pk ? (
+          <SimpleGrid
+            cols={2}
+            type='container'
+            spacing='xs'
+            verticalSpacing='xs'
+          >
+            {primaryBom.isLoading ? (
+              <Loader />
+            ) : (
+              <BomTable items={comparedItems} primary />
+            )}
+            {secondaryBom.isLoading ? (
+              <Loader />
+            ) : (
+              <BomTable items={comparedItems} primary={false} />
+            )}
+          </SimpleGrid>
+        ) : (
+          <Alert color='yellow'>{t`Select an assembly to view Bill of Materials comparison`}</Alert>
+        )}
       </Stack>
     </Drawer>
   );
