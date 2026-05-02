@@ -171,7 +171,14 @@ def annotate_build_order_requirements(reference: str = '') -> QuerySet:
     build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
 
     return Coalesce(
-        SubquerySum(f'{reference}used_in__build_lines__quantity', filter=build_filter),
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}used_in__build_lines__quantity')
+                - F(f'{reference}used_in__build_lines__consumed'),
+                output_field=DecimalField(),
+            ),
+            filter=build_filter,
+        ),
         Decimal(0),
         output_field=models.DecimalField(),
     )
