@@ -104,7 +104,7 @@ import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
-import { BomValidationInformation } from './bom/BomValidation';
+import { BomActions } from './bom/BomActions';
 
 /**
  * Render a part revision selector component
@@ -676,10 +676,7 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         controls: (
-          <BomValidationInformation
-            bomInformation={bomInformation}
-            partId={part.pk ?? -1}
-          />
+          <BomActions bomInformation={bomInformation} partInstance={part} />
         ),
         icon: <IconListTree />,
         hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),

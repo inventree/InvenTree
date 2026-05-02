@@ -24,18 +24,21 @@ import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
 import type { UseInstanceResult } from '../../../hooks/UseInstance';
 import { useUserState } from '../../../states/UserState';
+import { BomCompareDrawer } from './BomCompare';
 
 /**
  * A hover-over component which displays information about the BOM validation for a given part
  */
-export function BomValidationInformation({
+export function BomActions({
   bomInformation,
-  partId
+  partInstance
 }: {
   bomInformation: UseInstanceResult;
-  partId: number;
+  partInstance: any;
 }) {
   const user = useUserState();
+
+  const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);
 
   const [taskId, setTaskId] = useState<string>('');
 
@@ -58,7 +61,7 @@ export function BomValidationInformation({
       }
     },
     title: t`Validate BOM`,
-    pk: partId,
+    pk: partInstance.pk,
     preFormContent: (
       <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
@@ -109,7 +112,7 @@ export function BomValidationInformation({
           icon={<IconGitCompare />}
           color='blue'
           tooltip={t`Compare Bill of Materials`}
-          onClick={() => {}}
+          onClick={() => setBomCompareOpen(true)}
         />
         {!bomInformation.instance?.bom_validated &&
           user.hasChangeRole(UserRoles.bom) && (
@@ -153,6 +156,11 @@ export function BomValidationInformation({
           </HoverCard.Dropdown>
         </HoverCard>
       </Group>
+      <BomCompareDrawer
+        partInstance={partInstance}
+        opened={bomCompareOpen}
+        onClosed={() => setBomCompareOpen(false)}
+      />
     </>
   );
 }
