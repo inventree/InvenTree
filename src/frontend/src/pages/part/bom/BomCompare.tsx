@@ -5,6 +5,8 @@ import {
   Drawer,
   Group,
   Loader,
+  Paper,
+  Select,
   SimpleGrid,
   Stack,
   Table,
@@ -41,12 +43,14 @@ type BomCompareRow = {
   key: string;
 };
 
+type BomDisplayMode = 'all' | 'different' | 'common';
+
 function getBomDeltas(primary: any, secondary: any): string[] {
   const deltas: string[] = [];
 
   Object.entries(DELTA_FIELDS).forEach(([field, label]) => {
     if (primary?.[field] != secondary?.[field]) {
-      deltas.push(label);
+      deltas.push(field);
     }
   });
 
@@ -106,6 +110,20 @@ function BomTableRow({
           )}
         </Group>
       </Table.Td>
+      <Table.Td>
+        {partMatch && deltas.length > 0 ? (
+          <Stack gap='xs'>
+            {deltas.map((delta, index) => (
+              <Group key={delta.field} gap='xs' justify='space-between'>
+                <Text size='xs'>{delta.label}</Text>
+                <Text size='xs'>{delta.value ?? '-'}</Text>
+              </Group>
+            ))}
+          </Stack>
+        ) : (
+          <Text size='sm'>-</Text>
+        )}
+      </Table.Td>
     </Table.Tr>
   );
 }
@@ -123,6 +141,7 @@ function BomTable({
         <Table.Tr>
           <Table.Th>{t`Part`}</Table.Th>
           <Table.Th>{t`Quantity`}</Table.Th>
+          <Table.Th>{t`Changes`}</Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
@@ -143,6 +162,8 @@ export function BomCompareDrawer({
   onClosed: () => void;
   partInstance: any;
 }) {
+  const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
+
   // Fetch entire BOM for the part
   const primaryBom = useQuery({
     queryKey: ['bom-compare-primary', partInstance.pk, opened],
@@ -180,7 +201,7 @@ export function BomCompareDrawer({
 
   // Perform comparison against
   const comparedItems: any[] = useMemo(() => {
-    const rows: BomCompareRow[] = [];
+    let rows: BomCompareRow[] = [];
 
     const primaryPartIds = new Set();
     const secondaryPartIds = new Set();
@@ -236,6 +257,20 @@ export function BomCompareDrawer({
       }
     });
 
+    switch (displayMode) {
+      case 'different':
+        // Show only *different* parts
+        rows = rows.filter((row) => !row.match);
+        break;
+      case 'common':
+        // Show only *common* parts
+        rows = rows.filter((row) => row.match);
+        break;
+      default:
+      case 'all':
+        break;
+    }
+
     // Return rows, sorted by part name
     return rows.sort((a, b) => {
       const nameA = a.part_detail?.name ?? '';
@@ -243,7 +278,7 @@ export function BomCompareDrawer({
 
       return nameA.localeCompare(nameB);
     });
-  }, [primaryBom.data, secondaryBom.data]);
+  }, [displayMode, primaryBom.data, secondaryBom.data]);
 
   return (
     <Drawer
@@ -258,27 +293,49 @@ export function BomCompareDrawer({
     >
       <Stack gap='xs'>
         <Divider />
-        <SimpleGrid cols={2} type='container' spacing='xs' verticalSpacing='xs'>
-          <RenderPartColumn part={partInstance} />
-          <Expand>
-            <StandaloneField
-              fieldName='assembly'
-              fieldDefinition={{
-                description: t`Select assembly to compare`,
-                label: t`Assembly`,
-                field_type: 'related field',
-                api_url: apiUrl(ApiEndpoints.part_list),
-                model: ModelType.part,
-                required: true,
-                filters: {
-                  assembly: true
-                },
-                onValueChange: (value, instance) => {
-                  setSecondaryPart(instance);
-                }
-              }}
+        <Paper p='xs' withBorder>
+          <SimpleGrid cols={3}>
+            <Stack gap='xs' justify='flex-start' align='stretch'>
+              <Text size='sm'>{t`Primary Assembly`}</Text>
+              <Text
+                size='xs'
+                c='dimmed'
+              >{t`Primary assembly for comparison`}</Text>
+              <RenderPartColumn part={partInstance} />
+            </Stack>
+            <Expand>
+              <StandaloneField
+                fieldName='assembly'
+                fieldDefinition={{
+                  description: t`Select assembly to compare`,
+                  label: t`Secondary Assembly`,
+                  field_type: 'related field',
+                  api_url: apiUrl(ApiEndpoints.part_list),
+                  model: ModelType.part,
+                  required: true,
+                  filters: {
+                    assembly: true
+                  },
+                  onValueChange: (value, instance) => {
+                    setSecondaryPart(instance);
+                  }
+                }}
+              />
+            </Expand>
+            <Select
+              label={t`Display Mode`}
+              description={t`Select display mode for BOM comparison`}
+              defaultValue={'all'}
+              onChange={(value) => setDisplayMode(value as any)}
+              data={[
+                { value: 'all', label: t`Show All Parts` },
+                { value: 'different', label: t`Show different Parts` },
+                { value: 'common', label: t`Show common Parts` }
+              ]}
             />
-          </Expand>
+          </SimpleGrid>
+        </Paper>
+        <SimpleGrid cols={2} type='container' spacing='xs' verticalSpacing='xs'>
           {primaryBom.isLoading ? (
             <Loader />
           ) : (
