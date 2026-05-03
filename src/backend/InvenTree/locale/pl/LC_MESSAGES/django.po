@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-27 22:22+0000\n"
-"PO-Revision-Date: 2026-04-27 22:24\n"
+"POT-Creation-Date: 2026-04-28 02:31+0000\n"
+"PO-Revision-Date: 2026-04-28 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -571,7 +571,7 @@ msgstr "Obejmuje warianty"
 #: build/serializers.py:1483 company/models.py:1037 company/serializers.py:447
 #: order/api.py:309 order/api.py:313 order/api.py:940 order/api.py:1198
 #: order/api.py:1201 order/models.py:1991 order/models.py:2159
-#: order/models.py:2160 part/api.py:1132 part/api.py:1135 part/api.py:1348
+#: order/models.py:2160 part/api.py:1133 part/api.py:1136 part/api.py:1349
 #: part/models.py:527 part/models.py:3327 part/models.py:3470
 #: part/models.py:3528 part/models.py:3549 part/models.py:3571
 #: part/models.py:3712 part/models.py:3977 part/models.py:4398
@@ -595,8 +595,8 @@ msgstr "Obejmuje warianty"
 msgid "Part"
 msgstr "Komponent"
 
-#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3599
+#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:968
+#: part/api.py:1360 part/models.py:412 part/models.py:1142 part/models.py:3599
 #: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
 msgid "Category"
 msgstr "Kategoria"
@@ -747,7 +747,7 @@ msgstr "Wyjście"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr ""
 
-#: build/models.py:121 users/ruleset.py:31
+#: build/models.py:121 users/ruleset.py:33
 msgid "Build Orders"
 msgstr "Zlecenia budowy"
 
@@ -5744,71 +5744,71 @@ msgstr ""
 msgid "Has Results"
 msgstr ""
 
-#: part/api.py:653
+#: part/api.py:654
 msgid "Is Variant"
 msgstr ""
 
-#: part/api.py:661
+#: part/api.py:662
 msgid "Is Revision"
 msgstr ""
 
-#: part/api.py:671
+#: part/api.py:672
 msgid "Has Revisions"
 msgstr ""
 
-#: part/api.py:852
+#: part/api.py:853
 msgid "BOM Valid"
 msgstr ""
 
-#: part/api.py:961
+#: part/api.py:962
 msgid "Cascade Categories"
 msgstr ""
 
-#: part/api.py:962
+#: part/api.py:963
 msgid "If true, include items in child categories of the given category"
 msgstr ""
 
-#: part/api.py:968
+#: part/api.py:969
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr ""
 
-#: part/api.py:1280
+#: part/api.py:1281
 msgid "Assembly part is active"
 msgstr ""
 
-#: part/api.py:1284
+#: part/api.py:1285
 msgid "Assembly part is trackable"
 msgstr ""
 
-#: part/api.py:1288
+#: part/api.py:1289
 msgid "Assembly part is testable"
 msgstr ""
 
-#: part/api.py:1293
+#: part/api.py:1294
 msgid "Component part is active"
 msgstr ""
 
-#: part/api.py:1297
+#: part/api.py:1298
 msgid "Component part is trackable"
 msgstr ""
 
-#: part/api.py:1301
+#: part/api.py:1302
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1305
+#: part/api.py:1306
 msgid "Component part is an assembly"
 msgstr ""
 
-#: part/api.py:1309
+#: part/api.py:1310
 msgid "Component part is virtual"
 msgstr ""
 
-#: part/api.py:1313
+#: part/api.py:1314
 msgid "Has available stock"
 msgstr ""
 
-#: part/api.py:1370
+#: part/api.py:1371
 msgid "Uses"
 msgstr ""
 
@@ -5817,7 +5817,7 @@ msgstr ""
 msgid "Part Category"
 msgstr "Kategoria komponentu"
 
-#: part/models.py:93 users/ruleset.py:27
+#: part/models.py:93 users/ruleset.py:28
 msgid "Part Categories"
 msgstr "Kategorie części"
 
@@ -5870,7 +5870,7 @@ msgstr "Wartość domyślna"
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:528 part/serializers.py:114 users/ruleset.py:28
+#: part/models.py:528 part/serializers.py:114 users/ruleset.py:29
 msgid "Parts"
 msgstr "Części"
 
@@ -6632,7 +6632,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr ""
 
 #: part/serializers.py:873 stock/serializers.py:1048 stock/serializers.py:1231
-#: users/ruleset.py:30
+#: users/ruleset.py:32
 msgid "Stock Items"
 msgstr "Towary"
 
@@ -8542,7 +8542,7 @@ msgstr ""
 msgid "Stock Location"
 msgstr ""
 
-#: stock/models.py:148 users/ruleset.py:29
+#: stock/models.py:148 users/ruleset.py:31
 msgid "Stock Locations"
 msgstr "Lokacje stanu magazynowego"
 
@@ -9594,19 +9594,23 @@ msgstr ""
 msgid "Primary group for the user"
 msgstr ""
 
-#: users/ruleset.py:26
+#: users/ruleset.py:27
 msgid "Admin"
 msgstr ""
 
-#: users/ruleset.py:32
-msgid "Purchase Orders"
-msgstr "Zlecenia zakupu"
-
-#: users/ruleset.py:33
-msgid "Sales Orders"
+#: users/ruleset.py:30
+msgid "Bills of Material"
 msgstr ""
 
 #: users/ruleset.py:34
+msgid "Purchase Orders"
+msgstr "Zlecenia zakupu"
+
+#: users/ruleset.py:35
+msgid "Sales Orders"
+msgstr ""
+
+#: users/ruleset.py:36
 msgid "Return Orders"
 msgstr ""
 
