@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
     """
 
     dependencies = [
-        ("part", "0147_remove_part_default_supplier"),
+        ("part", "0148_auto_20260427_2233"),
     ]
 
     operations = [
