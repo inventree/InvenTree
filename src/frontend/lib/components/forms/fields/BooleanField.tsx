@@ -1,9 +1,9 @@
-import { isTrue } from '@lib/functions/Conversion';
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Switch } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+import { isTrue } from '../../../functions/Conversion';
+import type { ApiFormFieldType } from '../../../types/Forms';
 
 export function BooleanField({
   controller,

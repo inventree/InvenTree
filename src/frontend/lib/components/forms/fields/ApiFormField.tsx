@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import { IconFileUpload } from '@tabler/icons-react';
-import DateTimeField from '../../../../src/components/forms/DateTimeField';
 import type { ApiFormFieldSet, ApiFormFieldType } from '../../../types/Forms';
+import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
