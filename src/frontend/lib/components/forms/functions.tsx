@@ -1,6 +1,9 @@
-import { invalidResponse, permissionDenied } from '@lib/functions/Notification';
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import type { AxiosResponse } from 'axios';
+import {
+  invalidResponse,
+  permissionDenied
+} from '../../functions/Notification';
+import type { ApiFormFieldSet, ApiFormFieldType } from '../../types/Forms';
 
 /**
  * Extract the available fields (for a given method) from the response object

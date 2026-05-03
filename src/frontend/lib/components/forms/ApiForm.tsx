@@ -22,27 +22,27 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { Boundary } from '@lib/components/Boundary';
-import { isTrue } from '@lib/functions/Conversion';
+import { ApiFormField } from '../../../src/components/forms/fields/ApiFormField';
+import { useApi } from '../../../src/contexts/ApiContext';
+import { Boundary } from '../../components/Boundary';
+import { isTrue } from '../../functions/Conversion';
 import {
   type NestedDict,
   constructFormUrl,
   mapFields
-} from '@lib/functions/Forms';
-import { getDetailUrl } from '@lib/functions/Navigation';
+} from '../../functions/Forms';
+import { getDetailUrl } from '../../functions/Navigation';
 import {
   invalidResponse,
   showTimeoutNotification
-} from '@lib/functions/Notification';
+} from '../../functions/Notification';
 import type {
   ApiFormFieldSet,
   ApiFormFieldType,
   ApiFormProps
-} from '@lib/types/Forms';
-import { useApi } from '../../contexts/ApiContext';
-import { constructField, extractAvailableFields } from '../../functions/forms';
+} from '../../types/Forms';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
-import { ApiFormField } from './fields/ApiFormField';
+import { constructField, extractAvailableFields } from './functions';
 
 export function OptionsApiForm({
   props: _props,

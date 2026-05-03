@@ -1,6 +1,7 @@
 import { Boundary } from '@lib/components/Boundary';
 import { CopyableCell } from '@lib/components/CopyableCell';
 import { RowActions } from '@lib/components/RowActions';
+import { extractAvailableFields } from '@lib/components/forms/functions';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
@@ -35,7 +36,6 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
-import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';

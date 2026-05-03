@@ -10,6 +10,7 @@ import {
   RowEditAction
 } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
+import { EditApiForm } from '@lib/components/forms/ApiForm';
 import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -25,7 +26,6 @@ import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
 import { IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { EditApiForm } from '../../components/forms/ApiForm';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';

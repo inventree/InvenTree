@@ -17,6 +17,7 @@ import {
   RowEditAction
 } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
+import { EditApiForm } from '@lib/components/forms/ApiForm';
 import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -36,7 +37,6 @@ import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
-import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   TransferList,
   type TransferListItem

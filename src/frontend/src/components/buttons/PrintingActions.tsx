@@ -1,3 +1,4 @@
+import { extractAvailableFields } from '@lib/components/forms/functions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -8,7 +9,6 @@ import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../App';
-import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import {
   useGlobalSettingsState,
