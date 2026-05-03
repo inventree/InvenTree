@@ -217,7 +217,11 @@ test('Parts - BOM', async ({ browser }) => {
   // Let's try a BOM which has a "raw amount" which considers the units of the underlying part
   await navigate(page, 'part/109/bom');
 
-  const paintCell = await page.getByRole('cell', { name: '0.94635' });
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+
+  const paintCell = await page.getByRole('cell', {
+    name: 'Thumbnail Green Paint'
+  });
   await clickOnRowMenu(paintCell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
   await expect(
@@ -278,13 +282,15 @@ test('Parts - BOM Validation', async ({ browser }) => {
     .waitFor();
 
   // Edit line item, to ensure BOM is not valid
-  const cell = await page.getByRole('cell', { name: 'Thumbnail Red Paint' });
+  const cell = await page.getByRole('cell', { name: 'paint', exact: true });
 
+  // await cell.click({ button: 'right' });
+  // await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
   const input = await page.getByRole('textbox', {
-    name: 'number-field-quantity'
+    name: 'text-field-raw_amount'
   });
 
   const value = await input.inputValue();
