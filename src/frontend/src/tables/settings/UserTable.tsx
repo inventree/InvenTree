@@ -22,6 +22,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { useInstance } from '@lib/hooks/UseInstance';
 import useTable from '@lib/hooks/UseTable';
 import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
@@ -41,7 +42,6 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

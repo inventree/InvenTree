@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { PathParams } from '@lib/types/Core';
-import { useApi } from '../contexts/ApiContext';
+import { useApi } from '../../src/contexts/ApiContext';
 
 export interface UseInstanceResult {
   instance: any;

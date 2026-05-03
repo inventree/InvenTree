@@ -139,6 +139,10 @@ export {
 } from './components/nav/DetailDrawer';
 export { StylishText } from './components/StylishText';
 
+export {
+  useInstance,
+  type UseInstanceResult
+} from './hooks/UseInstance';
 // State management
 export {
   type StoredTableStateProps,

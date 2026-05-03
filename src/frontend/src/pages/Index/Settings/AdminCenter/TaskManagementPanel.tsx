@@ -4,11 +4,11 @@ import { lazy } from 'react';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { useInstance } from '@lib/hooks/UseInstance';
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';
-import { useInstance } from '../../../../hooks/UseInstance';
 import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';
 import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 

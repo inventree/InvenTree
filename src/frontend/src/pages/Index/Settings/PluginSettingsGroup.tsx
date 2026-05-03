@@ -1,3 +1,4 @@
+import { useInstance } from '@lib/hooks/UseInstance';
 import { ApiEndpoints } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
@@ -8,7 +9,6 @@ import {
   PluginSettingList,
   PluginUserSettingList
 } from '../../../components/settings/SettingList';
-import { useInstance } from '../../../hooks/UseInstance';
 
 function PluginSettingGroupItem({
   global,
