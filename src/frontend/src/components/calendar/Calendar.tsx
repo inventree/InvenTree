@@ -7,6 +7,7 @@ import FullCalendar from '@fullcalendar/react';
 import { ActionButton } from '@lib/components/ActionButton';
 import { Boundary } from '@lib/components/Boundary';
 import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
@@ -37,7 +38,6 @@ import {
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
-import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;

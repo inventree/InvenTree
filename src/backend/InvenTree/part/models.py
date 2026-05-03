@@ -2636,9 +2636,7 @@ class Part(
         parts = []
 
         # Child parts
-        children = self.get_descendants(include_self=False)
-
-        for child in children:
+        for child in self.get_descendants(include_self=False):
             parts.append(child)
 
         # Immediate parent, and siblings

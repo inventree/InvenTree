@@ -66,7 +66,8 @@ export default function UserSettings() {
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
               'SHOW_FULL_LOCATION_IN_TABLES',
-              'SHOW_FULL_CATEGORY_IN_TABLES'
+              'SHOW_FULL_CATEGORY_IN_TABLES',
+              'SHOW_BOM_SUBASSEMBLY_LEVELS'
             ]}
           />
         )

@@ -178,7 +178,6 @@ test('Settings - Global', async ({ browser }) => {
   await loadTab(page, 'Pricing');
   await loadTab(page, 'Parts');
   await loadTab(page, 'Stock', true);
-  await loadTab(page, 'Stock History');
 
   await loadTab(page, 'Notifications');
   await page
@@ -195,7 +194,7 @@ test('Settings - Global', async ({ browser }) => {
     .getByText('URL that is used to send messages to a slack channel')
     .waitFor();
 
-  await loadTab(page, 'Plugin Settings');
+  await loadTab(page, 'Plugins');
   await page
     .getByText('The settings below are specific to each available plugin')
     .waitFor();
@@ -236,13 +235,12 @@ test('Settings - Admin', async ({ browser }) => {
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Pricing');
-  await loadTab(page, 'Labels');
   await loadTab(page, 'Reporting');
-
-  await loadTab(page, 'Build Orders');
-  await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Sales Orders');
-  await loadTab(page, 'Return Orders');
+  await loadTab(page, 'Parts');
+  await loadTab(page, 'Stock');
+  await loadTab(page, 'Manufacturing');
+  await loadTab(page, 'Purchasing');
+  await loadTab(page, 'Sales');
 
   // Admin Center
   await page.getByRole('button', { name: 'admin' }).click();

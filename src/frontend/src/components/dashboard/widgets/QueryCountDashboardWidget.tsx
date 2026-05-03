@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -13,7 +14,6 @@ import { useDocumentVisibility } from '@mantine/hooks';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**

@@ -16,6 +16,8 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -29,12 +31,10 @@ import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { EditApiForm } from '../../components/forms/ApiForm';
-import { StylishText } from '../../components/items/StylishText';
 import {
   TransferList,
   type TransferListItem
 } from '../../components/items/TransferList';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useApiFormModal,

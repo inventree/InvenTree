@@ -33,6 +33,7 @@ import {
 } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
 import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
@@ -45,7 +46,6 @@ import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
-import { StylishText } from '../items/StylishText';
 import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 

@@ -2,6 +2,14 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.11.3 - April 2026
+
+Exposes additional type definitions related to rendering drawers from tables:
+- `DetailDrawer`
+- `TableState`
+
+Also exposes `StylishText`, which is required downstream for rendering the DetailDrawer component, and is used in a number of places within the InvenTree UI.
+
 ### 0.11.2 - April 2026
 
 Exposes additional type definitions related to tables and filters:

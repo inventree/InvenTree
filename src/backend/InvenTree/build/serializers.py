@@ -104,7 +104,8 @@ class BuildSerializer(
         read_only_fields = [
             'completed',
             'creation_date',
-            'completion_data',
+            'issued_by',
+            'completion_date',
             'status',
             'status_text',
             'level',

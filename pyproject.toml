@@ -109,12 +109,13 @@ unresolved-reference="ignore"  # 21 # see https://github.com/astral-sh/ty/issues
 unresolved-attribute="ignore"  # 505 # need Plugin Mixin typing
 call-non-callable="ignore"  # 8 ##
 invalid-assignment="ignore"  # 17  # need to wait for better django field stubs
-invalid-method-override="ignore" # 99
+# invalid-method-override="ignore" # 99
 invalid-return-type="ignore"  # 22 ##
-possibly-missing-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
+# possibly-missing-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
 unknown-argument="ignore"  # 3  # need to wait for better django field stubs
 invalid-argument-type="ignore"  # 49
 no-matching-overload="ignore"  # 3  # need to wait for betterdjango field stubs
+possibly-unbound-attribute="ignore"  # 21
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]

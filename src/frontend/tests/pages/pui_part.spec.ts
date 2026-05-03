@@ -180,10 +180,20 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
-  const cell = await page.getByRole('cell', {
-    name: 'Small plastic enclosure, black',
-    exact: true
-  });
+  // Test sub-assembly row expansion
+  await page.getByText('Widget Board (assembled)').click();
+  await page.getByText('R_10R_0402_1%').waitFor();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
+  const cell = await page
+    .getByRole('cell', { name: 'Thumbnail 1551ABK' })
+    .first();
 
   await clickOnRowMenu(cell);
 
@@ -247,6 +257,11 @@ test('Parts - BOM', async ({ browser }) => {
   // Check for the value converted back to [m]
   await page.getByRole('cell', { name: '0.01905' }).first().waitFor();
   await page.getByRole('cell', { name: 'my-ref' }).first().waitFor();
+  // Finish editing the BOM
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .click();
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).waitFor();
 });
 
 /**
@@ -256,8 +271,15 @@ test('Parts - BOM', async ({ browser }) => {
 test('Parts - BOM Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/107/bom' });
 
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
   // Edit line item, to ensure BOM is not valid
-  const cell = await page.getByRole('cell', { name: 'Red paint Red Paint' });
+  const cell = await page.getByRole('cell', { name: 'Thumbnail Red Paint' });
+
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
@@ -288,6 +310,37 @@ test('Parts - BOM Validation', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'bom-validation-info' }).hover();
   await page.getByText('Validated By: allaccessAlly').waitFor();
+});
+
+test('Parts - BOM Comparison', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/bom' });
+
+  await page
+    .getByRole('button', { name: 'action-button-compare-bill-of' })
+    .click();
+  await page.getByText('Select an assembly to view').waitFor();
+  await page
+    .getByRole('combobox', { name: 'related-field-assembly' })
+    .fill('blue round table');
+  await page.getByText('Blue Round TableA round table').click();
+
+  await page.getByRole('columnheader', { name: 'Quantity' }).first().waitFor();
+  await page.getByRole('columnheader', { name: 'Changes' }).first().waitFor();
+
+  await page.getByText('No changes').first().waitFor();
+  await page.getByText('Part added to BOM').first().waitFor();
+  await page.getByText('Removed from BOM').first().waitFor();
+
+  // Change display mode
+  await page.getByRole('textbox', { name: 'bom-compare-display-mode' }).click();
+  await page.getByRole('option', { name: 'Show different Parts' }).click();
+
+  // Use URL params to compare directly
+  await navigate(page, 'part/108/bom?compare=107');
+  await page.waitForLoadState('networkidle');
+  await page.getByText('0.125').nth(1).waitFor();
+  await page.getByText('Red Paint', { exact: true }).first().waitFor();
+  await page.getByText('Blue Paint', { exact: true }).first().waitFor();
 });
 
 test('Parts - Editing', async ({ browser }) => {
@@ -333,6 +386,13 @@ test('Parts - Locking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/bom' });
 
   await loadTab(page, 'Bill of Materials');
+
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
   await page
     .getByRole('button', { name: 'action-menu-add-bom-items' })
     .waitFor();
@@ -843,6 +903,8 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 
 test('Parts - Test Results', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
+
+  await page.waitForTimeout(200);
 
   await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
   await page.getByText('Blue Paint Applied').waitFor();

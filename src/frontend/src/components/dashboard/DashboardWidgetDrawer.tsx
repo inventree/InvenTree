@@ -15,8 +15,8 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { IconBackspace, IconLayoutGridAdd } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Drawer allowing the user to add new widgets to the dashboard.

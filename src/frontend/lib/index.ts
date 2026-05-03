@@ -26,6 +26,7 @@ export type {
   RowViewProps,
   TableColumn,
   TableColumnProps,
+  TableState,
   InvenTreeTableProps,
   InvenTreeTableRenderProps
 } from './types/Tables';
@@ -130,6 +131,13 @@ export {
   default as useTable,
   type TableStateExtraProps
 } from './hooks/UseTable';
+
+export {
+  type DrawerProps,
+  DetailDrawer,
+  DetailDrawerLink
+} from './components/nav/DetailDrawer';
+export { StylishText } from './components/StylishText';
 
 // State management
 export {
