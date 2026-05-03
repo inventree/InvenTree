@@ -144,7 +144,10 @@ function BomTableRow({
   return (
     <Table.Tr>
       <Table.Td>
-        <RenderPartColumn part={item.part_detail} />
+        <Group gap='xs'>
+          {rowIcon}
+          <RenderPartColumn part={item.part_detail} />
+        </Group>
       </Table.Td>
       <Table.Td>
         <Group gap='xs'>
@@ -372,21 +375,6 @@ export function BomCompareDrawer({
               >{t`Primary assembly for comparison`}</Text>
               <RenderPartColumn part={partInstance} />
             </Stack>
-            <Select
-              label={t`Display Mode`}
-              aria-label='bom-compare-display-mode'
-              description={t`Select display mode for BOM comparison`}
-              defaultValue={'all'}
-              onChange={(value) => setDisplayMode(value as any)}
-              style={{
-                maxWidth: 350
-              }}
-              data={[
-                { value: 'all', label: t`Show all Parts` },
-                { value: 'different', label: t`Show different Parts` },
-                { value: 'common', label: t`Show common Parts` }
-              ]}
-            />
             <Expand>
               <StandaloneField
                 fieldName='assembly'
@@ -415,6 +403,18 @@ export function BomCompareDrawer({
                 }}
               />
             </Expand>
+            <Select
+              label={t`Display Mode`}
+              aria-label='bom-compare-display-mode'
+              description={t`Select display mode for BOM comparison`}
+              defaultValue={'all'}
+              onChange={(value) => setDisplayMode(value as any)}
+              data={[
+                { value: 'all', label: t`Show all Parts` },
+                { value: 'different', label: t`Show different Parts` },
+                { value: 'common', label: t`Show common Parts` }
+              ]}
+            />
           </SimpleGrid>
         </Paper>
         {secondaryPartId ? (

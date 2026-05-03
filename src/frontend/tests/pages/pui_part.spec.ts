@@ -280,9 +280,23 @@ test('Parts - BOM Comparison', async ({ browser }) => {
     .fill('blue round table');
   await page.getByText('Blue Round TableA round table').click();
 
+  await page.getByRole('columnheader', { name: 'Quantity' }).first().waitFor();
   await page.getByRole('columnheader', { name: 'Changes' }).first().waitFor();
-  await page.getByRole('columnheader', { name: 'Quantity' }).nth(1).waitFor();
-  await page.getByText('Setup Quantity3').waitFor();
+
+  await page.getByText('No changes').first().waitFor();
+  await page.getByText('Part added to BOM').first().waitFor();
+  await page.getByText('Removed from BOM').first().waitFor();
+
+  // Change display mode
+  await page.getByRole('textbox', { name: 'bom-compare-display-mode' }).click();
+  await page.getByRole('option', { name: 'Show different Parts' }).click();
+
+  // Use URL params to compare directly
+  await navigate(page, 'part/108/bom?compare=107');
+  await page.waitForLoadState('networkidle');
+  await page.getByText('0.125').nth(1).waitFor();
+  await page.getByText('Red Paint', { exact: true }).first().waitFor();
+  await page.getByText('Blue Paint', { exact: true }).first().waitFor();
 });
 
 test('Parts - Editing', async ({ browser }) => {
