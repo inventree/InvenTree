@@ -5,10 +5,10 @@ import {
 } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import type { PathParams } from '@lib/types/Core';
 import { useApi } from '../../src/contexts/ApiContext';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../functions/Api';
+import type { PathParams } from '../types/Core';
 
 export interface UseInstanceResult {
   instance: any;
