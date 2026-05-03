@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-27 22:22+0000\n"
-"PO-Revision-Date: 2026-04-27 22:24\n"
+"POT-Creation-Date: 2026-04-28 02:31+0000\n"
+"PO-Revision-Date: 2026-04-28 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -571,7 +571,7 @@ msgstr "バリアントを含む"
 #: build/serializers.py:1483 company/models.py:1037 company/serializers.py:447
 #: order/api.py:309 order/api.py:313 order/api.py:940 order/api.py:1198
 #: order/api.py:1201 order/models.py:1991 order/models.py:2159
-#: order/models.py:2160 part/api.py:1132 part/api.py:1135 part/api.py:1348
+#: order/models.py:2160 part/api.py:1133 part/api.py:1136 part/api.py:1349
 #: part/models.py:527 part/models.py:3327 part/models.py:3470
 #: part/models.py:3528 part/models.py:3549 part/models.py:3571
 #: part/models.py:3712 part/models.py:3977 part/models.py:4398
@@ -595,8 +595,8 @@ msgstr "バリアントを含む"
 msgid "Part"
 msgstr "パーツ"
 
-#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3599
+#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:968
+#: part/api.py:1360 part/models.py:412 part/models.py:1142 part/models.py:3599
 #: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
 msgid "Category"
 msgstr "カテゴリ"
@@ -747,7 +747,7 @@ msgstr "出力"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "出力ストックアイテムIDでフィルタリングします。未インストールビルドアイテムを検索するには「null」をご使用ください。"
 
-#: build/models.py:121 users/ruleset.py:31
+#: build/models.py:121 users/ruleset.py:33
 msgid "Build Orders"
 msgstr "組立注文"
 
@@ -5744,71 +5744,71 @@ msgstr "指定したカテゴリの下にあるサブカテゴリを除外しま
 msgid "Has Results"
 msgstr "実績あり"
 
-#: part/api.py:653
+#: part/api.py:654
 msgid "Is Variant"
 msgstr "バリエーション？"
 
-#: part/api.py:661
+#: part/api.py:662
 msgid "Is Revision"
 msgstr "改訂版"
 
-#: part/api.py:671
+#: part/api.py:672
 msgid "Has Revisions"
 msgstr "改定あり"
 
-#: part/api.py:852
+#: part/api.py:853
 msgid "BOM Valid"
 msgstr "BOM有効"
 
-#: part/api.py:961
+#: part/api.py:962
 msgid "Cascade Categories"
 msgstr "カスケードカテゴリ"
 
-#: part/api.py:962
+#: part/api.py:963
 msgid "If true, include items in child categories of the given category"
 msgstr "もし該当する場合には、指定されたカテゴリの子カテゴリ内のアイテムを含めてください。"
 
-#: part/api.py:968
+#: part/api.py:969
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "数値カテゴリIDまたはリテラル'null'でフィルタリングしてください"
 
-#: part/api.py:1280
+#: part/api.py:1281
 msgid "Assembly part is active"
 msgstr ""
 
-#: part/api.py:1284
+#: part/api.py:1285
 msgid "Assembly part is trackable"
 msgstr ""
 
-#: part/api.py:1288
+#: part/api.py:1289
 msgid "Assembly part is testable"
 msgstr "組み立て部分はテスト可能"
 
-#: part/api.py:1293
+#: part/api.py:1294
 msgid "Component part is active"
 msgstr ""
 
-#: part/api.py:1297
+#: part/api.py:1298
 msgid "Component part is trackable"
 msgstr ""
 
-#: part/api.py:1301
+#: part/api.py:1302
 msgid "Component part is testable"
 msgstr "コンポーネント部分はテスト可能"
 
-#: part/api.py:1305
+#: part/api.py:1306
 msgid "Component part is an assembly"
 msgstr ""
 
-#: part/api.py:1309
+#: part/api.py:1310
 msgid "Component part is virtual"
 msgstr ""
 
-#: part/api.py:1313
+#: part/api.py:1314
 msgid "Has available stock"
 msgstr ""
 
-#: part/api.py:1370
+#: part/api.py:1371
 msgid "Uses"
 msgstr "用途"
 
@@ -5817,7 +5817,7 @@ msgstr "用途"
 msgid "Part Category"
 msgstr "パーツカテゴリ"
 
-#: part/models.py:93 users/ruleset.py:27
+#: part/models.py:93 users/ruleset.py:28
 msgid "Part Categories"
 msgstr "パーツカテゴリ"
 
@@ -5870,7 +5870,7 @@ msgstr "初期値"
 msgid "Default Parameter Value"
 msgstr "パラメータのデフォルト値"
 
-#: part/models.py:528 part/serializers.py:114 users/ruleset.py:28
+#: part/models.py:528 part/serializers.py:114 users/ruleset.py:29
 msgid "Parts"
 msgstr "パーツ"
 
@@ -6632,7 +6632,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "この部品の予定生産数量"
 
 #: part/serializers.py:873 stock/serializers.py:1048 stock/serializers.py:1231
-#: users/ruleset.py:30
+#: users/ruleset.py:32
 msgid "Stock Items"
 msgstr "在庫商品"
 
@@ -8542,7 +8542,7 @@ msgstr "アイコンが設定されていないすべての場所のデフォル
 msgid "Stock Location"
 msgstr "ストックロケーション"
 
-#: stock/models.py:148 users/ruleset.py:29
+#: stock/models.py:148 users/ruleset.py:31
 msgid "Stock Locations"
 msgstr "在庫場所"
 
@@ -9594,19 +9594,23 @@ msgstr "プライマリーグループ"
 msgid "Primary group for the user"
 msgstr "ユーザーのプライマリグループ"
 
-#: users/ruleset.py:26
+#: users/ruleset.py:27
 msgid "Admin"
 msgstr "管理者"
 
-#: users/ruleset.py:32
+#: users/ruleset.py:30
+msgid "Bills of Material"
+msgstr ""
+
+#: users/ruleset.py:34
 msgid "Purchase Orders"
 msgstr "購入注文"
 
-#: users/ruleset.py:33
+#: users/ruleset.py:35
 msgid "Sales Orders"
 msgstr "セールスオーダー"
 
-#: users/ruleset.py:34
+#: users/ruleset.py:36
 msgid "Return Orders"
 msgstr "返品注文"
 
