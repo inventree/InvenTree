@@ -6,7 +6,6 @@ import {
   Divider,
   Drawer,
   Group,
-  Loader,
   Paper,
   Select,
   SimpleGrid,
@@ -15,6 +14,7 @@ import {
   Text
 } from '@mantine/core';
 import {
+  IconArrowRight,
   IconCircleCheck,
   IconCirclePlus,
   IconCircleX,
@@ -30,6 +30,7 @@ import { RenderPartColumn } from '../../../tables/ColumnRenderers';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
+  quantity: t`Quantity`,
   reference: t`Reference`,
   allow_variants: t`Allow Variants`,
   inherited: t`Inherited`,
@@ -64,20 +65,14 @@ function getBomDeltas(primary: any, secondary: any): string[] {
 }
 
 function BomTableRow({
-  item,
-  primary
+  item
 }: Readonly<{
   item: BomCompareRow;
-  primary: boolean;
 }>) {
-  const hasPart = primary ? !!item.primary : !!item.secondary;
-
   const partMatch = !!item.primary && !!item.secondary;
 
   const quantityMatch =
     partMatch && item.primary.quantity == item.secondary.quantity;
-
-  const data = primary ? item.primary : item.secondary;
 
   const deltas: any[] = useMemo(() => {
     const fields: any[] = [];
@@ -86,17 +81,19 @@ function BomTableRow({
       fields.push({
         field: delta,
         label: DELTA_FIELDS[delta as keyof typeof DELTA_FIELDS],
-        value: primary ? item.primary?.[delta] : item.secondary?.[delta]
+        primaryValue: item.primary?.[delta] ?? null,
+        secondaryValue: item.secondary?.[delta] ?? null
       });
     });
 
     return fields;
-  }, [item, primary]);
+  }, [item]);
 
   // Determine the appropriate icon to display for this row
   const rowIcon: ReactNode = useMemo(() => {
     if (!!item.primary != !!item.secondary) {
-      if (primary == !!item.primary) {
+      if (!!item.secondary) {
+        // Part was added to the secondary BOM (exists in secondary but not primary)
         return (
           <ActionIcon
             variant='transparent'
@@ -142,52 +139,58 @@ function BomTableRow({
         </ActionIcon>
       );
     }
-  }, [item, primary]);
+  }, [item]);
 
   return (
     <Table.Tr>
       <Table.Td>
-        <Group justify='space-between'>
-          {hasPart ? (
-            <RenderPartColumn part={item.part_detail} />
-          ) : (
-            <Text size='sm'>-</Text>
-          )}
-          {rowIcon}
-        </Group>
+        <RenderPartColumn part={item.part_detail} />
       </Table.Td>
       <Table.Td>
-        <Group gap='xs' justify='space-between'>
-          <Text size='sm'>{data?.quantity ?? '-'}</Text>
-          {hasPart && item.part_detail?.units && (
+        <Group gap='xs'>
+          <Text size='sm'>
+            {item.primary?.quantity ?? item.secondary?.quantity ?? '-'}
+          </Text>
+          {item.part_detail?.units && (
             <Text size='xs'>[{item.part_detail.units}]</Text>
           )}
         </Group>
       </Table.Td>
       <Table.Td>
-        {partMatch && deltas.length > 0 ? (
-          <Stack gap='xs'>
-            {deltas.map((delta, index) => (
-              <Group key={delta.field} gap='xs' justify='space-between'>
-                <Text size='xs'>{delta.label}</Text>
-                <Text size='xs'>{delta.value ?? '-'}</Text>
-              </Group>
-            ))}
-          </Stack>
-        ) : (
-          <Text size='sm'>-</Text>
-        )}
+        <Group gap='xs'>
+          {rowIcon}
+          {partMatch && deltas.length > 0 ? (
+            <Stack gap='xs'>
+              {deltas.map((delta, index) => (
+                <Group key={delta.field} gap='xs' justify='space-between'>
+                  <Text size='xs'>{delta.label}</Text>
+                  <Text size='xs'>{delta.primaryValue ?? '-'}</Text>
+                  <ActionIcon size='xs' variant='transparent'>
+                    <IconArrowRight />
+                  </ActionIcon>
+                  <Text size='xs'>{delta.secondaryValue ?? '-'}</Text>
+                </Group>
+              ))}
+            </Stack>
+          ) : (
+            <Text size='xs'>
+              {partMatch
+                ? t`No changes`
+                : !!item.primary
+                  ? t`Part removed from BOM`
+                  : t`Part added to BOM`}
+            </Text>
+          )}
+        </Group>
       </Table.Td>
     </Table.Tr>
   );
 }
 
 function BomTable({
-  items,
-  primary
+  items
 }: Readonly<{
   items: BomCompareRow[];
-  primary: boolean;
 }>) {
   return (
     <Paper p='xs' withBorder>
@@ -201,7 +204,7 @@ function BomTable({
         </Table.Thead>
         <Table.Tbody>
           {items.map((item: any, index) => (
-            <BomTableRow key={index} item={item} primary={primary} />
+            <BomTableRow key={index} item={item} />
           ))}
         </Table.Tbody>
       </Table>
@@ -371,6 +374,7 @@ export function BomCompareDrawer({
             </Stack>
             <Select
               label={t`Display Mode`}
+              aria-label='bom-compare-display-mode'
               description={t`Select display mode for BOM comparison`}
               defaultValue={'all'}
               onChange={(value) => setDisplayMode(value as any)}
@@ -414,18 +418,7 @@ export function BomCompareDrawer({
           </SimpleGrid>
         </Paper>
         {secondaryPartId ? (
-          <SimpleGrid cols={{ base: 1, sm: 2 }}>
-            {primaryBom.isLoading ? (
-              <Loader />
-            ) : (
-              <BomTable items={comparedItems} primary />
-            )}
-            {secondaryBom.isLoading ? (
-              <Loader />
-            ) : (
-              <BomTable items={comparedItems} primary={false} />
-            )}
-          </SimpleGrid>
+          <BomTable items={comparedItems} />
         ) : (
           <Alert color='yellow'>{t`Select an assembly to view Bill of Materials comparison`}</Alert>
         )}
