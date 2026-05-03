@@ -24,24 +24,24 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { ActionButton } from '@lib/components/ActionButton';
-import {
-  ModelInformationDict,
-  type TranslatableModelInformationInterface
-} from '@lib/enums/ModelInformation';
-import { apiUrl } from '@lib/functions/Api';
-import { useCreateApiFormModal } from '@lib/hooks/UseForm';
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { IconPlus } from '@tabler/icons-react';
-import { useApi } from '../../../contexts/ApiContext';
+import { ScanButton } from '../../../../src/components/buttons/ScanButton';
+import Expand from '../../../../src/components/items/Expand';
+import { RenderInstance } from '../../../../src/components/render/Instance';
+import { useApi } from '../../../../src/contexts/ApiContext';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../../states/SettingsStates';
-import { vars } from '../../../theme';
-import { ScanButton } from '../../buttons/ScanButton';
-import Expand from '../../items/Expand';
-import { RenderInstance } from '../../render/Instance';
+} from '../../../../src/states/SettingsStates';
+import { vars } from '../../../../src/theme';
+import { ActionButton } from '../../../components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '../../../enums/ModelInformation';
+import { apiUrl } from '../../../functions/Api';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
+import type { ApiFormFieldType } from '../../../types/Forms';
 
 /**
  * Render a 'select' field for searching the database against a particular model type

@@ -1,3 +1,4 @@
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { useEditApiFormModal } from '@lib/hooks/UseForm';
 import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
@@ -38,7 +39,6 @@ import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import useWizard from '../../hooks/UseWizard';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { StandaloneField } from '../forms/StandaloneField';
 import { RenderRemoteInstance } from '../render/Instance';
 
 type SearchResult = {

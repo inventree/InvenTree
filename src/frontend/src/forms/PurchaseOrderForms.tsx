@@ -29,15 +29,19 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { StylishText } from '@lib/components/StylishText';
+import {
+  TableFieldExtraRow,
+  type TableFieldRowProps
+} from '@lib/components/forms/fields/TableField';
 import { apiUrl } from '@lib/functions/Api';
 import { toNumber } from '@lib/functions/Conversion';
 import { useCreateApiFormModal } from '@lib/hooks/UseForm';
@@ -45,10 +49,6 @@ import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '@lib/types/Forms';
-import {
-  TableFieldExtraRow,
-  type TableFieldRowProps
-} from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';

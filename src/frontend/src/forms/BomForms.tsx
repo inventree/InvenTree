@@ -1,3 +1,4 @@
+import type { TableFieldRowProps } from '@lib/components/forms/fields/TableField';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -8,7 +9,6 @@ import { Table } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { RenderPart } from '../components/render/Part';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useUserState } from '../states/UserState';

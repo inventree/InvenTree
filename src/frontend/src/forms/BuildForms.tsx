@@ -12,19 +12,19 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { apiUrl } from '@lib/functions/Api';
-import { useCreateApiFormModal } from '@lib/hooks/UseForm';
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
-} from '../components/forms/fields/TableField';
+} from '@lib/components/forms/fields/TableField';
+import { apiUrl } from '@lib/functions/Api';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import {
   RenderStockItem,

@@ -11,12 +11,13 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
+import type { TableFieldRowProps } from '@lib/components/forms/fields/TableField';
 import { apiUrl } from '@lib/functions/Api';
 import { toNumber } from '@lib/functions/Conversion';
 import { useCreateApiFormModal, useEditApiFormModal } from '@lib/hooks/UseForm';
@@ -26,7 +27,6 @@ import type {
   ApiFormFieldType
 } from '@lib/types/Forms';
 import dayjs from 'dayjs';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';

@@ -21,10 +21,10 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useShallow } from 'zustand/react/shallow';
-import { useIconState } from '../../../states/IconState';
-import { ApiIcon } from '../../items/ApiIcon';
+import { ApiIcon } from '../../../../src/components/items/ApiIcon';
+import { useIconState } from '../../../../src/states/IconState';
+import type { ApiFormFieldType } from '../../../types/Forms';
 
 export default function IconField({
   controller,

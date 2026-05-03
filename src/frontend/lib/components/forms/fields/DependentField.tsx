@@ -5,12 +5,12 @@ import {
   useFormContext
 } from 'react-hook-form';
 
+import { useApi } from '../../../../src/contexts/ApiContext';
 import {
   constructField,
   extractAvailableFields
-} from '@lib/components/forms/functions';
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { useApi } from '../../../contexts/ApiContext';
+} from '../../../components/forms/functions';
+import type { ApiFormFieldSet, ApiFormFieldType } from '../../../types/Forms';
 import { ApiFormField } from './ApiFormField';
 
 export function DependentField({

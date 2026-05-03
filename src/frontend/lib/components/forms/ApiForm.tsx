@@ -22,7 +22,6 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { ApiFormField } from '../../../src/components/forms/fields/ApiFormField';
 import { useApi } from '../../../src/contexts/ApiContext';
 import { Boundary } from '../../components/Boundary';
 import { isTrue } from '../../functions/Conversion';
@@ -42,6 +41,7 @@ import type {
   ApiFormProps
 } from '../../types/Forms';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
+import { ApiFormField } from './fields/ApiFormField';
 import { constructField, extractAvailableFields } from './functions';
 
 export function OptionsApiForm({

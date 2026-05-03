@@ -1,10 +1,10 @@
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
+import type { TableFieldRowProps } from '@lib/components/forms/fields/TableField';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import { useMemo } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 
 function BuildAllocateLineRow({
   props

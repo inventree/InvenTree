@@ -1,3 +1,4 @@
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { ApiEndpoints, ModelType, StylishText, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import {
@@ -24,7 +25,6 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../../App';
-import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
 import { RenderPartColumn } from '../../../tables/ColumnRenderers';
 

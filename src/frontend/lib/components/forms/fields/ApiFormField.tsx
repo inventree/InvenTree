@@ -4,9 +4,9 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
-import DateTimeField from '../DateTimeField';
+import DateTimeField from '../../../../src/components/forms/DateTimeField';
+import type { ApiFormFieldSet, ApiFormFieldType } from '../../../types/Forms';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';

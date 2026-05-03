@@ -159,6 +159,7 @@ export {
   EditApiForm,
   DeleteApiForm
 } from './components/forms/ApiForm';
+export { StandaloneField } from './components/forms/StandaloneField';
 
 export { useModal } from './hooks/UseModal';
 

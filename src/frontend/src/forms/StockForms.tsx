@@ -23,15 +23,19 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StandaloneField } from '@lib/components/forms/StandaloneField';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { StylishText } from '@lib/components/StylishText';
+import {
+  TableFieldExtraRow,
+  type TableFieldRowProps
+} from '@lib/components/forms/fields/TableField';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import {
@@ -47,10 +51,6 @@ import type {
   ApiFormModalProps,
   StockOperationProps
 } from '@lib/types/Forms';
-import {
-  TableFieldExtraRow,
-  type TableFieldRowProps
-} from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
