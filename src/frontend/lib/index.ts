@@ -135,7 +135,8 @@ export {
 export {
   type DrawerProps,
   DetailDrawer,
-  DetailDrawerLink
+  DetailDrawerLink,
+  DetailDrawerComponent
 } from './components/nav/DetailDrawer';
 export { StylishText } from './components/StylishText';
 
