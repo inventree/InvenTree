@@ -5,9 +5,7 @@ import {
   Center,
   Grid,
   Group,
-  HoverCard,
   Loader,
-  type MantineColor,
   Paper,
   Skeleton,
   Stack,
@@ -17,13 +15,11 @@ import {
   IconBookmarks,
   IconBuilding,
   IconChecklist,
-  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconListCheck,
   IconListDetails,
   IconListTree,
   IconLock,
@@ -47,7 +43,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { ActionButton } from '@lib/index';
 import type { StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -76,20 +71,17 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
-import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
-import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { type UseInstanceResult, useInstance } from '../../hooks/UseInstance';
+import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -112,6 +104,7 @@ import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
+import { BomActions } from './bom/BomActions';
 
 /**
  * Render a part revision selector component
@@ -155,132 +148,6 @@ function RevisionSelector({
 }
 
 /**
- * A hover-over component which displays information about the BOM validation for a given part
- */
-function BomValidationInformation({
-  bomInformation,
-  partId
-}: {
-  bomInformation: UseInstanceResult;
-  partId: number;
-}) {
-  const user = useUserState();
-
-  const [taskId, setTaskId] = useState<string>('');
-
-  useBackgroundTask({
-    taskId: taskId,
-    message: t`Validating BOM`,
-    successMessage: t`BOM validated`,
-    onComplete: () => {
-      bomInformation.instanceQuery.refetch();
-    }
-  });
-
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      // If the process has been offloaded to a background task
-      if (response.task_id) {
-        setTaskId(response.task_id);
-      } else {
-        bomInformation.instanceQuery.refetch();
-      }
-    }
-  });
-
-  if (bomInformation.instanceQuery.isFetching) {
-    return <Loader size='sm' />;
-  }
-
-  let icon: ReactNode;
-  let color: MantineColor;
-  let title = '';
-  let description = '';
-
-  if (bomInformation.instance?.bom_validated) {
-    color = 'green';
-    icon = <IconListCheck />;
-    title = t`BOM Validated`;
-    description = t`The Bill of Materials for this part has been validated`;
-  } else if (bomInformation.instance?.bom_checked_date) {
-    color = 'yellow';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
-  } else {
-    color = 'red';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has not yet been validated`;
-  }
-
-  return (
-    <>
-      {validateBom.modal}
-      <Group gap='xs' justify='flex-end'>
-        {!bomInformation.instance?.bom_validated &&
-          user.hasChangeRole(UserRoles.bom) && (
-            <ActionButton
-              icon={<IconCircleCheck />}
-              color='green'
-              tooltip={t`Validate BOM`}
-              onClick={validateBom.open}
-            />
-          )}
-        <HoverCard position='bottom-end'>
-          <HoverCard.Target>
-            <ActionIcon
-              color={color}
-              variant='transparent'
-              aria-label='bom-validation-info'
-            >
-              {icon}
-            </ActionIcon>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            <Alert color={color} icon={icon} title={title}>
-              <Stack gap='xs'>
-                <Text size='sm'>{description}</Text>
-                {bomInformation.instance?.bom_checked_date && (
-                  <Text size='sm'>
-                    {t`Validated On`}:{' '}
-                    {bomInformation.instance.bom_checked_date}
-                  </Text>
-                )}
-                {bomInformation.instance?.bom_checked_by_detail && (
-                  <Group gap='xs'>
-                    <Text size='sm'>{t`Validated By`}: </Text>
-                    <RenderUser
-                      instance={bomInformation.instance.bom_checked_by_detail}
-                    />
-                  </Group>
-                )}
-              </Stack>
-            </Alert>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      </Group>
-    </>
-  );
-}
-
-/**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
@@ -295,6 +162,7 @@ export default function PartDetail() {
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
+  // BOM validation information (used for hover-over info on the BOM tab)
   const bomInformation = useInstance({
     endpoint: ApiEndpoints.bom_validate,
     pk: id,
@@ -808,10 +676,7 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         controls: (
-          <BomValidationInformation
-            bomInformation={bomInformation}
-            partId={part.pk ?? -1}
-          />
+          <BomActions bomInformation={bomInformation} partInstance={part} />
         ),
         icon: <IconListTree />,
         hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),
