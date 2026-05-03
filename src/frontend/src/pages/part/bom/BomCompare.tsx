@@ -1,6 +1,7 @@
 import { ApiEndpoints, ModelType, StylishText, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
   Alert,
   Divider,
   Drawer,
@@ -13,16 +14,19 @@ import {
   Table,
   Text
 } from '@mantine/core';
+import {
+  IconCircleCheck,
+  IconCirclePlus,
+  IconCircleX,
+  IconStatusChange
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
 import { RenderPartColumn } from '../../../tables/ColumnRenderers';
-
-const MISMATCH_COLOR = '#ffe6e6aa';
-const MATCH_COLOR = 'transparent';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
@@ -89,22 +93,70 @@ function BomTableRow({
     return fields;
   }, [item, primary]);
 
+  // Determine the appropriate icon to display for this row
+  const rowIcon: ReactNode = useMemo(() => {
+    if (!!item.primary != !!item.secondary) {
+      if (primary == !!item.primary) {
+        return (
+          <ActionIcon
+            variant='transparent'
+            size='sm'
+            color='var(--mantine-color-yellow-5)'
+          >
+            <IconCirclePlus />
+          </ActionIcon>
+        );
+      } else {
+        return (
+          <ActionIcon
+            variant='transparent'
+            size='sm'
+            color='var(--mantine-color-red-5)'
+          >
+            <IconCircleX />
+          </ActionIcon>
+        );
+      }
+    } else if (
+      !!item.deltas?.length ||
+      item.primary?.quantity != item.secondary?.quantity
+    ) {
+      // Part exists in both BOMs but has differences
+      return (
+        <ActionIcon
+          variant='transparent'
+          size='sm'
+          color='var(--mantine-color-blue-5)'
+        >
+          <IconStatusChange />
+        </ActionIcon>
+      );
+    } else {
+      return (
+        <ActionIcon
+          variant='transparent'
+          size='sm'
+          color='var(--mantine-color-green-5)'
+        >
+          <IconCircleCheck />
+        </ActionIcon>
+      );
+    }
+  }, [item, primary]);
+
   return (
-    <Table.Tr key={item.key}>
-      <Table.Td
-        style={{ backgroundColor: partMatch ? MATCH_COLOR : MISMATCH_COLOR }}
-      >
-        {hasPart ? (
-          <RenderPartColumn part={item.part_detail} />
-        ) : (
-          <Text size='sm'>-</Text>
-        )}
+    <Table.Tr>
+      <Table.Td>
+        <Group justify='space-between'>
+          {hasPart ? (
+            <RenderPartColumn part={item.part_detail} />
+          ) : (
+            <Text size='sm'>-</Text>
+          )}
+          {rowIcon}
+        </Group>
       </Table.Td>
-      <Table.Td
-        style={{
-          backgroundColor: quantityMatch ? MATCH_COLOR : MISMATCH_COLOR
-        }}
-      >
+      <Table.Td>
         <Group gap='xs' justify='space-between'>
           <Text size='sm'>{data?.quantity ?? '-'}</Text>
           {hasPart && item.part_detail?.units && (
@@ -112,8 +164,8 @@ function BomTableRow({
           )}
         </Group>
       </Table.Td>
-      {partMatch && deltas.length > 0 ? (
-        <Table.Td style={{ backgroundColor: MISMATCH_COLOR }}>
+      <Table.Td>
+        {partMatch && deltas.length > 0 ? (
           <Stack gap='xs'>
             {deltas.map((delta, index) => (
               <Group key={delta.field} gap='xs' justify='space-between'>
@@ -122,12 +174,10 @@ function BomTableRow({
               </Group>
             ))}
           </Stack>
-        </Table.Td>
-      ) : (
-        <Table.Td>
+        ) : (
           <Text size='sm'>-</Text>
-        </Table.Td>
-      )}
+        )}
+      </Table.Td>
     </Table.Tr>
   );
 }
