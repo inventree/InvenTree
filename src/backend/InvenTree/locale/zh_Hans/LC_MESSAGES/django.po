@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-27 22:22+0000\n"
-"PO-Revision-Date: 2026-04-27 22:24\n"
+"POT-Creation-Date: 2026-04-28 02:31+0000\n"
+"PO-Revision-Date: 2026-04-28 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -571,7 +571,7 @@ msgstr "包含变体"
 #: build/serializers.py:1483 company/models.py:1037 company/serializers.py:447
 #: order/api.py:309 order/api.py:313 order/api.py:940 order/api.py:1198
 #: order/api.py:1201 order/models.py:1991 order/models.py:2159
-#: order/models.py:2160 part/api.py:1132 part/api.py:1135 part/api.py:1348
+#: order/models.py:2160 part/api.py:1133 part/api.py:1136 part/api.py:1349
 #: part/models.py:527 part/models.py:3327 part/models.py:3470
 #: part/models.py:3528 part/models.py:3549 part/models.py:3571
 #: part/models.py:3712 part/models.py:3977 part/models.py:4398
@@ -595,8 +595,8 @@ msgstr "包含变体"
 msgid "Part"
 msgstr "零件"
 
-#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:967
-#: part/api.py:1359 part/models.py:412 part/models.py:1142 part/models.py:3599
+#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:968
+#: part/api.py:1360 part/models.py:412 part/models.py:1142 part/models.py:3599
 #: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
 msgid "Category"
 msgstr "类别"
@@ -747,7 +747,7 @@ msgstr "产出"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "按产出库存项ID筛选，使用“null”查找未安装的生产项。"
 
-#: build/models.py:121 users/ruleset.py:31
+#: build/models.py:121 users/ruleset.py:33
 msgid "Build Orders"
 msgstr "生产订单"
 
@@ -5746,71 +5746,71 @@ msgstr "排除指定类别下的子类别"
 msgid "Has Results"
 msgstr "有结果"
 
-#: part/api.py:653
+#: part/api.py:654
 msgid "Is Variant"
 msgstr "是变体"
 
-#: part/api.py:661
+#: part/api.py:662
 msgid "Is Revision"
 msgstr "是修订版本"
 
-#: part/api.py:671
+#: part/api.py:672
 msgid "Has Revisions"
 msgstr "有修订版本"
 
-#: part/api.py:852
+#: part/api.py:853
 msgid "BOM Valid"
 msgstr "物料清单合规"
 
-#: part/api.py:961
+#: part/api.py:962
 msgid "Cascade Categories"
 msgstr "级联分类"
 
-#: part/api.py:962
+#: part/api.py:963
 msgid "If true, include items in child categories of the given category"
 msgstr "如果为真，则包含给定分类下的所有子分类中的项目"
 
-#: part/api.py:968
+#: part/api.py:969
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "按数字分类ID或字面值 \"null\" 进行筛选"
 
-#: part/api.py:1280
+#: part/api.py:1281
 msgid "Assembly part is active"
 msgstr "装配零件已启用"
 
-#: part/api.py:1284
+#: part/api.py:1285
 msgid "Assembly part is trackable"
 msgstr "装配零件可追踪"
 
-#: part/api.py:1288
+#: part/api.py:1289
 msgid "Assembly part is testable"
 msgstr "装配部份是可测试的"
 
-#: part/api.py:1293
+#: part/api.py:1294
 msgid "Component part is active"
 msgstr "元器件已激活"
 
-#: part/api.py:1297
+#: part/api.py:1298
 msgid "Component part is trackable"
 msgstr "该零部件可追溯"
 
-#: part/api.py:1301
+#: part/api.py:1302
 msgid "Component part is testable"
 msgstr "组件部份是可测试的"
 
-#: part/api.py:1305
+#: part/api.py:1306
 msgid "Component part is an assembly"
 msgstr "该零部件是一个装配件"
 
-#: part/api.py:1309
+#: part/api.py:1310
 msgid "Component part is virtual"
 msgstr "该零部件为虚拟件"
 
-#: part/api.py:1313
+#: part/api.py:1314
 msgid "Has available stock"
 msgstr "有可用库存"
 
-#: part/api.py:1370
+#: part/api.py:1371
 msgid "Uses"
 msgstr "使用"
 
@@ -5819,7 +5819,7 @@ msgstr "使用"
 msgid "Part Category"
 msgstr "零件类别"
 
-#: part/models.py:93 users/ruleset.py:27
+#: part/models.py:93 users/ruleset.py:28
 msgid "Part Categories"
 msgstr "零件类别"
 
@@ -5872,7 +5872,7 @@ msgstr "默认值"
 msgid "Default Parameter Value"
 msgstr "默认参数值"
 
-#: part/models.py:528 part/serializers.py:114 users/ruleset.py:28
+#: part/models.py:528 part/serializers.py:114 users/ruleset.py:29
 msgid "Parts"
 msgstr "零件"
 
@@ -6634,7 +6634,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "此零件计划待产数量"
 
 #: part/serializers.py:873 stock/serializers.py:1048 stock/serializers.py:1231
-#: users/ruleset.py:30
+#: users/ruleset.py:32
 msgid "Stock Items"
 msgstr "库存项"
 
@@ -8544,7 +8544,7 @@ msgstr "为所有没有图标的位置设置默认图标(可选)"
 msgid "Stock Location"
 msgstr "库存地点"
 
-#: stock/models.py:148 users/ruleset.py:29
+#: stock/models.py:148 users/ruleset.py:31
 msgid "Stock Locations"
 msgstr "库存地点"
 
@@ -9596,19 +9596,23 @@ msgstr "主组"
 msgid "Primary group for the user"
 msgstr "用户主组"
 
-#: users/ruleset.py:26
+#: users/ruleset.py:27
 msgid "Admin"
 msgstr "管理员"
 
-#: users/ruleset.py:32
+#: users/ruleset.py:30
+msgid "Bills of Material"
+msgstr ""
+
+#: users/ruleset.py:34
 msgid "Purchase Orders"
 msgstr "采购订单"
 
-#: users/ruleset.py:33
+#: users/ruleset.py:35
 msgid "Sales Orders"
 msgstr "销售订单"
 
-#: users/ruleset.py:34
+#: users/ruleset.py:36
 msgid "Return Orders"
 msgstr "退货订单"
 
