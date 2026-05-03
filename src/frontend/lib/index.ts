@@ -149,3 +149,4 @@ export {
   type StoredTableStateProps,
   useStoredTableState
 } from './states/StoredTableState';
+export { useLocalLibState } from './states/LocalLibState';
