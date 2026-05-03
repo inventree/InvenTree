@@ -31,6 +31,11 @@ import {
 } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/hooks/UseForm';
 import useTable from '@lib/hooks/UseTable';
 import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
@@ -50,11 +55,6 @@ import {
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
 import { useApi } from '../../contexts/ApiContext';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';

@@ -8,10 +8,10 @@ import { useStore } from 'zustand';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { useEditApiFormModal } from '@lib/hooks/UseForm';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
-import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
   createMachineSettingsState,
   createPluginSettingsState,

@@ -12,6 +12,12 @@ import { useUserState } from '../../states/UserState';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import {
+  useBulkEditApiFormModal,
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/hooks/UseForm';
+import {
   INVENTREE_MANTINE_VERSION,
   INVENTREE_PLUGIN_VERSION,
   INVENTREE_REACT_VERSION,
@@ -32,12 +38,6 @@ import {
   useReturnStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
-import {
-  useBulkEditApiFormModal,
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import {
   type ImporterOpenOptions,
   closeGlobalImporter,

@@ -40,6 +40,7 @@ import { ProgressBar } from '@lib/components/ProgressBar';
 import { StylishText } from '@lib/components/StylishText';
 import { apiUrl } from '@lib/functions/Api';
 import { toNumber } from '@lib/functions/Conversion';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -51,7 +52,6 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
-import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator

@@ -26,6 +26,7 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useEditApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -35,7 +36,6 @@ import {
 } from '../../../components/items/ActionDropdown';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { InvenTreeIcon } from '../../../functions/icons';
-import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../../states/SettingsStates';
 import { panelOptions } from '../PartPricingPanel';
 

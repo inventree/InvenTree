@@ -1,3 +1,8 @@
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '@lib/hooks/UseForm';
 import useTable from '@lib/hooks/UseTable';
 import {
   AddItemButton,
@@ -15,11 +20,6 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useParameterTemplateFields } from '../../forms/CommonForms';
 import { useFilters } from '../../hooks/UseFilter';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

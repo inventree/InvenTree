@@ -1,6 +1,7 @@
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import {} from '@lib/hooks/UseForm';
 import { useInstance } from '@lib/hooks/UseInstance';
 import { t } from '@lingui/core/macro';
 import { Paper, Skeleton, Stack } from '@mantine/core';
@@ -18,7 +19,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import {} from '../../hooks/UseForm';
 
 /**
  * Detail page for a single group

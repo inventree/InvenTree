@@ -3,13 +3,13 @@ import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { useModal } from '@lib/hooks/UseModal';
+import { useModalState } from '@lib/states/ModalState';
 import type {
   ApiFormModalProps,
   BulkEditApiFormModalProps
 } from '@lib/types/Forms';
-import { OptionsApiForm } from '../components/forms/ApiForm';
-import { useModalState } from '../states/ModalState';
-import { useModal } from './UseModal';
+import { OptionsApiForm } from '../../src/components/forms/ApiForm';
 
 /**
  * Construct and open a modal form

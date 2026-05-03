@@ -34,6 +34,12 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 import { StylishText } from '@lib/components/StylishText';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import {
+  useApiFormModal,
+  useBulkEditApiFormModal,
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '@lib/hooks/UseForm';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
@@ -49,12 +55,6 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
-import {
-  useApiFormModal,
-  useBulkEditApiFormModal,
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator

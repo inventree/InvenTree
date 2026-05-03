@@ -8,11 +8,11 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { StylishText } from '@lib/components/StylishText';
 import { YesNoUndefinedButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { useEditApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {

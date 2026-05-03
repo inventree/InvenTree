@@ -3,6 +3,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { useDeleteApiFormModal, useEditApiFormModal } from '@lib/hooks/UseForm';
 import { useInstance } from '@lib/hooks/UseInstance';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
@@ -42,10 +43,6 @@ import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';

@@ -15,6 +15,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '@lib/hooks/UseForm';
 import { useInstance } from '@lib/hooks/UseInstance';
 import useTable from '@lib/hooks/UseTable';
 import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
@@ -23,10 +27,6 @@ import { IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal
-} from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 

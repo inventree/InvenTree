@@ -1,6 +1,7 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import { useApiFormModal } from '@lib/hooks/UseForm';
 import type { UseInstanceResult } from '@lib/hooks/UseInstance';
 import { t } from '@lingui/core/macro';
 import {
@@ -23,7 +24,6 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
-import { useApiFormModal } from '../../../hooks/UseForm';
 import { useUserState } from '../../../states/UserState';
 import { BomCompareDrawer } from './BomCompare';
 

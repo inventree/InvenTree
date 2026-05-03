@@ -8,10 +8,10 @@ import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useDeleteApiFormModal } from '@lib/hooks/UseForm';
 import { useInstance } from '@lib/hooks/UseInstance';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 

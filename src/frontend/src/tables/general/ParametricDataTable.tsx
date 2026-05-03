@@ -1,4 +1,5 @@
 import { cancelEvent } from '@lib/functions/Events';
+import { useCreateApiFormModal, useEditApiFormModal } from '@lib/hooks/UseForm';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -22,10 +23,6 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { useParameterFields } from '../../forms/CommonForms';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';

@@ -30,10 +30,10 @@ import {
   type TranslatableModelInformationInterface
 } from '@lib/enums/ModelInformation';
 import { apiUrl } from '@lib/functions/Api';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { IconPlus } from '@tabler/icons-react';
 import { useApi } from '../../../contexts/ApiContext';
-import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState

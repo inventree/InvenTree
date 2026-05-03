@@ -29,13 +29,13 @@ import { SearchInput } from '@lib/components/SearchInput';
 import { StylishText } from '@lib/components/StylishText';
 import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
+import { useDeleteApiFormModal } from '@lib/hooks/UseForm';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
-import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**

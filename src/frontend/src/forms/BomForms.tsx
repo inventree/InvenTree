@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
@@ -10,7 +11,6 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { RenderPart } from '../components/render/Part';
 import { showApiErrorMessage } from '../functions/notifications';
-import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useUserState } from '../states/UserState';
 import { usePartFields } from './PartForms';
 

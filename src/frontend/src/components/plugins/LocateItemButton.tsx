@@ -1,11 +1,11 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconRadar } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import type { PluginInterface } from './PluginInterface';
 

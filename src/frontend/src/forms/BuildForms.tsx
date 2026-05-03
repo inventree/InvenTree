@@ -19,6 +19,7 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
+import { useCreateApiFormModal } from '@lib/hooks/UseForm';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
@@ -29,7 +30,6 @@ import {
   RenderStockItem,
   RenderStockLocation
 } from '../components/render/Stock';
-import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator

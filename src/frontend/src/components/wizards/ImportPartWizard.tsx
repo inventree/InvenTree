@@ -1,3 +1,4 @@
+import { useEditApiFormModal } from '@lib/hooks/UseForm';
 import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -35,7 +36,6 @@ import { Link } from 'react-router-dom';
 import { api } from '../../App';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useEditApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StandaloneField } from '../forms/StandaloneField';
