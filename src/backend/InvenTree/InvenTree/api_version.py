@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 481
+INVENTREE_API_VERSION = 482
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v482 -> 2026-05-04 : https://github.com/inventree/InvenTree/pull/11861
+    - Enable bulk-update operations on the BomItem API endpoint, allowing multiple BOM items to be updated in a single API call
 
 v481 -> 2026-04-28 : https://github.com/inventree/InvenTree/pull/11825
     - Adds new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management
