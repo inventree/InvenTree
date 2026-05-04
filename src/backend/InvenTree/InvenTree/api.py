@@ -701,7 +701,7 @@ class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
 
         Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
 
-        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+        This action is performed atomically, so either all items will be deleted, or none will be deleted.
         """
         return self._delete(request, *args, **kwargs)
 
