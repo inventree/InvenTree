@@ -1057,6 +1057,7 @@ class PartList(
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
+        'id',
         'name',
         'creation_date',
         'IPN',

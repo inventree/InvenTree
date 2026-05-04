@@ -47,7 +47,7 @@ export function UsedInTable({
         part: 'part_detail'
       }),
       IPNColumn({
-        sortable: false
+        sortable: true
       }),
       {
         accessor: 'part_detail.revision',
