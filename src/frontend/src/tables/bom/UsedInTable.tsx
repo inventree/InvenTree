@@ -1,23 +1,28 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { RowEditAction, UserRoles } from '@lib/index';
+import { ActionButton, RowEditAction, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
+import { IconReplace } from '@tabler/icons-react';
 import { formatDecimal } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useBulkEditApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
   IPNColumn,
   PartColumn,
-  ReferenceColumn
+  ReferenceColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -86,6 +91,11 @@ export function UsedInTable({
         description: t`Show inherited items`
       },
       {
+        name: 'part_locked',
+        label: t`Locked`,
+        description: t`Show locked assemblies`
+      },
+      {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional items`
@@ -122,7 +132,7 @@ export function UsedInTable({
 
       return [
         RowEditAction({
-          hidden: locked || !user.hasChangeRole(UserRoles.part),
+          hidden: locked || !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -133,9 +143,59 @@ export function UsedInTable({
     [user]
   );
 
+  const bulkReplaceParts = useMemo(() => {}, [table.selectedRecords]);
+
+  const bulkReplace = useBulkEditApiFormModal({
+    url: ApiEndpoints.bom_list,
+    items: table.selectedIds,
+    title: t`Replace Component`,
+    submitText: t`Replace`,
+    preFormContent: (
+      <Stack gap='xs'>
+        <Alert
+          color='orange'
+          icon={<IconReplace />}
+          title={t`Replace Component`}
+          mb='md'
+        >
+          <Text>{t`This action cannot be easily undone, so please ensure you have selected the correct assemblies.`}</Text>
+        </Alert>
+        <Text>{t`The selected assemblies will be updated with the new component.`}</Text>
+        {table.selectedRecords.map((record: any) => {
+          return <RenderPartColumn part={record.part_detail} key={record.pk} />;
+        })}
+        <Divider />
+      </Stack>
+    ),
+    fields: {
+      sub_part: {
+        filters: {
+          active: true,
+          component: true
+        },
+        default: partId
+      }
+    },
+    onFormSuccess: table.refreshTable
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        tooltip={t`Replace Component`}
+        icon={<IconReplace />}
+        color='blue'
+        onClick={bulkReplace.open}
+        hidden={!user.hasChangeRole(UserRoles.bom)}
+        disabled={!table.selectedIds.length}
+      />
+    ];
+  }, [user, table.selectedIds]);
+
   return (
     <>
       {editBomItem.modal}
+      {bulkReplace.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.bom_list)}
         tableState={table}
@@ -147,10 +207,12 @@ export function UsedInTable({
             part_detail: true,
             sub_part_detail: true
           },
+          enableSelection: user.hasChangeRole(UserRoles.bom),
           rowActions: rowActions,
-          tableFilters: tableFilters,
           modelType: ModelType.part,
-          modelField: 'part'
+          modelField: 'part',
+          tableActions: tableActions,
+          tableFilters: tableFilters
         }}
       />
     </>
