@@ -4044,8 +4044,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
     raw_amount = models.CharField(
         max_length=25,
-        verbose_name=_('Raw Amount'),
-        help_text=_('Raw amount of sub-part consumed to produce one part'),
+        verbose_name=_('Amount'),
+        help_text=_('Amount of sub-part consumed to produce one part'),
         blank=False,
         null=False,
     )

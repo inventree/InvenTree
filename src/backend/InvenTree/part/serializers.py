@@ -1642,7 +1642,7 @@ class BomItemSerializer(
 ):
     """Serializer for BomItem object."""
 
-    import_exclude_fields = ['validated', 'substitutes']
+    import_exclude_fields = ['quantity', 'validated', 'substitutes']
 
     export_exclude_fields = ['substitutes']
 
@@ -1696,8 +1696,8 @@ class BomItemSerializer(
         ]
 
     raw_amount = serializers.CharField(
-        label=_('Raw Amount'),
-        help_text=_('Raw amount required for this item (can include units)'),
+        label=_('Amount'),
+        help_text=_('Amount required for this item (can include units)'),
         required=False,
     )
 
