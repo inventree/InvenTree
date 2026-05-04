@@ -1553,10 +1553,16 @@ def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     manage(c, cmd, pty=True)
 
 
-@task(pre=[wait])
-def worker(c):
-    """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
+@task(pre=[wait], help={'verbose': 'Print verbose output from the command'})
+def worker(c, verbose: bool = False):
+    """Run the InvenTree background worker process.
+
+    Launches a django-q2 cluster to process background tasks.
+    Ref: https://django-q2.readthedocs.io
+    """
+    cmd = f'qcluster -v {2 if verbose else 0}'
+
+    manage(c, cmd, pty=True)
 
 
 @task(post=[static, server])
