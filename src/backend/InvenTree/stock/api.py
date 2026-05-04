@@ -1234,7 +1234,7 @@ class StockList(
                     ):
                         tracking.append(entry)
 
-                StockItemTracking.objects.bulk_create(tracking)
+                StockItemTracking.objects.bulk_create(tracking, batch_size=250)
 
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
