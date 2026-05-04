@@ -186,6 +186,7 @@ export default function BomPricingPanel({
             params: {
               part: part?.pk,
               sub_part_detail: true,
+              pricing: true,
               has_pricing: true
             },
             enableSelection: false,
