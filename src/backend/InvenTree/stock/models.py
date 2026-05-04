@@ -634,7 +634,7 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        StockItem.objects.bulk_create(items)
+        StockItem.objects.bulk_create(items, batch_size=250)
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
         if parent and parent.tree_id:
@@ -1973,7 +1973,7 @@ class StockItem(
             # Copy any test results from this item to the new one
             item.copyTestResultsFrom(self)
 
-        StockItemTracking.objects.bulk_create(history_items)
+        StockItemTracking.objects.bulk_create(history_items, batch_size=250)
 
         # Remove the equivalent number of items
         self.take_stock(
@@ -2008,7 +2008,7 @@ class StockItem(
             result.stock_item = self
             results_to_create.append(result)
 
-        StockItemTestResult.objects.bulk_create(results_to_create)
+        StockItemTestResult.objects.bulk_create(results_to_create, batch_size=250)
 
     def add_test_result(self, create_template=True, **kwargs):
         """Helper function to add a new StockItemTestResult.

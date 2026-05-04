@@ -1901,7 +1901,9 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
             )
 
         with transaction.atomic():
-            order.models.SalesOrderAllocation.objects.bulk_create(allocations)
+            order.models.SalesOrderAllocation.objects.bulk_create(
+                allocations, batch_size=250
+            )
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):

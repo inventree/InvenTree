@@ -602,9 +602,7 @@ class StockItemListTest(StockAPITestCase):
                 )
             )
 
-            if len(items) >= 100:
-                StockItem.objects.bulk_create(items)
-                items = []
+        StockItem.objects.bulk_create(items, batch_size=250)
 
         self.assertEqual(StockItem.objects.count(), 1000)
 
