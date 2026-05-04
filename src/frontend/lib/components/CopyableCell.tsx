@@ -1,6 +1,6 @@
 import { Group } from '@mantine/core';
 import { useState } from 'react';
-import { CopyButton } from '../components/buttons/CopyButton';
+import { CopyButton } from './CopyButton';
 
 /**
  * A wrapper component that adds a copy button to cell content on hover

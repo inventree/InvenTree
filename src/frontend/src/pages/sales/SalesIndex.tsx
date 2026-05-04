@@ -11,7 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
@@ -170,8 +170,8 @@ export default function SalesIndex() {
       <PanelGroup
         pageKey='sales-index'
         panels={panels}
-        model={'sales'}
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.sales}
       />
     </Stack>
   );

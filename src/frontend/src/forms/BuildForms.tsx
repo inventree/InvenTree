@@ -8,7 +8,6 @@ import {
   IconList,
   IconSitemap,
   IconTruckDelivery,
-  IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -127,12 +126,6 @@ export function useBuildOrderFields({
       },
       link: {
         icon: <IconLink />
-      },
-      issued_by: {
-        icon: <IconUser />,
-        filters: {
-          is_active: true
-        }
       },
       responsible: {
         icon: <IconUsersGroup />,

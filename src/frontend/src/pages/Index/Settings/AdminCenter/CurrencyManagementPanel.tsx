@@ -7,11 +7,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { api } from '../../../../App';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
-import { useTable } from '../../../../hooks/UseTable';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*

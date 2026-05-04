@@ -28,6 +28,7 @@ def global_setting_overrides() -> dict:
 
 def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
+    import InvenTree.ready
     from common.models import InvenTreeSetting
 
     if environment_key:
@@ -37,6 +38,10 @@ def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
 
     if backup_value is not None:
         kwargs['backup_value'] = backup_value
+
+    # Prevent database writes if we are in a read-only command
+    if InvenTree.ready.isReadOnlyCommand():
+        kwargs['create'] = False
 
     return InvenTreeSetting.get_setting(key, **kwargs)
 

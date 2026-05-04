@@ -51,46 +51,44 @@ You can link your InvenTree server to an LDAP server.
 
 Next you can start configuring the connection. Either use the config file or set the environment variables.
 
-| config key | ENV Variable | Description |
-| --- | --- | --- |
-| `ldap.enabled` | `INVENTREE_LDAP_ENABLED` | Set this to `True` to enable LDAP. |
-| `ldap.debug` | `INVENTREE_LDAP_DEBUG` | Set this to `True` to activate debug mode, useful for troubleshooting ldap configurations. |
-| `ldap.server_uri` | `INVENTREE_LDAP_SERVER_URI` | LDAP Server URI, e.g. `ldaps://example.org` |
-| `ldap.start_tls` | `INVENTREE_LDAP_START_TLS` | Enable TLS encryption over the standard LDAP port, [see](https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls). (You can set TLS options via `ldap.global_options`) |
-| `ldap.bind_dn` | `INVENTREE_LDAP_BIND_DN` | LDAP bind dn, e.g. `cn=admin,dc=example,dc=org` |
-| `ldap.bind_password` | `INVENTREE_LDAP_BIND_PASSWORD` | LDAP bind password |
-| `ldap.search_base_dn` | `INVENTREE_LDAP_SEARCH_BASE_DN` | LDAP search base dn, e.g. `cn=Users,dc=example,dc=org` |
-| `ldap.user_dn_template` | `INVENTREE_LDAP_USER_DN_TEMPLATE` | use direct bind as auth user, `ldap.bind_dn` and `ldap.bin_password` is not necessary then, e.g. `uid=%(user)s,dc=example,dc=org` |
-| `ldap.global_options` | `INVENTREE_LDAP_GLOBAL_OPTIONS` | set advanced options as dict, e.g. TLS settings. For a list of all available options, see [python-ldap docs](https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options). (keys and values starting with OPT_ get automatically converted to `python-ldap` keys) |
-| `ldap.search_filter_str`| `INVENTREE_LDAP_SEARCH_FILTER_STR` | LDAP search filter str, default: `uid=%(user)s` |
-| `ldap.user_attr_map` | `INVENTREE_LDAP_USER_ATTR_MAP` | LDAP <-> InvenTree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
-| `ldap.always_update_user` | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | Always update the user on each login, default: `true` |
-| `ldap.cache_timeout` | `INVENTREE_LDAP_CACHE_TIMEOUT` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
-| `ldap.group_search` | `INVENTREE_LDAP_GROUP_SEARCH` | Base LDAP DN for group searching; required to enable group features |
-| `ldap.group_object_class` | `INVENTREE_LDAP_GROUP_OBJECT_CLASS` | The string to pass to the LDAP group search `(objectClass=<...>)`, default: `groupOfUniqueNames` |
-| `ldap.mirror_groups` | `INVENTREE_LDAP_MIRROR_GROUPS` | If `True`, mirror a user's LDAP group membership in the Django database, default: `False` |
-| `ldap.group_type_class` | `INVENTREE_LDAP_GROUP_TYPE_CLASS` | The group class to be imported from `django_auth_ldap.config` as a string, default: `'GroupOfUniqueNamesType'`|
-| `ldap.group_type_class_args` | `INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS` | A `list` of positional args to pass to the LDAP group type class, default `[]` |
-| `ldap.group_type_class_kwargs` | `INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS` | A `dict` of keyword args to pass to the LDAP group type class, default `{'name_attr': 'cn'}` |
-| `ldap.require_group` | `INVENTREE_LDAP_REQUIRE_GROUP` | If set, users _must_ be in this group to log in to InvenTree |
-| `ldap.deny_group` | `INVENTREE_LDAP_DENY_GROUP` | If set, users _must not_ be in this group to log in to InvenTree |
-| `ldap.user_flags_by_group` | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
+{{ configtable() }}
+{{ configsetting("INVENTREE_LDAP_ENABLED") }} Enable LDAP support |
+{{ configsetting("INVENTREE_LDAP_DEBUG") }} Set this to `True` to activate debug mode, useful for troubleshooting ldap configurations. |
+| `INVENTREE_LDAP_SERVER_URI` | `ldap.server_uri` | LDAP Server URI, e.g. `ldaps://example.org` |
+| `INVENTREE_LDAP_START_TLS` | `ldap.start_tls` | Enable TLS encryption over the standard LDAP port, [see](https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls). (You can set TLS options via `ldap.global_options`) |
+| `INVENTREE_LDAP_BIND_DN` | `ldap.bind_dn` | LDAP bind dn, e.g. `cn=admin,dc=example,dc=org` |
+| `INVENTREE_LDAP_BIND_PASSWORD` | `ldap.bind_password` | LDAP bind password |
+| `INVENTREE_LDAP_SEARCH_BASE_DN` | `ldap.search_base_dn` | LDAP search base dn, e.g. `cn=Users,dc=example,dc=org` |
+| `INVENTREE_LDAP_USER_DN_TEMPLATE` | `ldap.user_dn_template` | use direct bind as auth user, `ldap.bind_dn` and `ldap.bin_password` is not necessary then, e.g. `uid=%(user)s,dc=example,dc=org` |
+| `INVENTREE_LDAP_GLOBAL_OPTIONS` | `ldap.global_options` | set advanced options as dict, e.g. TLS settings. For a list of all available options, see [python-ldap docs](https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options). (keys and values starting with OPT_ get automatically converted to `python-ldap` keys) |
+| `INVENTREE_LDAP_SEARCH_FILTER_STR`| `ldap.search_filter_str` | LDAP search filter str, default: `uid=%(user)s` |
+| `INVENTREE_LDAP_USER_ATTR_MAP` | `ldap.user_attr_map` | LDAP <-> InvenTree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
+| `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | `ldap.always_update_user` | Always update the user on each login, default: `true` |
+| `INVENTREE_LDAP_CACHE_TIMEOUT` | `ldap.cache_timeout` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
+| `INVENTREE_LDAP_GROUP_SEARCH` | `ldap.group_search` | Base LDAP DN for group searching; required to enable group features |
+| `INVENTREE_LDAP_GROUP_OBJECT_CLASS` | `ldap.group_object_class` | The string to pass to the LDAP group search `(objectClass=<...>)`, default: `groupOfUniqueNames` |
+| `INVENTREE_LDAP_MIRROR_GROUPS` | `ldap.mirror_groups` | If `True`, mirror a user's LDAP group membership in the Django database, default: `False` |
+| `INVENTREE_LDAP_GROUP_TYPE_CLASS` | `ldap.group_type_class` | The group class to be imported from `django_auth_ldap.config` as a string, default: `'GroupOfUniqueNamesType'`|
+| `INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS` | `ldap.group_type_class_args` | A `list` of positional args to pass to the LDAP group type class, default `[]` |
+| `INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS` | `ldap.group_type_class_kwargs` | A `dict` of keyword args to pass to the LDAP group type class, default `{'name_attr': 'cn'}` |
+| `INVENTREE_LDAP_REQUIRE_GROUP` | `ldap.require_group` | If set, users _must_ be in this group to log in to InvenTree |
+| `INVENTREE_LDAP_DENY_GROUP` | `ldap.deny_group` | If set, users _must not_ be in this group to log in to InvenTree |
+| `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | `ldap.user_flags_by_group` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
 
 ## Tracing support
 
 Starting with 0.14.0 InvenTree supports sending traces, logs and metrics to OpenTelemetry compatible endpoints (both HTTP and gRPC). A [list of vendors](https://opentelemetry.io/ecosystem/vendors) is available on the project site.
 This can be used to track usage and performance of the InvenTree backend and connected services like databases, caches and more.
 
-| config key | ENV Variable | Description |
-| --- | --- | --- |
-| `tracing.enabled` | `INVENTREE_TRACING_ENABLED` | Set this to `True` to enable OpenTelemetry. |
-| `tracing.endpoint` | `INVENTREE_TRACING_ENDPOINT` | General endpoint for information (not specific trace/log url) |
-| `tracing.headers` | `INVENTREE_TRACING_HEADERS` | HTTP headers that should be send with every request (often used for authentication). Format as a dict. |
-| `tracing.auth.basic` | `INVENTREE_TRACING_AUTH_BASIC` | Auth headers that should be send with every requests (will be encoded to b64 and overwrite auth headers) |
-| `tracing.is_http` | `INVENTREE_TRACING_IS_HTTP` | Are the endpoints HTTP (True, default) or gRPC (False) |
-| `tracing.append_http` | `INVENTREE_TRACING_APPEND_HTTP` | Append default url routes (v1) to `tracing.endpoint` |
-| `tracing.console` | `INVENTREE_TRACING_CONSOLE` | Print out all exports (additionally) to the console for debugging. Do not use in production |
-| `tracing.resources` | `INVENTREE_TRACING_RESOURCES` | Add additional resources to all exports. This can be used to add custom tags to the traces. Format as a dict. |
+{{ configtable() }}
+{{ configsetting("INVENTREE_TRACING_ENABLED") }} Enable OpenTelemetry |
+{{ configsetting("INVENTREE_TRACING_ENDPOINT") }} General endpoint for information (not specific trace/log url) |
+{{ configsetting("INVENTREE_TRACING_HEADERS") }} HTTP headers that should be send with every request (often used for authentication). Format as a dict. |
+{{ configsetting("INVENTREE_TRACING_AUTH") }} Auth headers that should be send with every requests (will be encoded to b64 and overwrite auth headers) |
+{{ configsetting("INVENTREE_TRACING_IS_HTTP") }} Are the endpoints HTTP (True, default) or gRPC (False) |
+{{ configsetting("INVENTREE_TRACING_APPEND_HTTP") }} Append default url routes (v1) to `tracing.endpoint` |
+{{ configsetting("INVENTREE_TRACING_CONSOLE") }} Print out all exports (additionally) to the console for debugging. Do not use in production |
+{{ configsetting("INVENTREE_TRACING_RESOURCES") }} Add additional resources to all exports. This can be used to add custom tags to the traces. Format as a dict. |
 
 ## Multi Site Support
 
@@ -99,7 +97,6 @@ If your InvenTree instance is used in a multi-site environment, you can enable m
 !!! tip "Django Documentation"
     For more information on multi-site support, refer to the [Django documentation]({% include "django.html" %}/ref/contrib/sites/).
 
-| Environment Variable | Config Key | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_SITE_MULTI | site_multi | Enable multiple sites | False |
-| INVENTREE_SITE_ID | site_id | Specify a fixed site ID | _Not specified_ |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SITE_MULTI") }} Enable multiple sites |
+{{ configsetting("INVENTREE_SITE_ID") }} Specify a fixed site ID |

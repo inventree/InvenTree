@@ -568,6 +568,9 @@ class BuildTest(BuildAPITest):
 
         self.assertEqual(bo.children.count(), 0)
 
+        self.assertIsNotNone(bo.issued_by)
+        self.assertEqual(bo.issued_by, self.user)
+
 
 class BuildAllocationTest(BuildAPITest):
     """Unit tests for allocation of stock items against a build order.
@@ -1162,18 +1165,12 @@ class BuildListTest(BuildAPITest):
         data = self.options(self.url, expected_code=200).data
 
         self.assertEqual(data['name'], 'Build List')
-        actions = data['actions']['POST']
+        actions = data['actions']['GET']
 
-        for field_name in [
-            'pk',
-            'title',
-            'part',
-            'part_detail',
-            'project_code',
-            'project_code_detail',
-            'quantity',
-        ]:
+        for field_name in ['pk', 'title', 'part', 'project_code', 'quantity']:
+            # Fields should exist in both GET and POST actions
             self.assertIn(field_name, actions)
+            self.assertIn(field_name, data['actions']['POST'])
 
         # Specific checks for certain fields
         for field_name in ['part', 'project_code', 'take_from']:

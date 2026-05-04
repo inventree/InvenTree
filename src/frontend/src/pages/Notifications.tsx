@@ -13,10 +13,10 @@ import { useCallback, useMemo } from 'react';
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useApi } from '../contexts/ApiContext';
-import { useTable } from '../hooks/UseTable';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
@@ -26,7 +26,7 @@ export default function NotificationsPage() {
 
   const markAllAsRead = useCallback(() => {
     api
-      .get(apiUrl(ApiEndpoints.notifications_readall), {
+      .post(apiUrl(ApiEndpoints.notifications_readall), {
         params: {
           read: false
         }

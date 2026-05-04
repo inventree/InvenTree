@@ -403,6 +403,14 @@ class Build(
         related_name='builds_issued',
     )
 
+    @property
+    def created_by(self):
+        """Alias for issued_by field.
+
+        This is used for compatibility with the order models
+        """
+        return self.issued_by
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,

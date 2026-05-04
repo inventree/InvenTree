@@ -11,6 +11,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
 )
+from users.serializers import UserSerializer
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -27,6 +28,21 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         if len(self.fields['model_type'].choices) == 0:
             self.fields['model_type'].choices = report.helpers.report_model_options()
 
+    def save(self, **kwargs):
+        """Override the save method to capture the user information."""
+        user = self.context.get('request').user
+
+        if not user or not user.is_authenticated:
+            raise PermissionError(
+                _('User must be authenticated to save report templates')
+            )
+
+        instance = super().save(**kwargs)
+        instance.updated_by = user
+        instance.save(increment_revision=False)
+
+        return instance
+
     @staticmethod
     def base_fields():
         """Base serializer field set."""
@@ -41,6 +57,9 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'enabled',
             'revision',
             'attach_to_model',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
 
     template = InvenTreeAttachmentSerializerField(required=True)
@@ -54,6 +73,10 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         required=True,
         allow_blank=False,
         allow_null=False,
+    )
+
+    updated_by_detail = UserSerializer(
+        source='updated_by', read_only=True, allow_null=True, many=False
     )
 
 

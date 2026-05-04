@@ -48,6 +48,11 @@ export function useSalesOrderFields({
         filters: {
           is_customer: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_customer: { value: true, hidden: true }
         }
       },
       customer_reference: {},

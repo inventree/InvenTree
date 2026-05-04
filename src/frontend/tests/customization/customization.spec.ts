@@ -1,7 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { noaccessuser } from '../defaults';
 import { navigate } from '../helpers';
-import { doLogin } from '../login';
 
 /**
  * Tests for user interface customization functionality.
@@ -19,15 +17,4 @@ test('Customization - Splash', async ({ page }) => {
   await expect(
     page.locator('[style*="playwright_custom_splash.png"]')
   ).toBeVisible();
-});
-
-test('Customization - Logo', async ({ page }) => {
-  await doLogin(page, {
-    user: noaccessuser
-  });
-
-  await page.waitForLoadState('networkidle');
-
-  await page.waitForTimeout(2500);
-  return;
 });

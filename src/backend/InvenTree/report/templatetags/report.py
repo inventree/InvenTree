@@ -1036,3 +1036,196 @@ def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """
 
     return mark_safe(icon_class + '\n'.join(fonts))
+
+
+@register.simple_tag()
+def lowercase(value: str) -> str:
+    """Convert a string to lowercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).lower()
+
+
+@register.simple_tag()
+def uppercase(value: str) -> str:
+    """Convert a string to uppercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).upper()
+
+
+@register.simple_tag()
+def titlecase(value: str) -> str:
+    """Convert a string to title case.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).title()
+
+
+@register.simple_tag()
+def strip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading and trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).strip(chars)
+
+
+@register.simple_tag()
+def lstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).lstrip(chars)
+
+
+@register.simple_tag()
+def rstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).rstrip(chars)
+
+
+@register.simple_tag()
+def split(value: str, separator: str = ',') -> list:
+    """Split a string into a list, using the provided separator (default = ',').
+
+    Arguments:
+        value: The string to be split
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return []
+    return [v.strip() for v in str(value).split(separator)]
+
+
+@register.simple_tag()
+def join(value: list, separator: str = ',') -> str:
+    """Join a list of items into a string, using the provided separator (default = ',').
+
+    Arguments:
+        value: The list of items to be joined
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return ''
+    return separator.join(str(v) for v in value)
+
+
+@register.simple_tag()
+def length(value: Any) -> int:
+    """Return the length of a list or string.
+
+    Arguments:
+        value: The value to be measured (e.g. a list or string)
+    """
+    if value is None:
+        return 0
+    try:
+        return len(value)
+    except TypeError:
+        return 0
+
+
+@register.simple_tag()
+def replace(value: str, old: str, new: str = '') -> str:
+    """Replace occurrences of a substring within a string with a new value.
+
+    Arguments:
+        value: The original string
+        old: The substring to be replaced
+        new: The value to replace the old substring with (default = "")
+    """
+    if not value:
+        return ''
+    return str(value).replace(old, new)
+
+
+@register.simple_tag()
+def first(value: list, default: Any = None) -> Any:
+    """Return the first item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the first item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[0]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def last(value: list, default: Any = None) -> Any:
+    """Return the last item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the last item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[-1]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def reverse(value: list) -> list:
+    """Return a reversed version of the provided list.
+
+    Arguments:
+        value: The list to be reversed
+    """
+    if not value:
+        return []
+    try:
+        return value[::-1]
+    except TypeError:
+        return []
+
+
+@register.simple_tag()
+def truncate(value: list, length: int) -> list:
+    """Return a truncated version of the provided list.
+
+    Arguments:
+        value: The list to be truncated
+        length: The maximum length of the returned list
+    """
+    if not value:
+        return []
+    try:
+        return value[:length]
+    except TypeError:
+        return []

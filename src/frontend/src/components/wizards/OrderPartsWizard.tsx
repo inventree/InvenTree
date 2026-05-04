@@ -1,5 +1,6 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { CopyButton } from '@lib/components/CopyButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -32,7 +33,6 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
 import { RenderPartColumn } from '../../tables/ColumnRenderers';
-import { CopyButton } from '../buttons/CopyButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
@@ -166,7 +166,8 @@ function PartRequirementsInfo({
  * - part: The part instance
  * - supplier_part: The selected supplier part instance
  * - purchase_order: The selected purchase order instance
- * - quantity: The quantity of the part to order
+ * - quantity: The quantity of the part to order (taking supplier pack size into account)
+ * - quantity_raw: The raw quantity entered by the user (before adjusting for supplier pack size)
  * - errors: Error messages for each attribute
  */
 interface PartOrderRecord {
@@ -174,6 +175,7 @@ interface PartOrderRecord {
   supplier_part: any;
   purchase_order: any;
   quantity: number;
+  quantity_raw?: number;
   errors: any;
 }
 
@@ -277,6 +279,7 @@ function SelectPartsStep({
       {
         accessor: 'part',
         title: t`Part`,
+        minWidth: 200,
         render: (record: PartOrderRecord) => (
           <Tooltip label={record.part?.description}>
             <Paper p='xs'>
@@ -375,7 +378,7 @@ function SelectPartsStep({
       {
         accessor: 'quantity',
         title: t`Quantity`,
-        width: 150,
+        width: 175,
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap'>
             <StandaloneField
@@ -425,7 +428,12 @@ function SelectPartsStep({
         )
       }
     ];
-  }, [onRemovePart]);
+  }, [
+    onSelectSupplierPart,
+    onSelectPurchaseOrder,
+    onSelectQuantity,
+    onRemovePart
+  ]);
 
   if (records.length === 0) {
     return (
@@ -483,6 +491,10 @@ export default function OrderPartsWizard({
       records.forEach((record: PartOrderRecord, index: number) => {
         if (record.part.pk === partId) {
           records[index].quantity = quantity;
+
+          if (records[index].quantity_raw === undefined) {
+            records[index].quantity_raw = quantity;
+          }
         }
       });
 
@@ -499,6 +511,21 @@ export default function OrderPartsWizard({
       records.forEach((record: PartOrderRecord, index: number) => {
         if (record.part.pk === partId) {
           records[index].supplier_part = supplierPart;
+
+          if (!records[index].quantity_raw && !!records[index].quantity) {
+            records[index].quantity_raw = records[index].quantity;
+          }
+
+          if (
+            supplierPart?.pack_quantity_native &&
+            records[index].quantity_raw
+          ) {
+            // Adjust the quantity based on the supplier pack size
+            records[index].quantity = Math.max(
+              0,
+              records[index].quantity_raw / supplierPart.pack_quantity_native
+            );
+          }
         }
       });
 
@@ -536,7 +563,13 @@ export default function OrderPartsWizard({
         />
       );
     },
-    [selectedParts]
+    [
+      selectedParts,
+      removePart,
+      selectQuantity,
+      selectSupplierPart,
+      selectPurchaseOrder
+    ]
   );
 
   const canStepForward = useCallback(
@@ -614,13 +647,17 @@ export default function OrderPartsWizard({
             const on_order = part.ordering ?? 0;
             const in_production = part.building ?? 0;
 
-            const to_order = required - on_hand - on_order - in_production;
+            const to_order = Math.max(
+              0,
+              required - on_hand - on_order - in_production
+            );
 
             records.push({
               part: part,
               supplier_part: undefined,
               purchase_order: undefined,
-              quantity: Math.max(to_order, 0),
+              quantity: to_order,
+              quantity_raw: undefined,
               errors: {}
             });
           }

@@ -599,6 +599,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
+    role_required = 'bom.change'
 
     @extend_schema(
         responses={
