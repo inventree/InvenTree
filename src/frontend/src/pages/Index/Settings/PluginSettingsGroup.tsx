@@ -1,10 +1,11 @@
-import { ApiEndpoints } from '@lib/index';
+import { ApiEndpoints, StylishText } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import {
+  GlobalSettingList,
   PluginSettingList,
   PluginUserSettingList
 } from '../../../components/settings/SettingList';
@@ -39,9 +40,13 @@ function PluginSettingGroupItem({
       hidden={count === 0}
     >
       <Accordion.Control>
-        <Group>
+        <Group justify='space-between'>
           <Text size='lg'>{pluginName}</Text>
-          {pluginDescription && <Text size='sm'>{pluginDescription}</Text>}
+          {pluginDescription && (
+            <Text size='sm' style={{ paddingRight: 25 }}>
+              {pluginDescription}
+            </Text>
+          )}
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
@@ -93,6 +98,28 @@ export default function PluginSettingsGroup({
 
   return (
     <Stack gap='xs'>
+      <Accordion defaultValue='plugin-settings'>
+        <Accordion.Item value='plugin-settings'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <GlobalSettingList
+              keys={[
+                'ENABLE_PLUGINS_SCHEDULE',
+                'ENABLE_PLUGINS_EVENTS',
+                'ENABLE_PLUGINS_INTERFACE',
+                'ENABLE_PLUGINS_URL',
+                'ENABLE_PLUGINS_NAVIGATION',
+                'ENABLE_PLUGINS_APP',
+                'ENABLE_PLUGINS_MAILS',
+                'PLUGIN_ON_STARTUP',
+                'PLUGIN_UPDATE_CHECK'
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
       <Alert color='blue' icon={<IconInfoCircle />}>
         <Text>
           {message ??
