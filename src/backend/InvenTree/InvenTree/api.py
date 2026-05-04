@@ -6,10 +6,13 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
 
 import structlog
@@ -42,45 +45,6 @@ from .version import inventreeApiText
 logger = structlog.get_logger('inventree')
 
 
-def read_license_file(path: Path) -> list:
-    """Extract license information from the provided file.
-
-    Arguments:
-        path: Path to the license file
-
-    Returns: A list of items containing the license information
-    """
-    # Check if the file exists
-    if not path.exists():
-        logger.error("License file not found at '%s'", path)
-        return []
-
-    try:
-        data = json.loads(path.read_text(encoding='utf-8'))
-    except Exception as e:
-        logger.exception("Failed to parse license file '%s': %s", path, e)
-        return []
-
-    output = []
-    names = set()
-
-    # Ensure we do not have any duplicate 'name' values in the list
-    for entry in data:
-        name = None
-        for key in entry:
-            if key.lower() == 'name':
-                name = entry[key]
-                break
-
-        if name is None or name in names:
-            continue
-
-        names.add(name)
-        output.append({key.lower(): value for key, value in entry.items()})
-
-    return sorted(output, key=lambda x: x.get('name', '').lower())
-
-
 class LicenseViewSerializer(serializers.Serializer):
     """Serializer for license information."""
 
@@ -90,10 +54,49 @@ class LicenseViewSerializer(serializers.Serializer):
     )
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class LicenseView(APIView):
     """Simple JSON endpoint for InvenTree license information."""
 
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+
+    def read_license_file(self, path: Path) -> list:
+        """Extract license information from the provided file.
+
+        Arguments:
+            path: Path to the license file
+
+        Returns: A list of items containing the license information
+        """
+        # Check if the file exists
+        if not path.exists():
+            logger.error("License file not found at '%s'", path)
+            return []
+
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+        except Exception as e:
+            logger.exception("Failed to parse license file '%s': %s", path, e)
+            return []
+
+        output = []
+        names = set()
+
+        # Ensure we do not have any duplicate 'name' values in the list
+        for entry in data:
+            name = None
+            for key in entry:
+                if key.lower() == 'name':
+                    name = entry[key]
+                    break
+
+            if name is None or name in names:
+                continue
+
+            names.add(name)
+            output.append({key.lower(): value for key, value in entry.items()})
+
+        return sorted(output, key=lambda x: x.get('name', '').lower())
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -102,9 +105,10 @@ class LicenseView(APIView):
         frontend = InvenTree.config.get_base_dir().joinpath(
             'web/static/web/.vite/dependencies.json'
         )
+
         return JsonResponse({
-            'backend': read_license_file(backend),
-            'frontend': read_license_file(frontend),
+            'backend': self.read_license_file(backend),
+            'frontend': self.read_license_file(frontend),
         })
 
 
@@ -136,6 +140,7 @@ class VersionViewSerializer(serializers.Serializer):
     links = LinkSerializer()
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
@@ -290,48 +295,59 @@ class InfoView(APIView):
             # Might be Token auth - check if so
             is_staff = self.check_auth_header(request)
 
-        data = {
-            'server': 'InvenTree',
-            'id': InvenTree.version.inventree_identifier(),
-            'version': InvenTree.version.inventreeVersion(),
-            'instance': InvenTree.version.inventreeInstanceName(),
-            'apiVersion': InvenTree.version.inventreeApiVersion(),
-            'worker_running': is_worker_running(),
-            'worker_count': settings.Q_CLUSTER['workers'],
-            'worker_pending_tasks': self.worker_pending_tasks(),
-            'plugins_enabled': settings.PLUGINS_ENABLED,
-            'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
-            'email_configured': is_email_configured(),
-            'debug_mode': settings.DEBUG,
-            'docker_mode': settings.DOCKER,
-            'default_locale': settings.LANGUAGE_CODE,
-            'customize': {
-                'logo': helpers.getLogoImage(),
-                'splash': helpers.getSplashScreen(),
-                'login_message': helpers.getCustomOption('login_message'),
-                'navbar_message': helpers.getCustomOption('navbar_message'),
-                'disable_theme_storage': str2bool(
-                    helpers.getCustomOption('disable_theme_storage')
-                ),
-            },
-            'active_plugins': plugins_info(),
-            # Following fields are only available to staff users
-            'system_health': check_system_health() if is_staff else None,
-            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
-            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
-            'installer': InvenTree.config.inventreeInstaller() if is_staff else None,
-            'target': InvenTree.version.inventreeTarget() if is_staff else None,
-            'django_admin': settings.INVENTREE_ADMIN_URL
-            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
-            else None,
-            'settings': {
-                'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
-                'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
-                'password_forgotten_enabled': get_global_setting(
-                    'LOGIN_ENABLE_PWD_FORGOT'
-                ),
-            },
-        }
+        # Cache the results of this view, per user
+        cache_key = f'api-info-{request.user.pk if request.user.is_authenticated else "A"}-{"Y" if is_staff else "N"}'
+
+        data = cache.get(cache_key, None)
+
+        if not data:
+            data = {
+                'server': 'InvenTree',
+                'id': InvenTree.version.inventree_identifier(),
+                'version': InvenTree.version.inventreeVersion(),
+                'instance': InvenTree.version.inventreeInstanceName(),
+                'apiVersion': InvenTree.version.inventreeApiVersion(),
+                'worker_running': is_worker_running(),
+                'worker_count': settings.Q_CLUSTER['workers'],
+                'worker_pending_tasks': self.worker_pending_tasks(),
+                'plugins_enabled': settings.PLUGINS_ENABLED,
+                'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
+                'email_configured': is_email_configured(),
+                'debug_mode': settings.DEBUG,
+                'docker_mode': settings.DOCKER,
+                'default_locale': settings.LANGUAGE_CODE,
+                'customize': {
+                    'logo': helpers.getLogoImage(),
+                    'splash': helpers.getSplashScreen(),
+                    'login_message': helpers.getCustomOption('login_message'),
+                    'navbar_message': helpers.getCustomOption('navbar_message'),
+                    'disable_theme_storage': str2bool(
+                        helpers.getCustomOption('disable_theme_storage')
+                    ),
+                },
+                'active_plugins': plugins_info(),
+                # Following fields are only available to staff users
+                'system_health': check_system_health() if is_staff else None,
+                'database': InvenTree.version.inventreeDatabase() if is_staff else None,
+                'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+                'installer': InvenTree.config.inventreeInstaller()
+                if is_staff
+                else None,
+                'target': InvenTree.version.inventreeTarget() if is_staff else None,
+                'django_admin': settings.INVENTREE_ADMIN_URL
+                if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+                else None,
+                'settings': {
+                    'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
+                    'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
+                    'password_forgotten_enabled': get_global_setting(
+                        'LOGIN_ENABLE_PWD_FORGOT'
+                    ),
+                },
+            }
+
+            # Cache for one minute - this will speed up repeated calls to this endpoint
+            cache.set(cache_key, data, 60)
 
         return JsonResponse(data)
 
