@@ -63,7 +63,19 @@ export default defineConfig(({ command, mode }) => {
     build: {
       manifest: true,
       outDir: OUTPUT_DIR,
-      sourcemap: true
+      sourcemap: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('@tabler/icons-react')) {
+              return 'tabler-icons';
+            }
+            if (id.includes('@mantine')) {
+              return 'mantine';
+            }
+          }
+        }
+      }
     },
     resolve: {
       alias: {
