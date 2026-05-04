@@ -2181,6 +2181,37 @@ class StockItemDeletionTest(StockAPITestCase):
 
         self.assertEqual(StockItem.objects.count(), n)
 
+    def test_delete_serialized(self):
+        """Test deletion of serialized stock items."""
+        trackable_part = part.models.Part.objects.create(
+            name='My part',
+            description='A trackable part',
+            trackable=True,
+            default_location=StockLocation.objects.get(pk=1),
+        )
+
+        stock_item = StockItem.objects.create(
+            part=trackable_part, quantity=1, serial='12345'
+        )
+
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
+
+        response = self.delete(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=400
+        )
+
+        self.assertIn('Serialized stock items cannot be deleted', str(response.data))
+
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
+
+        response = self.delete(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=204
+        )
+
+        self.get(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=404
+        )
+
 
 class StockTestResultTest(StockAPITestCase):
     """Tests for StockTestResult APIs."""
