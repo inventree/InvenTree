@@ -54,7 +54,6 @@ class LicenseViewSerializer(serializers.Serializer):
     )
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
 class LicenseView(APIView):
     """Simple JSON endpoint for InvenTree license information."""
 
