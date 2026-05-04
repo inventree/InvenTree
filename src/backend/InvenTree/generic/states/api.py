@@ -3,6 +3,8 @@
 import inspect
 
 from django.urls import include, path
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -104,6 +106,8 @@ class StatusView(GenericAPIView):
         return Response(serializer.data)
 
 
+# Cache the AllStatusViews response - these values are not expected to change frequently
+@method_decorator(cache_page(60), name='dispatch')
 class AllStatusViews(StatusView):
     """Endpoint for listing all defined status models."""
 
