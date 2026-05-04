@@ -2,12 +2,12 @@ import { Anchor, Group } from '@mantine/core';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../../functions/icons';
-import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**
@@ -64,7 +64,7 @@ function QueryWidget({
 }
 
 /**
- * Construct a dashboard widget descriptor, which displays the number of results for a particular query
+ * Construct a dashboard widget descriptor, which displays just a link to a particular query
  */
 export default function QueryDashboardWidget({
   label,
