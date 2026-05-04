@@ -66,9 +66,9 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 blank=True,
                 null=False,
-                help_text="Raw amount of sub-part consumed to produce one part",
+                help_text="Amount of sub-part consumed to produce one part",
                 max_length=25,
-                verbose_name="Raw Amount",
+                verbose_name="Amount",
             ),
         ),
         migrations.RunPython(set_default_raw_amount, reverse_code=migrations.RunPython.noop),
@@ -78,9 +78,9 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 blank=False,
                 null=False,
-                help_text="Raw amount of sub-part consumed to produce one part",
+                help_text="Amount of sub-part consumed to produce one part",
                 max_length=25,
-                verbose_name="Raw Amount",
+                verbose_name="Amount",
             ),
         ),
     ]
