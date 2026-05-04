@@ -440,8 +440,8 @@ export const checkLoginState = async (
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
         observeProfile();
-        followRedirect(navigate, redirect);
         await fetchGlobalStates();
+        followRedirect(navigate, redirect);
       }
     });
   };
@@ -489,12 +489,11 @@ function handleSuccessFullAuth(
     if (isOk) {
       await fetchUserState();
       observeProfile();
+      await fetchGlobalStates();
 
       if (location !== undefined) {
         followRedirect(navigate, location?.state);
       }
-
-      await fetchGlobalStates();
     }
   });
 }
