@@ -2,10 +2,13 @@
 
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import RedirectView, TemplateView
 
-spa_view = ensure_csrf_cookie(TemplateView.as_view(template_name='web/index.html'))
+spa_view = ensure_csrf_cookie(
+    cache_page(60 * 5)(TemplateView.as_view(template_name='web/index.html'))
+)
 
 
 def cui_compatibility_urls(base: str) -> list:
