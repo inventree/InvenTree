@@ -1405,7 +1405,11 @@ class BomOutputOptions(OutputConfiguration):
 
 
 class BomList(
-    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    BomMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of BomItem objects.
 
