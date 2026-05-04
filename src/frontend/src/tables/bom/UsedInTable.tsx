@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -21,7 +21,8 @@ import {
   DescriptionColumn,
   IPNColumn,
   PartColumn,
-  ReferenceColumn
+  ReferenceColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -142,27 +143,34 @@ export function UsedInTable({
     [user]
   );
 
+  const bulkReplaceParts = useMemo(() => {}, [table.selectedRecords]);
+
   const bulkReplace = useBulkEditApiFormModal({
     url: ApiEndpoints.bom_list,
     items: table.selectedIds,
-    title: t`Bulk Replace`,
+    title: t`Replace Component`,
+    submitText: t`Replace`,
     preFormContent: (
-      <Alert
-        color='yellow'
-        icon={<IconReplace />}
-        title={t`Replace Component`}
-        mb='md'
-      >
-        <Stack gap='xs'>
-          <Text>{t`Replace this component in the selected assemblies.`}</Text>
-          <Text>{t`The selected assemblies will be updated with the new component.`}</Text>
+      <Stack gap='xs'>
+        <Alert
+          color='orange'
+          icon={<IconReplace />}
+          title={t`Replace Component`}
+          mb='md'
+        >
           <Text>{t`This action cannot be easily undone, so please ensure you have selected the correct assemblies.`}</Text>
-        </Stack>
-      </Alert>
+        </Alert>
+        <Text>{t`The selected assemblies will be updated with the new component.`}</Text>
+        {table.selectedRecords.map((record: any) => {
+          return <RenderPartColumn part={record.part_detail} key={record.pk} />;
+        })}
+        <Divider />
+      </Stack>
     ),
     fields: {
       sub_part: {
         filters: {
+          active: true,
           component: true
         },
         default: partId
