@@ -19,6 +19,14 @@ import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
+function refreshGlobalStatesInBackground() {
+  // Do not block navigation on non-critical bootstrap data.
+  // Pages can render quickly while global state warms in the background.
+  fetchGlobalStates().catch((error) => {
+    console.error('ERR: Failed to refresh global states', error);
+  });
+}
+
 export function followRedirect(navigate: NavigateFunction, redirect: any) {
   let url = redirect?.redirectUrl ?? '/home';
 
@@ -156,8 +164,8 @@ export async function doBasicLogin(
   // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    await fetchGlobalStates();
     observeProfile();
+    refreshGlobalStatesInBackground();
   } else if (!success) {
     clearUserState();
   }
@@ -440,9 +448,8 @@ export const checkLoginState = async (
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
         observeProfile();
-        await fetchGlobalStates();
-
         followRedirect(navigate, redirect);
+        refreshGlobalStatesInBackground();
       }
     });
   };
@@ -490,11 +497,12 @@ function handleSuccessFullAuth(
     if (isOk) {
       await fetchUserState();
       observeProfile();
-      await fetchGlobalStates();
 
       if (location !== undefined) {
         followRedirect(navigate, location?.state);
       }
+
+      refreshGlobalStatesInBackground();
     }
   });
 }

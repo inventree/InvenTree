@@ -21,6 +21,7 @@ import {
 } from '../../functions/auth';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
@@ -44,6 +45,9 @@ export default function Login() {
       state.sso_registration_enabled,
       state.registration_enabled
     ])
+  );
+  const [loginChecked] = useUserState(
+    useShallow((state) => [state.login_checked])
   );
   const any_reg_enabled = registration_enabled() || sso_registration() || false;
 
@@ -79,7 +83,9 @@ export default function Login() {
       ChangeHost(defaultHostKey);
     }
 
-    checkLoginState(navigate, location?.state, true);
+    if (!loginChecked) {
+      checkLoginState(navigate, location?.state, true);
+    }
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {
