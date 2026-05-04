@@ -1289,6 +1289,10 @@ class BomFilter(FilterSet):
         label=_('Assembly part is testable'), field_name='part__testable'
     )
 
+    part_locked = rest_filters.BooleanFilter(
+        label=_('Assembly part is locked'), field_name='part__locked'
+    )
+
     # Filters for linked 'sub_part'
     sub_part_active = rest_filters.BooleanFilter(
         label=_('Component part is active'), field_name='sub_part__active'

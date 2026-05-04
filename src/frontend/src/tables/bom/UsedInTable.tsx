@@ -90,6 +90,11 @@ export function UsedInTable({
         description: t`Show inherited items`
       },
       {
+        name: 'part_locked',
+        label: t`Locked`,
+        description: t`Show locked assemblies`
+      },
+      {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional items`
