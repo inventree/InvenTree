@@ -449,6 +449,14 @@ class StockItem(
 
         order_insertion_by = ['part']
 
+    def delete(self, **kwargs):
+        """Custom delete method for StockItem model."""
+        if not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False):
+            if self.serialized:
+                raise ValidationError(_('Serialized stock items cannot be deleted'))
+
+        super().delete(**kwargs)
+
     @staticmethod
     def get_api_url():
         """Return API url."""
