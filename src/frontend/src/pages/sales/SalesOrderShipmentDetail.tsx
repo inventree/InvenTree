@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -377,6 +378,7 @@ export default function SalesOrderShipmentDetail() {
           completeShipment.open();
         }}
       />,
+      <AdminButton model={ModelType.salesordershipment} id={shipment.pk} />,
       <BarcodeActionDropdown
         key='barcode'
         model={ModelType.salesordershipment}
