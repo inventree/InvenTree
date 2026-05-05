@@ -569,7 +569,9 @@ export default function BuildDetail() {
       NotesPanel({
         model_type: ModelType.build,
         model_id: build.pk,
-        has_note: !!build.notes
+        has_note: !!build.notes,
+        // TODO @matmair - change API to include a "locked" attribute that we can check here
+        editable: build.status == 40 ? false : undefined
       })
     ];
   }, [
