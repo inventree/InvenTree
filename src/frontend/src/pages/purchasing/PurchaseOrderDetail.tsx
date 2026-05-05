@@ -412,7 +412,11 @@ export default function PurchaseOrderDetail() {
         model_id: order.pk,
         has_note: !!order.notes,
         // TODO @matmair - change API to include a "locked" attribute that we can check here
-        editable: order.status == 30 ? false : undefined
+        editable:
+          order.status == 30 &&
+          !globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS')
+            ? false
+            : undefined
       })
     ];
   }, [order, id, user]);
