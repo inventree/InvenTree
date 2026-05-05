@@ -145,7 +145,7 @@ def get_build_environment() -> Optional[str]:
 
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
-    config = env.config
+    config = getattr(env, 'config', None) or {}
     assets_dir = config.get('assets_dir', None)
 
     if assets_dir is None:

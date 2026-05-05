@@ -2318,7 +2318,7 @@ def docs_server(
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
-    """Start a local mkdocs server to view the documentation."""
+    """Start a local zensical server to view the documentation."""
     # Extract settings definitions
     if export_settings:
         export_definitions(c, basedir='docs')
@@ -2326,23 +2326,25 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'zensical serve -a {address} -f docs/mkdocs.yml')
 
 
 @task(
-    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+    help={
+        'zensical': 'Build the documentation using zensical at the end (default: False)'
+    }
 )
-def build_docs(c, mkdocs=False):
-    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+def build_docs(c, zensical: bool = False):
+    """Build the required documents for building the docs. Optionally build the documentation using zensical."""
     migrate(c)
     export_definitions(c, basedir='docs')
     doc_schema(c)
 
-    if mkdocs:
-        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+    if zensical:
+        run(c, 'zensical build  -f docs/mkdocs.yml')
         info('Documentation build complete')
     else:
-        info('Documentation build complete, but mkdocs not requested')
+        info('Documentation build complete, but zensical not requested')
 
 
 @task
