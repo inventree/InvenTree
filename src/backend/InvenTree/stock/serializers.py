@@ -1128,7 +1128,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
             )
 
         # Create tracking entries
-        StockItemTracking.objects.bulk_create(transaction_notes)
+        StockItemTracking.objects.bulk_create(transaction_notes, batch_size=250)
 
 
 class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):

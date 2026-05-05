@@ -19,6 +19,18 @@ const PluginErrorTable = Loadable(
   lazy(() => import('../../../../tables/plugin/PluginErrorTable'))
 );
 
+export const PLUGIN_SETTINGS_KEYS = [
+  'ENABLE_PLUGINS_SCHEDULE',
+  'ENABLE_PLUGINS_EVENTS',
+  'ENABLE_PLUGINS_INTERFACE',
+  'ENABLE_PLUGINS_URL',
+  'ENABLE_PLUGINS_NAVIGATION',
+  'ENABLE_PLUGINS_APP',
+  'ENABLE_PLUGINS_MAILS',
+  'PLUGIN_ON_STARTUP',
+  'PLUGIN_UPDATE_CHECK'
+];
+
 export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(
     useShallow((state) => state.server.plugins_enabled)
@@ -55,19 +67,7 @@ export default function PluginManagementPanel() {
             <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <GlobalSettingList
-              keys={[
-                'ENABLE_PLUGINS_SCHEDULE',
-                'ENABLE_PLUGINS_EVENTS',
-                'ENABLE_PLUGINS_INTERFACE',
-                'ENABLE_PLUGINS_URL',
-                'ENABLE_PLUGINS_NAVIGATION',
-                'ENABLE_PLUGINS_APP',
-                'ENABLE_PLUGINS_MAILS',
-                'PLUGIN_ON_STARTUP',
-                'PLUGIN_UPDATE_CHECK'
-              ]}
-            />
+            <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
           </Accordion.Panel>
         </Accordion.Item>
         {user.isSuperuser() && (

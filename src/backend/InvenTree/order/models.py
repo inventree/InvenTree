@@ -1173,7 +1173,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
-            stock.models.StockItem.objects.bulk_create(bulk_create_items)
+            stock.models.StockItem.objects.bulk_create(
+                bulk_create_items, batch_size=250
+            )
 
             # Fetch them back again
             tree_ids = [item.tree_id for item in bulk_create_items]
@@ -1200,7 +1202,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
         # Bulk create new tracking entries for each item
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+        stock.models.StockItemTracking.objects.bulk_create(
+            tracking_entries, batch_size=250
+        )
 
         # Update received quantity for each line item
         PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
