@@ -30,8 +30,8 @@ for key in [
     'READTHEDOCS_VERSION_NAME',
     'READTHEDOCS_VERSION_TYPE',
 ]:
-    val = os.environ.get(key, None) or '-- MISSING --'
-    print(f' - {key}: {val}')
+    if val := os.environ.get(key, None):
+        print(f' - {key}: {val}')
 
 # Cached settings dict values
 global CONFIG_SETTINGS

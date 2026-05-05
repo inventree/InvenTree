@@ -2308,6 +2308,7 @@ def doc_schema(c):
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
+        'open': 'Automatically open the documentation in a web browser (default: False)',
         'compile_schema': 'Compile the API schema documentation first (default: False)',
         'export_settings': 'Export settings definitions before starting the server (default: True)',
     }
@@ -2315,6 +2316,7 @@ def doc_schema(c):
 def docs_server(
     c,
     address='localhost:8080',
+    open: bool = False,
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
@@ -2326,7 +2328,12 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'zensical serve -a {address} -f docs/mkdocs.yml')
+    cmd = f'zensical serve -a {address} -f docs/mkdocs.yml'
+
+    if open:
+        cmd += ' --open'
+
+    run(c, cmd)
 
 
 @task(
@@ -2334,14 +2341,19 @@ def docs_server(
         'zensical': 'Build the documentation using zensical at the end (default: False)'
     }
 )
-def build_docs(c, zensical: bool = False):
+def build_docs(
+    c, definitions: bool = True, strict: bool = True, zensical: bool = False
+):
     """Build the required documents for building the docs. Optionally build the documentation using zensical."""
     migrate(c)
     export_definitions(c, basedir='docs')
     doc_schema(c)
 
     if zensical:
-        run(c, 'zensical build  -f docs/mkdocs.yml')
+        cmd = 'zensical build'
+        if strict:
+            cmd += ' --strict'
+        run(c, cmd)
         info('Documentation build complete')
     else:
         info('Documentation build complete, but zensical not requested')

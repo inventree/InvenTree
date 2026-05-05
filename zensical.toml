@@ -1,0 +1,64 @@
+[project]
+repo_url = "https://github.com/inventree/inventree"
+repo_name = "inventree/inventree"
+site_name = "InvenTree Documentation"
+site_url = "https://docs.inventree.org"
+site_description = "InvenTree - Open Source Inventory Management"
+site_author = "InvenTree Developers"
+docs_dir = "docs/docs"
+site_dir = "docs/site"
+
+[project.theme]
+variant = "classic"
+language = "en"
+features = [
+    "navigation.expand",
+    "navigation.instant",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.tracking",
+    "navigation.top",
+    "search.highlight",
+    "toc.follow",
+    "toc.integrate",
+]
+
+[project.theme.palette]
+scheme = "default"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.tables]
+[project.markdown_extensions.pymdownx.keys]
+[project.markdown_extensions.zensical.extensions.macros]
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.plugins.mkdocstrings.handlers.python]
+inventories = ["https://docs.python.org/3/objects.inv"]
+paths = ["src"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "google"
+inherited_members = true
+show_source = false
+
+[project.validation]
+unresolved_references = true
+unresolved_footnotes = true
+unused_definitions = true
+unused_footnotes = true
+shadowed_definitions = true
+shadowed_footnotes = true
+invalid_links = true
+invalid_link_anchors = true
+
+[project.extra]
+generator = false
+
+[project.extra.social]
+icon = "fontawesome/brands/github"
+link = "https://github.com/inventree/inventree"
