@@ -192,6 +192,9 @@ export function useParameterFields({
             }
           } else if (record?.selectionlist) {
             setFieldType('related field');
+          } else {
+            // Default to a simple string field
+            setFieldType('string');
           }
         }
       },
