@@ -1,4 +1,5 @@
 import { DefaultFallback } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { AuthConfig, AuthProvider } from '@lib/types/Auth';
@@ -31,7 +32,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';

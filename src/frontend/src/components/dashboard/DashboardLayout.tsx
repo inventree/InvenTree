@@ -97,11 +97,14 @@ export default function DashboardLayout() {
         setWidgets([...widgets, newWidget]);
       }
 
-      // Update the layouts to include the new widget (and enforce initial size)
+      // Update the layouts to include the new widget.
+      // Pass overrideSize=false so existing widgets keep their user-set
+      // dimensions; only the newly added widget will receive default sizing
+      // via react-grid-layout's auto-placement.
       const _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
-        _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, true);
+        _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, false);
       });
 
       setLayouts(_layouts);

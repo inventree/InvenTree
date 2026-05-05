@@ -2507,7 +2507,7 @@ class Part(
             templates.append(template)
 
         if len(templates) > 0:
-            PartTestTemplate.objects.bulk_create(templates)
+            PartTestTemplate.objects.bulk_create(templates, batch_size=250)
 
     @transaction.atomic
     def copy_category_parameters(self, category: PartCategory):
@@ -2549,7 +2549,7 @@ class Part(
                 )
             )
 
-        Parameter.objects.bulk_create(parameters)
+        Parameter.objects.bulk_create(parameters, batch_size=250)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -2681,9 +2681,7 @@ class Part(
         parts = []
 
         # Child parts
-        children = self.get_descendants(include_self=False)
-
-        for child in children:
+        for child in self.get_descendants(include_self=False):
             parts.append(child)
 
         # Immediate parent, and siblings

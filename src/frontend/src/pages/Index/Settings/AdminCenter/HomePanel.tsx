@@ -1,9 +1,9 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Accordion, Alert, SimpleGrid, Stack, Text } from '@mantine/core';
 import { type JSX, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { StylishText } from '../../../../components/items/StylishText';
 import {
   type ExtendedAlertInfo,
   ServerAlert,

@@ -81,6 +81,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
 
       render: (record) => {
+        if (record.virtual) {
+          return (
+            <Text size='sm' c='dimmed' fs='italic'>
+              {t`Virtual part`}
+            </Text>
+          );
+        }
+
         const extra: ReactNode[] = [];
 
         const stock = record?.total_in_stock ?? 0;

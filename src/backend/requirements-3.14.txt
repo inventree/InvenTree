@@ -101,16 +101,16 @@ blessed==1.38.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-boto3==1.42.87 \
-    --hash=sha256:15cc1404b3ccbcfe17bd5834d467b1b28d53d9aca44e3798dc44876ac57362e6 \
-    --hash=sha256:b5b86a826f8f12c7d38679f35bd0135807a6867a21eb8be6dea7c27aeb14ec14
+boto3==1.42.90 \
+    --hash=sha256:bafb5bb1dea262ac95f9afb1e415f06a9490f05cb203bdd897d0afdcd17733c6 \
+    --hash=sha256:fde7f7bcad6ec8342d6bf18f56d118d0cb6df189310cfaf73e2eb6443b1cb418
     # via
     #   -c src/backend/requirements.txt
     #   django-anymail
     #   django-storages
-botocore==1.42.87 \
-    --hash=sha256:1c6cc9555c1feec50b290a42de70ba6f04826c009562c2c12bb9990d0258482d \
-    --hash=sha256:32832df27c039cc1a518289afe0f6006296d3df26603b5f66e911457e67f0146
+botocore==1.42.90 \
+    --hash=sha256:234c39492cd3088acb021d999e3392a4d50238ae3e70b9d9ae1504c30d9009d1 \
+    --hash=sha256:5c95504720346990adc8e3ae1023eb46f9409084b79688e4773ba7099c5fd3db
     # via
     #   -c src/backend/requirements.txt
     #   boto3
@@ -814,9 +814,9 @@ feedparser==6.0.12 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-fido2==2.1.1 \
-    --hash=sha256:f1379f845870cc7fc64c7f07323c3ce41e8c96c37054e79e0acd5630b3fec5ac \
-    --hash=sha256:f85c16c8084abf6530b6c6ec3a0cf8575943321842e06916686943a8b784182c
+fido2==2.2.0 \
+    --hash=sha256:0d8122e690096ad82afde42ac9d6433a4eeffda64084f36341ea02546b181dd1 \
+    --hash=sha256:3587ccf0af7b71b5dd73f17e1dbec9f0fd157292f9163f02e7778f46d0d25fe5
     # via
     #   -c src/backend/requirements.txt
     #   django-allauth
@@ -1467,9 +1467,9 @@ opentelemetry-util-http==0.61b0 \
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-wsgi
-packaging==26.0 \
-    --hash=sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4 \
-    --hash=sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529
+packaging==26.1 \
+    --hash=sha256:5d9c0669c6285e491e0ced2eee587eaf67b670d94a19e94e3984a481aba6802f \
+    --hash=sha256:f042152b681c4bfac5cae2742a55e103d27ab2ec0f3d88037136b6bfe7c9c5de
     # via
     #   -c src/backend/requirements.txt
     #   bleach
@@ -2089,9 +2089,9 @@ s3transfer==0.16.0 \
     # via
     #   -c src/backend/requirements.txt
     #   boto3
-sentry-sdk==2.57.0 \
-    --hash=sha256:4be8d1e71c32fb27f79c577a337ac8912137bba4bcbc64a4ec1da4d6d8dc5199 \
-    --hash=sha256:812c8bf5ff3d2f0e89c82f5ce80ab3a6423e102729c4706af7413fd1eb480585
+sentry-sdk==2.58.0 \
+    --hash=sha256:688d1c704ddecf382ea3326f21a67453d4caa95592d722b7c780a36a9d23109e \
+    --hash=sha256:c1144d947352d54e5b7daa63596d9f848adf684989c06c4f5a659f0c85a18f6f
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -2371,9 +2371,9 @@ xmlsec==1.3.17 \
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
     #   python3-saml
-zipp==3.23.0 \
-    --hash=sha256:071652d6115ed432f5ce1d34c336c0adfd6a884660d1e9712a256d3d3bd4b14e \
-    --hash=sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166
+zipp==3.23.1 \
+    --hash=sha256:0b3596c50a5c700c9cb40ba8d86d9f2cc4807e9bedb06bcdf7fac85633e444dc \
+    --hash=sha256:32120e378d32cd9714ad503c1d024619063ec28aad2248dc6672ad13edfa5110
     # via
     #   -c src/backend/requirements.txt
     #   importlib-metadata

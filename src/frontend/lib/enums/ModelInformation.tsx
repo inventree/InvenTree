@@ -186,6 +186,7 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Sales Order Shipments`,
     url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
+    admin_url: '/order/salesordershipment/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
     supports_barcode: true,
     icon: 'shipment'

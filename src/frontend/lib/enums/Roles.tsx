@@ -5,6 +5,7 @@ import { t } from '@lingui/core/macro';
  */
 export enum UserRoles {
   admin = 'admin',
+  bom = 'bom',
   build = 'build',
   part = 'part',
   part_category = 'part_category',
