@@ -449,9 +449,15 @@ class StockItem(
 
         order_insertion_by = ['part']
 
-    def delete(self, **kwargs):
-        """Custom delete method for StockItem model."""
-        if not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False):
+    def delete(self, ignore_serial_check: bool = False, **kwargs):
+        """Custom delete method for StockItem model.
+
+        Arguments:
+            ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
+        """
+        if not ignore_serial_check and not get_global_setting(
+            'STOCK_ALLOW_DELETE_SERIALIZED', cache=False
+        ):
             if self.serialized:
                 raise ValidationError(_('Serialized stock items cannot be deleted'))
 
