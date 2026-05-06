@@ -451,7 +451,7 @@ export default function SalesOrderDetail() {
         has_note: !!order.notes,
         // TODO @matmair - change API to include a "locked" attribute that we can check here
         editable:
-          order.status == 30 &&
+          order.status == soStatus.COMPLETE &&
           !globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS')
             ? false
             : undefined
