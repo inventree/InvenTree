@@ -197,6 +197,27 @@ export default function BuildDetail() {
     defaultValue: {}
   });
 
+  // Fetch the number of child build orders associated with this build order
+  const { instance: childBuildData } = useInstance({
+    endpoint: ApiEndpoints.build_order_list,
+    params: {
+      parent: id,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
+
+  /**
+   * Display the "Child Build Orders" panel if either:
+   * - There are any child build orders (childBuildData.count > 0)
+   * - There are any sub-assembly items (subassemblyLineData.count > 0)
+   */
+  const showChildBuilds = useMemo(() => {
+    return childBuildData?.count > 0 || subassemblyLineData?.count > 0;
+  }, [childBuildData, subassemblyLineData]);
+
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const {
@@ -540,7 +561,7 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
-        hidden: (subassemblyLineData?.count ?? 0) <= 0, // Hide if no sub-assembly items
+        hidden: !showChildBuilds,
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
         ) : (
@@ -578,7 +599,7 @@ export default function BuildDetail() {
     user,
     buildStatus,
     globalSettings,
-    subassemblyLineData,
+    showChildBuilds,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData
