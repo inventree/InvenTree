@@ -12,8 +12,6 @@ import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
-from django.conf import settings
-
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
@@ -39,6 +37,8 @@ try:
         output = logger.warning
 
         try:
+            from django.conf import settings
+
             if settings.DOCKER:
                 output = logger.info
         except Exception:
