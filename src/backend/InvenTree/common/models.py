@@ -247,11 +247,14 @@ class BaseInvenTreeSetting(models.Model):
 
             if len(missing_keys) > 0:
                 logger.info('Building %s default values for %s', len(missing_keys), cls)
-                cls.objects.bulk_create([
-                    cls(key=key, value=cls.get_setting_default(key), **kwargs)
-                    for key in missing_keys
-                    if not key.startswith('_')
-                ])
+                cls.objects.bulk_create(
+                    [
+                        cls(key=key, value=cls.get_setting_default(key), **kwargs)
+                        for key in missing_keys
+                        if not key.startswith('_')
+                    ],
+                    batch_size=250,
+                )
         except Exception as exc:
             logger.exception(
                 'Failed to build default values for %s (%s)', cls, type(exc)

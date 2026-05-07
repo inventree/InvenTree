@@ -245,6 +245,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'SERIAL_NUMBER_GLOBALLY_UNIQUE',
+                'STOCK_ALLOW_DELETE_SERIALIZED',
                 'STOCK_DELETE_DEPLETED_DEFAULT',
                 'STOCK_BATCH_CODE_TEMPLATE',
                 'STOCK_OWNERSHIP_CONTROL',

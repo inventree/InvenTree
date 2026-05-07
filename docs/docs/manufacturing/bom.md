@@ -192,3 +192,17 @@ When comparing BOMs from two different assemblies, the user can select from the 
 | *Show common parts* | Display only the BOM line items which are common between the two assemblies. |
 
 In each case, any differences between the BOM line items are highlighted in red.
+
+## Replacing Components
+
+When a component is used in the BOM for multiple assemblies, it can be time consuming to update the BOM for each assembly when a change is required. InvenTree provides a "Replace Component" function which streamlines the process of replacing a component part with another part across multiple BOMs.
+
+To replace a component part within multiple assemblies:
+
+- Navigate to the [Used In](../part/views.md#used-in) tab of the component part detail page
+- Select the assemblies you wish to update by ticking the checkbox next to each assembly
+- Click on the {{ icon("replace", color="blue", title="Replace Component") }} icon to open the "Replace Component" dialog
+
+The following dialog will be displayed, which allows the user to select a new component part to replace the existing component part in the BOM of the selected assemblies:
+
+{{ image("build/replace_component.png", "Replace Component") }}
