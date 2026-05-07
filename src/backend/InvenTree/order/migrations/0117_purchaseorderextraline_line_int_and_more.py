@@ -18,10 +18,10 @@ def add_integer_line_number(apps, schema_editor):
     ]:
         items = []
 
-        for item in model.objects.all():
+        for item in model.objects.exclude(line__isnull=True).exclude(line=''):
             # Attempt to convert the existing line number to an integer
             try:
-                item.line_int = int(item.line) if item.line else 0
+                item.line_int = int(item.line)
                 items.append(item)
             except (ValueError, TypeError):
                 pass
