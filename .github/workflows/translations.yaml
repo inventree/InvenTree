@@ -7,7 +7,7 @@ on:
 
 env:
   python_version: 3.11
-  node_version: 20
+  node_version: 24
 
 permissions:
   contents: read
