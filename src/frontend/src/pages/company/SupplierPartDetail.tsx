@@ -79,9 +79,11 @@ export default function SupplierPartDetail() {
     const data = supplierPart ?? {};
 
     // Access nested data
-    data.manufacturer = data.manufacturer_detail?.pk;
-    data.MPN = data.manufacturer_part_detail?.MPN;
-    data.manufacturer_part = data.manufacturer_part_detail?.pk;
+    data.manufacturer =
+      supplierPart.manufacturer || data.manufacturer_detail?.pk;
+    data.MPN = supplierPart.MPN || data.manufacturer_part_detail?.MPN;
+    data.manufacturer_part =
+      supplierPart.manufacturer_part || data.manufacturer_part_detail?.pk;
 
     const tl: DetailsField[] = [
       {
