@@ -448,7 +448,13 @@ export default function SalesOrderDetail() {
       NotesPanel({
         model_type: ModelType.salesorder,
         model_id: order.pk,
-        has_note: !!order.notes
+        has_note: !!order.notes,
+        // TODO @matmair - change API to include a "locked" attribute that we can check here
+        editable:
+          order.status == soStatus.COMPLETE &&
+          !globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS')
+            ? false
+            : undefined
       })
     ];
   }, [order, id, user, soStatus, user]);

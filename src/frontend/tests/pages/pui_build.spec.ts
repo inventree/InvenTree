@@ -437,6 +437,12 @@ test('Build Order - Auto Allocate Tracked', async ({ browser }) => {
     url: 'manufacturing/build-order/27/consumed-stock'
   });
 
+  // Check some tabs along the way
+  await loadTab(page, 'Child Build Orders');
+  await page
+    .getByRole('button', { name: 'action-button-add-build-order' })
+    .waitFor();
+
   await loadTab(page, 'Incomplete Outputs');
 
   await page.getByRole('cell', { name: '0 / 6' }).waitFor();
