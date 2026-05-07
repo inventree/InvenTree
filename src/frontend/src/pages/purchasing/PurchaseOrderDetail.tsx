@@ -410,7 +410,13 @@ export default function PurchaseOrderDetail() {
       NotesPanel({
         model_type: ModelType.purchaseorder,
         model_id: order.pk,
-        has_note: !!order.notes
+        has_note: !!order.notes,
+        // TODO @matmair - change API to include a "locked" attribute that we can check here
+        editable:
+          order.status == poStatus.COMPLETE &&
+          !globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS')
+            ? false
+            : undefined
       })
     ];
   }, [order, id, user]);

@@ -1033,7 +1033,9 @@ class Build(
         self.deallocate_stock(output=output)
 
         # Remove the build output from the database
-        output.delete()
+        # This is a special case where serialized stock can be deleted,
+        # independedent of the global setting which normally prevents deletion of serialized stock items
+        output.delete(ignore_serial_check=True)
 
     @transaction.atomic
     def trim_allocated_stock(self):
