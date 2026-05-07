@@ -716,6 +716,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'STOCK_ALLOW_DELETE_SERIALIZED': {
+        'name': _('Delete Serialized Stock'),
+        'description': _('Allow deletion of stock items which have a serial number'),
+        'default': True,
+        'validator': bool,
+    },
     'STOCK_BATCH_CODE_TEMPLATE': {
         'name': _('Batch Code Template'),
         'description': _('Template for generating default batch codes for stock items'),

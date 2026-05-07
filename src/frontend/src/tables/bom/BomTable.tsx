@@ -718,6 +718,7 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
+              pricing: true,
               substitutes: true,
               part_detail: true,
               sub_part_detail: true,

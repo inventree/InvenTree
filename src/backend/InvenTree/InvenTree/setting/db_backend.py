@@ -19,19 +19,25 @@ def get_db_backend():
         'ENGINE': get_setting(
             'INVENTREE_DB_ENGINE', 'database.engine', '', typecast=str
         )
-        or get_config_value('database.ENGINE'),
+        or get_config_value('database.ENGINE')
+        or '',
         'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str)
-        or get_config_value('database.NAME'),
+        or get_config_value('database.NAME')
+        or '',
         'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str)
-        or get_config_value('database.USER'),
+        or get_config_value('database.USER')
+        or '',
         'PASSWORD': get_setting(
             'INVENTREE_DB_PASSWORD', 'database.password', '', typecast=str
         )
-        or get_config_value('database.PASSWORD'),
+        or get_config_value('database.PASSWORD')
+        or '',
         'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str)
-        or get_config_value('database.HOST'),
+        or get_config_value('database.HOST')
+        or '',
         'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str)
-        or get_config_value('database.PORT'),
+        or get_config_value('database.PORT')
+        or '',
         'OPTIONS': get_setting(
             'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
         )

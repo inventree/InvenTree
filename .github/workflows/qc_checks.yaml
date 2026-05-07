@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@f8cb9308b42121e793f835bd14c0b8090420430c # pin@main
+        uses: oasdiff/oasdiff-action/diff@c002f996c3d084acf62ea6dd4f2e7a57b7bc2a35 # pin@main
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"

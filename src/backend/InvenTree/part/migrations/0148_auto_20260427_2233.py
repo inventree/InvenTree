@@ -10,9 +10,10 @@ def update_bom_role(apps, schema_editor):
     we need to update the ruleset to include the correct models.
     
     """
-    from django.contrib.auth.models import Group
     from users.ruleset import RuleSetEnum
-    from users.models import RuleSet
+
+    Group = apps.get_model("auth", "Group")
+    RuleSet = apps.get_model("users", "RuleSet")
 
     # For each existing group, create a new 'bom' ruleset
     for group in Group.objects.all():
