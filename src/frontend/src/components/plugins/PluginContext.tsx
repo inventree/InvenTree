@@ -38,6 +38,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import {
   type ImporterOpenOptions,
   closeGlobalImporter,
@@ -78,6 +79,7 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      useInstance: useInstance,
       renderInstance: RenderInstance,
       renderRemoteInstance: RenderRemoteInstance,
       theme: theme,
