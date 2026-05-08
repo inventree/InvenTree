@@ -47,6 +47,7 @@ import {
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
+import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -78,6 +79,7 @@ export const useInvenTreeContext = () => {
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
       renderInstance: RenderInstance,
+      renderRemoteInstance: RenderRemoteInstance,
       theme: theme,
       colorScheme: colorScheme,
       importer: {

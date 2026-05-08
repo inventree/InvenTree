@@ -99,6 +99,9 @@ export type InvenTreePluginContext = {
   globalSettings: SettingsStateProps;
   modelInformation: ModelDict;
   renderInstance: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
+  renderRemoteInstance: (
+    props: Readonly<RenderInstanceProps>
+  ) => React.ReactNode;
   host: string;
   i18n: I18n;
   locale: string;
