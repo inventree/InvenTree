@@ -35,6 +35,4 @@ export function loadWindowGlobals() {
   import('@lingui/react').then((module) => {
     window.LinguiReact = module;
   });
-
-  console.log('LOADED GLOBAL OBJECTS');
 }
