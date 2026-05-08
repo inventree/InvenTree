@@ -46,7 +46,7 @@ import {
 } from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
-import { RenderInstance } from '../render/Instance';
+import { EditApiForm } from '../forms/ApiForm';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -100,6 +100,7 @@ export const useInvenTreeContext = () => {
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
         edit: useEditApiFormModal,
+        editApiForm: EditApiForm,
         stockActions: {
           addStock: useAddStockItem,
           assignStock: useAssignStockItem,

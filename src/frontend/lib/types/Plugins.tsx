@@ -7,6 +7,7 @@ import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
 import type {
   ApiFormModalProps,
+  ApiFormProps,
   BulkEditApiFormModalProps,
   StockOperationProps
 } from './Forms';
@@ -46,6 +47,7 @@ export type InvenTreeFormsContext = {
   create: (props: ApiFormModalProps) => UseModalReturn;
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
+  editApiForm: (props: { id?: string; props: ApiFormProps }) => React.ReactNode;
   stockActions: StockAdjustmentFormsContext;
 };
 
