@@ -2,6 +2,7 @@ import type {
   QueryObserverResult,
   UseQueryResult
 } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
 import type { ApiEndpoints } from '..';
 import type { ModelType } from '../enums/ModelType';
 import type { PathParams } from './Core';
@@ -51,4 +52,11 @@ export interface useInstanceProps {
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
   updateInterval?: number;
+}
+
+export interface RemoteInstanceProps {
+  model: ModelType;
+  modelUrl?: string;
+  modelRenderer?: (instance: any) => ReactNode;
+  pk: number;
 }
