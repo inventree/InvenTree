@@ -12,11 +12,11 @@ import 'react-resizable/css/styles.css';
 
 import type * as LinguiCore from '@lingui/core';
 import type * as LinguiReact from '@lingui/react';
+// Global types to be exported for use in plugins
 import type * as MantineCore from '@mantine/core';
 import type * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
 import type * as ReactDOM from 'react-dom';
-
 import * as ReactDOMClient from 'react-dom/client';
 
 import './styles/overrides.css';
