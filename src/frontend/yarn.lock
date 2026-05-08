@@ -306,7 +306,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.27.1"
     "@babel/plugin-transform-typescript" "^7.28.5"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.6", "@babel/runtime@^7.20.13", "@babel/runtime@^7.28.6", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.6", "@babel/runtime@^7.28.6", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
   version "7.29.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.29.2.tgz#9a6e2d05f4b6692e1801cd4fb176ad823930ed5e"
   integrity sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==
@@ -1135,14 +1135,6 @@
     lilconfig "^3.1.3"
     normalize-path "^3.0.0"
 
-"@lingui/core@5.9.5":
-  version "5.9.5"
-  resolved "https://registry.yarnpkg.com/@lingui/core/-/core-5.9.5.tgz#013608197d24309df3cf41a1ae60caf5146351f4"
-  integrity sha512-Y+iZq9NqnqZOqHNgPomUFP21KH/zs4oTTizWoz0AKAkBbq9T9yb1DSz/ugtBRjF1YLtKMF9tq28v3thMHANSiQ==
-  dependencies:
-    "@babel/runtime" "^7.20.13"
-    "@lingui/message-utils" "5.9.5"
-
 "@lingui/core@6.0.1", "@lingui/core@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-6.0.1.tgz#042f30e7d0c4bccdcc9c3c316969f9cff8eb7154"
@@ -1160,22 +1152,6 @@
     "@lingui/message-utils" "6.0.1"
     pofile "^1.1.4"
 
-"@lingui/macro@^5.9.2":
-  version "5.9.5"
-  resolved "https://registry.yarnpkg.com/@lingui/macro/-/macro-5.9.5.tgz#55b8924b35df0b5ab06b37bc0ab6c05d788f3bed"
-  integrity sha512-WZsF93jKwk0IW4xmvAGd+6S3dT+9ZzhXAasKIiJL9qB4viO9oj+oecGhXuPYTYV74mcoL7L1494hca0CsB/BLQ==
-  dependencies:
-    "@lingui/core" "5.9.5"
-    "@lingui/react" "5.9.5"
-
-"@lingui/message-utils@5.9.5":
-  version "5.9.5"
-  resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-5.9.5.tgz#952cb3b3f2bbcf4604bc5fdb334924ef5bdb5a31"
-  integrity sha512-t3dNbjb1dWkvcpXGMXIEyBDO3l4B8J2ColZXi0NTG1ioAj+sDfFxFB8fepVgd3JAk+AwARlOLvF14oS0mAdgpw==
-  dependencies:
-    "@messageformat/parser" "^5.0.0"
-    js-sha256 "^0.10.1"
-
 "@lingui/message-utils@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-6.0.1.tgz#89fef9fbd52600c11d9e89d2f54fed160f2e5af2"
@@ -1184,14 +1160,6 @@
     "@messageformat/date-skeleton" "^1.1.0"
     "@messageformat/parser" "^5.0.0"
     js-sha256 "^0.10.1"
-
-"@lingui/react@5.9.5":
-  version "5.9.5"
-  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-5.9.5.tgz#f77168fd3e5c1b221a47a7e43f63ca30479cf1eb"
-  integrity sha512-jzYoA/f4jrTfpOB+jrMhlC835UwqSXJdepr7cfWsmg+Rpp3HBSREtfrogaz1LqLI/AVnkmfp10Mo6VOp/8qeOQ==
-  dependencies:
-    "@babel/runtime" "^7.20.13"
-    "@lingui/core" "5.9.5"
 
 "@lingui/react@^6.0.1":
   version "6.0.1"
