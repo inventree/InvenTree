@@ -135,7 +135,8 @@ export {
 export {
   type DrawerProps,
   DetailDrawer,
-  DetailDrawerLink
+  DetailDrawerLink,
+  DetailDrawerComponent
 } from './components/nav/DetailDrawer';
 export { StylishText } from './components/StylishText';
 
@@ -144,3 +145,4 @@ export {
   type StoredTableStateProps,
   useStoredTableState
 } from './states/StoredTableState';
+export { useLocalLibState } from './states/LocalLibState';

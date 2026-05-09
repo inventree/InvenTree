@@ -26,7 +26,7 @@ export interface DrawerProps {
   closeOnEscape?: boolean;
 }
 
-function DetailDrawerComponent({
+export function DetailDrawerComponent({
   title,
   position = 'right',
   size,

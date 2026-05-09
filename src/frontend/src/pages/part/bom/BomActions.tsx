@@ -1,6 +1,7 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import type { UseInstanceResult } from '@lib/types/Rendering';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -23,7 +24,6 @@ import { useSearchParams } from 'react-router-dom';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
-import type { UseInstanceResult } from '../../../hooks/UseInstance';
 import { useUserState } from '../../../states/UserState';
 import { BomCompareDrawer } from './BomCompare';
 
