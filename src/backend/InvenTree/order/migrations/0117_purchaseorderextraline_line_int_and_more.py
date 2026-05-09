@@ -6,8 +6,6 @@ from django.db import migrations, models
 def add_integer_line_number(apps, schema_editor):
     """Add integer line numbers to existing line items."""
 
-    print("\nUpdating line items to add integer line numbers:")
-
     for model in [
         apps.get_model('order', 'PurchaseOrderLineItem'),
         apps.get_model('order', 'ReturnOrderLineItem'),
@@ -27,7 +25,7 @@ def add_integer_line_number(apps, schema_editor):
                 pass
 
         if len(items) > 0:
-            print(f"- Updating {len(items)} items for model {model._meta.model_name}")
+            print(f"- Updating {len(items)} line items for model {model._meta.model_name}")
             model.objects.bulk_update(items, ['line_int'], batch_size=250)
 
 
