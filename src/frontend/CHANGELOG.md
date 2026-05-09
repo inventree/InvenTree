@@ -2,6 +2,17 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.11.4 - Unreleased
+
+Adds additional functions in the plugin context related to form rendering and API invocation:
+- `useInstance`
+- `renderRemoteInstance`
+- `EditApiForm`
+
+Exposes sub-components related to DetailDrawer rendering:
+- `DetailDrawerComponent`
+- `useLocalLibState`
+
 ### 0.11.3 - April 2026
 
 Exposes additional type definitions related to rendering drawers from tables:
