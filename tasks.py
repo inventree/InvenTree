@@ -743,7 +743,6 @@ def setup_dev(c, tests: bool = False, verbose: bool = False):
     # Install prek hook
     info('Installing prek for checks before git commits...')
     run(c, 'prek install')
-    run(c, 'prek autoupdate')
     success('prek set up complete')
 
     # Set up test-data if flag is set
