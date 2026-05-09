@@ -3,9 +3,11 @@ import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { lazy } from 'react';
 import { useUserState } from '../../states/UserState';
-import NotesEditor from '../editors/NotesEditor';
 import type { PanelType } from './Panel';
+
+const NotesEditor = lazy(() => import('../editors/NotesEditor'));
 
 export default function NotesPanel({
   model_type,

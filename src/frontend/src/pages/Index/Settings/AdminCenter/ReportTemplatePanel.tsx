@@ -2,7 +2,13 @@ import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
-import { TemplateTable } from '../../../../tables/settings/TemplateTable';
+import { lazy } from 'react';
+
+const TemplateTable = lazy(() =>
+  import('../../../../tables/settings/TemplateTable').then((module) => ({
+    default: module.TemplateTable
+  }))
+);
 
 function ReportTemplateTable() {
   return (
