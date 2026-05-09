@@ -743,6 +743,7 @@ def setup_dev(c, tests: bool = False, verbose: bool = False):
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
     run(c, 'pre-commit install')
+    run(c, 'pre-commit autoupdate')
     success('pre-commit set up complete')
 
     # Set up test-data if flag is set
