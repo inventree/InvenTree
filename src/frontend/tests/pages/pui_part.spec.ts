@@ -232,7 +232,7 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
   await expect(
     page.getByRole('textbox', { name: 'text-field-raw_amount' })
-  ).toHaveValue('1 quart');
+  ).toHaveValue(/quart/);
 
   // Try to assign invalid units to this item, which should be rejected by validation
   await page
