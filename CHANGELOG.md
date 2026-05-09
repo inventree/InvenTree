@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+
 ### Added
 
 - [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
