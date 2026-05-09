@@ -3,6 +3,7 @@ import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
@@ -26,6 +27,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     plugins: [
+      visualizer(),
       react({
         babel: {
           plugins: ['macros']
