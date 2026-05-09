@@ -537,6 +537,19 @@ class Order(
         related_name='+',
     )
 
+    @property
+    def company(self):
+        """Return the company associated with this order.
+
+        This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
+        """
+        raise NotImplementedError(f'company() method not implemented for {__class__}')
+
+    @property
+    def order_address(self):
+        """Return the Address associated with this order."""
+        return self.address or self.company.primary_address
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -1038,6 +1051,29 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             base_part = supplier_part.part
 
+            # Update the line item quantity
+            line.received += quantity
+            line_items_to_update.append(line)
+
+            # Extract optional serial numbers
+            serials = item.get('serials', None)
+
+            if serials and type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
+
+            if base_part.virtual:
+                # Virtual parts are not received into stock, so skip the rest of the loop
+
+                if serialize:
+                    raise ValidationError(
+                        _('Serial numbers cannot be assigned to virtual parts')
+                    )
+
+                continue
+
             stock_location = item.get('location', location) or line.get_destination()
 
             # Calculate the received quantity in base part units
@@ -1051,15 +1087,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_price = convert_money(purchase_price, default_currency)
             else:
                 purchase_price = None
-
-            # Extract optional serial numbers
-            serials = item.get('serials', None)
-
-            if serials and type(serials) is list and len(serials) > 0:
-                serialize = True
-            else:
-                serialize = False
-                serials = [None]
 
             # Construct dataset for creating a new StockItem instances
             stock_data = {
@@ -1144,13 +1171,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
                 bulk_create_items.append(new_item)
 
-            # Update the line item quantity
-            line.received += quantity
-            line_items_to_update.append(line)
-
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
-            stock.models.StockItem.objects.bulk_create(bulk_create_items)
+            stock.models.StockItem.objects.bulk_create(
+                bulk_create_items, batch_size=250
+            )
 
             # Fetch them back again
             tree_ids = [item.tree_id for item in bulk_create_items]
@@ -1177,7 +1202,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
         # Bulk create new tracking entries for each item
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+        stock.models.StockItemTracking.objects.bulk_create(
+            tracking_entries, batch_size=250
+        )
 
         # Update received quantity for each line item
         PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
@@ -1728,6 +1755,8 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
     Attributes:
         quantity: Number of items
+        line: The line number for this item (optional)
+        line_int: An integer line number for this item (optional - used for natural sorting)
         reference: Reference text (e.g. customer reference) for this line item
         project_code: Project code associated with this line item (optional)
         note: Annotation for the item
@@ -1750,6 +1779,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
             })
 
         update_order = kwargs.pop('update_order', True)
+
+        # Update the integer representation of the line number (for natural sorting)
+        if self.line:
+            try:
+                self.line_int = int(self.line)
+            except (TypeError, ValueError):
+                self.line_int = 0
+        else:
+            self.line_int = 0
 
         super().save(*args, **kwargs)
         if update_order and self.order:
@@ -1782,6 +1820,17 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """Return the total price for this line item."""
         if self.price:
             return self.quantity * self.price
+
+    line = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
+        null=False,
+        verbose_name=_('Line Number'),
+        help_text=_('Line number for this item (optional)'),
+    )
+
+    line_int = models.IntegerField(default=0, blank=False, null=False)
 
     reference = models.CharField(
         max_length=100,
@@ -2224,6 +2273,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -2368,9 +2418,16 @@ class SalesOrderShipment(
     def address(self) -> Address:
         """Return the shipping address for this shipment.
 
-        If no specific shipment address is assigned, return the address from the order.
+        Lookup priority:
+        - Specific address assigned to this shipment
+        - Address assigned to the order
+        - Primary address of the customer
         """
-        return self.shipment_address or self.order.address
+        return (
+            self.shipment_address
+            or self.order.address
+            or self.order.customer.primary_address
+        )
 
     def is_checked(self) -> bool:
         """Return True if this shipment has been checked."""

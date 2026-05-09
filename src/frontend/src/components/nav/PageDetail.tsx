@@ -1,11 +1,11 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 
+import { StylishText } from '@lib/components/StylishText';
+import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { shortenString } from '../../functions/tables';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
 
@@ -17,6 +17,7 @@ interface PageDetailInterface {
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   lastCrumb?: Breadcrumb[];
+  thumbnailUrl?: string;
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
   editAction?: () => void;
@@ -35,6 +36,7 @@ export function PageDetail({
   subtitle,
   badges,
   imageUrl,
+  thumbnailUrl,
   breadcrumbs,
   lastCrumb: last_crumb,
   breadcrumbAction,
@@ -108,6 +110,7 @@ export function PageDetail({
                 {imageUrl && (
                   <ApiImage
                     src={imageUrl}
+                    thumbnail={thumbnailUrl}
                     radius='sm'
                     miw={42}
                     mah={42}

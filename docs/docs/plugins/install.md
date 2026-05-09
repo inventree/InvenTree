@@ -74,6 +74,9 @@ Enter the package name into the form as shown below. You can add a path and a ve
 
 {{ image("plugin/plugin_install_txt.png", "Plugin.txt file") }}
 
+!!! info "Superuser Required"
+    Only users with superuser privileges can manage plugins via the web interface.
+
 #### Local Directory
 
 Custom plugins can be placed in the `data/plugins/` directory, where they will be automatically discovered. This can be useful for developing and testing plugins, but can prove more difficult in production (e.g. when using Docker).

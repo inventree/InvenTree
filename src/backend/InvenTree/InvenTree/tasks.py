@@ -29,7 +29,6 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
-from InvenTree.config import get_setting
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -159,8 +158,56 @@ def record_task_success(task_name: str):
     set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
+def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
+    """Test if an identical task is already registered with the worker.
+
+    This will only return true if the task name, group, args and kwargs all match an existing task.
+
+    Arguments:
+        taskname: The name of the task to check for, in the format 'app.module.function'
+        group: The group that the task belongs to
+        *args: Positional arguments to match
+        **kwargs: Keyword arguments to match
+
+    Returns:
+        Optional[str]: The ID of the matching task, if found, otherwise None
+    """
+    from django_q.models import OrmQ
+
+    task_id = None
+
+    # Iterate through all available tasks, with the most recent first
+    for task in OrmQ.objects.all().order_by('-id'):
+        if task.func() != taskname and task.task['func'] != taskname:
+            # Task does not match
+            continue
+
+        if task.group() != group:
+            # Group does not match
+            continue
+
+        if task.args() != args:
+            # Task args do not match
+            continue
+
+        if task.kwargs() != kwargs:
+            # Task kwargs do not match
+            continue
+
+        task_id = task.task_id()
+
+        break
+
+    return task_id
+
+
 def offload_task(
-    taskname, *args, force_async=False, force_sync=False, **kwargs
+    taskname,
+    *args,
+    force_async: bool = False,
+    force_sync: bool = False,
+    check_duplicates: bool = True,
+    **kwargs,
 ) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
@@ -171,6 +218,7 @@ def offload_task(
         *args: Positional arguments to be passed to the task function
         force_async: If True, force the task to be offloaded (even if workers are not running)
         force_sync: If True, force the task to be run synchronously (even if workers are running)
+        check_duplicates: If True, check for existing identical tasks before offloading
         **kwargs: Keyword arguments to be passed to the task function
 
     Returns:
@@ -205,6 +253,15 @@ def offload_task(
             force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
+        # Before offloading, check if a duplicate task exists
+        if not force_sync and check_duplicates:
+            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+                logger.debug(
+                    "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
+                )
+
+                return task_id
+
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
@@ -764,7 +821,7 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not force and not settings.AUTO_UPDATE:
         logger.info('Auto-update is disabled - skipping migrations')
         return False
 

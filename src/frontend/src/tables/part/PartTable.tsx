@@ -7,6 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -20,7 +21,6 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -34,7 +34,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
@@ -81,6 +81,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
 
       render: (record) => {
+        if (record.virtual) {
+          return (
+            <Text size='sm' c='dimmed' fs='italic'>
+              {t`Virtual part`}
+            </Text>
+          );
+        }
+
         const extra: ReactNode[] = [];
 
         const stock = record?.total_in_stock ?? 0;
@@ -281,11 +289,7 @@ function partTableFilters(): TableFilter[] {
       name: 'virtual',
       label: t`Virtual`,
       description: t`Filter by parts which are virtual`,
-      type: 'choice',
-      choices: [
-        { value: 'true', label: t`Virtual` },
-        { value: 'false', label: t`Not Virtual` }
-      ]
+      type: 'boolean'
     },
     {
       name: 'is_template',
@@ -361,12 +365,7 @@ export function PartListTable({
   });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -387,8 +386,9 @@ export function PartListTable({
     title: t`Import Parts`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
@@ -407,7 +407,8 @@ export function PartListTable({
     fields: newPartFields,
     initialData: initialPartData,
     follow: true,
-    modelType: ModelType.part
+    modelType: ModelType.part,
+    keepOpenOption: true
   });
 
   const [selectedPart, setSelectedPart] = useState<any>({});
@@ -599,15 +600,6 @@ export function PartListTable({
             category_detail: true,
             location_detail: true
           }
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

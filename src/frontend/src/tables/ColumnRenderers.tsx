@@ -272,16 +272,13 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         <TableHoverCard
           value={
             <Group gap='xs' justify='left' wrap='nowrap'>
-              <Text c={color}>{text}</Text>
-              {part.units && (
-                <Text size='xs' c={color}>
-                  [{part.units}]
-                </Text>
-              )}
+              <Text>{text}</Text>
+              {part.units && <Text size='xs'>[{part.units}]</Text>}
             </Group>
           }
           title={t`Stock Information`}
           extra={extra}
+          iconColor={color}
         />
       );
     }
@@ -326,15 +323,15 @@ export function PathColumn(props: TableColumnProps): TableColumn {
       const pathstring = instance.pathstring || name;
 
       if (name == pathstring) {
-        return <Text>{name}</Text>;
+        return <Text size='sm'>{name}</Text>;
       }
 
       return (
         <TableHoverCard
-          value={<Text>{instance.name}</Text>}
+          value={<Text size='sm'>{instance.name}</Text>}
           icon='sitemap'
           title={props.title}
-          extra={[<Text>{instance.pathstring}</Text>]}
+          extra={[<Text size='sm'>{instance.pathstring}</Text>]}
         />
       );
     }
@@ -766,4 +763,14 @@ export function TotalPriceColumn(): TableColumn {
     accessor: 'total_price',
     title: t`Total Price`
   });
+}
+
+export function LineItemColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'line',
+    title: t`Line Item`,
+    sortable: true,
+    switchable: true,
+    ...props
+  };
 }

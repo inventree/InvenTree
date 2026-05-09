@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -31,7 +32,6 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
@@ -448,7 +448,13 @@ export default function SalesOrderDetail() {
       NotesPanel({
         model_type: ModelType.salesorder,
         model_id: order.pk,
-        has_note: !!order.notes
+        has_note: !!order.notes,
+        // TODO @matmair - change API to include a "locked" attribute that we can check here
+        editable:
+          order.status == soStatus.COMPLETE &&
+          !globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS')
+            ? false
+            : undefined
       })
     ];
   }, [order, id, user, soStatus, user]);

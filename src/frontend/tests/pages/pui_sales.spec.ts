@@ -193,6 +193,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByRole('cell', { name: tracking_number }).click();
 
   // Click through the various tabs
+  await loadTab(page, 'Parameters');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Allocated Stock');

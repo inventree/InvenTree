@@ -27,6 +27,8 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
 {{ globalsetting("INVENTREE_INSTANCE_ID", default="Randomly generated value") }}
 {{ globalsetting("INVENTREE_ANNOUNCE_ID") }}
+{{ globalsetting("INVENTREE_SHOW_SUPERUSER_BANNER") }}
+{{ globalsetting("INVENTREE_SHOW_ADMIN_BANNER") }}
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
@@ -204,6 +206,7 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
+{{ globalsetting("STOCK_ALLOW_DELETE_SERIALIZED") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
 {{ globalsetting("STOCK_ENABLE_EXPIRY") }}

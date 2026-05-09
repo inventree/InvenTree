@@ -390,3 +390,83 @@ class BomItemTest(TestCase):
 
         # Delete the new BOM item
         bom_item.delete()
+
+    def test_bom_validated(self):
+        """Test for caching of 'bom_validated' property."""
+        from part.tasks import validate_bom
+
+        assembly = Part.objects.create(
+            name='Assembly1', description='An assembly part', assembly=True
+        )
+
+        assembly_2 = Part.objects.create(
+            name='Assembly2', description='An assembly part', assembly=True
+        )
+
+        def check(valid: bool = True):
+            """Helper function to check the BOM for this assembly."""
+            nonlocal assembly
+            assembly.refresh_from_db()
+            self.assertEqual(assembly.bom_validated, valid)
+
+        def validate(valid: bool = True):
+            """Helper function to validate the BOM for this assembly."""
+            nonlocal assembly
+            validate_bom(assembly.pk, valid)
+            check(valid)
+
+        check(valid=False)
+        validate()
+
+        sub_part_1 = Part.objects.create(
+            name='SubPart1', description='A sub-part', component=True
+        )
+
+        sub_part_2 = Part.objects.create(
+            name='SubPart2', description='A sub-part', component=True
+        )
+
+        # Still valid at this stage - we have not made any changes to the BOM
+        check(valid=True)
+
+        # Creating a *new* BOM item should invalidate the bom_validated cache
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=sub_part_1, quantity=1
+        )
+
+        check(valid=False)
+
+        # Editing the BOM item should also invalidate the bom_validated cache
+        validate()
+        bom_item.quantity = 2
+        bom_item.save()
+        check(valid=False)
+
+        # Editing the BOM item without changing any relevant fields should not invalidate the bom_validated cache
+        validate()
+        bom_item.description = 'This is a description'
+        bom_item.save()
+        check(valid=True)
+
+        # Point the BOM item to a different component
+        validate()
+        bom_item.sub_part = sub_part_2
+        bom_item.save()
+        check(valid=False)
+
+        # Point the BOM to a different assembly
+        validate()
+        bom_item.part = assembly_2
+        bom_item.save()
+        check(valid=False)
+
+        # Check a partial restore - returning to previous state should re-validate
+        bom_item.part = assembly
+        bom_item.save()
+        check(valid=True)
+
+        # Now, delete the BomItem entirely
+        bom_item.delete()
+        check(valid=False)
+
+        self.assertIsNotNone(assembly.bom_checked_date)

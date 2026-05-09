@@ -64,7 +64,7 @@ export enum ApiEndpoints {
   content_type_list = 'contenttype/',
   icons = 'icons/',
   selectionlist_list = 'selection/',
-  selectionlist_detail = 'selection/:id/',
+  selectionentry_list = 'selection/:id/entry/',
 
   // Barcode API endpoints
   barcode = 'barcode/',
@@ -153,6 +153,7 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
+  stock_convert = 'stock/:id/convert/',
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',

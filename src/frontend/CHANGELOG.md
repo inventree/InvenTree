@@ -2,6 +2,50 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.11.4 - Unreleased
+
+Adds additional functions in the plugin context related to form rendering and API invocation:
+- `useInstance`
+- `renderRemoteInstance`
+- `EditApiForm`
+
+Exposes sub-components related to DetailDrawer rendering:
+- `DetailDrawerComponent`
+- `useLocalLibState`
+
+### 0.11.3 - April 2026
+
+Exposes additional type definitions related to rendering drawers from tables:
+- `DetailDrawer`
+- `TableState`
+
+Also exposes `StylishText`, which is required downstream for rendering the DetailDrawer component, and is used in a number of places within the InvenTree UI.
+
+### 0.11.2 - April 2026
+
+Exposes additional type definitions related to tables and filters:
+
+- TableFilterChoice
+- TableFilterType
+- TableFilter
+- FilterSetState
+
+### 0.11.1 - April 2026
+
+Fixes dependency issues for the `InvenTreeTable` component, which were introduced in `0.11.0`. This ensures that the component works correctly and does not cause issues with plugin builds.
+
+### 0.11.0 - April 2026
+
+Adds the `InvenTreeTable` component, which provides plugins with a method of implementing an API-driven data table which is consistent with the rest of the InvenTree UI. This component supports features such as pagination, sorting, and filtering, and can be used to display data from the InvenTree API in a tabular format.
+
+### 0.10.1 - April 2026
+
+Allows plugins to specify custom model rendering functions within the data import wizard, allowing import of data models not defined in the core InvenTree codebase.
+
+### 0.10.0 - April 2026
+
+Exposes the `importer` object to the plugin context, allow plugins to initialize a data import session using the data importer wizard.
+
 ### 0.9.0 - March 2026
 
 Exposes the `useMonitorBackgroundTask` hook, which allows plugins to monitor the status of a background task and display notifications when the task is complete. This is useful for plugins that offload long-running tasks to the background and want to provide feedback to the user when the task is complete.

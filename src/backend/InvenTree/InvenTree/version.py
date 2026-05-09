@@ -12,12 +12,10 @@ import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
-from django.conf import settings
-
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.3.0 dev'
+INVENTREE_SW_VERSION = '1.4.0 dev'
 
 # Minimum supported Python version
 MIN_PYTHON_VERSION = (3, 11)
@@ -39,6 +37,8 @@ try:
         output = logger.warning
 
         try:
+            from django.conf import settings
+
             if settings.DOCKER:
                 output = logger.info
         except Exception:

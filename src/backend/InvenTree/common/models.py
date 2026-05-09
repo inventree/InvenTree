@@ -10,6 +10,7 @@ import json
 import math
 import os
 import uuid
+from collections import OrderedDict
 from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
@@ -246,11 +247,14 @@ class BaseInvenTreeSetting(models.Model):
 
             if len(missing_keys) > 0:
                 logger.info('Building %s default values for %s', len(missing_keys), cls)
-                cls.objects.bulk_create([
-                    cls(key=key, value=cls.get_setting_default(key), **kwargs)
-                    for key in missing_keys
-                    if not key.startswith('_')
-                ])
+                cls.objects.bulk_create(
+                    [
+                        cls(key=key, value=cls.get_setting_default(key), **kwargs)
+                        for key in missing_keys
+                        if not key.startswith('_')
+                    ],
+                    batch_size=250,
+                )
         except Exception as exc:
             logger.exception(
                 'Failed to build default values for %s (%s)', cls, type(exc)
@@ -363,9 +367,15 @@ class BaseInvenTreeSetting(models.Model):
 
         # Specify any "default" values which are not in the database
         settings_definition = settings_definition or cls.SETTINGS
+
+        all_settings = OrderedDict()
+
         for key, setting in settings_definition.items():
-            if key.upper() not in settings:
-                settings[key.upper()] = cls(
+            # If the setting is already in the database, use that value
+            if key.upper() in settings:
+                all_settings[key] = settings[key.upper()]
+            else:
+                all_settings[key.upper()] = cls(
                     key=key.upper(),
                     value=cls.get_setting_default(key, **filters),
                     **filters,
@@ -373,10 +383,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # remove any hidden settings
             if exclude_hidden and setting.get('hidden', False):
-                del settings[key.upper()]
+                del all_settings[key.upper()]
 
         # format settings values and remove protected
-        for key, setting in settings.items():
+        for key, setting in all_settings.items():
             validator = cls.get_setting_validator(key, **filters)
 
             if cls.is_protected(key, **filters) and setting.value != '':
@@ -389,7 +399,7 @@ class BaseInvenTreeSetting(models.Model):
                 except ValueError:
                     setting.value = cls.get_setting_default(key, **filters)
 
-        return settings
+        return all_settings
 
     @classmethod
     def allValues(
@@ -2313,10 +2323,38 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
         """Return the API URL associated with the SelectionList model."""
         return reverse('api-selectionlist-list')
 
-    def get_choices(self):
-        """Return the choices for the selection list."""
-        choices = self.entries.filter(active=True)
+    def get_choices(self, active: Optional[bool] = True):
+        """Return the choices for the selection list.
+
+        Arguments:
+            active: If specified, filter choices by active status
+
+        Returns:
+            List of choice values for this selection list
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
         return [c.value for c in choices]
+
+    def has_choice(self, value: str, active: Optional[bool] = None):
+        """Check if the selection list has a particular choice.
+
+        Arguments:
+            value: The value to check for
+            active: If specified, filter choices by active status
+
+        Returns:
+            True if the choice exists in the selection list, False otherwise
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
+        return choices.filter(value=value).exists()
 
 
 class SelectionListEntry(models.Model):

@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldType } from '@lib/types/Forms';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useApi } from '../../contexts/ApiContext';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
@@ -77,9 +77,11 @@ function ImporterColumn({
 
 function ImporterDefaultField({
   fieldName,
+  customField,
   session
 }: {
   fieldName: string;
+  customField?: ApiFormFieldType | null;
   session: ImportSessionState;
 }) {
   const api = useApi();
@@ -162,8 +164,15 @@ function ImporterDefaultField({
       };
     }
 
+    if (customField) {
+      def = {
+        ...def,
+        ...customField
+      };
+    }
+
     return def;
-  }, [fieldName, session.availableFields, session.fieldDefaults]);
+  }, [fieldName, session.availableFields, session.fieldDefaults, customField]);
 
   return (
     fieldDef && <StandaloneField fieldDefinition={fieldDef} hideLabels={true} />
@@ -173,10 +182,12 @@ function ImporterDefaultField({
 function ImporterColumnTableRow({
   session,
   column,
+  customField,
   options
 }: Readonly<{
   session: ImportSessionState;
   column: any;
+  customField?: ApiFormFieldType | null;
   options: any;
 }>) {
   return (
@@ -200,16 +211,22 @@ function ImporterColumnTableRow({
         <ImporterColumn column={column} options={options} />
       </Table.Td>
       <Table.Td>
-        <ImporterDefaultField fieldName={column.field} session={session} />
+        <ImporterDefaultField
+          fieldName={column.field}
+          session={session}
+          customField={customField}
+        />
       </Table.Td>
     </Table.Tr>
   );
 }
 
 export default function ImporterColumnSelector({
-  session
+  session,
+  customFields
 }: Readonly<{
   session: ImportSessionState;
+  customFields?: ApiFormFieldSet | null;
 }>) {
   const api = useApi();
 
@@ -279,6 +296,7 @@ export default function ImporterColumnSelector({
                 session={session}
                 column={column}
                 options={columnOptions}
+                customField={customFields?.[column.field] || null}
               />
             );
           })}

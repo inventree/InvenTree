@@ -8,6 +8,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 from functools import wraps
 from pathlib import Path
 from platform import python_version
@@ -16,6 +18,14 @@ from typing import Optional
 import invoke
 from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
+
+
+def safe_value(fnc):
+    """Helper function to safely get value from function, catching import exceptions."""
+    try:
+        return fnc()
+    except (ModuleNotFoundError, ImportError):
+        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
 
 
 def is_true(x):
@@ -43,6 +53,51 @@ def is_debug_environment():
     return is_true(os.environ.get('INVENTREE_DEBUG', 'False')) or is_true(
         os.environ.get('RUNNER_DEBUG', 'False')
     )
+
+
+def get_django_version():
+    """Return the current Django version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeDjangoVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeDjangoVersion)
+
+
+def get_inventree_version():
+    """Return the current InvenTree version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeVersion)
+
+
+def get_inventree_api_version():
+    """Return the current InvenTree API version."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeApiVersion,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeApiVersion)
+
+
+def get_commit_hash():
+    """Return the current git commit hash."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitHash,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeCommitHash)
+
+
+def get_commit_date():
+    """Return the current git commit date."""
+    from src.backend.InvenTree.InvenTree.version import (
+        inventreeCommitDate,  # type: ignore[import]
+    )
+
+    return safe_value(inventreeCommitDate)
 
 
 def get_version_vals():
@@ -146,9 +201,20 @@ def state_logger(fn=None, method_name=None):
             do_log = is_debug_environment()
             if do_log:
                 info(f'# task | {func.method_name} | start')
-            func(c, *args, **kwargs)
+
+            t1 = time.time()
+            try:
+                func(c, *args, **kwargs)
+            except KeyboardInterrupt:
+                error('INVE-W15: Process interrupted by user.')
+                sys.exit(1)
+            except UnexpectedExit:
+                error(f"Task '{func.method_name}' failed with an error.")
+                raise
+            t2 = time.time()
+
             if do_log:
-                info(f'# task | {func.method_name} | done')
+                info(f'# task | {func.method_name} | done | elapsed: {t2 - t1:.2f}s')
 
         return wrapped
 
@@ -249,7 +315,7 @@ def main():
 # endregion
 
 
-def apps():
+def builtin_apps():
     """Returns a list of installed apps."""
     return [
         'build',
@@ -313,7 +379,7 @@ def content_excludes(
 
     # Optionally exclude user auth data
     if not allow_auth:
-        excludes.extend(['auth.group', 'auth.user'])
+        excludes.extend(['auth.group', 'auth.user', 'users.userprofile'])
 
     # Optionally exclude user token information
     if not allow_tokens:
@@ -384,7 +450,9 @@ if __name__ in ['__main__', 'tasks']:
     main()
 
 
-def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
+def run(
+    c, cmd, path: Optional[Path] = None, pty: bool = False, hide: bool = False, env=None
+):
     """Runs a given command a given path.
 
     Args:
@@ -392,20 +460,23 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
         cmd: Command to run.
         path: Path to run the command in.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        hide (bool, optional): Hide the command output. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     env = env or {}
     path = path or local_dir()
 
     try:
-        c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+        result = c.run(f'cd "{path}" && {cmd}', pty=pty, env=env, hide=hide)
     except UnexpectedExit as e:
         error(f"ERROR: InvenTree command failed: '{cmd}'")
         warning('- Refer to the error messages in the log above for more information')
         raise e
 
+    return result
 
-def manage(c, cmd, pty: bool = False, env=None):
+
+def manage(c, cmd, pty: bool = False, env=None, verbose: bool = False, **kwargs):
     """Runs a given command against django's "manage.py" script.
 
     Args:
@@ -413,8 +484,31 @@ def manage(c, cmd, pty: bool = False, env=None):
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
+        verbose (bool, optional): Print verbose output from the command. Defaults to False.
     """
-    run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
+    if verbose:
+        info(f'Running command: python3 manage.py {cmd}')
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
+    return run(
+        c, f'python3 manage.py {cmd}', manage_py_dir(), pty=pty, env=env, **kwargs
+    )
+
+
+def installed_apps(c) -> list[str]:
+    """Returns a list of all installed apps, including plugins."""
+    result = manage(c, 'list_apps', pty=False, hide=True)
+    output = result.stdout.strip()
+
+    # Look for the expected pattern
+    match = re.findall(r'>>> (.*) <<<', output)
+
+    if not match:
+        raise ValueError(f"Unexpected output from 'list_apps' command: {output}")
+
+    return match[0].split(',')
 
 
 def run_install(
@@ -424,8 +518,19 @@ def run_install(
     run_preflight=True,
     version_check=False,
     pinned=True,
+    verbose: bool = False,
 ):
-    """Run the installation of python packages from a requirements file."""
+    """Run the installation of python packages from a requirements file.
+
+    Arguments:
+        c: Command line context.
+        uv: Whether to use UV (experimental package manager) instead of pip.
+        install_file: Path to the requirements file to install from.
+        run_preflight: Whether to run the preflight installation step (installing pip/uv itself). Default is True.
+        version_check: Whether to check for a version-specific requirements file. Default is False.
+        pinned: Whether to use the --require-hashes option when installing packages. Default is True.
+        verbose: Whether to print verbose output from pip install commands. Default is False.
+    """
     if version_check:
         # Test if there is a version specific requirements file
         sys_ver_s = python_version().split('.')
@@ -443,25 +548,28 @@ def run_install(
 
     # Install required Python packages with PIP
     if not uv:
+        # Optionally run preflight first
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools {"" if verbose else "--quiet"}',
             )
+            info('Installed package manager')
+
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
     else:
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools {"" if verbose else "--quiet"}',
             )
             info('Installed package manager')
         run(
             c,
-            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
 
 
@@ -530,28 +638,34 @@ def check_file_existence(filename: Path, overwrite: bool = False):
             sys.exit(1)
 
 
-@task
+@task(help={'verbose': 'Print verbose output from the command'})
 @state_logger
-def wait(c):
+def wait(c, verbose: bool = False):
     """Wait until the database connection is ready."""
-    info('Waiting for database connection...')
-    return manage(c, 'wait_for_db')
+    return manage(c, 'wait_for_db', verbose=verbose)
 
 
 # Install tasks
 # region tasks
-@task(help={'uv': 'Use UV (experimental package manager)'})
+@task(
+    help={
+        'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
+    }
+)
 @state_logger
-def plugins(c, uv=False):
+def plugins(c, uv: bool = False, verbose: bool = False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_plugin_file,
     )
 
-    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
+    run_install(
+        c, uv, get_plugin_file(), run_preflight=False, pinned=False, verbose=verbose
+    )
 
     # Collect plugin static files
-    manage(c, 'collectplugins')
+    manage(c, 'collectplugins', verbose=verbose)
 
 
 @task(
@@ -559,29 +673,51 @@ def plugins(c, uv=False):
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
         'dev': 'Install development requirements instead of production requirements',
+        'verbose': 'Print verbose output from pip install commands',
     }
 )
 @state_logger
-def install(c, uv=False, skip_plugins=False, dev=False):
-    """Installs required python packages."""
+def install(
+    c,
+    uv: bool = False,
+    skip_plugins: bool = False,
+    dev: bool = False,
+    verbose: bool = False,
+):
+    """Install required python packages for InvenTree.
+
+    Arguments:
+        c: Command line context.
+        uv: Use UV package manager (experimental) instead of pip. Default is False.
+        skip_plugins: Skip plugin installation. Default is False.
+        dev: Install development requirements instead of production requirements. Default is False.
+        verbose: Print verbose output from pip install commands. Default is False.
+    """
+    info('Installing required python packages...')
+
     if dev:
         run_install(
             c,
             uv,
             local_dir().joinpath('src/backend/requirements-dev.txt'),
             version_check=True,
+            verbose=verbose,
         )
         success('Dependency installation complete')
         return
 
     # Ensure path is relative to *this* directory
     run_install(
-        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
+        c,
+        uv,
+        local_dir().joinpath('src/backend/requirements.txt'),
+        version_check=True,
+        verbose=verbose,
     )
 
     # Run plugins install
     if not skip_plugins:
-        plugins(c, uv=uv)
+        plugins(c, uv=uv, verbose=verbose)
 
     # Compile license information
     lic_path = manage_py_dir().joinpath('InvenTree', 'licenses.txt')
@@ -593,24 +729,26 @@ def install(c, uv=False, skip_plugins=False, dev=False):
     success('Dependency installation complete')
 
 
-@task(help={'tests': 'Set up test dataset at the end'})
-def setup_dev(c, tests=False):
+@task(
+    help={
+        'tests': 'Set up test dataset at the end',
+        'verbose': 'Print verbose output from commands',
+    }
+)
+def setup_dev(c, tests: bool = False, verbose: bool = False):
     """Sets up everything needed for the dev environment."""
     # Install required Python packages with PIP
-    install(c, uv=False, skip_plugins=True, dev=True)
+    install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
     run(c, 'pre-commit install')
-
-    # Update all the hooks
     run(c, 'pre-commit autoupdate')
-
     success('pre-commit set up complete')
 
     # Set up test-data if flag is set
     if tests:
-        setup_test(c)
+        setup_test(c, verbose=verbose)
 
 
 # Setup / maintenance tasks
@@ -650,7 +788,7 @@ def rebuild_thumbnails(c):
 @state_logger
 def clean_settings(c):
     """Clean the setting tables of old settings."""
-    info('Cleaning old settings from the database')
+    info('Cleaning old settings from the database...')
     manage(c, 'clean_settings')
     success('Settings cleaned successfully')
 
@@ -720,6 +858,15 @@ def translate(c, ignore_static=False, no_frontend=False):
         static(c)
 
     success('Translation files built successfully')
+
+
+@task(help={'verbose': 'Print verbose output'})
+@state_logger('backend_trans')
+def backend_trans(c, verbose: bool = False):
+    """Compile backend Django translation files."""
+    info('Compiling backend translations...')
+    manage(c, 'compilemessages', verbose=verbose)
+    success('Backend translations compiled successfully')
 
 
 @task(
@@ -860,20 +1007,33 @@ def listbackups(c):
     manage(c, 'listbackups')
 
 
-@task(pre=[wait], post=[rebuild_models, rebuild_thumbnails])
+@task(
+    pre=[wait],
+    post=[rebuild_models, rebuild_thumbnails],
+    help={
+        'verbose': 'Print verbose output from migration commands',
+        'detect': 'Detect and create new migrations based on changes to models',
+    },
+)
 @state_logger
-def migrate(c):
+def migrate(c, detect: bool = True, verbose: bool = False):
     """Performs database migrations.
 
     This is a critical step if the database schema have been altered!
     """
     info('Running InvenTree database migrations...')
 
-    # Run custom management command which wraps migrations in "maintenance mode"
-    manage(c, 'makemigrations')
-    manage(c, 'runmigrations', pty=True)
-    manage(c, 'migrate --run-syncdb')
-    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
+    if detect:
+        manage(c, 'makemigrations', verbose=verbose)
+
+    manage(c, 'runmigrations', pty=True, verbose=verbose)
+    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(
+        c,
+        'remove_stale_contenttypes --include-stale-apps --no-input',
+        pty=True,
+        verbose=verbose,
+    )
 
     success('InvenTree database migrations completed')
 
@@ -888,20 +1048,26 @@ def showmigrations(c, app=''):
     post=[clean_settings],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
+        'backend': 'Force backend translation compilation step (ignores INVENTREE_DOCKER)',
+        'no_backend': 'Skip backend translation compilation step',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
         'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
     },
 )
 @state_logger
 def update(
     c,
     skip_backup: bool = False,
+    backend: bool = False,
+    no_backend: bool = False,
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
     uv: bool = False,
+    verbose: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -911,6 +1077,7 @@ def update(
     The following tasks are performed, in order:
 
     - install
+    - backend_trans (optional)
     - backup (optional)
     - migrate
     - frontend_compile or frontend_download (optional)
@@ -920,7 +1087,17 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv)
+    install(c, uv=uv, verbose=verbose)
+
+    # Skip backend translation compilation on docker, unless explicitly requested.
+    # Users can also forcefully disable the step via `--no-backend`.
+    if (is_docker_environment() and not backend) or no_backend:
+        if no_backend:
+            info('Skipping backend translation compilation (no_backend flag set)')
+        else:
+            info('Skipping backend translation compilation (INVENTREE_DOCKER flag set)')
+    else:
+        backend_trans(c, verbose=verbose)
 
     if not skip_backup:
         backup(c)
@@ -953,7 +1130,7 @@ def update(
         # Note: frontend has already been compiled if required
         static(c, frontend=False)
 
-    success('InvenTree update complete!')
+    success('InvenTree update complete')
 
 
 # Data tasks
@@ -967,39 +1144,22 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
-        'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
-    },
-    pre=[wait],
+        'verbose': 'Print verbose output from management commands',
+    }
 )
 def export_records(
     c,
     filename='data.json',
-    overwrite=False,
-    include_email=False,
-    include_permissions=False,
-    include_tokens=False,
-    exclude_plugins=False,
-    include_sso=False,
-    include_session=False,
-    retain_temp=False,
+    overwrite: bool = False,
+    include_email: bool = False,
+    include_permissions: bool = False,
+    include_tokens: bool = False,
+    exclude_plugins: bool = False,
+    include_sso: bool = False,
+    include_session: bool = False,
+    verbose: bool = False,
 ):
-    """Export all database records to a file.
-
-    Write data to the file defined by filename.
-    If --overwrite is not set, the user will be prompted about overwriting an existing files.
-    If --include-permissions is not set, the file defined by filename will have permissions specified for a user or group removed.
-    If --delete-temp is not set, the temporary file (which includes permissions) will not be deleted. This file is named filename.tmp
-
-    For historical reasons, calling this function without any arguments will thus result in two files:
-    - data.json: does not include permissions
-    - data.json.tmp: includes permissions
-
-    If you want the script to overwrite any existing files without asking, add argument -o / --overwrite.
-
-    If you only want one file, add argument - d / --delete-temp.
-
-    If you want only one file, with permissions, then additionally add argument -i / --include-permissions
-    """
+    """Export all database records to a file."""
     # Get an absolute path to the file
     target = Path(filename)
     if not target.is_absolute():
@@ -1007,9 +1167,9 @@ def export_records(
 
     info(f"Exporting database records to file '{target}'")
 
-    check_file_existence(target, overwrite)
+    wait(c, verbose=verbose)
 
-    tmpfile = f'{target}.tmp'
+    check_file_existence(target, overwrite)
 
     excludes = content_excludes(
         allow_email=include_email,
@@ -1019,18 +1179,33 @@ def export_records(
         allow_sso=include_sso,
     )
 
-    cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile}' {excludes}"
+    with tempfile.NamedTemporaryFile(
+        suffix='.json', encoding='utf-8', mode='w+t', delete=True
+    ) as tmpfile:
+        cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
 
-    # Dump data to temporary file
-    manage(c, cmd, pty=True)
+        # Dump data to temporary file
+        manage(c, cmd, pty=True, verbose=verbose)
+        info('Running data post-processing step...')
 
-    info('Running data post-processing step...')
+        # Post-process the file, to remove any "permissions" specified for a user or group
+        tmpfile.seek(0)
+        data = json.loads(tmpfile.read())
 
-    # Post-process the file, to remove any "permissions" specified for a user or group
-    with open(tmpfile, encoding='utf-8') as f_in:
-        data = json.loads(f_in.read())
-
-    data_out = []
+    data_out = [
+        {
+            'metadata': True,
+            'comment': 'This file contains a dump of the InvenTree database',
+            'exported_at': datetime.datetime.now().isoformat(),
+            'exported_at_utc': datetime.datetime.utcnow().isoformat(),
+            'source_version': get_inventree_version(),
+            'api_version': get_inventree_api_version(),
+            'django_version': get_django_version(),
+            'python_version': python_version(),
+            'source_commit': get_commit_hash(),
+            'installed_apps': installed_apps(c),
+        }
+    ]
 
     for entry in data:
         model_name = entry.get('model', None)
@@ -1053,28 +1228,93 @@ def export_records(
     with open(target, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
 
-    if not retain_temp:
-        info('Removing temporary files')
-        os.remove(tmpfile)
-
     success('Data export completed')
+
+
+def validate_import_metadata(
+    c, metadata: dict, strict: bool = False, apps: bool = True, verbose: bool = False
+) -> bool:
+    """Validate the metadata associated with an import file.
+
+    Arguments:
+        c: The context or connection object
+        metadata (dict): The metadata to validate
+        apps (bool): If True, validate that all apps listed in the metadata are installed in the current environment.
+        strict (bool): If True, the import process will fail if any issues are detected.
+        verbose (bool): If True, print detailed information during validation.
+    """
+    if verbose:
+        info('Validating import metadata...')
+
+    valid = True
+
+    def metadata_issue(message: str):
+        """Handle an issue with the metadata."""
+        nonlocal valid
+        valid = False
+
+        if strict:
+            error(f'INVE-E16 Data Import Error: {message}')
+            sys.exit(1)
+        else:
+            warning(f'INVE-W13 Data Import Warning: {message}')
+
+    if not metadata:
+        metadata_issue(
+            'No metadata found in the import file - cannot validate source version'
+        )
+        return False
+
+    source_version = metadata.get('source_version')
+
+    if source_version != get_inventree_version():
+        metadata_issue(
+            f"Source version '{source_version}' does not match the current InvenTree version '{get_inventree_version()}' - this may lead to issues with the import process"
+        )
+
+    if apps:
+        local_apps = set(installed_apps(c))
+        source_apps = set(metadata.get('installed_apps', []))
+
+        for app in source_apps:
+            if app not in local_apps:
+                metadata_issue(
+                    f"Source app '{app}' is not installed in the current environment - this may break the import process"
+                )
+
+    if verbose and valid:
+        success('Metadata validation succeeded - no issues detected')
+
+    return valid
 
 
 @task(
     help={
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
-        'retain_temp': 'Retain temporary files at end of process (default = False)',
+        'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
+        'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
+        'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
+        'skip_migrations': 'Skip the migration step after clearing data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
-    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+    c,
+    filename='data.json',
+    clear: bool = False,
+    strict: bool = False,
+    exclude_plugins: bool = False,
+    ignore_nonexistent: bool = False,
+    skip_migrations: bool = False,
+    verbose: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
     target = Path(filename)
+
     if not target.is_absolute():
         target = local_dir().joinpath(filename)
 
@@ -1083,16 +1323,12 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True, migrate=True)
+        delete_data(c, force=True, migrate=True, verbose=verbose)
+
+    if not skip_migrations:
+        migrate(c, verbose=verbose)
 
     info(f"Importing database records from '{target}'")
-
-    # We need to load 'auth' data (users / groups) *first*
-    # This is due to the users.owner model, which has a ContentType foreign key
-    authfile = f'{target}.auth.json'
-
-    # Pre-process the data, to remove any "permissions" specified for a user or group
-    datafile = f'{target}.data.json'
 
     with open(target, encoding='utf-8') as f_in:
         try:
@@ -1101,53 +1337,105 @@ def import_records(
             error(f'ERROR: Failed to decode JSON file: {exc}')
             sys.exit(1)
 
+    # Separate out the data into different categories, to ensure they are loaded in the correct order
     auth_data = []
-    load_data = []
+    common_data = []
+    plugin_data = []
+    all_data = []
 
+    # A dict containing metadata associated with the data file
+    metadata = {}
+
+    def load_data(
+        title: str,
+        data: list[dict],
+        app: Optional[str] = None,
+        excludes: Optional[list[str]] = None,
+    ) -> tempfile.NamedTemporaryFile:
+        """Helper function to save data to a temporary file, and then load into the database."""
+        nonlocal ignore_nonexistent
+        nonlocal verbose
+        nonlocal c
+
+        # Skip if there is no data to load
+        if len(data) == 0:
+            return
+
+        info(f'Loading {len(data)} {title} records...')
+
+        with tempfile.NamedTemporaryFile(
+            suffix='.json', mode='w', encoding='utf-8', delete=False
+        ) as f_out:
+            f_out.write(json.dumps(data, indent=2))
+
+        cmd = f'loaddata {f_out.name} -v 0 --force-color'
+
+        if app:
+            cmd += f' --app {app}'
+
+        if ignore_nonexistent:
+            cmd += ' --ignorenonexistent'
+
+        # A set of content types to exclude from the import process
+        if excludes:
+            cmd += f' -i {excludes}'
+
+        manage(c, cmd, pty=True, verbose=verbose)
+
+    # Iterate through each entry in the provided data file, and separate out into different categories based on the model type
     for entry in data:
-        if 'model' in entry:
+        # Metadata needs to be extracted first
+        if entry.get('metadata', False):
+            metadata = entry
+            continue
+
+        if model := entry.get('model', None):
             # Clear out any permissions specified for a group
-            if entry['model'] == 'auth.group':
+            if model == 'auth.group':
                 entry['fields']['permissions'] = []
 
             # Clear out any permissions specified for a user
-            if entry['model'] == 'auth.user':
+            if model == 'auth.user':
                 entry['fields']['user_permissions'] = []
 
-            # Save auth data for later
-            if entry['model'].startswith('auth.'):
+            # Handle certain model types separately, to ensure they are loaded in the correct order
+            if model.startswith('auth.'):
                 auth_data.append(entry)
+            if model.startswith('users.'):
+                auth_data.append(entry)
+            elif model.startswith('common.'):
+                common_data.append(entry)
+            elif model.startswith('plugin.'):
+                plugin_data.append(entry)
             else:
-                load_data.append(entry)
+                all_data.append(entry)
         else:
-            warning('WARNING: Invalid entry in data file')
+            error(
+                f'{"ERROR" if strict else "WARNING"}: Invalid entry in data file - missing "model" key'
+            )
             print(entry)
+            if strict:
+                sys.exit(1)
 
-    # Write the auth file data
-    with open(authfile, 'w', encoding='utf-8') as f_out:
-        f_out.write(json.dumps(auth_data, indent=2))
+    # Check the metadata associated with the imported data
+    # Do not validate the 'apps' list yet - as the plugins have not yet been loaded
+    validate_import_metadata(c, metadata, strict=strict, apps=False)
 
-    # Write the processed data to the tmp file
-    with open(datafile, 'w', encoding='utf-8') as f_out:
-        f_out.write(json.dumps(load_data, indent=2))
+    # Load the temporary files in order
+    load_data('auth', auth_data)
+    load_data('common', common_data, app='common')
 
-    excludes = content_excludes(allow_auth=False)
+    if not exclude_plugins:
+        load_data('plugins', plugin_data, app='plugin')
 
-    # Import auth models first
-    info('Importing user auth data...')
-    cmd = f"loaddata '{authfile}'"
-    manage(c, cmd, pty=True)
+        if len(plugin_data) > 0 and not skip_migrations:
+            # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
+            migrate(c)
 
-    # Import everything else next
-    info('Importing database records...')
-    cmd = f"loaddata '{datafile}' -i {excludes}"
+    # Run validation again - ensure that the plugin apps have been loaded correctly
+    validate_import_metadata(c, metadata, strict=strict, apps=True)
 
-    manage(c, cmd, pty=True)
-
-    if not retain_temp:
-        info('Removing temporary files')
-        os.remove(datafile)
-        os.remove(authfile)
+    load_data('remaining', all_data, excludes=content_excludes(allow_auth=False))
 
     success('Data import completed')
 
@@ -1156,22 +1444,22 @@ def import_records(
     help={
         'force': 'Force deletion of all data without confirmation',
         'migrate': 'Run migrations before deleting data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     }
 )
-def delete_data(c, force: bool = False, migrate: bool = False):
+def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
-    info('Deleting all data from InvenTree database...')
+    info('Deleting existing data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb')
+        manage(c, 'migrate --run-syncdb', verbose=verbose)
 
-    if force:
-        manage(c, 'flush --noinput')
-    else:
-        manage(c, 'flush')
+    manage(c, f'flush{" --noinput" if force else ""}', verbose=verbose)
+
+    success('Existing data deleted')
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
@@ -1265,10 +1553,14 @@ def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     manage(c, cmd, pty=True)
 
 
-@task(pre=[wait])
-def worker(c):
-    """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
+@task(pre=[wait], help={'verbose': 'Print verbose output from the command'})
+def worker(c, verbose: bool = False):
+    """Run the InvenTree background worker process.
+
+    Launches a django-q2 cluster to process background tasks.
+    Ref: https://django-q2.readthedocs.io
+    """
+    manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
 @task(post=[static, server])
@@ -1388,7 +1680,7 @@ def test(
 
     pty = not disable_pty
 
-    tested_apps = ' '.join(apps())
+    tested_apps = ' '.join(builtin_apps())
 
     cmd = 'test'
 
@@ -1433,6 +1725,7 @@ def test(
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone (default = main)',
+        'verbose': 'Print verbose output from management commands',
     }
 )
 def setup_test(
@@ -1441,6 +1734,7 @@ def setup_test(
     dev=False,
     validate_files=False,
     use_ssh=False,
+    verbose=False,
     path='inventree-demo-dataset',
     branch='main',
 ):
@@ -1450,13 +1744,12 @@ def setup_test(
     )
 
     if not ignore_update:
-        update(c)
+        update(c, verbose=verbose)
 
     template_dir = local_dir().joinpath(path)
 
     # Remove old data directory
     if template_dir.exists():
-        info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
     URL = 'https://github.com/inventree/demo-dataset'
@@ -1471,11 +1764,16 @@ def setup_test(
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
-        migrate(c)
+        migrate(c, verbose=verbose)
 
     # Load data
     info('Loading database records ...')
-    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
+    import_records(
+        c,
+        filename=template_dir.joinpath('inventree_data.json'),
+        clear=True,
+        verbose=verbose,
+    )
 
     # Copy media files
     src = template_dir.joinpath('media')
@@ -1511,7 +1809,7 @@ def setup_test(
 
     # Set up development setup if flag is set
     if dev:
-        setup_dev(c)
+        setup_dev(c, verbose=verbose)
 
 
 @task(
@@ -1570,7 +1868,12 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+
     base_path = Path(basedir, 'generated').resolve()
+
+    if not base_path.exists():
+        info(f'Creating export directory: {base_path}')
+        base_path.mkdir(parents=True, exist_ok=True)
 
     filenames = [
         base_path.joinpath('inventree_settings.json'),
@@ -1597,7 +1900,6 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
@@ -1605,13 +1907,6 @@ def version(c):
         get_plugin_file,
         get_static_dir,
     )
-
-    def get_value(fnc):
-        """Helper function to safely get value from function, catching import exceptions."""
-        try:
-            return fnc()
-        except (ModuleNotFoundError, ImportError):
-            return wrap_color('ENVIRONMENT ERROR', '91')
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
@@ -1645,17 +1940,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_value(get_config_file)}
-Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
-Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
-Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
-Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
+Config      {safe_value(get_config_file)}
+Plugin File {safe_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {safe_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {safe_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {safe_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
-InvenTree   {InvenTreeVersion.inventreeVersion()}
-API         {InvenTreeVersion.inventreeApiVersion()}
+InvenTree   {get_inventree_version() or NOT_SPECIFIED}
+API         {get_inventree_api_version() or NOT_SPECIFIED}
 Python      {python_version()}
-Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
+Django      {get_django_version() or NOT_SPECIFIED}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1663,8 +1958,8 @@ Environment:
 Platform    {platform}
 Debug       {is_debug_environment()}
 
-Commit hash: {InvenTreeVersion.inventreeCommitHash()}
-Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {get_commit_hash() or NOT_SPECIFIED}
+Commit date: {get_commit_date() or NOT_SPECIFIED}"""
     )
     if is_pkg_installer_by_path():
         print(
@@ -1730,7 +2025,7 @@ def frontend_build(c):
     Args:
         c: Context variable
     """
-    info('Building frontend')
+    info('Building frontend...')
     yarn(c, 'yarn run build')
 
     def write_info(path: Path, content: str):
@@ -1757,6 +2052,8 @@ def frontend_build(c):
         )
     except Exception:
         warning('Failed to write frontend version marker')
+
+    success('Frontend build complete')
 
 
 @task
@@ -2010,12 +2307,19 @@ def doc_schema(c):
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
         'compile_schema': 'Compile the API schema documentation first (default: False)',
+        'export_settings': 'Export settings definitions before starting the server (default: True)',
     }
 )
-def docs_server(c, address='localhost:8080', compile_schema=False):
+def docs_server(
+    c,
+    address='localhost:8080',
+    compile_schema: bool = False,
+    export_settings: bool = True,
+):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    export_definitions(c, basedir='docs')
+    if export_settings:
+        export_definitions(c, basedir='docs')
 
     if compile_schema:
         doc_schema(c)
@@ -2096,6 +2400,7 @@ internal = Collection(
 )
 
 ns = Collection(
+    backend_trans,
     backup,
     export_records,
     frontend_download,

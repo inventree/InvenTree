@@ -48,6 +48,11 @@ export function useSalesOrderFields({
         filters: {
           is_customer: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_customer: { value: true, hidden: true }
         }
       },
       customer_reference: {},
@@ -169,6 +174,7 @@ export function useSalesOrderLineItemFields({
         },
         onValueChange: (_: any, record?: any) => setPart(record)
       },
+      line: {},
       reference: {},
       quantity: {
         onValueChange: (value) => {
@@ -464,6 +470,7 @@ export function useAllocateToSalesOrderForm({
     onFormSuccess: onFormSuccess,
     successMessage: t`Stock items allocated`,
     size: '80%',
+    keepOpenOption: true,
     initialData: {
       items: lineItems.map((item) => {
         return {

@@ -9,6 +9,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -18,7 +19,6 @@ import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
@@ -417,7 +417,8 @@ export function StockItemTable({
       // Navigate to the first result
       navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
     },
-    successMessage: t`Stock item created`
+    successMessage: t`Stock item created`,
+    keepOpenOption: true
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);

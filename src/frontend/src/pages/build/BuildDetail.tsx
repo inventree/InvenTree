@@ -5,6 +5,7 @@ import {
   IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
+  IconExclamationCircle,
   IconInfoCircle,
   IconList,
   IconListCheck,
@@ -88,6 +89,13 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: build?.part,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
+
   const buildLocation = useInstance({
     endpoint: ApiEndpoints.stock_location_list,
     pk: build?.take_from,
@@ -105,6 +113,16 @@ function BuildLinesPanel({
 
   return (
     <Stack gap='xs'>
+      {bomInformation?.isLoaded &&
+        bomInformation?.instance?.bom_validated == false && (
+          <Alert
+            color='orange'
+            icon={<IconExclamationCircle />}
+            title={t`BOM Not Validated`}
+          >
+            <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+          </Alert>
+        )}
       {buildLocation.instance.pk && (
         <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
           <RenderStockLocation instance={buildLocation.instance} />
@@ -178,6 +196,27 @@ export default function BuildDetail() {
     hasPrimaryKey: false,
     defaultValue: {}
   });
+
+  // Fetch the number of child build orders associated with this build order
+  const { instance: childBuildData } = useInstance({
+    endpoint: ApiEndpoints.build_order_list,
+    params: {
+      parent: id,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
+
+  /**
+   * Display the "Child Build Orders" panel if either:
+   * - There are any child build orders (childBuildData.count > 0)
+   * - There are any sub-assembly items (subassemblyLineData.count > 0)
+   */
+  const showChildBuilds = useMemo(() => {
+    return childBuildData?.count > 0 || subassemblyLineData?.count > 0;
+  }, [childBuildData, subassemblyLineData]);
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
@@ -522,7 +561,7 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
-        hidden: (subassemblyLineData?.count ?? 0) <= 0, // Hide if no sub-assembly items
+        hidden: !showChildBuilds,
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
         ) : (
@@ -560,7 +599,7 @@ export default function BuildDetail() {
     user,
     buildStatus,
     globalSettings,
-    subassemblyLineData,
+    showChildBuilds,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData

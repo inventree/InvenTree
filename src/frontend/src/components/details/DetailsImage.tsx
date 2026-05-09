@@ -22,6 +22,7 @@ import { modals } from '@mantine/modals';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
 import type { UserRoles } from '@lib/enums/Roles';
 import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
@@ -34,7 +35,6 @@ import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
 import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image
@@ -42,6 +42,7 @@ import { StylishText } from '../items/StylishText';
 export type DetailImageProps = {
   appRole?: UserRoles;
   src: string;
+  thumbnail?: string;
   apiPath: string;
   refresh?: () => void;
   imageActions?: DetailImageButtonProps;
@@ -465,7 +466,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   const expandImage = (event: any) => {
     cancelEvent(event);
     modals.open({
-      children: <ApiImage src={img} />,
+      children: <ApiImage src={img} thumbnail={props.thumbnail} />,
       withCloseButton: false
     });
   };
@@ -484,6 +485,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
           <>
             <ApiImage
               src={img}
+              thumbnail={props.thumbnail}
               mah={IMAGE_DIMENSION}
               maw={IMAGE_DIMENSION}
               onClick={expandImage}

@@ -12,7 +12,7 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 /**
  * Field set for SupplierPart instance
@@ -26,6 +26,8 @@ export function useSupplierPartFields({
   manufacturerPartId?: number;
   partId?: number;
 }) {
+  const [part, setPart] = useState<any>({});
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
@@ -35,6 +37,9 @@ export function useSupplierPartFields({
           part: partId,
           purchaseable: true,
           active: true
+        },
+        onValueChange: (value: any, record: any) => {
+          setPart(record);
         }
       },
       manufacturer_part: {
@@ -50,12 +55,27 @@ export function useSupplierPartFields({
             ...adjust.filters,
             part: adjust.data.part
           };
+        },
+        addCreateFields: {
+          part: {
+            value: part?.pk,
+            disabled: !!part?.pk
+          },
+          manufacturer: {},
+          MPN: {},
+          description: {},
+          link: {}
         }
       },
       supplier: {
         filters: {
           active: true,
           is_supplier: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       SKU: {
@@ -77,7 +97,7 @@ export function useSupplierPartFields({
     };
 
     return fields;
-  }, [manufacturerId, manufacturerPartId, partId]);
+  }, [manufacturerId, manufacturerPartId, partId, part]);
 }
 
 export function useManufacturerPartFields() {
@@ -88,6 +108,11 @@ export function useManufacturerPartFields() {
         filters: {
           active: true,
           is_manufacturer: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_manufacturer: { value: true, hidden: true }
         }
       },
       MPN: {},

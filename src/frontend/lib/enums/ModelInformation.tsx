@@ -186,6 +186,7 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Sales Order Shipments`,
     url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
+    admin_url: '/order/salesordershipment/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
     supports_barcode: true,
     icon: 'shipment'
@@ -285,6 +286,13 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Selection Lists`,
     url_overview: '/settings/admin/part-parameters',
     api_endpoint: ApiEndpoints.selectionlist_list,
+    icon: 'list_details'
+  },
+  selectionentry: {
+    label: () => t`Selection Entry`,
+    label_multiple: () => t`Selection Entries`,
+    url_overview: '/settings/admin/part-parameters',
+    api_endpoint: ApiEndpoints.selectionentry_list,
     icon: 'list_details'
   },
   error: {

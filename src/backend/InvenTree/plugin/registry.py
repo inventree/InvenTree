@@ -222,13 +222,18 @@ class PluginsRegistry:
         import InvenTree.ready
         from plugin.models import PluginConfig
 
-        if InvenTree.ready.isImportingData():
-            return None
+        # Under certain circumstances, we want to avoid creating new PluginConfig instances in the database
+        can_create = (
+            InvenTree.ready.canAppAccessDatabase(
+                allow_plugins=False, allow_shell=True, allow_test=True
+            )
+            and not InvenTree.ready.isReadOnlyCommand()
+        )
 
         try:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
-            if not cfg:
+            if not cfg and can_create:
                 logger.debug(
                     "get_plugin_config: Creating new PluginConfig for '%s'", slug
                 )

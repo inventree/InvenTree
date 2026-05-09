@@ -5,9 +5,8 @@ import {
   Center,
   Grid,
   Group,
-  HoverCard,
   Loader,
-  type MantineColor,
+  Paper,
   Skeleton,
   Stack,
   Text
@@ -16,13 +15,11 @@ import {
   IconBookmarks,
   IconBuilding,
   IconChecklist,
-  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconListCheck,
   IconListDetails,
   IconListTree,
   IconLock,
@@ -46,7 +43,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { ActionButton } from '@lib/index';
 import type { StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -75,15 +71,12 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
-import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
-import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -111,6 +104,7 @@ import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
+import { BomActions } from './bom/BomActions';
 
 /**
  * Render a part revision selector component
@@ -154,134 +148,6 @@ function RevisionSelector({
 }
 
 /**
- * A hover-over component which displays information about the BOM validation for a given part
- */
-function BomValidationInformation({
-  partId
-}: {
-  partId: number;
-}) {
-  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
-    useInstance({
-      endpoint: ApiEndpoints.bom_validate,
-      pk: partId,
-      hasPrimaryKey: true,
-      refetchOnMount: true
-    });
-
-  const [taskId, setTaskId] = useState<string>('');
-
-  useBackgroundTask({
-    taskId: taskId,
-    message: t`Validating BOM`,
-    successMessage: t`BOM validated`,
-    onComplete: () => {
-      bomInformationQuery.refetch();
-    }
-  });
-
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      // If the process has been offloaded to a background task
-      if (response.task_id) {
-        setTaskId(response.task_id);
-      } else {
-        bomInformationQuery.refetch();
-      }
-    }
-  });
-
-  if (bomInformationQuery.isFetching) {
-    return <Loader size='sm' />;
-  }
-
-  let icon: ReactNode;
-  let color: MantineColor;
-  let title = '';
-  let description = '';
-
-  if (bomInformation?.bom_validated) {
-    color = 'green';
-    icon = <IconListCheck />;
-    title = t`BOM Validated`;
-    description = t`The Bill of Materials for this part has been validated`;
-  } else if (bomInformation?.bom_checked_date) {
-    color = 'yellow';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
-  } else {
-    color = 'red';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has not yet been validated`;
-  }
-
-  return (
-    <>
-      {validateBom.modal}
-      <Group gap='xs' justify='flex-end'>
-        {!bomInformation.bom_validated && (
-          <ActionButton
-            icon={<IconCircleCheck />}
-            color='green'
-            tooltip={t`Validate BOM`}
-            onClick={validateBom.open}
-          />
-        )}
-        <HoverCard position='bottom-end'>
-          <HoverCard.Target>
-            <ActionIcon
-              color={color}
-              variant='transparent'
-              aria-label='bom-validation-info'
-            >
-              {icon}
-            </ActionIcon>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            <Alert color={color} icon={icon} title={title}>
-              <Stack gap='xs'>
-                <Text size='sm'>{description}</Text>
-                {bomInformation?.bom_checked_date && (
-                  <Text size='sm'>
-                    {t`Validated On`}: {bomInformation.bom_checked_date}
-                  </Text>
-                )}
-                {bomInformation?.bom_checked_by_detail && (
-                  <Group gap='xs'>
-                    <Text size='sm'>{t`Validated By`}: </Text>
-                    <RenderUser
-                      instance={bomInformation.bom_checked_by_detail}
-                    />
-                  </Group>
-                )}
-              </Stack>
-            </Alert>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      </Group>
-    </>
-  );
-}
-
-/**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
@@ -295,6 +161,14 @@ export default function PartDetail() {
 
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+
+  // BOM validation information (used for hover-over info on the BOM tab)
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
 
   const { instance: serials } = useInstance({
     endpoint: ApiEndpoints.part_serial_numbers,
@@ -325,55 +199,24 @@ export default function PartDetail() {
       refetchOnMount: true
     });
 
-  // Fetch information on part revision
+  const revisionsEnabled = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_REVISION'),
+    [globalSettings]
+  );
+
+  // Fetch information on parts which are revisions of *this* part
   const partRevisionQuery = useQuery({
     refetchOnMount: true,
-    queryKey: [
-      'part_revisions',
-      part.pk,
-      part.revision_of,
-      part.revision_count
-    ],
-    queryFn: async () => {
-      if (!part.revision_of && !part.revision_count) {
-        return [];
-      }
-
-      const revisions = [];
-
-      // First, fetch information for the top-level part
-      if (part.revision_of) {
-        await api
-          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
-          .then((response) => {
-            revisions.push(response.data);
-          });
-      } else {
-        revisions.push(part);
-      }
-
-      const url = apiUrl(ApiEndpoints.part_list);
-
-      await api
-        .get(url, {
+    enabled: revisionsEnabled && !!part && !!part.revision_count,
+    queryKey: ['part_revisions', part.pk, part.revision_count],
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.part_list), {
           params: {
-            revision_of: part.revision_of || part.pk
+            revision_of: part.pk
           }
         })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              response.data.forEach((r: any) => {
-                revisions.push(r);
-              });
-              break;
-            default:
-              break;
-          }
-        });
-
-      return revisions;
-    }
+        .then((response) => response.data)
   });
 
   const partRevisionOptions: any[] = useMemo(() => {
@@ -393,26 +236,14 @@ export default function PartDetail() {
       };
     });
 
-    // Add this part if not already available
-    if (!options.find((o) => o.value == part.pk)) {
-      options.push({
-        value: part.pk,
-        label: part.full_name,
-        part: part
-      });
-    }
-
     return options.sort((a, b) => {
       return `${a.part.revision}`.localeCompare(b.part.revision);
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
   const enableRevisionSelection: boolean = useMemo(() => {
-    return (
-      partRevisionOptions.length > 0 &&
-      globalSettings.isSet('PART_ENABLE_REVISION')
-    );
-  }, [partRevisionOptions, globalSettings]);
+    return partRevisionOptions.length > 0 && revisionsEnabled;
+  }, [partRevisionOptions, revisionsEnabled]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -482,6 +313,7 @@ export default function PartDetail() {
         name: 'variant_of',
         label: t`Variant of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.variant_of
       },
       {
@@ -489,6 +321,7 @@ export default function PartDetail() {
         name: 'revision_of',
         label: t`Revision of`,
         model: ModelType.part,
+        model_field: 'full_name',
         hidden: !part.revision_of
       },
       {
@@ -754,6 +587,7 @@ export default function PartDetail() {
                 deleteFile: true
               }}
               src={part.image}
+              thumbnail={part.thumbnail}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               refresh={refreshInstance}
               pk={part.pk}
@@ -763,10 +597,17 @@ export default function PartDetail() {
             </Grid.Col>
           </Grid>
           {enableRevisionSelection && (
-            <Stack gap='xs'>
-              <Text>{t`Select Part Revision`}</Text>
-              <RevisionSelector part={part} options={partRevisionOptions} />
-            </Stack>
+            <Paper p='sm' withBorder>
+              <Stack gap='xs'>
+                <Group gap='xs'>
+                  <ActionIcon variant='transparent'>
+                    <IconVersions />
+                  </ActionIcon>
+                  <Text>{t`Select Part Revision`}</Text>
+                </Group>
+                <RevisionSelector part={part} options={partRevisionOptions} />
+              </Stack>
+            </Paper>
           )}
         </Stack>
         <DetailsTable fields={tr} item={data} />
@@ -834,11 +675,28 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        controls: <BomValidationInformation partId={part.pk ?? -1} />,
+        controls: (
+          <BomActions bomInformation={bomInformation} partInstance={part} />
+        ),
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),
         content: part?.pk ? (
-          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+          <Stack gap='xs'>
+            {bomInformation.isLoaded &&
+              bomInformation.instance?.bom_validated === false && (
+                <Alert
+                  color='yellow'
+                  icon={<IconExclamationCircle />}
+                  title={t`BOM Not Validated`}
+                >
+                  <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+                </Alert>
+              )}
+            <BomTable
+              partId={part.pk ?? -1}
+              partLocked={part?.locked == true}
+            />
+          </Stack>
         ) : (
           <Skeleton />
         )
@@ -982,7 +840,15 @@ export default function PartDetail() {
         has_note: !!part?.notes
       })
     ];
-  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
+  }, [
+    id,
+    part,
+    user,
+    globalSettings,
+    userSettings,
+    detailsPanel,
+    bomInformation
+  ]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -998,6 +864,10 @@ export default function PartDetail() {
     if (partRequirementsQuery.isFetching) {
       return [];
     }
+
+    const allocated =
+      partRequirements.allocated_to_build_orders +
+      partRequirements.allocated_to_sales_orders;
 
     const required =
       partRequirements.required_for_build_orders +
@@ -1032,6 +902,12 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
+        label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        color='blue'
+        visible={allocated > 0}
+        key='allocated'
+      />,
+      <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
@@ -1044,9 +920,9 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
-        visible={partRequirements.building > 0}
+        visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge
@@ -1248,6 +1124,7 @@ export default function PartDetail() {
             }
             subtitle={part.description}
             imageUrl={part.image}
+            thumbnailUrl={part.thumbnail}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)
