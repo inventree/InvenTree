@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+
 ### Added
 
 - [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.

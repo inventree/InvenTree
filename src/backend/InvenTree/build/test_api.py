@@ -9,6 +9,7 @@ from rest_framework import status
 
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, Part
 from stock.models import StockItem
@@ -1546,6 +1547,44 @@ class BuildOutputScrapTest(BuildAPITest):
         self.assertEqual(completed_output.quantity, 4)
         self.assertEqual(completed_output.status, StockStatus.OK)
         self.assertFalse(completed_output.is_building)
+
+
+class BuildOutputCancelTest(BuildAPITest):
+    """Test cancellation of build outputs."""
+
+    def test_cancel_output(self):
+        """Test cancellation of a build output."""
+        build = Build.objects.get(pk=1)
+        build.part.trackable = True
+        build.part.save()
+
+        N = build.build_outputs.count()
+
+        # Create outputs
+        outputs = build.create_build_output(2, serials=['101', '202'])
+        self.assertEqual(outputs.count(), 2)
+        self.assertEqual(build.build_outputs.count(), N + 2)
+
+        output_ids = list(outputs.values_list('pk', flat=True))
+
+        # Let's cancel one of the outputs
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
+        url = reverse('api-build-output-delete', kwargs={'pk': build.pk})
+
+        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=201)
+
+        # Prevent deletion of serialized stock items, and try again
+        # Note that this should still succeed, independent of the global setting
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
+
+        self.post(url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=201)
+
+        # The outputs should have been scrapped
+        self.assertEqual(build.build_outputs.count(), N)
+
+        for pk in output_ids:
+            self.assertFalse(StockItem.objects.filter(pk=pk).exists())
+            self.get(reverse('api-stock-detail', kwargs={'pk': pk}), expected_code=404)
 
 
 class BuildLineTests(BuildAPITest):
