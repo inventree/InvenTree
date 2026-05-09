@@ -1,14 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { IconFileTypePdf } from '@tabler/icons-react';
 
-import { lazy } from 'react';
 import type { PreviewArea } from '../TemplateEditor';
-
-const PdfPreviewComponent = lazy(() =>
-  import('./PdfPreview').then((module) => ({
-    default: module.PdfPreviewComponent
-  }))
-);
+import { PdfPreviewComponent } from './PdfPreview';
 
 export const PdfPreview: PreviewArea = {
   key: 'pdf-preview',

@@ -29,6 +29,3 @@ dist-ssr
 /playwright/.cache/
 /.nyc_output/
 /coverage/
-
-# Report generation
-stats.html
