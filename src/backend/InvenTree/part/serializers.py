@@ -1701,20 +1701,6 @@ class BomItemSerializer(
         required=False,
     )
 
-    def validate_raw_amount(self, value):
-        """Validate the raw_amount field."""
-        # Check for null values
-        if value is None or value.strip() == '':
-            raise ValidationError(_('Quantity cannot be empty'))
-
-        try:
-            # Check that the value is acceptable to the unit registry
-            InvenTree.conversion.convert_value(value)
-        except Exception:
-            raise ValidationError(_('Invalid quantity format'))
-
-        return value
-
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 
     setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
@@ -1874,8 +1860,16 @@ class BomItemSerializer(
         """
         qty = data.pop('quantity', None)
 
-        if 'raw_amount' not in data:
+        if 'raw_amount' not in data and qty is not None:
             data['raw_amount'] = qty
+
+        # Check the raw_amount field is valid (this will raise a ValidationError if not)
+        if raw_amount := data.get('raw_amount', None):
+            try:
+                # Check that the value is acceptable to the unit registry
+                InvenTree.conversion.convert_value(raw_amount)
+            except Exception:
+                raise ValidationError({'raw_amount': _('Invalid quantity format')})
 
         return super().validate(data)
 
