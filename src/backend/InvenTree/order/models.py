@@ -1755,6 +1755,8 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
     Attributes:
         quantity: Number of items
+        line: The line number for this item (optional)
+        line_int: An integer line number for this item (optional - used for natural sorting)
         reference: Reference text (e.g. customer reference) for this line item
         project_code: Project code associated with this line item (optional)
         note: Annotation for the item
@@ -1777,6 +1779,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
             })
 
         update_order = kwargs.pop('update_order', True)
+
+        # Update the integer representation of the line number (for natural sorting)
+        if self.line:
+            try:
+                self.line_int = int(self.line)
+            except (TypeError, ValueError):
+                self.line_int = 0
+        else:
+            self.line_int = 0
 
         super().save(*args, **kwargs)
         if update_order and self.order:
@@ -1818,6 +1829,8 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Line Number'),
         help_text=_('Line number for this item (optional)'),
     )
+
+    line_int = models.IntegerField(default=0, blank=False, null=False)
 
     reference = models.CharField(
         max_length=100,

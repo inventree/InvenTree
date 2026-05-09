@@ -144,10 +144,25 @@ export function usePurchaseOrderLineItemFields({
           };
         },
         addCreateFields: {
-          part: {},
+          part: {
+            filters: {
+              active: true,
+              purchaseable: true
+            }
+          },
           SKU: {},
+          manufacturer_part: {
+            filters: {
+              part_detail: true,
+              manufacturer_detail: true,
+              active: true
+            }
+          },
           description: {},
-          supplier: { hidden: true }
+          supplier: {
+            hidden: true,
+            value: supplierId
+          }
         }
       },
       line: {},

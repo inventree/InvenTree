@@ -16,6 +16,7 @@ import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 import { useShallow } from 'zustand/react/shallow';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useLocalState } from '../../states/LocalState';
+import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
@@ -23,6 +24,8 @@ import DashboardWidgetDrawer from './DashboardWidgetDrawer';
 const ReactGridLayout = WidthProvider(Responsive);
 
 export default function DashboardLayout() {
+  const user = useUserState();
+
   // Dashboard layout definition
   const [layouts, setLayouts] = useState({});
   // Dashboard widget selection
@@ -224,8 +227,8 @@ export default function DashboardLayout() {
     setLayouts({});
   }, []);
 
-  const defaultLayouts = {
-    lg: [
+  const defaultLayouts: any = useMemo(() => {
+    const layouts: any[] = [
       {
         w: 6,
         h: 4,
@@ -236,8 +239,12 @@ export default function DashboardLayout() {
         minH: 4,
         moved: false,
         static: false
-      },
-      {
+      }
+    ];
+
+    if (user.isSuperuser()) {
+      // Superuser can also view the "news" widget
+      layouts.push({
         w: 6,
         h: 4,
         x: 6,
@@ -247,9 +254,13 @@ export default function DashboardLayout() {
         minH: 4,
         moved: false,
         static: false
-      }
-    ]
-  };
+      });
+    }
+
+    return {
+      lg: layouts
+    };
+  }, [user]);
   const loadWigs = ['news', 'gstart'];
   const defaultWidgets = useMemo(() => {
     return loadWigs

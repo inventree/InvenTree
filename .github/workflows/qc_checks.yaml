@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.11
-  node_version: 20
+  node_version: 24
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -329,7 +329,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
       INVENTREE_DEBUG: true
       INVENTREE_LOG_LEVEL: WARNING
-      node_version: '>=20.19.6'
+      node_version: '>=24'
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
@@ -452,7 +452,7 @@ jobs:
           update: true
           npm: true
         env:
-          node_version: '>=20.19.0'
+          node_version: '>=24'
       - name: Performance Reporting
         uses: CodSpeedHQ/action@658a901452bb54c799643e060733b7afe9121b8d # pin@v4.14.0
         with:

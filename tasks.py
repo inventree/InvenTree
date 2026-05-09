@@ -1560,9 +1560,7 @@ def worker(c, verbose: bool = False):
     Launches a django-q2 cluster to process background tasks.
     Ref: https://django-q2.readthedocs.io
     """
-    cmd = f'qcluster -v {2 if verbose else 0}'
-
-    manage(c, cmd, pty=True)
+    manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
 @task(post=[static, server])

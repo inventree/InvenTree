@@ -9,15 +9,33 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
 import { useShallow } from 'zustand/react/shallow';
-import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
-import { LicenseModal } from '../components/modals/LicenseModal';
-import { QrModal } from '../components/modals/QrModal';
-import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
-import type { JSX } from 'react';
+// Lazy load the various modal dialogs - they are not needed immediately, and this can help to reduce the initial bundle size
+const AboutInvenTreeModal = lazy(() =>
+  import('../components/modals/AboutInvenTreeModal').then((module) => ({
+    default: module.AboutInvenTreeModal
+  }))
+);
+const LicenseModal = lazy(() =>
+  import('../components/modals/LicenseModal').then((module) => ({
+    default: module.LicenseModal
+  }))
+);
+const QrModal = lazy(() =>
+  import('../components/modals/QrModal').then((module) => ({
+    default: module.QrModal
+  }))
+);
+const ServerInfoModal = lazy(() =>
+  import('../components/modals/ServerInfoModal').then((module) => ({
+    default: module.ServerInfoModal
+  }))
+);
+
+import { type JSX, lazy } from 'react';
 
 export function ThemeContext({
   children
