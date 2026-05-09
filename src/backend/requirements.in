@@ -71,3 +71,4 @@ opentelemetry-instrumentation-pymysql
 
 # Pins
 xmlsec==1.3.17
+# opentelemetry-exporter-otlp-proto-http>=1.40.0
