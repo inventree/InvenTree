@@ -101,8 +101,8 @@ jobs:
             echo "submit-performance=false" >> "$GITHUB_OUTPUT"
           fi
 
-  pre-commit:
-    name: Style [pre-commit]
+  code-style:
+    name: Style [prek]
     runs-on: ubuntu-24.04
     needs: paths-filter
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -116,8 +116,8 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
-      - name: Run pre-commit Checks
-        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
+      - name: Run pre commit hook Checks
+        uses: j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3 # pin@v2
       - name: Check Version
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
@@ -126,7 +126,7 @@ jobs:
   typecheck:
     name: Style [Typecheck]
     runs-on: ubuntu-24.04
-    needs: [paths-filter, pre-commit]
+    needs: [code-style, paths-filter]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
@@ -310,7 +310,7 @@ jobs:
     name: Tests - inventree-python
     runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true' || needs.paths-filter.outputs.performance == 'true'
     permissions:
       contents: read
@@ -374,7 +374,7 @@ jobs:
     name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
     runs-on: ubuntu-24.04
 
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
@@ -426,7 +426,7 @@ jobs:
     name: Tests - Performance
     runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     # check if we are in inventree/inventree - reporting only works in that OIDC context
     if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
     permissions:
@@ -462,7 +462,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-24.04
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
@@ -512,7 +512,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-24.04
 
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
@@ -668,7 +668,7 @@ jobs:
     name: Tests - Web UI
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     services:
       postgres:
@@ -779,7 +779,7 @@ jobs:
   zizmor:
     name: Security [Zizmor]
     runs-on: ubuntu-24.04
-    needs: ["pre-commit", "paths-filter"]
+    needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
     permissions:
