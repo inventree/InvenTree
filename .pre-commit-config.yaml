@@ -48,15 +48,15 @@ repos:
         args: [src/backend/requirements.in, -o, src/backend/requirements-3.14.txt, --python-version=3.14, -c, src/backend/requirements.txt]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile contrib/dev_reqs/requirements.txt
         args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, -c, src/backend/requirements.txt]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile docs/requirements.txt
         args: [docs/requirements.in, -o, docs/requirements.txt, -c, src/backend/requirements.txt]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile contrib/container/requirements.txt
         args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.14, -c, src/backend/requirements.txt]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
