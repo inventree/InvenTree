@@ -438,7 +438,7 @@ class BomItemTest(TestCase):
 
         # Editing the BOM item should also invalidate the bom_validated cache
         validate()
-        bom_item.quantity = 2
+        bom_item.set_quantity(2)
         bom_item.save()
         check(valid=False)
 

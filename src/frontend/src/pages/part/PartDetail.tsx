@@ -454,6 +454,13 @@ export default function PartDetail() {
         unit: part.units,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
+      },
+      {
+        type: 'number',
+        name: 'maximum_stock',
+        unit: part.units,
+        label: t`Maximum Stock`,
+        hidden: part.maximum_stock <= 0
       }
     ];
 
@@ -875,14 +882,21 @@ export default function PartDetail() {
 
     const shortfall = Math.max(required - partRequirements.total_stock, 0);
 
+    let stockColor = 'green';
+
+    if (partRequirements.total_stock <= part.minimum_stock) {
+      stockColor = 'orange';
+    } else if (
+      part.maximum_stock > 0 &&
+      partRequirements.total_stock > part.maximum_stock
+    ) {
+      stockColor = 'teal';
+    }
+
     return [
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
-        color={
-          partRequirements.total_stock >= part.minimum_stock
-            ? 'green'
-            : 'orange'
-        }
+        color={stockColor}
         visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,

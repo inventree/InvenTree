@@ -612,9 +612,9 @@ django-picklefield==3.4.0 \
 django-q-sentry==0.1.6 \
     --hash=sha256:9b8b4d7fad253a7d9a47f2c2ab0d9dea83078b7ef45c8849dbb1e4176ef8d050
     # via -r src/backend/requirements.in
-django-q2==1.9.0 \
-    --hash=sha256:4eded27644b0ffb291839c9f9c12fea6c0dec63ebd891fa6881b0b446098a49d \
-    --hash=sha256:ef7facca96fae9c11ddf2c5252d3817975c7a9a6d989fa0d65487d8823d57799
+django-q2==1.10.0 \
+    --hash=sha256:7746c1cb7178551d81f25f47603ed29b80599e93d82ffd198c493a2b2323f3b5 \
+    --hash=sha256:cc805008986c560ed4e0a3ef08776c1b41f403a60477b2726a2545ae64b71504
     # via -r src/backend/requirements.in
 django-recurrence==1.14 \
     --hash=sha256:154a6221bd6667c35250d9fa89bbc4792b3f1ec5dc8dff0f5872186b6df3cf76 \

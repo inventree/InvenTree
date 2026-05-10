@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-07 14:50\n"
+"PO-Revision-Date: 2026-05-09 23:17\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -64,7 +64,7 @@ msgstr "삭제"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
 #: src/components/items/ActionDropdown.tsx:278
-#: src/contexts/ThemeContext.tsx:57
+#: src/contexts/ThemeContext.tsx:56
 #: src/hooks/UseForm.tsx:39
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
@@ -1399,7 +1399,7 @@ msgstr "분명한"
 
 #: src/components/details/DetailsImage.tsx:307
 #: src/components/forms/ApiForm.tsx:711
-#: src/contexts/ThemeContext.tsx:56
+#: src/contexts/ThemeContext.tsx:55
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
 msgid "Submit"
@@ -1509,7 +1509,7 @@ msgstr "편집 활성화"
 #~ msgid "Edit Notes"
 #~ msgstr "Edit Notes"
 
-#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
+#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:15
 msgid "Code"
 msgstr "암호"
 
@@ -1525,7 +1525,7 @@ msgstr "미리보기 렌더링 오류"
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr "미리보기를 사용할 수 없습니다. \"미리보기 다시 불러오기\"를 클릭하세요"
 
-#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
+#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:15
 msgid "PDF Preview"
 msgstr "PDF 미리보기"
 
@@ -2928,7 +2928,7 @@ msgstr "검색어에 대한 결과가 없습니다"
 msgid "Attachments"
 msgstr "첨부파일"
 
-#: src/components/panels/NotesPanel.tsx:25
+#: src/components/panels/NotesPanel.tsx:27
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3118,7 +3118,7 @@ msgstr "플러그인 콘텐츠를 불러오는 중 오류가 발생했습니다"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:259
+#: src/components/render/Instance.tsx:255
 msgid "Unknown model: {model_name}"
 msgstr "알 수 없는 모델: {model_name}"
 
@@ -6867,19 +6867,19 @@ msgstr "이 InvenTree 설치에는 외부 플러그인이 활성화되어 있지
 msgid "Plugin Errors"
 msgstr "플러그인 오류"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:16
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:22
 msgid "Page Size"
 msgstr "페이지 크기"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
 msgid "Landscape"
 msgstr "풍경"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
 msgid "Merge"
 msgstr "병합"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:37
 msgid "Attach to Model"
 msgstr "모델에 연결"
 

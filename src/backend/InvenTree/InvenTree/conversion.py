@@ -184,7 +184,7 @@ def from_engineering_notation(value):
     return value
 
 
-def convert_value(value, unit):
+def convert_value(value, unit=None):
     """Attempt to convert a value to a specified unit.
 
     Arguments:
@@ -221,11 +221,11 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
         unit: Optional unit to convert to, and validate against
         strip_units: If True, strip units from the returned value, and return only the dimension
 
-    Raises:
-        ValidationError: If the value is invalid or cannot be converted to the specified unit
-
     Returns:
         The converted quantity, in the specified units
+
+    Raises:
+        ValidationError: If the value is invalid or cannot be converted to the specified unit
     """
     ureg = get_unit_registry()
 

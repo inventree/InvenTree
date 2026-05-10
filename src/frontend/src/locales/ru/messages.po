@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-07 14:51\n"
+"PO-Revision-Date: 2026-05-09 23:17\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -64,7 +64,7 @@ msgstr "Удалить"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
 #: src/components/items/ActionDropdown.tsx:278
-#: src/contexts/ThemeContext.tsx:57
+#: src/contexts/ThemeContext.tsx:56
 #: src/hooks/UseForm.tsx:39
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
@@ -1399,7 +1399,7 @@ msgstr "Очистить"
 
 #: src/components/details/DetailsImage.tsx:307
 #: src/components/forms/ApiForm.tsx:711
-#: src/contexts/ThemeContext.tsx:56
+#: src/contexts/ThemeContext.tsx:55
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
 msgid "Submit"
@@ -1509,7 +1509,7 @@ msgstr "Разрешить редактирование"
 #~ msgid "Edit Notes"
 #~ msgstr "Edit Notes"
 
-#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
+#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:15
 msgid "Code"
 msgstr "Код"
 
@@ -1525,7 +1525,7 @@ msgstr "Ошибка при отрисовке предпросмотра"
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr "Предварительный просмотр недоступен, нажмите \"Перезагрузить предпросмотр\"."
 
-#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
+#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:15
 msgid "PDF Preview"
 msgstr "Предварительный просмотр в PDF"
 
@@ -2928,7 +2928,7 @@ msgstr "Нет доступных результатов для поисково
 msgid "Attachments"
 msgstr "Вложения"
 
-#: src/components/panels/NotesPanel.tsx:25
+#: src/components/panels/NotesPanel.tsx:27
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3118,7 +3118,7 @@ msgstr "Произошла ошибка при загрузке содержим
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:259
+#: src/components/render/Instance.tsx:255
 msgid "Unknown model: {model_name}"
 msgstr "Неизвестная модель: {model_name}"
 
@@ -6867,19 +6867,19 @@ msgstr "Сторонние плагины на разрешены для дан�
 msgid "Plugin Errors"
 msgstr "Ошибки плагинов"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:16
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:22
 msgid "Page Size"
 msgstr "Размер страницы"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
 msgid "Landscape"
 msgstr "Альбомный"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
 msgid "Merge"
 msgstr "Объединить"
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:37
 msgid "Attach to Model"
 msgstr "Прикрепить к модели"
 

@@ -423,12 +423,12 @@ def scheduled_task(
         minutes (int, optional): The number of minutes between task runs. Defaults to None.
         tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
 
+    Returns:
+        _type_: _description_
+
     Raises:
         ValueError: If decorated object is not callable
         ValueError: If interval is not valid
-
-    Returns:
-        _type_: _description_
     """
 
     def _task_wrapper(admin_class):
