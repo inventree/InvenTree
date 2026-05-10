@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Anchor, Group, HoverCard, Image } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
-import { ApiImage } from './ApiImage';
+import { ApiImage } from '../../../src/components/images/ApiImage';
 
 /*
  * Render an image, loaded via the API

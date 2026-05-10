@@ -8,7 +8,7 @@ import {
   Text
 } from '@mantine/core';
 import { type ReactNode, useCallback } from 'react';
-import { Thumbnail } from '../../src/components/images/Thumbnail';
+import { Thumbnail } from './images/Thumbnail';
 
 /**
  * Helper function for rendering an inline model in a consistent style

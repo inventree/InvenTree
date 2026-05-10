@@ -38,6 +38,7 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { StylishText } from '@lib/components/StylishText';
+import { Thumbnail } from '@lib/components/images/Thumbnail';
 import { apiUrl } from '@lib/functions/Api';
 import { toNumber } from '@lib/functions/Conversion';
 import type {
@@ -48,7 +49,6 @@ import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { Thumbnail } from '../components/images/Thumbnail';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
