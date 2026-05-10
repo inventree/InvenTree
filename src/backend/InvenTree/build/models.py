@@ -975,10 +975,10 @@ class Build(
                         allocations.extend(new_allocations)
 
             # Bulk create tracking entries
-            stock.models.StockItemTracking.objects.bulk_create(tracking)
+            stock.models.StockItemTracking.objects.bulk_create(tracking, batch_size=250)
 
             # Generate stock allocations
-            BuildItem.objects.bulk_create(allocations)
+            BuildItem.objects.bulk_create(allocations, batch_size=250)
 
         else:
             """Create a single build output of the given quantity."""
@@ -1033,7 +1033,9 @@ class Build(
         self.deallocate_stock(output=output)
 
         # Remove the build output from the database
-        output.delete()
+        # This is a special case where serialized stock can be deleted,
+        # independedent of the global setting which normally prevents deletion of serialized stock items
+        output.delete(ignore_serial_check=True)
 
     @transaction.atomic
     def trim_allocated_stock(self):
@@ -1389,7 +1391,7 @@ class Build(
             new_items.extend(self.auto_allocate_tracked_output(output, **kwargs))
 
         # Bulk-create the new BuildItem objects
-        BuildItem.objects.bulk_create(new_items)
+        BuildItem.objects.bulk_create(new_items, batch_size=250)
 
     def auto_allocate_untracked_stock(self, **kwargs):
         """Automatically allocate untracked stock items against this build order.
@@ -1530,7 +1532,7 @@ class Build(
                         break
 
         # Bulk-create the new BuildItem objects
-        BuildItem.objects.bulk_create(new_items)
+        BuildItem.objects.bulk_create(new_items, batch_size=250)
 
     def unallocated_lines(self, tracked: Optional[bool] = None) -> QuerySet:
         """Returns a list of BuildLine objects which have not been fully allocated."""
@@ -1655,7 +1657,7 @@ class Build(
 
             lines.append(BuildLine(build=self, bom_item=bom_item, quantity=quantity))
 
-        BuildLine.objects.bulk_create(lines)
+        BuildLine.objects.bulk_create(lines, batch_size=250)
 
         if len(lines) > 0:
             logger.info('Created %s BuildLine objects for BuildOrder', len(lines))

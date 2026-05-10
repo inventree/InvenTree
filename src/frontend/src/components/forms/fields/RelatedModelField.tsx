@@ -410,6 +410,7 @@ export function RelatedModelField({
   const fieldDefinition = useMemo(() => {
     return {
       ...definition,
+      addCreateFields: undefined,
       autoFill: undefined,
       modelRenderer: undefined,
       onValueChange: undefined,

@@ -9,8 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+
 ### Added
 
+- [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.
+- [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
+- [#11861](https://github.com/inventree/InvenTree/pull/11861) adds support for bulk-replacing a component in multiple BOMs simultaneously
 - [#11853](https://github.com/inventree/InvenTree/pull/11853) adds BOM comparison functionality, allowing users to compare the BOM of one assembly with another assembly.
 - [#11809](https://github.com/inventree/InvenTree/pull/11809) adds multi-level subassembly display mode to the BOM table, allowing users to view multiple levels of subassemblies in a single table view. This is an optional display mode which can be toggled on or off by the user.
 - [#11778](https://github.com/inventree/InvenTree/pull/11778) adds inline supplier part creation to po line item addition dialog.

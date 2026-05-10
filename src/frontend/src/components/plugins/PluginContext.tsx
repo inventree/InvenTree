@@ -38,6 +38,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import {
   type ImporterOpenOptions,
   closeGlobalImporter,
@@ -46,7 +47,8 @@ import {
 } from '../../states/ImporterState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
-import { RenderInstance } from '../render/Instance';
+import { EditApiForm } from '../forms/ApiForm';
+import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -77,7 +79,9 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      useInstance: useInstance,
       renderInstance: RenderInstance,
+      renderRemoteInstance: RenderRemoteInstance,
       theme: theme,
       colorScheme: colorScheme,
       importer: {
@@ -100,6 +104,7 @@ export const useInvenTreeContext = () => {
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
         edit: useEditApiFormModal,
+        editApiForm: EditApiForm,
         stockActions: {
           addStock: useAddStockItem,
           assignStock: useAssignStockItem,

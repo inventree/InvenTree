@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
@@ -168,6 +169,12 @@ test('Parts - BOM', async ({ browser }) => {
   await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
 
+  // Check for pricing data to be displayed in the table
+  await page
+    .getByRole('cell', { name: /\$\d+\.\d+ - \$\d+\.\d+/ })
+    .first()
+    .waitFor();
+
   // Mouse-hover to display BOM validation info for this assembly
   await page.getByRole('button', { name: 'bom-validation-info' }).hover();
   await page
@@ -213,6 +220,53 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Add Substitute' }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
 
+  // Let's try a BOM which has a "raw amount" which considers the units of the underlying part
+  await navigate(page, 'part/109/bom');
+
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+
+  const paintCell = await page.getByRole('cell', {
+    name: 'Thumbnail Green Paint'
+  });
+  await clickOnRowMenu(paintCell);
+  await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+  await expect(
+    page.getByRole('textbox', { name: 'text-field-raw_amount' })
+  ).toHaveValue(/quart/);
+
+  // Try to assign invalid units to this item, which should be rejected by validation
+  await page
+    .getByRole('textbox', { name: 'text-field-raw_amount' })
+    .fill('2 cm');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Errors exist for one or more').waitFor();
+  await page.getByText('Could not convert 2 cm to litres').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Create a new BOM item with valid units
+  await page.getByRole('button', { name: 'action-menu-add-bom-items' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-bom-items-add' })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'related-field-sub_part' })
+    .fill('red wire');
+  await page
+    .getByRole('option', { name: 'Thumbnail Silicon Wire 12AWG' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-reference' })
+    .fill('my-ref');
+  await page
+    .getByRole('textbox', { name: 'text-field-raw_amount' })
+    .fill('3/4 inches');
+  await page.getByRole('switch', { name: 'boolean-field-optional' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the value converted back to [m]
+  await page.getByRole('cell', { name: '0.01905' }).first().waitFor();
+  await page.getByRole('cell', { name: 'my-ref' }).first().waitFor();
   // Finish editing the BOM
   await page
     .getByRole('button', { name: 'action-button-finish-editing-' })
@@ -234,13 +288,15 @@ test('Parts - BOM Validation', async ({ browser }) => {
     .waitFor();
 
   // Edit line item, to ensure BOM is not valid
-  const cell = await page.getByRole('cell', { name: 'Thumbnail Red Paint' });
+  const cell = await page.getByRole('cell', { name: 'paint', exact: true });
 
+  // await cell.click({ button: 'right' });
+  // await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
   const input = await page.getByRole('textbox', {
-    name: 'number-field-quantity'
+    name: 'text-field-raw_amount'
   });
 
   const value = await input.inputValue();
@@ -297,6 +353,34 @@ test('Parts - BOM Comparison', async ({ browser }) => {
   await page.getByText('0.125').nth(1).waitFor();
   await page.getByText('Red Paint', { exact: true }).first().waitFor();
   await page.getByText('Blue Paint', { exact: true }).first().waitFor();
+});
+
+test('Parts - Used In', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/4/used_in' });
+
+  // Check for expected elements
+  await page.getByRole('button', { name: 'Assembly Not sorted' }).waitFor();
+  await page.getByText('R33, R34, R35, R36').waitFor();
+
+  // Edit row
+  const cell = await page.getByRole('cell', { name: 'Thumbnail Test Board 1' });
+  await cell.click({ button: 'right' });
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+  await page.getByRole('textbox', { name: 'text-field-reference' }).waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Attempt to replace this part in multiple assemblies
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('button', { name: 'action-button-replace-' }).click();
+  await page.getByText('This action cannot be easily undone').waitFor();
+
+  // Submit the form - locked parts should throw an error
+  await page.getByRole('button', { name: 'Replace', exact: true }).click();
+
+  await page.getByText('Form Error').waitFor();
+  await page
+    .getByText('BOM item cannot be modified - assembly is locked')
+    .waitFor();
 });
 
 test('Parts - Editing', async ({ browser }) => {
@@ -552,7 +636,14 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
-  // BOM Pricing - linkjumping
+  // We expect some pricing data to be displayed
+  await page
+    .getByLabel('BOM Pricing')
+    .getByRole('cell', { name: /\$0\.\d+ - \$0\.\d+/ })
+    .first()
+    .waitFor();
+
+  // BOM Pricing - link-jumping
   await page
     .getByLabel('BOM Pricing')
     .getByRole('table')
@@ -577,7 +668,7 @@ test('Parts - Pricing (Supplier)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).click();
   await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
 
-  // Supplier Pricing - linkjumping
+  // Supplier Pricing - link-jumping
   const target = page.getByText('ARR-26041-LPC').first();
   await target.waitFor();
   await target.click();
@@ -599,7 +690,7 @@ test('Parts - Pricing (Variant)', async ({ browser }) => {
   // Variant Pricing
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
 
-  // Variant Pricing - linkjumping
+  // Variant Pricing - link-jumping
   const target = page.getByText('Green Chair').first();
   await target.waitFor();
   await target.click();
@@ -872,7 +963,7 @@ test('Parts - Test Results', async ({ browser }) => {
 
   // Look at the "test results" tab for the part
   await loadTab(page, 'Test Results');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(200);
 
   await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
   await page.getByText('Blue Paint Applied').waitFor();

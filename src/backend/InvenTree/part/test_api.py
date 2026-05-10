@@ -1005,7 +1005,9 @@ class PartAPITest(PartAPITestBase):
         sub_part.refresh_from_db()
 
         # Link the sub part to the assembly via a BOM
-        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=10)
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=sub_part, raw_amount='10', quantity=10
+        )
 
         filters = {'active': True, 'assembly': True, 'bom_valid': True}
 
@@ -1023,14 +1025,14 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(response.data[0]['pk'], assembly.pk)
 
         # Adjust the 'quantity' of the BOM item to make it invalid
-        bom_item.quantity = 15
+        bom_item.set_quantity(15)
         bom_item.save()
 
         response = self.get(url, filters)
         self.assertEqual(len(response.data), 0)
 
         # Adjust it back again - should be valid again
-        bom_item.quantity = 10
+        bom_item.set_quantity(10)
         bom_item.save()
 
         response = self.get(url, filters)
@@ -1054,7 +1056,7 @@ class PartAPITest(PartAPITestBase):
         self.assertIsNotNone(data['bom_checked_date'])
 
         # Now, let's try to validate and invalidate the assembly BOM via the API
-        bom_item.quantity = 99
+        bom_item.raw_amount = '  99'
         bom_item.save()
 
         data = self.get(bom_url, expected_code=200).data
@@ -2796,6 +2798,7 @@ class BomItemTest(InvenTreeAPITestCase):
             'rounding_multiple',
             'pk',
             'part',
+            'raw_amount',
             'quantity',
             'reference',
             'sub_part',
@@ -2821,6 +2824,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Increase the quantity
         data = response.data
+        del data['raw_amount']
         data['quantity'] = 57
         data['note'] = 'Added a note'
 
@@ -2828,6 +2832,14 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+        # Provide a conflicting "raw_amount" and "quantity" field
+        data['raw_amount'] = '   123.45  '
+        data['quantity'] = 99.99
+        response = self.patch(url, data, expected_code=200)
+
+        self.assertEqual(response.data['raw_amount'], '123.45')
+        self.assertAlmostEqual(response.data['quantity'], 123.45, places=2)
 
     def test_output_options(self):
         """Test that various output options work as expected."""
@@ -2846,14 +2858,57 @@ class BomItemTest(InvenTreeAPITestCase):
         """Test that we can create a new BomItem via the API."""
         url = reverse('api-bom-list')
 
+        # Test with legacy format (only the 'quantity' field is supplied)
         data = {'part': 100, 'sub_part': 4, 'quantity': 777}
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['raw_amount'], '777')
+        self.assertEqual(response.data['quantity'], 777)
 
-        self.post(url, data, expected_code=201)
+        # Test with the 'modern' format (accepts a raw_amount field)
+        data = {'part': 100, 'sub_part': 4, 'raw_amount': '123.45'}
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['raw_amount'], '123.45')
+        self.assertEqual(response.data['quantity'], 123.45)
+
+        # First, let's assign some units to the sub_part
+        sub_part = Part.objects.get(pk=4)
+        sub_part.units = 'metres'
+        sub_part.save()
+
+        # Test with a bunch of invalid 'raw_amount' values
+        for value in [
+            '3 ampere',
+            '17 degrees',
+            '1 kg',
+            '-4',
+            'yak',
+            '*****',
+            '$$$$$',
+            '',
+        ]:
+            data = {'part': 100, 'sub_part': 4, 'raw_amount': value}
+            self.post(url, data, expected_code=400)
+
+        # Test with a bunch of valid 'raw_amount' values
+        test_values = [
+            (5, 5),
+            ('3.14cm', 0.0314),
+            ('10 metres   ', 10),
+            ('2 inches', 0.0508),
+            ('1/7', 0.142857),
+            ('14 ', 14),
+        ]
+
+        for raw_amount, quantity in test_values:
+            data = {'part': 100, 'sub_part': 4, 'raw_amount': raw_amount}
+            response = self.post(url, data, expected_code=201)
+            self.assertEqual(response.data['raw_amount'], str(raw_amount).strip())
+            self.assertAlmostEqual(response.data['quantity'], quantity, places=4)
 
         # Now try to create a BomItem which references itself
-        data['part'] = 100
-        data['sub_part'] = 100
-        self.post(url, data, expected_code=400)
+        data = {'part': 100, 'sub_part': 100, 'quantity': 1}
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('(recursive)', str(response.data))
 
     def test_variants(self):
         """Tests for BomItem use with variants."""
