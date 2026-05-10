@@ -729,6 +729,23 @@ class PartFilter(FilterSet):
         # Filter items which have an 'in_stock' level higher than 'minimum_stock'
         return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
 
+    high_stock = rest_filters.BooleanFilter(
+        label='High stock', method='filter_high_stock'
+    )
+
+    def filter_high_stock(self, queryset, name, value):
+        """Filter by "high stock" status."""
+        if str2bool(value):
+            # Ignore any parts which do not have a specified 'maximum_stock' level
+            # Filter items which have an 'in_stock' level higher than 'maximum_stock'
+            return queryset.exclude(maximum_stock=0).filter(
+                Q(total_in_stock__gt=F('maximum_stock'))
+            )
+        # Filter items which have an 'in_stock' level lower than 'maximum_stock'
+        return queryset.filter(
+            Q(total_in_stock__lte=F('maximum_stock')) | Q(maximum_stock=0)
+        ).distinct()
+
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
 

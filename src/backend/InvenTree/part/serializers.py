@@ -600,6 +600,7 @@ class PartSerializer(
             'link',
             'locked',
             'minimum_stock',
+            'maximum_stock',
             'name',
             'notes',
             'parameters',
@@ -899,6 +900,10 @@ class PartSerializer(
 
     minimum_stock = serializers.FloatField(
         required=False, label=_('Minimum Stock'), default=0
+    )
+
+    maximum_stock = serializers.FloatField(
+        required=False, label=_('Maximum Stock'), default=0
     )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(

@@ -491,6 +491,7 @@ class Part(
         default_location: Where the item is normally stored (may be null)
         default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
+        maximum_stock: Maximum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
         assembly: Can this part be build from other parts?
@@ -1230,6 +1231,15 @@ class Part(
         validators=[MinValueValidator(0)],
         verbose_name=_('Minimum Stock'),
         help_text=_('Minimum allowed stock level'),
+    )
+
+    maximum_stock = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Maximum Stock'),
+        help_text=_('Maximum allowed stock level'),
     )
 
     units = models.CharField(

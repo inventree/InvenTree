@@ -120,6 +120,7 @@ const icons: InvenTreeIconType = {
   unallocated_stock: IconPackage,
   total_in_stock: IconPackages,
   minimum_stock: IconFlag,
+  maximum_stock: IconFlag,
   allocated_to_build_orders: IconTool,
   allocated_to_sales_orders: IconTruck,
   can_build: IconTools,
