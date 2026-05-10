@@ -789,13 +789,5 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
-      - uses: hynek/setup-cached-uv@4300ec2180bc77d705e626a34e381b81a4772c51 # pin@v2
-      - name: Run zizmor
-        run: uvx zizmor --format sarif . > results.sarif
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@95e58e9a2cdfd71adc6e0353d5c52f41a045d225 # pin@v3
-        with:
-          sarif_file: results.sarif
-          category: zizmor
+      - name: Run zizmor 🌈
+        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
