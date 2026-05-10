@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 import {
   type RowAction,
   RowDeleteAction,
@@ -16,7 +17,6 @@ import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

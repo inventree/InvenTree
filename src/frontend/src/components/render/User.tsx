@@ -2,8 +2,9 @@ import { Badge, Group, Text } from '@mantine/core';
 import { IconUser, IconUsersGroup } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
+import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 import { t } from '@lingui/core/macro';
-import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
+import type { InstanceRenderInterface } from './Instance';
 
 export function RenderOwner({
   instance

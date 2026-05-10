@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 
 export function RenderPlugin({
   instance

@@ -2,17 +2,15 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
+import { InlineSecondaryBadge } from '@lib/components/RenderInlineModel';
+import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { shortenString } from '@lib/functions/String';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
-import {
-  InlineSecondaryBadge,
-  type InstanceRenderInterface,
-  RenderInlineModel
-} from './Instance';
+import type { InstanceRenderInterface } from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
