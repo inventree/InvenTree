@@ -19,6 +19,7 @@ import order.models
 import part.filters as part_filters
 import stock.models
 import stock.serializers
+from common.settings import get_global_setting
 from company.serializers import (
     AddressBriefSerializer,
     CompanyBriefSerializer,
@@ -1663,6 +1664,15 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
         stock_item = data['stock_item']
         quantity = data['quantity']
 
+        if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
+            if (
+                stock_item.hasRequiredTests()
+                and not stock_item.passedAllRequiredTests()
+            ):
+                raise ValidationError({
+                    'stock_item': _('Stock item has not passed all required tests')
+                })
+
         if stock_item.serialized and quantity != 1:
             raise ValidationError({
                 'quantity': _('Quantity must be 1 for serialized stock item')
@@ -1852,6 +1862,14 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
                 continue
 
             stock_item = items[0]
+
+            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
+                if (
+                    stock_item.hasRequiredTests()
+                    and not stock_item.passedAllRequiredTests()
+                ):
+                    serials_unavailable.add(str(serial))
+                    continue
 
             if not stock_item.in_stock:
                 serials_unavailable.add(str(serial))
