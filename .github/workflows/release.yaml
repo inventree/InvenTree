@@ -78,14 +78,19 @@ jobs:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        run: gh release upload ${{ github.ref }} src/backend/InvenTree/web/static/frontend-build.zip#frontend-build.zip
+        run: gh release upload ${REF} src/backend/InvenTree/web/static/frontend-build.zip#frontend-build.zip
+        env:
+          REF: ${{ github.ref }}
       - name: Upload frontend to artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
       - name: Upload Attestation
-        run: gh release upload ${{ github.ref }} ${{ steps.attest.outputs.bundle-path}}#frontend-build.intoto.jsonl
+        run: gh release upload ${REF} ${BUNDLE_PATH}#frontend-build.intoto.jsonl
+        env:
+          REF: ${{ github.ref }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path}}
 
   docs:
     runs-on: ubuntu-24.04
@@ -122,7 +127,9 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        run: gh release upload ${{ github.ref }} docs/site/docs-html.zip#docs-html.zip
+        run: gh release upload ${REF} docs/site/docs-html.zip#docs-html.zip
+        env:
+          REF: ${{ github.ref }}
 
   build-pkgr:
     if: github.repository == 'inventree/InvenTree'
@@ -226,4 +233,8 @@ jobs:
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
-        run: gh release upload ${{ github.ref }} ${{ steps.package.outputs.package_path }}#${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+        run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
+        env:
+          REF: ${{ github.ref }}
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
