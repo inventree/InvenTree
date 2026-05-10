@@ -336,7 +336,8 @@ export default function SystemSettings() {
                 'SALESORDER_DEFAULT_SHIPMENT',
                 'SALESORDER_EDIT_COMPLETED_ORDERS',
                 'SALESORDER_SHIP_COMPLETE',
-                'SALESORDER_SHIPMENT_REQUIRES_CHECK'
+                'SALESORDER_SHIPMENT_REQUIRES_CHECK',
+                'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'
               ]}
             />
             <GlobalSettingList
