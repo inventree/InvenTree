@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 485
+INVENTREE_API_VERSION = 486
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v486 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11914
+    - Adds "maximum_stock" field to the Part model and associated API endpoints
+    - Adds "high_stock" filter to the Part API endpoint to filter parts which are above their maximum stock level
 
 v485 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11631
     - Adds "raw_amount" field to the BomItem API endpoint
