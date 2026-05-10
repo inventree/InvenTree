@@ -13,6 +13,10 @@ Exposes sub-components related to DetailDrawer rendering:
 - `DetailDrawerComponent`
 - `useLocalLibState`
 
+Exposes general purposes components:
+- `RenderInlineModel`
+- `Thumbnail`
+
 ### 0.11.3 - April 2026
 
 Exposes additional type definitions related to rendering drawers from tables:
