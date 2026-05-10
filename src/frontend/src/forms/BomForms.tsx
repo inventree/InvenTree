@@ -38,7 +38,10 @@ export function bomItemFields({
       },
       addCreateFields: newPartFields
     },
-    quantity: {},
+    raw_amount: {
+      label: t`Quantity`,
+      description: t`Required component quantity`
+    },
     reference: {},
     setup_quantity: {},
     attrition: {},

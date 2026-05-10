@@ -8,7 +8,7 @@ msgstr ""
 "Language: sk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-07 14:51\n"
+"PO-Revision-Date: 2026-05-09 23:17\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -64,7 +64,7 @@ msgstr ""
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
 #: src/components/items/ActionDropdown.tsx:278
-#: src/contexts/ThemeContext.tsx:57
+#: src/contexts/ThemeContext.tsx:56
 #: src/hooks/UseForm.tsx:39
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
@@ -1399,7 +1399,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:307
 #: src/components/forms/ApiForm.tsx:711
-#: src/contexts/ThemeContext.tsx:56
+#: src/contexts/ThemeContext.tsx:55
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
 msgid "Submit"
@@ -1509,7 +1509,7 @@ msgstr ""
 #~ msgid "Edit Notes"
 #~ msgstr "Edit Notes"
 
-#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
+#: src/components/editors/TemplateEditor/CodeEditor/index.tsx:15
 msgid "Code"
 msgstr ""
 
@@ -1525,7 +1525,7 @@ msgstr ""
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr ""
 
-#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
+#: src/components/editors/TemplateEditor/PdfPreview/index.tsx:15
 msgid "PDF Preview"
 msgstr ""
 
@@ -2928,7 +2928,7 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
-#: src/components/panels/NotesPanel.tsx:25
+#: src/components/panels/NotesPanel.tsx:27
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3118,7 +3118,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:259
+#: src/components/render/Instance.tsx:255
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -6867,19 +6867,19 @@ msgstr ""
 msgid "Plugin Errors"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:16
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:22
 msgid "Page Size"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
 msgid "Landscape"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
 msgid "Merge"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:37
 msgid "Attach to Model"
 msgstr ""
 
