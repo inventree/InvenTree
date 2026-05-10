@@ -2649,6 +2649,58 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['building'], 55)
         self.assertEqual(data['scheduled_to_build'], 32)
 
+    def test_low_stock(self):
+        """Test the 'low_stock' filter."""
+        part = Part.objects.create(
+            name='Low Stock Part',
+            description='A part which is low on stock',
+            category=PartCategory.objects.get(pk=1),
+            minimum_stock=10,
+        )
+
+        response = self.get(
+            reverse('api-part-list'), {'low_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], part.pk)
+
+        StockItem.objects.create(part=part, quantity=20)
+
+        response = self.get(
+            reverse('api-part-list'), {'low_stock': True}, expected_code=200
+        )
+
+        # No results should be returned, as the part is no longer low on stock
+        self.assertEqual(len(response.data), 0)
+
+    def test_high_stock(self):
+        """Test the 'high_stock' filter."""
+        part = Part.objects.create(
+            name='High Stock Part',
+            description='A part which is high on stock',
+            category=PartCategory.objects.get(pk=1),
+        )
+
+        StockItem.objects.create(part=part, quantity=100)
+
+        response = self.get(
+            reverse('api-part-list'), {'high_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 0)
+
+        # Set a "maximum stock" threshold for the part
+        part.maximum_stock = 50
+        part.save()
+
+        response = self.get(
+            reverse('api-part-list'), {'high_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], part.pk)
+
 
 class BomItemTest(InvenTreeAPITestCase):
     """Unit tests for the BomItem API."""
