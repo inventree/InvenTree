@@ -1,4 +1,3 @@
-import type { setRenderProps } from '@lib/states/types';
 import type { I18n } from '@lingui/core';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
@@ -6,6 +5,7 @@ import type { AxiosInstance } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
 import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
+import type { setRenderProps } from '../states/types';
 import type {
   ApiFormModalProps,
   ApiFormProps,

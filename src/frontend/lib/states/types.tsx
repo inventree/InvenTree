@@ -1,5 +1,5 @@
-import type { InstanceRenderInterface } from '@lib/types/Rendering';
 import type { ReactNode } from 'react';
+import type { InstanceRenderInterface } from '../types/Rendering';
 
 export type setRenderProps = (
   model: string,
