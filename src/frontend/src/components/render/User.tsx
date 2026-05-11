@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 import { t } from '@lingui/core/macro';
 import type { InstanceRenderInterface } from './Instance';
-import { RenderInlineModel } from './RenderInlineModel';
+import { RenderInlineModel } from './Instance';
 
 export function RenderOwner({
   instance

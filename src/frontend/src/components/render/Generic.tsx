@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Group, Text } from '@mantine/core';
 import type { InstanceRenderInterface } from './Instance';
-import { RenderInlineModel } from './RenderInlineModel';
+import { RenderInlineModel } from './Instance';
 
 export function RenderParameterTemplate({
   instance

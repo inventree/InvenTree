@@ -9,7 +9,7 @@ import { shortenString } from '@lib/functions/String';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import type { InstanceRenderInterface } from './Instance';
-import { RenderInlineModel } from './RenderInlineModel';
+import { RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance

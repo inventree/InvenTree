@@ -16,7 +16,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import { RenderInlineModel } from '../../components/render/RenderInlineModel';
+import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
