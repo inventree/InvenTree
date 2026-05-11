@@ -29,9 +29,6 @@ export const usePluginState = create<PluginStateProps>()((set, get) => ({
   ) => {
     // ensure model is not already registered
     if (get().customRenders[model]) {
-      console.warn(
-        `Overriding existing renderer is not allowed; model ${model}`
-      );
       return;
     }
     set((state) => ({
