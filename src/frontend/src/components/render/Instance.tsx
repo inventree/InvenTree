@@ -110,14 +110,19 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   let RenderComponent:
     | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
     | undefined;
-  if (props.model !== undefined) {
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
     RenderComponent =
       RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
-  if (RenderComponent === undefined && props.custom_model !== undefined) {
-    RenderComponent = usePluginState().getRenderer(props.custom_model);
+  // custom model renderer (registered by a plugin)
+  if (RenderComponent === undefined) {
+    RenderComponent = usePluginState().getRenderer(
+      props.custom_model ?? props.model ?? ''
+    );
   }
 
+  // provider component
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }

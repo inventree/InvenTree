@@ -21,7 +21,7 @@ interface PluginStateProps {
 export const usePluginState = create<PluginStateProps>()((set, get) => ({
   customRenders: {},
   getRenderer: (model: string) => {
-    return get().customRenders[model];
+    return get().customRenders[model] || undefined;
   },
   setRenderer: (
     model: string,
