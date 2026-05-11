@@ -2,7 +2,6 @@ import { t } from '@lingui/core/macro';
 import { Badge, Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -10,6 +9,7 @@ import { shortenString } from '@lib/functions/String';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import type { InstanceRenderInterface } from './Instance';
+import { RenderInlineModel } from './RenderInlineModel';
 
 /**
  * Inline rendering of a single Part instance

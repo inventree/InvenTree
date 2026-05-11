@@ -107,7 +107,8 @@ export type InvenTreePluginContext = {
   renderRemoteInstance: (
     props: Readonly<RemoteInstanceProps>
   ) => React.ReactNode;
-  Thumbnail: (props: Readonly<ThumbnailProps>) => JSX.Element;
+  renderInlineModel: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
+  thumbnail: (props: Readonly<ThumbnailProps>) => JSX.Element;
   host: string;
   i18n: I18n;
   locale: string;

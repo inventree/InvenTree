@@ -50,6 +50,7 @@ import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
+import { RenderInlineModel } from '../render/RenderInlineModel';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -83,7 +84,8 @@ export const useInvenTreeContext = () => {
       useInstance: useInstance,
       renderInstance: RenderInstance,
       renderRemoteInstance: RenderRemoteInstance,
-      Thumbnail: Thumbnail,
+      renderInlineModel: RenderInlineModel,
+      thumbnail: Thumbnail,
       theme: theme,
       colorScheme: colorScheme,
       importer: {

@@ -113,7 +113,6 @@ export {
   RowCancelAction,
   RowActions
 } from './components/RowActions';
-export { RenderInlineModel } from './components/RenderInlineModel';
 
 // Shared hooks
 export {

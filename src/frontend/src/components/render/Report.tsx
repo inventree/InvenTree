@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { RenderInlineModel } from '@lib/components/RenderInlineModel';
+import { RenderInlineModel } from './RenderInlineModel';
 
 export function RenderReportTemplate({
   instance

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { RenderInlineModel } from '@lib/components/RenderInlineModel';
 import { Group, Text } from '@mantine/core';
 import type { InstanceRenderInterface } from './Instance';
+import { RenderInlineModel } from './RenderInlineModel';
 
 export function RenderParameterTemplate({
   instance
