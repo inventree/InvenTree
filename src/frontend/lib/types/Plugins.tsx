@@ -1,3 +1,4 @@
+import type { setRenderProps } from '@lib/states/types';
 import type { I18n } from '@lingui/core';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
@@ -109,6 +110,9 @@ export type InvenTreePluginContext = {
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
   forms: InvenTreeFormsContext;
+  stateFnc: {
+    setRenderer: setRenderProps;
+  };
   tables: InvenTreeTablesContext<any>;
   importer: ImporterDrawerContext;
   model?: ModelType | string;

@@ -45,6 +45,7 @@ import {
   getGlobalImporterState,
   openGlobalImporter
 } from '../../states/ImporterState';
+import { usePluginState } from '../../states/PluginState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
@@ -53,6 +54,7 @@ import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
   const [server] = useServerApiState(useShallow((s) => [s.server]));
+  const [setRenderer] = usePluginState(useShallow((s) => [s.setRenderer]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -116,6 +118,9 @@ export const useInvenTreeContext = () => {
           transferStock: useTransferStockItem,
           returnStock: useReturnStockItem
         }
+      },
+      stateFnc: {
+        setRenderer: setRenderer
       }
     };
   }, [

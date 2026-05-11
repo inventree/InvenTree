@@ -25,6 +25,7 @@ import type {
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import { shortenString } from '@lib/functions/String';
 import { useApi } from '../../contexts/ApiContext';
+import { usePluginState } from '../../states/PluginState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -112,6 +113,8 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   if (props.model !== undefined) {
     RenderComponent =
       RendererLookup[props.model.toString().toLowerCase() as ModelType];
+  } else if (props.custom_model !== undefined) {
+    RenderComponent = usePluginState().getRenderer(props.custom_model);
   }
 
   if (!RenderComponent) {
