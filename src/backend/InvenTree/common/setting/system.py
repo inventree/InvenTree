@@ -910,6 +910,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
+        'name': _('Block Incomplete Item Tests'),
+        'description': _(
+            'Prevent allocation of stock items to sales orders if required item tests are incomplete'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PURCHASEORDER_REFERENCE_PATTERN': {
         'name': _('Purchase Order Reference Pattern'),
         'description': _(
