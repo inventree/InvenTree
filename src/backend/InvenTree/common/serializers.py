@@ -809,6 +809,14 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         return super().save(**kwargs)
 
 
+class AttachmentRenameSerializer(serializers.Serializer):
+    """Serializer for renaming an attachment."""
+
+    filename = serializers.CharField(
+        label=_('Filename'), required=True, allow_blank=False
+    )
+
+
 @register_importer()
 class ParameterTemplateSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer

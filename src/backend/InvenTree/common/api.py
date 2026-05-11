@@ -793,6 +793,24 @@ class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+class AttachmentRename(AttachmentMixin, CreateAPI):
+    """API endpoint for renaming an attachment."""
+
+    serializer_class = common.serializers.AttachmentRenameSerializer
+
+    def create(self, request, *args, **kwargs):
+        """Rename an attachment."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        attachment = self.get_object()
+        attachment.rename(serializer.validated_data['filename'])
+
+        data = common.serializers.AttachmentSerializer(attachment).data
+
+        return Response(data, status=200)
+
+
 class ParameterTemplateFilter(FilterSet):
     """FilterSet class for the ParameterTemplateList API endpoint."""
 
@@ -1440,6 +1458,11 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
+                    path(
+                        'rename/',
+                        AttachmentRename.as_view(),
+                        name='api-attachment-rename',
+                    ),
                     meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),

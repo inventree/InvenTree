@@ -7,6 +7,7 @@ import {
   IconExclamationCircle,
   IconExternalLink,
   IconFileUpload,
+  IconPencil,
   IconUpload,
   IconX
 } from '@tabler/icons-react';
@@ -221,6 +222,8 @@ export function AttachmentTable({
     number | undefined
   >(undefined);
 
+  const [selectedFilename, setSelectedFilename] = useState<string>('');
+
   const uploadFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       model_type: {
@@ -269,6 +272,18 @@ export function AttachmentTable({
         table.refreshTable();
       }
     }
+  });
+
+  const renameAttachment = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.attachment_rename, selectedAttachment ?? 0),
+    title: t`Rename Attachment`,
+    fields: {
+      filename: {
+        value: selectedFilename
+      }
+    },
+    table: table,
+    successMessage: t`Attachment renamed successfully`
   });
 
   const deleteAttachment = useDeleteApiFormModal({
@@ -333,6 +348,17 @@ export function AttachmentTable({
             editAttachment.open();
           }
         }),
+        {
+          title: t`Rename File`,
+          color: 'blue',
+          icon: <IconPencil />,
+          hidden: !user.hasChangePermission(model_type) || !record.attachment,
+          onClick: () => {
+            setSelectedFilename(record.attachment.split('/').pop() ?? '');
+            setSelectedAttachment(record.pk);
+            renameAttachment.open();
+          }
+        },
         RowDeleteAction({
           hidden: !canDelete,
           onClick: () => {
@@ -349,6 +375,7 @@ export function AttachmentTable({
     <>
       {uploadAttachment.modal}
       {editAttachment.modal}
+      {renameAttachment.modal}
       {deleteAttachment.modal}
       <Stack gap='xs'>
         {validPk && (

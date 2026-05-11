@@ -9,12 +9,14 @@ import hmac
 import json
 import math
 import os
+import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 from secrets import compare_digest
 from typing import Any, Optional
 
@@ -1992,6 +1994,48 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
         return str(self.link)
+
+    def validate_rename(self, filename: str):
+        """Validate that the provided filename is valid, for renaming an attachment."""
+        filename = filename.strip()
+
+        if not self.attachment:
+            raise ValidationError(_('No file attached to rename'))
+
+        if not filename:
+            raise ValidationError(_('Filename cannot be empty'))
+
+        if re.search(r'[\\/*?:"<>|]', filename):
+            raise ValidationError(_('Filename contains invalid characters'))
+
+    def rename(self, filename: str):
+        """Rename the attached file."""
+        self.validate_rename(filename)
+
+        old_path = Path(self.attachment.name)
+        new_path = old_path.parent / filename
+
+        if old_path == new_path:
+            # No change in filename
+            return
+
+        if not new_path.is_relative_to(old_path.parent):  # pragma: no cover
+            raise ValidationError(_('Invalid filename'))
+
+        new_path = new_path.as_posix()
+
+        if default_storage.exists(new_path):
+            raise ValidationError(_('A file with this name already exists'))
+
+        # Create a new file with the new name, and delete the old file
+        default_storage.save(new_path, self.attachment.file)
+
+        # Update the database file path
+        self.attachment.name = new_path
+        self.save()
+
+        # Remove the old path
+        default_storage.delete(old_path)
 
     model_type = models.CharField(
         max_length=100,

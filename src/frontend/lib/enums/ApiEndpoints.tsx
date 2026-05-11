@@ -237,6 +237,7 @@ export enum ApiEndpoints {
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
+  attachment_rename = 'attachment/:id/rename/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
