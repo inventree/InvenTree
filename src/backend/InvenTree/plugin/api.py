@@ -317,13 +317,13 @@ def check_plugin(
         plugin_slug (str): Slug for plugin.
         plugin_pk (int): Primary key for plugin.
 
+    Returns:
+        InvenTreePlugin: The config object for the provided plugin.
+
     Raises:
         NotFound: If plugin is not installed
         NotFound: If plugin is not correctly registered
         NotFound: If plugin is not active
-
-    Returns:
-        InvenTreePlugin: The config object for the provided plugin.
     """
     # Make sure that a plugin reference is specified
     if plugin_slug is None and plugin_pk is None:

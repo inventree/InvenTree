@@ -740,11 +740,10 @@ def setup_dev(c, tests: bool = False, verbose: bool = False):
     # Install required Python packages with PIP
     install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
-    # Install pre-commit hook
-    info('Installing pre-commit for checks before git commits...')
-    run(c, 'pre-commit install')
-    run(c, 'pre-commit autoupdate')
-    success('pre-commit set up complete')
+    # Install prek hook
+    info('Installing prek for checks before git commits...')
+    run(c, 'prek install')
+    success('prek set up complete')
 
     # Set up test-data if flag is set
     if tests:

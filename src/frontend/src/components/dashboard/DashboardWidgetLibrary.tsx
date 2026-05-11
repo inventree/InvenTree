@@ -71,6 +71,17 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       }
     }),
     QueryCountDashboardWidget({
+      title: t`High Stock`,
+      label: 'hgh-stk',
+      description: t`Show the number of parts which have excess stock`,
+      modelType: ModelType.part,
+      params: {
+        active: true,
+        high_stock: true,
+        virtual: false
+      }
+    }),
+    QueryCountDashboardWidget({
       title: t`Required for Build Orders`,
       label: 'bld-req',
       description: t`Show parts which are required for active build orders`,

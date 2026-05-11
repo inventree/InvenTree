@@ -138,7 +138,7 @@ test('Importing - BOM', async ({ browser }) => {
     .getByLabel('row-action-menu-')
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('12');
+  await page.getByRole('textbox', { name: 'text-field-raw_amount' }).fill('12');
 
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();

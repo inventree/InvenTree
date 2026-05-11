@@ -18,6 +18,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
   ModelRendererDict,
+  RemoteInstanceProps,
   RenderInstanceProps
 } from '@lib/types/Rendering';
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
@@ -124,12 +125,7 @@ export function RenderRemoteInstance({
   modelUrl,
   modelRenderer,
   pk
-}: Readonly<{
-  model: ModelType;
-  modelUrl?: string;
-  modelRenderer?: (instance: any) => ReactNode;
-  pk: number;
-}>): ReactNode {
+}: Readonly<RemoteInstanceProps>): ReactNode {
   const api = useApi();
 
   const { data, isLoading, isFetching } = useQuery({
