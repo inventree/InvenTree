@@ -70,3 +70,16 @@ export interface ThumbnailProps {
   hover?: boolean;
   hoverSize?: number;
 }
+
+export interface RenderInlineModelProps {
+  primary: ReactNode;
+  secondary?: ReactNode;
+  showSecondary?: boolean;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+  image?: string;
+  labels?: string[];
+  url?: string;
+  navigate?: any;
+  tooltip?: string;
+}

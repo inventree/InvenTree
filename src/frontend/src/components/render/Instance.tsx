@@ -18,6 +18,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type {
   ModelRendererDict,
   RemoteInstanceProps,
+  RenderInlineModelProps,
   RenderInstanceProps
 } from '@lib/types/Rendering';
 
@@ -172,18 +173,7 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: Readonly<{
-  primary: ReactNode;
-  secondary?: ReactNode;
-  showSecondary?: boolean;
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-  image?: string;
-  labels?: string[];
-  url?: string;
-  navigate?: any;
-  tooltip?: string;
-}>): ReactNode {
+}: Readonly<RenderInlineModelProps>): ReactNode {
   // TODO: Handle labels
   const onClick = useCallback(
     (event: any) => {

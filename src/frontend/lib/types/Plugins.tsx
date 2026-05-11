@@ -15,6 +15,7 @@ import type {
 import type { UseModalReturn } from './Modals';
 import type {
   RemoteInstanceProps,
+  RenderInlineModelProps,
   RenderInstanceProps,
   ThumbnailProps
 } from './Rendering';
@@ -107,7 +108,9 @@ export type InvenTreePluginContext = {
   renderRemoteInstance: (
     props: Readonly<RemoteInstanceProps>
   ) => React.ReactNode;
-  renderInlineModel: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
+  renderInlineModel: (
+    props: Readonly<RenderInlineModelProps>
+  ) => React.ReactNode;
   thumbnail: (props: Readonly<ThumbnailProps>) => JSX.Element;
   host: string;
   i18n: I18n;
