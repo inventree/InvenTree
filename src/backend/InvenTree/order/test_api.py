@@ -2404,6 +2404,43 @@ class SalesOrderAllocateTest(OrderTest):
             assert_subset=True,
         )
 
+    def test_block_on_required_tests(self):
+        """Test the SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS setting."""
+        from part.models import PartTestTemplate
+
+        line = self.order.lines.first()
+        part = line.part
+
+        # Make this a testable part
+        part.testable = True
+        part.save()
+
+        # Create a required test
+        PartTestTemplate.objects.create(
+            part=part, test_name='A required test', required=True
+        )
+
+        data = {
+            'items': [
+                {
+                    'line_item': line.pk,
+                    'stock_item': part.stock_items.last().pk,
+                    'quantity': line.quantity,
+                }
+            ]
+        }
+
+        set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', True)
+
+        response = self.post(self.url, data, expected_code=400)
+        self.assertIn(
+            'Stock item has not passed all required tests', str(response.data)
+        )
+
+        set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', False)
+
+        response = self.post(self.url, data, expected_code=201)
+
 
 class ReturnOrderTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrder API endpoints."""
