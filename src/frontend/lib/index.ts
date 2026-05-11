@@ -114,7 +114,6 @@ export {
   RowActions
 } from './components/RowActions';
 export { RenderInlineModel } from './components/RenderInlineModel';
-export { Thumbnail } from './components/images/Thumbnail';
 
 // Shared hooks
 export {

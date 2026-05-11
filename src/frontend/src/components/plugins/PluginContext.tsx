@@ -48,6 +48,7 @@ import {
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
+import { Thumbnail } from '../images/Thumbnail';
 import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
@@ -82,6 +83,7 @@ export const useInvenTreeContext = () => {
       useInstance: useInstance,
       renderInstance: RenderInstance,
       renderRemoteInstance: RenderRemoteInstance,
+      Thumbnail: Thumbnail,
       theme: theme,
       colorScheme: colorScheme,
       importer: {

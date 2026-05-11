@@ -13,13 +13,13 @@ import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
-import { Thumbnail } from '@lib/components/images/Thumbnail';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';

@@ -9,13 +9,13 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
-import { Thumbnail } from '@lib/components/images/Thumbnail';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

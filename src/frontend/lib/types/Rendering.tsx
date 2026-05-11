@@ -60,3 +60,13 @@ export interface RemoteInstanceProps {
   modelRenderer?: (instance: any) => ReactNode;
   pk: number;
 }
+export interface ThumbnailProps {
+  src?: string;
+  alt?: string;
+  size?: number;
+  text?: ReactNode;
+  align?: string;
+  link?: string;
+  hover?: boolean;
+  hoverSize?: number;
+}

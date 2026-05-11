@@ -1,8 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { Anchor, Group, HoverCard, Image } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { ApiImage } from '../../../src/components/images/ApiImage';
+import type { ThumbnailProps } from '@lib/types/Rendering';
+import { ApiImage } from './ApiImage';
 
 /*
  * Render an image, loaded via the API
@@ -16,16 +17,7 @@ export function Thumbnail({
   align,
   hover,
   hoverSize = 128
-}: Readonly<{
-  src?: string;
-  alt?: string;
-  size?: number;
-  text?: ReactNode;
-  align?: string;
-  link?: string;
-  hover?: boolean;
-  hoverSize?: number;
-}>) {
+}: Readonly<ThumbnailProps>) {
   const backup_image = '/static/img/blank_image.png';
 
   const inner = useMemo(() => {
