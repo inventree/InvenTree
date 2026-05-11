@@ -7,11 +7,12 @@ import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
 import type {
   ApiFormModalProps,
+  ApiFormProps,
   BulkEditApiFormModalProps,
   StockOperationProps
 } from './Forms';
 import type { UseModalReturn } from './Modals';
-import type { RenderInstanceProps } from './Rendering';
+import type { RemoteInstanceProps, RenderInstanceProps } from './Rendering';
 import type { SettingsStateProps } from './Settings';
 import type { InvenTreeTableRenderProps } from './Tables';
 import type { UserStateProps } from './User';
@@ -46,6 +47,7 @@ export type InvenTreeFormsContext = {
   create: (props: ApiFormModalProps) => UseModalReturn;
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
+  editApiForm: (props: { id?: string; props: ApiFormProps }) => React.ReactNode;
   stockActions: StockAdjustmentFormsContext;
 };
 
@@ -97,6 +99,9 @@ export type InvenTreePluginContext = {
   globalSettings: SettingsStateProps;
   modelInformation: ModelDict;
   renderInstance: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
+  renderRemoteInstance: (
+    props: Readonly<RemoteInstanceProps>
+  ) => React.ReactNode;
   host: string;
   i18n: I18n;
   locale: string;

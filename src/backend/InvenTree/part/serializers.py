@@ -22,9 +22,9 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
-import common.models
 import common.serializers
 import company.models
+import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
 import part.filters as part_filters
@@ -600,6 +600,7 @@ class PartSerializer(
             'link',
             'locked',
             'minimum_stock',
+            'maximum_stock',
             'name',
             'notes',
             'parameters',
@@ -905,6 +906,10 @@ class PartSerializer(
 
     minimum_stock = serializers.FloatField(
         required=False, label=_('Minimum Stock'), default=0
+    )
+
+    maximum_stock = serializers.FloatField(
+        required=False, label=_('Maximum Stock'), default=0
     )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
@@ -1648,7 +1653,7 @@ class BomItemSerializer(
 ):
     """Serializer for BomItem object."""
 
-    import_exclude_fields = ['validated', 'substitutes']
+    import_exclude_fields = ['quantity', 'validated', 'substitutes']
 
     export_exclude_fields = ['substitutes']
 
@@ -1666,6 +1671,7 @@ class BomItemSerializer(
             'part',
             'sub_part',
             'reference',
+            'raw_amount',
             'quantity',
             'allow_variants',
             'inherited',
@@ -1700,7 +1706,13 @@ class BomItemSerializer(
             'category_detail',
         ]
 
-    quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
+    raw_amount = serializers.CharField(
+        label=_('Amount'),
+        help_text=_('Amount required for this item (can include units)'),
+        required=False,
+    )
+
+    quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 
     setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
 
@@ -1709,25 +1721,6 @@ class BomItemSerializer(
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
     )
-
-    def validate_quantity(self, quantity):
-        """Perform validation for the BomItem quantity field."""
-        allow_zero_qty = common.models.InvenTreeSetting.get_setting(
-            'PART_BOM_ALLOW_ZERO_QUANTITY', False
-        )
-
-        if allow_zero_qty:
-            if quantity < 0:
-                raise serializers.ValidationError(
-                    _('Quantity must be greater than or equal to zero')
-                )
-        else:
-            if quantity <= 0:
-                raise serializers.ValidationError(
-                    _('Quantity must be greater than zero')
-                )
-
-        return quantity
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.filter(assembly=True),
@@ -1869,6 +1862,27 @@ class BomItemSerializer(
     available_variant_stock = serializers.FloatField(read_only=True, allow_null=True)
 
     external_stock = serializers.FloatField(read_only=True, allow_null=True)
+
+    def validate(self, data):
+        """Validate the supplied data.
+
+        Here, for legacy support, we intercept the 'quantity' field
+        (if the 'raw_amount' field is not provided)
+        """
+        qty = data.pop('quantity', None)
+
+        if 'raw_amount' not in data and qty is not None:
+            data['raw_amount'] = qty
+
+        # Check the raw_amount field is valid (this will raise a ValidationError if not)
+        if raw_amount := data.get('raw_amount', None):
+            try:
+                # Check that the value is acceptable to the unit registry
+                InvenTree.conversion.convert_value(raw_amount)
+            except Exception:
+                raise ValidationError({'raw_amount': _('Invalid quantity format')})
+
+        return super().validate(data)
 
     @staticmethod
     def annotate_queryset(queryset):

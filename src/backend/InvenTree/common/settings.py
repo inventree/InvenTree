@@ -81,11 +81,11 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         key (str): The key for the warning.
         options (dict or bool): Options for the warning, or True to set a default warning.
 
-    Raises:
-        ValueError: If the key is not provided.
-
     Returns:
         bool: True if the warning was checked / set successfully, False if no check was performed.
+
+    Raises:
+        ValueError: If the key is not provided.
     """
     if not key:
         raise ValueError('Key must be provided for global warning setting.')

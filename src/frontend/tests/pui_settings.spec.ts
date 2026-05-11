@@ -401,7 +401,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await loadTab(page, 'Parameters', true);
 
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
 
   // Clean old template data if exists
   await page

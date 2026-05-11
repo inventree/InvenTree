@@ -740,11 +740,10 @@ def setup_dev(c, tests: bool = False, verbose: bool = False):
     # Install required Python packages with PIP
     install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
-    # Install pre-commit hook
-    info('Installing pre-commit for checks before git commits...')
-    run(c, 'pre-commit install')
-    run(c, 'pre-commit autoupdate')
-    success('pre-commit set up complete')
+    # Install prek hook
+    info('Installing prek for checks before git commits...')
+    run(c, 'prek install')
+    success('prek set up complete')
 
     # Set up test-data if flag is set
     if tests:
@@ -1560,9 +1559,7 @@ def worker(c, verbose: bool = False):
     Launches a django-q2 cluster to process background tasks.
     Ref: https://django-q2.readthedocs.io
     """
-    cmd = f'qcluster -v {2 if verbose else 0}'
-
-    manage(c, cmd, pty=True)
+    manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
 @task(post=[static, server])

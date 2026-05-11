@@ -57,6 +57,7 @@ export function usePartFields({
       },
       default_expiry: {},
       minimum_stock: {},
+      maximum_stock: {},
       responsible: {
         filters: {
           is_active: true
