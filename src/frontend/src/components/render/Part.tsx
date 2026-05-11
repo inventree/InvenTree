@@ -8,8 +8,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { shortenString } from '@lib/functions/String';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
-import type { InstanceRenderInterface } from './Instance';
-import { RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
