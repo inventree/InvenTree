@@ -113,7 +113,8 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   if (props.model !== undefined) {
     RenderComponent =
       RendererLookup[props.model.toString().toLowerCase() as ModelType];
-  } else if (props.custom_model !== undefined) {
+  }
+  if (RenderComponent === undefined && props.custom_model !== undefined) {
     RenderComponent = usePluginState().getRenderer(props.custom_model);
   }
 

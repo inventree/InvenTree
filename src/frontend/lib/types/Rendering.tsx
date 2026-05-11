@@ -29,7 +29,7 @@ export type ModelRendererDict = EnumDictionary<
 
 export type RenderInstanceProps = {
   model: ModelType | undefined;
-  custom_model?: string;
+  custom_model?: string | undefined;
 } & InstanceRenderInterface;
 
 export interface UseInstanceResult {
