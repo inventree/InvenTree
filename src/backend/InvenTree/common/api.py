@@ -793,6 +793,7 @@ class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+@extend_schema(responses={201: common.serializers.AttachmentSerializer})
 class AttachmentRename(AttachmentMixin, CreateAPI):
     """API endpoint for renaming an attachment."""
 
@@ -808,7 +809,7 @@ class AttachmentRename(AttachmentMixin, CreateAPI):
 
         data = common.serializers.AttachmentSerializer(attachment).data
 
-        return Response(data, status=200)
+        return Response(data, status=201)
 
 
 class ParameterTemplateFilter(FilterSet):
