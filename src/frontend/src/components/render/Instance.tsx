@@ -17,6 +17,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
+  InstanceRenderInterface,
   ModelRendererDict,
   RemoteInstanceProps,
   RenderInstanceProps
@@ -105,18 +106,17 @@ export const RendererLookup: ModelRendererDict = {
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  if (props.model === undefined) {
-    return <UnknownRenderer model={props.model} />;
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+  if (props.model !== undefined) {
+    RenderComponent =
+      RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
-
-  const model_name = props.model.toString().toLowerCase() as ModelType;
-
-  const RenderComponent = RendererLookup[model_name];
 
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }
-
   return <RenderComponent {...props} />;
 }
 
