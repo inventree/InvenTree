@@ -115,12 +115,10 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
     RenderComponent =
       RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
-  // custom model renderer (registered by a plugin)
-  if (RenderComponent === undefined) {
-    RenderComponent = usePluginState().getRenderer(
-      props.custom_model ?? props.model ?? ''
-    );
-  }
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
 
   // provider component
   if (!RenderComponent) {
