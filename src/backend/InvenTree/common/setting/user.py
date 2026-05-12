@@ -209,6 +209,20 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'WEEK_STARTS_ON': {
+        'name': _('Week Starts On'),
+        'description': _('Starting day of the week, for display in calendar views'),
+        'default': '1',
+        'choices': [
+            ('0', _('Sunday')),
+            ('1', _('Monday')),
+            ('2', _('Tuesday')),
+            ('3', _('Wednesday')),
+            ('4', _('Thursday')),
+            ('5', _('Friday')),
+            ('6', _('Saturday')),
+        ],
+    },
     'DATE_DISPLAY_FORMAT': {
         'name': _('Date Format'),
         'description': _('Preferred format for displaying dates'),
