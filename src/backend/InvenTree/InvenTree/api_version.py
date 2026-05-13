@@ -1,13 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 484
+INVENTREE_API_VERSION = 486
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v484 -> 2026-05-07 : https://github.com/inventree/InvenTree/pull/9928
+v486 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/9928
     - Add "PartTest" API endpoint
+
+v485 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11631
+    - Adds "raw_amount" field to the BomItem API endpoint
+
+v484 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11910
+    - Adds more docstrings to (scheduled) tasks
 
 v483 -> 2026-05-04 : https://github.com/inventree/InvenTree/pull/11861
     - Enable bulk-update operations on the BomItem API endpoint, allowing multiple BOM items to be updated in a single API call

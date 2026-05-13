@@ -1,23 +1,8 @@
-import {
-  type QueryObserverResult,
-  type UseQueryResult,
-  useQuery
-} from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
-
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { PathParams } from '@lib/types/Core';
+import type { UseInstanceResult, useInstanceProps } from '@lib/types/Rendering';
+import { useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 import { useApi } from '../contexts/ApiContext';
-
-export interface UseInstanceResult {
-  instance: any;
-  setInstance: (instance: any) => void;
-  refreshInstance: () => void;
-  refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
-  instanceQuery: UseQueryResult;
-  isLoaded: boolean;
-}
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -40,18 +25,7 @@ export function useInstance<T = any>({
   refetchOnMount = true,
   refetchOnWindowFocus = false,
   updateInterval
-}: {
-  endpoint: ApiEndpoints;
-  pk?: string | number | undefined;
-  hasPrimaryKey?: boolean;
-  params?: any;
-  pathParams?: PathParams;
-  disabled?: boolean;
-  defaultValue?: any;
-  refetchOnMount?: boolean;
-  refetchOnWindowFocus?: boolean;
-  updateInterval?: number;
-}): UseInstanceResult {
+}: useInstanceProps): UseInstanceResult {
   const api = useApi();
 
   const [instance, setInstance] = useState<T | undefined>(defaultValue);

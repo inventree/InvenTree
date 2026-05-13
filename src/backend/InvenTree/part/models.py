@@ -3880,7 +3880,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     Attributes:
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
-        quantity: Number of 'sub_parts' consumed to produce one 'part'
+        raw_amount: Raw amount of 'sub_part' consumed to produce one 'part' (can be fractional, or use an associated unit)
+        quantity: Numerical quantity of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
@@ -3981,6 +3982,57 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         - If allow_variants is True, allow all part variants
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
+
+    def set_quantity(self, quantity: Decimal | str | float):
+        """Update the 'quantity' for this BomItem."""
+        self.raw_amount = quantity
+        self.recalculate_quantity()
+
+    def recalculate_quantity(self):
+        """Recalculate the 'quantity' field based on the 'raw_amount' field."""
+        if self.raw_amount is None or self.raw_amount == '':
+            self.raw_amount = self.quantity
+
+        # Convert from the "raw amount" to a numerical quantity, using the associated unit (if specified)
+        try:
+            quantity = InvenTree.conversion.convert_physical_value(
+                self.raw_amount, self.sub_part.units, strip_units=False
+            )
+
+            if not self.sub_part.units and not InvenTree.conversion.is_dimensionless(
+                quantity
+            ):
+                raise ValidationError({
+                    'raw_amount': _('Invalid quantity - no units specified for part')
+                })
+
+            allow_zero_qty = get_global_setting('PART_BOM_ALLOW_ZERO_QUANTITY', False)
+
+            if allow_zero_qty:
+                if float(quantity.magnitude) < 0:
+                    raise ValidationError({
+                        'raw_amount': _(
+                            'Quantity must be greater than or equal to zero'
+                        )
+                    })
+
+            else:
+                if float(quantity.magnitude) <= 0:
+                    raise ValidationError({
+                        'raw_amount': _('Quantity must be greater than zero')
+                    })
+
+            self.quantity = Decimal(quantity.magnitude)
+
+        except ValidationError as e:
+            raise ValidationError({'raw_amount': e.messages})
+
+        # Ensure that the raw_amount is converted to a Decimal value
+        try:
+            self.quantity = Decimal(self.quantity)
+        except InvalidOperation:
+            msg = _('Invalid quantity provided')
+            raise ValidationError({'quantity': msg, 'raw_amount': msg})
 
     def delete(self):
         """Check if this item can be deleted."""
@@ -4088,7 +4140,15 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         limit_choices_to={'component': True},
     )
 
-    # Quantity required
+    raw_amount = models.CharField(
+        max_length=25,
+        verbose_name=_('Amount'),
+        help_text=_('Amount of sub-part consumed to produce one part'),
+        blank=False,
+        null=False,
+    )
+
+    # Native quantity required
     quantity = models.DecimalField(
         default=1.0,
         max_digits=15,
@@ -4274,10 +4334,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         super().clean()
 
-        try:
-            self.quantity = Decimal(self.quantity)
-        except InvalidOperation:
-            raise ValidationError({'quantity': _('Must be a valid number')})
+        # Recalculate the 'quantity' field based on the 'raw_amount' field
+        self.recalculate_quantity()
 
         try:
             # Check for circular BOM references

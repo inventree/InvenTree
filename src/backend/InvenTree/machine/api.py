@@ -58,11 +58,11 @@ class MachineDetail(RetrieveUpdateDestroyAPI):
 def get_machine(machine_pk):
     """Get machine by pk.
 
-    Raises:
-        NotFound: If machine is not found
-
     Returns:
         BaseMachineType: The machine instance in the registry
+
+    Raises:
+        NotFound: If machine is not found
     """
     machine = registry.get_machine(machine_pk)
 

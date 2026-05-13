@@ -18,7 +18,8 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | --- | --- |
 | Part | A reference to another *Part* object which is required to build this assembly |
 | Reference | Optional reference field to describe the BOM Line Item, e.g. part designator |
-| Quantity | The quantity of *Part* required for the assembly |
+| Raw Amount | The raw quantity of the part required for the assembly, which can be expressed in different units of measure, e.g. `2 cm`, `1/2 inch`, `200 kg`. |
+| Quantity | The quantity of *Part* required for the assembly - this value is automatically calculated from the "raw amount" field, taking into account the units of measure associated with the underlying part. |
 | Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
 | Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
 | Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
@@ -26,6 +27,18 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
 | Note | Optional note field for additional information
+
+### Units of Measure
+
+The `raw_amount` field allows the user to specify the required quantity of a particular part in different [units of measure](../concepts/units.md). The units of measure are determined by the underlying part definition. For example, if the part is defined with a default unit of measure of "kg", the user can specify the required quantity in "g", "mg", "lb", etc.
+
+The `raw_amount` field is stored as a string, and the `quantity` field is automatically calculated from the `raw_amount` field, taking into account the units of measure associated with the underlying part. This allows for greater flexibility in specifying the required quantity of a particular part, while still maintaining accurate tracking of inventory and production requirements.
+
+If the underlying part does not have a defined unit of measure, the `raw_amount` field is not allowed to have any units of measure specified, and the `quantity` field is simply a numeric representation of the `raw_amount` field.
+
+### Fractional Representation
+
+The `raw_amount` field also allows for fractional representation of the required quantity. For example, if the required quantity is 0.5 kg, the user can specify this as `500 g`, `0.5 kg`, `1/2 kg`, etc. The `quantity` field will be automatically calculated as 0.5 kg, regardless of the specific representation used in the `raw_amount` field.
 
 ### Consumable BOM Line Items
 
