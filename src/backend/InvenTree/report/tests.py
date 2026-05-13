@@ -443,6 +443,7 @@ class LabelTest(InvenTreeAPITestCase):
         Template name: {{ template.name }}
         Barcode: {{ qr_data }}
         Location ID: {{ location.pk }}
+        Base URL: {{ base_url }}
         """
 
         template_file = ContentFile(
