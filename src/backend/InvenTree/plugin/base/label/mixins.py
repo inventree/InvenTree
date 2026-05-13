@@ -38,41 +38,51 @@ class LabelPrintingMixin:
 
     BLOCKING_PRINT = True
 
-    def render_to_pdf(self, label: LabelTemplate, instance, request, **kwargs):
+    def render_to_pdf(
+        self, label: LabelTemplate, instance, request, user=None, **kwargs
+    ):
         """Render this label to PDF format.
 
         Arguments:
             label: The LabelTemplate object to render against
             instance: The model instance to render
-            request: The HTTP request object which triggered this print job
+            request: The HTTP request object which triggered this print job (optional, may be None)
+            user: The user who triggered this print job (optional, may be None)
         """
         try:
-            return label.render(instance, request)
+            return label.render(instance, request=request, user=user)
         except Exception:
             log_error('render_to_pdf', plugin=self.slug)
             raise ValidationError(_('Error rendering label to PDF'))
 
-    def render_to_html(self, label: LabelTemplate, instance, request, **kwargs):
+    def render_to_html(
+        self, label: LabelTemplate, instance, request, user=None, **kwargs
+    ):
         """Render this label to HTML format.
 
         Arguments:
             label: The LabelTemplate object to render against
             instance: The model instance to render
-            request: The HTTP request object which triggered this print job
+            request: The HTTP request object which triggered this print job (optional, may be None)
+            user: The user who triggered this print job (optional, may be None)
         """
         try:
-            return label.render_as_string(instance, request)
+            return label.render_as_string(instance, request=request, user=user)
         except Exception:
             log_error('render_to_html', plugin=self.slug)
             raise ValidationError(_('Error rendering label to HTML'))
 
-    def render_to_png(self, label: LabelTemplate, instance, request=None, **kwargs):
+    def render_to_png(
+        self, label: LabelTemplate, instance, request=None, user=None, **kwargs
+    ):
         """Render this label to PNG format.
 
         Arguments:
             label: The LabelTemplate object to render against
             instance: The model instance to render
-            request: The HTTP request object which triggered this print job
+            request: The HTTP request object which triggered this print job (optional, may be None)
+            user: The user who triggered this print job (optional, may be None)
+
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)
             dpi: The DPI to use for the PNG rendering
@@ -85,7 +95,7 @@ class LabelPrintingMixin:
         pdf_data = kwargs.get('pdf_data')
 
         if not pdf_data:
-            pdf_data = self.render_to_pdf(label, instance, request, **kwargs)
+            pdf_data = self.render_to_pdf(label, instance, request, user=user, **kwargs)
 
         pdf2image_kwargs = {
             'dpi': kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300)),
@@ -106,7 +116,6 @@ class LabelPrintingMixin:
         output: DataOutput,
         items: list,
         request: Request,
-        user_id: int,
         **kwargs,
     ) -> None:
         """Print one or more labels with the provided template and items.
@@ -116,7 +125,6 @@ class LabelPrintingMixin:
             output: The DataOutput object used to store the results
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
-            user_id: The ID of the user to associate with the generated labels
 
         Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
@@ -132,7 +140,7 @@ class LabelPrintingMixin:
         """
         # Extract user information, in decreasing order of preference
         user = (
-            kwargs.get('user')
+            kwargs.pop('user', None)
             or getattr(request, 'user', None)
             or getattr(output, 'user', None)
         )
@@ -151,9 +159,9 @@ class LabelPrintingMixin:
         for item in items:
             context = label.get_context(item, request, user=user)
             filename = label.generate_filename(context)
-            pdf_data = self.render_to_pdf(label, item, request, **kwargs)
+            pdf_data = self.render_to_pdf(label, item, request, user=user, **kwargs)
             png_file = self.render_to_png(
-                label, item, request, pdf_data=pdf_data, **kwargs
+                label, item, request, pdf_data=pdf_data, user=user, **kwargs
             )
 
             print_args = {

@@ -819,7 +819,9 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             if hasattr(plugin, 'before_printing'):
                 plugin.before_printing()
 
-            plugin.print_labels(self, output, items, request, printing_options=options)
+            plugin.print_labels(
+                self, output, items, request, user=user, printing_options=options
+            )
 
             if hasattr(plugin, 'after_printing'):
                 plugin.after_printing()

@@ -335,9 +335,6 @@ class ReportTest(InvenTreeAPITestCase):
 
         item = StockItem.objects.first()
 
-        # Enable report debug mode - so we can read the output as HTML
-        set_global_setting('REPORT_DEBUG_MODE', True)
-
         test_strings = [
             f'Hello {self.user.username} - your user ID is {self.user.pk}.',
             f'Template name: {template.name}',
@@ -438,6 +435,67 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_custom_template(self):
+        """Test printing against a custom template file."""
+        template_string = """
+        Hello {{ user.username }} - your user ID is {{ user.pk }}.
+        Template name: {{ template.name }}
+        Barcode: {{ qr_data }}
+        Location ID: {{ location.pk }}
+        """
+
+        template_file = ContentFile(
+            template_string.encode('utf-8'), name='TestLabelTemplate.html'
+        )
+
+        # Create a new label template with the above string as the template
+        template = LabelTemplate.objects.create(
+            name='Test label template',
+            model_type='stocklocation',
+            template=template_file,
+            filename_pattern='unit_test_label.pdf',
+        )
+
+        location = StockItem.objects.exclude(location=None).first().location
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [location.pk]}
+
+        plugin = registry.get_plugin('inventreelabel')
+
+        test_strings = [
+            f'Hello {self.user.username} - your user ID is {self.user.pk}.',
+            f'Template name: {template.name}',
+            f'Location ID: {location.pk}',
+            f'INV-SL{location.pk}',
+        ]
+
+        # Test with "debug" both enabled and disabled
+        for debug in [True, False]:
+            plugin.set_setting('DEBUG', debug)
+
+            # Generate label via the API
+            data = self.post(url, data=post_data).data
+
+            self.assertEqual(data['user'], self.user.pk)
+            self.assertTrue(data['output'].endswith('.html' if debug else '.pdf'))
+
+            # Read the file contents back out, and validate
+            if debug:
+                # Read raw HTML file
+                output = default_storage.open(data['output'].replace('/media/', '', 1))
+                file_content = str(output.read(), 'utf-8')
+            else:
+                # Convert from PDF bytes to string for testing purposes
+                output_path = os.path.join(
+                    settings.MEDIA_ROOT, data['output'].replace('/media/', '', 1)
+                )
+                reader = PdfReader(output_path)
+                file_content = ''.join(page.extract_text() for page in reader.pages)
+
+            for ts in test_strings:
+                self.assertIn(ts, file_content)
 
     def test_filters(self):
         """Test that template filters are correctly validated."""
