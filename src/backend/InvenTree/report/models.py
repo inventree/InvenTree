@@ -247,34 +247,42 @@ class ReportTemplateBase(
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request=None, context=None, **kwargs) -> str:
+    def render_as_string(
+        self, instance, request=None, user=None, context=None, **kwargs
+    ) -> str:
         """Render the report to a HTML string.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
+            user: The user to associate with the generated report (if provided)
             context: Django template language contexts (optional)
 
         Returns:
             str: HTML string
         """
         if context is None:
-            context = self.get_context(instance, request, **kwargs)
+            context = self.get_context(instance, request, user=user, **kwargs)
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request=None, context=None, **kwargs) -> bytes:
+    def render(
+        self, instance, request=None, context=None, user=None, **kwargs
+    ) -> bytes:
         """Render the template to a PDF file.
 
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
-            context: Django template langaguage contexts (optional)
+            context: Django template language contexts (optional)
+            user: The user to associate with the generated report (if provided)
 
         Returns:
             bytes: PDF data
         """
-        html = self.render_as_string(instance, request, context, **kwargs)
+        html = self.render_as_string(
+            instance, request, user=user, context=context, **kwargs
+        )
         pdf = HTML(string=html).write_pdf(pdf_forms=True)
 
         return pdf
@@ -323,8 +331,13 @@ class ReportTemplateBase(
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
-    def base_context(self, request=None) -> BaseContextExtension:
-        """Return base context data (available to all templates)."""
+    def base_context(self, request=None, user=None, **kwargs) -> BaseContextExtension:
+        """Return base context data (available to all templates).
+
+        Arguments:
+            request: The request object (optional)
+            user: The user to associate with the generated report (if provided)
+        """
         return {
             'base_url': get_base_url(request=request),
             'date': InvenTree.helpers.current_date(),
@@ -333,18 +346,19 @@ class ReportTemplateBase(
             'template_description': self.description,
             'template_name': self.name,
             'template_revision': self.revision,
-            'user': request.user if request else None,
+            'user': user or getattr(request, 'user', None),
         }
 
-    def get_context(self, instance, request=None, **kwargs):
+    def get_context(self, instance, request=None, user=None, **kwargs):
         """Supply context data to the generic template for rendering.
 
         Arguments:
             instance: The model instance we are printing against
             request: The request object (optional)
+            user: The user to associate with the generated report (if provided)
         """
         # Provide base context information to all templates
-        base_context = self.base_context(request=request)
+        base_context = self.base_context(request=request, user=user, **kwargs)
 
         # Add in an context information provided by the model instance itself
         context = {**base_context, **instance.report_context()}
@@ -423,9 +437,15 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return report_context
 
-    def get_context(self, instance, request=None, **kwargs):
-        """Supply context data to the report template for rendering."""
-        base_context = super().get_context(instance, request)
+    def get_context(self, instance, request=None, user=None, **kwargs):
+        """Supply context data to the report template for rendering.
+
+        Arguments:
+            instance: The model instance we are printing against
+            request: The request object (optional)
+            user: The user to associate with the generated report (if provided)
+        """
+        base_context = super().get_context(instance, request, user=user, **kwargs)
         report_context: ReportContextExtension = self.get_report_context()
 
         context = {**base_context, **report_context}
@@ -465,12 +485,15 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             except Exception:
                 InvenTree.exceptions.log_error('report_callback', plugin=plugin.slug)
 
-    def print(self, items: list, request=None, output=None, **kwargs) -> DataOutput:
+    def print(
+        self, items: list, request=None, output=None, user=None, **kwargs
+    ) -> DataOutput:
         """Print reports for a list of items against this template.
 
         Arguments:
             items: A list of items to print reports for (model instance)
             output: The DataOutput object to use (if provided)
+            user: The user to associate with the generated report (if provided)
             request: The request object (optional)
 
         Returns:
@@ -489,6 +512,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         """
         logger.info("Printing %s reports against template '%s'", len(items), self.name)
 
+        # Extract user information from the provided context
+        user = user or getattr(request, 'user', None) or getattr(output, 'user', None)
+
         outputs = []
 
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
@@ -500,9 +526,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         if not output:
             output = DataOutput.objects.create(
                 total=len(items),
-                user=request.user
-                if request and request.user and request.user.is_authenticated
-                else None,
+                user=user,
                 progress=0,
                 complete=False,
                 output_type=DataOutput.DataOutputTypes.REPORT,
@@ -704,9 +728,16 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         }}
         """
 
-    def get_context(self, instance, request=None, **kwargs):
-        """Supply context data to the label template for rendering."""
-        base_context = super().get_context(instance, request, **kwargs)
+    def get_context(self, instance, request=None, user=None, **kwargs):
+        """Supply context data to the label template for rendering.
+
+        Arguments:
+            instance: The model instance we are printing against
+            request: The request object (optional)
+            user: The user to associate with the generated label (if provided)
+        """
+        base_context = super().get_context(instance, request, user=user, **kwargs)
+
         label_context: LabelContextExtension = {
             'width': self.width,
             'height': self.height,
@@ -737,6 +768,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         output=None,
         options=None,
         request=None,
+        user=None,
         **kwargs,
     ) -> DataOutput:
         """Print labels for a list of items against this template.
@@ -747,6 +779,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             output: The DataOutput object to use (if provided)
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
+            user: The user to associate with the generated labels (if provided)
 
         Returns:
             output: The DataOutput object representing the generated label(s)
@@ -758,11 +791,11 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             f"Printing {len(items)} labels against template '{self.name}' using plugin '{plugin.slug}'"
         )
 
+        user = user or getattr(request, 'user', None) or getattr(output, 'user', None)
+
         if not output:
             output = DataOutput.objects.create(
-                user=request.user
-                if request and request.user.is_authenticated
-                else None,
+                user=user,
                 total=len(items),
                 progress=0,
                 complete=False,
