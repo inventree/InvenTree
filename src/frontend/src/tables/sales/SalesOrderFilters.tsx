@@ -1,6 +1,5 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
-import { t } from '@lingui/core/macro';
 import {
   AssignedToMeFilter,
   CompletedAfterFilter,
@@ -9,6 +8,8 @@ import {
   CreatedBeforeFilter,
   CreatedByFilter,
   HasProjectCodeFilter,
+  HasStartDateFilter,
+  HasTargetDateFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -49,18 +50,8 @@ export default function SalesOrderFilters({
     TargetDateAfterFilter(),
     StartDateBeforeFilter(),
     StartDateAfterFilter(),
-    {
-      name: 'has_target_date',
-      type: 'boolean',
-      label: t`Has Target Date`,
-      description: t`Show orders with a target date`
-    },
-    {
-      name: 'has_start_date',
-      type: 'boolean',
-      label: t`Has Start Date`,
-      description: t`Show orders with a start date`
-    },
+    HasTargetDateFilter(),
+    HasStartDateFilter(),
     CompletedBeforeFilter(),
     CompletedAfterFilter(),
     UpdatedBeforeFilter(),

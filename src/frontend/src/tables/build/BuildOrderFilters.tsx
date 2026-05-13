@@ -8,6 +8,8 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
+  HasStartDateFilter,
+  HasTargetDateFilter,
   IncludeVariantsFilter,
   IssuedByFilter,
   MaxDateFilter,
@@ -59,18 +61,8 @@ export default function BuildOrderFilters({
     TargetDateAfterFilter(),
     StartDateBeforeFilter(),
     StartDateAfterFilter(),
-    {
-      name: 'has_target_date',
-      type: 'boolean',
-      label: t`Has Target Date`,
-      description: t`Show orders with a target date`
-    },
-    {
-      name: 'has_start_date',
-      type: 'boolean',
-      label: t`Has Start Date`,
-      description: t`Show orders with a start date`
-    }
+    HasTargetDateFilter(),
+    HasStartDateFilter()
   ];
 
   // Date filters may be optionally included or excluded from the filter set

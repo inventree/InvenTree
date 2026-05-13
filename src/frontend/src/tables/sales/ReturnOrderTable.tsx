@@ -36,6 +36,8 @@ import {
   CreatedBeforeFilter,
   CreatedByFilter,
   HasProjectCodeFilter,
+  HasStartDateFilter,
+  HasTargetDateFilter,
   IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
@@ -88,18 +90,8 @@ export function ReturnOrderTable({
       TargetDateAfterFilter(),
       StartDateBeforeFilter(),
       StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
+      HasTargetDateFilter(),
+      HasStartDateFilter(),
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       UpdatedBeforeFilter(),
