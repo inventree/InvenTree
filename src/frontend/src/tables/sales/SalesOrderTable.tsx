@@ -51,7 +51,7 @@ export function SalesOrderTable({
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return SalesOrderFilters({ includeDateFilters: true });
+    return SalesOrderFilters({ partId: partId, includeDateFilters: true });
   }, [partId]);
 
   const salesOrderFields = useSalesOrderFields({});

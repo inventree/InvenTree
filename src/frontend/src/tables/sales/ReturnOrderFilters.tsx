@@ -26,7 +26,7 @@ import {
   UpdatedBeforeFilter
 } from '../Filter';
 
-export default function SalesOrderFilters({
+export default function ReturnOrderFilters({
   partId,
   includeDateFilters = true
 }: {
@@ -34,7 +34,7 @@ export default function SalesOrderFilters({
   includeDateFilters?: boolean;
 }): TableFilter[] {
   const filters: TableFilter[] = [
-    OrderStatusFilter({ model: ModelType.salesorder }),
+    OrderStatusFilter({ model: ModelType.returnorder }),
     OutstandingFilter(),
     OverdueFilter(),
     AssignedToMeFilter(),

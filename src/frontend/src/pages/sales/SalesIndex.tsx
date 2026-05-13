@@ -45,6 +45,21 @@ function SalesOrderCalendar() {
   );
 }
 
+const ReturnOrderCalendar = () => {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.returnorder}
+      role={UserRoles.return_order}
+      params={{ outstanding: true }}
+      filters={calendarFilters}
+    />
+  );
+};
+
 export default function SalesIndex() {
   const user = useUserState();
 
@@ -83,13 +98,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <SalesOrderCalendar />
           },
           {
             value: 'parametric',
@@ -129,13 +138,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <ReturnOrderCalendar />
           },
           {
             value: 'parametric',
