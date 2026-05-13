@@ -28,30 +28,8 @@ import {
   TargetDateColumn,
   UpdatedAtColumn
 } from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  CompletedAfterFilter,
-  CompletedBeforeFilter,
-  CreatedAfterFilter,
-  CreatedBeforeFilter,
-  CreatedByFilter,
-  HasProjectCodeFilter,
-  IncludeVariantsFilter,
-  MaxDateFilter,
-  MinDateFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter,
-  StartDateAfterFilter,
-  StartDateBeforeFilter,
-  TargetDateAfterFilter,
-  TargetDateBeforeFilter,
-  UpdatedAfterFilter,
-  UpdatedBeforeFilter
-} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import ReturnOrderFilters from './ReturnOrderFilters';
 
 export function ReturnOrderTable({
   partId,
@@ -75,46 +53,7 @@ export function ReturnOrderTable({
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    const filters: TableFilter[] = [
-      OrderStatusFilter({ model: ModelType.returnorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      MinDateFilter(),
-      MaxDateFilter(),
-      CreatedBeforeFilter(),
-      CreatedAfterFilter(),
-      TargetDateBeforeFilter(),
-      TargetDateAfterFilter(),
-      StartDateBeforeFilter(),
-      StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
-      CompletedBeforeFilter(),
-      CompletedAfterFilter(),
-      UpdatedBeforeFilter(),
-      UpdatedAfterFilter(),
-      HasProjectCodeFilter(),
-      ProjectCodeFilter(),
-      ResponsibleFilter(),
-      CreatedByFilter()
-    ];
-
-    if (!!partId) {
-      filters.push(IncludeVariantsFilter());
-    }
-
-    return filters;
+    return ReturnOrderFilters({ partId: partId, includeDateFilters: true });
   }, [partId]);
 
   const tableColumns = useMemo(() => {

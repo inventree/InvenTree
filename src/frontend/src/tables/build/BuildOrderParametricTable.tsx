@@ -3,19 +3,22 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import {
   DescriptionColumn,
   PartColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
-import { OrderStatusFilter, OutstandingFilter } from '../Filter';
 import ParametricDataTable from '../general/ParametricDataTable';
+import BuildOrderFilters from './BuildOrderFilters';
 
 export default function BuildOrderParametricTable({
   queryParams
 }: {
   queryParams?: Record<string, any>;
 }): ReactNode {
+  const globalSettings = useGlobalSettingsState();
+
   const customColumns: TableColumn[] = useMemo(() => {
     return [
       ReferenceColumn({
@@ -32,8 +35,11 @@ export default function BuildOrderParametricTable({
   }, []);
 
   const customFilters: TableFilter[] = useMemo(() => {
-    return [OutstandingFilter(), OrderStatusFilter({ model: ModelType.build })];
-  }, []);
+    return BuildOrderFilters({
+      includeDateFilters: true,
+      externalBuilds: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+    });
+  }, [globalSettings]);
 
   return (
     <ParametricDataTable

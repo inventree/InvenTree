@@ -250,6 +250,24 @@ export function StartDateAfterFilter(): TableFilter {
   };
 }
 
+export function HasStartDateFilter(): TableFilter {
+  return {
+    name: 'has_start_date',
+    type: 'boolean',
+    label: t`Has Start Date`,
+    description: t`Show items with a start date`
+  };
+}
+
+export function HasTargetDateFilter(): TableFilter {
+  return {
+    name: 'has_target_date',
+    type: 'boolean',
+    label: t`Has Target Date`,
+    description: t`Show items with a target date`
+  };
+}
+
 export function TargetDateBeforeFilter(): TableFilter {
   return {
     name: 'target_date_before',
