@@ -62,7 +62,6 @@ export default function UserSettings() {
               'SHOW_SPOTLIGHT',
               'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',
-              'WEEK_STARTS_ON',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',

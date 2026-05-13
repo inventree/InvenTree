@@ -37,7 +37,7 @@ import {
 } from '../../contexts/LanguageContext';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
-import { useUserSettingsState } from '../../states/SettingsStates';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
@@ -58,7 +58,7 @@ export default function Calendar({
   state,
   ...calendarProps
 }: Readonly<InvenTreeCalendarProps>) {
-  const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
@@ -210,7 +210,7 @@ export default function Calendar({
             locales={allLocales}
             locale={calendarLocale}
             firstDay={Number.parseInt(
-              userSettings.getSetting('WEEK_STARTS_ON') ?? '1',
+              globalSettings.getSetting('WEEK_STARTS_ON') ?? '1',
               10
             )}
             headerToolbar={false}

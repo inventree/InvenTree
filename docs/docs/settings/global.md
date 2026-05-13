@@ -32,11 +32,22 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
-{{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
+{{ globalsetting("WEEK_STARTS_ON") }}
+
+Configuration of image download settings:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
+
+Configuration of various scheduled tasks:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
 {{ globalsetting("INVENTREE_BACKUP_ENABLE") }}
 {{ globalsetting("INVENTREE_BACKUP_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
