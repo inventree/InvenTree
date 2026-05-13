@@ -290,19 +290,27 @@ export default function SystemSettings() {
         label: t`Manufacturing`,
         icon: <IconBuildingFactory2 />,
         content: (
-          <GlobalSettingList
-            heading={t`Build Orders`}
-            keys={[
-              'BUILDORDER_REFERENCE_PATTERN',
-              'BUILDORDER_EXTERNAL_BUILDS',
-              'BUILDORDER_REQUIRE_RESPONSIBLE',
-              'BUILDORDER_REQUIRE_ACTIVE_PART',
-              'BUILDORDER_REQUIRE_LOCKED_PART',
-              'BUILDORDER_REQUIRE_VALID_BOM',
-              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
-              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
-            ]}
-          />
+          <>
+            <GlobalSettingList
+              heading={t`Build Orders`}
+              keys={[
+                'BUILDORDER_REFERENCE_PATTERN',
+                'BUILDORDER_REQUIRE_RESPONSIBLE',
+                'BUILDORDER_REQUIRE_ACTIVE_PART',
+                'BUILDORDER_REQUIRE_LOCKED_PART',
+                'BUILDORDER_REQUIRE_VALID_BOM',
+                'BUILDORDER_REQUIRE_CLOSED_CHILDS',
+                'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`External Build Orders`}
+              keys={[
+                'BUILDORDER_EXTERNAL_BUILDS',
+                'BUILDORDER_EXTERNAL_REQUIRED'
+              ]}
+            />
+          </>
         )
       },
       {

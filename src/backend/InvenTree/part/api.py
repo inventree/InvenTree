@@ -599,7 +599,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
-    role_required = 'bom.change'
+    role_required = 'bom'
 
     @extend_schema(
         responses={
@@ -610,7 +610,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance.
 
-        As this task if offloaded to the background worker,
+        As this task is offloaded to the background worker,
         we return information about the background task which is performing the validation.
         """
         part = self.get_object()
