@@ -97,6 +97,7 @@ function partTableColumns(): TableColumn[] {
           (record?.allocated_to_sales_orders ?? 0);
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
+        const max_stock = record?.maximum_stock ?? 0;
 
         let text = String(formatDecimal(stock));
 
@@ -110,6 +111,14 @@ function partTableColumns(): TableColumn[] {
           );
 
           color = 'orange';
+        }
+
+        if (max_stock > 0 && stock > max_stock) {
+          extra.push(
+            <Text key='max-stock' c='teal'>
+              {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
+            </Text>
+          );
         }
 
         if (record.ordering > 0) {
@@ -271,6 +280,12 @@ function partTableFilters(): TableFilter[] {
       name: 'low_stock',
       label: t`Low Stock`,
       description: t`Filter by parts which have low stock`,
+      type: 'boolean'
+    },
+    {
+      name: 'high_stock',
+      label: t`High Stock`,
+      description: t`Filter by parts which have high stock`,
       type: 'boolean'
     },
     {

@@ -8,10 +8,13 @@ Adds additional functions in the plugin context related to form rendering and AP
 - `useInstance`
 - `renderRemoteInstance`
 - `EditApiForm`
+- `RenderInlineModel`
+- `Thumbnail`
 
 Exposes sub-components related to DetailDrawer rendering:
 - `DetailDrawerComponent`
 - `useLocalLibState`
+
 
 ### 0.11.3 - April 2026
 

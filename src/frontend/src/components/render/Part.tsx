@@ -35,6 +35,10 @@ export function RenderPart(
   } else if (stock != null) {
     badgeText = `${t`Stock`}: ${formatDecimal(stock)}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
+
+    if (instance.maximum_stock > 0 && stock > instance.maximum_stock) {
+      badgeColor = 'teal';
+    }
   }
 
   const extra: ReactNode[] = [];

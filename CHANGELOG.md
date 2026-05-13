@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#11914](https://github.com/inventree/InvenTree/pull/11914) adds a "maximum_stock" field to the Part model, allowing users to specify a maximum preferred stock level for each part. This is used in conjunction with the existing "minimum_stock" field to allow users to define a preferred stock range for each part. The "high_stock" filter has also been added to the Part API endpoint, allowing users to filter parts which are above their maximum stock level.
 - [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.
 - [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
 - [#11861](https://github.com/inventree/InvenTree/pull/11861) adds support for bulk-replacing a component in multiple BOMs simultaneously

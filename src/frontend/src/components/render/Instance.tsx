@@ -15,14 +15,15 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
   ModelRendererDict,
   RemoteInstanceProps,
+  RenderInlineModelProps,
   RenderInstanceProps
 } from '@lib/types/Rendering';
+
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
-import { shortenString } from '@lib/functions/String';
+import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
 import { useApi } from '../../contexts/ApiContext';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
@@ -178,20 +179,8 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: Readonly<{
-  primary: ReactNode;
-  secondary?: ReactNode;
-  showSecondary?: boolean;
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-  image?: string;
-  labels?: string[];
-  url?: string;
-  navigate?: any;
-  tooltip?: string;
-}>): ReactNode {
+}: Readonly<RenderInlineModelProps>): ReactNode {
   // TODO: Handle labels
-
   const onClick = useCallback(
     (event: any) => {
       if (url && navigate) {
