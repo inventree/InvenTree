@@ -1978,7 +1978,7 @@ class PurchaseOrderLineItem(OrderLineItem):
                     })
 
         # Extra checks for external builds
-        if part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
+        if part and part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
             if not self.build_order and get_global_setting(
                 'BUILDORDER_EXTERNAL_REQUIRED'
             ):

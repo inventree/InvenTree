@@ -932,7 +932,10 @@ class ExternalBuildTest(InvenTreeAPITestCase):
     def test_validation(self):
         """Test validation of external build logic."""
         part = Part.objects.create(
-            name='Test part', description='A test part', purchaseable=False
+            name='Test part',
+            description='A test part',
+            assembly=True,
+            purchaseable=False,
         )
 
         # Create a build order
@@ -948,6 +951,47 @@ class ExternalBuildTest(InvenTreeAPITestCase):
             'Build orders can only be externally fulfilled for purchaseable parts',
             str(err.exception.messages),
         )
+
+    def test_build_requirement(self):
+        """Test the global 'BUILDORDER_EXTERNAL_REQUIRED' setting."""
+        # Create required test data
+        part = Part.objects.create(
+            name='Test part',
+            description='A test part',
+            assembly=True,
+            purchaseable=True,
+        )
+        supplier = company.models.Company.objects.create(
+            name='Test supplier', active=True, is_supplier=True
+        )
+        supplier_part = company.models.SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='TEST-123'
+        )
+
+        po = PurchaseOrder.objects.create(supplier=supplier, reference='PO-9999')
+        po_line = PurchaseOrderLineItem.objects.create(
+            order=po, part=supplier_part, quantity=10
+        )
+
+        set_global_setting('BUILDORDER_EXTERNAL_REQUIRED', False)
+        po_line.clean()  # Should not raise an error
+
+        set_global_setting('BUILDORDER_EXTERNAL_BUILDS', True)
+        set_global_setting('BUILDORDER_EXTERNAL_REQUIRED', True)
+
+        # Expect failure, there is no linked build order
+        with self.assertRaises(ValidationError):
+            po_line.clean()
+
+        # Create and link a build order
+        build = Build.objects.create(
+            part=part, title='Test build order', quantity=10, external=True
+        )
+        po_line.build_order = build
+        po_line.save()
+
+        # Clean step now passes
+        po_line.clean()
 
     def test_logic(self):
         """Test external build logic."""
