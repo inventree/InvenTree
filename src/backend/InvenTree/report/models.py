@@ -255,7 +255,7 @@ class ReportTemplateBase(
         Arguments:
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
-            user: The user to associate with the generated report (if provided)
+            user: The user to associate with the generated report
             context: Django template language contexts (optional)
 
         Returns:
@@ -275,7 +275,7 @@ class ReportTemplateBase(
             instance: The model instance to render against
             request: A HTTPRequest object (optional)
             context: Django template language contexts (optional)
-            user: The user to associate with the generated report (if provided)
+            user: The user to associate with the generated report
 
         Returns:
             bytes: PDF data
@@ -336,7 +336,7 @@ class ReportTemplateBase(
 
         Arguments:
             request: The request object (optional)
-            user: The user to associate with the generated report (if provided)
+            user: The user to associate with the generated report
         """
         return {
             'base_url': get_base_url(request=request),
@@ -355,7 +355,7 @@ class ReportTemplateBase(
         Arguments:
             instance: The model instance we are printing against
             request: The request object (optional)
-            user: The user to associate with the generated report (if provided)
+            user: The user to associate with the generated report
         """
         # Provide base context information to all templates
         base_context = self.base_context(request=request, user=user, **kwargs)
@@ -443,7 +443,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         Arguments:
             instance: The model instance we are printing against
             request: The request object (optional)
-            user: The user to associate with the generated report (if provided)
+            user: The user to associate with the generated report
         """
         base_context = super().get_context(instance, request, user=user, **kwargs)
         report_context: ReportContextExtension = self.get_report_context()
@@ -492,8 +492,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         Arguments:
             items: A list of items to print reports for (model instance)
-            output: The DataOutput object to use (if provided)
-            user: The user to associate with the generated report (if provided)
+            output: The DataOutput object to use
+            user: The user to associate with the generated report
             request: The request object (optional)
 
         Returns:
@@ -734,7 +734,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         Arguments:
             instance: The model instance we are printing against
             request: The request object (optional)
-            user: The user to associate with the generated label (if provided)
+            user: The user to associate with the generated label
         """
         base_context = super().get_context(instance, request, user=user, **kwargs)
 
@@ -776,10 +776,10 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         Arguments:
             items: A list of items to print labels for (model instance)
             plugin: The plugin to use for label rendering
-            output: The DataOutput object to use (if provided)
+            output: The DataOutput object to use
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
-            user: The user to associate with the generated labels (if provided)
+            user: The user to associate with the generated labels
 
         Returns:
             output: The DataOutput object representing the generated label(s)

@@ -20,8 +20,8 @@ def print_reports(
     Arguments:
         template_id: The ID of the ReportTemplate to use
         item_ids: List of item IDs to generate the report against
-        output_id: The ID of the DataOutput to use (if provided)
-        user_id: The ID of the user to associate with the generated report (if provided)
+        output_id: The ID of the DataOutput to use
+        user_id: The ID of the user to associate with the generated report
 
     This function is intended to be called by the background worker,
     and will continuously update the status of the DataOutput object.
@@ -72,9 +72,9 @@ def print_labels(
     Arguments:
         template_id: The ID of the LabelTemplate to use
         item_ids: List of item IDs to generate the labels against
-        output_id: The ID of the DataOutput to use (if provided)
-        user_id: The ID of the user to associate with the generated labels (if provided)
-        plugin_slug: The ID of the LabelPlugin to use (if provided)
+        output_id: The ID of the DataOutput to use
+        user_id: The ID of the user to associate with the generated labels
+        plugin_slug: The ID of the LabelPlugin to use
 
     This function is intended to be called by the background worker,
     and will continuously update the status of the DataOutput object.

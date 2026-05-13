@@ -106,6 +106,7 @@ class LabelPrintingMixin:
         output: DataOutput,
         items: list,
         request: Request,
+        user_id: int,
         **kwargs,
     ) -> None:
         """Print one or more labels with the provided template and items.
@@ -115,6 +116,7 @@ class LabelPrintingMixin:
             output: The DataOutput object used to store the results
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
+            user_id: The ID of the user to associate with the generated labels
 
         Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
@@ -128,10 +130,12 @@ class LabelPrintingMixin:
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular plugin.
         """
-        try:
-            user = request.user
-        except AttributeError:
-            user = None
+        # Extract user information, in decreasing order of preference
+        user = (
+            kwargs.get('user')
+            or getattr(request, 'user', None)
+            or getattr(output, 'user', None)
+        )
 
         # Initial state for the output print job
         output.progress = 0
@@ -145,7 +149,7 @@ class LabelPrintingMixin:
 
         # Generate a label output for each provided item
         for item in items:
-            context = label.get_context(item, request)
+            context = label.get_context(item, request, user=user)
             filename = label.generate_filename(context)
             pdf_data = self.render_to_pdf(label, item, request, **kwargs)
             png_file = self.render_to_png(
