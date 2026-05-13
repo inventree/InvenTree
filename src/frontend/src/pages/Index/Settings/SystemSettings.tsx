@@ -307,8 +307,7 @@ export default function SystemSettings() {
               heading={t`External Build Orders`}
               keys={[
                 'BUILDORDER_EXTERNAL_BUILDS',
-                'BUILDORDER_EXTERNAL_REQUIRED',
-                'BUILDORDER_EXTERNAL_VALIDATE_BOM'
+                'BUILDORDER_EXTERNAL_REQUIRED'
               ]}
             />
           </>

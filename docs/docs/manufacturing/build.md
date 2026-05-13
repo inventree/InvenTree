@@ -312,4 +312,3 @@ The following [global settings](../settings/global.md) are available for adjusti
 {{ globalsetting("PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS") }}
 {{ globalsetting("BUILDORDER_EXTERNAL_BUILDS") }}
 {{ globalsetting("BUILDORDER_EXTERNAL_REQUIRED") }}
-{{ globalsetting("BUILDORDER_EXTERNAL_VALIDATE_BOM") }}

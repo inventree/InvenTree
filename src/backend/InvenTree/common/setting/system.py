@@ -840,14 +840,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'BUILDORDER_EXTERNAL_VALIDATE_BOM': {
-        'name': _('Validate External Build BOM'),
-        'description': _(
-            'Require a validated BOM when ordering assembled parts from an external supplier'
-        ),
-        'default': False,
-        'validator': bool,
-    },
     'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
         'name': _('Block Until Tests Pass'),
         'description': _(

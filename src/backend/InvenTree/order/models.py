@@ -1988,15 +1988,6 @@ class PurchaseOrderLineItem(OrderLineItem):
                     )
                 })
 
-        if not part.bom_validated and get_global_setting(
-            'BUILDORDER_EXTERNAL_VALIDATE_BOM'
-        ):
-            raise ValidationError({
-                'part': _(
-                    'The assembly BOM must be validated before it can be purchased'
-                )
-            })
-
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
         return '{n} x {part} - {po}'.format(
