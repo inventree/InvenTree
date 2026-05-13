@@ -244,7 +244,6 @@ class ReportTemplateBase(
     def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
-
         return template_string.render(Context(context))
 
     def render_as_string(
@@ -540,7 +539,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         try:
             if self.merge:
-                base_context = super().base_context(request)
+                base_context = super().base_context(request=request, user=user)
                 report_context = self.get_report_context()
                 item_contexts = []
                 for instance in items:
@@ -561,9 +560,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
                 try:
                     if debug_mode:
-                        report = self.render_as_string(instance, request, contexts)
+                        report = self.render_as_string(
+                            instance, request, user=user, context=contexts
+                        )
                     else:
-                        report = self.render(instance, request, contexts)
+                        report = self.render(
+                            instance, request, user=user, context=contexts
+                        )
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
                     msg = f'Template file {t_name} does not exist'
@@ -592,7 +595,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 output.save()
             else:
                 for instance in items:
-                    context = self.get_context(instance, request)
+                    context = self.get_context(instance, request, user=user)
 
                     if report_name is None:
                         report_name = self.generate_filename(context)
@@ -600,9 +603,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     # Render the report output
                     try:
                         if debug_mode:
-                            report = self.render_as_string(instance, request, None)
+                            report = self.render_as_string(
+                                instance, request, user=user, context=context
+                            )
                         else:
-                            report = self.render(instance, request, None)
+                            report = self.render(
+                                instance, request, user=user, context=None
+                            )
                     except TemplateDoesNotExist as e:
                         t_name = str(e) or self.template
                         msg = f'Template file {t_name} does not exist'

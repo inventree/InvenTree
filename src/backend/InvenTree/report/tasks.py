@@ -55,7 +55,7 @@ def print_reports(
     # Ensure they are sorted by the order of the provided item IDs
     items = sorted(items, key=lambda item: item_ids.index(item.pk))
 
-    template.print(items, output=output)
+    template.print(items, output=output, user=user)
 
 
 @tracer.start_as_current_span('print_labels')
