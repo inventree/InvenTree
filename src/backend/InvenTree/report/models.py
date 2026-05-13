@@ -264,11 +264,7 @@ class ReportTemplateBase(
         return render_to_string(self.template_name, context)
 
     def render(
-        self,
-        instance: models.Model,
-        context: Optional[dict] = None,
-        user: Optional[AbstractUser] = None,
-        **kwargs,
+        self, instance: models.Model, context: Optional[dict] = None, **kwargs
     ) -> bytes:
         """Render the template to a PDF file.
 
@@ -280,7 +276,7 @@ class ReportTemplateBase(
         Returns:
             bytes: PDF data
         """
-        html = self.render_as_string(instance, user=user, context=context, **kwargs)
+        html = self.render_as_string(instance, context=context, **kwargs)
         pdf = HTML(string=html).write_pdf(pdf_forms=True)
 
         return pdf
