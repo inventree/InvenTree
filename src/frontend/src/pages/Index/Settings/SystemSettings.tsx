@@ -44,33 +44,47 @@ export default function SystemSettings() {
         label: t`Server`,
         icon: <IconServerCog />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'INVENTREE_BASE_URL',
-              'INVENTREE_COMPANY_NAME',
-              'INVENTREE_INSTANCE',
-              'INVENTREE_INSTANCE_TITLE',
-              'INVENTREE_INSTANCE_ID',
-              'INVENTREE_ANNOUNCE_ID',
-              'INVENTREE_SHOW_SUPERUSER_BANNER',
-              'INVENTREE_SHOW_ADMIN_BANNER',
-              'INVENTREE_RESTRICT_ABOUT',
-              'DISPLAY_FULL_NAMES',
-              'DISPLAY_PROFILE_INFO',
-              'INVENTREE_UPDATE_CHECK_INTERVAL',
-              'INVENTREE_DOWNLOAD_FROM_URL',
-              'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
-              'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
-              'INVENTREE_STRICT_URLS',
-              'INVENTREE_BACKUP_ENABLE',
-              'INVENTREE_BACKUP_DAYS',
-              'INVENTREE_DELETE_TASKS_DAYS',
-              'INVENTREE_DELETE_ERRORS_DAYS',
-              'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
-              'INVENTREE_DELETE_EMAIL_DAYS',
-              'INVENTREE_PROTECT_EMAIL_LOG'
-            ]}
-          />
+          <>
+            <GlobalSettingList
+              heading={t`Server Settings`}
+              keys={[
+                'INVENTREE_BASE_URL',
+                'INVENTREE_COMPANY_NAME',
+                'INVENTREE_INSTANCE',
+                'INVENTREE_INSTANCE_TITLE',
+                'INVENTREE_INSTANCE_ID',
+                'INVENTREE_ANNOUNCE_ID',
+                'INVENTREE_SHOW_SUPERUSER_BANNER',
+                'INVENTREE_SHOW_ADMIN_BANNER',
+                'INVENTREE_RESTRICT_ABOUT',
+                'DISPLAY_FULL_NAMES',
+                'DISPLAY_PROFILE_INFO',
+                'WEEK_STARTS_ON'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Image Download Settings`}
+              keys={[
+                'INVENTREE_DOWNLOAD_FROM_URL',
+                'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
+                'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
+                'INVENTREE_STRICT_URLS'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Scheduled Tasks`}
+              keys={[
+                'INVENTREE_UPDATE_CHECK_INTERVAL',
+                'INVENTREE_BACKUP_ENABLE',
+                'INVENTREE_BACKUP_DAYS',
+                'INVENTREE_DELETE_TASKS_DAYS',
+                'INVENTREE_DELETE_ERRORS_DAYS',
+                'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
+                'INVENTREE_DELETE_EMAIL_DAYS',
+                'INVENTREE_PROTECT_EMAIL_LOG'
+              ]}
+            />
+          </>
         )
       },
       {
