@@ -306,7 +306,8 @@ class ReportTest(InvenTreeAPITestCase):
     def test_print_custom_template(self):
         """Create a new template, print it, and check the output."""
         template_string = """
-        Hello {{ user.username }} - your user ID is {{ user.pk }}.
+        Hello {{ user.username }}
+        Your user ID is {{ user.pk }}.
         Template name: {{ template.name }}
         {% if merge %}
         REPORT OUTPUT: MERGE = ENABLED
@@ -327,7 +328,7 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Create a new report template with the above string as the template
         template = ReportTemplate.objects.create(
-            name='Test template for print output',
+            name='Test report template',
             model_type='stockitem',
             template=template_file,
             filename_pattern='unit_test_report.pdf',
@@ -336,7 +337,8 @@ class ReportTest(InvenTreeAPITestCase):
         item = StockItem.objects.first()
 
         test_strings = [
-            f'Hello {self.user.username} - your user ID is {self.user.pk}.',
+            f'Hello {self.user.username}',
+            f'Your user ID is {self.user.pk}.',
             f'Template name: {template.name}',
             f'Part Name: {item.part.name}',
             f'Stock ID: {item.pk}',
@@ -375,6 +377,9 @@ class ReportTest(InvenTreeAPITestCase):
                     )
                     reader = PdfReader(output_path)
                     file_content = ''.join(page.extract_text() for page in reader.pages)
+
+                # Replace any newline characters for testing purposes
+                file_content = file_content.replace('\n', ' ')
 
                 for ts in test_strings:
                     self.assertIn(ts, file_content)
@@ -494,6 +499,9 @@ class LabelTest(InvenTreeAPITestCase):
                 )
                 reader = PdfReader(output_path)
                 file_content = ''.join(page.extract_text() for page in reader.pages)
+
+            # Replace any newline for testing purposes
+            file_content = file_content.replace('\n', ' ')
 
             for ts in test_strings:
                 self.assertIn(ts, file_content)
