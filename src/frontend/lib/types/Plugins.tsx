@@ -6,6 +6,7 @@ import type { JSX } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
+import type { setRenderProps } from '../states/types';
 import type {
   ApiFormModalProps,
   ApiFormProps,
@@ -119,6 +120,9 @@ export type InvenTreePluginContext = {
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
   forms: InvenTreeFormsContext;
+  stateFnc: {
+    setRenderer: setRenderProps;
+  };
   tables: InvenTreeTablesContext<any>;
   importer: ImporterDrawerContext;
   model?: ModelType | string;

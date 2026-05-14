@@ -16,6 +16,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type {
+  InstanceRenderInterface,
   ModelRendererDict,
   RemoteInstanceProps,
   RenderInlineModelProps,
@@ -25,6 +26,7 @@ import type {
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
 import { useApi } from '../../contexts/ApiContext';
+import { usePluginState } from '../../states/PluginState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -112,18 +114,23 @@ export const RendererLookup: ModelRendererDict = {
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  if (props.model === undefined) {
-    return <UnknownRenderer model={props.model} />;
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
+    RenderComponent =
+      RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
 
-  const model_name = props.model.toString().toLowerCase() as ModelType;
-
-  const RenderComponent = RendererLookup[model_name];
-
+  // provider component
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }
-
   return <RenderComponent {...props} />;
 }
 
