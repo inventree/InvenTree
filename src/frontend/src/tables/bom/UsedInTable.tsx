@@ -230,7 +230,8 @@ export function UsedInTable({
           modelType: ModelType.part,
           modelField: 'part',
           tableActions: tableActions,
-          tableFilters: tableFilters
+          tableFilters: tableFilters,
+          isRecordSelectable: (record: any) => record.sub_part === partId
         }}
       />
     </>

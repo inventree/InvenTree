@@ -173,6 +173,7 @@ export type RowViewProps = RowAction & RowModelProps;
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
+ * @param isRecordSelectable : (record: any, index: number) => boolean - Callback function to determine if a row is selectable
  * @param detailAction: boolean - Enable detail action for each row (default = true)
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
@@ -203,6 +204,7 @@ export type InvenTreeTableProps<T = any> = {
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
+  isRecordSelectable?: (record: T, index: number) => boolean;
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];

@@ -860,6 +860,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
+              isRecordSelectable={tableProps.isRecordSelectable}
               rowExpansion={rowExpansion}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
