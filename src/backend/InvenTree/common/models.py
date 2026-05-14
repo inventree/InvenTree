@@ -247,11 +247,14 @@ class BaseInvenTreeSetting(models.Model):
 
             if len(missing_keys) > 0:
                 logger.info('Building %s default values for %s', len(missing_keys), cls)
-                cls.objects.bulk_create([
-                    cls(key=key, value=cls.get_setting_default(key), **kwargs)
-                    for key in missing_keys
-                    if not key.startswith('_')
-                ])
+                cls.objects.bulk_create(
+                    [
+                        cls(key=key, value=cls.get_setting_default(key), **kwargs)
+                        for key in missing_keys
+                        if not key.startswith('_')
+                    ],
+                    batch_size=250,
+                )
         except Exception as exc:
             logger.exception(
                 'Failed to build default values for %s (%s)', cls, type(exc)
@@ -2320,10 +2323,38 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
         """Return the API URL associated with the SelectionList model."""
         return reverse('api-selectionlist-list')
 
-    def get_choices(self):
-        """Return the choices for the selection list."""
-        choices = self.entries.filter(active=True)
+    def get_choices(self, active: Optional[bool] = True):
+        """Return the choices for the selection list.
+
+        Arguments:
+            active: If specified, filter choices by active status
+
+        Returns:
+            List of choice values for this selection list
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
         return [c.value for c in choices]
+
+    def has_choice(self, value: str, active: Optional[bool] = None):
+        """Check if the selection list has a particular choice.
+
+        Arguments:
+            value: The value to check for
+            active: If specified, filter choices by active status
+
+        Returns:
+            True if the choice exists in the selection list, False otherwise
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
+        return choices.filter(value=value).exists()
 
 
 class SelectionListEntry(models.Model):

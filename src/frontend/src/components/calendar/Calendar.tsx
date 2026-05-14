@@ -5,7 +5,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { Boundary } from '@lib/components/Boundary';
 import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
@@ -35,9 +37,8 @@ import {
 } from '../../contexts/LanguageContext';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
@@ -57,6 +58,8 @@ export default function Calendar({
   state,
   ...calendarProps
 }: Readonly<InvenTreeCalendarProps>) {
+  const globalSettings = useGlobalSettingsState();
+
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
@@ -206,6 +209,10 @@ export default function Calendar({
             initialView='dayGridMonth'
             locales={allLocales}
             locale={calendarLocale}
+            firstDay={Number.parseInt(
+              globalSettings.getSetting('WEEK_STARTS_ON') ?? '1',
+              10
+            )}
             headerToolbar={false}
             footerToolbar={false}
             {...calendarProps}

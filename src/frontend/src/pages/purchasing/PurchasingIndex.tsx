@@ -12,8 +12,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -25,10 +26,26 @@ import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import ManufacturerPartParametricTable from '../../tables/purchasing/ManufacturerPartParametricTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
+import PurchaseOrderFilters from '../../tables/purchasing/PurchaseOrderFilters';
 import PurchaseOrderParametricTable from '../../tables/purchasing/PurchaseOrderParametricTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPartParametricTable from '../../tables/purchasing/SupplierPartParametricTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+
+function PurchaseOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return PurchaseOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.purchaseorder}
+      role={UserRoles.purchase_order}
+      params={{ outstanding: true }}
+      filters={calendarFilters}
+    />
+  );
+}
 
 export default function PurchasingIndex() {
   const user = useUserState();
@@ -79,13 +96,7 @@ export default function PurchasingIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.purchaseorder}
-                role={UserRoles.purchase_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <PurchaseOrderCalendar />
           },
           {
             value: 'parametric',
@@ -215,8 +226,8 @@ export default function PurchasingIndex() {
       <PanelGroup
         pageKey='purchasing-index'
         panels={panels}
-        model={'purchasing'}
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.purchasing}
       />
     </Stack>
   );

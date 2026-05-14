@@ -537,6 +537,19 @@ class Order(
         related_name='+',
     )
 
+    @property
+    def company(self):
+        """Return the company associated with this order.
+
+        This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
+        """
+        raise NotImplementedError(f'company() method not implemented for {__class__}')
+
+    @property
+    def order_address(self):
+        """Return the Address associated with this order."""
+        return self.address or self.company.primary_address
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -1160,7 +1173,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
-            stock.models.StockItem.objects.bulk_create(bulk_create_items)
+            stock.models.StockItem.objects.bulk_create(
+                bulk_create_items, batch_size=250
+            )
 
             # Fetch them back again
             tree_ids = [item.tree_id for item in bulk_create_items]
@@ -1187,7 +1202,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
         # Bulk create new tracking entries for each item
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+        stock.models.StockItemTracking.objects.bulk_create(
+            tracking_entries, batch_size=250
+        )
 
         # Update received quantity for each line item
         PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
@@ -1738,6 +1755,8 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
     Attributes:
         quantity: Number of items
+        line: The line number for this item (optional)
+        line_int: An integer line number for this item (optional - used for natural sorting)
         reference: Reference text (e.g. customer reference) for this line item
         project_code: Project code associated with this line item (optional)
         note: Annotation for the item
@@ -1760,6 +1779,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
             })
 
         update_order = kwargs.pop('update_order', True)
+
+        # Update the integer representation of the line number (for natural sorting)
+        if self.line:
+            try:
+                self.line_int = int(self.line)
+            except (TypeError, ValueError):
+                self.line_int = 0
+        else:
+            self.line_int = 0
 
         super().save(*args, **kwargs)
         if update_order and self.order:
@@ -1792,6 +1820,17 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """Return the total price for this line item."""
         if self.price:
             return self.quantity * self.price
+
+    line = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
+        null=False,
+        verbose_name=_('Line Number'),
+        help_text=_('Line number for this item (optional)'),
+    )
+
+    line_int = models.IntegerField(default=0, blank=False, null=False)
 
     reference = models.CharField(
         max_length=100,
@@ -1916,13 +1955,16 @@ class PurchaseOrderLineItem(OrderLineItem):
             if self.part.supplier != self.order.supplier:
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
+        # Link to the base part
+        part = self.part.part
+
         if self.build_order:
             if not self.build_order.external:
                 raise ValidationError({
                     'build_order': _('Build order must be marked as external')
                 })
 
-            if part := self.part.part:
+            if part:
                 if not part.assembly:
                     raise ValidationError({
                         'build_order': _(
@@ -1934,6 +1976,17 @@ class PurchaseOrderLineItem(OrderLineItem):
                     raise ValidationError({
                         'build_order': _('Build order part must match line item part')
                     })
+
+        # Extra checks for external builds
+        if part and part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
+            if not self.build_order and get_global_setting(
+                'BUILDORDER_EXTERNAL_REQUIRED'
+            ):
+                raise ValidationError({
+                    'build_order': _(
+                        'An external build order is required for assembly parts'
+                    )
+                })
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
@@ -2379,9 +2432,16 @@ class SalesOrderShipment(
     def address(self) -> Address:
         """Return the shipping address for this shipment.
 
-        If no specific shipment address is assigned, return the address from the order.
+        Lookup priority:
+        - Specific address assigned to this shipment
+        - Address assigned to the order
+        - Primary address of the customer
         """
-        return self.shipment_address or self.order.address
+        return (
+            self.shipment_address
+            or self.order.address
+            or self.order.customer.primary_address
+        )
 
     def is_checked(self) -> bool:
         """Return True if this shipment has been checked."""

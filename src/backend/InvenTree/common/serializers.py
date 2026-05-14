@@ -28,7 +28,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
-    enable_filter,
+    OptionalField,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
@@ -381,7 +381,16 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance.get(instance)}
+
+        data = {'key': instance}
+
+        for k, v in self.instance.get(instance, {}).items():
+            if k == 'default_value':
+                # Skip sensitive default values
+                continue
+            data[k] = v
+
+        return data
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):
@@ -857,6 +866,7 @@ class ParameterSerializer(
             'note',
             'updated',
             'updated_by',
+            # Optional fields
             'template_detail',
             'updated_by_detail',
         ]
@@ -906,17 +916,22 @@ class ParameterSerializer(
         allow_null=False,
     )
 
-    updated_by_detail = enable_filter(
-        UserSerializer(
-            source='updated_by', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
         prefetch_fields=['updated_by'],
     )
 
-    template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False),
-        True,
+    template_detail = OptionalField(
+        serializer_class=ParameterTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'read_only': True, 'many': False},
+        default_include=True,
         prefetch_fields=['template', 'template__model_type'],
     )
 

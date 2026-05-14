@@ -15,14 +15,18 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
+  InstanceRenderInterface,
   ModelRendererDict,
+  RemoteInstanceProps,
+  RenderInlineModelProps,
   RenderInstanceProps
 } from '@lib/types/Rendering';
+
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
+import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
 import { useApi } from '../../contexts/ApiContext';
-import { shortenString } from '../../functions/tables';
+import { usePluginState } from '../../states/PluginState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -39,6 +43,7 @@ import {
   RenderParameter,
   RenderParameterTemplate,
   RenderProjectCode,
+  RenderSelectionEntry,
   RenderSelectionList
 } from './Generic';
 import {
@@ -95,6 +100,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
+  [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError
 };
 
@@ -102,34 +108,40 @@ export const RendererLookup: ModelRendererDict = {
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  if (props.model === undefined) {
-    return <UnknownRenderer model={props.model} />;
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
+    RenderComponent =
+      RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
 
-  const model_name = props.model.toString().toLowerCase() as ModelType;
-
-  const RenderComponent = RendererLookup[model_name];
-
+  // provider component
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }
-
   return <RenderComponent {...props} />;
 }
 
 export function RenderRemoteInstance({
   model,
+  modelUrl,
+  modelRenderer,
   pk
-}: Readonly<{
-  model: ModelType;
-  pk: number;
-}>): ReactNode {
+}: Readonly<RemoteInstanceProps>): ReactNode {
   const api = useApi();
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
-      const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
+      const url = modelUrl
+        ? apiUrl(modelUrl, pk)
+        : apiUrl(ModelInformationDict[model].api_endpoint, pk);
 
       return api.get(url).then((response) => response.data);
     }
@@ -145,6 +157,10 @@ export function RenderRemoteInstance({
         {model}: {pk}
       </Text>
     );
+  }
+
+  if (!!modelRenderer) {
+    return modelRenderer({ instance: data });
   }
 
   return <RenderInstance model={model} instance={data} />;
@@ -164,20 +180,8 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: Readonly<{
-  primary: ReactNode;
-  secondary?: ReactNode;
-  showSecondary?: boolean;
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-  image?: string;
-  labels?: string[];
-  url?: string;
-  navigate?: any;
-  tooltip?: string;
-}>): ReactNode {
+}: Readonly<RenderInlineModelProps>): ReactNode {
   // TODO: Handle labels
-
   const onClick = useCallback(
     (event: any) => {
       if (url && navigate) {

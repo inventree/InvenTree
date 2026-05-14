@@ -69,7 +69,16 @@ export default function OrderCalendar({
 
   // Complete set of available filters
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [...orderFilters, ...(filters ?? [])];
+    const calendarFilters: TableFilter[] = [...(filters ?? [])];
+
+    // Add any "standard" filters - but do not override provided filters
+    orderFilters.forEach((orderFilter) => {
+      if (!calendarFilters.some((f) => f.name === orderFilter.name)) {
+        calendarFilters.push(orderFilter);
+      }
+    });
+
+    return calendarFilters;
   }, [orderFilters, filters]);
 
   const modelInfo = useMemo(() => {

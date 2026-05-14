@@ -1,3 +1,4 @@
+import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   ModelType,
@@ -12,7 +13,6 @@ import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { IconFileUpload, IconPlus } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { useParameterFields } from '../../forms/CommonForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -21,7 +21,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
@@ -129,12 +129,7 @@ export function ParameterTable({
   const [selectedParameter, setSelectedParameter] = useState<any | undefined>(
     undefined
   );
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -154,8 +149,9 @@ export function ParameterTable({
     title: t`Import Parameters`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
@@ -260,15 +256,6 @@ export function ParameterTable({
             model_type: modelType,
             model_id: modelId
           }
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession !== undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

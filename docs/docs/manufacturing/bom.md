@@ -4,7 +4,7 @@ title: Bill of Materials
 
 ## Bill of Materials
 
-A Bill of Materials (BOM) defines the list of component parts required to make an assembly, [create builds](./build.md) and allocate inventory.
+A Bill of Materials (BOM) defines the list of component parts required to make an assembly, [create build orders](./build.md) and allocate inventory.
 
 A part which can be built from other sub components is called an *Assembly*.
 
@@ -18,7 +18,8 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | --- | --- |
 | Part | A reference to another *Part* object which is required to build this assembly |
 | Reference | Optional reference field to describe the BOM Line Item, e.g. part designator |
-| Quantity | The quantity of *Part* required for the assembly |
+| Raw Amount | The raw quantity of the part required for the assembly, which can be expressed in different units of measure, e.g. `2 cm`, `1/2 inch`, `200 kg`. |
+| Quantity | The quantity of *Part* required for the assembly - this value is automatically calculated from the "raw amount" field, taking into account the units of measure associated with the underlying part. |
 | Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
 | Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
 | Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
@@ -26,6 +27,18 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
 | Note | Optional note field for additional information
+
+### Units of Measure
+
+The `raw_amount` field allows the user to specify the required quantity of a particular part in different [units of measure](../concepts/units.md). The units of measure are determined by the underlying part definition. For example, if the part is defined with a default unit of measure of "kg", the user can specify the required quantity in "g", "mg", "lb", etc.
+
+The `raw_amount` field is stored as a string, and the `quantity` field is automatically calculated from the `raw_amount` field, taking into account the units of measure associated with the underlying part. This allows for greater flexibility in specifying the required quantity of a particular part, while still maintaining accurate tracking of inventory and production requirements.
+
+If the underlying part does not have a defined unit of measure, the `raw_amount` field is not allowed to have any units of measure specified, and the `quantity` field is simply a numeric representation of the `raw_amount` field.
+
+### Fractional Representation
+
+The `raw_amount` field also allows for fractional representation of the required quantity. For example, if the required quantity is 0.5 kg, the user can specify this as `500 g`, `0.5 kg`, `1/2 kg`, etc. The `quantity` field will be automatically calculated as 0.5 kg, regardless of the specific representation used in the `raw_amount` field.
 
 ### Consumable BOM Line Items
 
@@ -36,6 +49,12 @@ In the example below, see that the *Wood Screw* line item is marked as consumabl
 {{ image("build/bom_consumable_item.png", "Consumable BOM Item") }}
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
+
+### Optional BOM Line Items
+
+If a BOM line item is marked as *optional*, this means that the part and quantity information is tracked in the BOM, but this line item is not required to be allocated to a [Build Order](./build.md). This may be useful for certain items which are not strictly required for the build process to be completed.
+
+When completing a Build Order, the user can choose whether to include optional items in the build process or not. If optional items are included, they will be allocated to the Build Order as normal. If optional items are excluded, they will not be allocated to the Build Order, and the build process can be completed without them.
 
 ### Substitute BOM Line Items
 
@@ -86,9 +105,16 @@ Note that inherited BOM Line Items only flow "downwards" in the variant inherita
 !!! info "Editing Inherited Items"
     When editing an inherited BOM Line Item for a template part, the changes are automatically reflected in the BOM of any variant parts.
 
-## BOM Creation
+## BOM Editing
 
-BOMs can be created manually, by adjusting individual line items, or by uploading (importing) an existing BOM file.
+Bills of Material (BOMs) can be created manually, by adjusting individual line items, or by uploading (importing) an existing BOM file.
+
+### Editing Mode
+
+By default, the BOM is displayed in "view" mode. To edit the BOM, click on the {{ icon("edit", color="blue", title="Edit") }} icon at the top of the BOM panel. This will enable editing mode, which allows you to add, adjust or delete BOM line items.
+
+!!! warning "Permissions"
+    Only users with the appropriate permissions can edit BOMs. If you do not have permission to edit the BOM, the "Edit" icon will not be visible.
 
 ### Importing a BOM
 
@@ -156,89 +182,40 @@ If the BOM requires revalidation, the status will be displayed as "Not Validated
 
 {{ image("build/bom_invalid.png", "BOM Not Validated") }}
 
-## Required Quantity Calculation
+## BOM Comparison
 
-When a new [Build Order](./build.md) is created, the required production quantity of each component part is calculated based on the BOM line items defined for the assembly being built. To calculate the required production quantity of a component part, the following considerations are made:
+It is possible to compare the BOM of one assembly with another assembly. This comparison can highlight different component parts, quantities and other properties of the BOM line items.
 
-### Base Quantity
+To compare the BOM of one assembly with another, navigate to the "Bill of Materials" tab of the part detail page, then click on the {{ icon("git-compare", color="blue", title="Compare BOM") }} icon at the top of the BOM table:
 
-The base quantity of a BOM line item is defined by the `Quantity` field of the BOM line item. This is the number of parts which are required to build one assembly. This value is multiplied by the number of assemblies which are being built to determine the total quantity of parts required.
+{{ image("build/bom_compare_icon.png", "BOM Compare") }}
 
-```
-Required Quantity = Base Quantity * Number of Assemblies
-```
+This will open the BOM comparison view, which allows you to select a secondary assembly to compare with the primary assembly. The BOM line items of the two assemblies will be displayed side by side, with differences highlighted:
 
-### Attrition
+{{ image("build/bom_compare.png", "BOM Compare") }}
 
-The `Attrition` field of a BOM line item is used to account for expected losses during the production process. This is expressed as a percentage of the `Base Quantity` (e.g. 2%).
+### Display Mode
 
-If a non-zero attrition percentage is specified, it is applied to the calculated `Required Quantity` value.
+When comparing BOMs from two different assemblies, the user can select from the following view modes:
 
-```
-Required Quantity = Required Quantity * (1 + Attrition Percentage)
-```
+| View Mode | Description |
+| --- | --- |
+| *Show all parts* | Display all BOM line items from both assemblies. Differences are highlighted. |
+| *Show different parts* | Display only the BOM line items which are different between the two assemblies. |
+| *Show common parts* | Display only the BOM line items which are common between the two assemblies. |
 
-!!! info "Optional"
-    The attrition percentage is optional. If not specified, it defaults to 0%.
+In each case, any differences between the BOM line items are highlighted in red.
 
-### Setup Quantity
+## Replacing Components
 
-The `Setup Quantity` field of a BOM line item is used to account for fixed losses during the production process. This is an additional quantity of the part which is required to ensure that the production run can be completed successfully. This value is added to the calculated `Required Quantity`.
+When a component is used in the BOM for multiple assemblies, it can be time consuming to update the BOM for each assembly when a change is required. InvenTree provides a "Replace Component" function which streamlines the process of replacing a component part with another part across multiple BOMs.
 
-```
-Required Quantity = Required Quantity + Setup Quantity
-```
+To replace a component part within multiple assemblies:
 
-!!! info "Optional"
-    The setup quantity is optional. If not specified, it defaults to 0.
+- Navigate to the [Used In](../part/views.md#used-in) tab of the component part detail page
+- Select the assemblies you wish to update by ticking the checkbox next to each assembly
+- Click on the {{ icon("replace", color="blue", title="Replace Component") }} icon to open the "Replace Component" dialog
 
-### Rounding Multiple
+The following dialog will be displayed, which allows the user to select a new component part to replace the existing component part in the BOM of the selected assemblies:
 
-The `Rounding Multiple` field of a BOM line item is used to round the calculated `Required Quantity` value to the nearest multiple of the specified value. This is useful for ensuring that the required quantity is a whole number, or to meet specific packaging requirements.
-
-```
-Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
-```
-
-!!! info "Optional"
-    The rounding multiple is optional. If not specified, no rounding is applied to the calculated production quantity.
-
-### Example Calculation
-
-Consider a BOM line item with the following properties:
-
-- Base Quantity: 3
-- Attrition: 2% (0.02)
-- Setup Quantity: 10
-- Rounding Multiple: 25
-
-If we are building 100 assemblies, the required quantity would be calculated as follows:
-
-```
-Required Quantity = Base Quantity * Number of Assemblies
-                  = 3 * 100
-                  = 300
-
-Attrition Value = Required Quantity * Attrition Percentage
-                = 300 * 0.02
-                = 6
-
-Required Quantity = Required Quantity + Attrition Value
-                  = 300 + 6
-                  = 306
-
-Required Quantity = Required Quantity + Setup Quantity
-                  = 306 + 10
-                  = 316
-
-Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
-                  = ceil(316 / 25) * 25
-                  = 13 * 25
-                  = 325
-
-```
-
-So the final required production quantity of the component part would be `325`.
-
-!!! info "Calculation"
-    The required quantity calculation is performed automatically when a new [Build Order](./build.md) is created.
+{{ image("build/replace_component.png", "Replace Component") }}

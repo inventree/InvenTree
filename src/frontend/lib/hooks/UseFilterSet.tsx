@@ -1,8 +1,8 @@
-import type { FilterSetState, TableFilter } from '@lib/types/Filters';
 import { useLocalStorage } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
+import type { FilterSetState, TableFilter } from '../types/Filters';
 
-export function useFilterSet(
+export default function useFilterSet(
   filterKey: string,
   initialFilters?: TableFilter[]
 ): FilterSetState {

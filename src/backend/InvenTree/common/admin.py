@@ -32,6 +32,24 @@ class ParameterAdmin(admin.ModelAdmin):
     search_fields = ('template__name', 'data', 'note')
 
 
+class SelectionListEntryInlineAdmin(admin.StackedInline):
+    """Inline admin class for the SelectionListEntry model."""
+
+    model = common.models.SelectionListEntry
+    extra = 0
+
+
+@admin.register(common.models.SelectionList)
+class SelectionListAdmin(admin.ModelAdmin):
+    """Admin interface for SelectionList objects."""
+
+    list_display = ('name', 'description', 'active', 'locked')
+    search_fields = ('name', 'description')
+    list_filter = ('active', 'locked')
+
+    inlines = [SelectionListEntryInlineAdmin]
+
+
 @admin.register(common.models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     """Admin interface for Attachment objects."""

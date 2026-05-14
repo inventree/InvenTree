@@ -37,7 +37,6 @@ export type ApiFormFieldHeader = {
  * - All other attributes are optional, and may be provided by the API
  * - However, they can be overridden by the user
  *
- * @param name : The name of the field
  * @param label : The label to display for the field
  * @param value : The value of the field
  * @param default : The default value of the field
@@ -46,16 +45,22 @@ export type ApiFormFieldHeader = {
  * @param api_url : The API endpoint to fetch data from (for related fields)
  * @param pk_field : The primary key field for the related field (default = "pk")
  * @param model : The model to use for related fields
+ * @param custom_model : Optional custom model name (plugins may register renderers for custom models)
+ * @param modelRenderer : Optional function to render the related model instance (for related fields)
  * @param filters : Optional API filters to apply to related fields
+ * @param child: Optional definition of a child field (for nested objects)
+ * @param children: Optional definitions of child fields (for nested objects with multiple fields)
  * @param required : Whether the field is required
- * @param allow_null: Whether the field allows null values
- * @param allow_blank: Whether the field allows blank values
+ * @param error : Optional error message to display
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
- * @param error : Optional error message to display
+ * @param allow_null: Whether the field allows null values
+ * @param allow_blank: Whether the field allows blank values
  * @param exclude : Whether to exclude the field from the submitted data
+ * @param read_only : Whether the field is read-only
  * @param placeholder : The placeholder text to display
  * @param placeholderAutofill: Whether to allow auto-filling of the placeholder value
+ * @param addCreateFields : Fields to display when creating a new related object (for related fields)
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
@@ -63,11 +68,12 @@ export type ApiFormFieldHeader = {
  * @param rightSection : Content to render in the right section of the field
  * @param autoFill: Whether to automatically fill the field with data from the API
  * @param autoFillFilters: Optional filters to apply when auto-filling the field
+ * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
- * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  * @param addRow : Callback function to add a new row to a table field
- * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
+ * @param headers : Optional definitions of table headers (for table fields)
+ * @param singleFetchFunction : Optional function to fetch a single value for this field (used for fetching the initial value when editing an existing object)
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -96,6 +102,7 @@ export type ApiFormFieldType = {
   api_url?: string;
   pk_field?: string;
   model?: ModelType;
+  custom_model?: string;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
   child?: ApiFormFieldType;
@@ -113,6 +120,7 @@ export type ApiFormFieldType = {
   placeholderAutofill?: boolean;
   placeholderWarningCompare?: string | number;
   placeholderWarning?: string;
+  addCreateFields?: ApiFormFieldSet;
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
@@ -126,6 +134,7 @@ export type ApiFormFieldType = {
   addRow?: () => any;
   headers?: ApiFormFieldHeader[];
   depends_on?: string[];
+  singleFetchFunction?: (value: any) => Promise<any> | null;
 };
 
 export type ApiFormFieldSet = Record<string, ApiFormFieldType>;

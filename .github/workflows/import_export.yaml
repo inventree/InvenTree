@@ -56,12 +56,14 @@ jobs:
         with:
           filters: |
             server:
+              - .github/workflows/import_export.yaml
+              - .github/scripts/check_exported_data.py
               - 'src/backend/**'
               - 'tasks.py'
   test:
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
 
     services:
       postgres:
@@ -110,7 +112,7 @@ jobs:
           test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
       - name: Import Sqlite Dataset
         run: |
-          invoke import-records -c -f ${{ env.DATA_FILE }}
+          invoke import-records -c -f ${{ env.DATA_FILE }} --strict
           cd src/backend/InvenTree && python manage.py check_dummy_data
       - name: Export Sqlite Dataset
         run: |

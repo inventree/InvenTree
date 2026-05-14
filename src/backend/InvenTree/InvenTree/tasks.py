@@ -29,7 +29,6 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
-from InvenTree.config import get_setting
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -424,12 +423,12 @@ def scheduled_task(
         minutes (int, optional): The number of minutes between task runs. Defaults to None.
         tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
 
+    Returns:
+        _type_: _description_
+
     Raises:
         ValueError: If decorated object is not callable
         ValueError: If interval is not valid
-
-    Returns:
-        _type_: _description_
     """
 
     def _task_wrapper(admin_class):
@@ -822,7 +821,7 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not force and not settings.AUTO_UPDATE:
         logger.info('Auto-update is disabled - skipping migrations')
         return False
 

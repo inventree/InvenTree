@@ -63,7 +63,7 @@ class TransitionMethod:
             result: bool - True if the transition method was successful, False otherwise.
 
         Raises:
-            ValidationError: Alert the user that the transition failued
+            ValidationError: Alert the user that the transition failed
         """
         raise NotImplementedError(
             'TransitionMethod.transition must be implemented'

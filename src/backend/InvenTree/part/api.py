@@ -599,6 +599,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
+    role_required = 'bom'
 
     @extend_schema(
         responses={
@@ -609,7 +610,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance.
 
-        As this task if offloaded to the background worker,
+        As this task is offloaded to the background worker,
         we return information about the background task which is performing the validation.
         """
         part = self.get_object()
@@ -727,6 +728,23 @@ class PartFilter(FilterSet):
             )
         # Filter items which have an 'in_stock' level higher than 'minimum_stock'
         return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
+
+    high_stock = rest_filters.BooleanFilter(
+        label='High stock', method='filter_high_stock'
+    )
+
+    def filter_high_stock(self, queryset, name, value):
+        """Filter by "high stock" status."""
+        if str2bool(value):
+            # Ignore any parts which do not have a specified 'maximum_stock' level
+            # Filter items which have an 'in_stock' level higher than 'maximum_stock'
+            return queryset.exclude(maximum_stock=0).filter(
+                Q(total_in_stock__gt=F('maximum_stock'))
+            )
+        # Filter items which have an 'in_stock' level lower than 'maximum_stock'
+        return queryset.filter(
+            Q(total_in_stock__lte=F('maximum_stock')) | Q(maximum_stock=0)
+        ).distinct()
 
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
@@ -1056,6 +1074,7 @@ class PartList(
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
+        'id',
         'name',
         'creation_date',
         'IPN',
@@ -1288,6 +1307,10 @@ class BomFilter(FilterSet):
         label=_('Assembly part is testable'), field_name='part__testable'
     )
 
+    part_locked = rest_filters.BooleanFilter(
+        label=_('Assembly part is locked'), field_name='part__locked'
+    )
+
     # Filters for linked 'sub_part'
     sub_part_active = rest_filters.BooleanFilter(
         label=_('Component part is active'), field_name='sub_part__active'
@@ -1404,7 +1427,11 @@ class BomOutputOptions(OutputConfiguration):
 
 
 class BomList(
-    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    BomMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of BomItem objects.
 

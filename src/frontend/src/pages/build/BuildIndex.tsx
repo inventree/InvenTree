@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/types/Filters';
 import { useLocalStorage } from '@mantine/hooks';
@@ -20,7 +20,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { PartCategoryFilter } from '../../tables/Filter';
+import BuildOrderFilters from '../../tables/build/BuildOrderFilters';
 import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
@@ -28,15 +28,10 @@ function BuildOrderCalendar() {
   const globalSettings = useGlobalSettingsState();
 
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [
-      {
-        name: 'external',
-        label: t`External`,
-        description: t`Show external build orders`,
-        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
-      },
-      PartCategoryFilter()
-    ];
+    return BuildOrderFilters({
+      includeDateFilters: false,
+      externalBuilds: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+    });
   }, [globalSettings]);
 
   return (
@@ -102,8 +97,8 @@ export default function BuildIndex() {
       <PanelGroup
         pageKey='build-index'
         panels={panels}
-        model='manufacturing'
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.manufacturing}
       />
     </Stack>
   );

@@ -9,6 +9,7 @@ import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
+import QueryDashboardWidget from './widgets/QueryDashboardWidget';
 import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 
 /**
@@ -48,7 +49,15 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
         bom_valid: false // Only show parts with invalid BOMs
       }
     }),
-    // TODO: 'latest parts'
+    QueryDashboardWidget({
+      label: 'latest-parts',
+      title: t`Latest parts`,
+      description: t`Latest parts`,
+      modelType: ModelType.part,
+      params: {
+        ordering: '-id'
+      }
+    }),
     // TODO: 'recently updated stock'
     QueryCountDashboardWidget({
       title: t`Low Stock`,
@@ -58,6 +67,17 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: {
         active: true,
         low_stock: true,
+        virtual: false
+      }
+    }),
+    QueryCountDashboardWidget({
+      title: t`High Stock`,
+      label: 'hgh-stk',
+      description: t`Show the number of parts which have excess stock`,
+      modelType: ModelType.part,
+      params: {
+        active: true,
+        high_stock: true,
         virtual: false
       }
     }),

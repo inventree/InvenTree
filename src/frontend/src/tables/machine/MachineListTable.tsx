@@ -23,9 +23,15 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { StylishText } from '@lib/components/StylishText';
 import { YesNoButton } from '@lib/components/YesNoButton';
+import {
+  DetailDrawer,
+  DetailDrawerLink
+} from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
@@ -37,12 +43,7 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
-import {
-  DetailDrawer,
-  DetailDrawerLink
-} from '../../components/nav/DetailDrawer';
 import {
   StatusRenderer,
   TableStatusRenderer
@@ -54,7 +55,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
