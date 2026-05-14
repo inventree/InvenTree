@@ -20,6 +20,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     """
 
     NAME = 'InvenTreeLabel'
+    SLUG = 'inventreelabel'
     TITLE = _('InvenTree PDF label printer')
     DESCRIPTION = _('Provides native support for printing PDF labels')
     VERSION = '1.1.0'
