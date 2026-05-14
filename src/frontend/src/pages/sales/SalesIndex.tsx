@@ -13,6 +13,7 @@ import { useMemo } from 'react';
 
 import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -24,9 +25,40 @@ import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import ReturnOrderParametricTable from '../../tables/sales/ReturnOrderParametricTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
+import SalesOrderFilters from '../../tables/sales/SalesOrderFilters';
 import SalesOrderParametricTable from '../../tables/sales/SalesOrderParametricTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
+
+function SalesOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.salesorder}
+      role={UserRoles.sales_order}
+      params={{ outstanding: true }}
+      filters={calendarFilters}
+    />
+  );
+}
+
+const ReturnOrderCalendar = () => {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.returnorder}
+      role={UserRoles.return_order}
+      params={{ outstanding: true }}
+      filters={calendarFilters}
+    />
+  );
+};
 
 export default function SalesIndex() {
   const user = useUserState();
@@ -66,13 +98,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <SalesOrderCalendar />
           },
           {
             value: 'parametric',
@@ -112,13 +138,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <ReturnOrderCalendar />
           },
           {
             value: 'parametric',

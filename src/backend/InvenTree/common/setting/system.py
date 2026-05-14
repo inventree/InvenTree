@@ -832,6 +832,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'BUILDORDER_EXTERNAL_REQUIRED': {
+        'name': _('Require External Build Orders'),
+        'description': _(
+            'Require an external build order when ordering assembled parts from an external supplier'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
         'name': _('Block Until Tests Pass'),
         'description': _(
@@ -1201,6 +1209,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Display Users Profiles on their profile page'),
         'default': True,
         'validator': bool,
+    },
+    'WEEK_STARTS_ON': {
+        'name': _('Week Starts On'),
+        'description': _('Starting day of the week, for display in calendar views'),
+        'default': '1',
+        'choices': [
+            ('0', _('Sunday')),
+            ('1', _('Monday')),
+            ('2', _('Tuesday')),
+            ('3', _('Wednesday')),
+            ('4', _('Thursday')),
+            ('5', _('Friday')),
+            ('6', _('Saturday')),
+        ],
     },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),

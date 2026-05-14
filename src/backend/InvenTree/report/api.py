@@ -215,6 +215,7 @@ class LabelPrint(GenericAPIView):
             template.pk,
             [item.pk for item in items_to_print],
             output.pk,
+            user.pk if user else None,
             plugin.slug,
             options=(plugin_serializer.data if plugin_serializer else {}),
         )
@@ -297,7 +298,13 @@ class ReportPrint(GenericAPIView):
         item_ids = [item.pk for item in items_to_print]
 
         # Offload the task to the background worker
-        offload_task(report.tasks.print_reports, template.pk, item_ids, output.pk)
+        offload_task(
+            report.tasks.print_reports,
+            template.pk,
+            item_ids,
+            output.pk,
+            user.pk if user else None,
+        )
 
         output.refresh_from_db()
 
