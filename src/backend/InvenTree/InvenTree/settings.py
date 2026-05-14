@@ -517,19 +517,11 @@ if LDAP_AUTH:  # pragma: no cover
         'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
     )
 
-    AUTH_LDAP_MIRROR_GROUPS = get_boolean_setting(
-        'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
-    )
     AUTH_LDAP_GROUP_OBJECT_CLASS = get_setting(
         'INVENTREE_LDAP_GROUP_OBJECT_CLASS',
         'ldap.group_object_class',
         'groupOfUniqueNames',
         str,
-    )
-    AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
-        get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,
-        f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
         'INVENTREE_LDAP_GROUP_TYPE_CLASS',
@@ -546,9 +538,6 @@ if LDAP_AUTH:  # pragma: no cover
         {'name_attr': 'cn'},
         dict,
     )
-    AUTH_LDAP_GROUP_TYPE = getattr(django_auth_ldap.config, AUTH_LDAP_GROUP_TYPE_CLASS)(
-        *AUTH_LDAP_GROUP_TYPE_CLASS_ARGS, **AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS
-    )
     AUTH_LDAP_REQUIRE_GROUP = get_setting(
         'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
     )
@@ -559,7 +548,27 @@ if LDAP_AUTH:  # pragma: no cover
         default_value=None,
         typecast=dict,
     )
-    AUTH_LDAP_FIND_GROUP_PERMS = True
+
+    # Only configure group search and group permissions if a valid base DN is provided.
+    # Without this guard, passing None to LDAPSearch causes django-auth-ldap to crash
+    # with: TypeError: search_ext() argument 1 must be str, not None
+    # See: https://github.com/inventree/InvenTree/issues/11832
+    _ldap_group_search = get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search')
+    if _ldap_group_search:
+        AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
+            _ldap_group_search,
+            ldap.SCOPE_SUBTREE,
+            f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
+        )
+        AUTH_LDAP_GROUP_TYPE = getattr(
+            django_auth_ldap.config, AUTH_LDAP_GROUP_TYPE_CLASS
+        )(*AUTH_LDAP_GROUP_TYPE_CLASS_ARGS, **AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS)
+        AUTH_LDAP_MIRROR_GROUPS = get_boolean_setting(
+            'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
+        )
+        AUTH_LDAP_FIND_GROUP_PERMS = True
+    else:
+        AUTH_LDAP_FIND_GROUP_PERMS = False
 
 # Allow secure http developer server in debug mode
 if DEBUG:
