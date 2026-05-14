@@ -1955,13 +1955,16 @@ class PurchaseOrderLineItem(OrderLineItem):
             if self.part.supplier != self.order.supplier:
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
+        # Link to the base part
+        part = self.part.part
+
         if self.build_order:
             if not self.build_order.external:
                 raise ValidationError({
                     'build_order': _('Build order must be marked as external')
                 })
 
-            if part := self.part.part:
+            if part:
                 if not part.assembly:
                     raise ValidationError({
                         'build_order': _(
@@ -1973,6 +1976,17 @@ class PurchaseOrderLineItem(OrderLineItem):
                     raise ValidationError({
                         'build_order': _('Build order part must match line item part')
                     })
+
+        # Extra checks for external builds
+        if part and part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
+            if not self.build_order and get_global_setting(
+                'BUILDORDER_EXTERNAL_REQUIRED'
+            ):
+                raise ValidationError({
+                    'build_order': _(
+                        'An external build order is required for assembly parts'
+                    )
+                })
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""

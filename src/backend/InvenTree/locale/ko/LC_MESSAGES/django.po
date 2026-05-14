@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-07 12:50+0000\n"
-"PO-Revision-Date: 2026-05-07 14:10\n"
+"POT-Creation-Date: 2026-05-10 10:56+0000\n"
+"PO-Revision-Date: 2026-05-10 10:59\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -89,6 +89,7 @@ msgstr "{original}을(를) {unit}(으)로 변환할 수 없습니다"
 
 #: InvenTree/conversion.py:286 InvenTree/conversion.py:300
 #: InvenTree/helpers.py:610 order/models.py:747 order/models.py:1042
+#: part/models.py:3946
 msgid "Invalid quantity provided"
 msgstr "잘못된 수량이 제공되었습니다"
 
@@ -270,7 +271,7 @@ msgstr "잘못된 선택입니다"
 #: InvenTree/models.py:1022 common/models.py:1441 common/models.py:1868
 #: common/models.py:2129 common/models.py:2254 common/models.py:2551
 #: common/serializers.py:647 generic/states/serializers.py:20
-#: machine/models.py:25 part/models.py:1101 plugin/models.py:54
+#: machine/models.py:25 part/models.py:1102 plugin/models.py:54
 #: report/models.py:219 stock/models.py:86
 msgid "Name"
 msgstr "이름"
@@ -278,7 +279,7 @@ msgstr "이름"
 #: InvenTree/models.py:1028 build/models.py:265 common/models.py:178
 #: common/models.py:2261 common/models.py:2402 common/models.py:2566
 #: company/models.py:558 company/models.py:818 order/models.py:447
-#: order/models.py:1890 part/models.py:1124 report/models.py:225
+#: order/models.py:1890 part/models.py:1125 report/models.py:225
 #: report/models.py:818 report/models.py:844
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:92
@@ -336,15 +337,15 @@ msgstr "서버에 오류가 기록되었습니다."
 msgid "Image"
 msgstr "이미지"
 
-#: InvenTree/serializers.py:361 part/models.py:4182
+#: InvenTree/serializers.py:361
 msgid "Must be a valid number"
 msgstr "유효한 숫자여야 합니다"
 
-#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3316
+#: InvenTree/serializers.py:403 company/models.py:217 part/models.py:3326
 msgid "Currency"
 msgstr "통화"
 
-#: InvenTree/serializers.py:406 part/serializers.py:1387
+#: InvenTree/serializers.py:406 part/serializers.py:1392
 msgid "Select currency from available options"
 msgstr "사용 가능한 옵션에서 통화를 선택하세요"
 
@@ -571,11 +572,11 @@ msgstr "변형(Variant) 포함"
 #: build/serializers.py:1483 company/models.py:1037 company/serializers.py:447
 #: order/api.py:311 order/api.py:315 order/api.py:942 order/api.py:1200
 #: order/api.py:1203 order/models.py:2008 order/models.py:2176
-#: order/models.py:2177 part/api.py:1134 part/api.py:1137 part/api.py:1354
-#: part/models.py:527 part/models.py:3327 part/models.py:3470
-#: part/models.py:3528 part/models.py:3549 part/models.py:3571
-#: part/models.py:3712 part/models.py:3977 part/models.py:4398
-#: part/serializers.py:1336 part/serializers.py:1990
+#: order/models.py:2177 part/api.py:1151 part/api.py:1154 part/api.py:1371
+#: part/models.py:528 part/models.py:3337 part/models.py:3480
+#: part/models.py:3538 part/models.py:3559 part/models.py:3581
+#: part/models.py:3722 part/models.py:4039 part/models.py:4466
+#: part/serializers.py:1341 part/serializers.py:2004
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -595,9 +596,9 @@ msgstr "변형(Variant) 포함"
 msgid "Part"
 msgstr "부품"
 
-#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:968
-#: part/api.py:1365 part/models.py:412 part/models.py:1142 part/models.py:3599
-#: part/serializers.py:1346 part/serializers.py:1783 stock/api.py:868
+#: build/api.py:121 build/api.py:124 build/serializers.py:1497 part/api.py:985
+#: part/api.py:1382 part/models.py:412 part/models.py:1143 part/models.py:3609
+#: part/serializers.py:1351 part/serializers.py:1776 stock/api.py:868
 msgid "Category"
 msgstr "분류"
 
@@ -669,16 +670,16 @@ msgstr "트리 제외"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "빌드를 삭제하려면 먼저 취소해야 합니다"
 
-#: build/api.py:458 build/serializers.py:1424 part/models.py:4011
+#: build/api.py:458 build/serializers.py:1424 part/models.py:4081
 msgid "Consumable"
 msgstr "소모품"
 
-#: build/api.py:461 build/serializers.py:1427 part/models.py:4005
+#: build/api.py:461 build/serializers.py:1427 part/models.py:4075
 msgid "Optional"
 msgstr "선택사항"
 
 #: build/api.py:464 build/serializers.py:1469 common/setting/system.py:483
-#: part/models.py:1247 part/serializers.py:1728 part/serializers.py:1754
+#: part/models.py:1257 part/serializers.py:1721 part/serializers.py:1747
 #: stock/api.py:638
 msgid "Assembly"
 msgstr "조립품"
@@ -687,7 +688,7 @@ msgstr "조립품"
 msgid "Tracked"
 msgstr "추적됨"
 
-#: build/api.py:470 build/serializers.py:1430 part/models.py:1265
+#: build/api.py:470 build/serializers.py:1430 part/models.py:1275
 msgid "Testable"
 msgstr "테스트 가능"
 
@@ -711,8 +712,8 @@ msgid "Available"
 msgstr "사용 가능"
 
 #: build/api.py:532 build/serializers.py:1528 company/serializers.py:421
-#: order/serializers.py:1343 part/serializers.py:861 part/serializers.py:1197
-#: part/serializers.py:1792
+#: order/serializers.py:1343 part/serializers.py:862 part/serializers.py:1202
+#: part/serializers.py:1785
 msgid "On Order"
 msgstr "주문 중"
 
@@ -731,7 +732,7 @@ msgstr "작업 지시서"
 #: build/serializers.py:493 build/serializers.py:563 build/serializers.py:1264
 #: build/serializers.py:1270 order/api.py:1247 order/api.py:1252
 #: order/serializers.py:845 order/serializers.py:985 order/serializers.py:2141
-#: part/serializers.py:1356 stock/api.py:986 stock/serializers.py:111
+#: part/serializers.py:1361 stock/api.py:986 stock/serializers.py:111
 #: stock/serializers.py:619 stock/serializers.py:739 stock/serializers.py:917
 #: stock/serializers.py:1493 stock/serializers.py:1814
 #: stock/serializers.py:1863 templates/email/stale_stock_notification.html:18
@@ -739,7 +740,7 @@ msgstr "작업 지시서"
 msgid "Location"
 msgstr "위치"
 
-#: build/api.py:981 part/serializers.py:1381
+#: build/api.py:981 part/serializers.py:1386
 msgid "Output"
 msgstr "산출물"
 
@@ -785,7 +786,7 @@ msgstr "작업 지시서 참조번호"
 
 #: build/models.py:259 build/serializers.py:1421 order/models.py:641
 #: order/models.py:1354 order/models.py:1838 order/models.py:2781
-#: part/models.py:4051
+#: part/models.py:4121
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:35
 #: report/templates/report/inventree_return_order_report.html:26
@@ -871,7 +872,7 @@ msgid "Batch code for this build output"
 msgstr "이 빌드 산출물의 배치 코드"
 
 #: build/models.py:364 order/models.py:484 order/serializers.py:178
-#: part/models.py:1328
+#: part/models.py:1338
 msgid "Creation Date"
 msgstr "생성일"
 
@@ -908,7 +909,7 @@ msgid "User who issued this build order"
 msgstr "이 작업 지시서를 발행한 사용자"
 
 #: build/models.py:419 common/models.py:187 order/api.py:184
-#: order/models.py:516 part/models.py:1345
+#: order/models.py:516 part/models.py:1355
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "담당"
@@ -921,7 +922,7 @@ msgstr "이 작업 지시서를 담당하는 사용자 또는 그룹"
 msgid "External Link"
 msgstr "외부 링크"
 
-#: build/models.py:427 common/models.py:2017 part/models.py:1176
+#: build/models.py:427 common/models.py:2017 part/models.py:1177
 #: stock/models.py:1116
 msgid "Link to external URL"
 msgstr "외부 URL로 연결"
@@ -983,7 +984,7 @@ msgstr "생산 완제품이 작업 지시서와 일치하지 않습니다"
 #: build/models.py:1120 build/models.py:1226 build/serializers.py:281
 #: build/serializers.py:331 build/serializers.py:961 build/serializers.py:1740
 #: order/models.py:744 order/serializers.py:631 order/serializers.py:856
-#: part/serializers.py:1721 stock/models.py:961 stock/models.py:1451
+#: part/models.py:3934 stock/models.py:961 stock/models.py:1451
 #: stock/models.py:1916 stock/serializers.py:717 stock/serializers.py:1655
 msgid "Quantity must be greater than zero"
 msgstr "수량은 0보다 커야 합니다"
@@ -1020,7 +1021,7 @@ msgstr "빌드 객체"
 #: build/models.py:1787 build/models.py:2112 build/serializers.py:267
 #: build/serializers.py:316 build/serializers.py:1442 common/models.py:1371
 #: order/models.py:1810 order/models.py:2664 order/serializers.py:1783
-#: order/serializers.py:2234 part/models.py:3484 part/models.py:3999
+#: order/serializers.py:2234 part/models.py:3494 part/models.py:4069
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1099,7 +1100,7 @@ msgstr "대상 재고 항목"
 msgid "Build Level"
 msgstr "빌드 레벨"
 
-#: build/serializers.py:130 part/serializers.py:1283
+#: build/serializers.py:130 part/serializers.py:1288
 msgid "Part Name"
 msgstr "부품명"
 
@@ -1404,7 +1405,7 @@ msgstr "빌드 참조"
 msgid "Part Category Name"
 msgstr "부품 카테고리 이름"
 
-#: build/serializers.py:1433 common/setting/system.py:507 part/models.py:1259
+#: build/serializers.py:1433 common/setting/system.py:507 part/models.py:1269
 msgid "Trackable"
 msgstr "추적 가능"
 
@@ -1412,29 +1413,29 @@ msgstr "추적 가능"
 msgid "Inherited"
 msgstr "상속됨"
 
-#: build/serializers.py:1439 part/models.py:4084
+#: build/serializers.py:1439 part/models.py:4154
 msgid "Allow Variants"
 msgstr "변형(Variant) 허용"
 
-#: build/serializers.py:1445 build/serializers.py:1451 part/models.py:3802
-#: part/models.py:4390 stock/api.py:881
+#: build/serializers.py:1445 build/serializers.py:1451 part/models.py:3813
+#: part/models.py:4458 stock/api.py:881
 msgid "BOM Item"
 msgstr "BOM 항목"
 
-#: build/serializers.py:1529 order/serializers.py:1344 part/serializers.py:1201
-#: part/serializers.py:1796
+#: build/serializers.py:1529 order/serializers.py:1344 part/serializers.py:1206
+#: part/serializers.py:1789
 msgid "In Production"
 msgstr "생산 중"
 
-#: build/serializers.py:1531 part/serializers.py:852 part/serializers.py:1205
+#: build/serializers.py:1531 part/serializers.py:853 part/serializers.py:1210
 msgid "Scheduled to Build"
 msgstr "빌드 예정"
 
-#: build/serializers.py:1534 part/serializers.py:885
+#: build/serializers.py:1534 part/serializers.py:886
 msgid "External Stock"
 msgstr "외부 재고"
 
-#: build/serializers.py:1535 part/serializers.py:1191 part/serializers.py:1859
+#: build/serializers.py:1535 part/serializers.py:1196 part/serializers.py:1852
 msgid "Available Stock"
 msgstr "사용 가능 재고"
 
@@ -1617,7 +1618,7 @@ msgstr "키 문자열은 고유해야 합니다"
 #: common/models.py:1349 common/models.py:1350 common/models.py:1454
 #: common/models.py:1455 common/models.py:1700 common/models.py:1701
 #: common/models.py:2033 common/models.py:2034 common/models.py:2860
-#: importer/models.py:101 part/models.py:3578 part/models.py:3606
+#: importer/models.py:101 part/models.py:3588 part/models.py:3616
 #: plugin/models.py:355 plugin/models.py:356
 #: report/templates/report/inventree_test_report.html:105 users/models.py:124
 #: users/models.py:501
@@ -1651,7 +1652,7 @@ msgstr "이 웹훅의 이름"
 
 #: common/models.py:1446 common/models.py:2274 common/models.py:2409
 #: company/models.py:194 company/models.py:786 machine/models.py:40
-#: part/models.py:1282 plugin/models.py:69 stock/api.py:641 users/models.py:195
+#: part/models.py:1292 plugin/models.py:69 stock/api.py:641 users/models.py:195
 #: users/models.py:554 users/serializers.py:339 users/serializers.py:431
 msgid "Active"
 msgstr "활성"
@@ -1731,7 +1732,7 @@ msgstr "제목"
 #: common/models.py:1753 common/models.py:2016 company/models.py:188
 #: company/models.py:479 company/models.py:549 company/models.py:809
 #: order/models.py:462 order/models.py:1851 order/models.py:2412
-#: part/models.py:1175
+#: part/models.py:1176
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "링크"
@@ -1962,7 +1963,7 @@ msgstr "선택 목록 이름"
 msgid "Description of the selection list"
 msgstr "선택 목록 설명"
 
-#: common/models.py:2268 part/models.py:1287
+#: common/models.py:2268 part/models.py:1297
 msgid "Locked"
 msgstr "잠김"
 
@@ -2058,7 +2059,7 @@ msgstr "체크박스 매개변수에는 단위를 지정할 수 없습니다"
 msgid "Checkbox parameters cannot have choices"
 msgstr "체크박스 매개변수에는 선택지를 지정할 수 없습니다"
 
-#: common/models.py:2507 part/models.py:3676
+#: common/models.py:2507 part/models.py:3686
 msgid "Choices must be unique"
 msgstr "선택지는 고유해야 합니다"
 
@@ -2074,7 +2075,7 @@ msgstr "이 매개변수 템플릿의 대상 모델 유형"
 msgid "Parameter Name"
 msgstr "매개변수 이름"
 
-#: common/models.py:2558 part/models.py:1240
+#: common/models.py:2558 part/models.py:1250
 msgid "Units"
 msgstr "단위"
 
@@ -2094,7 +2095,7 @@ msgstr "체크박스"
 msgid "Is this parameter a checkbox?"
 msgstr "이 매개변수는 체크박스인가요?"
 
-#: common/models.py:2579 part/models.py:3763
+#: common/models.py:2579 part/models.py:3773
 msgid "Choices"
 msgstr "선택지"
 
@@ -2106,7 +2107,7 @@ msgstr "이 매개변수에 대한 유효한 선택지(쉼표로 구분)"
 msgid "Selection list for this parameter"
 msgstr "이 매개변수의 선택 목록"
 
-#: common/models.py:2596 part/models.py:3738 report/models.py:290
+#: common/models.py:2596 part/models.py:3748 report/models.py:290
 msgid "Enabled"
 msgstr "사용"
 
@@ -2157,7 +2158,7 @@ msgid "Parameter Value"
 msgstr "매개변수 값"
 
 #: common/models.py:2817 company/models.py:826 order/serializers.py:895
-#: order/serializers.py:2146 part/models.py:4059 part/models.py:4430
+#: order/serializers.py:2146 part/models.py:4129 part/models.py:4498
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
@@ -2859,8 +2860,8 @@ msgstr "부품은 기본적으로 템플릿입니다"
 msgid "Parts can be assembled from other components by default"
 msgstr "부품은 기본적으로 다른 구성요소로 조립할 수 있습니다"
 
-#: common/setting/system.py:489 part/models.py:1253 part/serializers.py:1763
-#: part/serializers.py:1771
+#: common/setting/system.py:489 part/models.py:1263 part/serializers.py:1756
+#: part/serializers.py:1764
 msgid "Component"
 msgstr "구성요소"
 
@@ -2868,7 +2869,7 @@ msgstr "구성요소"
 msgid "Parts can be used as sub-components by default"
 msgstr "부품은 기본적으로 하위 구성요소로 사용할 수 있습니다"
 
-#: common/setting/system.py:495 part/models.py:1271
+#: common/setting/system.py:495 part/models.py:1281
 msgid "Purchaseable"
 msgstr "구매 가능"
 
@@ -2876,7 +2877,7 @@ msgstr "구매 가능"
 msgid "Parts are purchaseable by default"
 msgstr "부품은 기본적으로 구매 가능합니다"
 
-#: common/setting/system.py:501 part/models.py:1277 stock/api.py:642
+#: common/setting/system.py:501 part/models.py:1287 stock/api.py:642
 msgid "Salable"
 msgstr "판매 가능"
 
@@ -2888,7 +2889,7 @@ msgstr "부품은 기본적으로 판매 가능합니다"
 msgid "Parts are trackable by default"
 msgstr "부품은 기본적으로 추적 가능합니다"
 
-#: common/setting/system.py:513 part/models.py:1293
+#: common/setting/system.py:513 part/models.py:1303
 msgid "Virtual"
 msgstr "가상"
 
@@ -4298,11 +4299,11 @@ msgstr "외부 공급업체 부품 링크 URL"
 msgid "Supplier part description"
 msgstr "공급업체 부품 설명"
 
-#: company/models.py:835 part/models.py:2300
+#: company/models.py:835 part/models.py:2310
 msgid "base cost"
 msgstr "기본 비용"
 
-#: company/models.py:836 part/models.py:2301
+#: company/models.py:836 part/models.py:2311
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "최소 요금(예: 보관 수수료)"
 
@@ -4323,7 +4324,7 @@ msgstr "포장 수량"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "한 포장에 공급되는 총 수량입니다. 단품인 경우 비워 두세요."
 
-#: company/models.py:870 part/models.py:2307
+#: company/models.py:870 part/models.py:2317
 msgid "multiple"
 msgstr "배수"
 
@@ -4355,7 +4356,7 @@ msgstr "이 공급업체에서 사용하는 기본 통화"
 msgid "Company Name"
 msgstr "회사명"
 
-#: company/serializers.py:417 part/serializers.py:857 stock/serializers.py:444
+#: company/serializers.py:417 part/serializers.py:858 stock/serializers.py:444
 msgid "In Stock"
 msgstr "재고 있음"
 
@@ -4519,7 +4520,7 @@ msgstr "원본 행 데이터"
 msgid "Errors"
 msgstr "오류"
 
-#: importer/models.py:585 part/serializers.py:1159
+#: importer/models.py:585 part/serializers.py:1164
 msgid "Valid"
 msgstr "유효"
 
@@ -5488,7 +5489,7 @@ msgstr "부품, 목적지, 목표일이 같은 항목을 하나의 라인 항목
 msgid "SKU"
 msgstr "SKU"
 
-#: order/serializers.py:749 part/models.py:1151 part/serializers.py:344
+#: order/serializers.py:749 part/models.py:1152 part/serializers.py:344
 msgid "Internal Part Number"
 msgstr "내부 부품 번호"
 
@@ -5764,63 +5765,63 @@ msgstr "리비전 여부"
 msgid "Has Revisions"
 msgstr "리비전 있음"
 
-#: part/api.py:853
+#: part/api.py:870
 msgid "BOM Valid"
 msgstr "BOM 유효"
 
-#: part/api.py:962
+#: part/api.py:979
 msgid "Cascade Categories"
 msgstr "카테고리 계층 포함"
 
-#: part/api.py:963
+#: part/api.py:980
 msgid "If true, include items in child categories of the given category"
 msgstr "참이면 지정된 카테고리의 하위 카테고리에 있는 항목을 포함합니다"
 
-#: part/api.py:969
+#: part/api.py:986
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "숫자 카테고리 ID 또는 'null' 값으로 필터"
 
-#: part/api.py:1282
+#: part/api.py:1299
 msgid "Assembly part is active"
 msgstr "조립 부품이 활성 상태"
 
-#: part/api.py:1286
+#: part/api.py:1303
 msgid "Assembly part is trackable"
 msgstr "조립 부품을 추적할 수 있음"
 
-#: part/api.py:1290
+#: part/api.py:1307
 msgid "Assembly part is testable"
 msgstr "조립 부품을 테스트할 수 있음"
 
-#: part/api.py:1294
+#: part/api.py:1311
 msgid "Assembly part is locked"
 msgstr ""
 
-#: part/api.py:1299
+#: part/api.py:1316
 msgid "Component part is active"
 msgstr "구성 부품이 활성 상태"
 
-#: part/api.py:1303
+#: part/api.py:1320
 msgid "Component part is trackable"
 msgstr "구성 부품을 추적할 수 있음"
 
-#: part/api.py:1307
+#: part/api.py:1324
 msgid "Component part is testable"
 msgstr "구성 부품을 테스트할 수 있음"
 
-#: part/api.py:1311
+#: part/api.py:1328
 msgid "Component part is an assembly"
 msgstr "구성 부품이 조립품임"
 
-#: part/api.py:1315
+#: part/api.py:1332
 msgid "Component part is virtual"
 msgstr "구성 부품이 가상 부품임"
 
-#: part/api.py:1319
+#: part/api.py:1336
 msgid "Has available stock"
 msgstr "사용 가능한 재고 있음"
 
-#: part/api.py:1376
+#: part/api.py:1393
 msgid "Uses"
 msgstr "사용"
 
@@ -5833,7 +5834,7 @@ msgstr "부품 카테고리"
 msgid "Part Categories"
 msgstr "부품 카테고리"
 
-#: part/models.py:111 part/models.py:1187
+#: part/models.py:111 part/models.py:1188
 msgid "Default Location"
 msgstr "기본 위치"
 
@@ -5882,632 +5883,656 @@ msgstr "기본값"
 msgid "Default Parameter Value"
 msgstr "기본 매개변수 값"
 
-#: part/models.py:528 part/serializers.py:114 users/ruleset.py:29
+#: part/models.py:529 part/serializers.py:114 users/ruleset.py:29
 msgid "Parts"
 msgstr "부품"
 
-#: part/models.py:574
+#: part/models.py:575
 msgid "Cannot delete parameters of a locked part"
 msgstr "잠긴 부품의 매개변수는 삭제할 수 없습니다"
 
-#: part/models.py:579
+#: part/models.py:580
 msgid "Cannot modify parameters of a locked part"
 msgstr "잠긴 부품의 매개변수는 수정할 수 없습니다"
 
-#: part/models.py:590
+#: part/models.py:591
 msgid "Cannot delete this part as it is locked"
 msgstr "잠겨 있어 이 부품을 삭제할 수 없습니다"
 
-#: part/models.py:593
+#: part/models.py:594
 msgid "Cannot delete this part as it is still active"
 msgstr "여전히 활성 상태라 이 부품을 삭제할 수 없습니다"
 
-#: part/models.py:598
+#: part/models.py:599
 msgid "Cannot delete this part as it is used in an assembly"
 msgstr "조립품에 사용 중이라 이 부품을 삭제할 수 없습니다"
 
-#: part/models.py:682 part/models.py:689
+#: part/models.py:683 part/models.py:690
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
 msgstr "부품 '{self}'은(는) '{parent}'의 BOM에 사용할 수 없습니다(순환 참조)"
 
-#: part/models.py:701
+#: part/models.py:702
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
 msgstr "부품 '{parent}'이(가) '{self}'의 BOM에 사용되고 있습니다(순환 참조)"
 
-#: part/models.py:768
+#: part/models.py:769
 #, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
 msgstr "IPN은 정규식 패턴 {pattern}과 일치해야 합니다"
 
-#: part/models.py:776
+#: part/models.py:777
 msgid "Part cannot be a revision of itself"
 msgstr "부품은 자기 자신의 개정이 될 수 없습니다"
 
-#: part/models.py:783
+#: part/models.py:784
 msgid "Revision code must be specified for a part marked as a revision"
 msgstr "개정으로 표시된 부품에는 개정 코드가 지정되어야 합니다"
 
-#: part/models.py:791
+#: part/models.py:792
 msgid "Revisions are only allowed for assembly parts"
 msgstr "개정은 조립 부품에만 허용됩니다"
 
-#: part/models.py:798
+#: part/models.py:799
 msgid "Cannot make a revision of a template part"
 msgstr "템플릿 부품의 개정을 만들 수 없습니다"
 
-#: part/models.py:804
+#: part/models.py:805
 msgid "Parent part must point to the same template"
 msgstr "상위 부품은 동일한 템플릿을 가리켜야 합니다"
 
-#: part/models.py:901
+#: part/models.py:902
 msgid "Stock item with this serial number already exists"
 msgstr "이 일련번호의 재고 항목이 이미 존재합니다"
 
-#: part/models.py:1031
+#: part/models.py:1032
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "부품 설정에서 중복 IPN은 허용되지 않습니다"
 
-#: part/models.py:1044
+#: part/models.py:1045
 msgid "Duplicate part revision already exists."
 msgstr "중복된 부품 개정이 이미 존재합니다."
 
-#: part/models.py:1054
+#: part/models.py:1055
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr "이 이름, IPN 및 개정의 부품이 이미 존재합니다."
 
-#: part/models.py:1069
+#: part/models.py:1070
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "부품은 구조 부품 카테고리에 할당할 수 없습니다!"
 
-#: part/models.py:1101
+#: part/models.py:1102
 msgid "Part name"
 msgstr "부품 이름"
 
-#: part/models.py:1106
+#: part/models.py:1107
 msgid "Is Template"
 msgstr "템플릿 여부"
 
-#: part/models.py:1107
+#: part/models.py:1108
 msgid "Is this part a template part?"
 msgstr "이 부품은 템플릿 부품인가요?"
 
-#: part/models.py:1117
+#: part/models.py:1118
 msgid "Is this part a variant of another part?"
 msgstr "이 부품은 다른 부품의 변형(Variant)인가요?"
 
-#: part/models.py:1118
+#: part/models.py:1119
 msgid "Variant Of"
 msgstr "변형 대상"
 
-#: part/models.py:1125
+#: part/models.py:1126
 msgid "Part description (optional)"
 msgstr "부품 설명(선택)"
 
-#: part/models.py:1132
+#: part/models.py:1133
 msgid "Keywords"
 msgstr "키워드"
 
-#: part/models.py:1133
+#: part/models.py:1134
 msgid "Part keywords to improve visibility in search results"
 msgstr "검색 결과에서 가시성을 높이기 위한 부품 키워드"
 
-#: part/models.py:1143
+#: part/models.py:1144
 msgid "Part category"
 msgstr "부품 카테고리"
 
-#: part/models.py:1150 part/serializers.py:831
+#: part/models.py:1151 part/serializers.py:832
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr "IPN"
 
-#: part/models.py:1158
+#: part/models.py:1159
 msgid "Part revision or version number"
 msgstr "부품 개정 또는 버전 번호"
 
-#: part/models.py:1159 report/models.py:231
+#: part/models.py:1160 report/models.py:231
 msgid "Revision"
 msgstr "개정"
 
-#: part/models.py:1168
+#: part/models.py:1169
 msgid "Is this part a revision of another part?"
 msgstr "이 부품은 다른 부품의 개정인가요?"
 
-#: part/models.py:1169
+#: part/models.py:1170
 msgid "Revision Of"
 msgstr "개정 대상"
 
-#: part/models.py:1185
+#: part/models.py:1186
 msgid "Where is this item normally stored?"
 msgstr "이 항목은 보통 어디에 보관되나요?"
 
-#: part/models.py:1222
+#: part/models.py:1223
 msgid "Default Expiry"
 msgstr "기본 만료"
 
-#: part/models.py:1223
+#: part/models.py:1224
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "이 부품의 재고 항목 만료 기간(일)"
 
-#: part/models.py:1231 part/serializers.py:901
+#: part/models.py:1232 part/serializers.py:902
 msgid "Minimum Stock"
 msgstr "최소 재고"
 
-#: part/models.py:1232
+#: part/models.py:1233
 msgid "Minimum allowed stock level"
 msgstr "허용되는 최소 재고 수준"
 
-#: part/models.py:1241
+#: part/models.py:1241 part/serializers.py:906
+msgid "Maximum Stock"
+msgstr ""
+
+#: part/models.py:1242
+msgid "Maximum allowed stock level"
+msgstr ""
+
+#: part/models.py:1251
 msgid "Units of measure for this part"
 msgstr "이 부품의 측정 단위"
 
-#: part/models.py:1248
+#: part/models.py:1258
 msgid "Can this part be built from other parts?"
 msgstr "이 부품을 다른 부품으로 조립/제작할 수 있나요?"
 
-#: part/models.py:1254
+#: part/models.py:1264
 msgid "Can this part be used to build other parts?"
 msgstr "이 부품을 사용해 다른 부품을 제작할 수 있나요?"
 
-#: part/models.py:1260
+#: part/models.py:1270
 msgid "Does this part have tracking for unique items?"
 msgstr "이 부품에 고유 항목 추적 기능이 있나요?"
 
-#: part/models.py:1266
+#: part/models.py:1276
 msgid "Can this part have test results recorded against it?"
 msgstr "이 부품에 대한 테스트 결과를 기록할 수 있나요?"
 
-#: part/models.py:1272
+#: part/models.py:1282
 msgid "Can this part be purchased from external suppliers?"
 msgstr "이 부품을 외부 공급업체에서 구매할 수 있나요?"
 
-#: part/models.py:1278
+#: part/models.py:1288
 msgid "Can this part be sold to customers?"
 msgstr "이 부품을 고객에게 판매할 수 있나요?"
 
-#: part/models.py:1282
+#: part/models.py:1292
 msgid "Is this part active?"
 msgstr "이 부품이 활성 상태인가요?"
 
-#: part/models.py:1288
+#: part/models.py:1298
 msgid "Locked parts cannot be edited"
 msgstr "잠긴 부품은 편집할 수 없습니다"
 
-#: part/models.py:1294
+#: part/models.py:1304
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "소프트웨어 제품이나 라이선스 같은 가상 부품인가요?"
 
-#: part/models.py:1299
+#: part/models.py:1309
 msgid "BOM Validated"
 msgstr "BOM 검증됨"
 
-#: part/models.py:1300
+#: part/models.py:1310
 msgid "Is the BOM for this part valid?"
 msgstr "이 부품의 BOM이 유효한가요?"
 
-#: part/models.py:1306
+#: part/models.py:1316
 msgid "BOM checksum"
 msgstr "BOM 체크섬"
 
-#: part/models.py:1307
+#: part/models.py:1317
 msgid "Stored BOM checksum"
 msgstr "저장된 BOM 체크섬"
 
-#: part/models.py:1315
+#: part/models.py:1325
 msgid "BOM checked by"
 msgstr "BOM 검증자"
 
-#: part/models.py:1320
+#: part/models.py:1330
 msgid "BOM checked date"
 msgstr "BOM 검증 날짜"
 
-#: part/models.py:1336
+#: part/models.py:1346
 msgid "Creation User"
 msgstr "생성 사용자"
 
-#: part/models.py:1346
+#: part/models.py:1356
 msgid "Owner responsible for this part"
 msgstr "이 부품의 책임 소유자"
 
-#: part/models.py:2308
+#: part/models.py:2318
 msgid "Sell multiple"
 msgstr "판매 배수"
 
-#: part/models.py:3317
+#: part/models.py:3327
 msgid "Currency used to cache pricing calculations"
 msgstr "가격 계산 캐시에 사용되는 통화"
 
-#: part/models.py:3333
+#: part/models.py:3343
 msgid "Minimum BOM Cost"
 msgstr "최소 BOM 비용"
 
-#: part/models.py:3334
+#: part/models.py:3344
 msgid "Minimum cost of component parts"
 msgstr "구성 부품의 최소 비용"
 
-#: part/models.py:3340
+#: part/models.py:3350
 msgid "Maximum BOM Cost"
 msgstr "최대 BOM 비용"
 
-#: part/models.py:3341
+#: part/models.py:3351
 msgid "Maximum cost of component parts"
 msgstr "구성 부품의 최대 비용"
 
-#: part/models.py:3347
+#: part/models.py:3357
 msgid "Minimum Purchase Cost"
 msgstr "최소 구매 비용"
 
-#: part/models.py:3348
+#: part/models.py:3358
 msgid "Minimum historical purchase cost"
 msgstr "과거 구매 비용의 최소값"
 
-#: part/models.py:3354
+#: part/models.py:3364
 msgid "Maximum Purchase Cost"
 msgstr "최대 구매 비용"
 
-#: part/models.py:3355
+#: part/models.py:3365
 msgid "Maximum historical purchase cost"
 msgstr "과거 구매 비용의 최대값"
 
-#: part/models.py:3361
+#: part/models.py:3371
 msgid "Minimum Internal Price"
 msgstr "최소 내부 가격"
 
-#: part/models.py:3362
+#: part/models.py:3372
 msgid "Minimum cost based on internal price breaks"
 msgstr "내부 가격 구간에 기반한 최소 비용"
 
-#: part/models.py:3368
+#: part/models.py:3378
 msgid "Maximum Internal Price"
 msgstr "최대 내부 가격"
 
-#: part/models.py:3369
+#: part/models.py:3379
 msgid "Maximum cost based on internal price breaks"
 msgstr "내부 가격 구간에 기반한 최대 비용"
 
-#: part/models.py:3375
+#: part/models.py:3385
 msgid "Minimum Supplier Price"
 msgstr "최소 공급업체 가격"
 
-#: part/models.py:3376
+#: part/models.py:3386
 msgid "Minimum price of part from external suppliers"
 msgstr "외부 공급업체로부터의 최소 가격"
 
-#: part/models.py:3382
+#: part/models.py:3392
 msgid "Maximum Supplier Price"
 msgstr "최대 공급업체 가격"
 
-#: part/models.py:3383
+#: part/models.py:3393
 msgid "Maximum price of part from external suppliers"
 msgstr "외부 공급업체로부터의 최대 가격"
 
-#: part/models.py:3389
+#: part/models.py:3399
 msgid "Minimum Variant Cost"
 msgstr "최소 변형 비용"
 
-#: part/models.py:3390
+#: part/models.py:3400
 msgid "Calculated minimum cost of variant parts"
 msgstr "변형 부품의 계산된 최소 비용"
 
-#: part/models.py:3396
+#: part/models.py:3406
 msgid "Maximum Variant Cost"
 msgstr "최대 변형 비용"
 
-#: part/models.py:3397
+#: part/models.py:3407
 msgid "Calculated maximum cost of variant parts"
 msgstr "변형 부품의 계산된 최대 비용"
 
-#: part/models.py:3403 part/models.py:3417
+#: part/models.py:3413 part/models.py:3427
 msgid "Minimum Cost"
 msgstr "최소 비용"
 
-#: part/models.py:3404
+#: part/models.py:3414
 msgid "Override minimum cost"
 msgstr "최소 비용 재정의"
 
-#: part/models.py:3410 part/models.py:3424
+#: part/models.py:3420 part/models.py:3434
 msgid "Maximum Cost"
 msgstr "최대 비용"
 
-#: part/models.py:3411
+#: part/models.py:3421
 msgid "Override maximum cost"
 msgstr "최대 비용 재정의"
 
-#: part/models.py:3418
+#: part/models.py:3428
 msgid "Calculated overall minimum cost"
 msgstr "계산된 전체 최소 비용"
 
-#: part/models.py:3425
+#: part/models.py:3435
 msgid "Calculated overall maximum cost"
 msgstr "계산된 전체 최대 비용"
 
-#: part/models.py:3431
+#: part/models.py:3441
 msgid "Minimum Sale Price"
 msgstr "최소 판매 가격"
 
-#: part/models.py:3432
+#: part/models.py:3442
 msgid "Minimum sale price based on price breaks"
 msgstr "가격 구간에 기반한 최소 판매 가격"
 
-#: part/models.py:3438
+#: part/models.py:3448
 msgid "Maximum Sale Price"
 msgstr "최대 판매 가격"
 
-#: part/models.py:3439
+#: part/models.py:3449
 msgid "Maximum sale price based on price breaks"
 msgstr "가격 구간에 기반한 최대 판매 가격"
 
-#: part/models.py:3445
+#: part/models.py:3455
 msgid "Minimum Sale Cost"
 msgstr "최소 판매 비용"
 
-#: part/models.py:3446
+#: part/models.py:3456
 msgid "Minimum historical sale price"
 msgstr "과거 판매 가격의 최소값"
 
-#: part/models.py:3452
+#: part/models.py:3462
 msgid "Maximum Sale Cost"
 msgstr "최대 판매 비용"
 
-#: part/models.py:3453
+#: part/models.py:3463
 msgid "Maximum historical sale price"
 msgstr "과거 판매 가격의 최대값"
 
-#: part/models.py:3471
+#: part/models.py:3481
 msgid "Part for stocktake"
 msgstr "재고 조사 대상 부품"
 
-#: part/models.py:3476
+#: part/models.py:3486
 msgid "Item Count"
 msgstr "항목 수"
 
-#: part/models.py:3477
+#: part/models.py:3487
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "재고 조사 시점의 개별 재고 항목 수"
 
-#: part/models.py:3485
+#: part/models.py:3495
 msgid "Total available stock at time of stocktake"
 msgstr "재고 조사 시점의 사용 가능한 총 재고"
 
-#: part/models.py:3489 report/templates/report/inventree_test_report.html:106
+#: part/models.py:3499 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3119
 msgid "Date"
 msgstr "날짜"
 
-#: part/models.py:3490
+#: part/models.py:3500
 msgid "Date stocktake was performed"
 msgstr "재고 조사가 수행된 날짜"
 
-#: part/models.py:3497
+#: part/models.py:3507
 msgid "Minimum Stock Cost"
 msgstr "최소 재고 비용"
 
-#: part/models.py:3498
+#: part/models.py:3508
 msgid "Estimated minimum cost of stock on hand"
 msgstr "보유 재고의 추정 최소 비용"
 
-#: part/models.py:3504
+#: part/models.py:3514
 msgid "Maximum Stock Cost"
 msgstr "최대 재고 비용"
 
-#: part/models.py:3505
+#: part/models.py:3515
 msgid "Estimated maximum cost of stock on hand"
 msgstr "보유 재고의 추정 최대 비용"
 
-#: part/models.py:3515
+#: part/models.py:3525
 msgid "Part Sale Price Break"
 msgstr "부품 판매 가격 구간"
 
-#: part/models.py:3629
+#: part/models.py:3639
 msgid "Part Test Template"
 msgstr "부품 테스트 템플릿"
 
-#: part/models.py:3655
+#: part/models.py:3665
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "템플릿 이름이 올바르지 않습니다 - 영숫자 문자를 최소 1개 포함해야 합니다"
 
-#: part/models.py:3687
+#: part/models.py:3697
 msgid "Test templates can only be created for testable parts"
 msgstr "테스트 템플릿은 테스트 가능한 부품에만 만들 수 있습니다"
 
-#: part/models.py:3701
+#: part/models.py:3711
 msgid "Test template with the same key already exists for part"
 msgstr "같은 키의 테스트 템플릿이 이 부품에 이미 존재합니다"
 
-#: part/models.py:3718
+#: part/models.py:3728
 msgid "Test Name"
 msgstr "테스트 이름"
 
-#: part/models.py:3719
+#: part/models.py:3729
 msgid "Enter a name for the test"
 msgstr "테스트 이름을 입력하세요"
 
-#: part/models.py:3725
+#: part/models.py:3735
 msgid "Test Key"
 msgstr "테스트 키"
 
-#: part/models.py:3726
+#: part/models.py:3736
 msgid "Simplified key for the test"
 msgstr "테스트를 위한 단순화된 키"
 
-#: part/models.py:3733
+#: part/models.py:3743
 msgid "Test Description"
 msgstr "테스트 설명"
 
-#: part/models.py:3734
+#: part/models.py:3744
 msgid "Enter description for this test"
 msgstr "이 테스트에 대한 설명을 입력하세요"
 
-#: part/models.py:3738
+#: part/models.py:3748
 msgid "Is this test enabled?"
 msgstr "이 테스트가 활성화되어 있나요?"
 
-#: part/models.py:3743
+#: part/models.py:3753
 msgid "Required"
 msgstr "필수"
 
-#: part/models.py:3744
+#: part/models.py:3754
 msgid "Is this test required to pass?"
 msgstr "이 테스트는 통과가 필수인가요?"
 
-#: part/models.py:3749
+#: part/models.py:3759
 msgid "Requires Value"
 msgstr "값 필요"
 
-#: part/models.py:3750
+#: part/models.py:3760
 msgid "Does this test require a value when adding a test result?"
 msgstr "테스트 결과를 추가할 때 값이 필요한가요?"
 
-#: part/models.py:3755
+#: part/models.py:3765
 msgid "Requires Attachment"
 msgstr "첨부 필요"
 
-#: part/models.py:3757
+#: part/models.py:3767
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "테스트 결과를 추가할 때 파일 첨부가 필요한가요?"
 
-#: part/models.py:3764
+#: part/models.py:3774
 msgid "Valid choices for this test (comma-separated)"
 msgstr "이 테스트의 유효한 선택지(쉼표로 구분)"
 
-#: part/models.py:3961
+#: part/models.py:3918
+msgid "Invalid quantity - no units specified for part"
+msgstr ""
+
+#: part/models.py:3927
+msgid "Quantity must be greater than or equal to zero"
+msgstr "수량은 0 이상이어야 합니다"
+
+#: part/models.py:4023
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "조립품이 잠겨 있어 BOM 항목을 수정할 수 없습니다"
 
-#: part/models.py:3968
+#: part/models.py:4030
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "변형 조립품이 잠겨 있어 BOM 항목을 수정할 수 없습니다"
 
-#: part/models.py:3978
+#: part/models.py:4040
 msgid "Select parent part"
 msgstr "상위 부품을 선택하세요"
 
-#: part/models.py:3988
+#: part/models.py:4050
 msgid "Sub part"
 msgstr "하위 부품"
 
-#: part/models.py:3989
+#: part/models.py:4051
 msgid "Select part to be used in BOM"
 msgstr "BOM에 사용할 부품을 선택하세요"
 
-#: part/models.py:4000
+#: part/models.py:4057 part/serializers.py:1704
+msgid "Amount"
+msgstr ""
+
+#: part/models.py:4058
+msgid "Amount of sub-part consumed to produce one part"
+msgstr ""
+
+#: part/models.py:4070
 msgid "BOM quantity for this BOM item"
 msgstr "이 BOM 항목의 BOM 수량"
 
-#: part/models.py:4006
+#: part/models.py:4076
 msgid "This BOM item is optional"
 msgstr "이 BOM 항목은 선택 사항입니다"
 
-#: part/models.py:4012
+#: part/models.py:4082
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "이 BOM 항목은 소모품입니다(제작 주문에서 추적되지 않음)"
 
-#: part/models.py:4020
+#: part/models.py:4090
 msgid "Setup Quantity"
 msgstr "설정 수량"
 
-#: part/models.py:4021
+#: part/models.py:4091
 msgid "Extra required quantity for a build, to account for setup losses"
 msgstr "설정 손실을 고려해 제작에 추가로 필요한 수량"
 
-#: part/models.py:4029
+#: part/models.py:4099
 msgid "Attrition"
 msgstr "손실률"
 
-#: part/models.py:4031
+#: part/models.py:4101
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
 msgstr "제작 손실률 추정치(백분율, 0-100)"
 
-#: part/models.py:4042
+#: part/models.py:4112
 msgid "Rounding Multiple"
 msgstr "반올림 배수"
 
-#: part/models.py:4044
+#: part/models.py:4114
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr "필요 생산 수량을 이 값의 가장 가까운 배수로 올림합니다"
 
-#: part/models.py:4052
+#: part/models.py:4122
 msgid "BOM item reference"
 msgstr "BOM 항목 참조"
 
-#: part/models.py:4060
+#: part/models.py:4130
 msgid "BOM item notes"
 msgstr "BOM 항목 메모"
 
-#: part/models.py:4066
+#: part/models.py:4136
 msgid "Checksum"
 msgstr "체크섬"
 
-#: part/models.py:4067
+#: part/models.py:4137
 msgid "BOM line checksum"
 msgstr "BOM 라인 체크섬"
 
-#: part/models.py:4072
+#: part/models.py:4142
 msgid "Validated"
 msgstr "검증됨"
 
-#: part/models.py:4073
+#: part/models.py:4143
 msgid "This BOM item has been validated"
 msgstr "이 BOM 항목이 검증되었습니다"
 
-#: part/models.py:4078
+#: part/models.py:4148
 msgid "Gets inherited"
 msgstr "상속됨"
 
-#: part/models.py:4079
+#: part/models.py:4149
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "이 BOM 항목은 변형 부품의 BOM에 상속됩니다"
 
-#: part/models.py:4085
+#: part/models.py:4155
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "변형 부품의 재고 항목을 이 BOM 항목에 사용할 수 있습니다"
 
-#: part/models.py:4194 stock/models.py:946
+#: part/models.py:4262 stock/models.py:946
 msgid "Quantity must be integer value for trackable parts"
 msgstr "추적 가능한 부품의 수량은 정수여야 합니다"
 
-#: part/models.py:4204 part/models.py:4206
+#: part/models.py:4272 part/models.py:4274
 msgid "Sub part must be specified"
 msgstr "하위 부품을 지정해야 합니다"
 
-#: part/models.py:4357
+#: part/models.py:4425
 msgid "BOM Item Substitute"
 msgstr "BOM 항목 대체품"
 
-#: part/models.py:4378
+#: part/models.py:4446
 msgid "Substitute part cannot be the same as the master part"
 msgstr "대체 부품은 기준 부품과 같을 수 없습니다"
 
-#: part/models.py:4391
+#: part/models.py:4459
 msgid "Parent BOM item"
 msgstr "상위 BOM 항목"
 
-#: part/models.py:4399
+#: part/models.py:4467
 msgid "Substitute part"
 msgstr "대체 부품"
 
-#: part/models.py:4415
+#: part/models.py:4483
 msgid "Part 1"
 msgstr "부품 1"
 
-#: part/models.py:4423
+#: part/models.py:4491
 msgid "Part 2"
 msgstr "부품 2"
 
-#: part/models.py:4424
+#: part/models.py:4492
 msgid "Select Related Part"
 msgstr "관련 부품 선택"
 
-#: part/models.py:4431
+#: part/models.py:4499
 msgid "Note for this relationship"
 msgstr "이 관계에 대한 메모"
 
-#: part/models.py:4450
+#: part/models.py:4518
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "부품과 자기 자신 사이에는 부품 관계를 만들 수 없습니다"
 
-#: part/models.py:4455
+#: part/models.py:4523
 msgid "Duplicate relationship already exists"
 msgstr "중복된 관계가 이미 존재합니다"
 
@@ -6627,239 +6652,243 @@ msgstr "이 MPN과 일치하는 제조사 부품이 이미 존재합니다"
 msgid "Supplier part matching this SKU already exists"
 msgstr "이 SKU와 일치하는 공급업체 부품이 이미 존재합니다"
 
-#: part/serializers.py:816
+#: part/serializers.py:817
 msgid "Category Name"
 msgstr "카테고리 이름"
 
-#: part/serializers.py:845
+#: part/serializers.py:846
 msgid "Building"
 msgstr "제작 중"
 
-#: part/serializers.py:846
+#: part/serializers.py:847
 msgid "Quantity of this part currently being in production"
 msgstr "현재 생산 중인 이 부품의 수량"
 
-#: part/serializers.py:853
+#: part/serializers.py:854
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "제작 예정인 이 부품의 미완료 수량"
 
-#: part/serializers.py:873 stock/serializers.py:1048 stock/serializers.py:1231
+#: part/serializers.py:874 stock/serializers.py:1048 stock/serializers.py:1231
 #: users/ruleset.py:32
 msgid "Stock Items"
 msgstr "재고 항목"
 
-#: part/serializers.py:877
+#: part/serializers.py:878
 msgid "Revisions"
 msgstr "개정"
 
-#: part/serializers.py:881 part/serializers.py:1188
+#: part/serializers.py:882 part/serializers.py:1193
 #: templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "총 재고"
 
-#: part/serializers.py:889
+#: part/serializers.py:890
 msgid "Unallocated Stock"
 msgstr "미할당 재고"
 
-#: part/serializers.py:897
+#: part/serializers.py:898
 msgid "Variant Stock"
 msgstr "변형 재고"
 
-#: part/serializers.py:968
+#: part/serializers.py:973
 msgid "Duplicate Part"
 msgstr "부품 복제"
 
-#: part/serializers.py:969
+#: part/serializers.py:974
 msgid "Copy initial data from another Part"
 msgstr "다른 부품에서 초기 데이터를 복사합니다"
 
-#: part/serializers.py:975
+#: part/serializers.py:980
 msgid "Initial Stock"
 msgstr "초기 재고"
 
-#: part/serializers.py:976
+#: part/serializers.py:981
 msgid "Create Part with initial stock quantity"
 msgstr "초기 재고 수량과 함께 부품을 생성합니다"
 
-#: part/serializers.py:982
+#: part/serializers.py:987
 msgid "Supplier Information"
 msgstr "공급업체 정보"
 
-#: part/serializers.py:983
+#: part/serializers.py:988
 msgid "Add initial supplier information for this part"
 msgstr "이 부품에 대한 초기 공급업체 정보를 추가합니다"
 
-#: part/serializers.py:992
+#: part/serializers.py:997
 msgid "Copy Category Parameters"
 msgstr "카테고리 매개변수 복사"
 
-#: part/serializers.py:993
+#: part/serializers.py:998
 msgid "Copy parameter templates from selected part category"
 msgstr "선택한 부품 카테고리의 매개변수 템플릿을 복사합니다"
 
-#: part/serializers.py:998
+#: part/serializers.py:1003
 msgid "Existing Image"
 msgstr "기존 이미지"
 
-#: part/serializers.py:999
+#: part/serializers.py:1004
 msgid "Filename of an existing part image"
 msgstr "기존 부품 이미지의 파일명"
 
-#: part/serializers.py:1016
+#: part/serializers.py:1021
 msgid "Image file does not exist"
 msgstr "이미지 파일이 존재하지 않습니다"
 
-#: part/serializers.py:1160
+#: part/serializers.py:1165
 msgid "Validate entire Bill of Materials"
 msgstr "전체 자재 명세서(BOM) 검증"
 
-#: part/serializers.py:1194 part/serializers.py:1802
+#: part/serializers.py:1199 part/serializers.py:1795
 msgid "Can Build"
 msgstr "제작 가능"
 
-#: part/serializers.py:1211
+#: part/serializers.py:1216
 msgid "Required for Build Orders"
 msgstr "제작 주문에 필요"
 
-#: part/serializers.py:1216
+#: part/serializers.py:1221
 msgid "Allocated to Build Orders"
 msgstr "제작 주문에 할당됨"
 
-#: part/serializers.py:1223
+#: part/serializers.py:1228
 msgid "Required for Sales Orders"
 msgstr "판매 주문에 필요"
 
-#: part/serializers.py:1227
+#: part/serializers.py:1232
 msgid "Allocated to Sales Orders"
 msgstr "판매 주문에 할당됨"
 
-#: part/serializers.py:1287
+#: part/serializers.py:1292
 msgid "Part IPN"
 msgstr "부품 IPN"
 
-#: part/serializers.py:1294
+#: part/serializers.py:1299
 msgid "Part Description"
 msgstr "부품 설명"
 
-#: part/serializers.py:1338
+#: part/serializers.py:1343
 msgid "Select a part to generate stocktake information for that part (and any variant parts)"
 msgstr "재고 조사 정보를 생성할 부품을 선택하세요(및 모든 변형 부품)."
 
-#: part/serializers.py:1348
+#: part/serializers.py:1353
 msgid "Select a category to include all parts within that category (and subcategories)"
 msgstr "해당 카테고리(및 하위 카테고리)의 모든 부품을 포함할 카테고리를 선택하세요"
 
-#: part/serializers.py:1358
+#: part/serializers.py:1363
 msgid "Select a location to include all parts with stock in that location (including sub-locations)"
 msgstr "해당 위치(하위 위치 포함)에 재고가 있는 모든 부품을 포함할 위치를 선택하세요"
 
-#: part/serializers.py:1365
+#: part/serializers.py:1370
 msgid "Generate Stocktake Entries"
 msgstr "재고 조사 항목 생성"
 
-#: part/serializers.py:1366
+#: part/serializers.py:1371
 msgid "Save stocktake entries for the selected parts"
 msgstr "선택한 부품에 대한 재고 조사 항목을 저장합니다"
 
-#: part/serializers.py:1373
+#: part/serializers.py:1378
 msgid "Generate Report"
 msgstr "보고서 생성"
 
-#: part/serializers.py:1374
+#: part/serializers.py:1379
 msgid "Generate a stocktake report for the selected parts"
 msgstr "선택한 부품에 대한 재고 조사 보고서를 생성합니다"
 
-#: part/serializers.py:1477
+#: part/serializers.py:1482
 msgid "Minimum Price"
 msgstr "최소 가격"
 
-#: part/serializers.py:1478
+#: part/serializers.py:1483
 msgid "Override calculated value for minimum price"
 msgstr "계산된 최소 가격 값을 재정의합니다"
 
-#: part/serializers.py:1485
+#: part/serializers.py:1490
 msgid "Minimum price currency"
 msgstr "최소 가격 통화"
 
-#: part/serializers.py:1492
+#: part/serializers.py:1497
 msgid "Maximum Price"
 msgstr "최대 가격"
 
-#: part/serializers.py:1493
+#: part/serializers.py:1498
 msgid "Override calculated value for maximum price"
 msgstr "계산된 최대 가격 값을 재정의합니다"
 
-#: part/serializers.py:1500
+#: part/serializers.py:1505
 msgid "Maximum price currency"
 msgstr "최대 가격 통화"
 
-#: part/serializers.py:1529
+#: part/serializers.py:1534
 msgid "Update"
 msgstr "업데이트"
 
-#: part/serializers.py:1530
+#: part/serializers.py:1535
 msgid "Update pricing for this part"
 msgstr "이 부품의 가격 정보를 업데이트합니다"
 
-#: part/serializers.py:1553
+#: part/serializers.py:1558
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr "제공된 통화를 {default_currency}(으)로 변환할 수 없습니다"
 
-#: part/serializers.py:1560
+#: part/serializers.py:1565
 msgid "Minimum price must not be greater than maximum price"
 msgstr "최소 가격은 최대 가격보다 클 수 없습니다"
 
-#: part/serializers.py:1563
+#: part/serializers.py:1568
 msgid "Maximum price must not be less than minimum price"
 msgstr "최대 가격은 최소 가격보다 작을 수 없습니다"
 
-#: part/serializers.py:1716
-msgid "Quantity must be greater than or equal to zero"
-msgstr "수량은 0 이상이어야 합니다"
+#: part/serializers.py:1705
+msgid "Amount required for this item (can include units)"
+msgstr ""
 
-#: part/serializers.py:1729
+#: part/serializers.py:1722
 msgid "Select the parent assembly"
 msgstr "상위 조립품을 선택하세요"
 
-#: part/serializers.py:1764
+#: part/serializers.py:1757
 msgid "Select the component part"
 msgstr "구성 부품을 선택하세요"
 
-#: part/serializers.py:1991
+#: part/serializers.py:1877
+msgid "Invalid quantity format"
+msgstr ""
+
+#: part/serializers.py:2005
 msgid "Select part to copy BOM from"
 msgstr "BOM을 복사할 부품을 선택하세요"
 
-#: part/serializers.py:1999
+#: part/serializers.py:2013
 msgid "Remove Existing Data"
 msgstr "기존 데이터 제거"
 
-#: part/serializers.py:2000
+#: part/serializers.py:2014
 msgid "Remove existing BOM items before copying"
 msgstr "복사하기 전에 기존 BOM 항목을 제거합니다"
 
-#: part/serializers.py:2005
+#: part/serializers.py:2019
 msgid "Include Inherited"
 msgstr "상속 항목 포함"
 
-#: part/serializers.py:2006
+#: part/serializers.py:2020
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "템플릿 부품에서 상속된 BOM 항목 포함"
 
-#: part/serializers.py:2011
+#: part/serializers.py:2025
 msgid "Skip Invalid Rows"
 msgstr "잘못된 행 건너뛰기"
 
-#: part/serializers.py:2012
+#: part/serializers.py:2026
 msgid "Enable this option to skip invalid rows"
 msgstr "이 옵션을 사용하면 잘못된 행을 건너뜁니다"
 
-#: part/serializers.py:2017
+#: part/serializers.py:2031
 msgid "Copy Substitute Parts"
 msgstr "대체 부품 복사"
 
-#: part/serializers.py:2018
+#: part/serializers.py:2032
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "BOM 항목을 복제할 때 대체 부품도 복사"
 
