@@ -7,6 +7,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
+import { hashString } from '@lib/index';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -367,12 +368,24 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     },
     [cacheKey, dataColumns]
   );
+
+  const tableColumnHash = useMemo(() => {
+    const columnNames = dataColumns.map((col: any) => col.accessor).join(', ');
+    return hashString(columnNames);
+  }, [dataColumns]);
+
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
     key: cacheKey,
     columns: dataColumns,
     getInitialValueInEffect: false
   });
+
+  // Reset column ordering and custom widths when the component is mounted
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
+  useEffect(() => {
+    tableColumns.setColumnsOrder(dataColumns.map((col: any) => col.accessor));
+  }, [tableColumnHash]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
