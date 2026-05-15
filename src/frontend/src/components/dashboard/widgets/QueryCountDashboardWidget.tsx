@@ -1,7 +1,7 @@
-import { ActionIcon, Anchor, Group, Loader } from '@mantine/core';
+import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -37,6 +37,8 @@ function QueryCountWidget({
 
   const modelProperties = ModelInformationDict[modelType];
 
+  const [count, setCount] = useState<number>(0);
+
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
     enabled: user.hasViewPermission(modelType) && visibility === 'visible',
@@ -54,7 +56,10 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data);
+        .then((res) => {
+          setCount(res.data?.count ?? 0);
+          return res.data;
+        });
     }
   });
 
@@ -81,18 +86,16 @@ function QueryCountWidget({
   );
 
   const result: ReactNode = useMemo(() => {
-    if (query.isFetching) {
-      return <Loader size='xs' />;
-    } else if (query.isError) {
+    if (query.isError) {
       return (
         <ActionIcon color='red' variant='transparent' size='lg'>
           <IconExclamationCircle />
         </ActionIcon>
       );
     } else {
-      return <StylishText size='xl'>{query.data?.count ?? '-'}</StylishText>;
+      return <RollingNumber value={count} fz='20px' />;
     }
-  }, [query.isFetching, query.isError, query.data]);
+  }, [query.isFetching, query.isError, count]);
 
   return (
     <Anchor href='#' onClick={onFollowLink} underline='never'>
