@@ -10,7 +10,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
-from django.utils.http import is_same_domain
+from django.utils.http import is_same_domain, url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -163,9 +163,16 @@ class AuthRequiredMiddleware:
             if path not in urls and not any(
                 path.startswith(p) for p in paths_ignore_handling
             ):
+                # Validate next url is safe to redirect to
+                next_url = request.path
+                if not url_has_allowed_host_and_scheme(
+                    url=next_url,
+                    allowed_hosts=settings.ALLOWED_HOSTS,
+                    require_https=request.is_secure(),
+                ):
+                    return redirect(str(reverse_lazy('account_login')))
                 # Save the 'next' parameter to pass through to the login view
-
-                return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+                return redirect(f'{reverse_lazy("account_login")}?next={next_url}')
             # Return a 401 (Unauthorized) response code for this request
             return HttpResponse('Unauthorized', status=401)
 
