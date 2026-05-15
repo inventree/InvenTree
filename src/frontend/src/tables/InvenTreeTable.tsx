@@ -7,7 +7,6 @@ import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
-import { hashString } from '@lib/index';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -369,10 +368,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [cacheKey, dataColumns]
   );
 
-  const tableColumnHash = useMemo(() => {
-    const columnNames = dataColumns.map((col: any) => col.accessor).join(', ');
-    return hashString(columnNames);
-  }, [dataColumns]);
+  // Generate an ordered list of column names,
+  // which we use to ensure the table is reloaded correctly when columns are added/removed/renamed
+  const tableColumnNames = useMemo(
+    () => dataColumns.map((col: any) => col.accessor).join(','),
+    [dataColumns]
+  );
 
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
@@ -385,7 +386,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
   useEffect(() => {
     tableColumns.setColumnsOrder(dataColumns.map((col: any) => col.accessor));
-  }, [tableColumnHash]);
+  }, [tableColumnNames]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
