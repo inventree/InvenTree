@@ -1145,6 +1145,10 @@ class SelectionListDetail(RetrieveUpdateDestroyAPI):
     serializer_class = common.serializers.SelectionListSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
 
 class EntryMixin:
     """Mixin for SelectionEntry views."""

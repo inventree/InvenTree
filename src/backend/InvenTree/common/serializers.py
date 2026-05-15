@@ -995,7 +995,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
             'entry_count',
         ]
 
-    default = SelectionEntrySerializer(read_only=True, many=False)
+    default = SelectionEntrySerializer(read_only=True, allow_null=True, many=False)
     choices = SelectionEntrySerializer(source='entries', many=True, required=False)
     entry_count = serializers.IntegerField(read_only=True)
 
