@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from error_report.middleware import ExceptionProcessor
 
+import InvenTree.helpers
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
@@ -126,7 +127,8 @@ class AuthRequiredMiddleware:
                     return True
             except ApiToken.DoesNotExist:  # pragma: no cover
                 logger.warning(
-                    'Access denied for unknown token %s', token
+                    'Access denied for unknown token %s',
+                    InvenTree.helpers.sanitize_token(str(token)),
                 )  # pragma: no cover
 
         return False
