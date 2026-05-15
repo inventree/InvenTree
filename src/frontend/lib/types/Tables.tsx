@@ -100,7 +100,7 @@ export type TableState = {
  */
 export type TableColumnProps<T = any> = {
   accessor?: string;
-  title?: string;
+  title?: string | ReactNode;
   ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
