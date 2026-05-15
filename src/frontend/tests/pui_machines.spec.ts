@@ -47,11 +47,11 @@ test('Machines - Activation', async ({ browser }) => {
       .getByRole('textbox', { name: 'text-field-name' })
       .fill('my-dummy-machine');
     await page
-      .getByRole('textbox', { name: 'choice-field-machine_type' })
+      .getByRole('combobox', { name: 'choice-field-machine_type' })
       .fill('label');
     await page.getByRole('option', { name: 'Label Printer' }).click();
 
-    await page.getByRole('textbox', { name: 'choice-field-driver' }).click();
+    await page.getByRole('combobox', { name: 'choice-field-driver' }).click();
     await page
       .getByRole('option', { name: 'Sample Label Printer Driver' })
       .click();
@@ -110,7 +110,7 @@ test('Machines - Activation', async ({ browser }) => {
   await page.getByText('InvenTreeLabelMachine').click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-machine' })
+    .getByRole('combobox', { name: 'choice-field-machine' })
     .fill('dummy');
   await page.getByRole('option', { name: 'my-dummy-machine' }).click();
 

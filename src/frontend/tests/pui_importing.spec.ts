@@ -26,7 +26,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Errors exist for one or more').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-model_type' })
+    .getByRole('combobox', { name: 'choice-field-model_type' })
     .fill('bom');
   await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();

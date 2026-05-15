@@ -162,7 +162,7 @@ test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   await page.getByRole('button', { name: 'table-export-data' }).click();
   await page.getByText('Select export plugin').waitFor();
   await page
-    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .getByRole('combobox', { name: 'choice-field-export_plugin' })
     .fill('CSV');
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Process completed successfully').waitFor();
@@ -606,6 +606,8 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
 
   // Receive the line item
   await loadTab(page, 'Line Items');
+  await page.getByRole('cell', { name: 'Thumbnail CRM license' }).waitFor();
+
   await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('button', { name: 'action-button-receive-items' })
