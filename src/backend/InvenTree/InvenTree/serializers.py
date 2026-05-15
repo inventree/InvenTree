@@ -315,13 +315,16 @@ class TreePathSerializer(serializers.Serializer):
 
         allowed_fields = ['pk', 'name', *(extra_fields or [])]
 
+        if InvenTree.ready.isGeneratingSchema():
+            return
+
         for field in list(self.fields.keys()):
             if field not in allowed_fields:
                 self.fields.pop(field, None)
 
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
-    icon = serializers.CharField(required=False, read_only=True)
+    icon = serializers.CharField(required=False, read_only=True, allow_null=True)
 
 
 class InvenTreeMoneySerializer(MoneyField):
