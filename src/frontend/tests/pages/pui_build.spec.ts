@@ -225,6 +225,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
+  await page.getByRole('cell', { name: 'BX-123' }).waitFor();
 
   // Check the "printing" actions for the selected outputs
   await page.getByRole('checkbox', { name: 'Select all records' }).check();

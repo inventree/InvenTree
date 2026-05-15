@@ -6,7 +6,8 @@ import { doCachedLogin } from './login';
 // Helper function to open the export data dialog
 const openExportDialog = async (page) => {
   await page.waitForLoadState('networkidle');
-  await page.getByLabel('table-export-data').click();
+
+  await page.getByRole('button', { name: 'table-export-data' }).click();
   await page.getByText('Export Format *', { exact: true }).waitFor();
   await page.getByText('Export Plugin *', { exact: true }).waitFor();
 };

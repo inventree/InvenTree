@@ -96,9 +96,7 @@ test('Dashboard - Plugins', async ({ browser }) => {
   await page.getByText('Hello world! This is a sample').waitFor();
 });
 
-test('Dashboard - Preserve widget sizes when adding new widget', async ({
-  browser
-}) => {
+test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   // Regression: addWidget previously snapped every existing widget back to
   // its minW/minH. Fix is in DashboardLayout.tsx::addWidget (overrideSize=false).
   const TARGET_W = 10;
@@ -152,6 +150,9 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
   // Sanity: profile rehydration produced the inflated values.
   for (const [bp, items] of Object.entries(await readLayouts(page))) {
     const entry = (items as any[]).find((i) => i?.i === 'ovr-so');
+
+    console.log('entry:', bp, entry);
+
     expect(entry?.w, `${bp}: ovr-so missing or wrong w`).toBe(TARGET_W);
     expect(entry?.h, `${bp}: ovr-so missing or wrong h`).toBe(TARGET_H);
   }

@@ -36,7 +36,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Existing database identifier for the record').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .getByRole('combobox', { name: 'import-column-map-reference' })
     .click();
   await page.getByRole('option', { name: 'Ignore this field' }).click();
 
@@ -195,7 +195,7 @@ test('Importing - Natural Keys', async ({ browser }) => {
 
   // Select different columns for data import
   // We will use the "SKU" field to map to the supplier part
-  await page.getByRole('textbox', { name: 'import-column-map-part' }).click();
+  await page.getByRole('combobox', { name: 'import-column-map-part' }).click();
   await page.getByRole('option', { name: 'SKU' }).click();
 
   // Other import fields will be left as default
