@@ -77,6 +77,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
   <ul>
     <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
     <li><a href="https://www.mysql.com/">MySQL</a></li>
+    <li><a href="https://www.mariadb.org/">MariaDB</a></li>
     <li><a href="https://www.sqlite.org/">SQLite</a></li>
     <li><a href="https://redis.io/">Redis</a></li>
   </ul>

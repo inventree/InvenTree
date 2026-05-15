@@ -179,9 +179,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         if self.pk is None:
             return self.key  # pragma: no cover
 
-        M = len(self.key) - 20
-
-        return self.key[:8] + '*' * M + self.key[-12:]
+        return InvenTree.helpers.sanitize_token(self.key)
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
