@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+- [#11951](https://github.com/inventree/InvenTree/pull/11951) adds API throtteling by default to make DoS attacks more difficult. This can be disabled by setting the `INVENTREE_THROTTLE_ANON` and `INVENTREE_THROTTLE_USER` settings to `None` (either via environment variable or config file). The default throttling rates are 20 requests per minute for anonymous users, and 20 requests per second for authenticated users.
 
 ### Added
 
