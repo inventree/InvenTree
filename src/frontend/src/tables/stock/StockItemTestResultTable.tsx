@@ -70,9 +70,9 @@ export default function StockItemTestResultTable({
       }
 
       return api
-        .get(apiUrl(ApiEndpoints.part_test_template_list), {
+        .get(apiUrl(ApiEndpoints.part_test_list), {
           params: {
-            part: partId,
+            for_part: partId,
             include_inherited: true,
             enabled: true
           }

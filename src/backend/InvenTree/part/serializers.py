@@ -50,6 +50,7 @@ from .models import (
     PartSellPriceBreak,
     PartStar,
     PartStocktake,
+    PartTest,
     PartTestTemplate,
 )
 
@@ -193,11 +194,8 @@ class PartTestTemplateSerializer(
         fields = [
             'pk',
             'key',
-            'part',
             'test_name',
             'description',
-            'enabled',
-            'required',
             'requires_value',
             'requires_attachment',
             'results',
@@ -205,6 +203,7 @@ class PartTestTemplateSerializer(
         ]
 
     key = serializers.CharField(read_only=True)
+
     results = serializers.IntegerField(
         label=_('Results'),
         help_text=_('Number of results recorded against this template'),
@@ -1235,6 +1234,40 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     def get_allocated_to_sales_orders(self, part) -> float:
         """Return the allocated sales order quantity."""
         return part.sales_order_allocation_count(include_variants=True, pending=True)
+
+
+class PartTestSerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
+    """Serializer for the PartTest class."""
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = PartTest
+        fields = [
+            'pk',
+            'template',
+            'part',
+            'enabled',
+            'required',
+            # Optional detail fields
+            'part_detail',
+            'template_detail',
+        ]
+
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={'source': 'part', 'many': False, 'read_only': True},
+        default_include=True,
+    )
+
+    template_detail = OptionalField(
+        serializer_class=PartTestTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'many': False, 'read_only': True},
+        default_include=True,
+    )
 
 
 class PartStocktakeSerializer(

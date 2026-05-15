@@ -1400,10 +1400,10 @@ class TestResultTest(StockTestBase):
         self.assertFalse(item.passedAllRequiredTests())
 
         # Generate a passing result for all required tests
-        for template in item.part.getRequiredTests():
+        for test in item.part.getRequiredTests():
             StockItemTestResult.objects.create(
                 stock_item=item,
-                template=template,
+                template=test.template,
                 result=True,
                 date=datetime.datetime(2025, 12, 12),
             )
