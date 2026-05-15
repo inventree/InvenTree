@@ -523,6 +523,8 @@ test('Build Order - Consume Stock', async ({ browser }) => {
 
   // Consume the rest of the stock via line items
   await loadTab(page, 'Required Parts');
+  await page.getByText('10K resistor in 0805 SMD').first().waitFor();
+
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-consume-stock' })
@@ -603,7 +605,7 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   await allocationRow.getByText('1 / 1').waitFor();
 
   // Close the allocation wizard
-  await page.getByRole('banner').getByRole('button').click();
+  await page.getByRole('button', { name: 'close-allocation-drawer' }).click();
 
   // Check that the output is now allocated as expected
   await row.getByText('1 / 6').waitFor();
