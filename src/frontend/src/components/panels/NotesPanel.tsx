@@ -26,7 +26,7 @@ export default function NotesPanel({
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
-    notification_dot: has_note ? 'info' : null,
+    indicator: has_note,
     content:
       model_type && model_id ? (
         <NotesEditor

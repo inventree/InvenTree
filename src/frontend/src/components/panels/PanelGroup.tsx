@@ -40,7 +40,8 @@ import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
-import { useWindowEvent } from '@mantine/hooks';
+import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
@@ -78,6 +79,84 @@ export type PanelProps = {
   pluginPanelWithoutId?: boolean;
   pluginPanelKey?: PluginPanelKey;
 };
+
+/**
+ * Render a single panel tab within the side menu
+ */
+function PanelTabComponent({
+  expanded,
+  panel,
+  onClick
+}: {
+  expanded: boolean;
+  panel: PanelType;
+  onClick: (event: any) => void;
+}) {
+  const visibility = useDocumentVisibility();
+
+  // Check if we should display an indicator dot for this panel
+  const indicator = useQuery({
+    enabled: panel.indicator !== undefined && visibility === 'visible',
+    queryKey: ['panel-notification', panel.name],
+    queryFn: async () => {
+      if (panel.indicator === undefined) {
+        return false;
+      } else if (typeof panel.indicator === 'function') {
+        return await panel.indicator();
+      } else {
+        return panel.indicator as boolean;
+      }
+    },
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
+  });
+
+  return (
+    <Tooltip
+      label={panel.label ?? panel.name}
+      key={panel.name}
+      disabled={expanded}
+      position='right'
+    >
+      <Tabs.Tab
+        p='xs'
+        key={`panel-label-${panel.name}`}
+        w={'100%'}
+        value={panel.name}
+        leftSection={
+          <Indicator
+            position='bottom-end'
+            disabled={!indicator?.data}
+            withBorder
+          >
+            {panel.icon}
+          </Indicator>
+        }
+        hidden={panel.hidden}
+        disabled={panel.disabled}
+        style={{
+          cursor: panel.disabled ? 'unset' : 'pointer'
+        }}
+        onClick={(event: any) => onClick(event)}
+      >
+        <Group justify='left' gap='xs' wrap='nowrap'>
+          <UnstyledButton
+            component={'a'}
+            style={{
+              textAlign: 'left'
+            }}
+            href={generateUrl(
+              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+            )}
+          >
+            {expanded && panel.label}
+          </UnstyledButton>
+        </Group>
+      </Tabs.Tab>
+    </Tooltip>
+  );
+}
 
 function BasePanelGroup({
   pageKey,
@@ -269,54 +348,13 @@ function BasePanelGroup({
                 {group.panels?.map(
                   (panel) =>
                     !panel.hidden && (
-                      <Tooltip
-                        label={panel.label ?? panel.name}
-                        key={panel.name}
-                        disabled={expanded}
-                        position='right'
-                      >
-                        <Tabs.Tab
-                          p='xs'
-                          key={`panel-label-${panel.name}`}
-                          w={'100%'}
-                          value={panel.name}
-                          leftSection={panel.icon}
-                          hidden={panel.hidden}
-                          disabled={panel.disabled}
-                          style={{
-                            cursor: panel.disabled ? 'unset' : 'pointer'
-                          }}
-                          onClick={(event: any) =>
-                            handlePanelChange(panel.name, event)
-                          }
-                        >
-                          <Indicator
-                            color={
-                              panel.notification_dot == 'info'
-                                ? 'blue'
-                                : panel.notification_dot == 'warning'
-                                  ? 'yellow'
-                                  : 'red'
-                            }
-                            position='middle-end'
-                            disabled={!panel.notification_dot}
-                          >
-                            <Group justify='left' gap='xs' wrap='nowrap'>
-                              <UnstyledButton
-                                component={'a'}
-                                style={{
-                                  textAlign: 'left'
-                                }}
-                                href={generateUrl(
-                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                                )}
-                              >
-                                {expanded && panel.label}
-                              </UnstyledButton>
-                            </Group>
-                          </Indicator>
-                        </Tabs.Tab>
-                      </Tooltip>
+                      <PanelTabComponent
+                        expanded={expanded}
+                        panel={panel}
+                        onClick={(event: any) =>
+                          handlePanelChange(panel.name, event)
+                        }
+                      />
                     )
                 )}
               </Box>
