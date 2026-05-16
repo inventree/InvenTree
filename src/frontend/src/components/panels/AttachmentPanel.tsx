@@ -3,6 +3,8 @@ import { Skeleton } from '@mantine/core';
 import { IconPaperclip } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { ApiEndpoints, apiUrl } from '@lib/index';
+import { api } from '../../App';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import type { PanelType } from './Panel';
 
@@ -17,6 +19,21 @@ export default function AttachmentPanel({
     name: 'attachments',
     label: t`Attachments`,
     icon: <IconPaperclip />,
+    indicator: async () => {
+      if (!model_type || !model_id) {
+        return false;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.attachment_list), {
+          params: {
+            model_type: model_type,
+            model_id: model_id,
+            limit: 1
+          }
+        })
+        .then((response) => (response.data?.count ?? 0) > 0);
+    },
     content:
       model_type && model_id ? (
         <AttachmentTable model_type={model_type} model_id={model_id} />
