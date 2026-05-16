@@ -42,6 +42,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
@@ -63,6 +64,7 @@ export default function CategoryDetail() {
 
   const navigate = useNavigate();
   const user = useUserState();
+  const settings = useUserSettingsState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -344,6 +346,17 @@ export default function CategoryDetail() {
     [category]
   );
 
+  const defaultPanel = useMemo(() => {
+    if (
+      settings.isSet('DISPLAY_ITEMS_FOR_FINAL_LOCATION', true) &&
+      category.pk &&
+      category.subcategories === 0
+    ) {
+      return 'parts';
+    }
+    return undefined;
+  }, [settings, category]);
+
   return (
     <>
       {editCategory.modal}
@@ -385,6 +398,7 @@ export default function CategoryDetail() {
             instance={category}
             reloadInstance={refreshInstance}
             id={category.pk ?? null}
+            defaultPanel={defaultPanel}
           />
         </Stack>
       </InstanceDetail>

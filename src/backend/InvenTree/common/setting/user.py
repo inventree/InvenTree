@@ -268,4 +268,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Save the last used printing machines for a user'),
         'default': '',
     },
+    'DISPLAY_ITEMS_FOR_FINAL_LOCATION': {
+        'name': _('Display Items for Final Location'),
+        'description': _(
+            'Automatically default to showing items instead of sublocations for final locations (locations with 0 sublocations)'
+        ),
+        'default': True,
+        'validator': bool,
+    },
 }

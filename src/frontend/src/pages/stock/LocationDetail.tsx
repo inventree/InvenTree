@@ -47,6 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -63,6 +64,7 @@ export default function Stock() {
 
   const navigate = useNavigate();
   const user = useUserState();
+  const settings = useUserSettingsState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -431,6 +433,17 @@ export default function Stock() {
     [location]
   );
 
+  const defaultPanel = useMemo(() => {
+    if (
+      settings.isSet('DISPLAY_ITEMS_FOR_FINAL_LOCATION', true) &&
+      location.pk &&
+      location.sublocations === 0
+    ) {
+      return 'stock-items';
+    }
+    return undefined;
+  }, [settings, location]);
+
   return (
     <>
       {editLocation.modal}
@@ -479,6 +492,7 @@ export default function Stock() {
             id={location?.pk}
             instance={location}
             pluginPanelWithoutId
+            defaultPanel={defaultPanel}
           />
         </Stack>
         {stockAdjustActions.modals.map((modal) => modal.modal)}
