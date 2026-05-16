@@ -1,15 +1,12 @@
+import { shortenString } from '@lib/index';
+import { StylishText } from '@lib/index';
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
-
-import { StylishText } from '@lib/components/StylishText';
-import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { shortenString } from '../../functions/tables';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
-import { StylishText } from '../items/StylishText';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
