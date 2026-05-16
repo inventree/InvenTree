@@ -2,7 +2,11 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
-### 0.11.4 - Unreleased
+### 1.4.0 - Unreleased
+
+This update brings the version numbering in-line with the core InvenTree server version, which is currently at `1.4.0`. This versioning scheme will be maintained going forward, with the UI components library version matching the core server version.
+
+Thus, version `1.4.x` of the UI components library will be compatible with version `1.4.x` of the InvenTree server, and so on.
 
 Adds additional functions in the plugin context related to form rendering and API invocation:
 - `useInstance`
