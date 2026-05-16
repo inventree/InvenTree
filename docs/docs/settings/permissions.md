@@ -25,15 +25,18 @@ A *role* is a set of distinct permissions linked to a given subset of InvenTree 
 
 InvenTree functionality is split into a number of distinct roles. A group will have a set of permissions assigned to each of the following roles:
 
-- **Admin** - The *admin* role is related to assigning user permissions.
-- **Part Category** - The *part category* role is related to accessing Part Category data
-- **Part** - The *part* role is related to accessing Part data
-- **Stock Location** - The *stock location* role is related to accessing Stock Location data
-- **Stock Item** - The *stock item* role is related to accessing Stock Item data
-- **Build** - The *build* role is related to accessing Build Order and Bill of Materials data
-- **Purchase Order** - The *purchase* role is related to accessing Purchase Order data
-- **Sales Order** - The *sales* role is related to accessing Sales Order data
-- **Return Order** - The *return* role is related to accessing Return Order data
+| Role | Description |
+| ---- | ----------- |
+| **Admin** | The *admin* role is related to assigning user permissions. |
+| **BOM** | The *bom* role is related to accessing Bill of Materials data |
+| **Build** | The *build* role is related to accessing manufacturing / Build Order |
+| **Part** | The *part* role is related to accessing Part data |
+| **Part Category** | The *part category* role is related to accessing Part Category data |
+| **Purchase Order** | The *purchase* role is related to accessing Purchase Order data |
+| **Return Order** | The *return* role is related to accessing Return Order data |
+| **Sales Order** | The *sales* role is related to accessing Sales Order data |
+| **Stock Item** | The *stock item* role is related to accessing Stock Item data |
+| **Stock Location** | The *stock location* role is related to accessing Stock Location data |
 
 {{ image("admin/roles.png", "Roles") }}
 
@@ -41,10 +44,23 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 
 Within each role, there are four levels of available permissions:
 
-- **View** - The *view* permission allows viewing of content related to the particular role
-- **Change** - The *change* permission allows the user to edit / alter / change data associated with the particular role
-- **Add** - The *add* permission allows the user to add / create database records associated with the particular role
-- **Delete** - The *delete* permission allows the user to delete / remove database records associated with the particular role
+| Permission | Description |
+| ---------- | ----------- |
+| **View** | The *view* permission allows viewing of content related to the particular role |
+| **Change** | The *change* permission allows the user to edit / alter / change data associated with the particular role |
+| **Add** | The *add* permission allows the user to add / create database records associated with the particular role |
+| **Delete** | The *delete* permission allows the user to delete / remove database records associated with the particular role |
+
+## Dangerous User Flags
+
+In addition to the above permissions, there are two special flags that can be assigned to a user:
+- **Staff** - A user with the *staff* flag is able to access the admin interface, and can trigger dangerous actions that might have a security impact such as changing parsable files on the server (templates / reports / plugins). Some of these actions require the *admin* role to be assigned as well.
+- **Superuser** - A user with the *superuser* flag is able to access and change all data and functions of InvenTree. A superuser can modify and access all data that the InvenTree installation / server has access to - including shell access on the server OS itself. This is a very powerful flag, and should be used with caution.
+
+It is strongly recommended to register any users with staff / superuser flags with strong MFA methods to reduce the risk of unauthorized access. These accounts should be used with caution, and should not be used for day-to-day operations.
+
+Practicing account tiering is strongly recommended.
+
 
 ## Admin Interface Permissions
 

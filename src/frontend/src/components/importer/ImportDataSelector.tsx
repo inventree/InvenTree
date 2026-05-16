@@ -9,37 +9,39 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../tables/RowActions';
-import { ActionButton } from '../buttons/ActionButton';
-import { YesNoButton } from '../buttons/YesNoButton';
-import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({
   session,
   column,
+  fieldDef,
   row,
   onEdit
 }: Readonly<{
   session: ImportSessionState;
+  fieldDef: any;
   column: any;
   row: any;
   onEdit?: () => void;
@@ -63,22 +65,24 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   const cellValue: ReactNode = useMemo(() => {
-    const field_def = session.availableFields[column.field];
+    // const field_def = session.availableFields[column.field];
 
     if (!row?.data) {
       return '-';
     }
 
-    switch (field_def?.type) {
+    switch (fieldDef?.type) {
       case 'boolean':
         return (
           <YesNoButton value={row.data ? row.data[column.field] : false} />
         );
       case 'related field':
-        if (field_def.model && row.data[column.field]) {
+        if (fieldDef.model && row.data[column.field]) {
           return (
             <RenderRemoteInstance
-              model={field_def.model}
+              model={fieldDef.model}
+              modelRenderer={fieldDef.modelRenderer}
+              modelUrl={fieldDef.api_url}
               pk={row.data[column.field]}
             />
           );
@@ -95,7 +99,7 @@ function ImporterDataCell({
     }
 
     return value;
-  }, [row.data, column.field, session.availableFields]);
+  }, [fieldDef, row.data, column.field, session.availableFields]);
 
   const cellValid: boolean = useMemo(
     () => cellErrors.length == 0,
@@ -127,9 +131,11 @@ function ImporterDataCell({
 }
 
 export default function ImporterDataSelector({
-  session
+  session,
+  customFields
 }: Readonly<{
   session: ImportSessionState;
+  customFields?: ApiFormFieldSet | null;
 }>) {
   const api = useApi();
   const table = useTable('dataimporter');
@@ -142,9 +148,11 @@ export default function ImporterDataSelector({
     for (const field of selectedFieldNames) {
       // Find the field definition in session.availableFields
       const fieldDef = session.availableFields[field];
-      if (fieldDef) {
+      const customField = customFields?.[field] ?? null;
+
+      if (fieldDef || customField) {
         // Construct field filters based on session field filters
-        let filters = fieldDef.filters ?? {};
+        let filters = fieldDef?.filters ?? {};
 
         if (session.fieldFilters[field]) {
           filters = {
@@ -153,17 +161,36 @@ export default function ImporterDataSelector({
           };
         }
 
+        if (field == 'id') {
+          continue; // Skip the ID field
+        }
+
         fields[field] = {
           ...fieldDef,
+          ...customField,
           field_type: fieldDef.type,
           description: fieldDef.help_text,
           filters: filters
         };
+
+        console.log('Defined Field:', field);
+        console.log({
+          ...fieldDef,
+          ...customField,
+          field_type: fieldDef.type,
+          description: fieldDef.help_text,
+          filters: filters
+        });
       }
     }
 
     return fields;
-  }, [selectedFieldNames, session.availableFields, session.fieldFilters]);
+  }, [
+    customFields,
+    selectedFieldNames,
+    session.availableFields,
+    session.fieldFilters
+  ]);
 
   const importData = useCallback(
     (rows: number[]) => {
@@ -225,6 +252,10 @@ export default function ImporterDataSelector({
 
   const editCell = useCallback(
     (row: any, col: any) => {
+      if (col.field == 'id') {
+        return; // Cannot edit the ID field
+      }
+
       setSelectedRow(row);
       setSelectedFieldNames([col.field]);
       editRow.open();
@@ -236,7 +267,11 @@ export default function ImporterDataSelector({
     url: ApiEndpoints.import_session_row_list,
     pk: selectedRow.pk,
     title: t`Delete Row`,
-    onFormSuccess: () => table.refreshTable()
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+      session.refreshSession();
+    }
   });
 
   const rowErrors = useCallback((row: any) => {
@@ -277,7 +312,7 @@ export default function ImporterDataSelector({
                 <IconCircleDashedCheck color='blue' size={16} />
               )}
               {!row.complete && !row.valid && (
-                <HoverCard openDelay={50} closeDelay={100}>
+                <HoverCard openDelay={50} closeDelay={100} position='top-start'>
                   <HoverCard.Target>
                     <IconExclamationCircle color='red' size={16} />
                   </HoverCard.Target>
@@ -310,6 +345,10 @@ export default function ImporterDataSelector({
                 column={column}
                 row={row}
                 onEdit={() => editCell(row, column)}
+                fieldDef={{
+                  ...session.availableFields[column.field],
+                  ...customFields?.[column.field]
+                }}
               />
             );
           }
@@ -318,7 +357,7 @@ export default function ImporterDataSelector({
     ];
 
     return columns;
-  }, [session]);
+  }, [session, customFields]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -423,6 +462,8 @@ export default function ImporterDataSelector({
             enableSelection: true,
             enableBulkDelete: true,
             afterBulkDelete: () => {
+              table.clearSelectedRecords();
+              table.refreshTable();
               session.refreshSession();
             }
           }}

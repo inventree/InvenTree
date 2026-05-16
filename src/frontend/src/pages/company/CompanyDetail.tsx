@@ -39,6 +39,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useDeleteApiFormModal,
@@ -73,8 +74,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -115,6 +115,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Email Address`,
         copy: true,
         hidden: !company.email
+      },
+      {
+        type: 'text',
+        name: 'tax_id',
+        label: t`Tax ID`,
+        copy: true,
+        hidden: !company.tax_id
       }
     ];
 
@@ -181,9 +188,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Supplied Parts`,
         icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
-        content: company?.pk && (
-          <SupplierPartTable params={{ supplier: company.pk }} />
-        )
+        content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
@@ -191,7 +196,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconBuildingWarehouse />,
         hidden: !company?.is_manufacturer,
         content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+          <ManufacturerPartTable manufacturerId={company.pk} />
         )
       },
       {
@@ -242,6 +247,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             allowAdd={false}
             tableName='assigned-stock'
             showLocation={false}
+            allowReturn
+            defaultInStock={null}
             params={{ customer: company.pk }}
           />
         ) : (
@@ -260,13 +267,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
+      ParametersPanel({
+        model_type: ModelType.company,
+        model_id: company?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.company,
         model_id: company.pk
       }),
       NotesPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        has_note: !!company.notes
       })
     ];
   }, [id, company, user]);
@@ -326,7 +338,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.company}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Company`}: ${company.name}`}

@@ -4,10 +4,11 @@ import datetime
 import hashlib
 import inspect
 import io
-import os
+import json
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -16,19 +17,24 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
+from django.db.models.fields.files import FieldFile, ImageFieldFile
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-import bleach
+import nh3
 import structlog
-from bleach import clean
 from djmoney.money import Money
 from PIL import Image
+from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-
-from .settings import MEDIA_URL, STATIC_URL
+from InvenTree.sanitizer import (
+    DEAFAULT_ATTRS,
+    DEFAULT_CSS,
+    DEFAULT_PROTOCOLS,
+    DEFAULT_TAGS,
+)
 
 logger = structlog.get_logger('inventree')
 
@@ -123,7 +129,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: str) -> str:
+def generateTestKey(test_name: str | None) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
@@ -154,7 +160,7 @@ def generateTestKey(test_name: str) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -171,18 +177,67 @@ def constructPathString(path, max_chars=250):
     return pathstring
 
 
-def getMediaUrl(filename):
+def getMediaUrl(
+    file: FieldFile | ImageFieldFile | StdImageFieldFile, name: str | None = None
+):
     """Return the qualified access path for the given file, under the media directory."""
-    return os.path.join(MEDIA_URL, str(filename))
+    if not isinstance(file, (FieldFile, ImageFieldFile, StdImageFieldFile)):
+        raise TypeError(
+            'file must be one of FileField, ImageFileField, StdImageFieldFile'
+        )
+    if name is not None:
+        file = regenerate_imagefile(file, name)
+
+    return default_storage.url(file.name)
+
+
+def regenerate_imagefile(_file, _name: str):
+    """Regenerate a file object for a given variation name.
+
+    Arguments:
+        _file: Original file object
+        _name: Name of the variation (e.g. 'thumbnail', 'preview')
+    """
+    name = _file.field.attr_class.get_variation_name(_file.name, _name)
+    return ImageFieldFile(_file.instance, _file, name)  # ty:ignore[too-many-positional-arguments]
+
+
+def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
+    """Convert an image object to a filename string.
+
+    Arguments:
+        img_obj: Image object
+        do_preview: Return preview image name
+        do_thumbnail: Return thumbnail image name
+    """
+
+    def extract(ref: str):
+        return None if not hasattr(img_obj, ref) else getattr(img_obj, ref).name
+
+    if not img_obj:
+        return None
+    elif do_preview:
+        return extract('preview')
+    elif do_thumbnail:
+        return extract('thumbnail')
+    else:
+        return img_obj.name
 
 
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
-    return os.path.join(STATIC_URL, str(filename))
+    return StaticFilesStorage().url(filename)
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
+def TestIfImage(img) -> bool:
+    """Test if an image file is indeed an image.
+
+    Arguments:
+        img: A file-like object
+
+    Returns:
+        True if the file is a valid image, False otherwise
+    """
     try:
         Image.open(img).verify()
         return True
@@ -200,9 +255,15 @@ def getBlankThumbnail():
     return getStaticUrl('img/blank_image.thumbnail.png')
 
 
+def checkStaticFile(*args) -> bool:
+    """Check if a file exists in the static storage."""
+    static_storage = StaticFilesStorage()
+    fn = Path(*args)
+    return static_storage.exists(str(fn))
+
+
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
-    """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
@@ -264,7 +325,7 @@ def TestIfImageURL(url):
     ]
 
 
-def str2bool(text, test=True):
+def str2bool(text, test=True) -> bool:
     """Test if a string 'looks' like a boolean value.
 
     Args:
@@ -279,12 +340,12 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def is_bool(text):
+def is_bool(text: str) -> bool:
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
 
 
-def isNull(text):
+def isNull(text: str) -> bool:
     """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
@@ -304,10 +365,13 @@ def isNull(text):
     ]
 
 
-def normalize(d):
+def normalize(d, rounding: Optional[int] = None) -> Decimal:
     """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
+
+    if rounding is not None:
+        d = round(d, rounding)
 
     d = d.normalize()
 
@@ -362,9 +426,7 @@ def increment(value):
     except ValueError:
         pass
 
-    number = number.zfill(width)
-
-    return prefix + number
+    return prefix + str(number).zfill(width)
 
 
 def decimal2string(d):
@@ -726,13 +788,14 @@ def extract_serial_numbers(
     return serials
 
 
-def validateFilterString(value, model=None):
+def validateFilterString(value: str, model=None) -> dict:
     """Validate that a provided filter string looks like a list of comma-separated key=value pairs.
 
     These should nominally match to a valid database filter based on the model being filtered.
 
     e.g. "category=6, IPN=12"
     e.g. "part__name=widget"
+    e.g. "item=[1,2,3], status=active"
 
     The ReportTemplate class uses the filter string to work out which items a given report applies to.
     For example, an acceptance test report template might only apply to stock items with a given IPN,
@@ -750,7 +813,8 @@ def validateFilterString(value, model=None):
     if not value or len(value) == 0:
         return results
 
-    groups = value.split(',')
+    # Split by comma, but ignore commas within square brackets
+    groups = re.split(r',(?![^\[]*\])', value)
 
     for group in groups:
         group = group.strip()
@@ -767,6 +831,16 @@ def validateFilterString(value, model=None):
 
         if not k or not v:
             raise ValidationError(f'Invalid group: {group}')
+
+        # Account for 'list' support
+        if v.startswith('[') and v.endswith(']'):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                raise ValidationError(f'Invalid list value: {v}')
+
+            if not isinstance(v, list):
+                raise ValidationError(f'Expected a list for key "{k}", got {type(v)}')
 
         results[k] = v
 
@@ -821,13 +895,13 @@ def clean_decimal(number):
 
 
 def strip_html_tags(value: str, raise_error=True, field_name=None):
-    """Strip HTML tags from an input string using the bleach library.
+    """Strip HTML tags from an input string using the nh3 library.
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
     value = str(value).strip()
 
-    cleaned = clean(value, strip=True, tags=[], attributes=[])
+    cleaned = nh3.clean(value, tags=frozenset())
 
     # Add escaped characters back in
     replacements = {'&gt;': '>', '&lt;': '<', '&amp;': '&'}
@@ -887,34 +961,32 @@ def clean_markdown(value: str) -> str:
         output_format='html',
     )
 
-    # Bleach settings
-    whitelist_tags = markdownify_settings.get(
-        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
-    )
-    whitelist_attrs = markdownify_settings.get(
-        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
-    )
-    whitelist_styles = markdownify_settings.get(
-        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
-    )
+    # nh3 sanitizer settings
+    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
+    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
+    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
     whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
+        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
     )
-    strip = markdownify_settings.get('STRIP', True)
 
-    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
-        allowed_css_properties=whitelist_styles
-    )
-    cleaner = bleach.Cleaner(
-        tags=whitelist_tags,
-        attributes=whitelist_attrs,
-        css_sanitizer=css_sanitizer,
-        protocols=whitelist_protocols,
-        strip=strip,
-    )
+    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
+    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
+        attrs_dict = {'*': set(whitelist_attrs)}
+    elif isinstance(whitelist_attrs, dict):
+        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
+    else:
+        attrs_dict = None
 
     # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = cleaner.clean(html)
+    clean_html = nh3.clean(
+        html,
+        tags=set(whitelist_tags),
+        attributes=attrs_dict,
+        url_schemes=set(whitelist_protocols),
+        filter_style_properties=set(whitelist_styles),
+        link_rel=None,
+        strip_comments=True,
+    )
 
     if html != clean_html:
         raise ValidationError(_('Data contains prohibited markdown content'))
@@ -950,7 +1022,7 @@ def current_time(local=True):
     """
     if settings.USE_TZ:
         now = timezone.now()
-        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        now = to_local_time(now, target_tz_str=server_timezone() if local else 'UTC')
         return now
     else:
         return datetime.datetime.now()
@@ -969,12 +1041,12 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: Optional[str] = None):
+def to_local_time(time, target_tz_str: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
         time: The time / date to convert
-        target_tz: The desired timezone (string) - defaults to server time
+        target_tz_str: The desired timezone (string) - defaults to server time
 
     Returns:
         A timezone aware datetime object, with the desired timezone
@@ -998,11 +1070,11 @@ def to_local_time(time, target_tz: Optional[str] = None):
         # Default to UTC if not provided
         source_tz = ZoneInfo('UTC')
 
-    if not target_tz:
-        target_tz = server_timezone()
+    if not target_tz_str:
+        target_tz_str = server_timezone()
 
     try:
-        target_tz = ZoneInfo(str(target_tz))
+        target_tz = ZoneInfo(str(target_tz_str))
     except ZoneInfoNotFoundError:
         target_tz = ZoneInfo('UTC')
 
@@ -1095,16 +1167,32 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
+    from plugin import PluginMixinEnum
     from plugin.registry import registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
         return False
 
-    # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Fetch active plugins
+    plugins = registry.with_mixin(PluginMixinEnum.BASE)
+
     # Format list
     return [
-        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
-        for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
+
+
+def sanitize_token(token_value: str, front=8, back=12) -> str:
+    """Sanitize a token by replacing the middle characters with asterisks.
+
+    Args:
+        token_value: The token string to sanitize
+        front: Number of characters to show at the start of the token (default = 8)
+        back: Number of characters to show at the end of the token (default = 12)
+
+    Returns:
+        The sanitized token string
+    """
+    middle = len(token_value) - (front + back)
+    return token_value[:front] + '*' * middle + token_value[-back:]

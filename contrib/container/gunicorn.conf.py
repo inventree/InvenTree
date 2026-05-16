@@ -54,4 +54,4 @@ def post_fork(server, worker):
 
     # Run tracing/logging instrumentation
     setup_tracing(**settings.TRACING_DETAILS)
-    setup_instruments()
+    setup_instruments(settings.DB_ENGINE)

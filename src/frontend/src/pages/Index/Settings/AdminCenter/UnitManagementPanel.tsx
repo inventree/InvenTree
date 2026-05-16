@@ -2,16 +2,16 @@ import { t } from '@lingui/core/macro';
 import { Accordion, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { StylishText } from '../../../../components/items/StylishText';
-import { useTable } from '../../../../hooks/UseTable';
+import useTable from '@lib/hooks/UseTable';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';
 
 function AllUnitTable() {
-  const table = useTable('all-units', 'name');
+  const table = useTable('all-units', { idAccessor: 'name' });
   const columns = useMemo(() => {
     return [
       {

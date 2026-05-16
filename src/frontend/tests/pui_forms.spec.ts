@@ -1,12 +1,12 @@
 /** Unit tests for form validation, rendering, etc */
-import test from 'playwright/test';
+import { expect, test } from 'playwright/test';
+import { stevenuser } from './defaults';
 import { navigate } from './helpers';
 import { doCachedLogin } from './login';
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'stock/location/index/stock-items'
   });
 
@@ -22,7 +22,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByText('Valid part must be supplied').waitFor();
 
   // Adjust other field - the errors should persist
-  await page.getByLabel('text-field-batch').fill('BATCH-123');
+  await page.getByLabel('text-field-batch', { exact: true }).fill('BATCH-123');
   await page.waitForTimeout(250);
 
   await page.getByText('Valid part must be supplied').waitFor();
@@ -53,14 +53,16 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-item-actions-edit').click();
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
+
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page.getByText('Errors exist for one or more form fields').waitFor();
   await page
     .getByText('Ensure this value is greater than or equal to 0')
     .waitFor();
 
   // Check the error message still persists after editing a different field
-  await page.getByLabel('text-field-packaging').fill('a box');
+  await page.getByLabel('text-field-packaging', { exact: true }).fill('a box');
   await page.waitForTimeout(250);
   await page
     .getByText('Ensure this value is greater than or equal to 0')
@@ -80,27 +82,30 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
 
 test('Forms - Supplier Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/index/suppliers'
   });
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByLabel('action-button-add-company').click();
-  await page.getByLabel('text-field-website').fill('not-a-website');
+  await page
+    .getByLabel('text-field-website', { exact: true })
+    .fill('not-a-website');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Check for validation errors
   await page.getByText('Form Error').waitFor();
   await page.getByText('Errors exist for one or more').waitFor();
-  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('This field is required').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill out another field, expect that the errors persist
-  await page.getByLabel('text-field-description').fill('A description');
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('A description');
   await page.waitForTimeout(250);
-  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('This field is required').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Generate a unique supplier name
@@ -108,9 +113,9 @@ test('Forms - Supplier Validation', async ({ browser }) => {
 
   // Fill with good data
   await page
-    .getByLabel('text-field-website')
+    .getByLabel('text-field-website', { exact: true })
     .fill('https://www.test-website.co.uk');
-  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByLabel('text-field-name', { exact: true }).fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('A description').first().waitFor();
@@ -122,10 +127,44 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await navigate(page, 'purchasing/index/suppliers');
   await page.waitForURL('**/purchasing/index/**');
   await page.getByLabel('action-button-add-company').click();
-  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByLabel('text-field-name', { exact: true }).fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Is prevented, due to uniqueness requirements
   await page.getByText('Form Error').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Forms - Keep form open option', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'stock/location/index/sublocations'
+  });
+  await page.waitForURL('**/stock/location/index/**');
+
+  await page.getByLabel('action-button-add-stock-location').click();
+
+  // Generate unique location name
+  const locationName = `New Sublocation ${new Date().getTime()}`;
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(locationName);
+
+  // Check keep form open switch and submit
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Location should be created, form should remain opened
+  await page.getByText('Item Created').waitFor();
+  await expect(page.getByRole('dialog')).toBeVisible();
+
+  // Create another location and uncheck this option
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill(`Another ${locationName}`);
+  await page.getByRole('switch', { name: 'Keep form open' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Location should be created, and the form (modal) should disappear
+  await page.getByText('Item Created').waitFor();
+  await expect(page.getByRole('dialog')).toBeHidden();
 });

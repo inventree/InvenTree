@@ -12,14 +12,17 @@ from plugin.registry import registry
 class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
     """Tests for the SampleValidatonPlugin class."""
 
-    fixtures = ['part', 'category', 'location', 'build']
+    fixtures = ['part', 'category', 'location', 'build', 'stock']
 
     def setUp(self):
         """Set up the test environment."""
+        super().setUp()
+
         cat = part.models.PartCategory.objects.first()
         self.part = part.models.Part.objects.create(
             name='TestPart', category=cat, description='A test part', component=True
         )
+
         self.assembly = part.models.Part.objects.create(
             name='TestAssembly',
             category=cat,
@@ -27,10 +30,6 @@ class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
             component=False,
             assembly=True,
         )
-        self.bom_item = part.models.BomItem.objects.create(
-            part=self.assembly, sub_part=self.part, quantity=1
-        )
-        super().setUp()
 
     def get_plugin(self):
         """Return the SampleValidatorPlugin instance."""
@@ -43,6 +42,16 @@ class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
     def test_validate_model_instance(self):
         """Test the validate_model_instance function."""
         # First, ensure that the plugin is disabled
+
+        # Create a BomItem to run tests on
+        # We need to refresh the part
+        self.part.refresh_from_db()
+        self.assembly.refresh_from_db()
+
+        self.bom_item = part.models.BomItem.objects.create(
+            part=self.assembly, sub_part=self.part, raw_amount=1, quantity=1
+        )
+
         self.enable_plugin(False)
 
         plg = self.get_plugin()
@@ -66,14 +75,14 @@ class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
 
         plg.set_setting('BOM_ITEM_INTEGER', True)
 
-        self.bom_item.quantity = 3.14159
+        self.bom_item.raw_amount = 3.14159
         with self.assertRaises(ValidationError):
             self.bom_item.save()
 
         # Now, disable the plugin setting
         plg.set_setting('BOM_ITEM_INTEGER', False)
 
-        self.bom_item.quantity = 3.14159
+        self.bom_item.set_quantity(3.14159)
         self.bom_item.save()
 
         # Test that we *cannot* set a part description to a shorter value

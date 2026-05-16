@@ -2,22 +2,22 @@
 
 import json
 import os
-import random
 import re
-import time
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
@@ -29,7 +29,6 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
-from InvenTree.config import get_setting
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -94,17 +93,11 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-    from InvenTree.ready import isInTestMode
-
     if n_days <= 0:
         logger.info(
             "Specified interval for task '%s' < 1 - task will not run", task_name
         )
         return False
-
-    # Sleep a random number of seconds to prevent worker conflict
-    if not isInTestMode():
-        time.sleep(random.randint(1, 5))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
@@ -165,15 +158,71 @@ def record_task_success(task_name: str):
     set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
+def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
+    """Test if an identical task is already registered with the worker.
+
+    This will only return true if the task name, group, args and kwargs all match an existing task.
+
+    Arguments:
+        taskname: The name of the task to check for, in the format 'app.module.function'
+        group: The group that the task belongs to
+        *args: Positional arguments to match
+        **kwargs: Keyword arguments to match
+
+    Returns:
+        Optional[str]: The ID of the matching task, if found, otherwise None
+    """
+    from django_q.models import OrmQ
+
+    task_id = None
+
+    # Iterate through all available tasks, with the most recent first
+    for task in OrmQ.objects.all().order_by('-id'):
+        if task.func() != taskname and task.task['func'] != taskname:
+            # Task does not match
+            continue
+
+        if task.group() != group:
+            # Group does not match
+            continue
+
+        if task.args() != args:
+            # Task args do not match
+            continue
+
+        if task.kwargs() != kwargs:
+            # Task kwargs do not match
+            continue
+
+        task_id = task.task_id()
+
+        break
+
+    return task_id
+
+
 def offload_task(
-    taskname, *args, force_async=False, force_sync=False, **kwargs
-) -> bool:
+    taskname,
+    *args,
+    force_async: bool = False,
+    force_sync: bool = False,
+    check_duplicates: bool = True,
+    **kwargs,
+) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
 
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        *args: Positional arguments to be passed to the task function
+        force_async: If True, force the task to be offloaded (even if workers are not running)
+        force_sync: If True, force the task to be run synchronously (even if workers are running)
+        check_duplicates: If True, check for existing identical tasks before offloading
+        **kwargs: Keyword arguments to be passed to the task function
+
     Returns:
-        bool: True if the task was offloaded (or ran), False otherwise
+        str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
     from InvenTree.exceptions import log_error
 
@@ -204,17 +253,29 @@ def offload_task(
             force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
+        # Before offloading, check if a duplicate task exists
+        if not force_sync and check_duplicates:
+            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+                logger.debug(
+                    "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
+                )
+
+                return task_id
+
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
+
+                # Return the ID of the offloaded task, so that it can be tracked if needed
+                return task.id
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {exc!s}")
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             return False
     else:
         if callable(taskname):
@@ -235,7 +296,7 @@ def offload_task(
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
                 )
@@ -252,7 +313,7 @@ def offload_task(
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No function named '{func}'"
                 )
@@ -263,12 +324,46 @@ def offload_task(
             with tracer.start_as_current_span(f'sync worker: {taskname}'):
                 _func(*args, **kwargs)
         except Exception as exc:
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
             raise exc
 
     # Finally, task either completed successfully or was offloaded
     return True
+
+
+def get_queued_task(task_id: str):
+    """Find the task in the queue, if it exists.
+
+    Note that the OrmQ table does NOT keep the task ID as a database field,
+    it is instead stored in the payload data.
+    If there are a large number of pending tasks, this query may be inefficient,
+    but there is no other way to find a queued task by ID.
+    """
+    offset = 0
+    limit = 500
+
+    if not task_id:
+        # Return early if no task ID was provided
+        return None
+
+    task_id = str(task_id)
+
+    from django_q.models import OrmQ
+
+    while True:
+        queued_tasks = OrmQ.objects.all().order_by('id')[offset : offset + limit]
+        if not queued_tasks:
+            break
+
+        for task in queued_tasks:
+            if task.task_id() == task_id:
+                return task
+
+        offset += limit
+
+    # No matching task was discovered
+    return None
 
 
 @dataclass()
@@ -309,7 +404,9 @@ tasks = TaskRegister()
 
 
 def scheduled_task(
-    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+    interval: str,
+    minutes: Optional[int] = None,
+    tasklist: Optional[TaskRegister] = None,
 ):
     """Register the given task as a scheduled task.
 
@@ -326,12 +423,12 @@ def scheduled_task(
         minutes (int, optional): The number of minutes between task runs. Defaults to None.
         tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
 
+    Returns:
+        _type_: _description_
+
     Raises:
         ValueError: If decorated object is not callable
         ValueError: If interval is not valid
-
-    Returns:
-        _type_: _description_
     """
 
     def _task_wrapper(admin_class):
@@ -473,12 +570,41 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('delete_old_emails')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_emails():
+    """Delete old email messages."""
+    try:
+        from common.models import EmailMessage
+
+        days = get_global_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        emails = EmailMessage.objects.filter(timestamp__lte=threshold)
+
+        if emails.count() > 0:
+            try:
+                emails.delete()
+                logger.info('Deleted %s old email messages', emails.count())
+            except ValidationError:
+                logger.info(
+                    'Did not delete %s old email messages because of a validation error',
+                    emails.count(),
+                )
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform 'delete_old_emails' - App registry not ready")
+
+
 @tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        from common.notifications import trigger_superuser_notification
+        from common.notifications import trigger_notification
+        from plugin.builtin.integration.core_notifications import (
+            InvenTreeUINotifications,
+        )
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -522,7 +648,7 @@ def check_for_updates():
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 
@@ -541,19 +667,16 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
-        logger.warning('InvenTree is not up-to-date, sending notification')
-
-        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
-        if not plg:
-            logger.warning('Cannot send notification - plugin not found')
-            return
-        plg = plg.plugin_config()
-        if not plg:
-            logger.warning('Cannot send notification - plugin config not found')
-            return
-        # Send notification
-        trigger_superuser_notification(
-            plg, f'An update for InvenTree to version {tag} is available'
+        # Send notification to superusers
+        trigger_notification(
+            None,
+            'update_available',
+            targets=get_user_model().objects.filter(is_superuser=True),
+            delivery_methods={InvenTreeUINotifications},
+            context={
+                'name': _('Update Available'),
+                'message': _('An update for InvenTree is available'),
+            },
         )
 
 
@@ -565,6 +688,15 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
+    from InvenTree.ready import canAppAccessDatabase, isRunningMigrations
+
+    if isRunningMigrations():
+        return
+
+    # Do not update exchange rates if we cannot access the database
+    if not canAppAccessDatabase(allow_test=True, allow_shell=True):
+        return
+
     try:
         from djmoney.contrib.exchange.models import Rate
 
@@ -605,7 +737,7 @@ def update_exchange_rates(force: bool = False):
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception('Error updating exchange rates: %s', str(type(e)))
+        logger.exception('Error updating exchange rates: %s', type(e))
 
 
 @tracer.start_as_current_span('run_backup')
@@ -640,6 +772,12 @@ def get_migration_plan():
     return plan
 
 
+def get_migration_count():
+    """Returns the number of all detected migrations."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    return executor.loader.applied_migrations
+
+
 @tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
@@ -649,7 +787,11 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
-    from plugin import registry
+    from . import ready
+
+    if ready.isRunningMigrations() or ready.isRunningBackup():
+        # Migrations are already running!
+        return False
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
@@ -679,13 +821,13 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not force and not settings.AUTO_UPDATE:
         logger.info('Auto-update is disabled - skipping migrations')
         return False
 
     # Log open migrations
     for migration in plan:
-        logger.info('- %s', str(migration[0]))
+        logger.info('- %s', migration[0])
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)
@@ -699,6 +841,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
+            logger.exception('Error during migrations: %s', e)
+        except Exception as e:  # pragma: no cover
             logger.exception('Error during migrations: %s', e)
         else:
             set_pending_migrations(0)

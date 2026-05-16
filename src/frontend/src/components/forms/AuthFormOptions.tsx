@@ -2,7 +2,7 @@ import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
 import { IconServer } from '@tabler/icons-react';
 
 import { useShallow } from 'zustand/react/shallow';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { ColorToggle } from '../items/ColorToggle';
 import { LanguageToggle } from '../items/LanguageToggle';
 

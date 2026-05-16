@@ -51,10 +51,10 @@ def update_history(apps, schema_editor):
 
             q = entry.quantity
 
-            if idx == 0 or not q == quantity:
+            if idx == 0 or q != quantity:
 
                 try:
-                    deltas['quantity']: float(q)
+                    deltas['quantity']= float(q)
                     updated = True
                 except Exception:
                     print(f"WARNING: Error converting quantity '{q}'")

@@ -3,9 +3,15 @@ title: InvenTree Installer
 ---
 
 ## Installer
+
 The InvenTree installer automates the installation procedure for a production InvenTree server.
 
-Supported OSs are Debian 11 and Ubuntu 20.04 LTS.
+The installer supports the following Linux distributions:
+
+- Debian 11, 12
+- Ubuntu 22.04 LTS, 24.04 LTS
+
+Support for other OS versions is not currently planned. If you are using a different distribution, you can still follow the [docker](./docker.md) or [bare metal](./install.md) installation instructions.
 
 ### Quick Script
 
@@ -37,7 +43,7 @@ The installer creates the following directories:
 | `/opt/inventree/` | InvenTree application files |
 | `/opt/inventree/data/` | InvenTree data files |
 
-#### Performed steps
+#### Performed Steps
 
 The installer script performs the following functions:
 
@@ -111,34 +117,63 @@ To stop the automatic generation of an admin user, generate an empty file needs 
 By default, InvenTree is served internally on port 6000 and then proxied via Nginx. The config is placed in `/etc/nginx/sites-enabled/inventree.conf` and overwritten on each update. The location can be set with the environment variable `SETUP_NGINX_FILE`.
 This only serves an HTTP version of InvenTree, to use HTTPS (recommended for production) or customize any further an additional config file should be used.
 
-#### Extra python packages
+#### Extra Python Packages
 Extra python packages can be installed by setting the environment variable `SETUP_EXTRA_PIP`.
 
 #### Database Options
 
 The used database backend can be configured with environment variables (before the first setup) or in the config file after the installation. Check the [configuration section](./config.md#database-options) for more information.
 
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, as it is not designed for high concurrency.
+
 ## Moving Data
 
-To change the data storage location, link the new location to `/opt/inventree/data`.
-A rough outline of steps to achieve this could be:
-- shut down the app service(s) `inventree` and webserver `nginx`
-- copy data to the new location
-- check everything was transferred successfully
-- delete the old location
-- create a symlink from the old location to the new one
-- start up the services again
+To change the data storage location, link the new location to `/opt/inventree/data`. A rough outline of steps to achieve this could be:
+
+- Shut down the app service(s) `inventree` and webserver `nginx`
+- Copy data to the new location
+- Check everything was transferred successfully
+- Delete the old location
+- Create a symlink from the old location to the new one
+- Start up the services again
 
 ## Updating InvenTree
 
-To update InvenTree run `apt install --only-upgrade inventree` - this might need to be run as a sudo user.
+To update InvenTree run the following command, which updates the InvenTree package to the latest version:
+
+```bash
+apt install --only-upgrade inventree
+```
+
+Note that this command may need to be run as a sudo user.
 
 ## Controlling InvenTree
 
 ### Services
 
-InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`).
-The service `inventree` controls everything, `inventree-web` (the [InvenTree web server](./processes.md#web-server)) and `inventree-worker` the [background worker(s)](./processes.md#background-worker).
+InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`):
+
+- `inventree` - The main InvenTree service that controls the web server and background worker(s)
+- `inventree-web` - The InvenTree [web server](./processes.md#web-server) process(es)
+- `inventree-worker` - The InvenTree [background worker(s)](./processes.md#background-worker) process(es)
+
+#### Restarting Services
+
+To restart the InvenTree services, use the following commands as necessary:
+
+```bash
+# Restart all InvenTree services
+inventree restart
+
+# Restart the web server only
+inventree restart web
+
+# Restart the worker only
+inventree restart worker
+```
+
+### Scaling Workers
 
 More instances of the worker can be instantiated from the command line. This is only meant for advanced users.
 
@@ -178,6 +213,26 @@ For example, to print InvenTree version information:
 
 ```bash
 inventree run invoke version
+```
+
+### Viewing Logs
+
+To view the logs of the InvenTree services, use the following commands:
+
+```bash
+inventree logs
+```
+
+To view just the tail of the logs, use:
+
+```bash
+inventree logs --tail
+```
+
+Or, to follow the logs in real-time:
+
+```bash
+inventree logs --follow
 ```
 
 ## Architecture

@@ -1,10 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import useTable from '@lib/hooks/UseTable';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
@@ -12,27 +20,28 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { LinkColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
+  DecimalColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  NoteColumn,
+  ProjectCodeColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,
   orderId,
   orderDetailRefresh,
   currency,
+  editable,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
+  editable: boolean;
   orderDetailRefresh: () => void;
   currency: string;
   role: UserRoles;
@@ -42,17 +51,16 @@ export default function ExtraLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       {
         accessor: 'reference',
         switchable: false
       },
-      {
-        accessor: 'description'
-      },
-      {
+      DescriptionColumn({}),
+      DecimalColumn({
         accessor: 'quantity',
         switchable: false
-      },
+      }),
       {
         accessor: 'price',
         title: t`Unit Price`,
@@ -70,6 +78,7 @@ export default function ExtraLineItemTable({
             multiplier: record.quantity
           })
       },
+      ProjectCodeColumn({}),
       NoteColumn({
         accessor: 'notes'
       }),
@@ -116,21 +125,21 @@ export default function ExtraLineItemTable({
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(role),
+          hidden: !editable || !user.hasChangeRole(role),
           onClick: () => {
             setSelectedLine(record.pk);
             editLineItem.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(role),
+          hidden: !editable || !user.hasAddRole(role),
           onClick: () => {
             setInitialData({ ...record });
             newLineItem.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(role),
+          hidden: !editable || !user.hasDeleteRole(role),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLineItem.open();
@@ -138,7 +147,7 @@ export default function ExtraLineItemTable({
         })
       ];
     },
-    [user, role]
+    [editable, user, role]
   );
 
   const tableActions = useMemo(() => {
@@ -146,7 +155,7 @@ export default function ExtraLineItemTable({
       <AddItemButton
         key='add-line-item'
         tooltip={t`Add Extra Line Item`}
-        hidden={!user.hasAddRole(role)}
+        hidden={!editable || !user.hasAddRole(role)}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -155,7 +164,7 @@ export default function ExtraLineItemTable({
         }}
       />
     ];
-  }, [user, role]);
+  }, [editable, user, role]);
 
   return (
     <>
@@ -170,6 +179,7 @@ export default function ExtraLineItemTable({
           params: {
             order: orderId
           },
+          defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions
         }}

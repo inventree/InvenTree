@@ -62,6 +62,7 @@ InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/versi
 There are nominally 5 active branches:
 - `master` - The main development branch
 - `stable` - The latest stable release
+- `next-breaking` - The next breaking release (e.g. 2.0, 3.0) with all deprecated features removed
 - `l10n` - Translation branch: Source to Crowdin
 - `l10_crowdin` - Translation branch: Source from Crowdin
 - `y.y.x` - Release branch for the currently supported version (e.g. `0.5.x`)
@@ -115,9 +116,40 @@ The translation process is as follows:
 4. Translations made in Crowdin are automatically pushed back to the `l10_crowdin` branch by Crowdin once they are approved
 5. The `l10_crowdin` branch is merged back into `master` by a maintainer periodically
 
+### `next-breaking` Branch
+
+Used for easier testing of plugins and integrations against the next major release. It is branched from master when a major release is cut and updated on minor release. The branch is not build into docker images or packages and not meant to be run in production.
+
+
+All deprecated features (REST or python API endpoints mostly) are removed from this branch after each minor release. This allows plugin developers to test their plugins against the next major release early and identify any extensive changes before the major release is cut.
+
+Only breaking changes are added to this branch. No new features should be added at any point to this branch, only breaking removals / changes.
+
+Before a major release is cut (1.12.5 > 2.0.0), this branch is merged back into `master`.
+
+
+During the life-time of a major release line (1.0.1, 1.1.x, 1.2.x, 1.3.x, ..., 1.12.5) all deprecation removals are collected in this branch.
+On every minor release (1.11.8 > 1.12.0) the `master` is rebased onto the `next-breaking` branch.
+
+Every time a change with depreations is merged into `master`, a follow up PR that removes the newly-introduced deprecation is created targeting the `next-breaking` branch. After the next minor is released and `master` was rebased into `next-breaking` all the PRs from the previous minor release line can be merged into the `next-breaking` branch. Deprecation removals for the - possibly - long running major release line can be collected this way without having a large number of deprecation removals PRs open.
+
 ## API versioning
 
 The [API version]({{ sourcefile("src/backend/InvenTree/InvenTree/api_version.py") }}) needs to be bumped every time when the API is changed.
+
+### Understanding API shape
+
+While the default Open API schema generation provides a good overview of the API endpoints, it does not provide insights into the shape of the underlying API (serializer) code.
+
+The default schema generation cli command `invoke dev.schema` / endpoint `/api/schema/` can be enhanced by setting the schema generation level in the config file or via the [debugging environment variable or config value](../start/config.md#debugging-and-logging-options) `INVENTREE_SCHEMA_LEVEL`.
+
+At level 1 only simple attributes describing the underlying Django Rest Framework API view of a endpoint are added under the `x-inventree-meta` key.
+
+At level 2 details about the inheritance of the view (key `x-inventree-components`) and model (key `x-inventree-model`) are added. This allows to trace back the view to the underlying serializer and model and ensure naming of endpoints is consistent with the data model.
+
+!!! note "For experiments only"
+    There are no CI or system checks to use these additional attributes yet. This is an experimental feature to help developers understand the API shape and how it changes better.
+
 
 ## Environment
 
@@ -130,7 +162,7 @@ The core software modules are targeting the following versions:
 | Python | {{ config.extra.min_python_version }} | Minimum required version |
 | Invoke | {{ config.extra.min_invoke_version }} | Minimum required version |
 | Django | {{ config.extra.django_version }} | Pinned version |
-| Node | 20 | Only needed for frontend development |
+| Node | 24 | Only needed for frontend development |
 
 Any other software dependencies are handled by the project package config.
 
@@ -186,6 +218,10 @@ To see all the available options:
 invoke dev.test --help
 ```
 
+```
+{{ invoke_commands('dev.test --help') }}
+```
+
 #### Database Permission Issues
 
 For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
@@ -207,6 +243,21 @@ coverage html -i
 ```
 
 The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
+
+### Database Query Profiling
+
+It may be useful during development to profile parts of the backend code to see how many database queries are executed. To that end, the `count_queries` context manager can be used to count the number of queries executed in a specific code block.
+
+```python
+from InvenTree.helpers import count_queries
+
+with count_queries("My code block"):
+    # Code block to profile
+    ...
+```
+
+A developer can use this to profile a specific code block, and the number of queries executed will be printed to the console.
+
 
 ## Code Style
 

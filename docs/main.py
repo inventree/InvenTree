@@ -34,6 +34,7 @@ for key in [
     print(f' - {key}: {val}')
 
 # Cached settings dict values
+global CONFIG_SETTINGS
 global GLOBAL_SETTINGS
 global USER_SETTINGS
 global TAGS
@@ -64,6 +65,7 @@ with open(settings_file, encoding='utf-8') as sf:
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+    CONFIG_SETTINGS = settings['config']
 
 # Tags
 with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
@@ -126,7 +128,7 @@ def check_link(url) -> bool:
     return False
 
 
-def get_build_environment() -> str:
+def get_build_environment() -> Optional[str]:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
@@ -233,12 +235,12 @@ def define_env(env):
         return url
 
     @env.macro
-    def invoke_commands():
+    def invoke_commands(command: str = '--list'):
         """Provides an output of the available commands."""
         tasks = here.parent.joinpath('tasks.py')
         output = gen_base.joinpath('invoke-commands.txt')
 
-        command = f'invoke -f {tasks} --list > {output}'
+        command = f'invoke -f {tasks} {command} > {output}'
 
         assert subprocess.call(command, shell=True) == 0
 
@@ -318,17 +320,20 @@ def define_env(env):
             json.dump(data, f, indent=4)
 
     @env.macro
-    def rendersetting(key: str, setting: dict, short: bool = False):
+    def rendersetting(
+        key: str, setting: dict, short: bool = False, default: Optional[str] = None
+    ):
         """Render a provided setting object into a table row.
 
         Arguments:
             key: The name of the setting to extract information for.
             setting: The setting object to render.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         name = setting['name']
         description = setting['description']
-        default = setting.get('default')
+        default = default or setting.get('default')
         units = setting.get('units')
 
         default = f'`{default}`' if default else ''
@@ -340,12 +345,13 @@ def define_env(env):
         return f'| <div title="{key}"><strong>{name}</strong></div> | {description} | {default} | {units} |'
 
     @env.macro
-    def globalsetting(key: str, short: bool = False):
+    def globalsetting(key: str, short: bool = False, default: Optional[str] = None):
         """Extract information on a particular global setting.
 
         Arguments:
             key: The name of the global setting to extract information for.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
@@ -354,7 +360,7 @@ def define_env(env):
         if not short:
             observe_setting(key, 'global')
 
-        return rendersetting(key, setting, short=short)
+        return rendersetting(key, setting, short=short, default=default)
 
     @env.macro
     def usersetting(key: str, short: bool = False):
@@ -372,6 +378,34 @@ def define_env(env):
             observe_setting(key, 'user')
 
         return rendersetting(key, setting, short=short)
+
+    @env.macro
+    def configtable():
+        """Generate a header for the configuration settings table."""
+        return '| Environment Variable | Configuration File | Default | Description |\n| --- | --- | --- | --- |'
+
+    @env.macro
+    def configsetting(key: str, default: Optional[str] = None):
+        """Extract information on a particular configuration setting.
+
+        Arguments:
+            key: The name of the configuration setting to extract information for.
+            default: An optional default value to override the setting's default display value.
+        """
+        global CONFIG_SETTINGS
+        setting = CONFIG_SETTINGS[key]
+
+        observe_setting(key, 'config')
+
+        cfg_key = setting.get('config_key', None)
+        cfg_key = f'`{cfg_key}`' if cfg_key else '-'
+
+        default = default or setting.get('default_value', None)
+
+        if default is None:
+            default = '*Not Specified*'
+
+        return f'| <span title="{key}" style="white-space: nowrap;"><code>{key}</code></span> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():

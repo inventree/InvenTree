@@ -96,7 +96,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         const pdf = new Blob([preview.data], {
-          type: preview.headers['content-type']
+          type: preview.headers['content-type'] as string
         });
 
         const srcUrl = URL.createObjectURL(pdf);
@@ -112,9 +112,9 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
               height: '100%',
-              width: '100%'
+              width: '100%',
+              paddingTop: '50px'
             }}
           >
             <Trans>Preview not available, click "Reload Preview".</Trans>

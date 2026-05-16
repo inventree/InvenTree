@@ -1,12 +1,27 @@
+import type { I18n } from '@lingui/core';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
+import type { JSX } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
-import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
+import type { setRenderProps } from '../states/types';
+import type {
+  ApiFormModalProps,
+  ApiFormProps,
+  BulkEditApiFormModalProps,
+  StockOperationProps
+} from './Forms';
 import type { UseModalReturn } from './Modals';
+import type {
+  RemoteInstanceProps,
+  RenderInlineModelProps,
+  RenderInstanceProps,
+  ThumbnailProps
+} from './Rendering';
 import type { SettingsStateProps } from './Settings';
+import type { InvenTreeTableRenderProps } from './Tables';
 import type { UserStateProps } from './User';
 
 export interface PluginProps {
@@ -22,11 +37,36 @@ export interface PluginVersion {
   mantine: string;
 }
 
+export type StockAdjustmentFormsContext = {
+  addStock: (props: StockOperationProps) => UseModalReturn;
+  assignStock: (props: StockOperationProps) => UseModalReturn;
+  changeStatus: (props: StockOperationProps) => UseModalReturn;
+  countStock: (props: StockOperationProps) => UseModalReturn;
+  deleteStock: (props: StockOperationProps) => UseModalReturn;
+  mergeStock: (props: StockOperationProps) => UseModalReturn;
+  removeStock: (props: StockOperationProps) => UseModalReturn;
+  transferStock: (props: StockOperationProps) => UseModalReturn;
+  returnStock: (props: StockOperationProps) => UseModalReturn;
+};
+
 export type InvenTreeFormsContext = {
   bulkEdit: (props: BulkEditApiFormModalProps) => UseModalReturn;
   create: (props: ApiFormModalProps) => UseModalReturn;
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
+  editApiForm: (props: { id?: string; props: ApiFormProps }) => React.ReactNode;
+  stockActions: StockAdjustmentFormsContext;
+};
+
+export type InvenTreeTablesContext<T extends Record<string, any>> = {
+  renderTable: (props: InvenTreeTableRenderProps<T>) => React.ReactNode;
+};
+
+export type ImporterDrawerContext = {
+  open: (sessionId: number, options?: { onClose?: () => void }) => void;
+  close: () => void;
+  isOpen: () => boolean;
+  sessionId: () => number | null;
 };
 
 /**
@@ -35,16 +75,22 @@ export type InvenTreeFormsContext = {
  *
  * @param version - The version of the running InvenTree software stack
  * @param api - The Axios API instance (see ../states/ApiState.tsx)
+ * @param queryClient - The Tanstack QueryClient instance (see ../states/QueryState.tsx)
  * @param user - The current user instance (see ../states/UserState.tsx)
  * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
  * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
+ * @param modelInformation - A dictionary of available model information
+ * @param renderInstance - A component function for rendering a model instance
+ * @param host - The current host URL
+ * @param i18n - The i18n instance for translations (from @lingui/core)
+ * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
- * @param host - The current host URL
- * @param locale - The current locale string (e.g. 'en' / 'de')
+ * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
+ * @param tables - A set of functions for rendering API tables
+ * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
  * @param model - The model type associated with the rendered component (if applicable)
- * @param modelInformation - A dictionary of available model information
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
  * @param reloadContent - A function which can be called to reload the plugin content
@@ -59,12 +105,26 @@ export type InvenTreePluginContext = {
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
   modelInformation: ModelDict;
+  renderInstance: (props: Readonly<RenderInstanceProps>) => React.ReactNode;
+  renderRemoteInstance: (
+    props: Readonly<RemoteInstanceProps>
+  ) => React.ReactNode;
+  renderInlineModel: (
+    props: Readonly<RenderInlineModelProps>
+  ) => React.ReactNode;
+  thumbnail: (props: Readonly<ThumbnailProps>) => JSX.Element;
   host: string;
+  i18n: I18n;
   locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
-  forms: InvenTreeFormsContext;
   colorScheme: MantineColorScheme;
+  forms: InvenTreeFormsContext;
+  stateFnc: {
+    setRenderer: setRenderProps;
+  };
+  tables: InvenTreeTablesContext<any>;
+  importer: ImporterDrawerContext;
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;

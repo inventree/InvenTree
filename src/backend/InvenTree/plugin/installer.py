@@ -47,7 +47,7 @@ def handle_pip_error(error, path: str) -> list:
     - Format the output from a pip command into a list of error messages.
     - Raise an appropriate error
     """
-    log_error(path)
+    log_error(path, scope='pip')
 
     output = error.output.decode('utf-8')
 
@@ -95,11 +95,13 @@ def get_install_info(packagename: str) -> dict:
                 info[key] = value
 
     except subprocess.CalledProcessError as error:
-        log_error('get_install_info')
+        log_error('get_install_info', scope='pip')
 
         output = error.output.decode('utf-8')
         info['error'] = output
-        logger.exception('Plugin lookup failed: %s', str(output))
+        logger.exception('Plugin lookup failed: %s', output)
+    except Exception:
+        log_error('get_install_info', scope='pip')
 
     return info
 
@@ -113,9 +115,13 @@ def plugins_file_hash():
     if not pf or not pf.exists():
         return None
 
-    with pf.open('rb') as f:
-        # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
-        return hashlib.sha256(f.read()).hexdigest()
+    try:
+        with pf.open('rb') as f:
+            # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
+            return hashlib.sha256(f.read()).hexdigest()
+    except Exception:
+        log_error('plugins_file_hash', scope='plugins')
+        return None
 
 
 def install_plugins_file():
@@ -125,7 +131,7 @@ def install_plugins_file():
     pf = settings.PLUGIN_FILE
 
     if not pf or not pf.exists():
-        logger.warning('Plugin file %s does not exist', str(pf))
+        logger.warning('Plugin file %s does not exist', pf)
         return
 
     cmd = ['install', '--disable-pip-version-check', '-U', '-r', str(pf)]
@@ -134,16 +140,19 @@ def install_plugins_file():
         pip_command(*cmd)
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
-        logger.exception('Plugin file installation failed: %s', str(output))
-        log_error('pip')
+        logger.exception('Plugin file installation failed: %s', output)
+        log_error('install_plugins_file', scope='pip')
         return False
     except Exception as exc:
         logger.exception('Plugin file installation failed: %s', exc)
-        log_error('pip')
+        log_error('install_plugins_file', scope='pip')
         return False
 
     # Collect plugin static files
-    plugin.staticfiles.collect_plugins_static_files()
+    try:
+        plugin.staticfiles.collect_plugins_static_files()
+    except Exception:
+        log_error('collect_plugins_static_files', scope='plugins')
 
     # At this point, the plugins file has been installed
     return True
@@ -165,7 +174,7 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
     pf = settings.PLUGIN_FILE
 
     if not pf or not pf.exists():
-        logger.warning('Plugin file %s does not exist', str(pf))
+        logger.warning('Plugin file %s does not exist', pf)
         return
 
     def compare_line(line: str):
@@ -177,7 +186,8 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
         with pf.open(mode='r') as f:
             lines = f.readlines()
     except Exception as exc:
-        logger.exception('Failed to read plugins file: %s', str(exc))
+        logger.exception('Failed to read plugins file: %s', exc)
+        log_error('update_plugins_file', scope='plugins')
         return
 
     # Reconstruct output file
@@ -213,7 +223,8 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
                 if not line.endswith('\n'):
                     f.write('\n')
     except Exception as exc:
-        logger.exception('Failed to add plugin to plugins file: %s', str(exc))
+        logger.exception('Failed to add plugin to plugins file: %s', exc)
+        log_error('update_plugins_file', scope='plugins')
 
 
 def install_plugin(url=None, packagename=None, user=None, version=None):
@@ -225,8 +236,8 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         user: Optional user performing the installation
         version: Optional version specifier
     """
-    if user and not user.is_staff:
-        raise ValidationError(_('Only staff users can administer plugins'))
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin installation is disabled'))
@@ -258,6 +269,13 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         if version:
             full_pkg = f'{full_pkg}=={version}'
 
+    if not full_pkg:
+        raise ValidationError(_('No package name or URL provided for installation'))
+
+    # Sanitize the package name for installation
+    if any(c in full_pkg for c in ';&|`$()'):
+        raise ValidationError(_('Invalid characters in package name or URL'))
+
     install_name.append(full_pkg)
 
     ret = {}
@@ -276,6 +294,8 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_install')
+    except Exception:
+        log_error('install_plugin', scope='plugins')
 
     if version := ret.get('version'):
         # Save plugin to plugins file
@@ -320,12 +340,31 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     """
     from plugin.registry import registry
 
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
+
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin uninstalling is disabled'))
 
     if cfg.active:
         raise ValidationError(
             _('Plugin cannot be uninstalled as it is currently active')
+        )
+
+    if cfg.is_mandatory():  # pragma: no cover
+        # This is only an additional check, as mandatory plugins cannot be deactivated
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is mandatory')
+        )
+
+    if cfg.is_sample():
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is a sample plugin')
+        )
+
+    if cfg.is_builtin():
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is a built-in plugin')
         )
 
     if not cfg.is_installed():
@@ -343,6 +382,8 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
             pip_command('uninstall', '-y', package_name)
         except subprocess.CalledProcessError as error:
             handle_pip_error(error, 'plugin_uninstall')
+        except Exception:
+            log_error('uninstall_plugin', scope='plugins')
     else:
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
@@ -351,6 +392,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     update_plugins_file(package_name, remove=True)
 
     if delete_config:
+        logger.info('Deleting plugin configuration from database: %s', cfg.key)
         # Remove the plugin configuration from the database
         cfg.delete()
 

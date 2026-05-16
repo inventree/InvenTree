@@ -111,7 +111,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         # Request custom panel information for a part instance
         response = self.get(url, data=query_data)
 
-        # There should be 4 active panels for the part by default
+        # There should be 3 active panels for the part by default
         self.assertEqual(3, len(response.data))
 
         _part.active = False
@@ -119,8 +119,8 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         response = self.get(url, data=query_data)
 
-        # As the part is not active, only 3 panels left
-        self.assertEqual(3, len(response.data))
+        # As the part is not active, only 2 panels left
+        self.assertEqual(2, len(response.data))
 
         # Disable the "ENABLE_PART_PANELS" setting, and try again
         plugin.set_setting('ENABLE_PART_PANELS', False)

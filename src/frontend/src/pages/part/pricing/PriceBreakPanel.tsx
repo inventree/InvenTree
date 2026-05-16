@@ -3,11 +3,18 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import {
@@ -15,15 +22,8 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../../hooks/UseForm';
-import { useTable } from '../../../hooks/UseTable';
 import { useUserState } from '../../../states/UserState';
-import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({

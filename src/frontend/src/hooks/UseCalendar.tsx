@@ -1,6 +1,7 @@
 import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useFilterSet from '@lib/hooks/UseFilterSet';
 import type { FilterSetState } from '@lib/types/Filters';
 import type { UseModalReturn } from '@lib/types/Modals';
 import type { DateValue } from '@mantine/dates';
@@ -10,7 +11,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { api } from '../App';
 import { showApiErrorMessage } from '../functions/notifications';
 import useDataExport from './UseDataExport';
-import { useFilterSet } from './UseFilterSet';
 
 /*
  * Type definition for representing the state of a calendar:
@@ -102,7 +102,15 @@ export default function useCalendar({
 
   const query = useQuery({
     enabled: !!startDate && !!endDate,
-    queryKey: ['calendar', name, endpoint, queryFilters],
+    queryKey: ['calendar', name, endpoint, queryFilters, startDate, endDate],
+    throwOnError: (error: any) => {
+      showApiErrorMessage({
+        error: error,
+        title: 'Error fetching calendar data'
+      });
+
+      return true;
+    },
     queryFn: async () => {
       // Fetch data from the API
       return api
@@ -111,12 +119,6 @@ export default function useCalendar({
         })
         .then((response) => {
           return response.data ?? [];
-        })
-        .catch((error) => {
-          showApiErrorMessage({
-            error: error,
-            title: 'Error fetching calendar data'
-          });
         });
     }
   });
@@ -173,6 +175,6 @@ export default function useCalendar({
     setEndDate,
     exportModal,
     query: query,
-    data: query.data
+    data: query.data ?? []
   };
 }

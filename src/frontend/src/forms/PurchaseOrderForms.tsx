@@ -1,9 +1,12 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
+  Alert,
   Container,
   Flex,
   FocusTrap,
   Group,
+  HoverCard,
   Modal,
   Table,
   TextInput
@@ -15,6 +18,7 @@ import {
   IconCoins,
   IconCurrencyDollar,
   IconHash,
+  IconInfoCircle,
   IconLink,
   IconList,
   IconNotes,
@@ -24,15 +28,18 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
 import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -42,8 +49,6 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
@@ -51,36 +56,66 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function usePurchaseOrderLineItemFields({
   supplierId,
   orderId,
+  currency,
   create
 }: {
   supplierId?: number;
   orderId?: number;
+  currency?: string;
   create?: boolean;
 }) {
   const globalSettings = useGlobalSettingsState();
 
   const [purchasePrice, setPurchasePrice] = useState<string>('');
-  const [autoPricing, setAutoPricing] = useState(true);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<string>(
+    currency ?? ''
+  );
+
+  const [autoPricing, setAutoPricing] = useState(false);
+
+  const [quantity, setQuantity] = useState<string>('1');
 
   // Internal part information
   const [part, setPart] = useState<any>({});
+  const [priceBreaks, setPriceBreaks] = useState<any[]>([]);
+  const [suggestedPurchasePrice, setSuggestedPurchasePrice] = useState<
+    string | undefined
+  >(undefined);
 
+  // Update suggested purchase price when part, quantity, or price breaks change
   useEffect(() => {
-    if (autoPricing) {
-      setPurchasePrice('');
+    // Only attempt to set purchase price for new line items
+    if (!create) return;
+
+    const qty = toNumber(quantity, null);
+
+    if (qty == null || qty <= 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
     }
-  }, [autoPricing]);
 
-  useEffect(() => {
-    setAutoPricing(purchasePrice === '');
-  }, [purchasePrice]);
+    if (!part || !priceBreaks || priceBreaks.length === 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = priceBreaks
+      .filter((pb: any) => qty >= pb.quantity)
+      .sort((a: any, b: any) => b.quantity - a.quantity);
+
+    if (applicablePriceBreaks.length) {
+      setSuggestedPurchasePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSuggestedPurchasePrice(undefined);
+    }
+  }, [create, part, quantity, priceBreaks]);
 
   const fields = useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -95,9 +130,11 @@ export function usePurchaseOrderLineItemFields({
           part_detail: true,
           supplier_detail: true,
           active: true,
-          part_active: true
+          part_active: true,
+          price_breaks: true
         },
         onValueChange: (value, record) => {
+          setPriceBreaks(record?.price_breaks ?? []);
           setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
@@ -105,21 +142,56 @@ export function usePurchaseOrderLineItemFields({
             ...adjust.filters,
             supplier: supplierId
           };
+        },
+        addCreateFields: {
+          part: {
+            filters: {
+              active: true,
+              purchaseable: true
+            }
+          },
+          SKU: {},
+          manufacturer_part: {
+            filters: {
+              part_detail: true,
+              manufacturer_detail: true,
+              active: true
+            }
+          },
+          description: {},
+          supplier: {
+            hidden: true,
+            value: supplierId
+          }
         }
       },
-      quantity: {},
+      line: {},
       reference: {},
+      quantity: {
+        onValueChange: (value) => {
+          setQuantity(value);
+        }
+      },
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        disabled: autoPricing,
+        placeholder: suggestedPurchasePrice,
+        placeholderAutofill: true,
         onValueChange: setPurchasePrice
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        value: purchasePriceCurrency,
+        onValueChange: setPurchasePriceCurrency
       },
       auto_pricing: {
+        default: create !== false,
         value: autoPricing,
         onValueChange: setAutoPricing
+      },
+      project_code: {
+        description: t`Select project code for this line item`
       },
       target_date: {
         icon: <IconCalendar />
@@ -159,7 +231,8 @@ export function usePurchaseOrderLineItemFields({
     globalSettings,
     supplierId,
     autoPricing,
-    purchasePrice
+    purchasePrice,
+    suggestedPurchasePrice
   ]);
 
   return fields;
@@ -189,6 +262,11 @@ export function usePurchaseOrderFields({
         filters: {
           is_supplier: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       supplier_reference: {},
@@ -245,7 +323,8 @@ export function usePurchaseOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
@@ -306,12 +385,7 @@ function LineItemFormRow({
 
   // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator({
-    isEnabled: () => batchOpen && trackable,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.idx, 'serial_numbers', value);
-      }
-    }
+    isEnabled: () => trackable
   });
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
@@ -329,7 +403,6 @@ function LineItemFormRow({
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
       props.changeFn(props.idx, 'batch_code', undefined);
-      props.changeFn(props.idx, 'serial_numbers', undefined);
     },
     onOpen: () => {
       // Generate a new batch code
@@ -337,6 +410,14 @@ function LineItemFormRow({
         part: record?.supplier_part_detail?.part,
         order: record?.order
       });
+    }
+  });
+
+  const [serialOpen, serialHandlers] = useDisclosure(false, {
+    onClose: () => {
+      props.changeFn(props.idx, 'serial_numbers', undefined);
+    },
+    onOpen: () => {
       // Generate new serial numbers
       if (trackable) {
         serialNumberGenerator.update({
@@ -379,14 +460,6 @@ function LineItemFormRow({
   useEffect(() => {
     props.changeFn(props.idx, 'barcode', barcode);
   }, [barcode]);
-
-  const batchToolTip: string = useMemo(() => {
-    if (trackable) {
-      return t`Assign Batch Code and Serial Numbers`;
-    } else {
-      return t`Assign Batch Code`;
-    }
-  }, [trackable]);
 
   // Update location field description on state change
   useEffect(() => {
@@ -436,12 +509,21 @@ function LineItemFormRow({
     }
 
     // Selected location is base part's default location
-    if (location === record.part_detail.default_location) {
+    if (
+      record.part_detail?.default_location &&
+      location === record.part_detail.default_location
+    ) {
       return t`Default location selected`;
     }
 
     return text;
   }, [location]);
+
+  // Handle virtual parts
+  const virtual = useMemo(
+    () => record.part_detail?.virtual ?? false,
+    [record.part_detail]
+  );
 
   return (
     <>
@@ -461,14 +543,30 @@ function LineItemFormRow({
       </Modal>
       <Table.Tr>
         <Table.Td>
-          <Flex gap='sm' align='center'>
-            <Thumbnail
-              size={40}
-              src={record.part_detail.thumbnail}
-              align='center'
-            />
-            <div>{record.part_detail.name}</div>
-          </Flex>
+          <Group gap='xs' justify='space-between'>
+            <Group gap='xs' justify='left'>
+              <Thumbnail
+                size={40}
+                src={record.part_detail.thumbnail}
+                align='center'
+              />
+              <div>{record.part_detail.name}</div>
+            </Group>
+            {virtual && (
+              <HoverCard>
+                <HoverCard.Target>
+                  <ActionIcon color='blue' variant='transparent'>
+                    <IconInfoCircle />
+                  </ActionIcon>
+                </HoverCard.Target>
+                <HoverCard.Dropdown>
+                  <Alert color='blue' title={t`Virtual Part`}>
+                    {t`This part is virtual, no physical stock will be received.`}
+                  </Alert>
+                </HoverCard.Dropdown>
+              </HoverCard>
+            )}
+          </Group>
         </Table.Td>
         <Table.Td>{record.supplier_part_detail.SKU}</Table.Td>
         <Table.Td>
@@ -500,16 +598,30 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
               tooltipAlignment='top'
-              variant={locationOpen ? 'filled' : 'transparent'}
+              variant={locationOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               size='sm'
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon='batch_code' />}
-              tooltip={batchToolTip}
+              tooltip={t`Assign Batch Code`}
               tooltipAlignment='top'
-              variant={batchOpen ? 'filled' : 'transparent'}
+              variant={batchOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
+            {trackable && (
+              <ActionButton
+                size='sm'
+                onClick={() => serialHandlers.toggle()}
+                icon={<InvenTreeIcon icon='serial' />}
+                tooltip={t`Assign Serial Numbers`}
+                tooltipAlignment='top'
+                variant={serialOpen ? 'outline' : 'transparent'}
+                disabled={virtual}
+              />
+            )}
+
             {settings.isSet('STOCK_ENABLE_EXPIRY') && (
               <ActionButton
                 size='sm'
@@ -517,7 +629,8 @@ function LineItemFormRow({
                 icon={<IconCalendarExclamation />}
                 tooltip={t`Set Expiry Date`}
                 tooltipAlignment='top'
-                variant={expiryDateOpen ? 'filled' : 'transparent'}
+                variant={expiryDateOpen ? 'outline' : 'transparent'}
+                disabled={virtual}
               />
             )}
             <ActionButton
@@ -526,21 +639,24 @@ function LineItemFormRow({
               tooltip={t`Adjust Packaging`}
               tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
-              variant={packagingOpen ? 'filled' : 'transparent'}
+              variant={packagingOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
               tooltipAlignment='top'
-              variant={statusOpen ? 'filled' : 'transparent'}
+              variant={statusOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
               tooltipAlignment='top'
-              variant={noteOpen ? 'filled' : 'transparent'}
+              variant={noteOpen ? 'outline' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
+              disabled={virtual}
             />
             {barcode ? (
               <ActionButton
@@ -550,6 +666,7 @@ function LineItemFormRow({
                 variant='filled'
                 color='red'
                 onClick={() => setBarcode(undefined)}
+                disabled={virtual}
               />
             ) : (
               <ActionButton
@@ -558,6 +675,7 @@ function LineItemFormRow({
                 tooltipAlignment='top'
                 variant='transparent'
                 onClick={() => open()}
+                disabled={virtual}
               />
             )}
           </Flex>
@@ -659,7 +777,7 @@ function LineItemFormRow({
         error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
-        visible={batchOpen && trackable}
+        visible={serialOpen}
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
@@ -668,7 +786,10 @@ function LineItemFormRow({
           field_type: 'string',
           label: t`Serial Numbers`,
           description: t`Enter serial numbers for received items`,
-          value: props.item.serial_numbers
+          value: props.item.serial_numbers,
+          placeholderAutofill: true,
+          placeholder:
+            serialNumberGenerator.result && `${serialNumberGenerator.result}`
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />
@@ -774,6 +895,10 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }),
         modelRenderer: (row: TableFieldRowProps) => {
           const record = records[row.item.line_item];
+
+          if (!record) {
+            return null;
+          }
 
           return (
             <LineItemFormRow

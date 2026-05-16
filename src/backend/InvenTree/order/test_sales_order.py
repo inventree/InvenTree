@@ -5,13 +5,13 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
-from company.models import Company
+from common.settings import set_global_setting
+from company.models import Address, Company
 from InvenTree import status_codes as status
-from InvenTree.unit_test import addUserPermission
+from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -24,10 +24,10 @@ from stock.models import StockItem
 from users.models import Owner
 
 
-class SalesOrderTest(TestCase):
+class SalesOrderTest(InvenTreeTestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
-    fixtures = ['users']
+    fixtures = ['company', 'users']
 
     @classmethod
     def setUpTestData(cls):
@@ -75,6 +75,38 @@ class SalesOrderTest(TestCase):
         cls.extraline = SalesOrderExtraLine.objects.create(
             quantity=1, order=cls.order, reference='Extra line'
         )
+
+    def test_validate_address(self):
+        """Test validation of the linked Address."""
+        order = SalesOrder.objects.first()
+
+        # Create an address for a different company
+        company = Company.objects.exclude(pk=order.customer.pk).first()
+        self.assertIsNotNone(company)
+        address = Address.objects.create(
+            company=company,
+            primary=False,
+            line1='123 Different St',
+            line2='Elsewhere',
+            postal_code='99999',
+            country='US',
+        )
+
+        order.address = address
+
+        with self.assertRaises(ValidationError) as err:
+            order.clean()
+
+        self.assertIn('Address does not match selected company', str(err.exception))
+
+        # Update the address to match the correct company
+        address.company = order.customer
+        address.save()
+
+        # Now validation should pass
+        order.address = address
+        order.clean()
+        order.save()
 
     def test_so_reference(self):
         """Unit tests for sales order generation."""
@@ -234,9 +266,35 @@ class SalesOrderTest(TestCase):
         self.assertIsNone(self.shipment.shipment_date)
         self.assertFalse(self.shipment.is_complete())
 
+        # Require that the shipment is checked before completion
+        set_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK', True)
+
+        self.assertFalse(self.shipment.is_checked())
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        with self.assertRaises(ValidationError) as err:
+            self.shipment.complete_shipment(None)
+
+        self.assertIn(
+            'Shipment must be checked before it can be completed',
+            err.exception.messages,
+        )
+
+        # Mark the shipment as checked
+        self.shipment.checked_by = get_user_model().objects.first()
+        self.shipment.save()
+        self.assertTrue(self.shipment.is_checked())
+
         # Mark the shipments as complete
         self.shipment.complete_shipment(None)
+        self.shipment.refresh_from_db()
         self.assertTrue(self.shipment.is_complete())
+
+        # Check that each of the items have now been allocated to the customer
+        for allocation in self.shipment.allocations.all():
+            item = allocation.item
+            self.assertEqual(item.customer, self.order.customer)
+            self.assertEqual(item.sales_order, self.order)
 
         # Now, should be OK to ship
         result = self.order.ship_order(None)
@@ -278,6 +336,88 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_shipment_many_items(self):
+        """Test completion of a shipment with many items.
+
+        Here, we create a shipment with a very large number of items assigned,
+        and check that the shipment can be completed without error.
+
+        This test is designed to test that the database does not error out,
+        even when a large number of items are assigned to a shipment.
+
+        Ref: https://github.com/inventree/InvenTree/pull/11500
+        """
+        customer = Company.objects.create(name='Customer 2', is_customer=True)
+
+        # Create a new SalesOrder
+        so = SalesOrder.objects.create(customer=customer, reference='SO-5678')
+
+        shipment = so.shipments.first()
+
+        if not shipment:
+            shipment = SalesOrderShipment.objects.create(
+                reference='SHIP-MENT', order=so
+            )
+
+        # Create a part
+        part = Part.objects.create(name='Part 1', salable=True)
+
+        N_ITEMS = 750
+
+        line = SalesOrderLineItem.objects.create(part=part, order=so, quantity=N_ITEMS)
+
+        # Create stock items, and assign to shipment
+        allocations = []
+        stock_items = []
+
+        tree_id = StockItem.objects.all().order_by('-tree_id').first().tree_id
+
+        for idx in range(N_ITEMS):
+            tree_id += 1
+
+            stock_items.append(
+                StockItem(
+                    part=part,
+                    quantity=1 + idx % 5,
+                    level=0,
+                    lft=0,
+                    rght=0,
+                    tree_id=tree_id,
+                )
+            )
+
+        StockItem.objects.bulk_create(stock_items)
+
+        # Check expected available quantity
+        self.assertEqual(part.total_stock, 2250)
+
+        # Allocate a single quantity from each stock item to the shipment
+        for item in StockItem.objects.filter(part=part):
+            allocations.append(
+                SalesOrderAllocation(
+                    line=line, shipment=shipment, item=item, quantity=1
+                )
+            )
+
+        SalesOrderAllocation.objects.bulk_create(allocations)
+
+        # Validate initial conditions for the SalesOrderShipment
+        self.assertEqual(shipment.allocations.count(), N_ITEMS)
+        self.assertIsNone(shipment.shipment_date)
+        self.assertFalse(shipment.is_complete())
+        self.assertTrue(shipment.check_can_complete(raise_error=False))
+
+        # Complete the shipment
+        shipment.complete_shipment(None)
+
+        shipment.refresh_from_db()
+        self.assertIsNotNone(shipment.shipment_date)
+        self.assertTrue(shipment.is_complete())
+
+        # Part stock quantity should have reduced by 1 for each allocated item
+        part.refresh_from_db()
+        self.assertEqual(part.total_stock, 2250 - N_ITEMS)
+
     def test_default_shipment(self):
         """Test sales order default shipment creation."""
         # Default setting value should be False
@@ -317,8 +457,62 @@ class SalesOrderTest(TestCase):
         self.assertIsNone(self.shipment.delivery_date)
         self.assertFalse(self.shipment.is_delivered())
 
+    def test_shipment_address(self):
+        """Unit tests for SalesOrderShipment address field."""
+        shipment = SalesOrderShipment.objects.first()
+        self.assertIsNotNone(shipment)
+
+        # Set an address for the order
+        address_1 = Address.objects.create(
+            company=shipment.order.customer, title='Order Address', line1='123 Test St'
+        )
+
+        # Save the address against the order
+        shipment.order.address = address_1
+        shipment.order.clean()
+        shipment.order.save()
+
+        # By default, no address set
+        self.assertIsNone(shipment.shipment_address)
+
+        # But, the 'address' accessor defaults to the order address
+        self.assertIsNotNone(shipment.address)
+        self.assertEqual(shipment.address, shipment.order.address)
+
+        # Set a custom address for the shipment
+        address_2 = Address.objects.create(
+            company=shipment.order.customer,
+            title='Shipment Address',
+            line1='456 Another St',
+        )
+
+        shipment.shipment_address = address_2
+        shipment.clean()
+        shipment.save()
+
+        self.assertEqual(shipment.address, shipment.shipment_address)
+        self.assertNotEqual(shipment.address, shipment.order.address)
+
+        # Check that the shipment_address validation works
+        other_company = Company.objects.exclude(pk=shipment.order.customer.pk).first()
+        self.assertIsNotNone(other_company)
+
+        address_2.company = other_company
+        address_2.save()
+        shipment.refresh_from_db()
+
+        # This should error out (address company does not match customer)
+        with self.assertRaises(ValidationError) as err:
+            shipment.clean()
+
+        self.assertIn(
+            'Shipment address must match the customer', err.exception.messages
+        )
+
     def test_overdue_notification(self):
         """Test overdue sales order notification."""
+        self.ensurePluginsLoaded()
+
         user = get_user_model().objects.get(pk=3)
 
         addUserPermission(user, 'order', 'salesorder', 'view')
@@ -383,3 +577,45 @@ class SalesOrderTest(TestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_virtual_parts(self):
+        """Test shipment of virtual parts against an order."""
+        vp = Part.objects.create(
+            name='Virtual Part',
+            salable=True,
+            virtual=True,
+            description='A virtual part that I sell',
+        )
+
+        so = SalesOrder.objects.create(
+            customer=self.customer,
+            reference='SO-VIRTUAL-1',
+            customer_reference='VIRT-001',
+        )
+
+        for qty in [5, 10, 15]:
+            SalesOrderLineItem.objects.create(order=so, part=vp, quantity=qty)
+
+        # Delete pending shipments (if any)
+        so.shipments.all().delete()
+
+        for line in so.lines.all():
+            self.assertEqual(line.part.virtual, True)
+            self.assertEqual(line.shipped, 0)
+            self.assertGreater(line.quantity, 0)
+            self.assertTrue(line.is_fully_allocated())
+            self.assertTrue(line.is_completed())
+
+        # Complete the order
+        so.ship_order(None)
+
+        so.refresh_from_db()
+        self.assertEqual(so.status, status.SalesOrderStatus.SHIPPED)
+
+        so.complete_order(None)
+        so.refresh_from_db()
+        self.assertEqual(so.status, status.SalesOrderStatus.COMPLETE)
+
+        # Ensure that virtual line item quantity values have been updated
+        for line in so.lines.all():
+            self.assertEqual(line.shipped, line.quantity)

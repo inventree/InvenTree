@@ -16,3 +16,14 @@ export function checkPluginVersion(context: InvenTreePluginContext) {
     );
   }
 }
+
+/**
+ * Helper function to initialize the plugin context.
+ */
+export function initPlugin(context: InvenTreePluginContext) {
+  // Check that the plugin version matches the expected version
+  checkPluginVersion(context);
+
+  // Activate the i18n context for the current locale
+  context.i18n?.activate?.(context.locale);
+}

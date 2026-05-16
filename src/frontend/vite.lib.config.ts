@@ -1,9 +1,19 @@
-// This config file is used to build the common InvenTree UI library components,
-// which are distributed via NPM - to facilitate plugin development
+/*
+ * This config file is used to build the common InvenTree UI library components,
+ * which are distributed via NPM - to facilitate plugin development.
+ *
+ * Note that we externalize a number of common libraries,
+ * so that plugins can use the same versions as the main InvenTree application.
+ *
+ * Externalizing libraries is critical here,
+ * to ensure that the plugins do not bundle their own versions of these libraries,
+ * so that the plugin uses the same React instance as the main application.
+ */
 
 import { resolve } from 'node:path';
 import { defineConfig, mergeConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { viteExternalsPlugin } from 'vite-plugin-externals';
 import viteConfig from './vite.config';
 
 import { __INVENTREE_VERSION_INFO__ } from './version-info';
@@ -21,9 +31,24 @@ export default defineConfig((cfg) =>
         rollupOptions: {
           output: {
             preserveModules: true,
-            preserveModulesRoot: 'lib'
+            preserveModulesRoot: 'lib',
+            globals: {
+              react: 'React',
+              'react-dom': 'ReactDOM',
+              '@lingui/core': 'LinguiCore',
+              '@lingui/react': 'LinguiReact',
+              '@mantine/core': 'MantineCore',
+              '@mantine/notifications': 'MantineNotifications'
+            }
           },
-          external: ['react', 'react-dom']
+          external: [
+            'react',
+            'react-dom',
+            '@lingui/core',
+            '@lingui/react',
+            '@mantine/core',
+            '@mantine/notifications'
+          ]
         },
         lib: {
           entry: {
@@ -39,6 +64,15 @@ export default defineConfig((cfg) =>
           outDir: 'dist',
           insertTypesEntry: true, // Ensures `dist/index.d.ts` is generated
           exclude: ['node_modules/**/*', 'src/**/*']
+        }),
+        viteExternalsPlugin({
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          ReactDom: 'ReactDOM',
+          '@lingui/core': 'LinguiCore',
+          '@lingui/react': 'LinguiReact',
+          '@mantine/core': 'MantineCore',
+          '@mantine/notifications': 'MantineNotifications'
         })
       ],
       define: {

@@ -18,9 +18,9 @@ This plugin has no configurable settings.
 
 ## Usage
 
-To export table data using this plugin, first click the *Download Data* button in the table toolbar:
+To export table data using this plugin, first click the *Export Data* button in the table toolbar:
 
-{{ image("download_data.png", base="plugin/builtin", title="Download Data") }}
+{{ image("download_data.png", base="plugin/builtin", title="Export Data") }}
 
 Then, select the *InvenTree Exporter* plugin from the list of available plugins:
 

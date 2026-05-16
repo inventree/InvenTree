@@ -2,7 +2,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { api } from '../App';
@@ -14,7 +14,7 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Type definition for a plugin panel which extends the standard PanelType
@@ -39,7 +39,7 @@ export function usePluginPanels({
 }: {
   instance?: any;
   reloadFunc?: () => void;
-  model?: ModelType | string;
+  model?: ModelType | PluginPanelKey;
   id?: string | number | null;
 }): PluginPanelSet {
   const globalSettings = useGlobalSettingsState();
@@ -52,7 +52,11 @@ export function usePluginPanels({
   // API query to fetch initial information on available plugin panels
   const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
-    queryKey: ['custom-plugin-panels', model, id],
+    queryKey: ['custom-plugin-panels', model, id, instance],
+    throwOnError: (error: any) => {
+      console.error('ERR: Failed to fetch plugin panels');
+      return false;
+    },
     queryFn: async () => {
       if (!pluginPanelsEnabled || !model) {
         return Promise.resolve([]);
@@ -69,11 +73,7 @@ export function usePluginPanels({
             target_id: id
           }
         })
-        .then((response: any) => response.data)
-        .catch((_error: any) => {
-          console.error('ERR: Failed to fetch plugin panels');
-          return [];
-        });
+        .then((response: any) => response.data);
     }
   });
 

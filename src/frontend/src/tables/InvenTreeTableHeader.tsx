@@ -2,9 +2,13 @@ import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Divider,
   Group,
+  HoverCard,
   Indicator,
+  Paper,
   Space,
+  Stack,
   Tooltip
 } from '@mantine/core';
 import {
@@ -18,19 +22,21 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { Boundary } from '@lib/components/Boundary';
+import { ButtonMenu } from '@lib/components/ButtonMenu';
+import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
+import { TableColumnSelect } from '@lib/components/TableColumnSelect';
+import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
-import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableColumnSelect } from './ColumnSelect';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
-import { TableSearchInput } from './Search';
+import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**
  * Render a composite header for an InvenTree table
@@ -42,6 +48,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns,
   columns,
   filters,
+  queryFilters,
+  clearQueryFilters,
   toggleColumn
 }: Readonly<{
   tableUrl?: string;
@@ -50,6 +58,8 @@ export default function InvenTreeTableHeader({
   hasSwitchableColumns: boolean;
   columns: any;
   filters: TableFilter[];
+  queryFilters?: URLSearchParams;
+  clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
 }>) {
   // Filter list visibility
@@ -74,8 +84,8 @@ export default function InvenTreeTableHeader({
     }
 
     // Allow overriding of query parameters
-    if (tableState.queryFilters) {
-      for (const [key, value] of tableState.queryFilters) {
+    if (queryFilters) {
+      for (const [key, value] of queryFilters) {
         if (value != undefined) {
           filters[key] = value;
         }
@@ -83,7 +93,7 @@ export default function InvenTreeTableHeader({
     }
 
     return filters;
-  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
+  }, [tableProps.params, tableState.filterSet, queryFilters]);
 
   const exportModal = useDataExport({
     url: tableUrl ?? '',
@@ -133,16 +143,21 @@ export default function InvenTreeTableHeader({
   });
 
   const hasCustomSearch = useMemo(() => {
-    return tableState.queryFilters.has('search');
-  }, [tableState.queryFilters]);
+    return queryFilters?.has('search');
+  }, [queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    if (hasCustomSearch) {
-      return tableState.queryFilters.size > 1;
-    } else {
-      return tableState.queryFilters.size > 0;
-    }
-  }, [hasCustomSearch, tableState.queryFilters]);
+    return (queryFilters?.size ?? 0) > 0;
+  }, [queryFilters]);
+
+  // Extract ID values for label and report printing
+  const printingIdValues = useMemo(() => {
+    return (
+      tableState.selectedRecords?.map((record) => {
+        return resolveItem(record, tableProps.printingAccessor ?? 'pk');
+      }) ?? []
+    );
+  }, [tableProps.printingAccessor, tableState.selectedRecords]);
 
   return (
     <>
@@ -163,13 +178,13 @@ export default function InvenTreeTableHeader({
           color='yellow'
           withCloseButton
           title={t`Custom table filters are active`}
-          onClose={() => tableState.clearQueryFilters()}
+          onClose={() => clearQueryFilters()}
         />
       )}
       <Group justify='apart' grow wrap='nowrap'>
         <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
-            items={tableState.selectedIds}
+            items={printingIdValues}
             modelType={tableProps.modelType}
             enableLabels={tableProps.enableLabels}
             enableReports={tableProps.enableReports}
@@ -201,7 +216,7 @@ export default function InvenTreeTableHeader({
         <Space />
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
-            <TableSearchInput
+            <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
@@ -235,17 +250,46 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`} position='top-end'>
-                  <IconFilter
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                  />
-                </Tooltip>
+                <HoverCard
+                  position='bottom-end'
+                  withinPortal={true}
+                  disabled={
+                    hasCustomFilters ||
+                    !tableState.filterSet.activeFilters?.length
+                  }
+                >
+                  <HoverCard.Target>
+                    <Tooltip
+                      label={t`Table Filters`}
+                      position='top-end'
+                      disabled={!!tableState.filterSet.activeFilters?.length}
+                    >
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Paper p='sm' withBorder>
+                      <Stack gap='xs'>
+                        <StylishText size='md'>{t`Active Filters`}</StylishText>
+                        <Divider />
+                        {tableState.filterSet.activeFilters?.map((filter) => (
+                          <FilterPreview
+                            filter={filter}
+                            filters={tableProps.tableFilters}
+                          />
+                        ))}
+                      </Stack>
+                    </Paper>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </ActionIcon>
             </Indicator>
           )}
           {tableUrl && tableProps.enableDownload && (
             <ActionIcon variant='transparent' aria-label='table-export-data'>
-              <Tooltip label={t`Download data`} position='top-end'>
+              <Tooltip label={t`Export data`} position='top-end'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
             </ActionIcon>

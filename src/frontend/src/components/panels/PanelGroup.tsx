@@ -3,12 +3,14 @@ import {
   Box,
   Divider,
   Group,
+  Indicator,
   Loader,
   Paper,
   Stack,
   Tabs,
   Text,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -30,17 +32,20 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '@lib/enums/ModelType';
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
+import { useWindowEvent } from '@mantine/hooks';
 import { useShallow } from 'zustand/react/shallow';
-import { identifierString } from '../../functions/conversion';
+import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
@@ -56,6 +61,8 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ * @param pluginPanelWithoutId - If true, the panel group will load plugin panels even with no id provided
+ * @param pluginPanelKey - The plugin panel key to use when loading plugin panels for this group from the backend
  */
 export type PanelProps = {
   pageKey: string;
@@ -63,12 +70,13 @@ export type PanelProps = {
   groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
-  model?: ModelType | string;
+  model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
-  markCustomPanels?: boolean;
+  pluginPanelWithoutId?: boolean;
+  pluginPanelKey?: PluginPanelKey;
 };
 
 function BasePanelGroup({
@@ -82,7 +90,8 @@ function BasePanelGroup({
   model,
   id,
   collapsible = true,
-  markCustomPanels = false
+  pluginPanelWithoutId = false,
+  pluginPanelKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -93,9 +102,17 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
+  const _pluginId = useMemo(() => {
+    if (id === undefined && pluginPanelWithoutId) return null;
+    return id;
+  }, [id, pluginPanelWithoutId]);
+  const _pluginKey = useMemo(() => {
+    if (model === undefined && pluginPanelWithoutId) return pluginPanelKey;
+    return model;
+  }, [model, pluginPanelWithoutId, pluginPanelKey]);
   const pluginPanelSet = usePluginPanels({
-    id: id,
-    model: model,
+    id: _pluginId,
+    model: _pluginKey,
     instance: instance,
     reloadFunc: reloadInstance
   });
@@ -154,7 +171,7 @@ function BasePanelGroup({
     if (pluginPanels.length > 0) {
       _grouped_panels.push({
         id: 'plugins',
-        label: markCustomPanels ? t`Plugin Provided` : '',
+        label: t`Plugin Provided`,
         panels: pluginPanels
       });
     }
@@ -170,9 +187,20 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      cancelEvent(event);
+
+      // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
+      if (isDirty) {
+        const confirm = globalThis.confirm(
+          t`You have unsaved changes, are you sure you want to navigate away from this panel?`
+        );
+        if (!confirm) {
+          return;
+        }
+      }
+
+      if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
-        cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
         navigate(`../${targetPanel}`);
@@ -184,6 +212,9 @@ function BasePanelGroup({
       if (targetPanel && onPanelChange) {
         onPanelChange(targetPanel);
       }
+
+      // change dirty state
+      setIsDirty(false);
     },
     [activePanels, navigate, location, onPanelChange]
   );
@@ -203,6 +234,13 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
@@ -252,29 +290,59 @@ function BasePanelGroup({
                             handlePanelChange(panel.name, event)
                           }
                         >
-                          {expanded && panel.label}
+                          <Indicator
+                            color={
+                              panel.notification_dot == 'info'
+                                ? 'blue'
+                                : panel.notification_dot == 'warning'
+                                  ? 'yellow'
+                                  : 'red'
+                            }
+                            position='middle-end'
+                            disabled={!panel.notification_dot}
+                          >
+                            <Group justify='left' gap='xs' wrap='nowrap'>
+                              <UnstyledButton
+                                component={'a'}
+                                style={{
+                                  textAlign: 'left'
+                                }}
+                                href={generateUrl(
+                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                                )}
+                              >
+                                {expanded && panel.label}
+                              </UnstyledButton>
+                            </Group>
+                          </Indicator>
                         </Tabs.Tab>
                       </Tooltip>
                     )
                 )}
               </Box>
             ))}
+            {collapsible && <Divider />}
             {collapsible && (
               <Group wrap='nowrap' gap='xs'>
-                <ActionIcon
-                  style={{
-                    paddingLeft: '10px'
-                  }}
-                  onClick={() => setExpanded(!expanded)}
-                  variant='transparent'
-                  size='md'
+                <Tooltip
+                  position='right'
+                  label={expanded ? t`Collapse panels` : t`Expand panels`}
                 >
-                  {expanded ? (
-                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                  ) : (
-                    <IconLayoutSidebarRightCollapse opacity={0.5} />
-                  )}
-                </ActionIcon>
+                  <ActionIcon
+                    style={{
+                      paddingLeft: '10px'
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                    variant='transparent'
+                    size='lg'
+                  >
+                    {expanded ? (
+                      <IconLayoutSidebarLeftCollapse opacity={0.75} />
+                    ) : (
+                      <IconLayoutSidebarRightCollapse opacity={0.75} />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
                 {pluginPanelSet.isLoading && <Loader size='xs' />}
               </Group>
             )}
@@ -309,7 +377,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content}
+                      {getPanelContent(panel.content, panel, setIsDirty)}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>
@@ -319,6 +387,39 @@ function BasePanelGroup({
       </Paper>
     </Boundary>
   );
+}
+
+/*
+ * Helper function to inject the setIsDirty callback into panel content if supported
+ * This allows panels to mark themselves as dirty when changes are made, which will trigger a confirmation prompt when navigating away from the panel
+ */
+function getPanelContent(
+  content: ReactNode,
+  panel: PanelType,
+  setIsDirty?: (dirty: boolean) => void
+): ReactNode {
+  if (content === null) {
+    return null;
+  }
+
+  // pass setIsDirty callback to content if supported
+  if (
+    panel.supportsDirty &&
+    typeof content === 'object' &&
+    'props' in content &&
+    setIsDirty
+  ) {
+    return {
+      ...content,
+      props: {
+        ...(content.props || {}),
+        setDirtyCallback: setIsDirty
+      }
+    };
+  }
+
+  // normal content, just return as is
+  return content;
 }
 
 function IndexPanelComponent({

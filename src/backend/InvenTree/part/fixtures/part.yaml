@@ -8,12 +8,12 @@
     category: 8
     link: http://www.acme.com/parts/m2x4lphs
     creation_date: '2018-01-01'
-    tree_id: 0
     purchaseable: True
     testable: False
+    tree_id: 5
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: part.part
   pk: 2
@@ -22,10 +22,10 @@
     description: 'M3x12 socket head cap screw'
     category: 8
     creation_date: '2019-02-02'
-    tree_id: 0
+    tree_id: 6
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # Create some resistors
 
@@ -36,11 +36,10 @@
     description: '2.2kOhm resistor in 0805 package'
     category: 2
     creation_date: '2020-03-03'
-    tree_id: 0
+    tree_id: 8
     level: 0
-    lft: 0
-    rght: 0
-
+    lft: 1
+    rght: 2
 
 - model: part.part
   pk: 4
@@ -50,10 +49,10 @@
     category: 2
     creation_date: '2021-04-04'
     default_location: 2  # Home/Bathroom
-    tree_id: 0
+    tree_id: 9
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # Create some capacitors
 - model: part.part
@@ -64,10 +63,10 @@
     purchaseable: true
     category: 3
     creation_date: '2022-05-05'
-    tree_id: 0
+    tree_id: 3
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: part.part
   pk: 25
@@ -80,11 +79,11 @@
     assembly: true
     trackable: true
     testable: true
-    tree_id: 0
-    level: 0
-    lft: 0
-    rght: 0
     default_expiry: 10
+    tree_id: 10
+    level: 0
+    lft: 1
+    rght: 2
 
 - model: part.part
   pk: 50
@@ -94,10 +93,10 @@
     category: null
     salable: true
     creation_date: '2024-07-07'
-    tree_id: 0
+    tree_id: 7
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # A part that can be made from other parts
 - model: part.part
@@ -115,10 +114,10 @@
     testable: True
     IPN: BOB
     revision: A2
-    tree_id: 0
+    tree_id: 2
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 - model: part.part
   pk: 101
@@ -128,10 +127,10 @@
     salable: true
     creation_date: '2026-09-09'
     active: True
-    tree_id: 0
+    tree_id: 1
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 2
 
 # A 'template' part
 - model: part.part
@@ -145,10 +144,10 @@
     creation_date: '2027-10-10'
     salable: true
     category: 7
-    tree_id: 1
+    tree_id: 4
     level: 0
-    lft: 0
-    rght: 0
+    lft: 1
+    rght: 10
 
 - model: part.part
   pk: 10001
@@ -160,10 +159,10 @@
     testable: true
     creation_date: '2028-11-11'
     category: 7
-    tree_id: 1
-    level: 0
-    lft: 0
-    rght: 0
+    tree_id: 4
+    level: 1
+    lft: 2
+    rght: 3
 
 - model: part.part
   pk: 10002
@@ -177,10 +176,10 @@
     salable: true
     creation_date: '2029-12-12'
     category: 7
-    tree_id: 1
-    level: 0
-    lft: 0
-    rght: 0
+    tree_id: 4
+    level: 1
+    lft: 8
+    rght: 9
 
 - model: part.part
   pk: 10003
@@ -193,10 +192,10 @@
     trackable: false
     testable: true
     creation_date: '2030-01-01'
-    tree_id: 1
-    level: 0
-    lft: 0
-    rght: 0
+    tree_id: 4
+    level: 1
+    lft: 4
+    rght: 7
 
 - model: part.part
   pk: 10004
@@ -209,10 +208,10 @@
     creation_date: '2031-02-02'
     trackable: true
     testable: true
-    tree_id: 1
-    level: 0
-    lft: 0
-    rght: 0
+    tree_id: 4
+    level: 2
+    lft: 5
+    rght: 6
 
 - model: part.partrelated
   pk: 1

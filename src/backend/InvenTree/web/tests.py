@@ -30,7 +30,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
         shipped_js = resp.split('<script type="module" src="')[1:]
         self.assertGreater(len(shipped_js), 0)
-        self.assertEqual(len(shipped_js), 3)
+        self.assertGreater(len(shipped_js), 3)
 
         manifest_file = Path(__file__).parent.joinpath('static/web/.vite/manifest.json')
         # Try with removed manifest file

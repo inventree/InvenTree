@@ -14,7 +14,7 @@ pool:
 strategy:
   matrix:
     Python39:
-      PYTHON_VERSION: '3.9'
+      PYTHON_VERSION: '3.11'
   maxParallel: 3
 
 steps:

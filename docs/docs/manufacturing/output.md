@@ -70,6 +70,18 @@ The following options are available when completing a build output:
 | Notes | Any additional notes associated with the completion of these outputs |
 | Accept Incomplete Allocation | If selected, this option allows [tracked build outputs](./allocate.md#tracked-build-outputs) to be completed in the case where required BOM items have not been fully allocated |
 
+### Partial Completion
+
+A build output may be *partially completed* by specifying a quantity less than the total quantity of that build output. In such a case, the following actions are performed:
+
+- The incomplete build output is "split" into two separate build outputs
+- The specified quantity is marked as completed, and the completed build quantity is increased accordingly
+- The remaining quantity is left as an incomplete build output, available for future completion
+
+!!! note "Serialized Outputs"
+    Serialized build outputs cannot be partially completed.
+
+
 ## Scrap Build Output
 
 *Scrapping* a build output marks the particular output as rejected, in the context of the given build order.
@@ -95,13 +107,24 @@ The following options are available when scrapping a build order:
 | Notes | Any additional notes associated with the scrapping of these outputs |
 | Discard Allocations | If selected, any installed BOM items will be removed first, before marking the build output as scrapped. Use this option if the installed items are recoverable and can be used elsewhere |
 
-## Delete Build Output
+### Partial Scrapping
 
-*Deleting* a build output causes the build output to be cancelled, and removed from the database entirely. Use this option when the build output does not physically exist (or was never built) and should not be tracked in the database.
+A build output may be *partially scrapped* by specifying a quantity less than the total quantity of that build output. In such a case, the following actions are performed:
 
-{{ image("build/build_output_delete.png", "Delete build output") }}
+- The incomplete build output is "split" into two separate build outputs
+- The specified quantity is marked as scrapped, and the completed build quantity is *not* increased
+- The remaining quantity is left as an incomplete build output, available for future completion
 
-Marking the build output(s) as deleted performs the following actions:
+!!! note "Serialized Outputs"
+    Serialized build outputs cannot be partially scrapped.
+
+## Cancel Build Output
+
+*Cancelling* a build output causes the build output to be deleted, and removed from the database entirely. Use this option when the build output does not physically exist (or was never built) and should not be tracked in the database.
+
+{{ image("build/build_output_delete.png", "Cancel build output") }}
+
+Marking the build output(s) as cancelled performs the following actions:
 
 - Any allocated stock items are returned to stock
 - The build output is removed from the database

@@ -123,11 +123,14 @@ By default, a production InvenTree installation is configured to run with [DEBUG
 
 Running in DEBUG mode provides many handy development features, however it is strongly recommended *NOT* to run in DEBUG mode in a production environment. This recommendation is made because DEBUG mode leaks a lot of information about your installation and may pose a security risk.
 
-So, for a production setup, you should set `INVENTREE_DEBUG=false` in the [configuration options](./config.md).
+So, for a production setup, you should ensure that `INVENTREE_DEBUG=false` in the [configuration options](./config.md).
+
+!!! warning "Security Risk"
+    Running InvenTree in DEBUG mode in a production environment is a significant security risk, and should be avoided at all costs.
 
 ### Turning Debug Mode off
 
-When running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the proxy setup has to be configured to handle this.
+When running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled* (which is the default for a production setup), the proxy setup has to be configured to handle this.
 
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details

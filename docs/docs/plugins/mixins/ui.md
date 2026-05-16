@@ -2,7 +2,7 @@
 title: User Interface Mixin
 ---
 
-## User Interface Mixin
+## UserInterfaceMixin
 
 The `UserInterfaceMixin` class provides a set of methods to implement custom functionality for the InvenTree web interface.
 
@@ -68,6 +68,20 @@ For example:
 ## Available UI Feature Types
 
 The following user interface feature types are available:
+
+### Spotlight Actions
+
+Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_spotlight_actions` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_spotlight_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
 
 ### Dashboard Items
 

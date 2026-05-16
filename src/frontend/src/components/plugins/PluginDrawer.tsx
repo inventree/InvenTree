@@ -4,10 +4,10 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { InfoItem } from '../items/InfoItem';
-import { StylishText } from '../items/StylishText';
 import { PluginSettingList } from '../settings/SettingList';
 import type { PluginInterface } from './PluginInterface';
 import PluginSettingsPanel from './PluginSettingsPanel';
@@ -93,6 +93,14 @@ export default function PluginDrawer({
                     name={t`Active`}
                     value={pluginInstance?.active}
                   />
+                  {pluginInstance?.meta.website && (
+                    <InfoItem
+                      type='text'
+                      name={t`Website`}
+                      value={pluginInstance?.meta.website}
+                      link={pluginInstance?.meta.website}
+                    />
+                  )}
                 </Stack>
               </Stack>
             </Card>

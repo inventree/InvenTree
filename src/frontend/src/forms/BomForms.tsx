@@ -12,29 +12,45 @@ import { RenderPart } from '../components/render/Part';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useUserState } from '../states/UserState';
+import { usePartFields } from './PartForms';
 
 /**
  * Field set for BomItem form
  */
-export function bomItemFields(): ApiFormFieldSet {
+export function bomItemFields({
+  showAssembly = false
+}: {
+  showAssembly?: boolean;
+}): ApiFormFieldSet {
+  const newPartFields = usePartFields({
+    create: true
+  });
+
   return {
     part: {
-      hidden: true
+      disabled: true,
+      hidden: !showAssembly
     },
     sub_part: {
       filters: {
-        component: true,
-        virtual: false
-      }
+        active: true, // Only show active parts when creating a new BOM item
+        component: true
+      },
+      addCreateFields: newPartFields
     },
-    quantity: {},
+    raw_amount: {
+      label: t`Quantity`,
+      description: t`Required component quantity`
+    },
     reference: {},
-    overage: {},
-    note: {},
+    setup_quantity: {},
+    attrition: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},
-    optional: {}
+    optional: {},
+    note: {}
   };
 }
 
@@ -77,7 +93,7 @@ function BomItemSubstituteRow({
 
 type BomItemSubstituteFormProps = {
   bomItemId: number;
-  substitutes: any[];
+  bomItem: any;
   onClose?: () => void;
 };
 
@@ -88,8 +104,8 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
   const [substitutes, setSubstitutes] = useState<any[]>([]);
 
   useEffect(() => {
-    setSubstitutes(props.substitutes);
-  }, [props.substitutes]);
+    setSubstitutes(props.bomItem?.substitutes ?? []);
+  }, [props.bomItem.substitutes]);
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {

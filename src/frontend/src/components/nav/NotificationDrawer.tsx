@@ -13,11 +13,18 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { IconArrowRight, IconBellCheck } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconBellCheck,
+  IconCircleCheck,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -27,8 +34,6 @@ import { getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Render a single notification entry in the drawer
@@ -122,10 +127,7 @@ export function NotificationDrawer({
             ordering: '-creation'
           }
         })
-        .then((response) => response.data)
-        .catch((error) => {
-          return error;
-        }),
+        .then((response) => response.data),
     refetchOnMount: false
   });
 
@@ -135,7 +137,7 @@ export function NotificationDrawer({
 
   const markAllAsRead = useCallback(() => {
     api
-      .get(apiUrl(ApiEndpoints.notifications_readall), {
+      .post(apiUrl(ApiEndpoints.notifications_readall), {
         params: {
           read: false
         }
@@ -206,11 +208,14 @@ export function NotificationDrawer({
       <Boundary label='NotificationDrawer'>
         <Stack gap='xs'>
           <Divider />
-          {!hasNotifications && (
-            <Alert color='green'>
-              <Text size='sm'>{t`You have no unread notifications.`}</Text>
-            </Alert>
-          )}
+          {!notificationQuery.isFetching &&
+            !notificationQuery.isLoading &&
+            !notificationQuery.isError &&
+            !hasNotifications && (
+              <Alert color='green' icon={<IconCircleCheck />}>
+                <Text size='sm'>{t`You have no unread notifications.`}</Text>
+              </Alert>
+            )}
           {hasNotifications &&
             notificationQuery.data?.results?.map((notification: any) => (
               <NotificationEntry
@@ -223,6 +228,15 @@ export function NotificationDrawer({
             <Center>
               <Loader size='sm' />
             </Center>
+          )}
+          {notificationQuery.isError && (
+            <Alert
+              color='red'
+              title={t`Error`}
+              icon={<IconExclamationCircle />}
+            >
+              <Text size='sm'>{t`Error loading notifications.`}</Text>
+            </Alert>
           )}
         </Stack>
       </Boundary>

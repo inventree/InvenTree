@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 env:
-  python_version: 3.9
+  python_version: 3.11
 
 jobs:
   stable:
@@ -20,7 +20,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Version Check
@@ -28,7 +28,7 @@ jobs:
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # pin@v1.1.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
       contents: write
       attestations: write
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -55,7 +55,7 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@9246b90769f852b3a8921f330c59e0b3f439d6e9 # pin@v0
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # pin@v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
@@ -65,32 +65,34 @@ jobs:
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "${REF_NAME}" > tag.txt
         env:
           REF_NAME: ${{ github.ref_name }}
+      - name: Write version file - SOURCE
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "GitHub Actions build on $(date --utc +%Y-%m-%dT%H:%M:%SZ)" > source.txt
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static/web
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # pin@v1
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        run: gh release upload ${REF} src/backend/InvenTree/web/static/frontend-build.zip#frontend-build.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload frontend to artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: src/backend/InvenTree/web/static/frontend-build.zip
-          asset_name: frontend-build.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+          name: frontend-build
+          path: src/backend/InvenTree/web/static/frontend-build.zip
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          asset_name: frontend-build.intoto.jsonl
-          file: ${{ steps.attest.outputs.bundle-path}}
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} ${BUNDLE_PATH}#frontend-build.intoto.jsonl
+        env:
+          REF: ${{ github.ref_name }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path}}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs:
     runs-on: ubuntu-24.04
@@ -107,7 +109,7 @@ jobs:
       INVENTREE_DEBUG: true
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -127,10 +129,116 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        run: gh release upload ${REF} docs/site/docs-html.zip#docs-html.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-pkgr:
+    if: github.repository == 'inventree/InvenTree'
+    name: ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - debian:12
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: docs/site/docs-html.zip
-          asset_name: docs-html.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Get frontend artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
+        with:
+          name: frontend-build
+      - name: Setup
+        id: setup
+        env:
+          NODE_ID: ${{ github.event.release.node_id }}
+          BRANCH: ${{ github.event.release.target_commitish }}
+          TARGET: ${{github.event.release.target_commitish}}
+          REPO: ${{ github.repository }}
+          VERSION_REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+
+        run: |
+          # Get info
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/$REPO/commits/$TARGET > commit.json
+
+          # Extract info
+          echo "INFO extract | Extracting info from github"
+          DATE=$(jq -r '.commit.committer.date' commit.json)
+          SIGNATURE=$(jq -r '.commit.verification.signature' commit.json)
+          FULL_SHA=$(jq -r '.sha' commit.json)
+          SHA=$(echo "$FULL_SHA" | cut -c1-7)
+
+          echo "INFO write | Write VERSION information"
+          echo "$VERSION" > VERSION
+          echo "INVENTREE_COMMIT_HASH='$SHA'" >> VERSION
+          echo "INVENTREE_COMMIT_SHA='$FULL_SHA'" >> VERSION
+          echo "INVENTREE_COMMIT_DATE='$DATE'" >> VERSION
+          echo "INVENTREE_PKG_INSTALLER='PKG'" >> VERSION
+          echo "INVENTREE_PKG_BRANCH='$BRANCH'" >> VERSION
+          echo "INVENTREE_PKG_TARGET='$TARGET'" >> VERSION
+          echo "NODE_ID='$NODE_ID'" >> VERSION
+          echo "SIGNATURE='$SIGNATURE'" >> VERSION
+
+          echo "INFO write | Written VERSION information"
+          echo "### VERSION ###"
+          cat VERSION
+          echo "### VERSION ###"
+
+          # Move frontend build into place
+          mkdir -p src/backend/InvenTree/web/static
+          unzip -qq frontend-build.zip -d src/backend/InvenTree/web/static/web
+
+          echo "INFO write release_version"
+          echo "VERSION=$VERSION_REF" >> $GITHUB_OUTPUT
+          echo "REF=$GITHUB_REF" >> $GITHUB_OUTPUT
+
+          # Disable before.sh for now - will need to be removed once we switch to go.packager.io fully
+          echo "#!/bin/bash" > contrib/packager.io/before.sh
+
+          echo "calculate release channel"
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          python3 .github/scripts/version_check.py
+      - name: Package
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
+        id: package
+        with:
+          target: ${{ matrix.target }}
+          version: ${{ steps.setup.outputs.version }}
+          debug: true
+          cache_prefix: ${{ github.ref_name }}
+          env: |
+            INVENTREE_DB_ENGINE=sqlite3
+            INVENTREE_DB_NAME=database.sqlite3
+            INVENTREE_PLUGINS_ENABLED=true
+            INVENTREE_MEDIA_ROOT=/opt/inventree/media
+            INVENTREE_STATIC_ROOT=/opt/inventree/static
+            INVENTREE_BACKUP_DIR=/opt/inventree/backup
+            INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
+            INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
+            APP_REPO=inventree/InvenTree
+      - name: Publish to go.packager.io
+        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        with:
+          target: ${{ matrix.target }}
+          token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
+          repository: inventree/InvenTree
+          channel: ${{ env.pkg_channel }}
+          file: ${{ steps.package.outputs.package_path }}
+      - name: Publish to artifact
+        run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
+        env:
+          REF: ${{ github.ref_name }}
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

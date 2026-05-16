@@ -17,7 +17,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -29,7 +29,7 @@ export default function UserDetail() {
   const user = useUserState();
   const settings = useGlobalSettingsState();
 
-  const { instance, instanceQuery, requestStatus } = useInstance({
+  const { instance, instanceQuery } = useInstance({
     endpoint: ApiEndpoints.user_list,
     pk: id
   });
@@ -84,14 +84,14 @@ export default function UserDetail() {
       {
         type: 'boolean',
         name: 'is_staff',
-        label: t`Staff`,
-        icon: 'info'
+        label: t`Administrator`,
+        icon: 'warning'
       },
       {
         type: 'boolean',
         name: 'is_superuser',
         label: t`Superuser`,
-        icon: 'info'
+        icon: 'warning'
       },
       {
         type: 'text',
@@ -197,13 +197,13 @@ export default function UserDetail() {
       ? []
       : [
           instance.is_staff && (
-            <Badge key='is_staff' color='blue'>{t`Staff`}</Badge>
+            <Badge key='is_staff' color='orange'>{t`Administrator`}</Badge>
           ),
           instance.is_superuser && (
             <Badge key='is_superuser' color='red'>{t`Superuser`}</Badge>
           ),
           !instance.is_staff && !instance.is_superuser && (
-            <Badge key='is_normal' color='yellow'>{t`Basic user`}</Badge>
+            <Badge key='is_normal' color='yellow'>{t`Normal user`}</Badge>
           ),
           instance.is_active ? (
             <Badge key='is_active' color='green'>{t`Active`}</Badge>
@@ -214,7 +214,7 @@ export default function UserDetail() {
   }, [instance, instanceQuery]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         <PageDetail
           title={`${t`User`}: ${instance.username}`}

@@ -1,5 +1,6 @@
-import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
+
+import { Text } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -22,7 +23,20 @@ export function RenderAddress({
     .filter(Boolean)
     .join(', ');
 
-  return <RenderInlineModel primary={instance.title} secondary={text} />;
+  const primary: string = instance.title || text;
+  const secondary: string = !!instance.title ? text : '';
+
+  const suffix: ReactNode = instance.primary ? (
+    <Text size='xs'>Primary Address</Text>
+  ) : null;
+
+  return (
+    <RenderInlineModel
+      primary={primary}
+      secondary={secondary}
+      suffix={suffix}
+    />
+  );
 }
 
 /**
@@ -36,9 +50,9 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       primary={instance.name}
-      secondary={instance.description}
+      suffix={instance.description}
       url={
         props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }
@@ -65,17 +79,23 @@ export function RenderSupplierPart(
   const supplier = instance.supplier_detail ?? {};
   const part = instance.part_detail ?? {};
 
+  const secondary: string = instance.SKU;
+  let suffix: string = part?.full_name ?? '';
+
+  // Display non-unitary pack quantities
+  if (instance.pack_quantity && instance.pack_quantity_native != 1) {
+    suffix += ` (${instance.pack_quantity})`;
+  }
+
   return (
     <RenderInlineModel
       {...props}
       primary={supplier?.name}
-      secondary={instance.SKU}
+      secondary={secondary}
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
@@ -100,10 +120,8 @@ export function RenderManufacturerPart(
       {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
-      image={manufacturer?.thumnbnail ?? manufacturer.image}
+      suffix={part.full_name}
+      image={manufacturer?.thumbnail ?? manufacturer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.manufacturerpart, instance.pk)

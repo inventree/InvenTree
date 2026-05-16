@@ -1,13 +1,16 @@
 """Serializers used in various InvenTree apps."""
 
-import os
 from collections import OrderedDict
 from copy import deepcopy
+from dataclasses import dataclass
 from decimal import Decimal
+from typing import Optional
 
-from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.storage import default_storage
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
@@ -18,7 +21,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
-from rest_framework.serializers import DecimalField
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
@@ -26,10 +30,301 @@ import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from InvenTree.helpers import str2bool
+from InvenTree.helpers_model import getModelsWithMixin
+
+
+@dataclass
+class OptionalField:
+    """DataClass used to optionally enable a serializer field.
+
+    This is used in conjunction with the `FilterableSerializerMixin` to allow
+    dynamic inclusion or exclusion of serializer fields at runtime.
+
+    Adding OptionalField instances to a serializer class is more "efficient"
+    than directly adding the field (and later removing it),
+    as the field is never instantiated unless it is required.
+
+    Additionally, you can specify prefetch fields which will be applied
+    to the queryset, *only* if the field is included in the final serializer.
+
+    This allows for optimization of database queries based only on the requested data.
+
+    Example:
+    class MySerializer(FilterableSerializerMixin, serializers.ModelSerializer):
+        my_optional_field = OptionalField(
+            serializer_class=serializers.CharField,
+            default_include=False,
+            filter_name='include_my_field',
+            serializer_kwargs={
+                'help_text': 'This is an optional field',
+                'read_only': True,
+            },
+            prefetch_fields=['related_field'],
+        )
+
+    """
+
+    serializer_class: Serializer
+    serializer_kwargs: Optional[dict] = None
+    default_include: bool = False
+    filter_name: Optional[str] = None
+    filter_by_query: bool = True
+    prefetch_fields: Optional[list[str]] = None
+
+
+class FilterableSerializerMixin:
+    """Mixin that enables filtering of marked fields on a serializer.
+
+    Use the `OptionalField` helper class to mark serializer fields as filterable.
+    This introduces overhead during initialization, so only use this mixin when necessary.
+    """
+
+    optional_filters: dict = None
+    fields_to_remove: set = None
+    optional_fields: set = None
+    filter_on_query: bool = True
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
+        # Extract some useful context information for later use
+        context = kwargs.get('context', {})
+        self.request = context.get('request', None) or getattr(self, 'request', None)
+        self.request_query_params = (
+            dict(getattr(self.request, 'query_params', {})) if self.request else {}
+        )
+
+        self.gather_optional_fields(kwargs)
+
+        super().__init__(*args, **kwargs)
+
+        # Ensure any fields we are *not* using are removed
+        for field_name in self.fields_to_remove:
+            self.fields.pop(field_name, None)
+
+    def is_exporting(self) -> bool:
+        """Determine if we are exporting data."""
+        return getattr(self, '_exporting_data', False)
+
+    def is_field_included(
+        self, field_name: str, field: OptionalField, kwargs: dict
+    ) -> bool:
+        """Determine at runtime whether an OptionalField should be included.
+
+        Arguments:
+            field_name: Name of the field
+            field: The OptionalField instance
+            kwargs: The kwargs provided to the serializer instance
+
+        Returns:
+            True if the field should be included, False otherwise.
+
+        Order of operations:
+
+        - If we are generating the schema, always include the field
+        - If this is a write request (POST, PUT, PATCH) and we are not exporting, always include the field
+        - If this is a top-level serializer, check the request query parameters for the filter name
+        - Check the kwargs provided to the serializer instance
+        - Finally, fall back to the default_include value for the field itself
+        """
+        field_ref = field.filter_name or field_name
+
+        # If we have already found a value for this filter, use it
+        # This allows multiple optional fields to share the same filter value
+        cached_value = self.optional_filters.get(field_ref, None)
+
+        if cached_value is not None:
+            return cached_value
+
+        # First, check kwargs provided to the serializer instance
+        # We also pop the value to avoid issues with nested serializers
+        value = kwargs.pop(field_ref, None)
+
+        # We do not want to pop fields while generating the schema
+        if InvenTree.ready.isGeneratingSchema():
+            return True
+
+        if value is not None:
+            # Cache the value for future reference
+            self.optional_filters[field_ref] = value
+
+        field_kwargs = field.serializer_kwargs or {}
+
+        # Skip filtering for a write request - all fields should be present for data creation
+        if method := getattr(self.request, 'method', None):
+            if method not in SAFE_METHODS and not self.is_exporting():
+                return True
+            else:
+                # Ignore write_only fields for read requests
+                if field_kwargs.get('write_only', False):
+                    return False
+
+        # For a top-level serializer, check request query parameters
+        if self.request and self.filter_on_query and field.filter_by_query:
+            param_value = self.request.query_params.get(field_ref, None)
+
+            if param_value is not None:
+                # Convert from list to single value if needed
+                if type(param_value) == list and len(param_value) == 1:
+                    param_value = param_value[0]
+
+                value = str2bool(param_value)
+
+                # Cache the value for future reference
+                self.optional_filters[field_ref] = value
+
+        if value is None:
+            value = field.default_include
+
+        return value
+
+    def find_optional_fields(self):
+        """Find all optional fields defined on this serializer."""
+        optional_fields = {}
+
+        # Walk upwards through the class hierarchy
+        seen_vars = set()
+
+        for base in self.__class__.__mro__:
+            for field_name, field in vars(base).items():
+                if field_name in seen_vars:
+                    continue
+
+                seen_vars.add(field_name)
+
+                if field and isinstance(field, OptionalField):
+                    optional_fields[field_name] = field
+
+        return optional_fields
+
+    def gather_optional_fields(self, kwargs):
+        """Determine which optional fields will be included on this serializer.
+
+        Note that there may be instances of OptionalField in the field set,
+        which need to either be instantiated or removed.
+        """
+        self.optional_filters = {}
+        self.prefetch_list = set()
+        self.fields_to_remove = set()
+        self.optional_fields = set()
+
+        for field_name, field in self.find_optional_fields().items():
+            if self.is_field_included(field_name, field, kwargs):
+                self.optional_fields.add(field_name)
+                # Add prefetch information
+                if field.prefetch_fields:
+                    for pf in field.prefetch_fields:
+                        self.prefetch_list.add(pf)
+            else:
+                self.fields_to_remove.add(field_name)
+
+    def get_field_names(self, declared_fields, info):
+        """Remove unused fields before returning field names."""
+        field_names = super().get_field_names(declared_fields, info)
+
+        # Add any optional fields which are included
+        for field_name in self.optional_fields:
+            if field_name not in field_names:
+                field_names.append(field_name)
+
+        # Remove any fields which are marked for removal
+        for field_name in self.fields_to_remove:
+            if field_name in field_names:
+                field_names.remove(field_name)
+
+        return field_names
+
+    def build_optional_field(self, field_name: str):
+        """Build an optional field, based on the provided field name."""
+        field = getattr(self, field_name, None)
+
+        if field and isinstance(field, OptionalField):
+            serializer_kwargs = {**field.serializer_kwargs} or {}
+            return field.serializer_class, serializer_kwargs
+
+    def build_relational_field(self, field_name, relation_info):
+        """Handle a special case where an OptionalField shadows a model relation."""
+        if field_name in self.optional_fields:
+            if field := self.build_optional_field(field_name):
+                return field
+
+        return super().build_relational_field(field_name, relation_info)
+
+    def build_property_field(self, field_name, model_class):
+        """Handle a special case where an OptionalField shadows a model property."""
+        if field_name in self.optional_fields:
+            if field := self.build_optional_field(field_name):
+                return field
+
+        return super().build_property_field(field_name, model_class)
+
+    def build_unknown_field(self, field_name, model_class):
+        """Perform lazy initialization of OptionalFields.
+
+        The DRF framework calls this method when it encounters a field which is not yet initialized.
+        """
+        if field := self.build_optional_field(field_name):
+            return field
+
+        return super().build_unknown_field(field_name, model_class)
+
+    def prefetch_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Apply any prefetching to the queryset based on the optionally included fields.
+
+        Args:
+            queryset: The original queryset.
+
+        Returns:
+            The modified queryset with prefetching applied.
+        """
+        # If we are inside an OPTIONS request, DO NOT PREFETCH
+        if request := getattr(self, 'request', None):
+            if method := getattr(request, 'method', None):
+                if str(method).lower() == 'options':
+                    return queryset
+
+            if getattr(request, '_metadata_requested', False):
+                return queryset
+
+        if self.prefetch_list and len(self.prefetch_list) > 0:
+            queryset = queryset.prefetch_related(*list(self.prefetch_list))
+
+        return queryset
 
 
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
+
+
+class TreePathSerializer(serializers.Serializer):
+    """Serializer field for representing a tree path."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'pk',
+            'name',
+            # Any fields after this point are optional, and can be included via extra_fields
+            'icon',
+        ]
+
+    def __init__(self, *args, extra_fields: Optional[list[str]] = None, **kwargs):
+        """Initialize the TreePathSerializer."""
+        super().__init__(*args, **kwargs)
+
+        allowed_fields = ['pk', 'name', *(extra_fields or [])]
+
+        if InvenTree.ready.isGeneratingSchema():
+            return
+
+        for field in list(self.fields.keys()):
+            if field not in allowed_fields:
+                self.fields.pop(field, None)
+
+    pk = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    icon = serializers.CharField(required=False, read_only=True, allow_null=True)
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -373,16 +668,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
             if hasattr(exc, 'message_dict'):
-                data = exc.message_dict
+                data = {**exc.message_dict}
             elif hasattr(exc, 'message'):
                 data = {'non_field_errors': [str(exc.message)]}
             else:
                 data = {'non_field_errors': [str(exc)]}
 
             # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
-            if '__all__' in data:
-                data['non_field_errors'] = data['__all__']
-                del data['__all__']
+            if hasattr(data, '__all__'):
+                data['non_field_errors'] = data.pop('__all__')
 
             raise ValidationError(data)
 
@@ -432,7 +726,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
-        return os.path.join(str(settings.MEDIA_URL), str(value))
+        return default_storage.url(str(value))
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
@@ -446,7 +740,7 @@ class InvenTreeImageSerializerField(serializers.ImageField):
         if not value:
             return None
 
-        return os.path.join(str(settings.MEDIA_URL), str(value))
+        return default_storage.url(str(value))
 
 
 class InvenTreeDecimalField(serializers.FloatField):
@@ -459,6 +753,11 @@ class InvenTreeDecimalField(serializers.FloatField):
 
     def to_internal_value(self, data):
         """Convert to python type."""
+        if data in [None, '']:
+            if self.allow_null:
+                return None
+            raise serializers.ValidationError(_('This field may not be null.'))
+
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
@@ -529,3 +828,96 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class ContentTypeField(serializers.ChoiceField):
+    """Serializer field which represents a ContentType as 'app_label.model_name'.
+
+    This field converts a ContentType instance to a string representation in the format 'app_label.model_name' during serialization, and vice versa during deserialization.
+
+    Additionally, a "mixin_class" can be supplied to the field, which will restrict the valid content types to only those models which inherit from the specified mixin.
+    """
+
+    mixin_class = None
+
+    def __init__(self, *args, mixin_class=None, **kwargs):
+        """Initialize the ContentTypeField.
+
+        Args:
+            mixin_class: Optional mixin class to restrict valid content types.
+        """
+        from InvenTree.cache import get_cached_content_types
+
+        self.mixin_class = mixin_class
+
+        # Override the 'choices' field, to limit to the appropriate models
+        if self.mixin_class is not None:
+            models = getModelsWithMixin(self.mixin_class)
+
+            kwargs['choices'] = [
+                (
+                    f'{model._meta.app_label}.{model._meta.model_name}',
+                    model._meta.verbose_name,
+                )
+                for model in models
+            ]
+        else:
+            content_types = get_cached_content_types()
+
+            kwargs['choices'] = [
+                (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
+            ]
+
+        if kwargs.get('allow_null') or kwargs.get('allow_blank'):
+            kwargs['choices'] = [('', '---------'), *kwargs['choices']]
+
+        super().__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        """Convert ContentType instance to string representation."""
+        return f'{value.app_label}.{value.model}'
+
+    def to_internal_value(self, data):
+        """Convert string representation back to ContentType instance."""
+        content_type = None
+
+        if data in ['', None]:
+            return None
+
+        # First, try to resolve the content type via direct pk value
+        try:
+            content_type_id = int(data)
+            content_type = ContentType.objects.get_for_id(content_type_id)
+        except (ValueError, ContentType.DoesNotExist):
+            content_type = None
+
+        try:
+            if len(data.split('.')) == 2:
+                app_label, model = data.split('.')
+                content_types = ContentType.objects.filter(
+                    app_label=app_label, model=model
+                )
+
+                if content_types.count() == 1:
+                    # Try exact match first
+                    content_type = content_types.first()
+            else:
+                # Try lookup just on model name
+                content_types = ContentType.objects.filter(model=data)
+                if content_types.exists() and content_types.count() == 1:
+                    content_type = content_types.first()
+
+        except Exception:
+            raise ValidationError(_('Invalid content type format'))
+
+        if content_type is None:
+            raise ValidationError(_('Content type not found'))
+
+        if self.mixin_class is not None:
+            model_class = content_type.model_class()
+            if not issubclass(model_class, self.mixin_class):
+                raise ValidationError(
+                    _('Content type does not match required mixin class')
+                )
+
+        return content_type

@@ -1,10 +1,9 @@
 import type { PluginProps } from '@lib/types/Plugins';
-import type { NavigateFunction } from 'react-router-dom';
-import { setApiDefaults } from '../App';
-import { useServerApiState } from './ApiState';
+import { removeTraceId, setApiDefaults, setTraceId } from '../App';
+import { useGlobalStatusState } from './GlobalStatusState';
 import { useIconState } from './IconState';
-import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
-import { useGlobalStatusState } from './StatusState';
+import { useServerApiState } from './ServerApiState';
+import { useGlobalSettingsState, useUserSettingsState } from './SettingsStates';
 import { useUserState } from './UserState';
 
 // Type interface fully defining the current server
@@ -38,6 +37,7 @@ export interface ServerAPIProps {
     splash: string;
     login_message: string;
     navbar_message: string;
+    disable_theme_storage: boolean;
   };
 }
 
@@ -45,9 +45,7 @@ export interface ServerAPIProps {
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
  */
-export async function fetchGlobalStates(
-  navigate?: NavigateFunction | undefined
-) {
+export async function fetchGlobalStates() {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
@@ -55,15 +53,13 @@ export async function fetchGlobalStates(
   }
 
   setApiDefaults();
-
-  useServerApiState.getState().fetchServerApiState();
-  const result = await useUserSettingsState.getState().fetchSettings();
-  if (!result && navigate) {
-    console.log('MFA is required - setting up');
-    // call mfa setup
-    navigate('/mfa-setup');
-  }
-  useGlobalSettingsState.getState().fetchSettings();
-  useGlobalStatusState.getState().fetchStatus();
-  useIconState.getState().fetchIcons();
+  const traceId = setTraceId();
+  await Promise.all([
+    useServerApiState.getState().fetchServerApiState(),
+    useUserSettingsState.getState().fetchSettings(),
+    useGlobalSettingsState.getState().fetchSettings(),
+    useGlobalStatusState.getState().fetchStatus(),
+    useIconState.getState().fetchIcons()
+  ]);
+  removeTraceId(traceId);
 }

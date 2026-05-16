@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('headers', models.JSONField(blank=True, null=True)),
                 ('full_message', models.TextField(blank=True, null=True)),
                 ('direction', models.CharField(blank=True, choices=[('I', 'Inbound'), ('O', 'Outbound')], max_length=50, null=True)),
-                ('priority', models.IntegerField(choices=[(0, 'None'), (1, 'Very High'), (2, 'High'), (3, 'Normal'), (4, 'Low'), (5, 'Very Low')], verbose_name='Prioriy')),
+                ('priority', models.IntegerField(choices=[(0, 'None'), (1, 'Very High'), (2, 'High'), (3, 'Normal'), (4, 'Low'), (5, 'Very Low')], verbose_name='Priority')),
                 ('delivery_options', models.JSONField(blank=True, null=True)),
                 ('error_code', models.CharField(blank=True, max_length=50, null=True)),
                 ('error_message', models.TextField(blank=True, null=True)),

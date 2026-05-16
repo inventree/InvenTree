@@ -3,9 +3,8 @@ import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
 import { useShallow } from 'zustand/react/shallow';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
-import { StylishText } from '../items/StylishText';
 
 export function ServerInfoModal({
   context,
@@ -16,9 +15,6 @@ export function ServerInfoModal({
   return (
     <Stack>
       <Divider />
-      <StylishText size='lg'>
-        <Trans>Server</Trans>
-      </StylishText>
       <Table striped>
         <Table.Tbody>
           <Table.Tr>
@@ -53,8 +49,10 @@ export function ServerInfoModal({
                 <Trans>Debug Mode</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>INVE-W4</Badge>
-                <Trans>Server is running in debug mode</Trans>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W4</Badge>
+                  <Trans>Server is running in debug mode</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}
@@ -104,8 +102,10 @@ export function ServerInfoModal({
                 <Trans>Background Worker</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>INVE-W5</Badge>
-                <Trans>The Background worker process is not running.</Trans>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W5</Badge>
+                  <Trans>The background worker process is not running</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}
@@ -115,8 +115,10 @@ export function ServerInfoModal({
                 <Trans>Email Settings</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>INVE-W7</Badge>
-                <Trans>Email settings not configured.</Trans>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W7</Badge>
+                  <Trans>Email settings not configured.</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}

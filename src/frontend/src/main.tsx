@@ -9,16 +9,22 @@ import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import * as MantineCore from '@mantine/core';
-import * as MantineNotifications from '@mantine/notifications';
+
+import type * as LinguiCore from '@lingui/core';
+import type * as LinguiReact from '@lingui/react';
+// Global types to be exported for use in plugins
+import type * as MantineCore from '@mantine/core';
+import type * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import type * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
+
 import './styles/overrides.css';
 
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
+import { loadWindowGlobals } from './window';
 
 // define settings
 declare global {
@@ -31,6 +37,7 @@ declare global {
       api_host?: string;
       sentry_dsn?: string;
       environment?: string;
+      mobile_mode?: 'default' | 'allow-ignore' | 'allow-always';
     };
     react: typeof React;
     React: typeof React;
@@ -38,6 +45,8 @@ declare global {
     ReactDOMClient: typeof ReactDOMClient;
     MantineCore: typeof MantineCore;
     MantineNotifications: typeof MantineNotifications;
+    LinguiCore: typeof LinguiCore;
+    LinguiReact: typeof LinguiReact;
   }
 }
 
@@ -101,13 +110,6 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
     environment: window.INVENTREE_SETTINGS.environment || 'default'
   });
 }
-
-(window as any).React = React;
-(window as any).ReactDOM = ReactDOM;
-(window as any).ReactDOMClient = ReactDOMClient;
-(window as any).MantineCore = MantineCore;
-(window as any).MantineNotifications = MantineNotifications;
-
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
   window.location.replace(`/${getBaseUrl()}`);
@@ -120,3 +122,6 @@ ReactDOMClient.createRoot(
     <MainView />
   </React.StrictMode>
 );
+
+// Load globals onto the window object, so that they can be accessed by plugins without requiring direct imports
+loadWindowGlobals();

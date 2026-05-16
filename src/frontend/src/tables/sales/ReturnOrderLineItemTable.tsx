@@ -2,13 +2,20 @@ import { t } from '@lingui/core/macro';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   useReceiveReturnOrderLineItems,
@@ -20,32 +27,35 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DateColumn,
+  DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
 import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
   order,
   orderDetailRefresh,
   customerId,
+  editable,
   currency
 }: Readonly<{
   orderId: number;
   order: any;
   orderDetailRefresh: () => void;
   customerId: number;
+  editable: boolean;
   currency: string;
 }>) {
   const table = useTable('return-order-line-item');
@@ -101,32 +111,25 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      LineItemColumn({}),
+      PartColumn({
+        part: 'part_detail',
+        ordering: 'part'
+      }),
       {
         accessor: 'part_detail.IPN',
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false
-      },
-      {
-        accessor: 'item_detail.serial',
-        title: t`Quantity`,
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
+      StockColumn({
+        accessor: 'item_detail',
         switchable: false,
-        render: (record: any) => {
-          if (record.item_detail.serial && record.quantity == 1) {
-            return `# ${record.item_detail.serial}`;
-          } else {
-            return record.quantity;
-          }
-        }
-      },
+        sortable: true,
+        ordering: 'stock'
+      }),
       StatusColumn({
         model: ModelType.stockitem,
         sortable: false,
@@ -134,6 +137,7 @@ export default function ReturnOrderLineItemTable({
         title: t`Status`
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       StatusColumn({
         model: ModelType.returnorderlineitem,
         sortable: true,
@@ -180,7 +184,7 @@ export default function ReturnOrderLineItemTable({
       <AddItemButton
         key='add-line-item'
         tooltip={t`Add Line Item`}
-        hidden={!user.hasAddRole(UserRoles.return_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
           newLine.open();
         }}
@@ -189,7 +193,11 @@ export default function ReturnOrderLineItemTable({
         key='receive-items'
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
-        hidden={!inProgress || !user.hasChangeRole(UserRoles.return_order)}
+        hidden={
+          !editable ||
+          !inProgress ||
+          !user.hasChangeRole(UserRoles.return_order)
+        }
         onClick={() => {
           setSelectedItems(
             table.selectedRecords.filter((record: any) => !record.received_date)
@@ -199,7 +207,7 @@ export default function ReturnOrderLineItemTable({
         disabled={table.selectedRecords.length == 0}
       />
     ];
-  }, [user, inProgress, orderId, table.selectedRecords]);
+  }, [user, editable, inProgress, orderId, table.selectedRecords]);
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
@@ -217,6 +225,7 @@ export default function ReturnOrderLineItemTable({
         {
           hidden:
             received ||
+            !editable ||
             !inProgress ||
             !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
@@ -227,14 +236,14 @@ export default function ReturnOrderLineItemTable({
           }
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.return_order),
+          hidden: !editable || !user.hasChangeRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.return_order),
+          hidden: !editable || !user.hasDeleteRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -242,7 +251,7 @@ export default function ReturnOrderLineItemTable({
         })
       ];
     },
-    [user, inProgress]
+    [user, editable, inProgress]
   );
 
   return (
@@ -262,6 +271,7 @@ export default function ReturnOrderLineItemTable({
             item_detail: true,
             order_detail: true
           },
+          defaultSortColumn: 'line',
           enableSelection:
             inProgress && user.hasChangeRole(UserRoles.return_order),
           tableActions: tableActions,

@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
@@ -12,7 +13,6 @@ import {
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
@@ -26,7 +26,7 @@ import { useInstance } from '../../hooks/UseInstance';
 export default function GroupDetail() {
   const { id } = useParams();
 
-  const { instance, instanceQuery, requestStatus } = useInstance({
+  const { instance, instanceQuery } = useInstance({
     endpoint: ApiEndpoints.group_list,
     pk: id
   });
@@ -72,7 +72,7 @@ export default function GroupDetail() {
   }, [instance, id]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         <PageDetail
           title={`${t`Group`}: ${instance.name}`}

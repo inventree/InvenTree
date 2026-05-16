@@ -21,7 +21,7 @@ import type {
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 export function useReturnOrderFields({
@@ -91,7 +91,8 @@ export function useReturnOrderFields({
             value: false,
             hidden: true
           },
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
@@ -127,13 +128,17 @@ export function useReturnOrderLineItemFields({
           part_detail: true
         }
       },
-      quantity: {},
+      line: {},
       reference: {},
+      quantity: {},
       outcome: {
         hidden: create == true
       },
       price: {},
       price_currency: {},
+      project_code: {
+        description: t`Select project code for this line item`
+      },
       target_date: {},
       notes: {},
       link: {}

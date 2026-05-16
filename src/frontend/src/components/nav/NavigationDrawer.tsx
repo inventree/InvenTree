@@ -1,25 +1,18 @@
 import { t } from '@lingui/core/macro';
-import {
-  Container,
-  Drawer,
-  Flex,
-  Group,
-  ScrollArea,
-  Space
-} from '@mantine/core';
+import { Container, Drawer, Flex, Group, Space } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
-import { StylishText } from '../items/StylishText';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
@@ -183,33 +176,31 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       </Group>
       <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type='always' offsetScrollbars>
+        <MenuLinks
+          title={t`Navigation`}
+          links={menuItemsNavigate}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Settings`}
+          links={menuItemsSettings}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Actions`}
+          links={menuItemsAction}
+          beforeClick={closeFunc}
+        />
+        <Space h='md' />
+        {plugins.length > 0 ? (
           <MenuLinks
-            title={t`Navigation`}
-            links={menuItemsNavigate}
+            title={t`Plugins`}
+            links={plugins}
             beforeClick={closeFunc}
           />
-          <MenuLinks
-            title={t`Settings`}
-            links={menuItemsSettings}
-            beforeClick={closeFunc}
-          />
-          <MenuLinks
-            title={t`Actions`}
-            links={menuItemsAction}
-            beforeClick={closeFunc}
-          />
-          <Space h='md' />
-          {plugins.length > 0 ? (
-            <MenuLinks
-              title={t`Plugins`}
-              links={plugins}
-              beforeClick={closeFunc}
-            />
-          ) : (
-            <></>
-          )}
-        </ScrollArea>
+        ) : (
+          <></>
+        )}
       </Container>
       <div ref={ref}>
         <Space h='md' />

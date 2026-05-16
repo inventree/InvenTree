@@ -5,10 +5,10 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
-import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
-import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
 
 export interface TableFieldRowProps {
@@ -110,17 +110,6 @@ export function TableField({
     val.splice(idx, 1);
     field.onChange(val);
   };
-
-  const fieldDefinition = useMemo(() => {
-    return {
-      ...definition,
-      modelRenderer: undefined,
-      onValueChange: undefined,
-      adjustFilters: undefined,
-      read_only: undefined,
-      addRow: undefined
-    };
-  }, [definition]);
 
   // Extract errors associated with the current row
   const rowErrors: any = useCallback(

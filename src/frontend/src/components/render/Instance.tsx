@@ -1,14 +1,32 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Group,
+  type MantineSize,
+  Paper,
+  Skeleton,
+  Space,
+  Text
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import type {
+  InstanceRenderInterface,
+  ModelRendererDict,
+  RemoteInstanceProps,
+  RenderInlineModelProps,
+  RenderInstanceProps
+} from '@lib/types/Rendering';
+
+export type { InstanceRenderInterface } from '@lib/types/Rendering';
+import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
 import { useApi } from '../../contexts/ApiContext';
-import { shortenString } from '../../functions/tables';
+import { usePluginState } from '../../states/PluginState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -22,7 +40,10 @@ import {
   RenderContentType,
   RenderError,
   RenderImportSession,
+  RenderParameter,
+  RenderParameterTemplate,
   RenderProjectCode,
+  RenderSelectionEntry,
   RenderSelectionList
 } from './Generic';
 import {
@@ -32,12 +53,7 @@ import {
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
-import {
-  RenderPart,
-  RenderPartCategory,
-  RenderPartParameterTemplate,
-  RenderPartTestTemplate
-} from './Part';
+import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
 import { RenderPlugin } from './Plugin';
 import { RenderLabelTemplate, RenderReportTemplate } from './Report';
 import {
@@ -47,35 +63,22 @@ import {
 } from './Stock';
 import { RenderGroup, RenderOwner, RenderUser } from './User';
 
-type EnumDictionary<T extends string | symbol | number, U> = {
-  [K in T]: U;
-};
-
-export interface InstanceRenderInterface {
-  instance: any;
-  link?: boolean;
-  navigate?: any;
-  showSecondary?: boolean;
-}
-
 /**
  * Lookup table for rendering a model instance
  */
-const RendererLookup: EnumDictionary<
-  ModelType,
-  (props: Readonly<InstanceRenderInterface>) => ReactNode
-> = {
+export const RendererLookup: ModelRendererDict = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
   [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.parameter]: RenderParameter,
+  [ModelType.parametertemplate]: RenderParameterTemplate,
   [ModelType.manufacturerpart]: RenderManufacturerPart,
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
-  [ModelType.partparametertemplate]: RenderPartParameterTemplate,
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
@@ -97,50 +100,50 @@ const RendererLookup: EnumDictionary<
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
+  [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError
 };
-
-export type RenderInstanceProps = {
-  model: ModelType | undefined;
-} & InstanceRenderInterface;
 
 /**
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  if (props.model === undefined) {
-    return <UnknownRenderer model={props.model} />;
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
+    RenderComponent =
+      RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
 
-  const model_name = props.model.toString().toLowerCase() as ModelType;
-
-  const RenderComponent = RendererLookup[model_name];
-
+  // provider component
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }
-
   return <RenderComponent {...props} />;
 }
 
 export function RenderRemoteInstance({
   model,
+  modelUrl,
+  modelRenderer,
   pk
-}: Readonly<{
-  model: ModelType;
-  pk: number;
-}>): ReactNode {
+}: Readonly<RemoteInstanceProps>): ReactNode {
   const api = useApi();
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
-      const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
+      const url = modelUrl
+        ? apiUrl(modelUrl, pk)
+        : apiUrl(ModelInformationDict[model].api_endpoint, pk);
 
-      return api
-        .get(url)
-        .then((response) => response.data)
-        .catch(() => null);
+      return api.get(url).then((response) => response.data);
     }
   });
 
@@ -154,6 +157,10 @@ export function RenderRemoteInstance({
         {model}: {pk}
       </Text>
     );
+  }
+
+  if (!!modelRenderer) {
+    return modelRenderer({ instance: data });
   }
 
   return <RenderInstance model={model} instance={data} />;
@@ -173,20 +180,8 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: Readonly<{
-  primary: string;
-  secondary?: string;
-  showSecondary?: boolean;
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-  image?: string;
-  labels?: string[];
-  url?: string;
-  navigate?: any;
-  tooltip?: string;
-}>): ReactNode {
+}: Readonly<RenderInlineModelProps>): ReactNode {
   // TODO: Handle labels
-
   const onClick = useCallback(
     (event: any) => {
       if (url && navigate) {
@@ -196,34 +191,51 @@ export function RenderInlineModel({
     [url, navigate]
   );
 
-  const primaryText = shortenString({
-    str: primary,
-    len: 50
-  });
+  if (typeof primary === 'string') {
+    primary = shortenString({
+      str: primary,
+      len: 50
+    });
 
-  const secondaryText = shortenString({
-    str: secondary,
-    len: 75
-  });
+    primary = <Text size='sm'>{primary}</Text>;
+  }
+
+  if (typeof secondary === 'string') {
+    secondary = shortenString({
+      str: secondary,
+      len: 75
+    });
+
+    if (secondary.toString()?.length > 0) {
+      secondary = <InlineSecondaryBadge text={secondary.toString()} />;
+    }
+  }
+
+  if (typeof suffix === 'string') {
+    suffix = <Text size='xs'>{suffix}</Text>;
+  }
 
   return (
-    <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
-      <Group gap='xs' justify='left' wrap='nowrap'>
+    <Group gap='xs' justify='space-between' title={tooltip}>
+      <Group gap='xs' justify='left'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
-          <Anchor href='' onClick={(event: any) => onClick(event)}>
-            <Text size='sm'>{primaryText}</Text>
+          <Anchor
+            href={`/${getBaseUrl()}${url}`}
+            onClick={(event: any) => onClick(event)}
+          >
+            {primary}
           </Anchor>
         ) : (
-          <Text size='sm'>{primaryText}</Text>
+          primary
         )}
-        {showSecondary && secondary && <Text size='xs'>{secondaryText}</Text>}
+        {showSecondary && secondary && secondary}
       </Group>
       {suffix && (
         <>
           <Space />
-          <div style={{ fontSize: 'xs', lineHeight: 'xs' }}>{suffix}</div>
+          {suffix}
         </>
       )}
     </Group>
@@ -237,4 +249,30 @@ export function UnknownRenderer({
 }>): ReactNode {
   const model_name = model ? model.toString() : 'undefined';
   return <Alert color='red' title={t`Unknown model: ${model_name}`} />;
+}
+
+/**
+ * Render a "badge like" component with a text label
+ */
+export function InlineSecondaryBadge({
+  text,
+  title,
+  size = 'xs'
+}: {
+  text: string;
+  title?: string;
+  size?: MantineSize;
+}): ReactNode {
+  return (
+    <Paper p={2} withBorder style={{ backgroundColor: 'transparent' }}>
+      <Group gap='xs' wrap='nowrap'>
+        {title && (
+          <Text size={size} title={title}>
+            {title}:
+          </Text>
+        )}
+        <Text size={size ?? 'xs'}>{text}</Text>
+      </Group>
+    </Paper>
+  );
 }

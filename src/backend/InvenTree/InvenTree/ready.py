@@ -1,13 +1,48 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import functools
 import inspect
 import os
 import sys
+import warnings
+
+from django.conf import settings
+
+import structlog
+
+logger = structlog.get_logger('inventree')
+
+
+# Keep track of loaded apps, to prevent multiple executions of ready functions
+_loaded_apps = set()
+
+
+def clearLoadedApps():
+    """Clear the set of loaded apps."""
+    global _loaded_apps
+    _loaded_apps = set()
+
+
+def setAppLoaded(app_name: str):
+    """Mark an app as loaded."""
+    global _loaded_apps
+    _loaded_apps.add(app_name)
+
+
+def isAppLoaded(app_name: str) -> bool:
+    """Return True if the app has been marked as loaded."""
+    global _loaded_apps
+    return app_name in _loaded_apps
 
 
 def isInTestMode():
     """Returns True if the database is in testing mode."""
-    return 'test' in sys.argv
+    return 'test' in sys.argv or sys.argv[0].endswith('pytest')
+
+
+def isWaitingForDatabase():
+    """Return True if we are currently waiting for the database to be ready."""
+    return 'wait_for_db' in sys.argv
 
 
 def isImportingData():
@@ -26,7 +61,13 @@ def isRunningMigrations():
 def isRebuildingData():
     """Return true if any of the rebuilding commands are being executed."""
     return any(
-        x in sys.argv for x in ['rebuild_models', 'rebuild_thumbnails', 'rebuild']
+        x in sys.argv
+        for x in [
+            'rebuild',
+            'rebuild_models',
+            'rebuild_thumbnails',
+            'remove_stale_contenttypes',
+        ]
     )
 
 
@@ -38,19 +79,101 @@ def isRunningBackup():
             'backup',
             'restore',
             'dbbackup',
-            'dbresotore',
+            'dbrestore',
             'mediabackup',
             'mediarestore',
         ]
     )
 
 
+def isCollectingPlugins():
+    """Return True if the 'collectplugins' command is being executed."""
+    return 'collectplugins' in sys.argv
+
+
+# This variable is used to cache the result of the isGeneratingSchema function, to prevent multiple executions of the same checks
+_IS_GENERATING_SCHEMA: bool | None = None
+
+
+def _setGeneratingSchema(value: bool):
+    """Set the value of the isGeneratingSchema variable."""
+    global _IS_GENERATING_SCHEMA
+    _IS_GENERATING_SCHEMA = value
+    return value
+
+
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
-    if 'schema' in sys.argv:
-        return True
+    global _IS_GENERATING_SCHEMA
 
-    return any('drf_spectacular' in frame.filename for frame in inspect.stack())
+    if _IS_GENERATING_SCHEMA is not None:
+        return _IS_GENERATING_SCHEMA
+
+    if isInServerThread() or isInWorkerThread():
+        return _setGeneratingSchema(False)
+
+    if isRunningMigrations() or isRunningBackup() or isRebuildingData():
+        return _setGeneratingSchema(False)
+
+    if isImportingData():
+        return _setGeneratingSchema(False)
+
+    if isInTestMode():
+        return _setGeneratingSchema(False)
+
+    if isWaitingForDatabase():
+        return _setGeneratingSchema(False)
+
+    if isCollectingPlugins():
+        return _setGeneratingSchema(False)
+
+    # Additional set of commands which should not trigger schema generation
+    excluded_commands = [
+        'compilemessages',
+        'createsuperuser',
+        'clean_settings',
+        'collectstatic',
+        'makemessages',
+        'wait_for_db',
+        'list_apps',
+        'gunicorn',
+        'sqlflush',
+        'qcluster',
+        'check',
+        'shell',
+        'help',
+    ]
+
+    if any(cmd in sys.argv for cmd in excluded_commands):
+        return _setGeneratingSchema(False)
+
+    included_commands = [
+        'schema',
+        'spectactular',
+        # schema adjacent calls
+        'export_settings_definitions',
+        'export_tags',
+        'export_filters',
+        'export_report_context',
+    ]
+
+    if any(cmd in sys.argv for cmd in included_commands):
+        return _setGeneratingSchema(True)
+
+    # This is a very inefficient call - so we only use it as a last resort
+    result = any('drf_spectacular' in frame.filename for frame in inspect.stack())
+
+    if not result:
+        # We should only get here if we *are* generating schema
+        # Raise a warning, so that developers can add extra checks above
+
+        if settings.DEBUG:
+            logger.warning(
+                'isGeneratingSchema called outside of expected contexts - this may be a sign of a problem with the ready() function'
+            )
+            logger.warning('sys.argv: %s', sys.argv)
+
+    return _setGeneratingSchema(result)
 
 
 def isInWorkerThread():
@@ -81,10 +204,45 @@ def isInMainThread():
     return not isInWorkerThread()
 
 
+def readOnlyCommands():
+    """Return a list of read-only management commands which should not trigger database writes."""
+    return [
+        'help',
+        'check',
+        'shell',
+        'sqlflush',
+        'list_apps',
+        'wait_for_db',
+        'spectactular',
+        'makemessages',
+        'collectstatic',
+        'showmigrations',
+        'compilemessages',
+    ]
+
+
+def isReadOnlyCommand():
+    """Return True if the current command is a read-only command, which should not trigger any database writes."""
+    if (
+        isImportingData()
+        or isRunningMigrations()
+        or isRebuildingData()
+        or isRunningBackup()
+    ):
+        return True
+
+    return any(cmd in sys.argv for cmd in readOnlyCommands())
+
+
 def canAppAccessDatabase(
     allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False
 ):
     """Returns True if the apps.py file can access database records.
+
+    Arguments:
+        allow_test: If True, override checks and allow database access during testing mode
+        allow_plugins: If True, override checks and allow database access during plugin loading
+        allow_shell: If True, override checks and allow database access during shell sessions
 
     There are some circumstances where we don't want the ready function in apps.py
     to touch the database
@@ -94,7 +252,7 @@ def canAppAccessDatabase(
         return False
 
     # Prevent database access if we are importing data
-    if isImportingData():
+    if not allow_plugins and isImportingData():
         return False
 
     # Prevent database access if we are rebuilding data
@@ -108,13 +266,13 @@ def canAppAccessDatabase(
     # If any of the following management commands are being executed,
     # prevent custom "on load" code from running!
     excluded_commands = [
-        'check',
-        'createsuperuser',
-        'wait_for_db',
-        'makemessages',
         'compilemessages',
-        'spectactular',
+        'createsuperuser',
         'collectstatic',
+        'makemessages',
+        'spectactular',
+        'wait_for_db',
+        'check',
     ]
 
     if not allow_shell:
@@ -144,3 +302,22 @@ def isPluginRegistryLoaded():
     from plugin import registry
 
     return registry.plugins_loaded
+
+
+def ignore_ready_warning(func):
+    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase.
+
+    Ref: https://github.com/inventree/InvenTree/issues/10806
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                'ignore',
+                message='Accessing the database during app initialization is discouraged',
+                category=RuntimeWarning,
+            )
+            return func(*args, **kwargs)
+
+    return wrapper

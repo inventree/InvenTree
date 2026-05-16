@@ -1,4 +1,5 @@
-import { test } from '../baseFixtures.js';
+import { expect, test } from '../baseFixtures.js';
+import { stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -14,9 +15,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
 
   await page.waitForURL('**/web/stock/location/**');
 
-  await loadTab(page, 'Location Details');
-  await page.waitForURL('**/web/stock/location/index/details');
-
   await loadTab(page, 'Stock Items');
   await page.getByText('1551ABK').first().click();
 
@@ -25,7 +23,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await loadTab(page, 'Default Parts');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Stock Items');
   await loadTab(page, 'Location Details');
 
@@ -33,16 +31,34 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
   await loadTab(page, 'Stock Tracking');
-  await loadTab(page, 'Test Data');
+  await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
+
+  // Let's create a new stock item
+  await navigate(page, 'part/822/stock');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'number-field-quantity' })
+    .fill('987');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Automatically navigate through to the newly created stock item
+  await page.getByText('Quantity: 987').first().waitFor();
+  await loadTab(page, 'Stock Tracking');
+  await page
+    .getByRole('cell', { name: 'Stock item created' })
+    .first()
+    .waitFor();
+  await page.getByRole('cell', { name: 'allaccess Ally Access' }).waitFor();
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
-  await loadTab(page, 'Location Details');
 
   await page.getByLabel('nav-breadcrumb-action').click();
   await page.getByLabel('nav-tree-toggle-1}').click();
@@ -54,10 +70,69 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
 });
 
+test('Stock - Location Delete', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/38/sublocations'
+  });
+
+  const loc_1 = `loc-1-${Math.floor(Math.random() * 1000)}`;
+  const loc_2 = `loc-2-${Math.floor(Math.random() * 1000)}`;
+
+  // Create a sub-location
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-location' })
+    .click();
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(loc_1);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Create a secondary sub-location
+  await loadTab(page, 'Sublocations');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-location' })
+    .click();
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(loc_2);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Navigate up to parent
+  await page.getByRole('link', { name: `breadcrumb-2-${loc_1}` }).click();
+  await loadTab(page, 'Sublocations');
+  await page.getByRole('cell', { name: loc_2, exact: true }).waitFor();
+
+  // Delete this location, and all child locations
+  await page
+    .locator('div')
+    .filter({
+      hasText: new RegExp(`^Stock>PCB Assembler>${loc_1}Stock Location$`)
+    })
+    .getByLabel('action-menu-location-actions')
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-location-actions-delete' })
+    .click();
+
+  await page
+    .getByRole('textbox', { name: 'choice-field-delete_stock_items' })
+    .click();
+  await page
+    .getByRole('option', { name: 'Move items to parent location' })
+    .click();
+
+  await page
+    .getByRole('textbox', { name: 'choice-field-delete_sub_locations' })
+    .click();
+  await page.getByRole('option', { name: 'Delete items' }).click();
+
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Confirm we are on the right page
+  await page.getByText('External PCB assembler').waitFor();
+  await loadTab(page, 'Sublocations');
+  await page.getByText('No records found').first().waitFor();
+});
+
 test('Stock - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: '/stock/location/index/'
   });
 
@@ -130,7 +205,9 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   await page.getByLabel('action-button-add-stock-item').click();
 
   // Initially fill with invalid serial/quantity combinations
-  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('200-250');
   await page.getByLabel('number-field-quantity').fill('10');
 
   // Add delay to account to field debounce
@@ -171,7 +248,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
 
   await page.getByLabel('action-menu-stock-actions').click();
   await page.getByLabel('action-menu-stock-actions-search').click();
-  await page.getByLabel('text-field-serial').fill('359');
+  await page.getByLabel('text-field-serial', { exact: true }).fill('359');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Start at serial 359
@@ -183,7 +260,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
   await page.getByText('358', { exact: true }).first().waitFor();
 
   await page.getByLabel('action-button-find-serial').click();
-  await page.getByLabel('text-field-serial').fill('200');
+  await page.getByLabel('text-field-serial', { exact: true }).fill('200');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('Serial Number: 200').waitFor();
@@ -199,12 +276,34 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations').click();
   await page.getByLabel('action-menu-stock-operations-serialize').click();
 
-  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+  // Check for expected placeholder value
+  await expect(
+    page.getByRole('textbox', {
+      name: 'text-field-serial_numbers',
+      exact: true
+    })
+  ).toHaveAttribute('placeholder', '365+');
+
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page
-    .getByText('Group range 200-250 exceeds allowed quantity')
+    .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
+
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('1, 2, 3');
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page
+    .getByText('Number of unique serial numbers (3) must match quantity (100)')
+    .waitFor();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
@@ -247,6 +346,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
   await page.getByText('Scanned stock item into location').waitFor();
 
+  // Add "zero" stock - ensure the quantity stays the same
+  await launchStockAction('add');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 123').first().waitFor();
+
   // Add stock, and change status
   await launchStockAction('add');
   await page.getByLabel('number-field-quantity').fill('12');
@@ -256,6 +360,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByText('Lost').first().waitFor();
   await page.getByText('Unavailable').first().waitFor();
   await page.getByText('135').first().waitFor();
+
+  // Remove "zero" stock - ensure the quantity stays the same
+  await launchStockAction('remove');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 135').first().waitFor();
 
   // Remove stock, and change status
   await launchStockAction('remove');
@@ -284,6 +393,73 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations-return').click();
 });
 
+// Test conversion between part variants
+test('Stock - Convert', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/242/details' });
+
+  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+
+  // Convert to widget.red.02
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-convert' })
+    .click();
+  await page.getByRole('combobox', { name: 'related-field-part' }).fill('red');
+  await page.getByText('widget.red.02 | Red Widget |').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('widget.red.02 | Red Widget |').waitFor();
+
+  // Convert to widget.red.00
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-convert' })
+    .click();
+  await page.getByRole('combobox', { name: 'related-field-part' }).fill('red');
+  await page.getByText('widget.red.00 | Red Widget |').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+});
+
+test('Stock - Return Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/customer/32/assigned-stock'
+  });
+
+  // Return stock items assigned to customer
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByRole('button', { name: 'action-menu-stock-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-actions-return-stock' })
+    .click();
+  await page.getByText('Return selected items into stock').first().waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Location detail
+  await navigate(page, 'stock/item/1253');
+  await page
+    .getByRole('button', { name: 'action-menu-stock-operations' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-stock-operations-return-stock'
+    })
+    .click();
+
+  await page.getByText('#128').waitFor();
+  await page.getByText('Merge into existing stock').waitFor();
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Quantity must be greater than zero').waitFor();
+  await page.getByText('This field is required.').waitFor();
+});
+
 test('Stock - Tracking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
 
@@ -294,6 +470,55 @@ test('Stock - Tracking', async ({ browser }) => {
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
+
+  /* Add some more stock items and tracking information:
+   * - Duplicate this stock item
+   * - Give it a unique serial number
+   * - Ensure the tracking information is duplicated correctly
+   * - Delete the new stock item
+   * - Ensure that the tracking information is retained against the base part
+   */
+
+  // Duplicate the stock item
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-serial_numbers' })
+    .fill('9876');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check stock tracking information is correct
+  await page.getByText('Serial Number: 9876').first().waitFor();
+  await loadTab(page, 'Stock Tracking');
+  await page
+    .getByRole('cell', { name: 'Stock item created' })
+    .first()
+    .waitFor();
+
+  // Delete this stock item
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-delete' })
+    .click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Check stock tracking for base part
+  await loadTab(page, 'Stock History');
+  await page.getByRole('button', { name: 'Stock Tracking' }).click();
+
+  await page.getByText('Stock item no longer exists').first().waitFor();
+  await page
+    .getByRole('cell', { name: 'Thumbnail Blue Widget' })
+    .first()
+    .waitFor();
+
+  await page.getByText('# 162').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {
@@ -301,7 +526,7 @@ test('Stock - Location', async ({ browser }) => {
 
   await loadTab(page, 'Default Parts');
   await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('action-menu-barcode-actions').click();

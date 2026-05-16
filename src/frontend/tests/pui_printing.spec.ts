@@ -1,14 +1,36 @@
+import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
+import { adminuser } from './defaults.js';
 import { activateTableView, loadTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
+
+// Test for the label editing interface
+test('Printing - Label Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/labels'
+  });
+
+  // Open a particular label template for editing
+  await page.getByRole('cell', { name: 'Sample build line label' }).click();
+
+  // Await expected entries
+  await page.getByRole('tab', { name: 'PDF Preview' }).waitFor();
+  await page.getByText('This is an example template').waitFor();
+  await page
+    .locator('div')
+    .filter({ hasText: /^BO\d+$/ })
+    .first()
+    .waitFor();
+});
 
 /*
  * Test for label printing.
  * Select a number of stock items from the table,
  * and print labels against them
  */
-test('Label Printing', async ({ browser }) => {
+test('Printing - Label Printing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
@@ -32,13 +54,12 @@ test('Label Printing', async ({ browser }) => {
 
   // Select label template
   await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Stock Item Label (').click();
-
-  await page.waitForTimeout(100);
+  await page
+    .getByRole('option', { name: 'InvenTree Stock Item Label' })
+    .click();
 
   await page.getByLabel('related-field-plugin').click();
-
-  await page.getByText('InvenTreeLabel', { exact: true }).click();
+  await page.getByRole('option', { name: 'InvenTreeLabel provides' }).click();
 
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
@@ -53,7 +74,7 @@ test('Label Printing', async ({ browser }) => {
  * Navigate to a PurchaseOrder detail page,
  * and print a report against it.
  */
-test('Report Printing', async ({ browser }) => {
+test('Printing - Report Printing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
@@ -63,35 +84,28 @@ test('Report Printing', async ({ browser }) => {
   await loadTab(page, 'Purchase Orders');
   await activateTableView(page);
 
-  await page.getByRole('cell', { name: 'PO0009' }).click();
+  await page.getByRole('cell', { name: 'PO0013' }).click();
 
   // Select "print report"
   await page.getByLabel('action-menu-printing-actions').click();
   await page.getByLabel('action-menu-printing-actions-print-reports').click();
 
-  // Select template
-  await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Purchase Order').click();
-
-  await page.waitForTimeout(100);
-
-  // Submit the print form (should result in success)
+  // Template should auto-fill (there is only one template available)
+  await page.getByText('Sample purchase order report').waitFor();
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
-
   await page.getByText('Process completed successfully').first().waitFor();
+
   await page.context().close();
 });
 
-test('Report Editing', async ({ browser, request }) => {
+test('Printing - Report Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // activate the sample plugin for this test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -103,6 +117,14 @@ test('Report Editing', async ({ browser, request }) => {
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();
+
+  // check that styles are applied correctly
+  await expect(page.getByText('{% block style %}')).toBeVisible();
+  const element: Locator = page.getByText('block').first();
+  const color = await element.evaluate((el) => {
+    return window.getComputedStyle(el).getPropertyValue('color');
+  });
+  expect(color).toBe('rgb(78, 201, 176)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();
@@ -146,7 +168,6 @@ test('Report Editing', async ({ browser, request }) => {
 
   // deactivate the sample plugin again after the test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: false
   });

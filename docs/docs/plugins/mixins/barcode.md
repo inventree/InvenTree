@@ -2,7 +2,7 @@
 title: Barcode Mixin
 ---
 
-## Barcode Plugins
+## BarcodeMixin
 
 InvenTree supports decoding of arbitrary barcode data and generation of internal barcode formats via a **Barcode Plugin** interface. Barcode data POSTed to the `/api/barcode/` endpoint will be supplied to all loaded barcode plugins, and the first plugin to successfully interpret the barcode data will return a response to the client.
 

@@ -1,6 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
-import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  IconBookmark,
+  IconCircleCheck,
+  IconCircleX,
+  IconInfoCircle
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -8,7 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import dayjs from 'dayjs';
+import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -30,13 +35,17 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
+import { RenderAddress } from '../../components/render/Company';
+import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import {
-  useSalesOrderShipmentCompleteFields,
-  useSalesOrderShipmentFields
+  useCheckShipmentForm,
+  useCompleteShipmentForm,
+  useSalesOrderShipmentFields,
+  useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
 import {
-  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -49,11 +58,12 @@ export default function SalesOrderShipmentDetail() {
   const user = useUserState();
   const navigate = useNavigate();
 
+  const userId = useMemo(() => user.userId(), [user]);
+
   const {
     instance: shipment,
     instanceQuery: shipmentQuery,
-    refreshInstance: refreshShipment,
-    requestStatus: shipmentStatus
+    refreshInstance: refreshShipment
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
@@ -62,18 +72,15 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const {
-    instance: customer,
-    instanceQuery: customerQuery,
-    refreshInstance: refreshCustomer,
-    requestStatus: customerStatus
-  } = useInstance({
+  const { instance: customer, instanceQuery: customerQuery } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: shipment.order_detail?.customer,
     hasPrimaryKey: true
   });
 
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
+
+  const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
 
   const detailsPanel = useMemo(() => {
     if (shipmentQuery.isFetching || customerQuery.isFetching) {
@@ -107,6 +114,18 @@ export default function SalesOrderShipmentDetail() {
         hidden: !data.customer
       },
       {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`Link`,
+        copy: true,
+        hidden: !shipment.link
+      }
+    ];
+
+    // Top right: Shipment information
+    const tr: DetailsField[] = [
+      {
         type: 'text',
         name: 'customer_reference',
         icon: 'serial',
@@ -123,16 +142,6 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         type: 'text',
-        name: 'allocated_items',
-        icon: 'packages',
-        label: t`Allocated Items`
-      }
-    ];
-
-    // Top right: Shipment information
-    const tr: DetailsField[] = [
-      {
-        type: 'text',
         name: 'tracking_number',
         label: t`Tracking Number`,
         icon: 'trackable',
@@ -146,6 +155,50 @@ export default function SalesOrderShipmentDetail() {
         icon: 'serial',
         value_formatter: () => shipment.invoice_number || '---',
         copy: !!shipment.invoice_number
+      }
+    ];
+
+    const address: any =
+      shipment.shipment_address_detail || shipment.order_detail?.address_detail;
+
+    const bl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'address',
+        label: t`Shipping Address`,
+        icon: 'address',
+        value_formatter: () =>
+          address ? (
+            <RenderAddress
+              instance={
+                shipment.shipment_address_detail ||
+                shipment.order_detail?.address_detail
+              }
+            />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'allocated_items',
+        icon: 'packages',
+        label: t`Allocated Items`
+      },
+      {
+        type: 'text',
+        name: 'checked_by',
+        label: t`Checked By`,
+        icon: 'check',
+        value_formatter: () =>
+          shipment.checked_by_detail ? (
+            <RenderUser instance={shipment.checked_by_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not checked`}</Text>
+          )
       },
       {
         type: 'text',
@@ -162,14 +215,6 @@ export default function SalesOrderShipmentDetail() {
         icon: 'calendar',
         value_formatter: () => formatDate(shipment.delivery_date),
         hidden: !shipment.delivery_date
-      },
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !shipment.link
       }
     ];
 
@@ -194,6 +239,8 @@ export default function SalesOrderShipmentDetail() {
             </Grid.Col>
           </Grid>
           <DetailsTable fields={tr} item={data} />
+          <DetailsTable fields={bl} item={data} />
+          <DetailsTable fields={br} item={data} />
         </ItemDetailsGrid>
       </>
     );
@@ -222,19 +269,25 @@ export default function SalesOrderShipmentDetail() {
           />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.salesordershipment,
+        model_id: shipment.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.salesordershipment,
         model_id: shipment.pk
       }),
       NotesPanel({
         model_type: ModelType.salesordershipment,
-        model_id: shipment.pk
+        model_id: shipment.pk,
+        has_note: !!shipment.notes
       })
     ];
   }, [isPending, shipment, detailsPanel]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
-    pending: isPending
+    pending: isPending,
+    customerId: shipment.order_detail?.customer
   });
 
   const editShipment = useEditApiFormModal({
@@ -255,19 +308,19 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
+  const completeShipment = useCompleteShipmentForm({
+    shipment: shipment,
+    onSuccess: refreshShipment
+  });
 
-  const completeShipment = useCreateApiFormModal({
-    url: ApiEndpoints.sales_order_shipment_complete,
-    pk: shipment.pk,
-    fields: completeShipmentFields,
-    title: t`Complete Shipment`,
-    focus: 'tracking_number',
-    initialData: {
-      ...shipment,
-      shipment_date: dayjs().format('YYYY-MM-DD')
-    },
-    onFormSuccess: refreshShipment
+  const checkShipment = useCheckShipmentForm({
+    shipmentId: shipment.pk,
+    onSuccess: refreshShipment
+  });
+
+  const uncheckShipment = useUncheckShipmentForm({
+    shipmentId: shipment.pk,
+    onSuccess: refreshShipment
   });
 
   const shipmentBadges = useMemo(() => {
@@ -283,6 +336,18 @@ export default function SalesOrderShipmentDetail() {
         visible={isPending}
       />,
       <DetailsBadge
+        key='checked'
+        label={t`Checked`}
+        color='green'
+        visible={isPending && isChecked}
+      />,
+      <DetailsBadge
+        key='not-checked'
+        label={t`Not Checked`}
+        color='red'
+        visible={isPending && !isChecked}
+      />,
+      <DetailsBadge
         key='shipped'
         label={t`Shipped`}
         color='green'
@@ -295,7 +360,7 @@ export default function SalesOrderShipmentDetail() {
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [isPending, shipment.deliveryDate, shipmentQuery.isFetching]);
+  }, [isPending, isChecked, shipment.deliveryDate, shipmentQuery.isFetching]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
@@ -313,6 +378,7 @@ export default function SalesOrderShipmentDetail() {
           completeShipment.open();
         }}
       />,
+      <AdminButton model={ModelType.salesordershipment} id={shipment.pk} />,
       <BarcodeActionDropdown
         key='barcode'
         model={ModelType.salesordershipment}
@@ -335,6 +401,20 @@ export default function SalesOrderShipmentDetail() {
             onClick: editShipment.open,
             tooltip: t`Edit Shipment`
           }),
+          {
+            hidden: !isPending || isChecked,
+            name: t`Check`,
+            tooltip: t`Mark shipment as checked`,
+            icon: <IconCircleCheck color='green' />,
+            onClick: checkShipment.open
+          },
+          {
+            hidden: !isPending || !isChecked,
+            name: t`Uncheck`,
+            tooltip: t`Mark shipment as unchecked`,
+            icon: <IconCircleX color='red' />,
+            onClick: uncheckShipment.open
+          },
           CancelItemAction({
             hidden: !isPending,
             onClick: deleteShipment.open,
@@ -343,16 +423,17 @@ export default function SalesOrderShipmentDetail() {
         ]}
       />
     ];
-  }, [isPending, user, shipment]);
+  }, [isChecked, isPending, user, shipment]);
 
   return (
     <>
       {completeShipment.modal}
       {editShipment.modal}
       {deleteShipment.modal}
+      {checkShipment.modal}
+      {uncheckShipment.modal}
       <InstanceDetail
-        status={shipmentStatus}
-        loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        query={shipmentQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>

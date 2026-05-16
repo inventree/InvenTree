@@ -1,18 +1,40 @@
-export const classicUrl = 'http://127.0.0.1:8000';
+export const webUrl = '/web';
 
-export const apiUrl = `${classicUrl}/api`;
-export const baseUrl = './web';
-export const loginUrl = `${baseUrl}/login`;
-export const logoutUrl = `${baseUrl}/logout`;
-export const homeUrl = `${baseUrl}/home`;
+// Note: API requests are handled by the backend server
+export const apiUrl = 'http://localhost:8000/api/';
 
-export const user = {
-  name: 'Ally Access',
-  username: 'allaccess',
-  password: 'nolimits'
+export const homeUrl = `${webUrl}/home`;
+export const loginUrl = `${webUrl}/login`;
+export const logoutUrl = `${webUrl}/logout`;
+
+export type UserType = {
+  name?: string;
+  username: string;
+  testcred: string;
 };
 
-export const adminuser = {
+export const allaccessuser: UserType = {
+  name: 'Ally Access',
+  username: 'allaccess',
+  testcred: 'nolimits'
+};
+
+export const adminuser: UserType = {
   username: 'admin',
-  password: 'inventree'
+  testcred: 'inventree'
+};
+
+export const stevenuser: UserType = {
+  username: 'steven',
+  testcred: 'wizardstaff'
+};
+
+export const readeruser: UserType = {
+  username: 'reader',
+  testcred: 'readonly'
+};
+
+export const noaccessuser: UserType = {
+  username: 'noaccess',
+  testcred: 'youshallnotpass'
 };

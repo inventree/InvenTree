@@ -3,28 +3,32 @@ import { Trans } from '@lingui/react/macro';
 import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/index';
+import useTable from '@lib/hooks/UseTable';
+import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
+import type { TableColumn, TableState } from '@lib/types/Tables';
 import { IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
-import { StylishText } from '../../components/items/StylishText';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export interface GroupDetailI {
   pk: number;
@@ -45,7 +49,6 @@ export function GroupDrawer({
   } = useInstance({
     endpoint: ApiEndpoints.group_list,
     pk: id,
-    throwError: true,
     params: {
       permission_detail: true,
       role_detail: true,
@@ -185,17 +188,7 @@ export function GroupTable({
     preFormWarning: t`Are you sure you want to delete this group?`
   });
 
-  const newGroup = useCreateApiFormModal({
-    url: ApiEndpoints.group_list,
-    title: t`Add Group`,
-    fields: {
-      name: {
-        label: t`Name`,
-        description: t`Name of the user group`
-      }
-    },
-    table: table
-  });
+  const newGroup = useCreateApiFormModal(groupFields(table));
 
   const tableActions = useMemo(() => {
     const actions = [];
@@ -252,4 +245,18 @@ export function GroupTable({
       />
     </>
   );
+}
+
+export function groupFields(table?: TableState): ApiFormModalProps {
+  return {
+    url: ApiEndpoints.group_list,
+    title: t`Add Group`,
+    fields: {
+      name: {
+        label: t`Name`,
+        description: t`Name of the user group`
+      }
+    },
+    table: table ?? undefined
+  };
 }

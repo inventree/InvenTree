@@ -6,18 +6,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
-import { setApiDefaults } from '../../App';
+import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
-import { defaultHostKey } from '../../defaults/defaultHostList';
+import {
+  defaultHostKey,
+  translateHostName
+} from '../../defaults/defaultHostList';
 import {
   checkLoginState,
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
@@ -29,7 +32,9 @@ export default function Login() {
   );
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const hostname =
-    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
+    hostList[hostKey] === undefined
+      ? t`No selection`
+      : translateHostName(hostList[hostKey]?.name);
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,8 +45,7 @@ export default function Login() {
       state.registration_enabled
     ])
   );
-  const both_reg_enabled =
-    registration_enabled() || sso_registration() || false;
+  const any_reg_enabled = registration_enabled() || sso_registration() || false;
 
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
@@ -64,7 +68,9 @@ export default function Login() {
     if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
+    const traceid = setTraceId();
     fetchServerApiState();
+    removeTraceId(traceid);
   }
 
   // Set default host to localhost if no host is selected
@@ -109,7 +115,7 @@ export default function Login() {
             ) : (
               <>
                 <AuthenticationForm />
-                {both_reg_enabled === false && (
+                {any_reg_enabled && (
                   <Text ta='center' size={'xs'} mt={'md'}>
                     <Trans>Don&apos;t have an account?</Trans>{' '}
                     <Anchor

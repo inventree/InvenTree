@@ -5,7 +5,7 @@ from django.http import Http404
 from django.urls import reverse
 
 import structlog
-from rest_framework import exceptions, serializers
+from rest_framework import exceptions, permissions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.request import clone_request
@@ -15,7 +15,7 @@ import common.models
 import InvenTree.permissions
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, check_user_role
 
 logger = structlog.get_logger('inventree')
 
@@ -23,7 +23,7 @@ logger = structlog.get_logger('inventree')
 class InvenTreeMetadata(SimpleMetadata):
     """Custom metadata class for the DRF API.
 
-    This custom metadata class imits the available "actions",
+    This custom metadata class limits the available "actions",
     based on the user's role permissions.
 
     Thus when a client send an OPTIONS request to an API endpoint,
@@ -50,6 +50,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
             view.request = clone_request(request, method)
+
+            # Mark this request, to prevent expensive prefetching
+            view.request._metadata_requested = True
+
             try:
                 # Test global permissions
                 if hasattr(view, 'check_permissions'):
@@ -122,18 +126,40 @@ class InvenTreeMetadata(SimpleMetadata):
             if hasattr(view, 'rolemap'):
                 rolemap.update(view.rolemap)
 
+            # The view may define a custom role requirement
+            role_required = getattr(view, 'role_required', None)
+
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check_user_permission(user, self.model, permission)
+                # general model / role permission
+                result = check_user_permission(user, self.model, permission) or (
+                    role_required and check_user_role(user, role_required, permission)
+                )
+
+                # check if simple IsAuthenticated permission class is used
+                if not result:
+                    result = (
+                        view.permission_classes
+                        and len(view.permission_classes) == 1
+                        and any(
+                            perm
+                            in [
+                                permissions.IsAuthenticated,
+                                InvenTree.permissions.IsAuthenticatedOrReadScope,
+                            ]
+                            for perm in view.permission_classes
+                        )
+                    )
 
                 if method in actions and not result:
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods and check_user_permission(
-                user, self.model, 'delete'
-            ):
-                actions['DELETE'] = {}
+            if 'DELETE' in view.allowed_methods:
+                if check_user_permission(user, self.model, 'delete') or (
+                    role_required and check_user_role(user, role_required, 'delete')
+                ):
+                    actions['DELETE'] = {}
 
             metadata['actions'] = actions
 
@@ -354,6 +380,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        from InvenTree.serializers import OptionalField
+
+        if isinstance(field, OptionalField) or issubclass(
+            field.__class__, OptionalField
+        ):
+            # Rehydrate the OptionalField for proper introspection
+            rehydrated_field = field.serializer_class(**(field.serializer_kwargs or {}))
+            return self.get_field_info(rehydrated_field)
+
         # Try to add the child property to the dependent field to be used by the super call
         if self.label_lookup[field] == 'dependent field':
             field.get_child(raise_exception=True)
@@ -396,7 +431,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = (reverse('api-user-list'),)
+                    field_info['api_url'] = reverse('api-user-list')
                 elif field_info['model'] == 'group':
                     field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':
@@ -413,6 +448,13 @@ class InvenTreeMetadata(SimpleMetadata):
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':
             field_info['depends_on'] = field.depends_on
+
+        # Extends with extra attributes from the serializer
+        extra_field_attributes = ['allow_blank', 'allow_null']
+
+        for attr in extra_field_attributes:
+            if hasattr(field, attr):
+                field_info[attr] = getattr(field, attr)
 
         # Extend field info if the field has a get_field_info method
         if (

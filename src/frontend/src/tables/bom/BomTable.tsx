@@ -4,47 +4,58 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
-  IconFileArrowLeft,
+  IconEdit,
+  IconFileUpload,
   IconLock,
+  IconPlus,
   IconSwitch3
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import type { TableColumn } from '@lib/types/Tables';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
+  CategoryColumn,
   DescriptionColumn,
+  IPNColumn,
   NoteColumn,
-  ReferenceColumn
+  ReferenceColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -76,38 +87,60 @@ export function BomTable({
   const table = useTable('bom');
   const navigate = useNavigate();
 
-  const [importOpened, setImportOpened] = useState<boolean>(false);
+  const openImporter = useImporterState((state) => state.openImporter);
 
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const userSettings = useUserSettingsState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
+    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
+
     return [
       {
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
+        minWidth: 250,
+        render: (record: any) => {
           const part = record.sub_part_detail;
+
           const extra = [];
 
-          if (record.part != partId) {
+          if (partId && record.part != partId) {
             extra.push(
-              <Text key='different-parent'>{t`This BOM item is defined for a different parent`}</Text>
+              <Text
+                key='different-parent'
+                size='sm'
+              >{t`This BOM item is defined for a different parent`}</Text>
             );
           }
+
+          if (!record.validated) {
+            extra.push(
+              <Text key='not-validated' c='red' size='sm'>
+                {t`This BOM item has not been validated`}
+              </Text>
+            );
+          }
+
+          const assembly: boolean = record.sub_part_detail?.assembly ?? false;
 
           return (
             part && (
               <TableHoverCard
                 value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
+                  <Group gap='xs' justify='left'>
+                    {assembly && !isEditing && allowExpansion && (
+                      <RowExpansionIcon
+                        enabled
+                        expanded={table.isRowExpanded(record.pk)}
+                      />
+                    )}
+                    <RenderPartColumn part={part} />
+                  </Group>
                 }
+                iconColor={record.validated ? undefined : 'red'}
                 extra={extra}
                 title={t`Part Information`}
               />
@@ -115,13 +148,23 @@ export function BomTable({
           );
         }
       },
-      {
-        accessor: 'sub_part_detail.IPN',
-        title: t`IPN`,
-        sortable: true
-      },
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
+      }),
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
+      }),
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
       }),
       ReferenceColumn({
         switchable: true
@@ -135,17 +178,77 @@ export function BomTable({
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between' grow>
-              <Text>{quantity}</Text>
-              {record.overage && <Text size='xs'>+{record.overage}</Text>}
-              {units && <Text size='xs'>{units}</Text>}
+            <Group justify='space-between'>
+              <Group gap='xs'>
+                <Text>{quantity}</Text>
+                {record.setup_quantity && record.setup_quantity > 0 && (
+                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                )}
+                {record.attrition && record.attrition > 0 && (
+                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
+                )}
+              </Group>
+              {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
       },
       {
+        accessor: 'setup_quantity',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const setup_quantity = record.setup_quantity;
+          const units = record.sub_part_detail?.units;
+          if (setup_quantity == null || setup_quantity === 0) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text size='xs'>{formatDecimal(setup_quantity)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
+        accessor: 'attrition',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const attrition = record.attrition;
+          if (attrition == null || attrition === 0) {
+            return '-';
+          } else {
+            return <Text size='xs'>{`${formatDecimal(attrition)}%`}</Text>;
+          }
+        }
+      },
+      {
+        accessor: 'rounding_multiple',
+        defaultVisible: false,
+        sortable: false,
+        render: (record: any) => {
+          const units = record.sub_part_detail?.units;
+          const multiple: number | null = record.round_up_multiple;
+
+          if (multiple == null) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text>{formatDecimal(multiple)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
-        render: (row) => {
+        defaultVisible: false,
+        render: (row: any) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
@@ -162,21 +265,24 @@ export function BomTable({
         }
       },
       BooleanColumn({
-        accessor: 'optional'
+        accessor: 'optional',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'consumable'
+        accessor: 'consumable',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'allow_variants'
+        accessor: 'allow_variants',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'inherited'
-        // TODO: Custom renderer for this column
-        // TODO: See bom.js for existing implementation
+        accessor: 'inherited',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'validated'
+        accessor: 'validated',
+        defaultVisible: false
       }),
       {
         accessor: 'price_range',
@@ -184,6 +290,7 @@ export function BomTable({
         ordering: 'pricing_max',
         sortable: true,
         switchable: true,
+        defaultVisible: false,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
       },
@@ -199,24 +306,30 @@ export function BomTable({
       {
         accessor: 'available_stock',
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const extra: ReactNode[] = [];
+
+          const part = record.sub_part_detail;
 
           const available_stock: number = availableStockQuantity(record);
           const on_order: number = record?.on_order ?? 0;
           const building: number = record?.building ?? 0;
 
+          if (part?.virtual) {
+            return <Text fs='italic'>{t`Virtual part`}</Text>;
+          }
+
           const text =
             available_stock <= 0 ? (
               <Text c='red' style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
-              available_stock
+              `${formatDecimal(available_stock)}`
             );
 
           if (record.external_stock > 0) {
             extra.push(
               <Text key='external'>
-                {t`External stock`}: {record.external_stock}
+                {t`External stock`}: {formatDecimal(record.external_stock)}
               </Text>
             );
           }
@@ -225,7 +338,7 @@ export function BomTable({
             extra.push(
               <Text key='substitute'>
                 {t`Includes substitute stock`}:{' '}
-                {record.available_substitute_stock}
+                {formatDecimal(record.available_substitute_stock)}
               </Text>
             );
           }
@@ -233,7 +346,8 @@ export function BomTable({
           if (record.allow_variants && record.available_variant_stock > 0) {
             extra.push(
               <Text key='variant'>
-                {t`Includes variant stock`}: {record.available_variant_stock}
+                {t`Includes variant stock`}:{' '}
+                {formatDecimal(record.available_variant_stock)}
               </Text>
             );
           }
@@ -241,7 +355,7 @@ export function BomTable({
           if (on_order > 0) {
             extra.push(
               <Text key='on_order'>
-                {t`On order`}: {on_order}
+                {t`On order`}: {formatDecimal(on_order)}
               </Text>
             );
           }
@@ -249,7 +363,7 @@ export function BomTable({
           if (building > 0) {
             extra.push(
               <Text key='building'>
-                {t`Building`}: {building}
+                {t`Building`}: {formatDecimal(building)}
               </Text>
             );
           }
@@ -268,10 +382,17 @@ export function BomTable({
         title: t`Can Build`,
         sortable: true,
         render: (record: any) => {
+          // Virtual sub-part - the "can build" quantity does not make sense here
+          if (record.sub_part_detail?.virtual) {
+            return '-';
+          }
+
+          // No information available
           if (record.can_build === null || record.can_build === undefined) {
             return '-';
           }
 
+          // NaN or infinite values
           if (
             !Number.isFinite(record.can_build) ||
             Number.isNaN(record.can_build)
@@ -279,13 +400,14 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.trunc(record.can_build);
+          const can_build = Math.max(0, Math.trunc(record.can_build));
+
           const value = (
             <Text
               fs={record.consumable && 'italic'}
               c={can_build <= 0 && !record.consumable ? 'red' : undefined}
             >
-              {can_build}
+              {formatDecimal(can_build)}
             </Text>
           );
 
@@ -306,7 +428,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [table.isRowExpanded, isEditing, partId, params, userSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -321,9 +443,19 @@ export function BomTable({
         description: t`Show trackable items`
       },
       {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
+      },
+      {
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
         description: t`Show assembled items`
+      },
+      {
+        name: 'sub_part_virtual',
+        label: t`Virtual Part`,
+        description: t`Show virtual items`
       },
       {
         name: 'available_stock',
@@ -364,17 +496,17 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 
   const [selectedBomItem, setSelectedBomItem] = useState<any>({});
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = 'bomitem';
+    const fields = dataImporterSessionFields({
+      modelType: 'bomitem'
+    });
 
     fields.field_overrides.value = {
       part: partId
@@ -388,15 +520,16 @@ export function BomTable({
     title: t`Import BOM Data`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     initialData: {
       part: partId
     },
@@ -408,7 +541,7 @@ export function BomTable({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
     title: t`Edit BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     successMessage: t`BOM item updated`,
     table: table
   });
@@ -421,32 +554,12 @@ export function BomTable({
     table: table
   });
 
-  const editSubstitues = useEditBomSubstitutesForm({
+  const editSubstitutes = useEditBomSubstitutesForm({
     bomItemId: selectedBomItem.pk,
-    substitutes: selectedBomItem?.substitutes ?? [],
+    bomItem: selectedBomItem,
     onClose: () => {
       table.refreshTable();
     }
-  });
-
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: t`BOM validated`,
-    onFormSuccess: () => table.refreshTable()
   });
 
   const validateBomItem = useCallback((record: any) => {
@@ -494,12 +607,14 @@ export function BomTable({
           hidden:
             partLocked ||
             record.validated ||
-            !user.hasChangeRole(UserRoles.part),
+            !user.hasChangeRole(UserRoles.bom),
           icon: <IconCircleCheck />,
-          onClick: () => validateBomItem(record)
+          onClick: () => {
+            validateBomItem(record);
+          }
         },
         RowEditAction({
-          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -508,15 +623,15 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasAddRole(UserRoles.part),
+          hidden: partLocked || !user.hasAddRole(UserRoles.bom),
           icon: <IconSwitch3 />,
           onClick: () => {
             setSelectedBomItem(record);
-            editSubstitues.open();
+            editSubstitutes.open();
           }
         },
         RowDeleteAction({
-          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
+          hidden: partLocked || !user.hasDeleteRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             deleteBomItem.open();
@@ -524,42 +639,65 @@ export function BomTable({
         })
       ];
     },
-    [partId, partLocked, user]
+    [isEditing, partId, partLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-bom'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Import BOM Data`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importBomItem.open()}
+      <ActionDropdown
+        key='add-bom-actions'
+        tooltip={t`Add BOM Items`}
+        position='bottom-start'
+        icon={<IconPlus />}
+        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.bom)}
+        actions={[
+          {
+            name: t`Add BOM Item`,
+            icon: <IconPlus />,
+            tooltip: t`Add a single BOM item`,
+            onClick: () => newBomItem.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import BOM items from a file`,
+            onClick: () => importBomItem.open()
+          }
+        ]}
       />,
       <ActionButton
-        key='validate-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
-        tooltip={t`Validate BOM`}
+        key='edit-bom'
+        hidden={partLocked || !user.hasChangeRole(UserRoles.bom) || isEditing}
+        tooltip={t`Edit BOM`}
+        icon={<IconEdit />}
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      />,
+      <ActionButton
+        key='finish-editing'
+        hidden={!isEditing}
+        color='green'
+        tooltip={t`Finish Editing BOM`}
         icon={<IconCircleCheck />}
-        onClick={() => validateBom.open()}
-      />,
-      <AddItemButton
-        key='add-bom-item'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add BOM Item`}
-        onClick={() => newBomItem.open()}
+        onClick={() => {
+          setIsEditing(false);
+          table.refreshTable();
+        }}
       />
     ];
-  }, [partLocked, user]);
+  }, [isEditing, partLocked, user]);
+
+  // Row expansion (for displaying subassemblies)
+  const rowExpansion = subassemblyRowExpansion({ table: table });
 
   return (
     <>
       {importBomItem.modal}
       {newBomItem.modal}
       {editBomItem.modal}
-      {validateBom.modal}
       {deleteBomItem.modal}
-      {editSubstitues.modal}
+      {editSubstitutes.modal}
       <Stack gap='xs'>
         {partLocked && (
           <Alert
@@ -576,32 +714,30 @@ export function BomTable({
           tableState={table}
           columns={tableColumns}
           props={{
+            minHeight: 400,
             params: {
               ...params,
               part: partId,
+              pricing: true,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,
             modelType: ModelType.part,
             modelField: 'sub_part',
-            rowActions: rowActions,
-            enableSelection: !partLocked,
-            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true
+            onCellClick: () => {},
+            rowActions: isEditing ? rowActions : undefined,
+            enableSelection: isEditing && !partLocked,
+            enableBulkDelete:
+              isEditing && !partLocked && user.hasDeleteRole(UserRoles.bom),
+            enableDownload: true,
+            rowExpansion: isEditing ? undefined : rowExpansion
           }}
         />
       </Stack>
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
-        }}
-      />
     </>
   );
 }

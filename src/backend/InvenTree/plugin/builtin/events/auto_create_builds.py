@@ -29,7 +29,7 @@ class AutoCreateBuildsPlugin(EventMixin, InvenTreePlugin):
     SLUG = 'autocreatebuilds'
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Automatically create build orders for assemblies')
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
 
     def wants_process_event(self, event) -> bool:
         """Return whether given event should be processed or not."""
@@ -93,6 +93,7 @@ class AutoCreateBuildsPlugin(EventMixin, InvenTreePlugin):
             Build.objects.create(
                 part=subassembly,
                 parent=build,
+                title=f'Generated child build for {build.reference}',
                 project_code=build.project_code,
                 quantity=required_quantity,
                 responsible=build.responsible,

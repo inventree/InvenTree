@@ -15,7 +15,7 @@ class MailPluginSampleTests(TestCase):
 
     def activate_plugin(self):
         """Activate the sample mail plugin."""
-        config = registry.get_plugin('samplemail').plugin_config()
+        config = registry.get_plugin('samplemail', active=None).plugin_config()
         config.active = True
         config.save()
 

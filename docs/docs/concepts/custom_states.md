@@ -10,6 +10,10 @@ States can be added in the [Admin Center](../settings/admin.md#admin-center) und
 
 States need to be assigned to a model, state (for example status on a StockItem) and a logical key - that will be used for business logic. These 3 values combined need to be unique throughout the system.
 
-Custom states can be used in the following models:
-- StockItem
-- Orders (PurchaseOrder, SalesOrder, ReturnOrder, ReturnOrderLine)
+Custom states can be defined for the following models:
+
+- [Stock Item](../stock/index.md)
+- [Build Order](../manufacturing/build.md)
+- [Purchase Order](../purchasing/purchase_order.md)
+- [Sales Order](../sales/sales_order.md)
+- [Return Order](../sales/return_order.md)

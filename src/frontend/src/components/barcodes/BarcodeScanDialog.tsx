@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -11,13 +12,17 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { extractErrorMessage } from '../../functions/api';
 import { useUserState } from '../../states/UserState';
-import { StylishText } from '../items/StylishText';
 import { BarcodeInput } from './BarcodeInput';
 
 export type BarcodeScanResult = {
   success?: string;
   error?: string;
 };
+
+export type BarcodeScanSuccessCallback = (
+  barcode: string,
+  response: any
+) => void;
 
 // Callback function for handling a barcode scan
 // This function should return true if the barcode was handled successfully
@@ -31,13 +36,15 @@ export default function BarcodeScanDialog({
   opened,
   callback,
   modelType,
-  onClose
+  onClose,
+  onScanSuccess
 }: Readonly<{
   title?: string;
   opened: boolean;
   modelType?: ModelType;
   callback?: BarcodeScanCallback;
   onClose: () => void;
+  onScanSuccess?: BarcodeScanSuccessCallback;
 }>) {
   const navigate = useNavigate();
 
@@ -53,6 +60,7 @@ export default function BarcodeScanDialog({
         <ScanInputHandler
           navigate={navigate}
           onClose={onClose}
+          onScanSuccess={onScanSuccess}
           modelType={modelType}
           callback={callback}
         />
@@ -65,10 +73,12 @@ export function ScanInputHandler({
   callback,
   modelType,
   onClose,
+  onScanSuccess,
   navigate
 }: Readonly<{
   callback?: BarcodeScanCallback;
   onClose: () => void;
+  onScanSuccess?: BarcodeScanSuccessCallback;
   modelType?: ModelType;
   navigate: NavigateFunction;
 }>) {
@@ -94,7 +104,13 @@ export function ScanInputHandler({
               data[model_type]['pk']
             );
             onClose();
-            navigate(url);
+
+            if (onScanSuccess) {
+              onScanSuccess(data['barcode'], data);
+            } else {
+              navigate(url);
+            }
+
             match = true;
             break;
           }

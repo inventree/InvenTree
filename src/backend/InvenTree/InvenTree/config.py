@@ -7,7 +7,9 @@ import os
 import random
 import shutil
 import string
+import sys
 from pathlib import Path
+from typing import Any, Optional
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -68,6 +70,64 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
+def get_root_dir() -> Path:
+    """Returns the InvenTree root directory."""
+    return get_base_dir().parent.parent.parent
+
+
+def inventreeInstaller() -> Optional[str]:
+    """Returns the installer for the running codebase - if set or detectable."""
+    load_version_file()
+
+    # First look in the environment variables, e.g. if running in docker
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return str(installer)
+
+    if is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False')):
+        return 'DEV'
+
+    if is_true(os.environ.get('INVENTREE_DOCKER', 'False')):
+        return 'DOC'
+
+    try:
+        from django.conf import settings
+
+        from InvenTree.version import main_commit
+
+        if settings.DOCKER:
+            return 'DOC'
+        elif main_commit is not None:
+            return 'GIT'
+    except Exception:
+        pass
+    return None
+
+
+def get_config_dir() -> Path:
+    """Returns the InvenTree configuration directory depending on the install type."""
+    if inst := inventreeInstaller():
+        if inst == 'DOC':
+            return Path('/home/inventree/data/').resolve()
+        elif inst == 'DEV':
+            return Path('/home/inventree/dev/').resolve()
+        elif inst == 'PKG':
+            return Path('/etc/inventree/').resolve()
+
+    return get_root_dir().joinpath('config').resolve()
+
+
+def get_testfolder_dir() -> Path:
+    """Returns the InvenTree test folder directory."""
+    return get_base_dir().joinpath('_testfolder').resolve()
+
+
+def get_version_file() -> Path:
+    """Returns the path of the InvenTree VERSION file. This does not ensure that the file exists."""
+    return get_root_dir().joinpath('VERSION').resolve()
+
+
 def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
@@ -90,15 +150,19 @@ def get_config_file(create=True) -> Path:
 
     Note: It will be created it if does not already exist!
     """
+    conf_dir = get_config_dir()
     base_dir = get_base_dir()
 
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
     if cfg_filename:
         cfg_filename = Path(cfg_filename.strip()).resolve()
+    elif get_base_dir().joinpath('config.yaml').exists():
+        # If the config file is in the old directory, use that
+        cfg_filename = base_dir.joinpath('config.yaml').resolve()
     else:
         # Config file is *not* specified - use the default
-        cfg_filename = base_dir.joinpath('config.yaml').resolve()
+        cfg_filename = conf_dir.joinpath('config.yaml').resolve()
 
     if not cfg_filename.exists() and create:
         print(
@@ -110,10 +174,11 @@ def get_config_file(create=True) -> Path:
         shutil.copyfile(cfg_template, cfg_filename)
         print(f'Created config file {cfg_filename}')
 
+    check_config_dir('INVENTREE_CONFIG_FILE', cfg_filename, conf_dir)
     return cfg_filename
 
 
-def load_config_data(set_cache: bool = False) -> map:
+def load_config_data(set_cache: bool = False) -> map | None:
     """Load configuration data from the config file.
 
     Arguments:
@@ -126,12 +191,20 @@ def load_config_data(set_cache: bool = False) -> map:
     if CONFIG_DATA is not None and not set_cache:
         return CONFIG_DATA
 
-    import yaml
+    import yaml.parser
 
     cfg_file = get_config_file()
 
     with open(cfg_file, encoding='utf-8') as cfg:
-        data = yaml.safe_load(cfg)
+        try:
+            data = yaml.safe_load(cfg)
+        except yaml.parser.ParserError as error:
+            logger.error(
+                "INVE-E13: Error reading InvenTree configuration file '%s': %s",
+                cfg_file,
+                error,
+            )
+            sys.exit(1)
 
     # Set the cache if requested
     if set_cache:
@@ -159,6 +232,11 @@ def do_typecast(value, type, var_name=None):
     elif type is dict:
         value = to_dict(value)
 
+    # Special handling for boolean typecasting
+    elif type is bool:
+        val = is_true(value)
+        return val
+
     elif type is not None:
         # Try to typecast the value
         try:
@@ -174,6 +252,24 @@ def do_typecast(value, type, var_name=None):
                     error,
                 )
     return value
+
+
+def get_config_value(config_key: str) -> Optional[Any]:
+    """Helper function to retrieve a configuration value from the config file."""
+    cfg_data = load_config_data()
+
+    result = None
+
+    # Hack to allow 'path traversal' in configuration file
+    for key in config_key.strip().split('.'):
+        if type(cfg_data) is not dict or key not in cfg_data:
+            result = None
+            break
+
+        result = cfg_data[key]
+        cfg_data = cfg_data[key]
+
+    return result
 
 
 def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
@@ -192,10 +288,13 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
     def set_metadata(source: str):
         """Set lookup metadata for the setting."""
+        global CONFIG_LOOKUPS
+
         key = env_var or config_key
         CONFIG_LOOKUPS[key] = {
             'env_var': env_var,
             'config_key': config_key,
+            'default_value': default_value,
             'source': source,
             'accessed': datetime.datetime.now(),
         }
@@ -210,18 +309,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
     # Next, try to load from configuration file
     if config_key is not None:
-        cfg_data = load_config_data()
-
-        result = None
-
-        # Hack to allow 'path traversal' in configuration file
-        for key in config_key.strip().split('.'):
-            if type(cfg_data) is not dict or key not in cfg_data:
-                result = None
-                break
-
-            result = cfg_data[key]
-            cfg_data = cfg_data[key]
+        result = get_config_value(config_key)
 
         if result is not None:
             set_metadata('yaml')
@@ -291,7 +379,7 @@ def get_backup_dir(create=True, error=True):
     return bd
 
 
-def get_plugin_file():
+def get_plugin_file() -> Path:
     """Returns the path of the InvenTree plugins specification file.
 
     Note: It will be created if it does not already exist!
@@ -319,6 +407,7 @@ def get_plugin_file():
             '# InvenTree Plugins (uses PIP framework to install)\n\n'
         )
 
+    check_config_dir('INVENTREE_PLUGIN_FILE', plugin_file)
     return plugin_file
 
 
@@ -327,7 +416,7 @@ def get_plugin_dir():
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
-def get_secret_key():
+def get_secret_key(return_path: bool = False) -> str | Path:
     """Return the secret key value which will be used by django.
 
     Following options are tested, in descending order of preference:
@@ -336,18 +425,24 @@ def get_secret_key():
     B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
     C) Look for default key file "secret_key.txt"
     D) Create "secret_key.txt" if it does not exist
+
+    Args:
+        return_path (bool): If True, return the path to the secret key file instead of the key data.
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
         logger.info('SECRET_KEY loaded by INVENTREE_SECRET_KEY')  # pragma: no cover
-        return secret_key
+        return str(secret_key)
 
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
+    elif get_base_dir().joinpath('secret_key.txt').exists():
+        secret_key_file = get_base_dir().joinpath('secret_key.txt')
     else:
         # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath('secret_key.txt').resolve()
+        secret_key_file = get_config_dir().joinpath('secret_key.txt').resolve()
+    check_config_dir('INVENTREE_SECRET_KEY_FILE', secret_key_file)
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
@@ -358,14 +453,14 @@ def get_secret_key():
         key = ''.join([random.choice(options) for _idx in range(100)])
         secret_key_file.write_text(key)
 
+    if return_path:
+        return secret_key_file
+
     logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)
-
-    key_data = secret_key_file.read_text().strip()
-
-    return key_data
+    return secret_key_file.read_text().strip()
 
 
-def get_oidc_private_key():
+def get_oidc_private_key(return_path: bool = False) -> str | Path:
     """Return the private key for OIDC authentication.
 
     Following options are tested, in descending order of preference:
@@ -383,11 +478,19 @@ def get_oidc_private_key():
         get_setting(
             'INVENTREE_OIDC_PRIVATE_KEY_FILE',
             'oidc_private_key_file',
-            get_base_dir().joinpath('oidc.pem'),
+            get_config_dir().joinpath('oidc.pem'),
         )
     )
+
+    # Trying old default location
+    if not key_loc.exists():
+        old_def_path = get_base_dir().joinpath('oidc.pem')
+        if old_def_path.exists():
+            key_loc = old_def_path.resolve()
+
+    check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
-        return key_loc.read_text()
+        return key_loc.read_text() if not return_path else key_loc
     else:
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
@@ -407,8 +510,7 @@ def get_oidc_private_key():
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )
-        RSA_KEY = key_loc.read_text()
-    return RSA_KEY
+        return key_loc.read_text() if not return_path else key_loc
 
 
 def get_custom_file(
@@ -452,13 +554,14 @@ def get_frontend_settings(debug=True):
         'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
     )
 
+    base_url = get_setting(
+        'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web', typecast=str
+    )
+
     # Set the base URL for the user interface
     # This is the UI path e.g. '/web/'
     if 'base_url' not in frontend_settings:
-        frontend_settings['base_url'] = (
-            get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'web')
-            or 'web'
-        )
+        frontend_settings['base_url'] = base_url
 
     # If provided, specify the API host
     api_host = frontend_settings.get('api_host', None) or get_setting(
@@ -494,3 +597,54 @@ def get_frontend_settings(debug=True):
         frontend_settings['url_compatibility'] = True
 
     return frontend_settings
+
+
+def check_config_dir(
+    setting_name: str, current_path: Path, config_dir: Optional[Path] = None
+) -> None:
+    """Warn if the config directory is not used."""
+    if not config_dir:
+        config_dir = get_config_dir()
+
+    if not current_path.is_relative_to(config_dir):
+        logger.warning(
+            "INVE-W10 - Config for '%s' not in recommended directory '%s'.",
+            setting_name,
+            config_dir,
+        )
+
+        try:
+            from common.settings import GlobalWarningCode, set_global_warning
+
+            set_global_warning(
+                GlobalWarningCode.UNCOMMON_CONFIG, {'path': str(config_dir)}
+            )
+        except ModuleNotFoundError:  # pragma: no cover
+            pass
+
+    return
+
+
+VERSION_LOADED = False
+"""Flag to indicate if the VERSION file has been loaded in this process."""
+
+
+def load_version_file():
+    """Load the VERSION file if it exists and place the contents into the general execution environment.
+
+    Returns:
+        True if the VERSION file was loaded (now or previously), False otherwise.
+    """
+    global VERSION_LOADED
+    if VERSION_LOADED:
+        return True
+
+    # Load the VERSION file if it exists
+    from dotenv import load_dotenv
+
+    version_file = get_version_file()
+    if version_file.exists():
+        load_dotenv(version_file)
+        VERSION_LOADED = True
+        return True
+    return False

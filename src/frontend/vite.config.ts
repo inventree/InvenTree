@@ -3,7 +3,7 @@ import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
 import { __INVENTREE_VERSION_INFO__ } from './version-info';
@@ -13,7 +13,7 @@ import { __INVENTREE_VERSION_INFO__ } from './version-info';
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
 if (IS_IN_WSL) {
-  console.log('WSL detected: using polling for file system events');
+  console.debug('WSL detected: using polling for file system events');
 }
 
 // Output directory for the built files
@@ -21,6 +21,9 @@ const OUTPUT_DIR = '../../src/backend/InvenTree/web/static/web';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
+  // In 'build' mode, we want to use an empty base URL (for static file generation)
+  const baseUrl: string | undefined = command === 'build' ? '' : undefined;
+
   return {
     plugins: [
       react({
@@ -29,7 +32,6 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       vanillaExtractPlugin(),
-      splitVendorChunkPlugin(),
       license({
         sourcemap: true,
         thirdParty: {
@@ -57,7 +59,7 @@ export default defineConfig(({ command, mode }) => {
     ],
     // When building, set the base path to an empty string
     // This is required to ensure that the static path prefix is observed
-    base: command == 'build' ? '' : undefined,
+    base: baseUrl,
     build: {
       manifest: true,
       outDir: OUTPUT_DIR,

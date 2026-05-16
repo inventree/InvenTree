@@ -1,7 +1,6 @@
 """Plugin mixin class for UrlsMixin."""
 
 from django.conf import settings
-from django.urls import include, re_path
 
 import structlog
 
@@ -72,12 +71,8 @@ class UrlsMixin:
 
     @property
     def urlpatterns(self):
-        """Urlpatterns for this plugin."""
-        if self.has_urls:
-            return re_path(
-                f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug
-            )
-        return None
+        """URL patterns for this plugin."""
+        return self.urls or None
 
     @property
     def has_urls(self):

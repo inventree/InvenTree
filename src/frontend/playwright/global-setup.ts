@@ -1,7 +1,14 @@
-import { type FullConfig, chromium } from '@playwright/test';
+import { type FullConfig, chromium, request } from '@playwright/test';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  adminuser,
+  allaccessuser,
+  apiUrl,
+  readeruser,
+  stevenuser
+} from '../tests/defaults';
 import { doCachedLogin } from '../tests/login';
 
 async function globalSetup(config: FullConfig) {
@@ -18,27 +25,49 @@ async function globalSetup(config: FullConfig) {
     });
   }
 
-  // Perform login for each user
-  const browser = await chromium.launch();
+  const baseUrl = config.projects[0].use?.baseURL || 'http://localhost:5173';
+  const apiContext = await request.newContext();
 
-  await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+  let tries = 100;
+  let success = false;
+
+  // Wait for the web server to actually be started
+  while (tries--) {
+    // Perform GET request to the API URL
+    const response = await apiContext
+      .get(apiUrl, { timeout: 5000 })
+      .catch(() => {});
+
+    if (!!response && response?.ok() && response?.status() === 200) {
+      success = true;
+      break;
+    }
+    console.log(`... waiting for API to be available at ${apiUrl}`);
+  }
+
+  if (!success) {
+    throw new Error(`Failed to connect to API at ${apiUrl} after 100 attempts`);
+  }
+
+  // Perform login for each user (each in a separate browser instance)
+  await doCachedLogin(await chromium.launch(), {
+    user: adminuser,
+    baseUrl: baseUrl
   });
 
-  await doCachedLogin(browser, {
-    username: 'allaccess',
-    password: 'nolimits'
+  await doCachedLogin(await chromium.launch(), {
+    user: allaccessuser,
+    baseUrl: baseUrl
   });
 
-  await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly'
+  await doCachedLogin(await chromium.launch(), {
+    user: readeruser,
+    baseUrl: baseUrl
   });
 
-  await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff'
+  await doCachedLogin(await chromium.launch(), {
+    user: stevenuser,
+    baseUrl: baseUrl
   });
 }
 

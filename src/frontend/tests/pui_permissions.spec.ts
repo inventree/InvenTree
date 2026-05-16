@@ -3,20 +3,24 @@
  */
 
 import test from '@playwright/test';
-import { loadTab } from './helpers';
+import { adminuser, readeruser } from './defaults';
+import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
 
 /**
  * Test the "admin" account
  * - This is a superuser account, so should have *all* permissions available
  */
-test('Permissions - Admin', async ({ browser, request }) => {
+test('Permissions - Admin', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: '/settings/admin/'
   });
+
+  // Check for superuser banner
+  await page.getByText('Superuser Mode').waitFor();
+  await page.getByText('The current user has elevated').waitFor();
 
   // Check for expected tabs
   await loadTab(page, 'Machines');
@@ -29,27 +33,24 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Change password
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Change Password' }).click();
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Change Password' }).click();
   await page.getByLabel('text-field-password').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText("['This password is too short").waitFor();
   await page
-    .locator('label')
-    .filter({ hasText: 'Override warning' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-override_warning' })
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Password updated').click();
 
   // Open profile
-  await page.getByRole('cell', { name: 'Ian', exact: true }).click({
-    button: 'right'
-  });
-  await page.getByRole('button', { name: 'Open Profile' }).click();
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Open Profile' }).click();
   await page.getByText('User: ian', { exact: true }).click();
 });
 
@@ -57,15 +58,13 @@ test('Permissions - Admin', async ({ browser, request }) => {
  * Test the "reader" account
  * - This account is read-only, but should be able to access *most* pages
  */
-test('Permissions - Reader', async ({ browser, request }) => {
+test('Permissions - Reader', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly',
+    user: readeruser,
     url: '/part/category/index/'
   });
 
-  await loadTab(page, 'Category Details');
   await loadTab(page, 'Parts');
 
   // Navigate to a specific part
@@ -103,7 +102,7 @@ test('Permissions - Reader', async ({ browser, request }) => {
 
   // Go to the user profile page
   await page.getByRole('button', { name: 'Ronald Reader' }).click();
-  await page.getByRole('menuitem', { name: 'Account Settings' }).click();
+  await page.getByRole('menuitem', { name: 'User Settings' }).click();
 
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Display Options');

@@ -13,6 +13,8 @@ class BuildEvents(BaseEventEnum):
     COMPLETED = 'build.completed'
     OVERDUE = 'build.overdue_build_order'
 
+    STOCK_REQUIRED = 'build.stock_required'
+
     # Build output events
     OUTPUT_CREATED = 'buildoutput.created'
     OUTPUT_COMPLETED = 'buildoutput.completed'

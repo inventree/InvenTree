@@ -16,9 +16,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
         super().setUp()
 
         # Activate plugin
-        config = registry.get_plugin('samplelocate').plugin_config()
-        config.active = True
-        config.save()
+        registry.set_plugin_state('samplelocate', True)
 
     fixtures = ['category', 'part', 'location', 'stock']
 

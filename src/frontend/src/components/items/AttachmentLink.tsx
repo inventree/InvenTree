@@ -6,6 +6,7 @@ import {
   IconFileTypePdf,
   IconFileTypeXls,
   IconFileTypeZip,
+  IconFileUnknown,
   IconLink,
   IconPhoto
 } from '@tabler/icons-react';
@@ -17,6 +18,11 @@ import { generateUrl } from '../../functions/urls';
  */
 export function attachmentIcon(attachment: string): ReactNode {
   const sz = 18;
+
+  if (!attachment) {
+    return <IconFileUnknown size={sz} />;
+  }
+
   const suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
   switch (suffix) {
     case 'pdf':
@@ -58,8 +64,6 @@ export function AttachmentLink({
   attachment: string;
   external?: boolean;
 }>): ReactNode {
-  const text = external ? attachment : attachment.split('/').pop();
-
   const url = useMemo(() => {
     if (external) {
       return attachment;
@@ -68,12 +72,24 @@ export function AttachmentLink({
     return generateUrl(attachment);
   }, [attachment, external]);
 
+  const text: string = useMemo(() => {
+    if (!attachment) {
+      return '-';
+    }
+
+    return external ? attachment : (attachment.split('/').pop() ?? '-');
+  }, [attachment, external]);
+
   return (
     <Group justify='left' gap='sm' wrap='nowrap'>
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={url} target='_blank' rel='noopener noreferrer'>
-        {text}
-      </Anchor>
+      {!!attachment ? (
+        <Anchor href={url} target='_blank' rel='noopener noreferrer'>
+          {text}
+        </Anchor>
+      ) : (
+        text
+      )}
     </Group>
   );
 }

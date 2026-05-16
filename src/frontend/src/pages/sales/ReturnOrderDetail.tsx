@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -25,13 +26,14 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
+import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
@@ -41,7 +43,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
@@ -59,8 +61,7 @@ export default function ReturnOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.return_order_list,
     pk: id,
@@ -68,6 +69,25 @@ export default function ReturnOrderDetail() {
       customer_detail: true
     }
   });
+
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
+  const orderOpen = useMemo(() => {
+    return (
+      order.status == roStatus.PENDING ||
+      order.status == roStatus.PLACED ||
+      order.status == roStatus.IN_PROGRESS ||
+      order.status == roStatus.ON_HOLD
+    );
+  }, [order, roStatus]);
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [orderOpen, globalSettings]);
 
   const orderCurrency = useMemo(() => {
     return (
@@ -172,6 +192,18 @@ export default function ReturnOrderDetail() {
       },
       {
         type: 'text',
+        name: 'address',
+        label: t`Return Address`,
+        icon: 'address',
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
+      },
+      {
+        type: 'text',
         name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
@@ -250,6 +282,15 @@ export default function ReturnOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
+      },
+      {
+        type: 'date',
+        name: 'updated_at',
+        label: t`Last Updated`,
+        icon: 'calendar',
+        copy: true,
+        showTime: true,
+        hidden: !order.updated_at
       }
     ];
 
@@ -300,6 +341,7 @@ export default function ReturnOrderDetail() {
                   order={order}
                   orderDetailRefresh={refreshInstance}
                   customerId={order.customer}
+                  editable={lineItemsEditable}
                   currency={orderCurrency}
                 />
               </Accordion.Panel>
@@ -314,6 +356,7 @@ export default function ReturnOrderDetail() {
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
+                  editable={lineItemsEditable}
                   role={UserRoles.return_order}
                 />
               </Accordion.Panel>
@@ -321,13 +364,18 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
+      ParametersPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.returnorder,
         model_id: order.pk
       }),
       NotesPanel({
         model_type: ModelType.returnorder,
-        model_id: order.pk
+        model_id: order.pk,
+        has_note: !!order.notes
       })
     ];
   }, [order, id, user]);
@@ -410,8 +458,6 @@ export default function ReturnOrderDetail() {
     successMessage: t`Order completed`
   });
 
-  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
-
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
 
@@ -459,6 +505,7 @@ export default function ReturnOrderDetail() {
         modelType={ModelType.returnorder}
         items={[order.pk]}
         enableReports
+        enableLabels
       />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
@@ -488,7 +535,17 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, roStatus]);
+  }, [user, order, orderOpen, roStatus]);
+
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
 
   return (
     <>
@@ -499,14 +556,13 @@ export default function ReturnOrderDetail() {
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.return_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Return Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}

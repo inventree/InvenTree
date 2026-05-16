@@ -1,0 +1,6 @@
+ID,Name,Description,Default Location,Default keywords,Level,Parent Category,Parts,Subcategories,Path,Starred,Structural,Icon,Parent default location
+23,Category 0,"Part category, level 1",,,0,,0,5,Category 0,False,False,,
+1,Electronics,Electronic components and systems,,,0,,135,12,Electronics,False,False,,
+17,Furniture,Furniture and associated things,,,0,,22,2,Furniture,False,False,,
+2,Mechanical,Mechanical components,,,0,,263,3,Mechanical,False,False,,
+20,Paint,"Paints, inks, etc",,,0,,5,0,Paint,False,False,,

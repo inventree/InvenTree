@@ -1,16 +1,20 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
 import io
+import ipaddress
+import socket
 from decimal import Decimal
 from typing import Optional, cast
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import requests.exceptions
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -22,7 +26,13 @@ from common.notifications import (
     trigger_notification,
 )
 from common.settings import get_global_setting
+from InvenTree.cache import (
+    get_cached_content_types,
+    get_session_cache,
+    set_session_cache,
+)
 from InvenTree.format import format_money
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 
@@ -80,6 +90,36 @@ def construct_absolute_url(*arg, base_url=None, request=None):
     return urljoin(base_url, relative_url)
 
 
+def validate_url_no_ssrf(url):
+    """Validate that a URL does not point to a private/internal network address.
+
+    Resolves the hostname to an IP address and checks it against private,
+    loopback, link-local, and reserved IP ranges to prevent SSRF attacks.
+
+    Arguments:
+        url: The URL to validate
+
+    Raises:
+        ValueError: If the URL resolves to a private or reserved IP address
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+
+    if not hostname:
+        raise ValueError(_('Invalid URL: no hostname'))
+
+    try:
+        addrinfo = socket.getaddrinfo(hostname, None)
+    except socket.gaierror:
+        raise ValueError(_('Invalid URL: hostname could not be resolved'))
+
+    for _family, _type, _proto, _canonname, sockaddr in addrinfo:
+        ip = ipaddress.ip_address(sockaddr[0])
+
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+            raise ValueError(_('URL points to a private or reserved IP address'))
+
+
 def download_image_from_url(remote_url, timeout=2.5):
     """Download an image file from a remote URL.
 
@@ -107,6 +147,9 @@ def download_image_from_url(remote_url, timeout=2.5):
     validator = URLValidator()
     validator(remote_url)
 
+    # SSRF protection: validate the resolved IP is not private/internal
+    validate_url_no_ssrf(remote_url)
+
     # Calculate maximum allowable image size (in bytes)
     max_size = (
         int(get_global_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
@@ -121,10 +164,36 @@ def download_image_from_url(remote_url, timeout=2.5):
         response = requests.get(
             remote_url,
             timeout=timeout,
-            allow_redirects=True,
+            allow_redirects=False,
             stream=True,
             headers=headers,
         )
+
+        # Handle redirects manually to validate each destination
+        max_redirects = 5
+        redirect_count = 0
+
+        while response.is_redirect and redirect_count < max_redirects:
+            redirect_url = response.headers.get('Location')
+            if not redirect_url:
+                break
+
+            # Validate the redirect destination against SSRF
+            validator(redirect_url)
+            validate_url_no_ssrf(redirect_url)
+
+            redirect_count += 1
+            response = requests.get(
+                redirect_url,
+                timeout=timeout,
+                allow_redirects=False,
+                stream=True,
+                headers=headers,
+            )
+
+        if redirect_count >= max_redirects:
+            raise ValueError(_('Too many redirects'))
+
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
@@ -135,6 +204,8 @@ def download_image_from_url(remote_url, timeout=2.5):
         raise requests.exceptions.HTTPError(
             _('Server responded with invalid status code') + f': {response.status_code}'
         )
+    except ValueError:
+        raise
     except Exception as exc:
         raise Exception(_('Exception occurred') + f': {exc!s}')
 
@@ -183,6 +254,7 @@ def render_currency(
     money: Money,
     decimal_places: Optional[int] = None,
     currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
     min_decimal_places: Optional[int] = None,
     max_decimal_places: Optional[int] = None,
     include_symbol: bool = True,
@@ -193,6 +265,7 @@ def render_currency(
         money: The Money instance to be rendered
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
+        multiplier: An optional multiplier to apply to the money amount before rendering
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
@@ -201,7 +274,16 @@ def render_currency(
         return '-'
 
     if type(money) is not Money:
-        return '-'
+        # Try to convert to a Money object
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(
+                f"render_currency: {_('Invalid money value')}: '{money}' ({type(money).__name__})"
+            )
 
     if currency is not None:
         # Attempt to convert to the provided currency
@@ -210,6 +292,14 @@ def render_currency(
             money = convert_money(money, currency)
         except Exception:
             pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f"render_currency: {_('Invalid multiplier value')}: '{multiplier}' ({type(multiplier).__name__})"
+            )
 
     if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
@@ -239,6 +329,7 @@ def render_currency(
     )
 
 
+@ignore_ready_warning
 def getModelsWithMixin(mixin_class) -> list:
     """Return a list of database models that inherit from the given mixin class.
 
@@ -247,17 +338,25 @@ def getModelsWithMixin(mixin_class) -> list:
     Returns:
         List of models that inherit from the given mixin class
     """
-    from django.contrib.contenttypes.models import ContentType
+    # First, look in the session cache - to prevent repeated expensive comparisons
+    cache_key = f'models_with_mixin_{mixin_class.__name__}'
 
-    try:
-        db_models = [
-            x.model_class() for x in ContentType.objects.all() if x is not None
-        ]
-    except (OperationalError, ProgrammingError):
-        # Database is likely not yet ready
-        db_models = []
+    if cached_models := get_session_cache(cache_key):
+        return cached_models
 
-    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
+    content_types = get_cached_content_types()
+
+    db_models = [x.model_class() for x in content_types if x is not None]
+
+    models_with_mixin = [
+        x for x in db_models if x is not None and issubclass(x, mixin_class)
+    ]
+    # sort to make resulting list deterministic (and easier to test)
+    models_with_mixin.sort(key=lambda x: x._meta.label_lower)
+
+    # Store the result in the session cache
+    set_session_cache(cache_key, models_with_mixin)
+    return models_with_mixin
 
 
 def notify_responsible(
@@ -328,8 +427,9 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    if content.template:
-        context['template']['html'] = content.template.format(**content_context)
+    tmp = content.template
+    if tmp:
+        context['template']['html'] = tmp.format(**content_context)
 
     # Create notification
     trigger_notification(

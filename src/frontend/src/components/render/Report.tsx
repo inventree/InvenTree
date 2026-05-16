@@ -8,10 +8,7 @@ export function RenderReportTemplate({
   instance: any;
 }>): ReactNode {
   return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-    />
+    <RenderInlineModel primary={instance.name} suffix={instance.description} />
   );
 }
 
@@ -21,9 +18,6 @@ export function RenderLabelTemplate({
   instance: any;
 }>): ReactNode {
   return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-    />
+    <RenderInlineModel primary={instance.name} suffix={instance.description} />
   );
 }

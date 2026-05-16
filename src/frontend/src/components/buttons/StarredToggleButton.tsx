@@ -1,12 +1,12 @@
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconBell } from '@tabler/icons-react';
 import type { JSX } from 'react';
 import { useApi } from '../../contexts/ApiContext';
-import { ActionButton } from './ActionButton';
 
 export default function StarredToggleButton({
   instance,
@@ -31,9 +31,11 @@ export default function StarredToggleButton({
         { starred: !starred }
       )
       .then(() => {
+        hideNotification('subscription-update');
         showNotification({
-          title: 'Subscription updated',
-          message: `Subscription ${starred ? 'removed' : 'added'}`,
+          title: t`Subscription Updated`,
+          id: 'subscription-update',
+          message: starred ? t`Subscription removed` : t`Subscription added`,
           autoClose: 5000,
           color: 'blue'
         });
@@ -41,12 +43,16 @@ export default function StarredToggleButton({
       })
       .catch((error) => {
         showNotification({
-          title: 'Error',
+          title: t`Error`,
           message: error.message,
           autoClose: 5000,
           color: 'red'
         });
       });
+  }
+
+  if (!instance || !instance.pk) {
+    return <></>;
   }
 
   return (

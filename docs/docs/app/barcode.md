@@ -73,7 +73,7 @@ the *Scan Items Into Location* action allows you to scan items into the selected
 
 ### Stock Item Actions
 
-From the [Stock Item detail page](./stock.md#stock-item-detail-view), the following barcode actions may be available:
+From the [Stock Item detail page](./stock.md#details-tab), the following barcode actions may be available:
 
 {{ image("app/barcode_stock_item_actions.png", "Stock item barcode actions") }}
 

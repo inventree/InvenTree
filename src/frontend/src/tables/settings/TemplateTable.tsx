@@ -5,12 +5,21 @@ import { IconFileCode } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { identifierString } from '@lib/functions/Conversion';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
@@ -22,7 +31,6 @@ import type {
 } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   getPluginTemplateEditor,
   getPluginTemplatePreview
@@ -31,7 +39,7 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import { identifierString } from '../../functions/conversion';
+import { formatDate } from '../../defaults/formatters';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -40,12 +48,14 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  UserColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 export type TemplateI = {
   pk: number;
@@ -80,8 +90,7 @@ export function TemplateDrawer({
   } = useInstance<TemplateI>({
     endpoint: templateEndpoint,
     hasPrimaryKey: true,
-    pk: id,
-    throwError: true
+    pk: id
   });
 
   // Editors
@@ -204,11 +213,11 @@ export function TemplateTable({
         sortable: true,
         switchable: false
       },
-      {
+      DescriptionColumn({
         accessor: 'description',
         sortable: false,
         switchable: true
-      },
+      }),
       {
         accessor: 'template',
         sortable: false,
@@ -230,12 +239,40 @@ export function TemplateTable({
       {
         accessor: 'revision',
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <Group gap='xs' justify='space-between'>
+              <Text size='sm'>{record.revision}</Text>
+              {record.updated && (
+                <TableHoverCard
+                  value=''
+                  title={t`Last Updated`}
+                  extra={<Text size='xs'>{formatDate(record.updated)}</Text>}
+                />
+              )}
+            </Group>
+          );
+        }
       },
+      UserColumn({
+        accessor: 'updated_by_detail',
+        sortable: false,
+        defaultVisible: false,
+        title: t`Updated By`
+      }),
       {
         accessor: 'filters',
         sortable: false,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
+      },
+      {
+        accessor: 'filename_pattern',
+        title: t`Filename`,
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,

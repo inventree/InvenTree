@@ -1,20 +1,8 @@
-import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
-
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { PathParams } from '@lib/types/Core';
+import type { UseInstanceResult, useInstanceProps } from '@lib/types/Rendering';
+import { useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 import { useApi } from '../contexts/ApiContext';
-
-export interface UseInstanceResult {
-  instance: any;
-  setInstance: (instance: any) => void;
-  refreshInstance: () => void;
-  refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
-  instanceQuery: any;
-  requestStatus: number;
-  isLoaded: boolean;
-}
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -32,44 +20,44 @@ export function useInstance<T = any>({
   params = {},
   defaultValue = {},
   pathParams,
+  disabled,
   hasPrimaryKey = true,
   refetchOnMount = true,
   refetchOnWindowFocus = false,
-  throwError = false,
   updateInterval
-}: {
-  endpoint: ApiEndpoints;
-  pk?: string | number | undefined;
-  hasPrimaryKey?: boolean;
-  params?: any;
-  pathParams?: PathParams;
-  defaultValue?: any;
-  refetchOnMount?: boolean;
-  refetchOnWindowFocus?: boolean;
-  throwError?: boolean;
-  updateInterval?: number;
-}): UseInstanceResult {
+}: useInstanceProps): UseInstanceResult {
   const api = useApi();
 
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
-  const [requestStatus, setRequestStatus] = useState<number>(0);
+  // A memoized key to track changes in the params and pathParams
+  const paramsKey = useMemo(() => {
+    return JSON.stringify(params) + JSON.stringify(pathParams);
+  }, [params, pathParams]);
 
   const instanceQuery = useQuery<T>({
-    queryKey: [
-      'instance',
-      endpoint,
-      pk,
-      JSON.stringify(params),
-      JSON.stringify(pathParams)
-    ],
+    enabled: !disabled,
+    queryKey: ['instance', endpoint, pk, paramsKey, disabled],
+    retry: (failureCount, error: any) => {
+      // If it's a 404, don't retry
+      if (error.response?.status == 404) {
+        return false;
+      }
+
+      // Otherwise, retry up to 3 times
+      return failureCount < 3;
+    },
     queryFn: async () => {
+      if (disabled) {
+        return defaultValue;
+      }
+
       if (hasPrimaryKey) {
         if (
           pk == null ||
           pk == undefined ||
           pk.toString().length == 0 ||
-          pk == '-1'
+          pk.toString() == '-1'
         ) {
           setInstance(defaultValue);
           return defaultValue;
@@ -84,7 +72,6 @@ export function useInstance<T = any>({
           params: params
         })
         .then((response) => {
-          setRequestStatus(response.status);
           switch (response.status) {
             case 200:
               setInstance(response.data);
@@ -93,15 +80,6 @@ export function useInstance<T = any>({
               setInstance(defaultValue);
               return defaultValue;
           }
-        })
-        .catch((error) => {
-          setRequestStatus(error.response?.status || 0);
-          setInstance(defaultValue);
-          console.error(`ERR: Error fetching instance ${url}:`, error);
-
-          if (throwError) throw error;
-
-          return defaultValue;
         });
     },
     refetchOnMount: refetchOnMount,
@@ -131,7 +109,6 @@ export function useInstance<T = any>({
     refreshInstance,
     refreshInstancePromise,
     instanceQuery,
-    requestStatus,
     isLoaded
   };
 }

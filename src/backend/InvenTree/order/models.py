@@ -1,15 +1,15 @@
 """Order model definitions."""
 
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -179,7 +179,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class BaseOrderReportContext(report.mixins.BaseReportContext):
+class BaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Base context for all order models.
 
     Attributes:
@@ -199,7 +199,7 @@ class BaseOrderReportContext(report.mixins.BaseReportContext):
     title: str
 
 
-class PurchaseOrderReportContext(report.mixins.BaseReportContext):
+class PurchaseOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the purchase order model.
 
     Attributes:
@@ -221,7 +221,7 @@ class PurchaseOrderReportContext(report.mixins.BaseReportContext):
     supplier: Optional[Company]
 
 
-class SalesOrderReportContext(report.mixins.BaseReportContext):
+class SalesOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the sales order model.
 
     Attributes:
@@ -243,7 +243,7 @@ class SalesOrderReportContext(report.mixins.BaseReportContext):
     customer: Optional[Company]
 
 
-class ReturnOrderReportContext(report.mixins.BaseReportContext):
+class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the return order model.
 
     Attributes:
@@ -268,6 +268,7 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -297,7 +298,8 @@ class Order(
     """
 
     REQUIRE_RESPONSIBLE_SETTING = None
-    LOCK_SETTING = None
+    UNLOCK_SETTING = None
+    IMPORT_ID_FIELDS = ['reference']
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -329,24 +331,31 @@ class Order(
         if not self.creation_date:
             self.creation_date = InvenTree.helpers.current_date()
 
+        self.updated_at = InvenTree.helpers.current_time()
+
         super().save(*args, **kwargs)
 
     def check_locked(self, db: bool = False) -> bool:
         """Check if this order is 'locked'.
 
-        Args:
+        A locked order cannot be modified after it has been completed.
+
+        Arguments:
             db: If True, check with the database. If False, check the instance (default False).
         """
-        return (
-            self.LOCK_SETTING
-            and get_global_setting(self.LOCK_SETTING)
-            and self.check_complete(db)
-        )
+        if not self.check_complete(db=db):
+            # If the order is not complete, it is not locked
+            return False
+
+        if self.UNLOCK_SETTING:
+            return get_global_setting(self.UNLOCK_SETTING, backup_value=False) is False
+
+        return False
 
     def check_complete(self, db: bool = False) -> bool:
         """Check if this order is 'complete'.
 
-        Args:
+        Arguments:
             db: If True, check with the database. If False, check the instance (default False).
         """
         status = self.get_db_instance().status if db else self.status
@@ -377,6 +386,13 @@ class Order(
                 'target_date': _('Target date must be after start date'),
                 'start_date': _('Start date must be before target date'),
             })
+
+        # Check that the referenced 'address' matches the correct 'company'
+        if self.company and self.address:
+            if self.address.company != self.company:
+                raise ValidationError({
+                    'address': _('Address does not match selected company')
+                })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -419,7 +435,8 @@ class Order(
         Makes use of the overdue_filter() method to avoid code duplication
         """
         return (
-            self.__class__.objects.filter(pk=self.pk)
+            self.__class__.objects
+            .filter(pk=self.pk)
             .filter(self.__class__.overdue_filter())
             .exists()
         )
@@ -483,6 +500,13 @@ class Order(
         help_text=_('Date order was issued'),
     )
 
+    updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Updated At'),
+        help_text=_('Timestamp of last update'),
+    )
+
     responsible = models.ForeignKey(
         UserModels.Owner,
         on_delete=models.SET_NULL,
@@ -513,6 +537,19 @@ class Order(
         related_name='+',
     )
 
+    @property
+    def company(self):
+        """Return the company associated with this order.
+
+        This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
+        """
+        raise NotImplementedError(f'company() method not implemented for {__class__}')
+
+    @property
+    def order_address(self):
+        """Return the Address associated with this order."""
+        return self.address or self.company.primary_address
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -532,7 +569,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = PurchaseOrderStatus
-    LOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -546,14 +583,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return {**super().report_context(), 'supplier': self.supplier}
+        return_ctx = super().report_context()
+        return_ctx.update({'supplier': self.supplier})
+        return return_ctx
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrder model."""
         return reverse('api-po-list')
 
@@ -572,7 +611,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return defaults
 
     @classmethod
-    def barcode_model_type_code(cls):
+    def barcode_model_type_code(cls) -> str:
         """Return the associated barcode model type code for this model."""
         return 'PO'
 
@@ -777,20 +816,26 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             self.save()
 
+            unique_parts = set()
+
             # Schedule pricing update for any referenced parts
-            for line in self.lines.all():
+            for line in self.lines.all().prefetch_related('part__part'):
+                # Ensure we only check 'unique' parts
                 if line.part and line.part.part:
-                    line.part.part.schedule_pricing_update(create=True)
+                    unique_parts.add(line.part.part)
+
+            for part in unique_parts:
+                part.schedule_pricing_update(create=True, refresh=False)
 
             trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
 
     @transaction.atomic
     def issue_order(self):
         """Equivalent to 'place_order'."""
-        self.place_order()
+        return self.place_order()
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return self.status in [
             PurchaseOrderStatus.PENDING.value,
@@ -826,17 +871,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
         )
 
     @property
-    def is_pending(self):
+    def is_pending(self) -> bool:
         """Return True if the PurchaseOrder is 'pending'."""
         return self.status == PurchaseOrderStatus.PENDING.value
 
     @property
-    def is_open(self):
+    def is_open(self) -> bool:
         """Return True if the PurchaseOrder is 'open'."""
         return self.status in PurchaseOrderStatusGroups.OPEN
 
     @property
-    def can_cancel(self):
+    def can_cancel(self) -> bool:
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
         - Status is PLACED
@@ -862,7 +907,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return self.status in [
             PurchaseOrderStatus.PENDING.value,
@@ -879,36 +924,319 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     # endregion
 
-    def pending_line_items(self):
+    def pending_line_items(self) -> QuerySet:
         """Return a list of pending line items for this order.
 
         Any line item where 'received' < 'quantity' will be returned.
         """
         return self.lines.filter(quantity__gt=F('received'))
 
-    def completed_line_items(self):
+    def completed_line_items(self) -> QuerySet:
         """Return a list of completed line items against this order."""
         return self.lines.filter(quantity__lte=F('received'))
 
     @property
-    def line_count(self):
+    def line_count(self) -> int:
         """Return the total number of line items associated with this order."""
         return self.lines.count()
 
     @property
-    def completed_line_count(self):
+    def completed_line_count(self) -> int:
         """Return the number of complete line items associated with this order."""
         return self.completed_line_items().count()
 
     @property
-    def pending_line_count(self):
+    def pending_line_count(self) -> int:
         """Return the number of pending line items associated with this order."""
         return self.pending_line_items().count()
 
     @property
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """Return True if all line items have been received."""
         return self.pending_line_items().count() == 0
+
+    @transaction.atomic
+    def receive_line_items(
+        self, location, items: list, user: User, **kwargs
+    ) -> QuerySet:
+        """Receive multiple line items against this PurchaseOrder.
+
+        Arguments:
+            location: The StockLocation to receive the items into
+            items: A list of line item IDs and quantities to receive
+            user: The User performing the action
+
+        Returns:
+            A QuerySet of the newly created StockItem objects
+
+        The 'items' list values contain:
+            line_item: The PurchaseOrderLineItem instance
+            quantity: The quantity of items to receive
+            location: The location to receive the item into (optional)
+            status: The 'status' of the item
+            barcode: Optional barcode for the item (optional)
+            batch_code: Optional batch code for the item (optional)
+            expiry_date: Optional expiry date for the item (optional)
+            serials: Optional list of serial numbers (optional)
+            note: Optional notes for the item (optional)
+        """
+        if self.status != PurchaseOrderStatus.PLACED:
+            raise ValidationError(
+                "Lines can only be received against an order marked as 'PLACED'"
+            )
+
+        # List of stock items which have been created
+        stock_items: list[stock.models.StockItem] = []
+
+        # List of stock items to bulk create
+        bulk_create_items: list[stock.models.StockItem] = []
+
+        # List of tracking entries to create
+        tracking_entries: list[stock.models.StockItemTracking] = []
+
+        # List of line items to update
+        line_items_to_update: list[PurchaseOrderLineItem] = []
+
+        convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
+        default_currency = currency_code_default()
+
+        # Prefetch line item objects for DB efficiency
+        line_items_ids = [item['line_item'].pk for item in items]
+
+        # Cache the custom status options for the StockItem model
+        custom_stock_status_values = stock.models.StockItem.STATUS_CLASS.custom_values()
+
+        line_items = PurchaseOrderLineItem.objects.filter(
+            pk__in=line_items_ids
+        ).prefetch_related('part', 'part__part', 'order')
+
+        # Map order line items to their corresponding stock items
+        line_item_map = {line.pk: line for line in line_items}
+
+        # Before we continue, validate that each line item is valid
+        # We validate this here because it is far more efficient,
+        # after we have fetched *all* line items in a single DB query
+        for line_item in line_item_map.values():
+            if line_item.order != self:
+                raise ValidationError({_('Line item does not match purchase order')})
+
+            if not line_item.part or not line_item.part.part:
+                raise ValidationError({_('Line item is missing a linked part')})
+
+        for item in items:
+            # Extract required information
+            line_item_id = item['line_item'].pk
+
+            line = line_item_map[line_item_id]
+
+            quantity = item['quantity']
+            barcode = item.get('barcode', '')
+
+            try:
+                if quantity < 0:
+                    raise ValidationError({
+                        'quantity': _('Quantity must be a positive number')
+                    })
+                quantity = InvenTree.helpers.clean_decimal(quantity)
+            except TypeError:
+                raise ValidationError({'quantity': _('Invalid quantity provided')})
+
+            supplier_part = line.part
+
+            if not supplier_part:
+                logger.warning(
+                    'Line item %s is missing a linked supplier part', line.pk
+                )
+                continue
+
+            base_part = supplier_part.part
+
+            # Update the line item quantity
+            line.received += quantity
+            line_items_to_update.append(line)
+
+            # Extract optional serial numbers
+            serials = item.get('serials', None)
+
+            if serials and type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
+
+            if base_part.virtual:
+                # Virtual parts are not received into stock, so skip the rest of the loop
+
+                if serialize:
+                    raise ValidationError(
+                        _('Serial numbers cannot be assigned to virtual parts')
+                    )
+
+                continue
+
+            stock_location = item.get('location', location) or line.get_destination()
+
+            # Calculate the received quantity in base part units
+            stock_quantity = supplier_part.base_quantity(quantity)
+
+            # Calculate unit purchase price (in base units)
+            if line.purchase_price:
+                purchase_price = line.purchase_price / supplier_part.base_quantity(1)
+
+                if convert_purchase_price:
+                    purchase_price = convert_money(purchase_price, default_currency)
+            else:
+                purchase_price = None
+
+            # Construct dataset for creating a new StockItem instances
+            stock_data = {
+                'part': supplier_part.part,
+                'supplier_part': supplier_part,
+                'purchase_order': self,
+                'purchase_price': purchase_price,
+                'location': stock_location,
+                'quantity': 1 if serialize else stock_quantity,
+                'batch': item.get('batch_code', ''),
+                'expiry_date': item.get('expiry_date', None),
+                'notes': item.get('note', '') or item.get('notes', ''),
+                'packaging': item.get('packaging') or supplier_part.packaging,
+            }
+
+            # Extract the "status" field
+            status = item.get('status', StockStatus.OK.value)
+
+            # Check linked build order
+            # This is for receiving against an *external* build order
+            if build_order := line.build_order:
+                if not build_order.external:
+                    raise ValidationError(
+                        'Cannot receive items against an internal build order'
+                    )
+
+                if build_order.part != base_part:
+                    raise ValidationError(
+                        'Cannot receive items against a build order for a different part'
+                    )
+
+                if not stock_location and build_order.destination:
+                    # Override with the build order destination (if not specified)
+                    stock_data['location'] = stock_location = build_order.destination
+
+                if build_order.active:
+                    # An 'active' build order marks the items as "in production"
+                    stock_data['build'] = build_order
+                    stock_data['is_building'] = True
+                elif build_order.status == BuildStatus.COMPLETE:
+                    # A 'completed' build order marks the items as "completed"
+                    stock_data['build'] = build_order
+                    stock_data['is_building'] = False
+
+                    # Increase the 'completed' quantity for the build order
+                    build_order.completed += stock_quantity
+                    build_order.save()
+                elif build_order.status == BuildStatus.CANCELLED:
+                    # A 'cancelled' build order is ignored
+                    pass
+                else:
+                    # Un-handled state - raise an error
+                    raise ValidationError(
+                        "Cannot receive items against a build order in state '{build_order.status}'"
+                    )
+
+            # Now, create the new stock items
+            if serialize:
+                new_items = stock.models.StockItem._create_serial_numbers(
+                    serials=serials, **stock_data
+                )
+
+                for item in new_items:
+                    item.set_status(status, custom_values=custom_stock_status_values)
+                    stock_items.append(item)
+
+            else:
+                new_item = stock.models.StockItem(
+                    **stock_data,
+                    serial='',
+                    tree_id=stock.models.StockItem.getNextTreeID(),
+                    parent=None,
+                    level=0,
+                    lft=1,
+                    rght=2,
+                )
+
+                new_item.set_status(status, custom_values=custom_stock_status_values)
+
+                if barcode:
+                    new_item.assign_barcode(barcode_data=barcode, save=False)
+
+                bulk_create_items.append(new_item)
+
+        # Bulk create new stock items
+        if len(bulk_create_items) > 0:
+            stock.models.StockItem.objects.bulk_create(
+                bulk_create_items, batch_size=250
+            )
+
+            # Fetch them back again
+            tree_ids = [item.tree_id for item in bulk_create_items]
+
+            created_items = stock.models.StockItem.objects.filter(
+                tree_id__in=tree_ids, level=0, lft=1, rght=2, purchase_order=self
+            ).prefetch_related('location')
+
+            stock_items.extend(created_items)
+
+        # Generate a new tracking entry for each stock item
+        for item in stock_items:
+            tracking_entries.append(
+                item.add_tracking_entry(
+                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+                    user,
+                    deltas={
+                        'location': item.location.pk if item.location else None,
+                        'purchaseorder': self.pk,
+                        'quantity': float(item.quantity),
+                    },
+                    commit=False,
+                )
+            )
+
+        # Bulk create new tracking entries for each item
+        stock.models.StockItemTracking.objects.bulk_create(
+            tracking_entries, batch_size=250
+        )
+
+        # Update received quantity for each line item
+        PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
+
+        # Trigger an event for any interested plugins
+        trigger_event(
+            PurchaseOrderEvents.ITEM_RECEIVED,
+            order_id=self.pk,
+            item_ids=[item.pk for item in stock_items],
+        )
+
+        # Check to auto-complete the PurchaseOrder
+        if (
+            get_global_setting('PURCHASEORDER_AUTO_COMPLETE', True)
+            and self.pending_line_count == 0
+        ):
+            self.received_by = user
+            self.complete_order()
+
+        # Send notification
+        notify_responsible(
+            self,
+            PurchaseOrder,
+            exclude=user,
+            content=InvenTreeNotificationBodies.ItemsReceived,
+            extra_users=line.part.part.get_subscribers(),
+        )
+
+        # Return a list of the created stock items
+        return stock.models.StockItem.objects.filter(
+            pk__in=[item.pk for item in stock_items]
+        )
 
     @transaction.atomic
     def receive_line_item(
@@ -929,182 +1257,24 @@ class PurchaseOrder(TotalPriceMixin, Order):
             notes: Optional notes field for the StockItem
             packaging: Optional packaging field for the StockItem
             barcode: Optional barcode field for the StockItem
+            notify: If true, notify users of received items
 
         Raises:
             ValidationError: If the quantity is negative or otherwise invalid
             ValidationError: If the order is not in the 'PLACED' state
         """
-        # Extract optional batch code for the new stock item
-        batch_code = kwargs.get('batch_code', '')
-
-        # Extract optional expiry date for the new stock item
-        expiry_date = kwargs.get('expiry_date')
-
-        # Extract optional list of serial numbers
-        serials = kwargs.get('serials')
-
-        # Extract optional notes field
-        notes = kwargs.get('notes', '')
-
-        # Extract optional packaging field
-        packaging = kwargs.get('packaging')
-
-        if not packaging:
-            # Default to the packaging field for the linked supplier part
-            if line.part:
-                packaging = line.part.packaging
-
-        # Extract optional barcode field
-        barcode = kwargs.get('barcode')
-
-        # Prevent null values for barcode
-        if barcode is None:
-            barcode = ''
-
-        if self.status != PurchaseOrderStatus.PLACED:
-            raise ValidationError(
-                "Lines can only be received against an order marked as 'PLACED'"
-            )
-
-        try:
-            if quantity < 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be a positive number')
-                })
-            quantity = InvenTree.helpers.clean_decimal(quantity)
-        except TypeError:
-            raise ValidationError({'quantity': _('Invalid quantity provided')})
-
-        # Create a new stock item
-        if line.part and quantity > 0:
-            # Calculate received quantity in base units
-            stock_quantity = line.part.base_quantity(quantity)
-
-            # Calculate unit purchase price (in base units)
-            if line.purchase_price:
-                unit_purchase_price = line.purchase_price
-
-                # Convert purchase price to base units
-                unit_purchase_price /= line.part.base_quantity(1)
-
-                # Convert to base currency
-                if get_global_setting('PURCHASEORDER_CONVERT_CURRENCY'):
-                    try:
-                        unit_purchase_price = convert_money(
-                            unit_purchase_price, currency_code_default()
-                        )
-                    except Exception:
-                        log_error('PurchaseOrder.receive_line_item')
-
-            else:
-                unit_purchase_price = None
-
-            # Determine if we should individually serialize the items, or not
-            if type(serials) is list and len(serials) > 0:
-                serialize = True
-            else:
-                serialize = False
-                serials = [None]
-
-            # Construct dataset for receiving items
-            data = {
-                'part': line.part.part,
-                'supplier_part': line.part,
-                'location': location,
-                'quantity': 1 if serialize else stock_quantity,
-                'purchase_order': self,
-                'status': status,
-                'batch': batch_code,
-                'expiry_date': expiry_date,
-                'packaging': packaging,
-                'purchase_price': unit_purchase_price,
-            }
-
-            if build_order := line.build_order:
-                # Receiving items against an "external" build order
-
-                if not build_order.external:
-                    raise ValidationError(
-                        'Cannot receive items against an internal build order'
-                    )
-
-                if build_order.part != data['part']:
-                    raise ValidationError(
-                        'Cannot receive items against a build order for a different part'
-                    )
-
-                if not location and build_order.destination:
-                    # Override with the build order destination (if not specified)
-                    data['location'] = location = build_order.destination
-
-                if build_order.active:
-                    # An 'active' build order marks the items as "in production"
-                    data['build'] = build_order
-                    data['is_building'] = True
-                elif build_order.status == BuildStatus.COMPLETE:
-                    # A 'completed' build order marks the items as "completed"
-                    data['build'] = build_order
-                    data['is_building'] = False
-
-                    # Increase the 'completed' quantity for the build order
-                    build_order.completed += stock_quantity
-                    build_order.save()
-
-                elif build_order.status == BuildStatus.CANCELLED:
-                    # A 'cancelled' build order is ignored
-                    pass
-                else:
-                    # Un-handled state - raise an error
-                    raise ValidationError(
-                        "Cannot receive items against a build order in state '{build_order.status}'"
-                    )
-
-            for sn in serials:
-                item = stock.models.StockItem(serial=sn, **data)
-
-                # Assign the provided barcode
-                if barcode:
-                    item.assign_barcode(barcode_data=barcode, save=False)
-
-                item.save(add_note=False)
-
-                tracking_info = {'status': status, 'purchaseorder': self.pk}
-
-                item.add_tracking_entry(
-                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
-                    user,
-                    notes=notes,
-                    deltas=tracking_info,
-                    location=location,
-                    purchaseorder=self,
-                    quantity=float(quantity),
-                )
-
-                trigger_event(
-                    PurchaseOrderEvents.ITEM_RECEIVED,
-                    order_id=self.pk,
-                    item_id=item.pk,
-                    line_id=line.pk,
-                )
-
-        # Update the number of parts received against the particular line item
-        # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
-        line.received += quantity
-        line.save()
-
-        # Has this order been completed?
-        if len(self.pending_line_items()) == 0:
-            if get_global_setting('PURCHASEORDER_AUTO_COMPLETE', True):
-                self.received_by = user
-                self.complete_order()  # This will save the model
-
-        # Issue a notification to interested parties, that this order has been "updated"
-        notify_responsible(
-            self,
-            PurchaseOrder,
-            exclude=user,
-            content=InvenTreeNotificationBodies.ItemsReceived,
-            extra_users=line.part.part.get_subscribers(),
+        self.receive_line_items(
+            location,
+            [
+                {
+                    'line_item': line,
+                    'quantity': quantity,
+                    'location': location,
+                    'status': status,
+                    **kwargs,
+                }
+            ],
+            user,
         )
 
 
@@ -1114,7 +1284,7 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
-    LOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -1128,14 +1298,16 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the SalesOrder model."""
         return reverse('api-so-list')
 
@@ -1145,14 +1317,14 @@ class SalesOrder(TotalPriceMixin, Order):
         return SalesOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request=None):
+    def api_defaults(cls, request=None) -> dict:
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
 
     @classmethod
-    def barcode_model_type_code(cls):
+    def barcode_model_type_code(cls) -> str:
         """Return the associated barcode model type code for this model."""
         return 'SO'
 
@@ -1209,7 +1381,7 @@ class SalesOrder(TotalPriceMixin, Order):
     )
 
     @property
-    def status_text(self):
+    def status_text(self) -> str:
         """Return the text representation of the status field."""
         return SalesOrderStatus.text(self.status)
 
@@ -1234,38 +1406,50 @@ class SalesOrder(TotalPriceMixin, Order):
     )
 
     @property
-    def is_pending(self):
+    def is_pending(self) -> bool:
         """Return True if this order is 'pending'."""
         return self.status == SalesOrderStatus.PENDING
 
     @property
-    def is_open(self):
+    def is_open(self) -> bool:
         """Return True if this order is 'open' (either 'pending' or 'in_progress')."""
         return self.status in SalesOrderStatusGroups.OPEN
 
     @property
-    def stock_allocations(self):
+    def stock_allocations(self) -> QuerySet:
         """Return a queryset containing all allocations for this order."""
         return SalesOrderAllocation.objects.filter(
             line__in=[line.pk for line in self.lines.all()]
         )
 
-    def is_fully_allocated(self):
+    def is_fully_allocated(self) -> bool:
         """Return True if all line items are fully allocated."""
         return all(line.is_fully_allocated() for line in self.lines.all())
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Return true if any lines in the order are over-allocated."""
         return any(line.is_overallocated() for line in self.lines.all())
 
-    def is_completed(self):
-        """Check if this order is "shipped" (all line items delivered)."""
-        return all(line.is_completed() for line in self.lines.all())
+    def is_completed(self) -> bool:
+        """Check if this order is "shipped" (all line items delivered).
 
-    def can_complete(self, raise_error=False, allow_incomplete_lines=False):
+        Note: Any "virtual" parts are ignored in this calculation.
+        """
+        lines = self.lines.all().filter(part__virtual=False)
+
+        return all(line.is_completed() for line in lines)
+
+    def can_complete(
+        self, raise_error: bool = False, allow_incomplete_lines: bool = False
+    ) -> bool:
         """Test if this SalesOrder can be completed.
 
-        Throws a ValidationError if cannot be completed.
+        Arguments:
+            raise_error: If True, raise ValidationError if the order cannot be completed
+            allow_incomplete_lines: If True, allow incomplete line items when completing the order
+
+        Raises:
+            ValidationError: If the order cannot be completed, and raise_error is True
         """
         try:
             if self.status == SalesOrderStatus.COMPLETE.value:
@@ -1288,10 +1472,15 @@ class SalesOrder(TotalPriceMixin, Order):
                     _('Order cannot be completed as there are incomplete allocations')
                 )
 
-            if not allow_incomplete_lines and self.pending_line_count > 0:
-                raise ValidationError(
-                    _('Order cannot be completed as there are incomplete line items')
-                )
+            if not allow_incomplete_lines:
+                pending_lines = self.pending_line_items().exclude(part__virtual=True)
+
+                if pending_lines.count() > 0:
+                    raise ValidationError(
+                        _(
+                            'Order cannot be completed as there are incomplete line items'
+                        )
+                    )
 
         except ValidationError as e:
             if raise_error:
@@ -1307,7 +1496,7 @@ class SalesOrder(TotalPriceMixin, Order):
         self.issue_order()
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return self.status in [
             SalesOrderStatus.PENDING.value,
@@ -1333,7 +1522,7 @@ class SalesOrder(TotalPriceMixin, Order):
             )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return self.status in [
             SalesOrderStatus.PENDING.value,
@@ -1348,6 +1537,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event(SalesOrderEvents.HOLD, id=self.pk)
 
+    @transaction.atomic
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
@@ -1358,6 +1548,16 @@ class SalesOrder(TotalPriceMixin, Order):
         bypass_shipped = InvenTree.helpers.str2bool(
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
+
+        # Update line items
+        for line in self.lines.all():
+            # Mark any "virtual" parts as shipped at this point
+            if line.part and line.part.virtual and line.shipped != line.quantity:
+                line.shipped = line.quantity
+                line.save()
+
+            if line.part:
+                line.part.schedule_pricing_update(create=True)
 
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
@@ -1370,17 +1570,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
         self.save()
 
-        # Schedule pricing update for any referenced parts
-        for line in self.lines.all():
-            if line.part:
-                line.part.schedule_pricing_update(create=True)
-
         trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
         return True
 
     @property
-    def can_cancel(self):
+    def can_cancel(self) -> bool:
         """Return True if this order can be cancelled."""
         return self.is_open
 
@@ -1438,7 +1633,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Attempt to transition to COMPLETED status."""
         return self.handle_transition(
             self.status,
-            SalesOrderStatus.COMPLETED.value,
+            SalesOrderStatus.COMPLETE.value,
             self,
             self._action_complete,
             user=user,
@@ -1462,41 +1657,44 @@ class SalesOrder(TotalPriceMixin, Order):
     # endregion
 
     @property
-    def line_count(self):
+    def line_count(self) -> int:
         """Return the total number of lines associated with this order."""
         return self.lines.count()
 
-    def completed_line_items(self):
+    def completed_line_items(self) -> QuerySet:
         """Return a queryset of the completed line items for this order."""
         return self.lines.filter(shipped__gte=F('quantity'))
 
-    def pending_line_items(self):
-        """Return a queryset of the pending line items for this order."""
-        return self.lines.filter(shipped__lt=F('quantity'))
+    def pending_line_items(self) -> QuerySet:
+        """Return a queryset of the pending line items for this order.
+
+        Note: We exclude "virtual" parts here, as they do not get allocated
+        """
+        return self.lines.filter(shipped__lt=F('quantity')).exclude(part__virtual=True)
 
     @property
-    def completed_line_count(self):
+    def completed_line_count(self) -> int:
         """Return the number of completed lines for this order."""
         return self.completed_line_items().count()
 
     @property
-    def pending_line_count(self):
+    def pending_line_count(self) -> int:
         """Return the number of pending (incomplete) lines associated with this order."""
         return self.pending_line_items().count()
 
-    def completed_shipments(self):
+    def completed_shipments(self) -> QuerySet:
         """Return a queryset of the completed shipments for this order."""
         return self.shipments.exclude(shipment_date=None)
 
-    def pending_shipments(self):
+    def pending_shipments(self) -> QuerySet:
         """Return a queryset of the pending shipments for this order."""
         return self.shipments.filter(shipment_date=None)
 
-    def allocations(self):
+    def allocations(self) -> QuerySet:
         """Return a queryset of all allocations for this order."""
         return SalesOrderAllocation.objects.filter(line__order=self)
 
-    def pending_allocations(self):
+    def pending_allocations(self) -> QuerySet:
         """Return a queryset of any pending allocations for this order.
 
         Allocations are pending if:
@@ -1510,22 +1708,22 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.allocations().filter(Q1 | Q2).distinct()
 
     @property
-    def shipment_count(self):
+    def shipment_count(self) -> int:
         """Return the total number of shipments associated with this order."""
         return self.shipments.count()
 
     @property
-    def completed_shipment_count(self):
+    def completed_shipment_count(self) -> int:
         """Return the number of completed shipments associated with this order."""
         return self.completed_shipments().count()
 
     @property
-    def pending_shipment_count(self):
+    def pending_shipment_count(self) -> int:
         """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
 
     @property
-    def pending_allocation_count(self):
+    def pending_allocation_count(self) -> int:
         """Return the number of pending (non-shipped) allocations."""
         return self.pending_allocations().count()
 
@@ -1557,7 +1755,10 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
     Attributes:
         quantity: Number of items
+        line: The line number for this item (optional)
+        line_int: An integer line number for this item (optional - used for natural sorting)
         reference: Reference text (e.g. customer reference) for this line item
+        project_code: Project code associated with this line item (optional)
         note: Annotation for the item
         target_date: An (optional) date for expected shipment of this line item.
     """
@@ -1574,11 +1775,23 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """
         if self.order and self.order.check_locked():
             raise ValidationError({
-                'reference': _('The order is locked and cannot be modified')
+                'non_field_errors': _('The order is locked and cannot be modified')
             })
 
+        update_order = kwargs.pop('update_order', True)
+
+        # Update the integer representation of the line number (for natural sorting)
+        if self.line:
+            try:
+                self.line_int = int(self.line)
+            except (TypeError, ValueError):
+                self.line_int = 0
+        else:
+            self.line_int = 0
+
         super().save(*args, **kwargs)
-        self.order.save()
+        if update_order and self.order:
+            self.order.save()
 
     def delete(self, *args, **kwargs):
         """Custom delete method for the OrderLineItem model.
@@ -1587,7 +1800,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """
         if self.order and self.order.check_locked():
             raise ValidationError({
-                'reference': _('The order is locked and cannot be modified')
+                'non_field_errors': _('The order is locked and cannot be modified')
             })
 
         super().delete(*args, **kwargs)
@@ -1607,6 +1820,17 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """Return the total price for this line item."""
         if self.price:
             return self.quantity * self.price
+
+    line = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
+        null=False,
+        verbose_name=_('Line Number'),
+        help_text=_('Line number for this item (optional)'),
+    )
+
+    line_int = models.IntegerField(default=0, blank=False, null=False)
 
     reference = models.CharField(
         max_length=100,
@@ -1636,6 +1860,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_(
             'Target date for this line item (leave blank to use the target date from the order)'
         ),
+    )
+
+    project_code = models.ForeignKey(
+        common_models.ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Select project code for this order'),
     )
 
 
@@ -1693,22 +1926,27 @@ class PurchaseOrderLineItem(OrderLineItem):
 
         verbose_name = _('Purchase Order Line Item')
 
-    # Filter for determining if a particular PurchaseOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(received__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular PurchaseOrderLineItem is overdue."""
+        return (
+            Q(received__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrderLineItem model."""
         return reverse('api-po-line-list')
 
-    def clean(self):
+    def clean(self) -> None:
         """Custom clean method for the PurchaseOrderLineItem model.
 
-        Ensure the supplier part matches the supplier
+        Raises:
+            ValidationError: If the SupplierPart does not match the PurchaseOrder supplier
+            ValidationError: If the linked BuildOrder is not marked as external
+            ValidationError: If the linked BuildOrder part does not match the line item part
         """
         super().clean()
 
@@ -1717,13 +1955,16 @@ class PurchaseOrderLineItem(OrderLineItem):
             if self.part.supplier != self.order.supplier:
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
+        # Link to the base part
+        part = self.part.part
+
         if self.build_order:
             if not self.build_order.external:
                 raise ValidationError({
                     'build_order': _('Build order must be marked as external')
                 })
 
-            if part := self.part.part:
+            if part:
                 if not part.assembly:
                     raise ValidationError({
                         'build_order': _(
@@ -1735,6 +1976,17 @@ class PurchaseOrderLineItem(OrderLineItem):
                     raise ValidationError({
                         'build_order': _('Build order part must match line item part')
                     })
+
+        # Extra checks for external builds
+        if part and part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
+            if not self.build_order and get_global_setting(
+                'BUILDORDER_EXTERNAL_REQUIRED'
+            ):
+                raise ValidationError({
+                    'build_order': _(
+                        'An external build order is required for assembly parts'
+                    )
+                })
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
@@ -1817,17 +2069,16 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when received, only an arbitrary
-              stock items location will be reported as the location for the
-              entire line.
+        1. If a destination is specified against this line item, return that.
+        2. If a destination is specified against the PurchaseOrderPart, return that.
+        3. If a default location is specified against the linked Part, return that.
         """
-        for item in stock.models.StockItem.objects.filter(
-            supplier_part=self.part, purchase_order=self.order
-        ):
-            if item.location:
-                return item.location
         if self.destination:
             return self.destination
+
+        if self.order.destination:
+            return self.order.destination
+
         if self.part and self.part.part and self.part.part.default_location:
             return self.part.part.default_location
 
@@ -1840,7 +2091,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         """Determine if this line item has been fully received."""
         return self.received >= self.quantity
 
-    def update_pricing(self):
+    def update_pricing(self) -> None:
         """Update pricing information based on the supplier part data."""
         if self.part:
             price = self.part.get_price(
@@ -1859,8 +2110,6 @@ class PurchaseOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the PurchaseOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:
@@ -1869,7 +2118,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
         verbose_name = _('Purchase Order Extra Line')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrderExtraLine model."""
         return reverse('api-po-extra-line-list')
 
@@ -1897,28 +2146,29 @@ class SalesOrderLineItem(OrderLineItem):
 
         verbose_name = _('Sales Order Line Item')
 
-    # Filter for determining if a particular SalesOrderLineItem is overdue
-    OVERDUE_FILTER = (
-        Q(shipped__lt=F('quantity'))
-        & ~Q(target_date=None)
-        & Q(target_date__lt=InvenTree.helpers.current_date())
-    )
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a particular SalesOrderLineItem is overdue."""
+        return (
+            Q(shipped__lt=F('quantity'))
+            & ~Q(target_date=None)
+            & Q(target_date__lt=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrderLineItem model."""
         return reverse('api-so-line-list')
 
-    def clean(self):
-        """Perform extra validation steps for this SalesOrderLineItem instance."""
+    def clean(self) -> None:
+        """Perform extra validation steps for this SalesOrderLineItem instance.
+
+        Raises:
+            ValidationError: If the linked part is not salable
+        """
         super().clean()
 
         if self.part:
-            if self.part.virtual:
-                raise ValidationError({
-                    'part': _('Virtual part cannot be assigned to a sales order')
-                })
-
             if not self.part.salable:
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
@@ -1939,7 +2189,7 @@ class SalesOrderLineItem(OrderLineItem):
         null=True,
         verbose_name=_('Part'),
         help_text=_('Part'),
-        limit_choices_to={'salable': True, 'virtual': False},
+        limit_choices_to={'salable': True},
     )
 
     sale_price = InvenTreeModelMoneyField(
@@ -1990,27 +2240,36 @@ class SalesOrderLineItem(OrderLineItem):
 
         return query['allocated']
 
-    def is_fully_allocated(self):
+    def is_fully_allocated(self) -> bool:
         """Return True if this line item is fully allocated."""
+        # If the linked part is "virtual", then we cannot allocate stock against it
+        if self.part and self.part.virtual:
+            return True
+
         if self.order.status == SalesOrderStatus.SHIPPED:
             return self.fulfilled_quantity() >= self.quantity
 
         return self.allocated_quantity() >= self.quantity
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Return True if this line item is over allocated."""
         return self.allocated_quantity() > self.quantity
 
-    def is_completed(self):
+    def is_completed(self) -> bool:
         """Return True if this line item is completed (has been fully shipped)."""
+        # A "virtual" part is always considered to be "completed"
+        if self.part and self.part.virtual:
+            return True
+
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
+class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict):
     """Context for the SalesOrderShipment model.
 
     Attributes:
         allocations: QuerySet of SalesOrderAllocation objects
+        address: The shipping address for this shipment (or order)
         order: The associated SalesOrder object
         reference: Shipment reference string
         shipment: The SalesOrderShipment object itself
@@ -2021,12 +2280,14 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
     allocations: report.mixins.QuerySet['SalesOrderAllocation']
     order: 'SalesOrder'
     reference: str
+    address: 'Address'
     shipment: 'SalesOrderShipment'
     tracking_number: str
     title: str
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -2042,6 +2303,7 @@ class SalesOrderShipment(
 
     Attributes:
         order: SalesOrder reference
+        shipment_address: Shipping address for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2060,8 +2322,22 @@ class SalesOrderShipment(
         unique_together = ['order', 'reference']
         verbose_name = _('Sales Order Shipment')
 
+    def clean(self) -> None:
+        """Custom clean method for the SalesOrderShipment class.
+
+        Raises:
+            ValidationError: If the shipment address does not match the customer
+        """
+        super().clean()
+
+        if self.order and self.shipment_address:
+            if self.shipment_address.company != self.order.customer:
+                raise ValidationError({
+                    'shipment_address': _('Shipment address must match the customer')
+                })
+
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
 
@@ -2070,6 +2346,7 @@ class SalesOrderShipment(
         return {
             'allocations': self.allocations,
             'order': self.order,
+            'address': self.address,
             'reference': self.reference,
             'shipment': self,
             'tracking_number': self.tracking_number,
@@ -2084,6 +2361,16 @@ class SalesOrderShipment(
         related_name='shipments',
         verbose_name=_('Order'),
         help_text=_('Sales Order'),
+    )
+
+    shipment_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Address'),
+        help_text=_('Shipping address for this shipment'),
+        related_name='+',
     )
 
     shipment_date = models.DateField(
@@ -2141,16 +2428,39 @@ class SalesOrderShipment(
         max_length=2000,
     )
 
-    def is_complete(self):
+    @property
+    def address(self) -> Address:
+        """Return the shipping address for this shipment.
+
+        Lookup priority:
+        - Specific address assigned to this shipment
+        - Address assigned to the order
+        - Primary address of the customer
+        """
+        return (
+            self.shipment_address
+            or self.order.address
+            or self.order.customer.primary_address
+        )
+
+    def is_checked(self) -> bool:
+        """Return True if this shipment has been checked."""
+        return self.checked_by is not None
+
+    def is_complete(self) -> bool:
         """Return True if this shipment has already been completed."""
         return self.shipment_date is not None
 
-    def is_delivered(self):
+    def is_delivered(self) -> bool:
         """Return True if this shipment has already been delivered."""
         return self.delivery_date is not None
 
-    def check_can_complete(self, raise_error=True):
-        """Check if this shipment is able to be completed."""
+    def check_can_complete(self, raise_error: bool = True) -> bool:
+        """Check if this shipment is able to be completed.
+
+        Arguments:
+            raise_error: If True, raise ValidationError if cannot complete
+        """
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
@@ -2158,6 +2468,14 @@ class SalesOrderShipment(
 
             if self.allocations.count() == 0:
                 raise ValidationError(_('Shipment has no allocated stock items'))
+
+            if (
+                get_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK')
+                and not self.is_checked()
+            ):
+                raise ValidationError(
+                    _('Shipment must be checked before it can be completed')
+                )
 
         except ValidationError as e:
             if raise_error:
@@ -2175,54 +2493,45 @@ class SalesOrderShipment(
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
+
+        Arguments:
+            user: The user who is completing this shipment
+
+        Returns:
+            task_id: The ID of the background task which is processing this shipment
         """
         import order.tasks
 
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
 
-        # Update the "shipment" date
-        self.shipment_date = kwargs.get(
-            'shipment_date', InvenTree.helpers.current_date()
-        )
-        self.shipped_by = user
-
-        # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number')
-
-        if tracking_number is not None:
+        if tracking_number := kwargs.get('tracking_number'):
             self.tracking_number = tracking_number
 
-        # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number')
-
-        if invoice_number is not None:
+        if invoice_number := kwargs.get('invoice_number'):
             self.invoice_number = invoice_number
 
-        # Was a link provided?
-        link = kwargs.get('link')
-
-        if link is not None:
+        if link := kwargs.get('link'):
             self.link = link
-
-        # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date')
-
-        if delivery_date is not None:
-            self.delivery_date = delivery_date
 
         self.save()
 
+        # Extract shipment date and delivery date from kwargs (if provided)
+        shipment_date = kwargs.get('shipment_date', InvenTree.helpers.current_date())
+        delivery_date = kwargs.get('delivery_date')
+
         # Offload the "completion" of each line item to the background worker
         # This may take some time, and we don't want to block the main thread
-        InvenTree.tasks.offload_task(
+        task_id = InvenTree.tasks.offload_task(
             order.tasks.complete_sales_order_shipment,
-            shipment_id=self.pk,
-            user_id=user.pk if user else None,
+            self.pk,
+            user.pk if user else None,
+            shipment_date,
+            delivery_date=delivery_date,
             group='sales_order',
         )
 
-        trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
+        return task_id
 
 
 class SalesOrderExtraLine(OrderExtraLine):
@@ -2230,8 +2539,6 @@ class SalesOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the SalesOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:
@@ -2415,7 +2722,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = ReturnOrderStatus
-    LOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -2430,7 +2737,9 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return {**super().report_context(), 'customer': self.customer}
+        return_ctx = super().report_context()
+        return_ctx.update({'customer': self.customer})
+        return return_ctx
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -2683,18 +2992,23 @@ class ReturnOrder(TotalPriceMixin, Order):
             line.item = stock_item
             line.save()
 
-        status = kwargs.get('status')
+        status = kwargs.get('status', StockStatus.QUARANTINED.value)
 
         if status is None:
             status = StockStatus.QUARANTINED.value
 
-        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
+        deltas = {
+            'status': status,
+            'returnorder': self.pk,
+            'location': location.pk,
+            'quantity': float(line.quantity),
+        }
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = status
+        stock_item.set_status(status)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
@@ -2795,7 +3109,7 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
         null=True,
         blank=True,
         verbose_name=_('Received Date'),
-        help_text=_('The date this this return item was received'),
+        help_text=_('The date this return item was received'),
     )
 
     @property
@@ -2839,3 +3153,43 @@ class ReturnOrderExtraLine(OrderExtraLine):
         verbose_name=_('Order'),
         help_text=_('Return Order'),
     )
+
+
+def _touch_order_updated_at(instance):
+    """Bump updated_at on the parent order without triggering a full save."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+    instance.order.__class__.objects.filter(pk=instance.order_id).update(
+        updated_at=InvenTree.helpers.current_time()
+    )
+
+
+@receiver(post_save, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_save')
+@receiver(
+    post_delete, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_delete'
+)
+@receiver(
+    post_save, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_save'
+)
+@receiver(
+    post_delete, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_delete'
+)
+@receiver(post_save, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_save')
+@receiver(
+    post_delete, sender=SalesOrderLineItem, dispatch_uid='so_lineitem_post_delete'
+)
+@receiver(post_save, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_save')
+@receiver(
+    post_delete, sender=SalesOrderExtraLine, dispatch_uid='so_extraline_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderLineItem, dispatch_uid='ro_lineitem_post_delete'
+)
+@receiver(post_save, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_save')
+@receiver(
+    post_delete, sender=ReturnOrderExtraLine, dispatch_uid='ro_extraline_post_delete'
+)
+def update_order_on_lineitem_change(sender, instance, **kwargs):
+    """Update parent order updated_at when any line item is saved or deleted."""
+    _touch_order_updated_at(instance)

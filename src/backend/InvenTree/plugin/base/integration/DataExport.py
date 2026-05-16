@@ -1,7 +1,7 @@
 """Plugin class for custom data exporting."""
 
 from collections import OrderedDict
-from typing import Union
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
@@ -22,6 +22,9 @@ class DataExportMixin:
 
     ExportOptionsSerializer = None
 
+    # How many rows to fetch into memory at once when exporting data?
+    EXPORT_CHUNK_SIZE: int = 250
+
     class MixinMeta:
         """Meta options for this mixin."""
 
@@ -36,8 +39,8 @@ class DataExportMixin:
         self,
         model_class: type,
         user: User,
-        serializer_class: serializers.Serializer = None,
-        view_class: views.APIView = None,
+        serializer_class: Optional[serializers.Serializer] = None,
+        view_class: Optional[views.APIView] = None,
         *args,
         **kwargs,
     ) -> bool:
@@ -90,6 +93,7 @@ class DataExportMixin:
         headers: OrderedDict,
         context: dict,
         output: DataOutput,
+        serializer_context: Optional[dict] = None,
         **kwargs,
     ) -> list:
         """Export data from the queryset.
@@ -100,18 +104,38 @@ class DataExportMixin:
         Arguments:
             queryset: The queryset to export
             serializer_class: The serializer class to use for exporting the data
+            serializer_context: Optional context for the serializer
             headers: The headers for the export
             context: Any custom context for the export (provided by the plugin serializer)
             output: The DataOutput object for the export
 
         Returns: The exported data (a list of dict objects)
         """
-        # The default implementation simply serializes the queryset
-        return serializer_class(queryset, many=True, exporting=True).data
+        output.refresh_from_db()
+        N = queryset.count()
 
-    def get_export_options_serializer(
-        self, **kwargs
-    ) -> Union[serializers.Serializer, None]:
+        rows = []
+
+        offset = 0
+
+        while offset < N:
+            chunk = queryset[offset : offset + self.EXPORT_CHUNK_SIZE]
+
+            chunk_rows = serializer_class(
+                chunk, many=True, exporting=True, context=serializer_context or {}
+            ).data
+
+            rows.extend(chunk_rows)
+
+            offset += self.EXPORT_CHUNK_SIZE
+
+            # Update the export progress
+            output.progress += len(chunk_rows)
+            output.save()
+
+        return rows
+
+    def get_export_options_serializer(self, **kwargs) -> serializers.Serializer | None:
         """Return a serializer class with dynamic export options for this plugin.
 
         Returns:

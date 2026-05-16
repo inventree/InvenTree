@@ -3,3 +3,7 @@
 .mantine-datatable-context-menu-cursor {
   cursor: pointer;
 }
+
+.mantine-datatable-resizable-columns {
+  table-layout: auto !important;
+}

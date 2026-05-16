@@ -3,7 +3,7 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList
+  IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -32,6 +32,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -40,8 +41,8 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
@@ -51,8 +52,7 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -161,15 +161,17 @@ export default function ManufacturerPartDetail() {
         content: detailsPanel
       },
       {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: manufacturerPart?.pk ? (
-          <ManufacturerPartParameterTable
-            params={{ manufacturer_part: manufacturerPart.pk }}
+        name: 'stock',
+        label: t`Received Stock`,
+        hidden: !user.hasViewRole(UserRoles.stock),
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            tableName='manufacturer-part-stock'
+            params={{
+              manufacturer_part: id
+            }}
           />
-        ) : (
-          <Skeleton />
         )
       },
       {
@@ -178,24 +180,29 @@ export default function ManufacturerPartDetail() {
         icon: <IconBuildingWarehouse />,
         content: manufacturerPart?.pk ? (
           <SupplierPartTable
-            params={{
-              manufacturer_part: manufacturerPart.pk
-            }}
+            partId={manufacturerPart.part}
+            manufacturerId={manufacturerPart.manufacturer}
+            manufacturerPartId={manufacturerPart.pk}
           />
         ) : (
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk
       }),
       NotesPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        has_note: !!manufacturerPart?.notes
       })
     ];
-  }, [manufacturerPart]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -273,10 +280,13 @@ export default function ManufacturerPartDetail() {
       {deleteManufacturerPart.modal}
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.manufacturerpart}
+      >
         <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[

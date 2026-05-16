@@ -73,27 +73,35 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
   );
 
   // API query handler
-  const queryGenerator = useQuery({
+  useQuery({
     enabled: true,
     queryKey: [
       'generator',
       props.key,
       props.endpoint,
+      props.modalId,
       props.initialQuery,
       modalState.openModals,
       debouncedQuery
     ],
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    throwOnError: (error: any) => {
+      console.error(
+        `Error generating ${props.key} @ ${props.endpoint}:`,
+        error
+      );
+      return false;
+    },
     queryFn: async () => {
       const generatorQuery = {
-        ...debouncedQuery,
-        ...(props.initialQuery ?? {})
+        ...(props.initialQuery ?? {}),
+        ...debouncedQuery
       };
 
       if (!isEnabled()) {
         setResult(null);
-        return;
+        return null;
       }
 
       return api
@@ -105,12 +113,6 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
           props.onGenerate?.(value);
 
           return response;
-        })
-        .catch((error) => {
-          console.error(
-            `Error generating ${props.key} @ ${props.endpoint}:`,
-            error
-          );
         });
     }
   });

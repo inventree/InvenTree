@@ -1,0 +1,61 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block header %}
+<tr style='background: #eef3f7; height: 4rem; text-align: center;'>
+    <td colspan="7" style="padding-bottom: 1rem; color: #68686a; font-weight: bold;">
+        <p style='font-size: 1.25rem;'>{{ message }}</p>
+        <p>{% trans "The following stock items are approaching their expiry dates:" %}</p>
+    </td>
+</tr>
+{% endblock header %}
+
+{% block body %}
+<tr style="height: 3rem; border-bottom: 1px solid #68686a; background-color: #f5f5f5;">
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Part" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Location" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Quantity" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Batch" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Serial Number" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Expiry Date" %}</td>
+    <td style="text-align: center; padding: 10px; font-weight: bold;">{% trans "Days Until Expiry" %}</td>
+</tr>
+{% for item_data in stale_items %}
+<tr style="height: 3rem; border-bottom: 1px solid #ddd;">
+    <td style="text-align: center; padding: 10px;">
+        <a href="{{ item_data.absolute_url }}" style="color: #007bff; text-decoration: none;">
+            {{ item_data.stock_item.part.full_name }}
+        </a>
+    </td>
+    <td style="text-align: center; padding: 10px;">{{ item_data.stock_item.location|default:"-" }}</td>
+    <td style="text-align: center; padding: 10px;">{% decimal item_data.stock_item.quantity %}</td>
+    <td style="text-align: center; padding: 10px;">{{ item_data.stock_item.batch|default:"-" }}</td>
+    <td style="text-align: center; padding: 10px;">{{ item_data.stock_item.serial|default:"-" }}</td>
+    <td style="text-align: center; padding: 10px;">{{ item_data.stock_item.expiry_date|date:"Y-m-d"|default:"-" }}</td>
+    <td style="text-align: center; padding: 10px;">
+        {% if item_data.days_until_expiry is not None %}
+            {% if item_data.days_until_expiry < 0 %}
+                <span style="color: red; font-weight: bold;">{{ item_data.expiry_status }}</span>
+            {% elif item_data.days_until_expiry == 0 %}
+                <span style="color: orange; font-weight: bold;">{{ item_data.expiry_status }}</span>
+            {% else %}
+                {{ item_data.expiry_status }}
+            {% endif %}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+{% endblock body %}
+
+{% block footer %}
+<tr style='background: #eef3f7; height: 2rem;'>
+    <td colspan="7" style="padding-top:1rem; text-align: center">
+        <p><em>{% trans "You are receiving this email because you are subscribed to notifications for these parts" %}.</em></p>
+        <p><em><small>{% inventree_version shortstring=True %} - <a href='https://docs.inventree.org'>InvenTree Documentation</a></small></em></p>
+    </td>
+</tr>
+{% endblock footer %}

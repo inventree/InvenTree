@@ -25,15 +25,18 @@ import { useApi } from '../../contexts/ApiContext';
 export default function NotesEditor({
   modelType,
   modelId,
-  editable
+  editable,
+  setDirtyCallback
 }: Readonly<{
   modelType: ModelType;
   modelId: number;
   editable?: boolean;
+  setDirtyCallback?: (dirty: boolean) => void;
 }>) {
   const api = useApi();
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
+  const [localIsDirty, setLocalIsDirty] = useState<boolean>(false);
 
   const [markdown, setMarkdown] = useState<string>('');
 
@@ -41,6 +44,10 @@ export default function NotesEditor({
     // Initially disable editing mode on load
     setEditing(false);
   }, [editable, modelId, modelType]);
+
+  useEffect(() => {
+    setDirtyCallback?.(localIsDirty);
+  }, [localIsDirty]);
 
   const noteUrl: string = useMemo(() => {
     const modelInfo = ModelInformationDict[modelType];
@@ -92,11 +99,9 @@ export default function NotesEditor({
 
   const dataQuery = useQuery({
     queryKey: ['notes-editor', noteUrl, modelType, modelId],
+    retry: 5,
     queryFn: () =>
-      api
-        .get(noteUrl)
-        .then((response) => response.data?.notes ?? '')
-        .catch(() => ''),
+      api.get(noteUrl).then((response) => response.data?.notes ?? ''),
     enabled: true
   });
 
@@ -123,6 +128,7 @@ export default function NotesEditor({
             id: 'notes',
             autoClose: 2000
           });
+          setLocalIsDirty(false);
         })
         .catch((error) => {
           notifications.hide('notes');
@@ -211,7 +217,7 @@ export default function NotesEditor({
         const sibling =
           mdeInstance?.codemirror.getWrapperElement()?.nextSibling;
 
-        if (sibling != null) {
+        if (sibling != null && editable != false) {
           EasyMDE.togglePreview(mdeInstance);
         }
       }
@@ -224,6 +230,7 @@ export default function NotesEditor({
       getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
       onChange={(value: string) => {
         setMarkdown(value);
+        setLocalIsDirty(true);
       }}
       options={editorOptions}
       value={markdown}

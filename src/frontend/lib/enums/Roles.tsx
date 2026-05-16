@@ -5,6 +5,7 @@ import { t } from '@lingui/core/macro';
  */
 export enum UserRoles {
   admin = 'admin',
+  bom = 'bom',
   build = 'build',
   part = 'part',
   part_category = 'part_category',
@@ -12,8 +13,7 @@ export enum UserRoles {
   return_order = 'return_order',
   sales_order = 'sales_order',
   stock = 'stock',
-  stock_location = 'stock_location',
-  stocktake = 'stocktake'
+  stock_location = 'stock_location'
 }
 
 /*
@@ -46,8 +46,6 @@ export function userRoleLabel(role: UserRoles): string {
       return t`Stock Items`;
     case UserRoles.stock_location:
       return t`Stock Location`;
-    case UserRoles.stocktake:
-      return t`Stocktake`;
     default:
       return role as string;
   }

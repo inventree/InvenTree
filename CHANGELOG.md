@@ -1,0 +1,125 @@
+# Changelog
+
+All major notable changes to this project will be documented in this file (starting with 1.0.0).
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## Unreleased - YYYY-MM-DD
+
+### Breaking Changes
+
+- [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+
+### Added
+
+- [#11914](https://github.com/inventree/InvenTree/pull/11914) adds a "maximum_stock" field to the Part model, allowing users to specify a maximum preferred stock level for each part. This is used in conjunction with the existing "minimum_stock" field to allow users to define a preferred stock range for each part. The "high_stock" filter has also been added to the Part API endpoint, allowing users to filter parts which are above their maximum stock level.
+- [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.
+- [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
+- [#11861](https://github.com/inventree/InvenTree/pull/11861) adds support for bulk-replacing a component in multiple BOMs simultaneously
+- [#11853](https://github.com/inventree/InvenTree/pull/11853) adds BOM comparison functionality, allowing users to compare the BOM of one assembly with another assembly.
+- [#11809](https://github.com/inventree/InvenTree/pull/11809) adds multi-level subassembly display mode to the BOM table, allowing users to view multiple levels of subassemblies in a single table view. This is an optional display mode which can be toggled on or off by the user.
+- [#11778](https://github.com/inventree/InvenTree/pull/11778) adds inline supplier part creation to po line item addition dialog.
+- [#11772](https://github.com/inventree/InvenTree/pull/11772) the UI now warns if you navigate away from a note panel with unsaved changes
+- [#11788](https://github.com/inventree/InvenTree/pull/11788) adds support for custom permissions checks on database models defined in plugins. If a model defines a `check_user_permission` classmethod, this will be called to determine if a user has permission to view the model. This is required for plugin models which do not have the required ruleset definitions for the standard permission system.
+
+### Changed
+
+- [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.
+- [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
+
+### Removed
+
+## 1.3.0 - 2026-04-11
+
+### Breaking Changes
+
+- [#11303](https://github.com/inventree/InvenTree/pull/11303) removes the `default_supplier` field from the `Part` model. Instead, the `SupplierPart` model now has a `primary` field which is used to indicate which supplier is the default for a given part. Any external client applications which made use of the old `default_supplier` field will need to be updated.
+- [#11500](https://github.com/inventree/InvenTree/pull/11500) fixes a spelling mistake in the database configuration values, which may affect some users running the PostgreSQL database backend. The `tcp_keepalives_internal` option has been renamed to `tcp_keepalives_interval` to reflect the correct PostgreSQL configuration option name. If you are using PostgreSQL, and have set a custom value for the `tcp_keepalives_internal` option, you will need to update this to `tcp_keepalives_interval` in your configuration (either via environment variable or config file).
+
+### Added
+
+- [#11702](https://github.com/inventree/InvenTree/pull/11702) adds "last updated" and "updated by" fields for label and report templates, allowing users to track when a template was last modified and by whom.
+- [#11685](https://github.com/inventree/InvenTree/pull/11685) exposes the data importer wizard to the plugin interface, allowing plugins to trigger the data importer wizard and perform custom data imports from the UI.
+- [#11692](https://github.com/inventree/InvenTree/pull/11692) adds line item numbering for external orders (purchase, sales and return orders). This allows users to specify a line number for each line item on the order, which can be used for reference purposes. The line number is optional, and can be left blank if not required. The line number is stored as a string, to allow for more flexible formatting (e.g. "1", "1.1", "A", etc).
+- [#11641](https://github.com/inventree/InvenTree/pull/11641) adds support for custom parameters against the SalesOrderShipment model.
+- [#11527](https://github.com/inventree/InvenTree/pull/11527) adds a new API endpoint for monitoring the status of a particular background task. This endpoint allows clients to check the status of a background task and receive updates when the task is complete. This is useful for long-running tasks that may take some time to complete, allowing clients to provide feedback to users about the progress of the task.
+- [#11405](https://github.com/inventree/InvenTree/pull/11405) adds default table filters, which hide inactive items by default. The default table filters are overridden by user filter selection, and only apply to the table view initially presented to the user. This means that users can still view inactive items if they choose to, but they will not be shown by default.
+- [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
+- [#11383](https://github.com/inventree/InvenTree/pull/11383) adds "exists_for_model_id", "exists_for_related_model", and "exists_for_related_model_id" filters to the ParameterTemplate API endpoint. These filters allow users to check for the existence of parameters associated with specific models or related models, improving the flexibility and usability of the API.
+- [#10887](https://github.com/inventree/InvenTree/pull/10887) adds the ability to auto-allocate tracked items against specific build outputs. Currently, this will only allocate items where the serial number of the tracked item matches the serial number of the build output, but in future this may be extended to allow for more flexible allocation rules.
+- [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
+- [#11374](https://github.com/inventree/InvenTree/pull/11374) adds `updated_at` field on purchase, sales and return orders.
+- [#11074](https://github.com/inventree/InvenTree/pull/11074) adds "Keep form open" option on create form which leaves dialog with form opened after form submitting.
+
+### Changed
+
+- [#11648](https://github.com/inventree/InvenTree/pull/11648) improves the import/export process, allowing data records defined by plugins to be loaded when importing a database from a file.
+- [#11630](https://github.com/inventree/InvenTree/pull/11630) enhances the `import_records` and `export_records` system commands, by adding a metadata entry to the exported data file to allow for compatibility checks during data import.
+
+### Removed
+
+- [#11581](https://github.com/inventree/InvenTree/pull/11581) removes the ability to specify arbitrary filters when performing bulk operations via the API. This functionality represented a significant security risk, and was not required for any existing use cases. Bulk operations now only work with a provided list of primary keys.
+
+## 1.2.0 - 2026-02-12
+
+### Breaking Changes
+
+- [#10699](https://github.com/inventree/InvenTree/pull/10699) removes the `PartParameter` and `PartParameterTemplate` models (and associated API endpoints). These have been replaced with generic `Parameter` and `ParameterTemplate` models (and API endpoints). Any external client applications which made use of the old endpoints will need to be updated.
+- [#11035](https://github.com/inventree/InvenTree/pull/11035) moves to a single endpoint for all metadata operations. The previous endpoints for PartMetadata, SupplierPartMetadata, etc have been removed. Any external client applications which made use of the old endpoints will need to be updated.
+
+### Added
+
+- Adds "Category" columns to BOM and Build Item tables and APIs in [#10722](https://github.com/inventree/InvenTree/pull/10772)
+- Adds generic "Parameter" and "ParameterTemplate" models (and associated API endpoints) in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Adds parameter support for multiple new model types in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Allows report generator to produce PDF input controls in [#10969](https://github.com/inventree/InvenTree/pull/10969)
+- UI overhaul of parameter management in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Allow input controls within generated PDF reports in [#10969](https://github.com/inventree/InvenTree/pull/10969)
+
+### Changed
+
+- Improved stocktake functionality in [#11257](https://github.com/inventree/InvenTree/pull/11257)
+
+### Removed
+- Removed python 3.9 / 3.10 support as part of Django 5.2 upgrade in [#10730](https://github.com/inventree/InvenTree/pull/10730)
+- Removed the "PartParameter" and "PartParameterTemplate" models (and associated API endpoints) in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Removed the "ManufacturerPartParameter" model (and associated API endpoints) [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Removed individual metadata endpoints for all models ([#11035](https://github.com/inventree/InvenTree/pull/11035))
+
+## 1.1.0 - 2025-11-02
+
+### Added
+
+- Added `order_queryset` report helper function in [#10439](https://github.com/inventree/InvenTree/pull/10439)
+- Added `SupplierMixin` to import data from suppliers in [#9761](https://github.com/inventree/InvenTree/pull/9761)
+- Added much more detailed status information for machines to the API endpoint (including backend and frontend changes) in [#10381](https://github.com/inventree/InvenTree/pull/10381)
+- Added ability to partially complete and partially scrap build outputs in [#10499](https://github.com/inventree/InvenTree/pull/10499)
+- Added support for Redis ACL user-based authentication in [#10551](https://github.com/inventree/InvenTree/pull/10551)
+- Expose stock adjustment forms to the UI plugin context in [#10584](https://github.com/inventree/InvenTree/pull/10584)
+- Allow stock adjustments for "in production" items in [#10600](https://github.com/inventree/InvenTree/pull/10600)
+- Adds optional shipping address against individual sales order shipments in [#10650](https://github.com/inventree/InvenTree/pull/10650)
+- Adds UI elements to "check" and "uncheck" sales order shipments in [#10654](https://github.com/inventree/InvenTree/pull/10654)
+- Allow assigning project codes to order line items in [#10657](https://github.com/inventree/InvenTree/pull/10657)
+- Added support for webauthn login for the frontend in [#9729](https://github.com/inventree/InvenTree/pull/9729)
+- Added support for Debian 12, Ubuntu 22.04 and Ubuntu 24.04 in the installer and package in [#10705](https://github.com/inventree/InvenTree/pull/10705)
+- Support for S3 and SFTP storage backends for media and static files ([#10140](https://github.com/inventree/InvenTree/pull/10140))
+- Adds hooks for custom UI spotlight actions in [#10720](https://github.com/inventree/InvenTree/pull/10720)
+- Support uploading attachments against SupplierPart in [#10724](https://github.com/inventree/InvenTree/pull/10724)
+
+### Changed
+
+- Changed site URL check to allow protocol mismatches if `INVENTREE_SITE_LAX_PROTOCOL` is set to `True` (default) in [#10454](https://github.com/inventree/InvenTree/pull/10454)
+- Changed call signature of `get_global_setting` to use `environment_key` instead of `enviroment_key` in [#10557](https://github.com/inventree/InvenTree/pull/10557)
+
+
+## 1.0.0 - 2025-09-15
+
+The first "stable" release following semver but not extensively other than the previous releases. The use of 1.0 indicates the stability that users already expect from InvenTree.
+
+An overarching theme of this release is the complete switch to a new UI framework and paradigm (PUI). The old templating based UI (CUI) is now removed. This makes major improvements in the security and portability of InvenTree possible.
+
+Our blog holds [a few articles](https://inventree.org/blog/2024/09/23/ui-roadmap) on the topic. This journey started in [March 2022](https://github.com/inventree/InvenTree/issues/2789) and was announced [in 2023](https://inventree.org/blog/2023/08/28/react).
+
+
+Specific entries to the changelog will be kept for all stable channel minor releases, for changes in 1.0 please refer to the [blog posts](https://inventree.org/blog/2025/09/15/1.0.0) and the [milestone](https://github.com/inventree/InvenTree/milestone/17)

@@ -20,12 +20,13 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import type { HostList } from '@lib/types/Server';
 import { useShallow } from 'zustand/react/shallow';
+import { translateHostName } from '../../defaults/defaultHostList';
 import { Wrapper } from '../../pages/Auth/Layout';
-import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { ActionButton } from '../buttons/ActionButton';
+import { useServerApiState } from '../../states/ServerApiState';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -43,7 +44,7 @@ export function InstanceOptions({
   );
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
-    label: hostList[key]?.name
+    label: translateHostName(hostList[key]?.name)
   }));
 
   function SaveOptions(newHostList: HostList): void {

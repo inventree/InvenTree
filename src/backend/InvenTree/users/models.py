@@ -24,7 +24,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
-from InvenTree.ready import isImportingData
+from InvenTree.ready import isImportingData, isReadOnlyCommand
 
 from .ruleset import RULESET_CHOICES, get_ruleset_models
 
@@ -47,7 +47,9 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user
+    from django_auth_ldap.backend import (  # type: ignore[unresolved-import]
+        populate_user,
+    )
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):
@@ -61,7 +63,10 @@ if settings.LDAP_AUTH:
         user.save()
 
         # if they got an email address from LDAP, create it now and make it the primary
-        if user.email:
+        if (
+            user.email
+            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
+        ):
             EmailAddress.objects.create(user=user, email=user.email, primary=True)
 
 
@@ -73,17 +78,6 @@ def default_token():
 def default_token_expiry():
     """Generate an expiry date for a newly created token."""
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
-
-
-def default_create_token(token_model, user, serializer):
-    """Generate a default value for the token."""
-    token = token_model.objects.filter(user=user, name='', revoked=False)
-
-    if token.exists():
-        return token.first()
-
-    else:
-        return token_model.objects.create(user=user, name='')
 
 
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
@@ -185,9 +179,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         if self.pk is None:
             return self.key  # pragma: no cover
 
-        M = len(self.key) - 20
-
-        return self.key[:8] + '*' * M + self.key[-12:]
+        return InvenTree.helpers.sanitize_token(self.key)
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
@@ -469,7 +461,7 @@ class Owner(models.Model):
 def create_owner(sender, instance, **kwargs):
     """Callback function to create a new owner instance after either a new group or user instance is saved."""
     # Ignore during data import process to avoid data duplication
-    if not isImportingData():
+    if not isReadOnlyCommand() and not isImportingData():
         Owner.create(obj=instance)
 
 
@@ -606,6 +598,10 @@ class UserProfile(InvenTree.models.MetadataMixin):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     """Create or update user profile when user is saved."""
+    # Disable profile creation if importing data from file or running a read-only command
+    if isReadOnlyCommand() or isImportingData():
+        return
+
     if created:
         UserProfile.objects.create(user=instance)
     instance.profile.save()
@@ -635,6 +631,10 @@ def validate_primary_group_on_delete(sender, instance, **kwargs):
 @receiver(m2m_changed, sender=User.groups.through)
 def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
     """Validate primary_group on user profiles when a group is added or removed."""
+    # Disable user profile validation if importing data from file
+    if isImportingData():
+        return
+
     if action in ['post_add', 'post_remove']:
         profile = instance.profile
         if profile.primary_group and profile.primary_group not in instance.groups.all():

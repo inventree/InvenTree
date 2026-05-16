@@ -7,6 +7,7 @@
 
 [build.environment]
   VITE_DEMO = "true"
+  PYTHON_VERSION = "3.11"
 
 # Send requests to subpath
 

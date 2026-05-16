@@ -10,11 +10,12 @@ from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
-from django_q.models import Schedule, Task
+from django_q.models import OrmQ, Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting
+from InvenTree.unit_test import PluginRegistryMixin
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)
@@ -55,7 +56,7 @@ def get_result():
     return 'abc'
 
 
-class InvenTreeTaskTests(TestCase):
+class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
     """Unit tests for tasks."""
 
     def test_offloading(self):
@@ -191,7 +192,7 @@ class InvenTreeTaskTests(TestCase):
 
         # Create a staff user (to ensure notifications are sent)
         user = User.objects.create_user(
-            username='staff', password='staffpass', is_staff=False
+            username='i_am_staff', password='staffpass', is_staff=False, is_active=True
         )
 
         n_tasks = Task.objects.count()
@@ -220,6 +221,9 @@ class InvenTreeTaskTests(TestCase):
         user.is_staff = True
         user.save()
 
+        # Ensure error notifications are enabled for this user
+        InvenTreeUserSetting.set_setting('NOTIFICATION_ERROR_REPORT', True, user=user)
+
         # Create a 'failed' task in the database
         # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
         Task.objects.create(id=n_tasks + 2, **test_data)
@@ -230,8 +234,134 @@ class InvenTreeTaskTests(TestCase):
 
         msg = NotificationMessage.objects.last()
 
-        self.assertEqual(msg.name, 'Task Failure')
-        self.assertEqual(
-            msg.message,
-            "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
-        )
+        self.assertEqual(msg.name, 'Server Error')
+        self.assertEqual(msg.message, 'An error has been logged by the server.')
+
+    def test_delete_old_emails(self):
+        """Test the delete_old_emails task."""
+        from common.models import EmailMessage
+
+        # Create an email message
+        self.create_mails()
+
+        # Run the task
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 31)
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 1)
+        self.assertEqual(emails[0].subject, 'Test Email 2')
+
+        # Set the setting higher than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 0)
+
+        # Re-Add messages and enable a proper log
+        self.create_mails()
+
+        # Set the setting lower than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 7)
+        InvenTreeSetting.set_setting('INVENTREE_PROTECT_EMAIL_LOG', True)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has not been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 2)
+
+    def create_mails(self):
+        """Create some email messages for testing."""
+        from common.models import EmailMessage
+
+        start_mails = [
+            ['Test Email 1', 'This is a test email.', 'abc@example.org', threshold_low],
+            [
+                'Test Email 2',
+                'This is another test email.',
+                'def@example.org',
+                threshold,
+            ],
+        ]
+        for subject, body, to, timestamp in start_mails:
+            msg = EmailMessage.objects.create(
+                subject=subject, body=body, to=to, priority=1
+            )
+            msg.timestamp = timestamp
+            msg.save()
+
+    def test_duplicate_tasks(self):
+        """Test for task duplication."""
+        # Start with a blank slate
+        OrmQ.objects.all().delete()
+
+        # Add some unique tasks
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                f'dummy_module.dummy_function_{idx}', force_async=True
+            )
+
+        self.assertEqual(OrmQ.objects.count(), 10)
+
+        # Add some duplicate tasks
+        for _idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function_x',
+                1,
+                2,
+                3,
+                animal='cat',
+                vegetable='carrot',
+                force_async=True,
+            )
+
+        # Only 1 extra task should have been added
+        self.assertEqual(OrmQ.objects.count(), 11)
+
+        # Add some more duplicate tasks, but ignore duplication checks
+        for _idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function_y',
+                1,
+                2,
+                3,
+                animal='dog',
+                vegetable='yam',
+                force_async=True,
+                check_duplicates=False,
+            )
+
+        # 10 extra tasks should have been added
+        self.assertEqual(OrmQ.objects.count(), 21)
+
+        # Add more tasks, which are *not* duplicates based on args
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function',
+                1,
+                idx,
+                3,
+                animal='cat',
+                vegetable='carrot',
+                force_async=True,
+            )
+
+        # Add more tasks, which are *not* duplicates based on kwargs
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function',
+                1,
+                2,
+                3,
+                animal='cat',
+                vegetable=f'vegetable_{idx}',
+                force_async=True,
+            )
+
+        # 20 more tasks should have been added
+        self.assertEqual(OrmQ.objects.count(), 41)

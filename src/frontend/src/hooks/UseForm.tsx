@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
   ApiFormModalProps,
@@ -24,9 +24,15 @@ export function useApiFormModal(props: ApiFormModalProps) {
     return props.modalId ?? id;
   }, [props.modalId, id]);
 
+  const keepOpenRef = useRef(false);
+  const setKeepOpen = (v: boolean) => {
+    keepOpenRef.current = v;
+  };
+
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
+      onKeepOpenChange: setKeepOpen,
       actions: [
         ...(props.actions || []),
         {
@@ -38,7 +44,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
         }
       ],
       onFormSuccess: (data, form) => {
-        if (props.checkClose?.(data, form) ?? true) {
+        if (!keepOpenRef.current && (props.checkClose?.(data, form) ?? true)) {
           modalClose.current();
         }
         props.onFormSuccess?.(data, form);
@@ -50,14 +56,18 @@ export function useApiFormModal(props: ApiFormModalProps) {
     [props]
   );
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   const modal = useModal({
     id: modalId,
     title: formProps.title,
     onOpen: () => {
+      setIsOpen(true);
       modalState.setModalOpen(modalId, true);
       formProps.onOpen?.();
     },
     onClose: () => {
+      setIsOpen(false);
       modalState.setModalOpen(modalId, false);
       formProps.onClose?.();
     },
@@ -66,7 +76,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
     children: (
       <Stack gap={'xs'}>
         <Divider />
-        <OptionsApiForm props={formProps} id={modalId} />
+        <OptionsApiForm props={formProps} id={modalId} opened={isOpen} />
       </Stack>
     )
   });
@@ -157,8 +167,8 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
     () => ({
       ...props,
       method: props.method ?? 'DELETE',
-      submitText: t`Delete`,
-      submitColor: 'red',
+      submitText: props.submitText ?? t`Delete`,
+      submitColor: props.submitColor ?? 'red',
       successMessage:
         props.successMessage === null
           ? null

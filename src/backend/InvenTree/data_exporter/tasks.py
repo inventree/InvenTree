@@ -35,7 +35,7 @@ def export_data(
     """
     from plugin import registry
 
-    if (plugin := registry.get_plugin(plugin_key)) is None:
+    if (plugin := registry.get_plugin(plugin_key, active=True)) is None:
         logger.warning("export_data: Plugin '%s' not found", plugin_key)
         return
 
