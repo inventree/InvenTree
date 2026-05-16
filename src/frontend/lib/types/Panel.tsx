@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react';
 
+// The type of indicator dot to be shown against a panel
+export type PanelIndicatorType = 'info' | 'warning' | 'danger' | null;
+
 /**
  * Type used to specify a single panel in a panel group
  */
@@ -8,7 +11,7 @@ export type PanelType = {
   label: string;
   controls?: ReactNode;
   icon?: ReactNode;
-  indicator?: boolean | (() => Promise<boolean>);
+  notification_dot?: PanelIndicatorType | (() => Promise<PanelIndicatorType>);
   content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
@@ -16,6 +19,9 @@ export type PanelType = {
   supportsDirty?: boolean;
 };
 
+/**
+ * Type used to specify a group of panels
+ */
 export type PanelGroupType = {
   id: string;
   label: string;

@@ -5,6 +5,7 @@ import {
   Group,
   Indicator,
   Loader,
+  type MantineColor,
   Paper,
   Stack,
   Tabs,
@@ -39,6 +40,11 @@ import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
+import type {
+  PanelGroupType,
+  PanelIndicatorType,
+  PanelType
+} from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
@@ -47,7 +53,6 @@ import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
-import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
 /**
@@ -95,22 +100,35 @@ function PanelTabComponent({
   const visibility = useDocumentVisibility();
 
   // Check if we should display an indicator dot for this panel
-  const indicator = useQuery({
-    enabled: panel.indicator !== undefined && visibility === 'visible',
+  const notificationDot = useQuery({
+    enabled: panel.notification_dot !== undefined && visibility === 'visible',
     queryKey: ['panel-notification', panel.name],
     queryFn: async () => {
-      if (panel.indicator === undefined) {
-        return false;
-      } else if (typeof panel.indicator === 'function') {
-        return await panel.indicator();
+      if (panel.notification_dot === undefined) {
+        return null;
+      } else if (typeof panel.notification_dot === 'function') {
+        return await panel.notification_dot();
       } else {
-        return panel.indicator as boolean;
+        return panel.notification_dot as PanelIndicatorType;
       }
     },
     staleTime: 5 * 60 * 1000, // cache for 5 minutes
     refetchOnMount: false,
     refetchOnWindowFocus: false
   });
+
+  const indicatorColor: MantineColor | undefined = useMemo(() => {
+    switch (notificationDot.data) {
+      case 'info':
+        return 'blue';
+      case 'warning':
+        return 'yellow';
+      case 'danger':
+        return 'red';
+      default:
+        return undefined;
+    }
+  }, [notificationDot.data]);
 
   return (
     <Tooltip
@@ -125,7 +143,13 @@ function PanelTabComponent({
         w={'100%'}
         value={panel.name}
         leftSection={
-          <Indicator position='top-end' disabled={!indicator?.data} withBorder>
+          <Indicator
+            position='top-end'
+            disabled={!indicatorColor}
+            color={indicatorColor}
+            withBorder
+            size={14}
+          >
             {panel.icon}
           </Indicator>
         }
