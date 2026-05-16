@@ -42,8 +42,10 @@ function QueryCountWidget({
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
     enabled: user.hasViewPermission(modelType) && visibility === 'visible',
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
+    staleTime: 5 * 60 * 1000, // 5 minute stale time
     queryFn: () => {
       if (visibility !== 'visible') {
         return null;
