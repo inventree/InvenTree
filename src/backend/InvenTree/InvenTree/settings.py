@@ -544,7 +544,7 @@ if USE_JWT:
 
 # Throtteling setup
 THROTTLE_ANON = get_setting('INVENTREE_THROTTLE_ANON', 'throttle.anon', '20/minute')
-THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '20/second')
+THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '60/second')
 
 if not DEBUG and THROTTLE_ANON and str(THROTTLE_ANON).lower() != 'none':
     REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon'] = THROTTLE_ANON
