@@ -273,7 +273,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Automatically default to showing items instead of sublocations for final locations (locations with 0 sublocations)'
         ),
-        'default': True,
+        'default': False,
         'validator': bool,
     },
 }
