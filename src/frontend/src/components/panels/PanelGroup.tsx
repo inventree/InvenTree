@@ -432,7 +432,10 @@ function IndexPanelComponent({
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
-        selectedPanel || defaultPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+        selectedPanel ||
+        defaultPanel ||
+        state.lastUsedPanels[pageKey] ||
+        panels[0]?.name;
 
       const panel = panels.findIndex(
         (p) => p.name === panelName && !p.disabled && !p.hidden
