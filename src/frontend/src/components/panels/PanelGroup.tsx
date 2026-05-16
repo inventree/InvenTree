@@ -125,11 +125,7 @@ function PanelTabComponent({
         w={'100%'}
         value={panel.name}
         leftSection={
-          <Indicator
-            position='bottom-end'
-            disabled={!indicator?.data}
-            withBorder
-          >
+          <Indicator position='top-end' disabled={!indicator?.data} withBorder>
             {panel.icon}
           </Indicator>
         }
