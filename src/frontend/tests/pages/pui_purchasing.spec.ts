@@ -509,8 +509,9 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   // Select all line items to receive
   await loadTab(page, 'Line Items');
 
+  await page.getByRole('cell', { name: '002.02-PCB' }).waitFor();
   await page.getByLabel('Select all records').click();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(100);
   await page.getByLabel('action-button-receive-items').click();
 
   // Check for display of individual locations

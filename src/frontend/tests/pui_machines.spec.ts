@@ -52,9 +52,12 @@ test('Machines - Activation', async ({ browser }) => {
     await page.getByRole('option', { name: 'Label Printer' }).click();
 
     await page.getByRole('combobox', { name: 'choice-field-driver' }).click();
+    await page.waitForTimeout(200);
     await page
       .getByRole('option', { name: 'Sample Label Printer Driver' })
       .click();
+    await page.waitForTimeout(200);
+
     await page.getByRole('button', { name: 'Submit' }).click();
   } else {
     // Machine already exists - just click on it to open the "machine drawer"
@@ -64,10 +67,13 @@ test('Machines - Activation', async ({ browser }) => {
   // Creating the new machine opens the "machine drawer"
 
   // Check for "machine type" settings
-  await page.getByText('Scope the printer to a specific location').waitFor();
+  await page
+    .getByText('Scope the printer to a specific location')
+    .first()
+    .waitFor();
 
   // Check for "machine driver" settings
-  await page.getByText('Custom string for connecting').waitFor();
+  await page.getByText('Custom string for connecting').first().waitFor();
 
   // Edit the available setting
   await page.getByRole('button', { name: 'edit-setting-CONNECTION' }).click();
