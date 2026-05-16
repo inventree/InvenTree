@@ -226,7 +226,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             }
         ]
 
-    def get_ui_primary_action_buttons(self, request, context, **kwargs):
+    def get_ui_primary_actions(self, request, context, **kwargs):
         """Return a list of custom primary action buttons."""
         return [
             {
