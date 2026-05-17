@@ -4,7 +4,7 @@ import { useHotkeys } from '@mantine/hooks';
 import { StylishText } from '@lib/components/StylishText';
 import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
@@ -51,6 +51,7 @@ export function PageDetail({
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
+  const location = useLocation();
   useHotkeys([
     [
       'mod+E',
@@ -91,7 +92,7 @@ export function PageDetail({
 
   const extraActions = usePluginUIFeature<PrimaryActionUIFeature>({
     featureType: 'primary_action',
-    context: {}
+    context: { location: location.pathname }
   });
 
   // action caching
