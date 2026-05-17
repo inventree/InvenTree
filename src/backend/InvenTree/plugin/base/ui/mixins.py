@@ -218,5 +218,16 @@ class UserInterfaceMixin:
         Returns:
             list: A list of custom primary action buttons to be injected into the UI
         """
+        # Sample code to render conditional primary action button based on context
+        # items = []
+        # if self.my_assert_function(context):
+        #     items.append({
+        #         'key': 'sample-primary-action',
+        #         'title': 'Sample Primary Action',
+        #         'icon': 'ti:plus:outline',
+        #         'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
+        #     })
+        # return items
+
         # Default implementation returns an empty list
         return []
