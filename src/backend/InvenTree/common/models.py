@@ -2034,7 +2034,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('A file with this name already exists'))
 
         # Create a new file with the new name, and delete the old file
-        default_storage.save(new_path, self.attachment.file)
+        new_path = default_storage.save(new_path, self.attachment.file)
 
         # Update the database file path
         self.attachment.name = new_path
