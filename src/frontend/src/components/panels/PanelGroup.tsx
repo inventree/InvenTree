@@ -79,6 +79,7 @@ export type PanelProps = {
   model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
+  defaultPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
   pluginPanelWithoutId?: boolean;
@@ -483,12 +484,16 @@ function getPanelContent(
 function IndexPanelComponent({
   pageKey,
   selectedPanel,
+  defaultPanel,
   panels
 }: Readonly<PanelProps>) {
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
-        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+        selectedPanel ||
+        defaultPanel ||
+        state.lastUsedPanels[pageKey] ||
+        panels[0]?.name;
 
       const panel = panels.findIndex(
         (p) => p.name === panelName && !p.disabled && !p.hidden
