@@ -419,7 +419,13 @@ export function RelatedModelField({
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
+      placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
+      singleFetchFunction: undefined,
       exclude: undefined,
+      allow_blank: undefined,
       allow_null: undefined,
       read_only: undefined
     };

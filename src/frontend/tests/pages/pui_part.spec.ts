@@ -344,7 +344,9 @@ test('Parts - BOM Comparison', async ({ browser }) => {
   await page.getByText('Removed from BOM').first().waitFor();
 
   // Change display mode
-  await page.getByRole('textbox', { name: 'bom-compare-display-mode' }).click();
+  await page
+    .getByRole('combobox', { name: 'bom-compare-display-mode' })
+    .click();
   await page.getByRole('option', { name: 'Show different Parts' }).click();
 
   // Use URL params to compare directly
