@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@mantine/hooks';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { FilterSetState, TableFilter } from '../types/Filters';
 
 export default function useFilterSet(
@@ -16,15 +16,15 @@ export default function useFilterSet(
     getInitialValueInEffect: false
   });
 
-  const activeFilters: TableFilter[] = useMemo(() => {
+  useEffect(() => {
     if (storedFilters == null) {
-      // If there are no stored filters, set initial values
-      const filters = initialFilters || [];
-      setStoredFilters(filters);
-      return filters;
+      setStoredFilters(initialFilters || []);
     }
-    return storedFilters || [];
-  }, [storedFilters]);
+  }, [storedFilters, initialFilters, setStoredFilters]);
+
+  const activeFilters: TableFilter[] = useMemo(() => {
+    return storedFilters ?? initialFilters ?? [];
+  }, [storedFilters, initialFilters]);
 
   // Callback to clear all active filters from the table
   const clearActiveFilters = useCallback(() => {
