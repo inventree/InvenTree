@@ -348,7 +348,7 @@ export default function CategoryDetail() {
 
   const defaultPanel = useMemo(() => {
     if (
-      settings.isSet('DISPLAY_ITEMS_FOR_FINAL_LOCATION', true) &&
+      settings.isSet('DISPLAY_ITEMS_FINAL_LEVEL', true) &&
       category.pk &&
       category.subcategories === 0
     ) {

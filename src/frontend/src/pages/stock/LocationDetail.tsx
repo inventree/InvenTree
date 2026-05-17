@@ -435,7 +435,7 @@ export default function Stock() {
 
   const defaultPanel = useMemo(() => {
     if (
-      settings.isSet('DISPLAY_ITEMS_FOR_FINAL_LOCATION', true) &&
+      settings.isSet('DISPLAY_ITEMS_FINAL_LEVEL', true) &&
       location.pk &&
       location.sublocations === 0
     ) {
