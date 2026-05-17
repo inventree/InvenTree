@@ -4,10 +4,12 @@ import { useHotkeys } from '@mantine/hooks';
 import { StylishText } from '@lib/components/StylishText';
 import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
+import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
@@ -48,6 +50,7 @@ export function PageDetail({
   editEnabled
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
+  const navigate = useNavigate();
   useHotkeys([
     [
       'mod+E',
@@ -94,13 +97,24 @@ export function PageDetail({
   // action caching
   const computedActions = useMemo(() => {
     const extraActionArray: ReactNode[] = extraActions.map((action) => {
-      const { options, func } = action;
-      const { title, icon, context } = options;
+      const { options: opts, func } = action;
+      const { title, icon, context, options } = opts;
+
+      const click = () => {
+        const url = options?.url;
+        if (url) {
+          navigate(url);
+        } else if (func) {
+          func(context);
+        }
+      };
+
       return (
         <PrimaryActionButton
           title={title}
-          icon={icon}
-          onClick={() => func(context)}
+          leftSection={<ApiIcon name={icon as string} />}
+          color={options?.color}
+          onClick={click}
           key={title}
         />
       );

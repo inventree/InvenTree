@@ -232,8 +232,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             {
                 'key': 'sample-primary-action',
                 'title': 'Sample Primary Action',
-                'icon': 'ti:plus',
-                'options': {'url': '/sample/action/'},
+                'icon': 'ti:plus:outline',
+                'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
             }
         ]
 
