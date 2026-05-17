@@ -369,6 +369,7 @@ function BasePanelGroup({
                   (panel) =>
                     !panel.hidden && (
                       <PanelTabComponent
+                        key={`panel-tab-${group.id}-${panel.name}`}
                         expanded={expanded}
                         panel={panel}
                         onClick={(event: any) =>
