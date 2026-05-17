@@ -22,6 +22,12 @@ export type {
 } from './types/Plugins';
 
 export type {
+  PanelIndicatorType,
+  PanelType,
+  PanelGroupType
+} from './types/Panel';
+
+export type {
   RowAction,
   RowViewProps,
   TableColumn,
