@@ -781,8 +781,34 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
 
+    def update(self, request, *args, **kwargs):
+        """Update an existing attachment object."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('change', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
+        partial = kwargs.pop('partial', False)
+        data = self.clean_data(request.data)
+
+        # Extract filename first
+        filename = data.pop('filename', None)
+
+        # Run other validation / updates first, before attempting to rename the file
+        serializer = self.get_serializer(attachment, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # User is attempting to rename the file
+        if filename and attachment.basename and filename != attachment.basename:
+            attachment.rename(filename)
+
+        return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
-        """Check user permissions before deleting an attachment."""
+        """Delete an existing attachment object."""
         attachment = self.get_object()
 
         if not attachment.check_permission('delete', request.user):
@@ -791,25 +817,6 @@ class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
-
-
-@extend_schema(responses={201: common.serializers.AttachmentSerializer})
-class AttachmentRename(AttachmentMixin, CreateAPI):
-    """API endpoint for renaming an attachment."""
-
-    serializer_class = common.serializers.AttachmentRenameSerializer
-
-    def create(self, request, *args, **kwargs):
-        """Rename an attachment."""
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        attachment = self.get_object()
-        attachment.rename(serializer.validated_data['filename'])
-
-        data = common.serializers.AttachmentSerializer(attachment).data
-
-        return Response(data, status=201)
 
 
 class ParameterTemplateFilter(FilterSet):
@@ -1463,11 +1470,6 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'rename/',
-                        AttachmentRename.as_view(),
-                        name='api-attachment-rename',
-                    ),
                     meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),

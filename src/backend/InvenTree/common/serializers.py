@@ -1,4 +1,4 @@
-"""JSON serializers for common components."""
+"""API serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery
@@ -807,14 +807,6 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             raise PermissionDenied(permission_error_msg)
 
         return super().save(**kwargs)
-
-
-class AttachmentRenameSerializer(serializers.Serializer):
-    """Serializer for renaming an attachment."""
-
-    filename = serializers.CharField(
-        label=_('Filename'), required=True, allow_blank=False
-    )
 
 
 @register_importer()

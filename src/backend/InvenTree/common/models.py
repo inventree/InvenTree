@@ -2008,6 +2008,12 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if re.search(r'[\\/*?:"<>|]', filename):
             raise ValidationError(_('Filename contains invalid characters'))
 
+        current_ext = os.path.splitext(self.attachment.name)[1]
+        new_ext = os.path.splitext(filename)[1]
+
+        if current_ext.lower() != new_ext.lower():
+            raise ValidationError(_('Cannot change file extension'))
+
     def rename(self, filename: str):
         """Rename the attached file."""
         self.validate_rename(filename)
