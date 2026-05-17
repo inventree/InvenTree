@@ -1,7 +1,7 @@
 import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -37,12 +37,10 @@ function QueryCountWidget({
 
   const modelProperties = ModelInformationDict[modelType];
 
-  const [count, setCount] = useState<number>(0);
-
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
     enabled: user.hasViewPermission(modelType) && visibility === 'visible',
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
     staleTime: 5 * 60 * 1000, // 5 minute stale time
@@ -59,8 +57,7 @@ function QueryCountWidget({
           }
         })
         .then((res) => {
-          setCount(res.data?.count ?? 0);
-          return res.data;
+          return res.data?.count ?? 0;
         });
     }
   });
@@ -95,9 +92,11 @@ function QueryCountWidget({
         </ActionIcon>
       );
     } else {
-      return <RollingNumber value={count} fz='20px' />;
+      return (
+        <RollingNumber value={query.isFetching ? 0 : query.data} fz='20px' />
+      );
     }
-  }, [query.isFetching, query.isError, count]);
+  }, [query.isFetching, query.isError, query.data]);
 
   return (
     <Anchor href='#' onClick={onFollowLink} underline='never'>
