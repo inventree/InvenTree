@@ -100,6 +100,7 @@ test('Machines - Activation', async ({ browser }) => {
 
   // Let's print something with the machine
   await navigate(page, 'stock/location/1/stock-items');
+  await page.getByText('Blue plastic enclosure').first().waitFor();
 
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
