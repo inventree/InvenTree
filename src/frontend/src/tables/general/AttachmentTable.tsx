@@ -221,8 +221,6 @@ export function AttachmentTable({
     number | undefined
   >(undefined);
 
-  const [selectedFilename, setSelectedFilename] = useState<string>('');
-
   const uploadFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       model_type: {
@@ -249,6 +247,11 @@ export function AttachmentTable({
     // Remove the 'attachment' field if we are editing an existing attachment, or uploading a link
     if (attachmentType != 'attachment' || !!selectedAttachment) {
       delete fields['attachment'];
+    }
+
+    if (!selectedAttachment) {
+      // Cannot edit the filename during creation
+      delete fields['filename'];
     }
 
     return fields;
