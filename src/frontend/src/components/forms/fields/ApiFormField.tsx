@@ -81,6 +81,8 @@ export function ApiFormField({
       ...fieldDefinition,
       autoFill: undefined,
       placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
