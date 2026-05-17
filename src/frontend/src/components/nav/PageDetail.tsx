@@ -48,7 +48,10 @@ export function PageDetail({
   useHotkeys([
     [
       'mod+E',
-      () => {
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
         if (editEnabled ?? true) {
           editAction?.();
         }
