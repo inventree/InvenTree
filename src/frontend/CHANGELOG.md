@@ -2,7 +2,7 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
-### 1.4.0 - Unreleased
+### 1.4.0 - May 2026
 
 #### Version Numbering
 
