@@ -3,9 +3,9 @@ import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { lazy } from 'react';
 import { useUserState } from '../../states/UserState';
-import type { PanelType } from './Panel';
 
 const NotesEditor = lazy(() => import('../editors/NotesEditor'));
 
