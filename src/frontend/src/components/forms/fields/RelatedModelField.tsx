@@ -384,10 +384,14 @@ export function RelatedModelField({
       }
 
       return (
-        <RenderInstance instance={data} model={definition.model ?? undefined} />
+        <RenderInstance
+          instance={data}
+          model={definition.model ?? undefined}
+          custom_model={definition.custom_model ?? undefined}
+        />
       );
     },
-    [definition.model, definition.modelRenderer]
+    [definition.model, definition.modelRenderer, definition.custom_model]
   );
 
   // Update form values when the selected value changes
@@ -415,7 +419,13 @@ export function RelatedModelField({
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
+      placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
+      singleFetchFunction: undefined,
       exclude: undefined,
+      allow_blank: undefined,
       allow_null: undefined,
       read_only: undefined
     };

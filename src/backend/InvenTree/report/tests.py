@@ -6,7 +6,11 @@ from io import StringIO
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.urls import reverse
+
+from pypdf import PdfReader
 
 import report.models as report_models
 from build.models import Build
@@ -299,6 +303,92 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+    def test_print_custom_template(self):
+        """Create a new template, print it, and check the output."""
+        template_string = """
+        Hello {{ user.username }}
+        Your user ID is {{ user.pk }}.
+        Template name: {{ template.name }}
+        {% if merge %}
+        REPORT OUTPUT: MERGE = ENABLED
+        {% for instance in instances %}
+        Part Name: {{ instance.part.name }}
+        Stock ID: {{ instance.stock_item.pk }}
+        {% endfor %}
+        {% else %}
+        REPORT OUTPUT: MERGE = DISABLED
+        Part Name: {{ part.name }}
+        Stock ID: {{ stock_item.pk }}
+        {% endif %}
+        """
+
+        template_file = ContentFile(
+            template_string.encode('utf-8'), name='TestPrintTemplate.html'
+        )
+
+        # Create a new report template with the above string as the template
+        template = ReportTemplate.objects.create(
+            name='Test report template',
+            model_type='stockitem',
+            template=template_file,
+            filename_pattern='unit_test_report.pdf',
+        )
+
+        item = StockItem.objects.first()
+
+        test_strings = [
+            f'Hello {self.user.username}',
+            f'Your user ID is {self.user.pk}.',
+            f'Template name: {template.name}',
+            f'Part Name: {item.part.name}',
+            f'Stock ID: {item.pk}',
+        ]
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk]}
+
+        # Test with "debug" both enabled and disabled
+        for debug in [True, False]:
+            set_global_setting('REPORT_DEBUG_MODE', debug)
+
+            # Test with "merge" both enabled and disabled
+            for merge in [True, False]:
+                template.merge = merge
+                template.save()
+
+                # Generate report via the API
+                data = self.post(url, data=post_data).data
+
+                self.assertEqual(data['user'], self.user.pk)
+                self.assertIsNotNone(data['output'])
+                self.assertTrue(data['output'].endswith('.html' if debug else '.pdf'))
+                self.assertIn('unit_test_report', data['output'])
+
+                if debug:
+                    # Read raw HTML file
+                    output = default_storage.open(
+                        data['output'].replace('/media/', '', 1)
+                    )
+                    file_content = str(output.read(), 'utf-8')
+                else:
+                    # Convert from PDF bytes to string for testing purposes
+                    output_path = os.path.join(
+                        settings.MEDIA_ROOT, data['output'].replace('/media/', '', 1)
+                    )
+                    reader = PdfReader(output_path)
+                    file_content = ''.join(page.extract_text() for page in reader.pages)
+
+                # Replace any newline characters for testing purposes
+                file_content = file_content.replace('\n', ' ')
+
+                for ts in test_strings:
+                    self.assertIn(ts, file_content)
+
+                self.assertIn(
+                    f'REPORT OUTPUT: MERGE = {"ENABLED" if merge else "DISABLED"}',
+                    file_content,
+                )
+
 
 class LabelTest(InvenTreeAPITestCase):
     """Unit tests for label templates."""
@@ -350,6 +440,71 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_custom_template(self):
+        """Test printing against a custom template file."""
+        template_string = """
+        Hello {{ user.username }} - your user ID is {{ user.pk }}.
+        Template name: {{ template.name }}
+        Barcode: {{ qr_data }}
+        Location ID: {{ location.pk }}
+        Base URL: {{ base_url }}
+        """
+
+        template_file = ContentFile(
+            template_string.encode('utf-8'), name='TestLabelTemplate.html'
+        )
+
+        # Create a new label template with the above string as the template
+        template = LabelTemplate.objects.create(
+            name='Test label template',
+            model_type='stocklocation',
+            template=template_file,
+            filename_pattern='unit_test_label.pdf',
+        )
+
+        location = StockItem.objects.exclude(location=None).first().location
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [location.pk]}
+
+        plugin = registry.get_plugin('inventreelabel')
+
+        test_strings = [
+            f'Hello {self.user.username} - your user ID is {self.user.pk}.',
+            f'Template name: {template.name}',
+            f'Location ID: {location.pk}',
+            f'INV-SL{location.pk}',
+        ]
+
+        # Test with "debug" both enabled and disabled
+        for debug in [True, False]:
+            plugin.set_setting('DEBUG', debug)
+
+            # Generate label via the API
+            data = self.post(url, data=post_data).data
+
+            self.assertEqual(data['user'], self.user.pk)
+            self.assertTrue(data['output'].endswith('.html' if debug else '.pdf'))
+
+            # Read the file contents back out, and validate
+            if debug:
+                # Read raw HTML file
+                output = default_storage.open(data['output'].replace('/media/', '', 1))
+                file_content = str(output.read(), 'utf-8')
+            else:
+                # Convert from PDF bytes to string for testing purposes
+                output_path = os.path.join(
+                    settings.MEDIA_ROOT, data['output'].replace('/media/', '', 1)
+                )
+                reader = PdfReader(output_path)
+                file_content = ''.join(page.extract_text() for page in reader.pages)
+
+            # Replace any newline for testing purposes
+            file_content = file_content.replace('\n', ' ')
+
+            for ts in test_strings:
+                self.assertIn(ts, file_content)
 
     def test_filters(self):
         """Test that template filters are correctly validated."""

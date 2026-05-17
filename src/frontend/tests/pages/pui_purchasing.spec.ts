@@ -162,7 +162,7 @@ test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   await page.getByRole('button', { name: 'table-export-data' }).click();
   await page.getByText('Select export plugin').waitFor();
   await page
-    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .getByRole('combobox', { name: 'choice-field-export_plugin' })
     .fill('CSV');
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Process completed successfully').waitFor();
@@ -509,8 +509,9 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   // Select all line items to receive
   await loadTab(page, 'Line Items');
 
+  await page.getByRole('cell', { name: '002.02-PCB' }).waitFor();
   await page.getByLabel('Select all records').click();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(100);
   await page.getByLabel('action-button-receive-items').click();
 
   // Check for display of individual locations
@@ -606,6 +607,8 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
 
   // Receive the line item
   await loadTab(page, 'Line Items');
+  await page.getByRole('cell', { name: 'Thumbnail CRM license' }).waitFor();
+
   await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('button', { name: 'action-button-receive-items' })

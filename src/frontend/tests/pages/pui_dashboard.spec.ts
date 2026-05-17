@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { createApi } from '../api.js';
 import { test } from '../baseFixtures.js';
+import { allaccessuser } from '../defaults.js';
 import { doCachedLogin } from '../login.js';
 import { setPluginState } from '../settings.js';
 
@@ -96,9 +98,7 @@ test('Dashboard - Plugins', async ({ browser }) => {
   await page.getByText('Hello world! This is a sample').waitFor();
 });
 
-test('Dashboard - Preserve widget sizes when adding new widget', async ({
-  browser
-}) => {
+test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   // Regression: addWidget previously snapped every existing widget back to
   // its minW/minH. Fix is in DashboardLayout.tsx::addWidget (overrideSize=false).
   const TARGET_W = 10;
@@ -110,7 +110,11 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
       return raw ? (JSON.parse(raw)?.state?.layouts ?? {}) : {};
     });
 
-  const page = await doCachedLogin(browser);
+  const user = allaccessuser;
+
+  const page = await doCachedLogin(browser, {
+    user: user
+  });
   await resetDashboard(page);
 
   // Add widget A; this also persists to the backend user profile.
@@ -120,7 +124,7 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
   await page.getByLabel('add-widget-ovr-so').click();
   await page.getByRole('banner').getByRole('button').click();
   await page.getByText('Overdue Sales Orders').waitFor();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(100);
 
   // Inflate widget A on the backend profile and reload. The auth flow on
   // page load rehydrates layouts from the profile, not localStorage, so a
@@ -132,26 +136,31 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
       it?.i === 'ovr-so' ? { ...it, w: TARGET_W, h: TARGET_H } : it
     );
   }
-  await page.evaluate(async (layouts) => {
-    const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? '';
-    await fetch('/api/user/profile/', {
-      method: 'PATCH',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrf
-      },
-      body: JSON.stringify({ widgets: { widgets: ['ovr-so'], layouts } })
-    });
-  }, inflated);
+
+  const api = createApi({
+    username: user.username,
+    password: user.testcred
+  });
+
+  (await api).patch('user/profile/', {
+    data: {
+      widgets: {
+        widgets: ['ovr-so'],
+        layouts: inflated
+      }
+    }
+  });
 
   await page.reload();
   await page.getByText('Overdue Sales Orders').waitFor();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(100);
 
   // Sanity: profile rehydration produced the inflated values.
   for (const [bp, items] of Object.entries(await readLayouts(page))) {
     const entry = (items as any[]).find((i) => i?.i === 'ovr-so');
+
+    console.log('entry:', bp, entry);
+
     expect(entry?.w, `${bp}: ovr-so missing or wrong w`).toBe(TARGET_W);
     expect(entry?.h, `${bp}: ovr-so missing or wrong h`).toBe(TARGET_H);
   }
@@ -163,7 +172,7 @@ test('Dashboard - Preserve widget sizes when adding new widget', async ({
   await page.getByLabel('add-widget-ovr-po').click();
   await page.getByRole('banner').getByRole('button').click();
   await page.getByText('Overdue Purchase Orders').waitFor();
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(100);
 
   for (const [bp, items] of Object.entries(await readLayouts(page))) {
     const entry = (items as any[]).find((i) => i?.i === 'ovr-so');

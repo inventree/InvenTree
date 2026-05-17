@@ -2,9 +2,11 @@ import type { I18n } from '@lingui/core';
 import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
+import type { JSX } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
+import type { setRenderProps } from '../states/types';
 import type {
   ApiFormModalProps,
   ApiFormProps,
@@ -12,7 +14,12 @@ import type {
   StockOperationProps
 } from './Forms';
 import type { UseModalReturn } from './Modals';
-import type { RemoteInstanceProps, RenderInstanceProps } from './Rendering';
+import type {
+  RemoteInstanceProps,
+  RenderInlineModelProps,
+  RenderInstanceProps,
+  ThumbnailProps
+} from './Rendering';
 import type { SettingsStateProps } from './Settings';
 import type { InvenTreeTableRenderProps } from './Tables';
 import type { UserStateProps } from './User';
@@ -102,6 +109,10 @@ export type InvenTreePluginContext = {
   renderRemoteInstance: (
     props: Readonly<RemoteInstanceProps>
   ) => React.ReactNode;
+  renderInlineModel: (
+    props: Readonly<RenderInlineModelProps>
+  ) => React.ReactNode;
+  thumbnail: (props: Readonly<ThumbnailProps>) => JSX.Element;
   host: string;
   i18n: I18n;
   locale: string;
@@ -109,6 +120,9 @@ export type InvenTreePluginContext = {
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
   forms: InvenTreeFormsContext;
+  stateFnc: {
+    setRenderer: setRenderProps;
+  };
   tables: InvenTreeTablesContext<any>;
   importer: ImporterDrawerContext;
   model?: ModelType | string;

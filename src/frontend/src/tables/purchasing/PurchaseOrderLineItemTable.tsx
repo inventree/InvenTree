@@ -416,7 +416,7 @@ export function PurchaseOrderLineItemTable({
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
-        hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
+        hidden={!orderPlaced || !user.hasAddRole(UserRoles.purchase_order)}
       />
     ];
   }, [orderId, user, table, editable, orderPlaced]);
