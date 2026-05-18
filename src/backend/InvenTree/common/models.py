@@ -2095,6 +2095,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     attachment = models.FileField(
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
+        validators=[common.validators.validate_attachment_file],
         help_text=_('Select file to attach'),
         blank=True,
         null=True,

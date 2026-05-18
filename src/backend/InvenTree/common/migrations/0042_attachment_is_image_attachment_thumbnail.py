@@ -2,6 +2,9 @@
 
 from django.db import migrations, models
 
+import common.models
+import common.validators
+
 
 class Migration(migrations.Migration):
 
@@ -28,6 +31,18 @@ class Migration(migrations.Migration):
                 null=True,
                 upload_to="",
                 verbose_name="Thumbnail",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="attachment",
+            name="attachment",
+            field=models.FileField(
+                blank=True,
+                help_text="Select file to attach",
+                null=True,
+                upload_to=common.models.rename_attachment,
+                validators=[common.validators.validate_attachment_file],
+                verbose_name="Attachment",
             ),
         ),
     ]

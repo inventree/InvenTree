@@ -76,6 +76,16 @@ def validate_attachment_model_type(value):
         raise ValidationError('Model type does not support attachments')
 
 
+def validate_attachment_file(attachment):
+    """Ensure that the provided attachment file is valid."""
+    max_size = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE', create=False)
+
+    if attachment.size > (max_size * 1024 * 1024):
+        raise ValidationError(
+            _(f'File size exceeds maximum upload limit of {max_size} MB')
+        )
+
+
 def validate_notes_model_type(value):
     """Ensure that the provided model type is valid.
 
