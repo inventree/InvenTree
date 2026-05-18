@@ -717,7 +717,7 @@ class AttachmentFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.Attachment
-        fields = ['model_type', 'model_id', 'upload_user']
+        fields = ['model_type', 'model_id', 'upload_user', 'is_image']
 
     is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
 

@@ -300,6 +300,11 @@ export function AttachmentTable({
         name: 'is_file',
         label: t`Is File`,
         description: t`Show file attachments`
+      },
+      {
+        name: 'is_image',
+        label: t`Is Image`,
+        description: t`Show image attachments`
       }
     ];
   }, []);

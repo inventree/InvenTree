@@ -48,6 +48,7 @@ from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
+from PIL import Image
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
@@ -1986,6 +1987,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         else:
             self.file_size = 0
 
+        # Is this an image, or not?
+        self.is_image = self.check_is_image()
+
         super().save(*args, **kwargs)
 
         # Update file size
@@ -2169,6 +2173,29 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_related_permission(permission, user)
+
+    def check_is_image(self) -> bool:
+        """Check if the attached file is an image.
+
+        We consider it a valid image if:
+
+        - The file exists in storage
+        - The file can be opened and verified by the PIL library
+
+        """
+        if not self.attachment:
+            return False
+
+        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+            return False
+
+        img_data = default_storage.open(self.attachment.name).read()
+
+        try:
+            Image.open(BytesIO(img_data)).verify()
+            return True
+        except Exception:
+            return False
 
 
 class InvenTreeCustomUserStateModel(models.Model):
