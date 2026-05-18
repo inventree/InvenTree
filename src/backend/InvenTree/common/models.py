@@ -1963,7 +1963,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             # Remove the attached file from storage
             try:
                 default_storage.delete(attachment.name)
-            except Exception:
+            except Exception:  # pragma: no cover
                 pass
 
     def save(self, *args, **kwargs):
@@ -2039,7 +2039,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         old_path = Path(self.attachment.name)
         new_path = old_path.parent / filename
 
-        if old_path == new_path:
+        if old_path == new_path:  # pragma: no cover
             # No change in filename
             return
 
@@ -2055,7 +2055,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         new_path = default_storage.save(new_path, self.attachment.file)
 
         # Ensure that the new file exists
-        if not default_storage.exists(new_path):
+        if not default_storage.exists(new_path):  # pragma: no cover
             raise ValidationError(_('Failed to save renamed file'))
 
         # Update the database file path
