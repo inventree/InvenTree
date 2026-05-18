@@ -9,7 +9,6 @@ import hmac
 import json
 import math
 import os
-import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -27,9 +26,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.utils import validate_file_name
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -2005,8 +2005,10 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if not filename:
             raise ValidationError(_('Filename cannot be empty'))
 
-        if re.search(r'[\\/*?:"<>|]', filename):
-            raise ValidationError(_('Filename contains invalid characters'))
+        try:
+            validate_file_name(filename, allow_relative_path=False)
+        except SuspiciousFileOperation:
+            raise ValidationError(_('Invalid filename'))
 
         current_ext = os.path.splitext(self.attachment.name)[1]
         new_ext = os.path.splitext(filename)[1]
@@ -2035,6 +2037,10 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         # Create a new file with the new name, and delete the old file
         new_path = default_storage.save(new_path, self.attachment.file)
+
+        # Ensure that the new file exists
+        if not default_storage.exists(new_path):
+            raise ValidationError(_('Failed to save renamed file'))
 
         # Update the database file path
         self.attachment.name = new_path
