@@ -13,6 +13,40 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { useApi } from '../../contexts/ApiContext';
 
+import '@blocknote/core/fonts/inter.css';
+import { BlockNoteView } from '@blocknote/mantine';
+import '@blocknote/mantine/style.css';
+import { useCreateBlockNote } from '@blocknote/react';
+import { Paper } from '@mantine/core';
+import { useUserState } from '../../states/UserState';
+
+export default function NotesEditor({
+  modelType,
+  modelId,
+  editable,
+  setDirtyCallback
+}: Readonly<{
+  modelType: ModelType;
+  modelId: number;
+  editable?: boolean;
+  setDirtyCallback?: (dirty: boolean) => void;
+}>) {
+  const user = useUserState();
+
+  const canEdit = useMemo(
+    () => user.hasChangePermission(modelType),
+    [user, modelType]
+  );
+
+  const editor = useCreateBlockNote();
+
+  return (
+    <Paper p='md' shadow='sm' withBorder>
+      <BlockNoteView editor={editor} editable={canEdit} />
+    </Paper>
+  );
+}
+
 /*
  * A text editor component for editing notes against a model type and instance.
  * Uses the react-simple-mde editor: https://github.com/RIP21/react-simplemde-editor
@@ -22,7 +56,7 @@ import { useApi } from '../../contexts/ApiContext';
  * - Allow image resizing in the future (requires back-end validation changes))
  * - Allow user to configure the editor toolbar (i.e. hide some buttons if they don't want them)
  */
-export default function NotesEditor({
+export function OldNotesEditor({
   modelType,
   modelId,
   editable,
