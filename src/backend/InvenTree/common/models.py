@@ -2987,6 +2987,10 @@ class Note(
         help_text=_('Optional description field'),
     )
 
+    content = models.TextField(
+        blank=True, verbose_name=_('Content'), help_text=_('Note content')
+    )
+
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""

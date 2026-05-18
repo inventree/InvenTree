@@ -819,6 +819,47 @@ class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+class NoteFilter(FilterSet):
+    """Filterset class for the NoteList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Note
+        fields = ['model_type', 'model_id', 'updated_by']
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
+
+class NoteMixin:
+    """Mixin class for the Note views."""
+
+    queryset = common.models.Note.objects.all()
+    serializer_class = common.serializers.NoteSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class NoteList(NoteMixin, ListCreateAPI):
+    """List API endpoint for Note objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = NoteFilter
+
+    ordering_fields = ['model_id', 'model_type', 'user', 'creation']
+    search_fields = ['content', 'model_id', 'model_type', 'user__username']
+    unique_create_fields = ['model_type', 'model_id']
+
+
+class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Note objects."""
+
+
 class ParameterTemplateFilter(FilterSet):
     """FilterSet class for the ParameterTemplateList API endpoint."""
 
@@ -1475,6 +1516,20 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    # Notes
+    path(
+        'note/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(common.models.Note),
+                    path('', NoteDetail.as_view(), name='api-note-detail'),
+                ]),
+            ),
+            path('', NoteList.as_view(), name='api-note-list'),
         ]),
     ),
     # Parameters and templates

@@ -9,6 +9,23 @@ import common.icons
 from common.settings import get_global_setting
 
 
+def note_model_types():
+    """Return a list of valid note model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNotesMixin)
+    )
+
+
+def note_model_options():
+    """Return a list of options for models which support notes."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in note_model_types()
+    ]
+
+
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
     import InvenTree.models

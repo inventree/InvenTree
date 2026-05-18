@@ -809,6 +809,82 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         return super().save(**kwargs)
 
 
+class NoteSerializer(InvenTreeModelSerializer):
+    """Serializer for the Note model."""
+
+    class Meta:
+        """Meta options for NoteSerializer."""
+
+        model = common_models.Note
+        fields = [
+            'pk',
+            'model_type',
+            'model_id',
+            'title',
+            'description',
+            'content',
+            'updated',
+            'updated_by',
+        ]
+
+        read_only_fields = ['updated', 'updated_by']
+
+    def save(self, **kwargs):
+        """Save the Note instance."""
+        from InvenTree.models import InvenTreeNoteMixin
+        from users.permissions import check_user_permission
+
+        model_type = self.validated_data.get('model_type', None)
+
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
+
+        # Ensure that the user has permission to modify notes for the specified model
+        user = self.context.get('request').user
+
+        target_model_class = model_type.model_class()
+
+        if not issubclass(target_model_class, InvenTreeNoteMixin):
+            raise PermissionDenied(_('Invalid model type specified for note'))
+
+        permission_error_msg = _(
+            'User does not have permission to create or edit notes for this model'
+        )
+
+        if not check_user_permission(user, target_model_class, 'change'):
+            raise PermissionDenied(permission_error_msg)
+
+        if not target_model_class.check_related_permission('change', user):
+            raise PermissionDenied(permission_error_msg)
+
+        instance = super().save(**kwargs)
+        instance.updated_by = user
+        instance.save()
+
+        return instance
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeParameterMixin,
+        choices=common.validators.note_model_options,
+        label=_('Model Type'),
+        default='',
+        allow_null=False,
+    )
+
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
+        prefetch_fields=['updated_by'],
+    )
+
+
 @register_importer()
 class ParameterTemplateSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
