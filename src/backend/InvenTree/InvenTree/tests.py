@@ -739,7 +739,9 @@ class TestHelpers(TestCase):
         large_img = 'https://github.com/inventree/InvenTree/raw/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
 
         # Download a valid image (should not throw an error)
-        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
+        InvenTree.helpers_model.download_image_from_url(
+            large_img, timeout=10, max_size=10 * 1024 * 1024
+        )
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
