@@ -1,10 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 487
+INVENTREE_API_VERSION = 489
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
+    - Removes the "remote_image" field from the Part API endpoint
+    - Removes the "remote_image" field from the Company API endpoint
+
+v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
+    - Allow renaming of attachments after upload via the API
 
 v487 -> 2026-05-15 : https://github.com/inventree/InvenTree/pull/11948
     - Make SelectionList default nullable

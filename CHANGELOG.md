@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#11920](https://github.com/inventree/InvenTree/pull/11920) adds support for renaming attachments after they have been uploaded. This includes both backend and frontend changes, allowing users to rename attachments via the API or through the UI.
 - [#11914](https://github.com/inventree/InvenTree/pull/11914) adds a "maximum_stock" field to the Part model, allowing users to specify a maximum preferred stock level for each part. This is used in conjunction with the existing "minimum_stock" field to allow users to define a preferred stock range for each part. The "high_stock" filter has also been added to the Part API endpoint, allowing users to filter parts which are above their maximum stock level.
 - [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.
 - [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
@@ -30,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
 
 ### Removed
+
+- [#11962](https://github.com/inventree/InvenTree/pull/11962) removes the "remote_image" field from the Part API endpoint, which (previously) allowed the user to specify a remote URL for an image to be downloaded and associated with the part. This field was removed due to security concerns around downloading images from arbitrary URLs. If you were using this field in an external client application, you will need to update your application to use the new "download_image_from_url" API endpoint instead.
 
 ## 1.3.0 - 2026-04-11
 

@@ -15,6 +15,7 @@ from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 from secrets import compare_digest
 from typing import Any, Optional
 
@@ -25,9 +26,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.utils import validate_file_name
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -1948,6 +1950,22 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         choice_fnc = common.validators.attachment_model_options
 
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the Attachment model.
+
+        - Ensure that the attached file is deleted from storage when the database entry is removed
+        """
+        attachment = self.attachment
+
+        super().delete(*args, **kwargs)
+
+        if attachment and default_storage.exists(attachment.name):
+            try:
+                # Remove the attached file from storage
+                default_storage.delete(attachment.name)
+            except Exception:  # pragma: no cover
+                pass
+
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
 
@@ -1992,6 +2010,60 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
         return str(self.link)
+
+    def validate_rename(self, filename: str):
+        """Validate that the provided filename is valid, for renaming an attachment."""
+        filename = filename.strip()
+
+        if not self.attachment:
+            raise ValidationError(_('No file attached to rename'))
+
+        if not filename:
+            raise ValidationError(_('Filename cannot be empty'))
+
+        try:
+            validate_file_name(filename, allow_relative_path=False)
+        except SuspiciousFileOperation:
+            raise ValidationError(_('Invalid filename'))
+
+        current_ext = os.path.splitext(self.attachment.name)[1]
+        new_ext = os.path.splitext(filename)[1]
+
+        if current_ext.lower() != new_ext.lower():
+            raise ValidationError(_('Cannot change file extension'))
+
+    def rename(self, filename: str):
+        """Rename the attached file."""
+        self.validate_rename(filename)
+
+        old_path = Path(self.attachment.name)
+        new_path = old_path.parent / filename
+
+        if old_path == new_path:  # pragma: no cover
+            # No change in filename
+            return
+
+        if not new_path.is_relative_to(old_path.parent):  # pragma: no cover
+            raise ValidationError(_('Invalid filename'))
+
+        new_path = new_path.as_posix()
+
+        if default_storage.exists(new_path):
+            raise ValidationError(_('A file with this name already exists'))
+
+        # Create a new file with the new name, and delete the old file
+        new_path = default_storage.save(new_path, self.attachment.file)
+
+        # Ensure that the new file exists
+        if not default_storage.exists(new_path):  # pragma: no cover
+            raise ValidationError(_('Failed to save renamed file'))
+
+        # Update the database file path
+        self.attachment.name = new_path
+        self.save()
+
+        # Remove the old path
+        default_storage.delete(old_path)
 
     model_type = models.CharField(
         max_length=100,

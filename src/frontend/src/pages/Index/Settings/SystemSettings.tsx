@@ -59,15 +59,7 @@ export default function SystemSettings() {
                 'INVENTREE_RESTRICT_ABOUT',
                 'DISPLAY_FULL_NAMES',
                 'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON'
-              ]}
-            />
-            <GlobalSettingList
-              heading={t`Image Download Settings`}
-              keys={[
-                'INVENTREE_DOWNLOAD_FROM_URL',
-                'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
-                'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
+                'WEEK_STARTS_ON',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
