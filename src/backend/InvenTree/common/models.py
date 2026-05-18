@@ -1950,6 +1950,22 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         choice_fnc = common.validators.attachment_model_options
 
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the Attachment model.
+
+        - Ensure that the attached file is deleted from storage when the database entry is removed
+        """
+        attachment = self.attachment
+
+        super().delete(*args, **kwargs)
+
+        if attachment:
+            # Remove the attached file from storage
+            try:
+                default_storage.delete(attachment.name)
+            except Exception:
+                pass
+
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
 
