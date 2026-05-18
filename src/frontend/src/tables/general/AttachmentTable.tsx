@@ -49,7 +49,12 @@ function attachmentTableColumns(): TableColumn[] {
       noWrap: true,
       render: (record: any) => {
         if (record.attachment) {
-          return <AttachmentLink attachment={record.attachment} />;
+          return (
+            <AttachmentLink
+              thumbnail={record.is_image ? record.thumbnail : undefined}
+              attachment={record.attachment}
+            />
+          );
         } else if (record.link) {
           return <AttachmentLink attachment={record.link} external />;
         } else {

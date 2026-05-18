@@ -1941,6 +1941,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         tags: Tags for the attachment
     """
 
+    THUMBNAIL_SIZE = 128
+
     class Meta:
         """Metaclass options."""
 
@@ -1957,13 +1959,22 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         - Ensure that the attached file is deleted from storage when the database entry is removed
         """
         attachment = self.attachment
+        thumbnail = self.thumbnail
 
         super().delete(*args, **kwargs)
 
+        # Delete the associated files from storage (if they exist)W
         if attachment and default_storage.exists(attachment.name):
             try:
                 # Remove the attached file from storage
                 default_storage.delete(attachment.name)
+            except Exception:  # pragma: no cover
+                pass
+
+        if thumbnail and default_storage.exists(thumbnail.name):
+            try:
+                # Remove the thumbnail file from storage
+                default_storage.delete(thumbnail.name)
             except Exception:  # pragma: no cover
                 pass
 
@@ -1989,6 +2000,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         # Is this an image, or not?
         self.is_image = self.check_is_image()
+
+        if self.is_image and not self.thumbnail:
+            self.generate_thumbnail()
 
         super().save(*args, **kwargs)
 
@@ -2196,6 +2210,28 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             return True
         except Exception:
             return False
+
+    def generate_thumbnail(self):
+        """Generate a thumbnail for the attached image."""
+        if not self.attachment:
+            return
+
+        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+            return
+
+        img_data = default_storage.open(self.attachment.name).read()
+
+        try:
+            img = Image.open(BytesIO(img_data))
+            img.thumbnail((self.THUMBNAIL_SIZE, self.THUMBNAIL_SIZE))
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='PNG')
+            thumb_io.seek(0)
+
+            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
+        except Exception:
+            pass
 
 
 class InvenTreeCustomUserStateModel(models.Model):

@@ -730,6 +730,7 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         fields = [
             'pk',
             'attachment',
+            'thumbnail',
             'filename',
             'link',
             'comment',
@@ -766,6 +767,8 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=True)
+
+    thumbnail = InvenTreeImageSerializerField(read_only=True, allow_null=True)
 
     # The 'filename' field must be present in the serializer
     filename = serializers.CharField(
