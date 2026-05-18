@@ -2082,6 +2082,19 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         null=True,
     )
 
+    is_image = models.BooleanField(
+        default=False,
+        verbose_name=_('Image'),
+        help_text=_('Is this attachment an image?'),
+    )
+
+    thumbnail = models.ImageField(
+        verbose_name=_('Thumbnail'),
+        help_text=_('Thumbnail image for this attachment'),
+        blank=True,
+        null=True,
+    )
+
     link = InvenTree.fields.InvenTreeURLField(
         blank=True,
         null=True,
