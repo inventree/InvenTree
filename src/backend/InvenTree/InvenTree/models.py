@@ -632,15 +632,93 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         return params
 
-    def check_parameter_delete(self, parameter):
+    def check_parameter_delete(self, parameter) -> bool:
         """Run a check to determine if the provided parameter can be deleted.
 
         The default implementation always returns True, but this can be overridden in the implementing class.
         """
         return True
 
-    def check_parameter_save(self, parameter):
+    def check_parameter_save(self, parameter) -> bool:
         """Run a check to determine if the provided parameter can be saved.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+
+class InvenTreeNoteMixin(InvenTreePermissionCheckMixin):
+    """Provides an abstracted class for managing notes.
+
+    Links the implementing model to the common.models.Note table,
+    and provides multiple accessor / helper methods.
+    """
+
+    class Meta:
+        """Metaclass options for InvenTreeNoteMixin."""
+
+        abstract = True
+
+    # Define a reverse relation to the Note model
+    notes_list = GenericRelation(
+        'common.Note', content_type_field='model_type', object_id_field='model_id'
+    )
+
+    @property
+    def notes(self) -> QuerySet:
+        """Return a queryset containing all notes for this model."""
+        # Check the query cache for pre-fetched parameters
+        if cache := getattr(self, '_prefetched_objects_cache', None):
+            if 'notes_list' in cache:
+                return cache['notes_list']
+
+        return self.notes_list.all()
+
+    def delete(self, *args, **kwargs):
+        """Handle the deletion of a model instance.
+
+        Before deleting the model instance, delete any associated notes.
+        """
+        self.notes_list.all().delete()
+        super().delete(*args, **kwargs)
+
+    @transaction.atomic
+    def copy_notes_from(self, other, **kwargs):
+        """Copy all notes from another model instance.
+
+        Arguments:
+            other: The other model instance to copy notes from
+            **kwargs: Additional keyword arguments to pass to the Note constructor
+        """
+        import common.models
+
+        notes = []
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+
+        for note in other.notes.all():
+            note.pk = None
+            note.model_id = self.pk
+            note.model_type = content_type
+
+            notes.append(note)
+
+        if len(notes) > 0:
+            common.models.Note.objects.bulk_create(notes, batch_size=250)
+
+    def get_note(self, title: str):
+        """Return a Note instance for the given note title."""
+        return self.notes_list.filter(title=title).first()
+
+    def check_note_delete(self, note) -> bool:
+        """Run a check to determine if the provided note can be deleted.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+    def check_note_save(self, note) -> bool:
+        """Run a check to determine if the provided note can be saved.
 
         The default implementation always returns True, but this can be overridden in the implementing class.
         """

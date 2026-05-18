@@ -2906,6 +2906,88 @@ class Parameter(
         return self.template.description
 
 
+class Note(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a note assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this note is linked
+        model_id: The ID of the model to which this note is linked
+        user: The user who created the note
+        title: The title of the note
+        description: A description of the note (optional)
+        content: The content of the note
+        created: Date/time that the note was created
+    """
+
+    class Meta:
+        """Meta options for Note model."""
+
+        verbose_name = _('Note')
+        verbose_name_plural = _('Notes')
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-note-list')
+
+    def save(self, *args, **kwargs):
+        """Perform custom save checks before saving a Note instance."""
+        self.check_save()
+        super().save(*args, **kwargs)
+
+    def delete(self):
+        """Perform custom delete checks before deleting a Parameter instance."""
+        self.check_delete()
+        super().delete()
+
+    def clean(self):
+        """Clean / validate the note before saving to the database."""
+        # TODO: Implement this
+
+    def check_save(self):
+        """Check if this note can be saved."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_save(self)
+
+    def check_delete(self):
+        """Check if this note can be deleted."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_delete(self)
+
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+
+    model_id = models.PositiveIntegerField()
+
+    content_object = GenericForeignKey('model_type', 'model_id')
+
+    title = models.CharField(
+        max_length=100, verbose_name=_('Title'), help_text=_('Note title')
+    )
+
+    description = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Optional description field'),
+    )
+
+
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
