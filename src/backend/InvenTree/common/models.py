@@ -2204,7 +2204,13 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if not self.attachment:
             return False
 
-        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+        if not self.attachment.name:
+            return False
+
+        try:
+            if not default_storage.exists(self.attachment.name):
+                return False
+        except Exception:
             return False
 
         img_data = default_storage.open(self.attachment.name).read()
