@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/index';
+import { type PanelType, apiUrl } from '@lib/index';
 import {
   IconBookmark,
   IconInfoCircle,
@@ -33,7 +33,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
