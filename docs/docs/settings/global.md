@@ -33,14 +33,6 @@ Configuration of basic server settings:
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
 {{ globalsetting("WEEK_STARTS_ON") }}
-
-Configuration of image download settings:
-
-| Name | Description | Default | Units |
-| ---- | ----------- | ------- | ----- |
-{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
-{{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
-{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
 
 Configuration of various scheduled tasks:
