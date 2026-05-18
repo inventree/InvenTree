@@ -17,7 +17,7 @@ import '@blocknote/core/fonts/inter.css';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
-import { Paper } from '@mantine/core';
+import { Box, Flex, Paper, Tabs } from '@mantine/core';
 import { useUserState } from '../../states/UserState';
 
 export default function NotesEditor({
@@ -41,9 +41,23 @@ export default function NotesEditor({
   const editor = useCreateBlockNote();
 
   return (
-    <Paper p='md' shadow='sm' withBorder>
-      <BlockNoteView editor={editor} editable={canEdit} />
-    </Paper>
+    <Flex align='left'>
+      <Box style={{ flex: 1 }}>
+        <Paper p='md' shadow='sm' withBorder>
+          <BlockNoteView
+            editor={editor}
+            editable={canEdit}
+            style={{ minHeight: '400px' }}
+          />
+        </Paper>
+      </Box>
+      <Tabs orientation='vertical' placement='right'>
+        <Tabs.List>
+          <Tabs.Tab value='manufacturing'>Manufacturing</Tabs.Tab>
+          <Tabs.Tab value='washing'>Washing</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    </Flex>
   );
 }
 
