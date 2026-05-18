@@ -1959,9 +1959,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         super().delete(*args, **kwargs)
 
-        if attachment:
-            # Remove the attached file from storage
+        if attachment and default_storage.exists(attachment.name):
             try:
+                # Remove the attached file from storage
                 default_storage.delete(attachment.name)
             except Exception:  # pragma: no cover
                 pass
