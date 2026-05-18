@@ -30,6 +30,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("SHOW_BOM_SUBASSEMBLY_LEVELS")}}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
 {{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
+{{ usersetting("DISPLAY_ITEMS_FINAL_LEVEL") }}
 
 ### Search Settings
 

@@ -4,6 +4,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack } from '@mantine/core';
 import {
@@ -34,7 +35,6 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
@@ -47,6 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -63,6 +64,7 @@ export default function Stock() {
 
   const navigate = useNavigate();
   const user = useUserState();
+  const settings = useUserSettingsState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -431,6 +433,17 @@ export default function Stock() {
     [location]
   );
 
+  const defaultPanel = useMemo(() => {
+    if (
+      settings.isSet('DISPLAY_ITEMS_FINAL_LEVEL', true) &&
+      location.pk &&
+      location.sublocations === 0
+    ) {
+      return 'stock-items';
+    }
+    return undefined;
+  }, [settings, location]);
+
   return (
     <>
       {editLocation.modal}
@@ -479,6 +492,7 @@ export default function Stock() {
             id={location?.pk}
             instance={location}
             pluginPanelWithoutId
+            defaultPanel={defaultPanel}
           />
         </Stack>
         {stockAdjustActions.modals.map((modal) => modal.modal)}

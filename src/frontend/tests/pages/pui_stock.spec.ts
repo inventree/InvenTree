@@ -111,14 +111,14 @@ test('Stock - Location Delete', async ({ browser }) => {
     .click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-delete_stock_items' })
+    .getByRole('combobox', { name: 'choice-field-delete_stock_items' })
     .click();
   await page
     .getByRole('option', { name: 'Move items to parent location' })
     .click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-delete_sub_locations' })
+    .getByRole('combobox', { name: 'choice-field-delete_sub_locations' })
     .click();
   await page.getByRole('option', { name: 'Delete items' }).click();
 
