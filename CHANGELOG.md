@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- [#11962](https://github.com/inventree/InvenTree/pull/11962) removes the "remote_image" field from the Part API endpoint, which (previously) allowed the user to specify a remote URL for an image to be downloaded and associated with the part. This field was removed due to security concerns around downloading images from arbitrary URLs. If you were using this field in an external client application, you will need to update your application to use the new "download_image_from_url" API endpoint instead.
+
 ## 1.3.0 - 2026-04-11
 
 ### Breaking Changes

@@ -29,8 +29,6 @@ import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
-import { useEditApiFormModal } from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
@@ -320,8 +318,7 @@ function ImageActionButtons({
   apiPath,
   hasImage,
   pk,
-  setImage,
-  downloadImage
+  setImage
 }: Readonly<{
   actions?: DetailImageButtonProps;
   visible: boolean;
@@ -329,10 +326,7 @@ function ImageActionButtons({
   hasImage: boolean;
   pk: string;
   setImage: (image: string) => void;
-  downloadImage: () => void;
 }>) {
-  const globalSettings = useGlobalSettingsState();
-
   return (
     <>
       {visible && (
@@ -363,25 +357,6 @@ function ImageActionButtons({
               }}
             />
           )}
-          {actions.downloadImage &&
-            globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL') && (
-              <ActionButton
-                icon={
-                  <InvenTreeIcon
-                    icon='download'
-                    iconProps={{ color: 'white' }}
-                  />
-                }
-                tooltip={t`Download remote image`}
-                variant='outline'
-                size='lg'
-                tooltipAlignment='top'
-                onClick={(event: any) => {
-                  cancelEvent(event);
-                  downloadImage();
-                }}
-              />
-            )}
           {actions.uploadFile && (
             <ActionButton
               icon={
@@ -439,21 +414,6 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const permissions = useUserState();
 
-  const downloadImage = useEditApiFormModal({
-    url: props.apiPath,
-    title: t`Download Image`,
-    fields: {
-      remote_image: {}
-    },
-    timeout: 10000,
-    successMessage: t`Image downloaded successfully`,
-    onFormSuccess: (response: any) => {
-      if (response.image) {
-        setAndRefresh(response.image);
-      }
-    }
-  });
-
   const hasOverlay: boolean = useMemo(() => {
     return (
       props.imageActions?.selectExisting ||
@@ -473,7 +433,6 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   return (
     <>
-      {downloadImage.modal}
       <Grid.Col span={{ base: 12, sm: 4 }}>
         <AspectRatio
           ref={ref}
@@ -502,7 +461,6 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
                     hasImage={!!props.src}
                     pk={props.pk}
                     setImage={setAndRefresh}
-                    downloadImage={downloadImage.open}
                   />
                 </Overlay>
               )}
