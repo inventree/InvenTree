@@ -13,6 +13,7 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
+  IconTransfer,
   IconTruckDelivery
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -372,6 +373,20 @@ export default function SystemSettings() {
               ]}
             />
           </Stack>
+        )
+      },
+      {
+        name: 'transferorders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'TRANSFERORDER_ENABLED',
+              'TRANSFERORDER_REFERENCE_PATTERN',
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+            ]}
+          />
         )
       },
       {

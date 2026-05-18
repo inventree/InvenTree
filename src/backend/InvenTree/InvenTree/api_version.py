@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 488
+INVENTREE_API_VERSION = 489
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
 
 v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
     - Allow renaming of attachments after upload via the API
