@@ -232,17 +232,26 @@ export function AttachmentTable({
         hidden: true
       },
       attachment: {},
+      filename: {},
       link: {},
       comment: {}
     };
 
     if (attachmentType != 'link') {
       delete fields['link'];
+    } else {
+      delete fields['attachment'];
+      delete fields['filename'];
     }
 
     // Remove the 'attachment' field if we are editing an existing attachment, or uploading a link
     if (attachmentType != 'attachment' || !!selectedAttachment) {
       delete fields['attachment'];
+    }
+
+    if (!selectedAttachment) {
+      // Cannot edit the filename during creation
+      delete fields['filename'];
     }
 
     return fields;
@@ -329,6 +338,11 @@ export function AttachmentTable({
         RowEditAction({
           hidden: !user.hasChangePermission(model_type),
           onClick: () => {
+            if (record.attachment) {
+              setAttachmentType('attachment');
+            } else {
+              setAttachmentType('link');
+            }
             setSelectedAttachment(record.pk);
             editAttachment.open();
           }

@@ -1,5 +1,9 @@
 """API unit tests for InvenTree common functionality."""
 
+import io
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.urls import reverse
 
 import common.models
@@ -675,3 +679,113 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(template=template.pk).exists()
         )
+
+
+class AttachmentAPITests(InvenTreeAPITestCase):
+    """Tests for the Attachment API."""
+
+    def test_attachments(self):
+        """Test API functionality for attachments."""
+        from common.models import Attachment
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        part = Part.objects.create(name='Test Part', description='A part for testing')
+
+        N = Attachment.objects.count()
+
+        # Upload multiple attachments against the part instance
+        for ii in range(5):
+            file_object = io.StringIO('Hello world')
+            file_object.seek(0)
+
+            fn = f'test_file_{ii}.txt'
+
+            content_file = ContentFile(file_object.read(), name=fn)
+
+            url = reverse('api-attachment-list')
+
+            response = self.post(
+                url,
+                data={
+                    'model_type': 'part',
+                    'model_id': part.pk,
+                    'attachment': content_file,
+                    'comment': f'This is test file {ii}',
+                },
+                format='multipart',
+                expected_code=201,
+            )
+
+            data = response.data
+
+            # Check that the file has actually been created
+            self.assertEqual(data['filename'], fn)
+            self.assertTrue(
+                default_storage.exists(data['attachment'].replace('/media/', ''))
+            )
+
+        # Check that we have the expected number of attachments
+        self.assertEqual(Attachment.objects.count(), N + 5)
+        self.assertEqual(part.attachments.count(), 5)
+
+        # Let's rename one of the attachments
+        att = part.attachments.first()
+        self.assertEqual(att.basename, 'test_file_0.txt')
+
+        url = reverse('api-attachment-detail', kwargs={'pk': att.pk})
+
+        # A few failed attempts
+        for new_name in [
+            'different_ext.docx',
+            'test_file_1.txt',
+            '../../test_file.txt',
+        ]:
+            print('- ATTEMPTING:', new_name)
+            response = self.patch(url, data={'filename': new_name}, expected_code=400)
+
+        att.refresh_from_db()
+        self.assertEqual(att.basename, 'test_file_0.txt')
+
+        # Let's try seriously this time
+        new_name = 'a_new_file.txt'
+        response = self.patch(url, data={'filename': new_name}, expected_code=200)
+
+        att.refresh_from_db()
+        self.assertEqual(att.basename, new_name)
+
+        # Check that the file has been renamed on disk
+        self.assertTrue(
+            default_storage.exists(f'attachments/part/{part.pk}/{new_name}')
+        )
+        self.assertFalse(
+            default_storage.exists(f'attachments/part/{part.pk}/test_file_0.txt')
+        )
+
+        # Next, let's delete the attachment manually - via the API
+        response = self.delete(url, expected_code=403)
+        self.assignRole('part.delete')
+        response = self.delete(url, expected_code=204)
+
+        # Check that the file has been deleted from disk
+        self.assertFalse(
+            default_storage.exists(f'attachments/part/{part.pk}/{new_name}')
+        )
+
+        self.assertEqual(Attachment.objects.count(), N + 4)
+        self.assertEqual(part.attachments.count(), 4)
+
+        # Fetch the remaining attachments
+        attachments = list(part.attachments.all())
+
+        # Now, delete the part instance
+        part.active = False
+        part.save()
+        part.delete()
+
+        self.assertEqual(Attachment.objects.count(), N)
+
+        for att in attachments:
+            # Ensure that the file associated with each attachment has been removed
+            self.assertFalse(default_storage.exists(att.attachment.path))

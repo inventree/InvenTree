@@ -661,7 +661,9 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
 
         Before deleting the model instance, delete any associated attachments.
         """
-        self.attachments.all().delete()
+        for attachment in list(self.attachments.all()):
+            attachment.delete()
+
         super().delete(*args, **kwargs)
 
     @property
