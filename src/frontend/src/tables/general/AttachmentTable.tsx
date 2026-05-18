@@ -51,7 +51,7 @@ function attachmentTableColumns(): TableColumn[] {
         if (record.attachment) {
           return (
             <AttachmentLink
-              thumbnail={record.is_image ? record.thumbnail : undefined}
+              thumbnail={record.thumbnail}
               attachment={record.attachment}
             />
           );

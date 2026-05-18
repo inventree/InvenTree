@@ -1999,10 +1999,14 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             self.file_size = 0
 
         # Is this an image, or not?
-        self.is_image = self.check_is_image()
+        is_image = self.check_is_image()
 
-        if self.is_image and not self.thumbnail:
+        if is_image and not self.thumbnail:
+            # Generate a thumbnail for this image if it does not already exist
             self.generate_thumbnail()
+        elif not is_image and self.thumbnail:
+            # Clear the thumbnail if this is not an image
+            self.thumbnail = None
 
         super().save(*args, **kwargs)
 
@@ -2101,12 +2105,6 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         null=True,
     )
 
-    is_image = models.BooleanField(
-        default=False,
-        verbose_name=_('Image'),
-        help_text=_('Is this attachment an image?'),
-    )
-
     thumbnail = models.ImageField(
         verbose_name=_('Thumbnail'),
         help_text=_('Thumbnail image for this attachment'),
@@ -2151,6 +2149,11 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     )
 
     tags = TaggableManager(blank=True)
+
+    @property
+    def is_image(self) -> bool:
+        """Return True if this attachment is an image."""
+        return bool(self.thumbnail)
 
     @property
     def basename(self):

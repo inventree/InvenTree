@@ -15,15 +15,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="attachment",
-            name="is_image",
-            field=models.BooleanField(
-                default=False,
-                help_text="Is this attachment an image?",
-                verbose_name="Image",
-            ),
-        ),
-        migrations.AddField(
-            model_name="attachment",
             name="thumbnail",
             field=models.ImageField(
                 blank=True,

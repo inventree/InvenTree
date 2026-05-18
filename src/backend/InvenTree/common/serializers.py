@@ -738,20 +738,12 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             'upload_user',
             'user_detail',
             'file_size',
-            'is_image',
             'model_type',
             'model_id',
             'tags',
         ]
 
-        read_only_fields = [
-            'pk',
-            'file_size',
-            'upload_date',
-            'upload_user',
-            'filename',
-            'is_image',
-        ]
+        read_only_fields = ['pk', 'file_size', 'upload_date', 'upload_user', 'filename']
 
     def __init__(self, *args, **kwargs):
         """Override the model_type field to provide dynamic choices."""

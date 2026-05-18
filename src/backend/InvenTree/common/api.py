@@ -717,7 +717,15 @@ class AttachmentFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.Attachment
-        fields = ['model_type', 'model_id', 'upload_user', 'is_image']
+        fields = ['model_type', 'model_id', 'upload_user']
+
+    is_image = rest_filters.BooleanFilter(label=_('Is Image'), method='filter_is_image')
+
+    def filter_is_image(self, queryset, name, value):
+        """Filter attachments based on whether they are an image or not."""
+        if value:
+            return queryset.filter(thumbnail__isnull=False).exclude(thumbnail='')
+        return queryset.filter(Q(thumbnail__isnull=True) | Q(thumbnail='')).distinct()
 
     is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
 
