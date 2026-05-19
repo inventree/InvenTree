@@ -128,6 +128,9 @@ RUN npm install -g n yarn --ignore-scripts && \
 RUN bash -c "n lts"
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
+COPY contrib/container/execute.sh ${INVENTREE_HOME}/execute.sh
+RUN chmod +x ${INVENTREE_HOME}/execute.sh
+
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
