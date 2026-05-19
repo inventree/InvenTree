@@ -491,6 +491,54 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Latest Serial Number').waitFor();
 });
 
+test('Parts - Details - Upload image modal accepts pasted clipboard image', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page.getByLabel('action-button-upload-new-image').first().click();
+  await page.getByText('Upload Image', { exact: true }).waitFor();
+
+  await page.evaluate((pngBase64: string) => {
+    const binary = atob(pngBase64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    const imageFile = new File([bytes], 'pasted.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(imageFile);
+
+    const pasteEvent = new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true,
+      clipboardData: dataTransfer
+    });
+
+    document.dispatchEvent(pasteEvent);
+  }, 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAusB9Y9x8WcAAAAASUVORK5CYII=');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Image has been uploaded successfully').waitFor();
+
+  // Now remove the associated image
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-delete-image' })
+    .click();
+  await page.getByRole('button', { name: 'Remove' }).click();
+  await page.getByText('The image has been removed successfully').waitFor();
+});
+
 test('Parts - Requirements', async ({ browser }) => {
   // Navigate to the "Widget Assembly" part detail page
   // This part has multiple "variants"
