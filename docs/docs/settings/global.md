@@ -33,6 +33,7 @@ Configuration of basic server settings:
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
 {{ globalsetting("WEEK_STARTS_ON") }}
+{{ globalsetting("INVENTREE_UPLOAD_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
 
 Configuration of various scheduled tasks:

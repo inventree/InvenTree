@@ -60,6 +60,7 @@ export default function SystemSettings() {
                 'DISPLAY_FULL_NAMES',
                 'DISPLAY_PROFILE_INFO',
                 'WEEK_STARTS_ON',
+                'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
