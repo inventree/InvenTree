@@ -209,6 +209,7 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
+{{ globalsetting("STOCK_ALLOW_EDIT_SERIAL") }}
 {{ globalsetting("STOCK_ALLOW_DELETE_SERIALIZED") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
