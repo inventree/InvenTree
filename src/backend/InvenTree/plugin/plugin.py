@@ -97,7 +97,7 @@ class MetaBase:
     def get_meta_value(self, key: str, old_key: Optional[str] = None, default=None):
         """Reference a meta item with a key.
 
-        Args:
+        Arguments:
             key (str): key for the value
             old_key (str, optional): deprecated key - will throw warning
             default (optional): Value if nothing with key can be found. Defaults to None.
