@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
 
 ### Added
