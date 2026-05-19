@@ -425,9 +425,20 @@ test('Build Order - Allocation', async ({ browser }) => {
   const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
-  await page
-    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
-    .waitFor();
+
+  const allocateStockBtn = page.getByRole('menuitem', {
+    name: 'Allocate Stock',
+    exact: true
+  });
+  await expect(allocateStockBtn).toBeDisabled();
+
+  await allocateStockBtn.hover();
+  await expect(
+    page.getByText(
+      'Trackable parts must be allocated via the Build Outputs tab'
+    )
+  ).toBeVisible();
+
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
