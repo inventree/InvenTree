@@ -696,6 +696,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'STOCK_ALLOW_EDIT_SERIAL': {
+        'name': _('Allow Edit Serial Number'),
+        'description': _('Allow editing of serial number for stock items'),
+        'default': True,
+        'validator': bool,
+    },
     'STOCK_ALLOW_DELETE_SERIALIZED': {
         'name': _('Delete Serialized Stock'),
         'description': _('Allow deletion of stock items which have a serial number'),
