@@ -142,6 +142,8 @@ Note that any serial number adjustments are subject to the same validation rules
 
 {{ image("stock/serial_edit_error.png", title="Error while editing a serial number") }}
 
+!!! info "Disable Serial Number Editing"
+    If you wish to prevent users from editing serial numbers, this can be achieved by disabling the `Allow Edit Serial Number` setting in the system settings view.
 
 #### Plugin Support
 
