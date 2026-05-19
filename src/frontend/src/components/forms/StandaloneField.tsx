@@ -9,13 +9,15 @@ export function StandaloneField({
   fieldName = 'field',
   defaultValue,
   hideLabels,
-  error
+  error,
+  selectAndFocus = false
 }: Readonly<{
   fieldDefinition: ApiFormFieldType;
   fieldName?: string;
   defaultValue?: any;
   hideLabels?: boolean;
   error?: string;
+  selectAndFocus?: boolean;
 }>) {
   // Field must have a defined name
   const name = useMemo(() => fieldName ?? 'field', [fieldName]);
@@ -49,6 +51,7 @@ export function StandaloneField({
         control={form.control}
         hideLabels={hideLabels}
         setFields={undefined}
+        selectAndFocus={selectAndFocus}
       />
     </FormProvider>
   );

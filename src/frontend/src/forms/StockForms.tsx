@@ -557,6 +557,7 @@ function StockOperationsRow({
   setMax?: boolean;
   merge?: boolean;
   record?: any;
+  focusAndSelect?: boolean;
 }) {
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
@@ -659,6 +660,7 @@ function StockOperationsRow({
           <Table.Td>
             <StandaloneField
               fieldName='quantity'
+              selectAndFocus={true}
               fieldDefinition={{
                 field_type: 'number',
                 value: quantity,
@@ -1215,7 +1217,8 @@ function useStockOperationModal({
   title,
   preFormContent,
   successMessage,
-  modalFunc = useCreateApiFormModal
+  modalFunc = useCreateApiFormModal,
+  onOpen
 }: {
   items?: object;
   pk?: number;
@@ -1228,6 +1231,7 @@ function useStockOperationModal({
   preFormContent?: JSX.Element;
   successMessage?: string;
   modalFunc?: apiModalFunc;
+  onOpen?: () => void;
 }) {
   const baseParams: any = {
     part_detail: true,
@@ -1284,7 +1288,10 @@ function useStockOperationModal({
     successMessage: successMessage,
     onFormSuccess: () => refresh(),
     onClose: () => setOpened(false),
-    onOpen: () => setOpened(true)
+    onOpen: () => {
+      setOpened(true);
+      onOpen?.();
+    }
   });
 }
 
@@ -1299,7 +1306,17 @@ export function useAddStockItem(props: StockOperationProps) {
       <Alert color='blue'>
         {t`Increase the quantity of the selected stock items by a given amount.`}
       </Alert>
-    )
+    ),
+    onOpen: () => {
+      setTimeout(() => {
+        const input = document.querySelector<HTMLInputElement>(
+          '#number-field-quantity, input[aria-label="number-field-quantity"]'
+        );
+
+        input?.focus();
+        input?.select();
+      }, 0);
+    }
   });
 }
 
@@ -1314,7 +1331,17 @@ export function useRemoveStockItem(props: StockOperationProps) {
       <Alert color='blue'>
         {t`Decrease the quantity of the selected stock items by a given amount.`}
       </Alert>
-    )
+    ),
+    onOpen: () => {
+      setTimeout(() => {
+        const input = document.querySelector<HTMLInputElement>(
+          'input[aria-label="number-field-quantity"]'
+        );
+
+        input?.focus();
+        input?.select();
+      }, 0);
+    }
   });
 }
 
@@ -1359,7 +1386,17 @@ export function useCountStockItem(props: StockOperationProps) {
       <Alert color='blue'>
         {t`Count the selected stock items, and adjust the quantity accordingly.`}
       </Alert>
-    )
+    ),
+    onOpen: () => {
+      setTimeout(() => {
+        const input = document.querySelector<HTMLInputElement>(
+          'input[aria-label="number-field-quantity"]'
+        );
+
+        input?.focus();
+        input?.select();
+      }, 0);
+    }
   });
 }
 
