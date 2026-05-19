@@ -1644,6 +1644,36 @@ class StockItemTest(StockAPITestCase):
         )
         self.assertEqual(trackable_part.get_stock_count(), 10)
 
+    def test_edit_serial(self):
+        """Test that we can edit serial numbers via the API."""
+        item = StockItem.objects.create(
+            part=Part.objects.filter(trackable=True).first(),
+            quantity=1,
+            location=StockLocation.objects.first(),
+        )
+
+        set_global_setting('STOCK_ALLOW_EDIT_SERIAL', False)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        # Edit the serial number
+        # This should succeed, as the initial serial number is blank
+        response = self.patch(url, {'serial': '54321'}, expected_code=200)
+        self.assertEqual(response.data['serial'], '54321')
+
+        # Edit it again - this time, should fail as the serial number is already set
+        response = self.patch(url, {'serial': '98765'}, expected_code=400)
+        self.assertIn('Editing of serial numbers is not allowed', str(response.data))
+
+        # Ensure that changing a different field does not cause an error
+        response = self.patch(url, {'batch': 'abcde'}, expected_code=200)
+        self.assertEqual(response.data['batch'], 'abcde')
+
+        # Adjust the setting to allow serial editing
+        set_global_setting('STOCK_ALLOW_EDIT_SERIAL', True)
+        response = self.patch(url, {'serial': '98765'}, expected_code=200)
+        self.assertEqual(response.data['serial'], '98765')
+
     def test_default_expiry(self):
         """Test that the "default_expiry" functionality works via the API.
 
