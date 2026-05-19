@@ -61,9 +61,6 @@ export default function SystemSettings() {
                 'DISPLAY_PROFILE_INFO',
                 'WEEK_STARTS_ON',
                 'INVENTREE_UPLOAD_MAX_SIZE',
-                'INVENTREE_DOWNLOAD_FROM_URL',
-                'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
-                'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
