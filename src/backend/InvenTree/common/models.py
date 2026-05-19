@@ -1933,6 +1933,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
+        thumbnail: A generated thumbnail for the uploaded file (if applicable)
+        is_image: True if this attachment is a valid image file
         comment: A comment or description for the attachment
         user: The user who uploaded the attachment
         upload_date: The date the attachment was uploaded
@@ -2144,16 +2146,17 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         help_text=_('Date the file was uploaded'),
     )
 
+    is_image = models.BooleanField(
+        default=False,
+        verbose_name=_('Is image'),
+        help_text=_('True if this attachment is a valid image file'),
+    )
+
     file_size = models.PositiveIntegerField(
         default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
     )
 
     tags = TaggableManager(blank=True)
-
-    @property
-    def is_image(self) -> bool:
-        """Return True if this attachment is an image."""
-        return bool(self.thumbnail)
 
     @property
     def basename(self):

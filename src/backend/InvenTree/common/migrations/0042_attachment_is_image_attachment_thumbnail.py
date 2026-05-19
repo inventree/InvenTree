@@ -24,6 +24,15 @@ class Migration(migrations.Migration):
                 verbose_name="Thumbnail",
             ),
         ),
+        migrations.AddField(
+            model_name="attachment",
+            name="is_image",
+            field=models.BooleanField(
+                default=False,
+                help_text="True if this attachment is a valid image file",
+                verbose_name="Is image",
+            ),
+        ),
         migrations.AlterField(
             model_name="attachment",
             name="attachment",
