@@ -80,6 +80,7 @@ class Build(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,

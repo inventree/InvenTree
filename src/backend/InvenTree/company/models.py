@@ -79,6 +79,7 @@ class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -486,6 +487,7 @@ class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
@@ -603,6 +605,7 @@ class SupplierPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,

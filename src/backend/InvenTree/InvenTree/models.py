@@ -1277,6 +1277,8 @@ class InvenTreeNotesMixin(models.Model):
     - notes : A text field for storing notes
     """
 
+    # TODO: THIS MIXIN IS TO BE REMOVED IN FAVOUR OF THE GENERIC RELATIONSHIP TO THE Note MODEL
+
     class Meta:
         """Metaclass options for this mixin.
 

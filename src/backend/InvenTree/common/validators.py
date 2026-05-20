@@ -14,7 +14,7 @@ def note_model_types():
     import InvenTree.models
 
     return list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNotesMixin)
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNoteMixin)
     )
 
 
@@ -96,7 +96,7 @@ def validate_attachment_model_type(value):
 def validate_notes_model_type(value):
     """Ensure that the provided model type is valid.
 
-    The provided value must map to a model which implements the 'InvenTreeNotesMixin'.
+    The provided value must map to a model which implements the 'InvenTreeNoteMixin'.
     """
     import InvenTree.helpers_model
     import InvenTree.models
@@ -106,7 +106,7 @@ def validate_notes_model_type(value):
         return
 
     model_types = list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNotesMixin)
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNoteMixin)
     )
 
     model_names = [model.__name__.lower() for model in model_types]
