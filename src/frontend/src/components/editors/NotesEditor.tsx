@@ -31,11 +31,38 @@ export default function NotesEditor({
   editable?: boolean;
   setDirtyCallback?: (dirty: boolean) => void;
 }>) {
+  const api = useApi();
   const user = useUserState();
 
+  const [selectedNote, setSelectedNote] = useState<string | undefined>(
+    undefined
+  );
+
+  // Fetch the available notes for the given model type and ID
+  const notesQuery = useQuery({
+    queryKey: ['notes', modelType, modelId],
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.note_list), {
+          params: {
+            model_id: modelId,
+            model_type: modelType
+          }
+        })
+        .then((response) => response.data ?? []);
+    },
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    enabled: !!modelId && !!modelType
+  });
+
   const canEdit = useMemo(
-    () => user.hasChangePermission(modelType),
-    [user, modelType]
+    () =>
+      user.hasChangePermission(modelType) &&
+      notesQuery.isFetched &&
+      notesQuery.isSuccess,
+    [user, modelType, notesQuery]
   );
 
   const editor = useCreateBlockNote();
@@ -46,6 +73,7 @@ export default function NotesEditor({
         <Paper p='md' shadow='sm' withBorder>
           <BlockNoteView
             editor={editor}
+            content={selectedNote}
             editable={canEdit}
             style={{ minHeight: '400px' }}
           />
