@@ -926,3 +926,42 @@ class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
 
         self.assertFalse(att.is_image)
         self.assertFalse(att.thumbnail)
+
+    def test_is_image_filter(self):
+        """The is_image filter on the attachment list endpoint should return only matching attachments."""
+        url = reverse('api-attachment-list')
+        base_filters = {'model_type': 'part', 'model_id': self.part.pk}
+
+        # Upload one valid image and three non-image attachments
+        self._upload_attachment(self._make_image_file('img1.png'))
+        self._upload_attachment(
+            SimpleUploadedFile(
+                'corrupt.png', b'not image data', content_type='image/png'
+            )
+        )
+        self._upload_attachment(
+            SimpleUploadedFile('doc.txt', b'hello', content_type='text/plain')
+        )
+        self.post(
+            url,
+            data={**base_filters, 'link': 'https://example.com/resource'},
+            format='multipart',
+            expected_code=201,
+        )
+
+        all_attachments = self.get(url, base_filters, expected_code=200).data
+        self.assertEqual(len(all_attachments), 4)
+
+        # is_image=true → only the valid image
+        images = self.get(
+            url, {**base_filters, 'is_image': 'true'}, expected_code=200
+        ).data
+        self.assertEqual(len(images), 1)
+        self.assertTrue(images[0]['is_image'])
+
+        # is_image=false → the three non-image attachments
+        non_images = self.get(
+            url, {**base_filters, 'is_image': 'false'}, expected_code=200
+        ).data
+        self.assertEqual(len(non_images), 3)
+        self.assertTrue(all(not a['is_image'] for a in non_images))
