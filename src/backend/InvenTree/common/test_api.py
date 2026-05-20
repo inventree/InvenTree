@@ -965,3 +965,37 @@ class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
         ).data
         self.assertEqual(len(non_images), 3)
         self.assertTrue(all(not a['is_image'] for a in non_images))
+
+    def test_upload_exceeds_size_limit(self):
+        """Uploading a file that exceeds INVENTREE_UPLOAD_MAX_SIZE should be rejected with a 400 error."""
+        from common.settings import get_global_setting, set_global_setting
+
+        original_limit = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE')
+        # Use a 1 MB ceiling so the test file stays small and fast
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        limit_bytes = 1 * 1024 * 1024
+
+        try:
+            # File exactly at the limit — validator uses >, so this must be accepted
+            self._upload_attachment(
+                SimpleUploadedFile(
+                    'at_limit.txt', b'\x00' * limit_bytes, content_type='text/plain'
+                ),
+                expected_code=201,
+            )
+
+            # File one byte over the limit — must be rejected
+            response = self._upload_attachment(
+                SimpleUploadedFile(
+                    'over_limit.txt',
+                    b'\x00' * (limit_bytes + 1),
+                    content_type='text/plain',
+                ),
+                expected_code=400,
+            )
+            self.assertIn('attachment', response.data)
+        finally:
+            set_global_setting(
+                'INVENTREE_UPLOAD_MAX_SIZE', original_limit, change_user=None
+            )
