@@ -700,13 +700,29 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
   // allocate line item 1
   const cell1 = await page.getByText('C_100pF_0402', { exact: true });
   await clickOnRowMenu(cell1);
-  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await Promise.all([
+    // Ensure api request which automatically fills in the stockitem to allocate
+    // finishes (so the form is valid) before proceeding
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/stock/') && response.status() === 200
+    ),
+    page.getByRole('menuitem', { name: 'Allocate Stock' }).click()
+  ]);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // allocate line item 1
   const cell2 = await page.getByText('R_2.2K_0603_1%', { exact: true });
   await clickOnRowMenu(cell2);
-  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await Promise.all([
+    // Ensure api request which automatically fills in the stockitem to allocate
+    // finishes (so the form is valid) before proceeding
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/stock/') && response.status() === 200
+    ),
+    page.getByRole('menuitem', { name: 'Allocate Stock' }).click()
+  ]);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // complete order
