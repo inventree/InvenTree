@@ -809,7 +809,7 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         return super().save(**kwargs)
 
 
-class NoteSerializer(InvenTreeModelSerializer):
+class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for the Note model."""
 
     class Meta:
