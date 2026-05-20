@@ -1943,7 +1943,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         tags: Tags for the attachment
     """
 
-    THUMBNAIL_SIZE = 128
+    THUMBNAIL_SIZE = 256
 
     class Meta:
         """Metaclass options."""
