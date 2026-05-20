@@ -120,6 +120,7 @@ possibly-unbound-attribute="ignore"  # 21
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"
+omit = ["*/test_migrations.py"]
 
 [tool.coverage.html]
 show_contexts = true
