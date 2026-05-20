@@ -7,6 +7,8 @@ __pycache__/
 .Python
 env/
 inventree-env/
+.env
+deployment/.env
 .venv/
 ./build/
 .cache/
@@ -119,3 +121,7 @@ InvenTree/web/static
 
 # performance test results
 .codspeed/
+
+# templates
+.templates/
+venv/

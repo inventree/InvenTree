@@ -42,5 +42,8 @@ services:
       INVENTREE_PY_ENV: /home/inventree/dev/venv
       INVENTREE_DEVCONTAINER: True
 
+    env_file:
+      - ../.env
+
     depends_on:
       - db
