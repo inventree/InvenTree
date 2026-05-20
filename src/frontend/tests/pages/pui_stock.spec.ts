@@ -695,6 +695,19 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
 
   await navigate(page, 'stock/transfer-order/6/');
 
+  // Duplicate this transfer order, to ensure a fresh run each time
+  await page.getByLabel('action-menu-order-actions').click();
+  await page.getByLabel('action-menu-order-actions-duplicate').click();
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Issue the order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Order issued').waitFor();
+
   await loadTab(page, 'Line Items');
 
   // allocate line item 1
