@@ -18,6 +18,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import {
+  Alert,
   Box,
   Button,
   Flex,
@@ -27,7 +28,7 @@ import {
   Tabs,
   Text
 } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { IconCirclePlus, IconInfoCircle } from '@tabler/icons-react';
 import { useNoteFields } from '../../forms/CommonForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
@@ -88,9 +89,14 @@ export default function NotesEditor({
     () =>
       user.hasChangePermission(modelType) &&
       notesQuery.isFetched &&
-      notesQuery.isSuccess,
+      notesQuery.isSuccess &&
+      !!notesQuery.data,
     [user, modelType, notesQuery]
   );
+
+  const hasNotes = useMemo(() => {
+    return notesQuery.data && notesQuery.data.length > 0;
+  }, [notesQuery.data]);
 
   const editor = useCreateBlockNote();
 
@@ -115,39 +121,49 @@ export default function NotesEditor({
       {createNote.modal}
       <Flex align='left'>
         <Box style={{ flex: 1 }}>
-          <Paper p='md' shadow='sm' withBorder>
-            <BlockNoteView
-              editor={editor}
-              content={''}
-              editable={canEdit}
-              style={{ minHeight: '400px' }}
-            />
+          <Paper p='sm' shadow='sm' withBorder>
+            {hasNotes ? (
+              <Stack gap='xs'>
+                <BlockNoteView
+                  editor={editor}
+                  content={''}
+                  editable={canEdit}
+                  style={{ minHeight: '400px' }}
+                />
+              </Stack>
+            ) : (
+              <Alert title={t`Notes`} icon={<IconInfoCircle />}>
+                {t`There are no notes yet for this item.`}
+              </Alert>
+            )}
           </Paper>
         </Box>
-        <Stack gap='xs'>
-          <Button leftSection={<IconCirclePlus />} onClick={createNote.open}>
-            {t`Add Note`}
-          </Button>
-          <Tabs
-            orientation='vertical'
-            placement='right'
-            value={selectedNote?.toString()}
-          >
-            <Tabs.List style={{ minWidth: '200px' }}>
-              {notesQuery.data?.map((note: any) => (
-                <Tabs.Tab
-                  key={note.pk}
-                  value={note.pk?.toString()}
-                  onClick={() => setSelectedNote(note.pk)}
-                >
-                  <Group gap='xs' wrap='nowrap'>
-                    <Text size='sm'>{note.title}</Text>
-                  </Group>
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-          </Tabs>
-        </Stack>
+        <Paper p='sm' shadow='sm' withBorder ml='md' style={{ width: '200px' }}>
+          <Stack gap='xs'>
+            <Button leftSection={<IconCirclePlus />} onClick={createNote.open}>
+              {t`Add Note`}
+            </Button>
+            <Tabs
+              orientation='vertical'
+              placement='right'
+              value={selectedNote?.toString()}
+            >
+              <Tabs.List style={{ width: '100%' }}>
+                {notesQuery.data?.map((note: any) => (
+                  <Tabs.Tab
+                    key={note.pk}
+                    value={note.pk?.toString()}
+                    onClick={() => setSelectedNote(note.pk)}
+                  >
+                    <Group gap='xs' wrap='nowrap'>
+                      <Text size='sm'>{note.title}</Text>
+                    </Group>
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+            </Tabs>
+          </Stack>
+        </Paper>
       </Flex>
     </>
   );
