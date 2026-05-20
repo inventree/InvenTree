@@ -699,15 +699,12 @@ This returns a [Parameter](../concepts/parameters.md) object which contains the 
 The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
 ```
-{% raw %}
 {% load report %}
 
 {% parameter part "length" as length %}
 
 Part: {{ part.name }}<br>
 Length: {{ length.data }} [{{ length.units }}]
-
-{% endraw %}
 ```
 
 A [Parameter](../concepts/parameters.md) has the following available attributes:

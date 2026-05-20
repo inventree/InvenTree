@@ -30,8 +30,8 @@ for key in [
     'READTHEDOCS_VERSION_NAME',
     'READTHEDOCS_VERSION_TYPE',
 ]:
-    val = os.environ.get(key, None) or '-- MISSING --'
-    print(f' - {key}: {val}')
+    if val := os.environ.get(key, None):
+        print(f' - {key}: {val}')
 
 # Cached settings dict values
 global CONFIG_SETTINGS
@@ -145,7 +145,7 @@ def get_build_environment() -> Optional[str]:
 
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
-    config = env.config
+    config = getattr(env, 'config', None) or {}
     assets_dir = config.get('assets_dir', None)
 
     if assets_dir is None:
