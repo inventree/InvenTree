@@ -283,3 +283,26 @@ export function useParameterFields({
     user
   ]);
 }
+
+export function useNoteFields({
+  modelType,
+  modelId
+}: {
+  modelType: ModelType;
+  modelId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      model_type: {
+        hidden: true,
+        value: modelType
+      },
+      model_id: {
+        hidden: true,
+        value: modelId
+      },
+      title: {},
+      description: {}
+    };
+  }, [modelType, modelId]);
+}

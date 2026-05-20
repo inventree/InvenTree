@@ -17,7 +17,19 @@ import '@blocknote/core/fonts/inter.css';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
-import { Box, Flex, Paper, Tabs } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Flex,
+  Group,
+  Paper,
+  Stack,
+  Tabs,
+  Text
+} from '@mantine/core';
+import { IconCirclePlus } from '@tabler/icons-react';
+import { useNoteFields } from '../../forms/CommonForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 
 export default function NotesEditor({
@@ -34,7 +46,8 @@ export default function NotesEditor({
   const api = useApi();
   const user = useUserState();
 
-  const [selectedNote, setSelectedNote] = useState<string | undefined>(
+  // The ID of the selected note
+  const [selectedNote, setSelectedNote] = useState<number | undefined>(
     undefined
   );
 
@@ -57,6 +70,20 @@ export default function NotesEditor({
     enabled: !!modelId && !!modelType
   });
 
+  // Adjust the note selection
+  useEffect(() => {
+    // If the currently selected note is not in the list of available notes, then we need to adjust the selection
+    if (
+      selectedNote &&
+      notesQuery.data &&
+      !notesQuery.data.some((note: any) => note.pk === selectedNote)
+    ) {
+      setSelectedNote(
+        notesQuery.data.length > 0 ? notesQuery.data[0].pk : undefined
+      );
+    }
+  }, [notesQuery.data]);
+
   const canEdit = useMemo(
     () =>
       user.hasChangePermission(modelType) &&
@@ -67,25 +94,62 @@ export default function NotesEditor({
 
   const editor = useCreateBlockNote();
 
+  const noteFields = useNoteFields({ modelType: modelType, modelId: modelId });
+
+  const createNote = useCreateApiFormModal({
+    title: t`Add Note`,
+    fields: noteFields,
+    url: apiUrl(ApiEndpoints.note_list),
+    method: 'POST',
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      notesQuery.refetch().then(() => {
+        // Select the newly created note
+        setSelectedNote(response.pk);
+      });
+    }
+  });
+
   return (
-    <Flex align='left'>
-      <Box style={{ flex: 1 }}>
-        <Paper p='md' shadow='sm' withBorder>
-          <BlockNoteView
-            editor={editor}
-            content={selectedNote}
-            editable={canEdit}
-            style={{ minHeight: '400px' }}
-          />
-        </Paper>
-      </Box>
-      <Tabs orientation='vertical' placement='right'>
-        <Tabs.List>
-          <Tabs.Tab value='manufacturing'>Manufacturing</Tabs.Tab>
-          <Tabs.Tab value='washing'>Washing</Tabs.Tab>
-        </Tabs.List>
-      </Tabs>
-    </Flex>
+    <>
+      {createNote.modal}
+      <Flex align='left'>
+        <Box style={{ flex: 1 }}>
+          <Paper p='md' shadow='sm' withBorder>
+            <BlockNoteView
+              editor={editor}
+              content={''}
+              editable={canEdit}
+              style={{ minHeight: '400px' }}
+            />
+          </Paper>
+        </Box>
+        <Stack gap='xs'>
+          <Button leftSection={<IconCirclePlus />} onClick={createNote.open}>
+            {t`Add Note`}
+          </Button>
+          <Tabs
+            orientation='vertical'
+            placement='right'
+            value={selectedNote?.toString()}
+          >
+            <Tabs.List style={{ minWidth: '200px' }}>
+              {notesQuery.data?.map((note: any) => (
+                <Tabs.Tab
+                  key={note.pk}
+                  value={note.pk?.toString()}
+                  onClick={() => setSelectedNote(note.pk)}
+                >
+                  <Group gap='xs' wrap='nowrap'>
+                    <Text size='sm'>{note.title}</Text>
+                  </Group>
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+          </Tabs>
+        </Stack>
+      </Flex>
+    </>
   );
 }
 
