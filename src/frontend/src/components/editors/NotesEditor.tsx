@@ -28,7 +28,11 @@ import {
   Tabs,
   Text
 } from '@mantine/core';
-import { IconCirclePlus, IconInfoCircle } from '@tabler/icons-react';
+import {
+  IconCirclePlus,
+  IconInfoCircle,
+  IconUpload
+} from '@tabler/icons-react';
 import { useNoteFields } from '../../forms/CommonForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
@@ -46,6 +50,8 @@ export default function NotesEditor({
 }>) {
   const api = useApi();
   const user = useUserState();
+
+  const editor = useCreateBlockNote();
 
   // The ID of the selected note
   const [selectedNote, setSelectedNote] = useState<number | undefined>(
@@ -70,6 +76,20 @@ export default function NotesEditor({
     refetchOnMount: true,
     enabled: !!modelId && !!modelType
   });
+
+  useEffect(() => {
+    const note = notesQuery.data?.find((note: any) => note.pk === selectedNote);
+
+    if (note) {
+      const blocks = editor.tryParseHTMLToBlocks(note.content ?? '');
+
+      if (blocks) {
+        editor.replaceBlocks(editor.document, blocks);
+      }
+    } else {
+      editor.replaceBlocks(editor.document, []);
+    }
+  }, [editor, selectedNote, notesQuery.data]);
 
   // Adjust the note selection
   useEffect(() => {
@@ -98,8 +118,6 @@ export default function NotesEditor({
     return notesQuery.data && notesQuery.data.length > 0;
   }, [notesQuery.data]);
 
-  const editor = useCreateBlockNote();
-
   const noteFields = useNoteFields({ modelType: modelType, modelId: modelId });
 
   const createNote = useCreateApiFormModal({
@@ -116,6 +134,47 @@ export default function NotesEditor({
     }
   });
 
+  const saveNote = useCallback(() => {
+    // if (!selectedNote) {
+    //   return;
+    // }
+
+    const blocks = editor.document;
+    const html = editor.blocksToHTMLLossy(blocks);
+
+    // TODO: Sanitize the HTML content before sending to the server (or ensure it's sanitized on the back-end)
+
+    if (selectedNote) {
+      const url = apiUrl(ApiEndpoints.note_list, selectedNote);
+
+      notifications.hide('note-update-status');
+
+      api
+        .patch(url, { content: html })
+        .then(() => {
+          notifications.show({
+            title: t`Success`,
+            message: t`Note updated`,
+            color: 'green',
+            id: 'note-update-status',
+            autoClose: 2000
+          });
+        })
+        .catch((error) => {
+          notifications.show({
+            title: t`Error`,
+            message: t`Failed to update note: ${error.message}`,
+            color: 'red',
+            id: 'note-update-status',
+            autoClose: 2000
+          });
+        })
+        .finally(() => {
+          notesQuery.refetch();
+        });
+    }
+  }, [selectedNote, editor]);
+
   return (
     <>
       {createNote.modal}
@@ -126,7 +185,6 @@ export default function NotesEditor({
               <Stack gap='xs'>
                 <BlockNoteView
                   editor={editor}
-                  content={''}
                   editable={canEdit}
                   style={{ minHeight: '400px' }}
                 />
@@ -140,6 +198,9 @@ export default function NotesEditor({
         </Box>
         <Paper p='sm' shadow='sm' withBorder ml='md' style={{ width: '200px' }}>
           <Stack gap='xs'>
+            <Button leftSection={<IconUpload />} onClick={saveNote}>
+              {t`Save`}
+            </Button>
             <Button leftSection={<IconCirclePlus />} onClick={createNote.open}>
               {t`Add Note`}
             </Button>

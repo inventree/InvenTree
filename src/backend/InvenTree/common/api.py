@@ -840,6 +840,10 @@ class NoteFilter(FilterSet):
 class NoteMixin:
     """Mixin class for the Note views."""
 
+    # Ignore default sanitizing of the 'content' field
+    # Note: This is handled explicitly in the 'save' method of the Note model
+    SAFE_FIELDS = ['content']
+
     queryset = common.models.Note.objects.all()
     serializer_class = common.serializers.NoteSerializer
     permission_classes = [IsAuthenticatedOrReadScope]

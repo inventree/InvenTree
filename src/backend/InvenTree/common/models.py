@@ -2921,10 +2921,6 @@ class Note(
         created: Date/time that the note was created
     """
 
-    # Ignore default sanitizing of the 'content' field
-    # Note: This is handled explicitly in the 'save' method
-    SAFE_FIELDS = ['content']
-
     class Meta:
         """Meta options for Note model."""
 
