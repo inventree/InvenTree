@@ -789,3 +789,99 @@ class AttachmentAPITests(InvenTreeAPITestCase):
         for att in attachments:
             # Ensure that the file associated with each attachment has been removed
             self.assertFalse(default_storage.exists(att.attachment.path))
+
+
+class NoteAPITests(InvenTreeAPITestCase):
+    """API tests for the Note model, focusing on the 'primary' flag behaviour."""
+
+    def setUp(self):
+        """Create a Part instance to attach notes to."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.assignRole('part.add')
+
+        self.part = Part.objects.create(
+            name='Test Part', description='A part for testing notes'
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_note(self, title, primary=None, expected_code=201):
+        data = {'model_type': 'part', 'model_id': self.part.pk, 'title': title}
+        if primary is not None:
+            data['primary'] = primary
+        return self.post(self._note_url(), data=data, expected_code=expected_code)
+
+    def test_first_note_is_primary(self):
+        """A note created when no other notes exist is automatically primary."""
+        response = self._create_note('Only Note')
+        self.assertTrue(response.data['primary'])
+
+    def test_second_note_not_primary_by_default(self):
+        """Notes created after the first are not primary by default."""
+        first = self._create_note('First Note')
+        second = self._create_note('Second Note')
+
+        self.assertTrue(first.data['primary'])
+        self.assertFalse(second.data['primary'])
+
+        # Confirm the first is still marked primary in the database
+        from common.models import Note
+
+        self.assertTrue(Note.objects.get(pk=first.data['pk']).primary)
+
+    def test_setting_primary_clears_others(self):
+        """Marking a note as primary demotes all sibling notes."""
+        first = self._create_note('First Note')
+        second = self._create_note('Second Note')
+        third = self._create_note('Third Note')
+
+        # Only the first should be primary after creation
+        self.assertTrue(first.data['primary'])
+        self.assertFalse(second.data['primary'])
+        self.assertFalse(third.data['primary'])
+
+        # Promote the third note via PATCH
+        response = self.patch(
+            self._note_url(third.data['pk']), data={'primary': True}, expected_code=200
+        )
+        self.assertTrue(response.data['primary'])
+
+        # Verify via the list endpoint that only the third is primary
+        list_response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        primary_pks = [n['pk'] for n in list_response.data if n['primary']]
+        self.assertEqual(primary_pks, [third.data['pk']])
+
+    def test_primary_flag_isolated_per_model_instance(self):
+        """Primary flag changes on one model instance do not affect notes on another."""
+        from part.models import Part
+
+        other_part = Part.objects.create(name='Other Part', description='Another part')
+
+        note_a = self._create_note('Note on Part A')
+        self.assertTrue(note_a.data['primary'])
+
+        # Create a note on the other part; it should be primary for *that* part
+        note_b_response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': other_part.pk,
+                'title': 'Note on Part B',
+            },
+            expected_code=201,
+        )
+        self.assertTrue(note_b_response.data['primary'])
+
+        # The note on Part A should still be primary
+        note_a_detail = self.get(self._note_url(note_a.data['pk']), expected_code=200)
+        self.assertTrue(note_a_detail.data['primary'])
