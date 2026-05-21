@@ -664,15 +664,16 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin):
         'common.Note', content_type_field='model_type', object_id_field='model_id'
     )
 
-    @property
-    def notes(self) -> QuerySet:
-        """Return a queryset containing all notes for this model."""
-        # Check the query cache for pre-fetched parameters
-        if cache := getattr(self, '_prefetched_objects_cache', None):
-            if 'notes_list' in cache:
-                return cache['notes_list']
+    # TODO: Un-comment this once the InvenTreeNotesMixin class is removed
+    # @property
+    # def notes(self) -> QuerySet:
+    #     """Return a queryset containing all notes for this model."""
+    #     # Check the query cache for pre-fetched parameters
+    #     if cache := getattr(self, '_prefetched_objects_cache', None):
+    #         if 'notes_list' in cache:
+    #             return cache['notes_list']
 
-        return self.notes_list.all()
+    #     return self.notes_list.all()
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
