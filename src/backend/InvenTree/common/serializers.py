@@ -820,6 +820,7 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             'pk',
             'model_type',
             'model_id',
+            'primary',
             'title',
             'description',
             'content',
