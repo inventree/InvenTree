@@ -30,7 +30,7 @@ export default function OrderCalendarToolTip({
         <Text size='sm' fw='bold'>
           {order.reference}
         </Text>
-        <Text size='xs'>{order.description}</Text>
+        <Text size='xs'>{order.description || order.title}</Text>
       </Group>
       {order.start_date && (
         <Group gap='xs'>
