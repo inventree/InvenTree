@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 489
+INVENTREE_API_VERSION = 490
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
+    - moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
 
 v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
     - Removes the "remote_image" field from the Part API endpoint

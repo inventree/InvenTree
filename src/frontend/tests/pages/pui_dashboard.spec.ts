@@ -142,7 +142,7 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
     password: user.testcred
   });
 
-  (await api).patch('user/profile/', {
+  (await api).patch('user/me/profile/', {
     data: {
       widgets: {
         widgets: ['ovr-so'],
