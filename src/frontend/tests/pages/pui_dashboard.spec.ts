@@ -94,3 +94,86 @@ test('Dashboard - Plugins', async ({ browser }) => {
   await page.getByRole('heading', { name: 'Sample Dashboard Item' }).waitFor();
   await page.getByText('Hello world! This is a sample').waitFor();
 });
+
+test('Dashboard - Preserve widget sizes', async ({ browser }) => {
+  // Regression: addWidget previously snapped every existing widget back to
+  // its minW/minH. Fix is in DashboardLayout.tsx::addWidget (overrideSize=false).
+  const TARGET_W = 10;
+  const TARGET_H = 6;
+
+  const readLayouts = (page: Page) =>
+    page.evaluate(() => {
+      const raw = localStorage.getItem('session-settings');
+      return raw ? (JSON.parse(raw)?.state?.layouts ?? {}) : {};
+    });
+
+  const user = allaccessuser;
+
+  const page = await doCachedLogin(browser, {
+    user: user
+  });
+  await resetDashboard(page);
+
+  // Add widget A; this also persists to the backend user profile.
+  await page.getByLabel('dashboard-menu').click();
+  await page.getByRole('menuitem', { name: 'Add Widget' }).click();
+  await page.getByLabel('dashboard-widgets-filter-input').fill('overdue order');
+  await page.getByLabel('add-widget-ovr-so').click();
+  await page.getByRole('banner').getByRole('button').click();
+  await page.getByText('Overdue Sales Orders').waitFor();
+  await page.waitForTimeout(100);
+
+  // Inflate widget A on the backend profile and reload. The auth flow on
+  // page load rehydrates layouts from the profile, not localStorage, so a
+  // localStorage-only edit would be wiped out on reload.
+  const current = await readLayouts(page);
+  const inflated: Record<string, any[]> = {};
+  for (const bp of Object.keys(current)) {
+    inflated[bp] = current[bp].map((it: any) =>
+      it?.i === 'ovr-so' ? { ...it, w: TARGET_W, h: TARGET_H } : it
+    );
+  }
+
+  const api = createApi({
+    username: user.username,
+    password: user.testcred
+  });
+
+  (await api).patch('user/me/profile/', {
+    data: {
+      widgets: {
+        widgets: ['ovr-so'],
+        layouts: inflated
+      }
+    }
+  });
+
+  await page.reload();
+  await page.getByText('Overdue Sales Orders').waitFor();
+  await page.waitForTimeout(100);
+
+  // Sanity: profile rehydration produced the inflated values.
+  for (const [bp, items] of Object.entries(await readLayouts(page))) {
+    const entry = (items as any[]).find((i) => i?.i === 'ovr-so');
+
+    console.log('entry:', bp, entry);
+
+    expect(entry?.w, `${bp}: ovr-so missing or wrong w`).toBe(TARGET_W);
+    expect(entry?.h, `${bp}: ovr-so missing or wrong h`).toBe(TARGET_H);
+  }
+
+  // Add widget B. With the bug, this clobbered widget A back to minW/minH.
+  await page.getByLabel('dashboard-menu').click();
+  await page.getByRole('menuitem', { name: 'Add Widget' }).click();
+  await page.getByLabel('dashboard-widgets-filter-input').fill('overdue order');
+  await page.getByLabel('add-widget-ovr-po').click();
+  await page.getByRole('banner').getByRole('button').click();
+  await page.getByText('Overdue Purchase Orders').waitFor();
+  await page.waitForTimeout(100);
+
+  for (const [bp, items] of Object.entries(await readLayouts(page))) {
+    const entry = (items as any[]).find((i) => i?.i === 'ovr-so');
+    expect(entry?.w, `${bp}: ovr-so width was reset`).toBe(TARGET_W);
+    expect(entry?.h, `${bp}: ovr-so height was reset`).toBe(TARGET_H);
+  }
+});

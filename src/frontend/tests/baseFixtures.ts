@@ -70,7 +70,7 @@ export const test = baseTest.extend({
         !msg.text().includes('/this/does/not/exist.js') &&
         !url.includes('/this/does/not/exist.js') &&
         !url.includes('/api/user/me/') &&
-        !url.includes('/api/user/token/') &&
+        !url.includes('/api/user/me/token/') &&
         !url.includes('/api/auth/v1/auth/login') &&
         !url.includes('/api/auth/v1/auth/session') &&
         !url.includes('/api/auth/v1/account/authenticators/totp') &&
