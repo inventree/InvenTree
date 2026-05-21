@@ -21,6 +21,7 @@ FeatureType = Literal[
     'template_editor',  # Custom template editor
     'template_preview',  # Custom template preview
     'navigation',  # Custom navigation items
+    'primary_action',  # Custom primary action buttons
 ]
 
 
@@ -106,6 +107,7 @@ class UserInterfaceMixin:
             'panel': self.get_ui_panels,
             'template_editor': self.get_ui_template_editors,
             'template_preview': self.get_ui_template_previews,
+            'primary_action': self.get_ui_primary_actions,
         }
 
         if feature_type in feature_map:
@@ -201,5 +203,31 @@ class UserInterfaceMixin:
         Returns:
             list: A list of custom navigation items to be injected into the UI
         """
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_primary_actions(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return a list of custom primary action buttons to be injected into the UI.
+
+        Args:
+            request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
+
+        Returns:
+            list: A list of custom primary action buttons to be injected into the UI
+        """
+        # Sample code to render conditional primary action button based on context
+        # items = []
+        # if self.my_assert_function(context):
+        #     items.append({
+        #         'key': 'sample-primary-action',
+        #         'title': 'Sample Primary Action',
+        #         'icon': 'ti:plus:outline',
+        #         'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
+        #     })
+        # return items
+
         # Default implementation returns an empty list
         return []
