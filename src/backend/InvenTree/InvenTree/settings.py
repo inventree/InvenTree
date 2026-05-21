@@ -305,6 +305,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
     # InvenTree apps
+    'attendance.apps.AttendanceConfig',
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function

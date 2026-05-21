@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py makemigrations attendance)",
+      "Bash(../../../dev/venv/bin/python manage.py makemigrations attendance)",
+      "Bash(/home/thegreatcensor/InvenTree/dev/venv/bin/python --version)",
+      "Bash(/home/thegreatcensor/InvenTree/dev/venv/bin/python3 --version)",
+      "Bash(PYTHONPATH=/home/thegreatcensor/InvenTree/src/backend/InvenTree:/home/thegreatcensor/InvenTree/dev/venv/lib/python3.11/site-packages /usr/bin/python3 manage.py makemigrations attendance)",
+      "Bash(xxd)",
+      "Bash(grep 't`' /home/thegreatcensor/InvenTree/src/frontend/src/pages/attendance/TimesheetReport.tsx)",
+      "Bash(grep 't`' /home/thegreatcensor/InvenTree/src/frontend/src/pages/attendance/ClockPage.tsx)",
+      "Bash(sed -n '34,42p' src/backend/InvenTree/attendance/api.py)",
+      "Bash(sed -n '78,82p' src/backend/InvenTree/attendance/api.py)",
+      "Bash(sed -n '156,162p' src/backend/InvenTree/attendance/api.py)",
+      "Bash(sed -n '174,178p' src/backend/InvenTree/attendance/api.py)",
+      "Bash(sed -n '200,204p' src/backend/InvenTree/attendance/api.py)",
+      "Bash(sed -n '34,42p' src/backend/InvenTree/attendance/models.py)",
+      "Bash(sed -n '72,79p' src/backend/InvenTree/attendance/models.py)",
+      "Bash(sed -n '101,108p' src/backend/InvenTree/attendance/models.py)",
+      "Bash(sed -n '19,22p' src/backend/InvenTree/attendance/serializers.py)",
+      "Bash(sed -n '48,51p' src/backend/InvenTree/attendance/serializers.py)",
+      "Bash(sed -n '81,84p' src/backend/InvenTree/attendance/serializers.py)",
+      "Bash(sed -n '91,95p' src/backend/InvenTree/attendance/serializers.py)"
+    ]
+  }
+}

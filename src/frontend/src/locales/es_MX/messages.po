@@ -75,7 +75,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: lib/components/RowActions.tsx:136
-#: src/components/nav/NavigationDrawer.tsx:190
+#: src/components/nav/NavigationDrawer.tsx:203
 #: src/forms/PurchaseOrderForms.tsx:917
 #: src/forms/StockForms.tsx:805
 #: src/forms/StockForms.tsx:852
@@ -431,7 +431,7 @@ msgstr "Orden de devolución"
 #: lib/enums/ModelInformation.tsx:196
 #: lib/enums/Roles.tsx:42
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:343
+#: src/pages/Index/Settings/SystemSettings.tsx:344
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:758
 #: src/pages/sales/SalesIndex.tsx:99
@@ -604,6 +604,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:639
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:830
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:189
+#: src/pages/attendance/ClockPage.tsx:155
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -1945,11 +1946,11 @@ msgid "API Version"
 msgstr "Versión de API"
 
 #: src/components/forms/InstanceOptions.tsx:143
-#: src/components/nav/NavigationDrawer.tsx:197
+#: src/components/nav/NavigationDrawer.tsx:210
 #: src/defaults/actions.tsx:173
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:229
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:356
+#: src/pages/Index/Settings/SystemSettings.tsx:357
 msgid "Plugins"
 msgstr "Complementos"
 
@@ -2055,7 +2056,7 @@ msgstr "Añadir fila nueva"
 #~ msgid "Select image"
 #~ msgstr "Select image"
 
-#: src/components/images/Thumbnail.tsx:12
+#: src/components/images/Thumbnail.tsx:13
 msgid "Thumbnail"
 msgstr "Miniatura"
 
@@ -2122,6 +2123,7 @@ msgstr "Procesando datos"
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:401
+#: src/pages/attendance/ClockPage.tsx:79
 msgid "An error occurred"
 msgstr "Se ha producido un error"
 
@@ -2469,7 +2471,7 @@ msgstr "Enlaces"
 #~ msgstr "View Code on GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:175
-#: src/components/nav/NavigationDrawer.tsx:208
+#: src/components/nav/NavigationDrawer.tsx:221
 #: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Documentación"
@@ -2664,7 +2666,7 @@ msgid "Learn more about {code}"
 msgstr ""
 
 #: src/components/nav/Header.tsx:209
-#: src/components/nav/NavigationDrawer.tsx:134
+#: src/components/nav/NavigationDrawer.tsx:147
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:129
 #: src/pages/Index/Settings/UserSettings.tsx:109
@@ -2699,7 +2701,7 @@ msgstr "No se encontró nada..."
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:54
-#: src/components/nav/NavigationDrawer.tsx:185
+#: src/components/nav/NavigationDrawer.tsx:198
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
 msgid "Settings"
@@ -2711,7 +2713,7 @@ msgstr "Ajustes"
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:61
-#: src/components/nav/NavigationDrawer.tsx:140
+#: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:86
 #: src/pages/Index/Settings/UserSettings.tsx:144
@@ -2729,11 +2731,11 @@ msgstr "Ajustes del usuario"
 #~ msgstr "Current language {locale}"
 
 #: src/components/nav/MainMenu.tsx:69
-#: src/components/nav/NavigationDrawer.tsx:146
+#: src/components/nav/NavigationDrawer.tsx:159
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:373
-#: src/pages/Index/Settings/SystemSettings.tsx:378
+#: src/pages/Index/Settings/SystemSettings.tsx:374
+#: src/pages/Index/Settings/SystemSettings.tsx:379
 msgid "System Settings"
 msgstr "Ajustes del sistema"
 
@@ -2742,7 +2744,7 @@ msgstr "Ajustes del sistema"
 #~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:78
-#: src/components/nav/NavigationDrawer.tsx:153
+#: src/components/nav/NavigationDrawer.tsx:166
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:164
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:294
@@ -2823,11 +2825,19 @@ msgstr "Compras"
 msgid "Sales"
 msgstr "Ventas"
 
-#: src/components/nav/NavigationDrawer.tsx:180
+#: src/components/nav/NavigationDrawer.tsx:129
+msgid "Clock In / Out"
+msgstr ""
+
+#: src/components/nav/NavigationDrawer.tsx:135
+msgid "Timesheet Report"
+msgstr ""
+
+#: src/components/nav/NavigationDrawer.tsx:193
 msgid "Navigation"
 msgstr "Navegación"
 
-#: src/components/nav/NavigationDrawer.tsx:214
+#: src/components/nav/NavigationDrawer.tsx:227
 msgid "About"
 msgstr "Acerca de"
 
@@ -2938,6 +2948,7 @@ msgid "Attachments"
 msgstr "Archivos adjuntos"
 
 #: src/components/panels/NotesPanel.tsx:27
+#: src/pages/attendance/ClockPage.tsx:243
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3127,7 +3138,7 @@ msgstr "Ha ocurrido un error al cargar el contenido del complemento"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:255
+#: src/components/render/Instance.tsx:244
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -3226,6 +3237,8 @@ msgstr "Categoría"
 #: src/forms/StockForms.tsx:1144
 #: src/forms/StockForms.tsx:1188
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
+#: src/pages/attendance/ClockPage.tsx:182
+#: src/pages/attendance/ClockPage.tsx:237
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:299
 #: src/tables/ColumnRenderers.tsx:363
@@ -7098,6 +7111,70 @@ msgstr "Marcar como no leído"
 #: src/pages/Notifications.tsx:146
 #~ msgid "Delete notifications"
 #~ msgstr "Delete notifications"
+
+#: src/pages/attendance/ClockPage.tsx:78
+msgid "Clock Action Failed"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:126
+msgid "Attendance"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:149
+msgid "Loading status..."
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:156
+msgid "Could not load clock status. Please try again."
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:171
+msgid "Clocked In"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:171
+msgid "Clocked Out"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:177
+msgid "Clocked in at"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:194
+msgid "Last clock out"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:199
+msgid "Session"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:207
+msgid "Welcome! Clock in to get started."
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:219
+msgid "Clock Out"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:219
+msgid "Clock In"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:229
+msgid "Hide details"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:230
+msgid "Add location / notes"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:238
+msgid "Stand or area"
+msgstr ""
+
+#: src/pages/attendance/ClockPage.tsx:244
+msgid "Optional note"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:71
 msgid "No Required Items"
@@ -12923,4 +13000,3 @@ msgstr "Leer la documentación"
 #: src/views/MobileAppView.tsx:42
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-
