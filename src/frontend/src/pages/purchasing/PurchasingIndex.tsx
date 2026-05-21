@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Stack } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingStore,
@@ -10,8 +10,9 @@ import {
   IconShoppingCart,
   IconTable
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import type { EventContentArg } from '@fullcalendar/core';
 import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/index';
@@ -21,6 +22,7 @@ import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
+import { RenderCompany } from '../../components/render/Company';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
@@ -37,12 +39,28 @@ function PurchaseOrderCalendar() {
     return PurchaseOrderFilters({ includeDateFilters: false });
   }, []);
 
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    // Extract the order from the event extendedProps
+    const order = event?.event?._def?.extendedProps?.order;
+
+    if (!order) return null;
+
+    return (
+      <Stack gap='xs'>
+        <RenderCompany instance={order.supplier_detail} />
+        <Text size='sm'>{order.reference}</Text>
+        <Text size='xs'>{order.description}</Text>
+      </Stack>
+    );
+  }, []);
+
   return (
     <OrderCalendar
       model={ModelType.purchaseorder}
       role={UserRoles.purchase_order}
-      params={{ outstanding: true }}
+      params={{ outstanding: true, supplier_detail: true }}
       filters={calendarFilters}
+      tooltip={renderTooltip}
     />
   );
 }
