@@ -515,7 +515,7 @@ user_urls = [
     ),
     # User related endpoints
     path(
-        'token/',
+        'tokens/',
         include([
             path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
             path('', TokenListView.as_view(), name='api-token-list'),
