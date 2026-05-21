@@ -1,9 +1,8 @@
 import { t } from '@lingui/core/macro';
+import { useHotkeys } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
-import 'easymde/dist/easymde.min.css';
-import { useHotkeys } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
