@@ -162,8 +162,9 @@ export default function NotesEditor({
 
     const blocks = editor.document;
     const html = editor.blocksToHTMLLossy(blocks);
+    const cleanHtml = DOMPurify.sanitize(html);
 
-    // TODO: Sanitize the HTML content before sending to the server (or ensure it's sanitized on the back-end)
+    // Sanitize the HTML content before sending to the server (or ensure it's sanitized on the back-end)
 
     if (selectedNote) {
       const url = apiUrl(ApiEndpoints.note_list, selectedNote);
@@ -171,7 +172,7 @@ export default function NotesEditor({
       notifications.hide('note-update-status');
 
       api
-        .patch(url, { content: html })
+        .patch(url, { content: cleanHtml })
         .then(() => {
           setIsDirty(false);
           notifications.show({
