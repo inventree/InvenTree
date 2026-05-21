@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Stack, Text } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingStore,
@@ -18,11 +18,11 @@ import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
-import { RenderCompany } from '../../components/render/Company';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
@@ -40,18 +40,11 @@ function PurchaseOrderCalendar() {
   }, []);
 
   const renderTooltip = useCallback((event: EventContentArg) => {
-    // Extract the order from the event extendedProps
-    const order = event?.event?._def?.extendedProps?.order;
-
-    if (!order) return null;
-
-    return (
-      <Stack gap='xs'>
-        <RenderCompany instance={order.supplier_detail} />
-        <Text size='sm'>{order.reference}</Text>
-        <Text size='xs'>{order.description}</Text>
-      </Stack>
-    );
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'supplier_detail'
+    });
   }, []);
 
   return (
