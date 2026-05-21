@@ -87,6 +87,14 @@ class Migration(migrations.Migration):
                         verbose_name="Update By",
                     ),
                 ),
+                (
+                    "primary",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Is this the primary note for the associated model?",
+                        verbose_name="Primary",
+                    ),
+                )
             ],
             options={
                 "verbose_name": "Note",

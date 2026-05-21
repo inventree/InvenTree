@@ -2935,7 +2935,22 @@ class Note(
     def save(self, *args, **kwargs):
         """Perform custom save checks before saving a Note instance."""
         self.check_save()
+
+        others = Note.objects.filter(
+            model_type=self.model_type, model_id=self.model_id
+        ).exclude(pk=self.pk)
+
+        # If this is the *only* note for this model instance, then set it as the primary note
+        if not others.exists():
+            self.primary = True
+
         super().save(*args, **kwargs)
+
+        # Once this note is saved, mark other notes as non-primary
+        if self.primary:
+            Note.objects.filter(
+                model_type=self.model_type, model_id=self.model_id
+            ).exclude(pk=self.pk).update(primary=False)
 
     def delete(self):
         """Perform custom delete checks before deleting a Parameter instance."""
@@ -2975,6 +2990,12 @@ class Note(
     model_id = models.PositiveIntegerField()
 
     content_object = GenericForeignKey('model_type', 'model_id')
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary note for the associated model?'),
+    )
 
     title = models.CharField(
         max_length=100, verbose_name=_('Title'), help_text=_('Note title')
