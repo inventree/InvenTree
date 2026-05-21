@@ -131,7 +131,7 @@ class AbstractOrderSerializer(
     status_custom_key = serializers.IntegerField(
         label=_('Custom Status Key'),
         help_text=_('Update order status to a custom value for this logical value'),
-        required=False,
+        allow_null=True,
         default=None,
     )
 
