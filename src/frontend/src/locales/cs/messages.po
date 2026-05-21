@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-10 10:59\n"
+"PO-Revision-Date: 2026-05-19 07:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -53,14 +53,14 @@ msgstr "Upravit"
 #: src/components/forms/ApiForm.tsx:769
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
-#: src/hooks/UseForm.tsx:170
+#: src/hooks/UseForm.tsx:174
 #: src/pages/Notifications.tsx:109
 #: src/tables/plugin/PluginListTable.tsx:247
 msgid "Delete"
 msgstr "Odstranit"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/details/DetailsImage.tsx:84
+#: src/components/details/DetailsImage.tsx:82
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
 #: src/components/items/ActionDropdown.tsx:278
@@ -70,26 +70,26 @@ msgstr "Odstranit"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
 #: src/tables/FilterSelectDrawer.tsx:382
-#: src/tables/build/BuildOutputTable.tsx:610
+#: src/tables/build/BuildOutputTable.tsx:613
 msgid "Cancel"
 msgstr "Zrušit"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
 #: src/forms/PurchaseOrderForms.tsx:917
-#: src/forms/StockForms.tsx:805
-#: src/forms/StockForms.tsx:852
-#: src/forms/StockForms.tsx:905
-#: src/forms/StockForms.tsx:951
-#: src/forms/StockForms.tsx:989
-#: src/forms/StockForms.tsx:1099
+#: src/forms/StockForms.tsx:806
+#: src/forms/StockForms.tsx:853
+#: src/forms/StockForms.tsx:906
+#: src/forms/StockForms.tsx:952
+#: src/forms/StockForms.tsx:990
+#: src/forms/StockForms.tsx:1100
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
 msgid "Actions"
 msgstr "Akce"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:524
-#: src/components/nav/Header.tsx:190
+#: src/components/forms/fields/RelatedModelField.tsx:534
+#: src/components/nav/Header.tsx:192
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:77
@@ -133,21 +133,21 @@ msgstr "Ne"
 #: src/forms/PurchaseOrderForms.tsx:913
 #: src/forms/ReturnOrderForms.tsx:244
 #: src/forms/SalesOrderForms.tsx:434
-#: src/forms/StockForms.tsx:368
-#: src/forms/StockForms.tsx:800
-#: src/forms/StockForms.tsx:847
-#: src/forms/StockForms.tsx:900
-#: src/forms/StockForms.tsx:946
-#: src/forms/StockForms.tsx:984
-#: src/forms/StockForms.tsx:1027
-#: src/forms/StockForms.tsx:1095
-#: src/forms/StockForms.tsx:1143
-#: src/forms/StockForms.tsx:1187
+#: src/forms/StockForms.tsx:369
+#: src/forms/StockForms.tsx:801
+#: src/forms/StockForms.tsx:848
+#: src/forms/StockForms.tsx:901
+#: src/forms/StockForms.tsx:947
+#: src/forms/StockForms.tsx:985
+#: src/forms/StockForms.tsx:1028
+#: src/forms/StockForms.tsx:1096
+#: src/forms/StockForms.tsx:1144
+#: src/forms/StockForms.tsx:1188
 #: src/pages/build/BuildDetail.tsx:258
 #: src/pages/part/PartDetail.tsx:1133
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/ColumnRenderers.tsx:91
-#: src/tables/build/BuildOrderParametricTable.tsx:26
+#: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:247
 #: src/tables/part/RelatedPartTable.tsx:53
 #: src/tables/stock/StockTrackingTable.tsx:119
@@ -159,11 +159,11 @@ msgstr "Díl"
 #: lib/enums/Roles.tsx:36
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:200
-#: src/pages/part/CategoryDetail.tsx:135
-#: src/pages/part/CategoryDetail.tsx:282
-#: src/pages/part/CategoryDetail.tsx:337
-#: src/pages/part/CategoryDetail.tsx:368
+#: src/pages/Index/Settings/SystemSettings.tsx:206
+#: src/pages/part/CategoryDetail.tsx:137
+#: src/pages/part/CategoryDetail.tsx:284
+#: src/pages/part/CategoryDetail.tsx:339
+#: src/pages/part/CategoryDetail.tsx:381
 #: src/pages/part/PartDetail.tsx:862
 msgid "Parts"
 msgstr "Díly"
@@ -182,10 +182,10 @@ msgid "Parameter"
 msgstr "Parametr"
 
 #: lib/enums/ModelInformation.tsx:40
-#: src/components/panels/ParametersPanel.tsx:21
+#: src/components/panels/ParametersPanel.tsx:24
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:196
-#: src/pages/Index/Settings/SystemSettings.tsx:194
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:193
+#: src/pages/Index/Settings/SystemSettings.tsx:200
 #: src/pages/part/PartDetail.tsx:818
 msgid "Parameters"
 msgstr "Parametry"
@@ -221,7 +221,7 @@ msgid "Supplier Part"
 msgstr "Díl dodavatele"
 
 #: lib/enums/ModelInformation.tsx:60
-#: src/pages/purchasing/PurchasingIndex.tsx:129
+#: src/pages/purchasing/PurchasingIndex.tsx:140
 msgid "Supplier Parts"
 msgstr "Díly dodavatele"
 
@@ -234,20 +234,20 @@ msgid "Manufacturer Part"
 msgstr "Díl výrobce"
 
 #: lib/enums/ModelInformation.tsx:70
-#: src/pages/purchasing/PurchasingIndex.tsx:179
+#: src/pages/purchasing/PurchasingIndex.tsx:190
 msgid "Manufacturer Parts"
 msgstr "Díly výrobce"
 
 #: lib/enums/ModelInformation.tsx:79
-#: src/pages/part/CategoryDetail.tsx:368
-#: src/tables/Filter.tsx:449
+#: src/pages/part/CategoryDetail.tsx:381
+#: src/tables/Filter.tsx:467
 msgid "Part Category"
 msgstr "Kategorie dílu"
 
 #: lib/enums/ModelInformation.tsx:80
 #: lib/enums/Roles.tsx:38
-#: src/pages/part/CategoryDetail.tsx:276
-#: src/pages/part/CategoryDetail.tsx:359
+#: src/pages/part/CategoryDetail.tsx:278
+#: src/pages/part/CategoryDetail.tsx:372
 #: src/pages/part/PartDetail.tsx:1122
 msgid "Part Categories"
 msgstr "Kategorie dílů"
@@ -270,22 +270,22 @@ msgstr "Skladová položka"
 #: lib/enums/ModelInformation.tsx:89
 #: lib/enums/Roles.tsx:46
 #: src/pages/company/CompanyDetail.tsx:211
-#: src/pages/part/CategoryDetail.tsx:311
+#: src/pages/part/CategoryDetail.tsx:313
 #: src/pages/part/PartStockHistoryDetail.tsx:117
-#: src/pages/stock/LocationDetail.tsx:130
-#: src/pages/stock/LocationDetail.tsx:208
+#: src/pages/stock/LocationDetail.tsx:132
+#: src/pages/stock/LocationDetail.tsx:210
 msgid "Stock Items"
 msgstr "Skladové položky"
 
 #: lib/enums/ModelInformation.tsx:98
 #: lib/enums/Roles.tsx:48
-#: src/pages/stock/LocationDetail.tsx:454
+#: src/pages/stock/LocationDetail.tsx:467
 msgid "Stock Location"
 msgstr "Umístění skladu"
 
 #: lib/enums/ModelInformation.tsx:99
-#: src/pages/stock/LocationDetail.tsx:182
-#: src/pages/stock/LocationDetail.tsx:446
+#: src/pages/stock/LocationDetail.tsx:184
+#: src/pages/stock/LocationDetail.tsx:459
 #: src/pages/stock/StockDetail.tsx:1021
 msgid "Stock Locations"
 msgstr "Skladová umístění"
@@ -335,7 +335,7 @@ msgstr "Položky sestavy"
 #: src/pages/company/CompanyDetail.tsx:347
 #: src/tables/company/CompanyTable.tsx:56
 #: src/tables/company/ContactTable.tsx:67
-#: src/tables/company/ParametricCompanyTable.tsx:18
+#: src/tables/company/ParametricCompanyTable.tsx:29
 msgid "Company"
 msgstr "Firma"
 
@@ -349,13 +349,13 @@ msgstr "Firmy"
 #: src/pages/sales/ReturnOrderDetail.tsx:232
 #: src/pages/sales/SalesOrderDetail.tsx:225
 #: src/tables/ColumnRenderers.tsx:563
-#: src/tables/Filter.tsx:346
+#: src/tables/Filter.tsx:364
 #: src/tables/TableHoverCard.tsx:101
 msgid "Project Code"
 msgstr "Kód projektu"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:173
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 msgid "Project Codes"
 msgstr "Kódy projektu"
 
@@ -373,11 +373,11 @@ msgstr "Objednávka"
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/SystemSettings.tsx:314
+#: src/pages/Index/Settings/SystemSettings.tsx:329
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:269
 #: src/pages/part/PartDetail.tsx:739
-#: src/pages/purchasing/PurchasingIndex.tsx:66
+#: src/pages/purchasing/PurchasingIndex.tsx:83
 msgid "Purchase Orders"
 msgstr "Objednávky"
 
@@ -406,10 +406,10 @@ msgstr "Prodejní objednávka"
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:44
 #: src/defaults/actions.tsx:116
-#: src/pages/Index/Settings/SystemSettings.tsx:332
+#: src/pages/Index/Settings/SystemSettings.tsx:347
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:751
-#: src/pages/sales/SalesIndex.tsx:53
+#: src/pages/sales/SalesIndex.tsx:85
 msgid "Sales Orders"
 msgstr "Prodejní objednávky"
 
@@ -431,10 +431,10 @@ msgstr "Vrácená objednávka"
 #: lib/enums/ModelInformation.tsx:196
 #: lib/enums/Roles.tsx:42
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:343
+#: src/pages/Index/Settings/SystemSettings.tsx:359
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:758
-#: src/pages/sales/SalesIndex.tsx:99
+#: src/pages/sales/SalesIndex.tsx:125
 msgid "Return Orders"
 msgstr "Vrácené objednávky"
 
@@ -484,7 +484,7 @@ msgstr "Správci"
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
 #: src/tables/ColumnRenderers.tsx:596
-#: src/tables/Filter.tsx:395
+#: src/tables/Filter.tsx:413
 #: src/tables/settings/ApiTokenTable.tsx:107
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
@@ -531,7 +531,7 @@ msgid "Label Template"
 msgstr "Šablona štítku"
 
 #: lib/enums/ModelInformation.tsx:256
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:210
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:207
 msgid "Label Templates"
 msgstr "Šablony štítků"
 
@@ -540,7 +540,7 @@ msgid "Report Template"
 msgstr "Šablona hlášení"
 
 #: lib/enums/ModelInformation.tsx:264
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:216
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:213
 msgid "Report Templates"
 msgstr "Šablony hlášení"
 
@@ -584,7 +584,7 @@ msgstr "Výběr záznamů"
 #: src/components/dashboard/DashboardLayout.tsx:295
 #: src/components/editors/NotesEditor.tsx:81
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
-#: src/components/forms/fields/ApiFormField.tsx:246
+#: src/components/forms/fields/ApiFormField.tsx:250
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:215
 #: src/components/importer/ImporterColumnSelector.tsx:278
@@ -626,8 +626,8 @@ msgstr "Administrace"
 
 #: lib/enums/Roles.tsx:34
 #: src/defaults/actions.tsx:146
-#: src/pages/Index/Settings/SystemSettings.tsx:294
-#: src/pages/build/BuildIndex.tsx:67
+#: src/pages/Index/Settings/SystemSettings.tsx:302
+#: src/pages/build/BuildIndex.tsx:62
 #: src/pages/part/PartDetail.tsx:768
 #: src/pages/sales/SalesOrderDetail.tsx:431
 msgid "Build Orders"
@@ -949,20 +949,20 @@ msgstr "Zrušit odběr oznámení"
 msgid "Subscribe to notifications"
 msgstr "Přihlásit se k odběru oznámení"
 
-#: src/components/calendar/Calendar.tsx:118
-#: src/components/calendar/Calendar.tsx:181
+#: src/components/calendar/Calendar.tsx:121
+#: src/components/calendar/Calendar.tsx:184
 msgid "Calendar Filters"
 msgstr "Filtry kalendáře"
 
-#: src/components/calendar/Calendar.tsx:133
+#: src/components/calendar/Calendar.tsx:136
 msgid "Previous month"
 msgstr "Předchozí měsíc"
 
-#: src/components/calendar/Calendar.tsx:142
+#: src/components/calendar/Calendar.tsx:145
 msgid "Select month"
 msgstr "Vybrat měsíc"
 
-#: src/components/calendar/Calendar.tsx:163
+#: src/components/calendar/Calendar.tsx:166
 msgid "Next month"
 msgstr "Příští měsíc"
 
@@ -971,20 +971,20 @@ msgstr "Příští měsíc"
 #~ msgid "Download data"
 #~ msgstr "Download data"
 
-#: src/components/calendar/Calendar.tsx:194
+#: src/components/calendar/Calendar.tsx:197
 #: src/tables/InvenTreeTableHeader.tsx:292
 msgid "Export data"
 msgstr "Exportovat data"
 
-#: src/components/calendar/OrderCalendar.tsx:132
+#: src/components/calendar/OrderCalendar.tsx:141
 msgid "Order Updated"
 msgstr "Objednávka aktualizována"
 
-#: src/components/calendar/OrderCalendar.tsx:142
+#: src/components/calendar/OrderCalendar.tsx:151
 msgid "Error updating order"
 msgstr "Chyba při aktualizaci objednávky"
 
-#: src/components/calendar/OrderCalendar.tsx:178
+#: src/components/calendar/OrderCalendar.tsx:187
 #: src/tables/Filter.tsx:194
 msgid "Overdue"
 msgstr "Po splatnosti"
@@ -1080,7 +1080,7 @@ msgid "Latest parts"
 msgstr "Poslední díly"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:63
-#: src/tables/part/PartTable.tsx:281
+#: src/tables/part/PartTableFilters.tsx:77
 msgid "Low Stock"
 msgstr "Nízké zásoby"
 
@@ -1089,13 +1089,13 @@ msgid "Show the number of parts which are low on stock"
 msgstr "Zobraz počet polžek s nízkou skladovou zásobou"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:74
-#: src/tables/part/PartTable.tsx:287
+#: src/tables/part/PartTableFilters.tsx:83
 msgid "High Stock"
-msgstr ""
+msgstr "Vysoké zásoby"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:76
 msgid "Show the number of parts which have excess stock"
-msgstr ""
+msgstr "Zobrazit počet položek které mají přebytečné zásoby"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:85
 msgid "Required for Build Orders"
@@ -1170,7 +1170,7 @@ msgid "Show the number of sales orders which are assigned to you"
 msgstr "Zobrazit počet objednávek, které vám jsou přiděleny"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:150
-#: src/pages/sales/SalesIndex.tsx:87
+#: src/pages/sales/SalesIndex.tsx:113
 msgid "Pending Shipments"
 msgstr "Čekající zásilky"
 
@@ -1344,16 +1344,16 @@ msgstr "E-mail: "
 msgid "No name defined"
 msgstr "Žádný název není definován"
 
-#: src/components/details/DetailsImage.tsx:78
+#: src/components/details/DetailsImage.tsx:76
 msgid "Remove Image"
 msgstr "Odstranit obrázek"
 
-#: src/components/details/DetailsImage.tsx:81
+#: src/components/details/DetailsImage.tsx:79
 msgid "Remove the associated image from this item?"
 msgstr "Odstranit přidružený obrázek z této položky?"
 
-#: src/components/details/DetailsImage.tsx:84
-#: src/forms/StockForms.tsx:904
+#: src/components/details/DetailsImage.tsx:82
+#: src/forms/StockForms.tsx:905
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
@@ -1368,11 +1368,11 @@ msgstr "Odstranit přidružený obrázek z této položky?"
 msgid "Remove"
 msgstr "Odstranit"
 
-#: src/components/details/DetailsImage.tsx:89
+#: src/components/details/DetailsImage.tsx:87
 msgid "Image removed"
 msgstr "Obrázek odstraněn"
 
-#: src/components/details/DetailsImage.tsx:90
+#: src/components/details/DetailsImage.tsx:88
 msgid "The image has been removed successfully"
 msgstr "Obrázek byl úspěšně odstraněn"
 
@@ -1380,33 +1380,33 @@ msgstr "Obrázek byl úspěšně odstraněn"
 #~ msgid "Drag and drop to upload"
 #~ msgstr "Drag and drop to upload"
 
-#: src/components/details/DetailsImage.tsx:158
+#: src/components/details/DetailsImage.tsx:156
 msgid "Drag and drop to upload, or paste an image from the clipboard"
 msgstr "Přetažením nahrajete nebo vložte obrázek ze schránky"
 
-#: src/components/details/DetailsImage.tsx:163
+#: src/components/details/DetailsImage.tsx:161
 msgid "Click to select file(s)"
 msgstr "Klepnutím vyberte soubor(y)"
 
-#: src/components/details/DetailsImage.tsx:223
+#: src/components/details/DetailsImage.tsx:221
 msgid "Image uploaded"
 msgstr "Obrázek byl nahrán"
 
-#: src/components/details/DetailsImage.tsx:224
+#: src/components/details/DetailsImage.tsx:222
 msgid "Image has been uploaded successfully"
 msgstr "Obrázek byl úspěšně nahrán"
 
-#: src/components/details/DetailsImage.tsx:231
+#: src/components/details/DetailsImage.tsx:229
 #: src/tables/general/AttachmentTable.tsx:201
 msgid "Upload Error"
 msgstr "Chyba nahrávání"
 
-#: src/components/details/DetailsImage.tsx:301
+#: src/components/details/DetailsImage.tsx:299
 #: src/components/forms/fields/AutoFillRightSection.tsx:34
 msgid "Clear"
 msgstr "Vymazat"
 
-#: src/components/details/DetailsImage.tsx:307
+#: src/components/details/DetailsImage.tsx:305
 #: src/components/forms/ApiForm.tsx:711
 #: src/contexts/ThemeContext.tsx:55
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
@@ -1414,37 +1414,37 @@ msgstr "Vymazat"
 msgid "Submit"
 msgstr "Odeslat"
 
-#: src/components/details/DetailsImage.tsx:351
+#: src/components/details/DetailsImage.tsx:345
 msgid "Select from existing images"
 msgstr "Vybrat z existujících obrázků"
 
-#: src/components/details/DetailsImage.tsx:359
+#: src/components/details/DetailsImage.tsx:353
 msgid "Select Image"
 msgstr "Vybrat obrázek"
 
-#: src/components/details/DetailsImage.tsx:375
-msgid "Download remote image"
-msgstr "Stáhnout vzdálený obrázek"
-
-#: src/components/details/DetailsImage.tsx:390
+#: src/components/details/DetailsImage.tsx:365
 msgid "Upload new image"
 msgstr "Nahrát nový obrázek"
 
-#: src/components/details/DetailsImage.tsx:397
+#: src/components/details/DetailsImage.tsx:372
 msgid "Upload Image"
 msgstr "Nahrát obrázek"
 
-#: src/components/details/DetailsImage.tsx:410
+#: src/components/details/DetailsImage.tsx:375
+#~ msgid "Download remote image"
+#~ msgstr "Download remote image"
+
+#: src/components/details/DetailsImage.tsx:385
 msgid "Delete image"
 msgstr "Smazat obrázek"
 
 #: src/components/details/DetailsImage.tsx:444
-msgid "Download Image"
-msgstr "Stáhnout obrázek"
+#~ msgid "Download Image"
+#~ msgstr "Download Image"
 
 #: src/components/details/DetailsImage.tsx:449
-msgid "Image downloaded successfully"
-msgstr "Obraz byl úspěšně stažen"
+#~ msgid "Image downloaded successfully"
+#~ msgstr "Image downloaded successfully"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
@@ -1669,7 +1669,7 @@ msgid "Errors exist for one or more form fields"
 msgstr "Existují chyby pro jedno nebo více polí formuláře"
 
 #: src/components/forms/ApiForm.tsx:749
-#: src/hooks/UseForm.tsx:139
+#: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:210
 msgid "Update"
 msgstr "Aktualizovat"
@@ -1858,9 +1858,9 @@ msgstr "Server"
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
-#: src/pages/part/CategoryDetail.tsx:91
+#: src/pages/part/CategoryDetail.tsx:93
 #: src/pages/part/PartDetail.tsx:294
-#: src/pages/stock/LocationDetail.tsx:91
+#: src/pages/stock/LocationDetail.tsx:93
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
 #: src/tables/machine/MachineTypeTable.tsx:252
@@ -1947,9 +1947,9 @@ msgstr "Verze rozhraní API"
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/components/nav/NavigationDrawer.tsx:197
 #: src/defaults/actions.tsx:173
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:229
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:226
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:356
+#: src/pages/Index/Settings/SystemSettings.tsx:372
 msgid "Plugins"
 msgstr "Pluginy"
 
@@ -1980,7 +1980,7 @@ msgstr "Zastaveno"
 msgid "Running"
 msgstr "Spuštěno"
 
-#: src/components/forms/fields/ApiFormField.tsx:206
+#: src/components/forms/fields/ApiFormField.tsx:210
 msgid "Select file to upload"
 msgstr "Vyberte soubor k nahrání"
 
@@ -2020,22 +2020,22 @@ msgstr "Vyberte balení"
 msgid "{0} icons"
 msgstr "Ikony {0}"
 
-#: src/components/forms/fields/RelatedModelField.tsx:525
+#: src/components/forms/fields/RelatedModelField.tsx:535
 #: src/components/modals/AboutInvenTreeModal.tsx:91
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Načítání"
 
-#: src/components/forms/fields/RelatedModelField.tsx:527
+#: src/components/forms/fields/RelatedModelField.tsx:537
 msgid "No results found"
 msgstr "Nebyly nalezeny žádné výsledky"
 
-#: src/components/forms/fields/RelatedModelField.tsx:577
+#: src/components/forms/fields/RelatedModelField.tsx:587
 #: src/tables/general/BarcodeScanTable.tsx:35
 msgid "Item"
 msgstr "Položka"
 
-#: src/components/forms/fields/RelatedModelField.tsx:578
+#: src/components/forms/fields/RelatedModelField.tsx:588
 msgid "Create New {model}"
 msgstr "Vytvořit nový {model}"
 
@@ -2043,11 +2043,11 @@ msgstr "Vytvořit nový {model}"
 msgid "modelRenderer entry required for tables"
 msgstr "Položka modelRenderer je požadovaná pro tabulky"
 
-#: src/components/forms/fields/TableField.tsx:187
+#: src/components/forms/fields/TableField.tsx:176
 msgid "No entries available"
 msgstr "Nejsou žádné záznamy"
 
-#: src/components/forms/fields/TableField.tsx:198
+#: src/components/forms/fields/TableField.tsx:187
 msgid "Add new row"
 msgstr "Přidat nový řádek"
 
@@ -2055,7 +2055,7 @@ msgstr "Přidat nový řádek"
 #~ msgid "Select image"
 #~ msgstr "Select image"
 
-#: src/components/images/Thumbnail.tsx:12
+#: src/components/images/Thumbnail.tsx:13
 msgid "Thumbnail"
 msgstr "Náhled"
 
@@ -2101,7 +2101,7 @@ msgstr "Filtrovat podle stavu ověření řádku"
 
 #: src/components/importer/ImportDataSelector.tsx:405
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:582
+#: src/tables/build/BuildOutputTable.tsx:585
 msgid "Complete"
 msgstr "Hotovo"
 
@@ -2382,7 +2382,7 @@ msgid "Change"
 msgstr "Změnit"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:950
+#: src/forms/StockForms.tsx:951
 #: src/tables/stock/StockItemTestResultTable.tsx:368
 msgid "Add"
 msgstr "Přidat"
@@ -2610,7 +2610,7 @@ msgstr "Pracovník na pozadí není spuštěn"
 #~ msgstr "The Background worker process is not running."
 
 #: src/components/modals/ServerInfoModal.tsx:115
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:130
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Email Settings"
 msgstr "Nastavení e-mailu"
 
@@ -2663,10 +2663,10 @@ msgstr "Některé databáze čekají na migraci."
 msgid "Learn more about {code}"
 msgstr "Další informace o {code}"
 
-#: src/components/nav/Header.tsx:209
+#: src/components/nav/Header.tsx:211
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:129
+#: src/pages/Index/Settings/SystemSettings.tsx:135
 #: src/pages/Index/Settings/UserSettings.tsx:109
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
@@ -2677,15 +2677,15 @@ msgstr "Notifikace"
 #~ msgid "Administrator Mode"
 #~ msgstr "Administrator Mode"
 
-#: src/components/nav/Header.tsx:231
+#: src/components/nav/Header.tsx:233
 msgid "Superuser Mode"
 msgstr "Režim superuživatele"
 
-#: src/components/nav/Header.tsx:231
+#: src/components/nav/Header.tsx:233
 msgid "Admin Mode"
 msgstr "Režim administrátora"
 
-#: src/components/nav/Header.tsx:237
+#: src/components/nav/Header.tsx:239
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "Aktuální uživatel má vyšší oprávnění a neměl by být používán pro běžné používání."
 
@@ -2732,8 +2732,8 @@ msgstr "Uživatelská nastavení"
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:373
-#: src/pages/Index/Settings/SystemSettings.tsx:378
+#: src/pages/Index/Settings/SystemSettings.tsx:389
+#: src/pages/Index/Settings/SystemSettings.tsx:394
 msgid "System Settings"
 msgstr "Nastavení systému"
 
@@ -2745,8 +2745,8 @@ msgstr "Nastavení systému"
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:164
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:294
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:299
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:291
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:296
 msgid "Admin Center"
 msgstr "Centrum správce"
 
@@ -2782,11 +2782,11 @@ msgstr "Odhlásit"
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
-#: src/forms/StockForms.tsx:803
-#: src/pages/Index/Settings/SystemSettings.tsx:241
+#: src/forms/StockForms.tsx:804
+#: src/pages/Index/Settings/SystemSettings.tsx:247
 #: src/pages/part/PartDetail.tsx:651
-#: src/pages/stock/LocationDetail.tsx:424
-#: src/pages/stock/LocationDetail.tsx:454
+#: src/pages/stock/LocationDetail.tsx:426
+#: src/pages/stock/LocationDetail.tsx:467
 #: src/pages/stock/StockDetail.tsx:644
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Stock"
@@ -2794,30 +2794,30 @@ msgstr "Zásoby"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:48
-#: src/pages/Index/Settings/SystemSettings.tsx:290
+#: src/pages/Index/Settings/SystemSettings.tsx:297
 #: src/pages/build/BuildDetail.tsx:814
-#: src/pages/build/BuildIndex.tsx:101
+#: src/pages/build/BuildIndex.tsx:96
 msgid "Manufacturing"
 msgstr "Výroba"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:54
-#: src/pages/Index/Settings/SystemSettings.tsx:310
+#: src/pages/Index/Settings/SystemSettings.tsx:325
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:268
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:368
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:574
-#: src/pages/purchasing/PurchasingIndex.tsx:214
+#: src/pages/purchasing/PurchasingIndex.tsx:225
 msgid "Purchasing"
 msgstr "Nákup"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:60
-#: src/pages/Index/Settings/SystemSettings.tsx:327
+#: src/pages/Index/Settings/SystemSettings.tsx:342
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:569
-#: src/pages/sales/SalesIndex.tsx:169
+#: src/pages/sales/SalesIndex.tsx:189
 #: src/pages/sales/SalesOrderDetail.tsx:640
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:444
 msgid "Sales"
@@ -2876,18 +2876,18 @@ msgstr "Odstranit skupinu vyhledávání"
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/part/PartDetail.tsx:726
 #: src/pages/part/PartSupplierDetail.tsx:15
-#: src/pages/purchasing/PurchasingIndex.tsx:100
+#: src/pages/purchasing/PurchasingIndex.tsx:111
 msgid "Suppliers"
 msgstr "Dodavatelé"
 
 #: src/components/nav/SearchDrawer.tsx:314
 #: src/pages/part/PartSupplierDetail.tsx:23
-#: src/pages/purchasing/PurchasingIndex.tsx:150
+#: src/pages/purchasing/PurchasingIndex.tsx:161
 msgid "Manufacturers"
 msgstr "Výrobci"
 
 #: src/components/nav/SearchDrawer.tsx:324
-#: src/pages/sales/SalesIndex.tsx:133
+#: src/pages/sales/SalesIndex.tsx:153
 msgid "Customers"
 msgstr "Zákazníci"
 
@@ -2933,7 +2933,7 @@ msgstr "Žádné výsledky"
 msgid "No results available for search query"
 msgstr "Pro hledání nejsou k dispozici žádné výsledky"
 
-#: src/components/panels/AttachmentPanel.tsx:18
+#: src/components/panels/AttachmentPanel.tsx:20
 msgid "Attachments"
 msgstr "Přílohy"
 
@@ -2943,19 +2943,19 @@ msgstr "Přílohy"
 msgid "Notes"
 msgstr "Poznámky"
 
-#: src/components/panels/PanelGroup.tsx:174
+#: src/components/panels/PanelGroup.tsx:274
 msgid "Plugin Provided"
 msgstr "Plugin poskytnutý"
 
-#: src/components/panels/PanelGroup.tsx:195
+#: src/components/panels/PanelGroup.tsx:295
 msgid "You have unsaved changes, are you sure you want to navigate away from this panel?"
 msgstr "Máte neuložené změny, jste si jisti, že chcete opustit tento panel?"
 
-#: src/components/panels/PanelGroup.tsx:329
+#: src/components/panels/PanelGroup.tsx:389
 msgid "Collapse panels"
 msgstr "Sbalit panely"
 
-#: src/components/panels/PanelGroup.tsx:329
+#: src/components/panels/PanelGroup.tsx:389
 msgid "Expand panels"
 msgstr "Rozbalit panely"
 
@@ -2987,12 +2987,12 @@ msgstr "Informace o pluginu"
 #: src/pages/company/ManufacturerPartDetail.tsx:92
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:148
-#: src/pages/part/CategoryDetail.tsx:111
+#: src/pages/part/CategoryDetail.tsx:113
 #: src/pages/part/PartDetail.tsx:308
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
-#: src/pages/stock/LocationDetail.tsx:111
+#: src/pages/stock/LocationDetail.tsx:113
 #: src/tables/ColumnRenderers.tsx:456
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:159
@@ -3022,10 +3022,10 @@ msgstr "Datum"
 #: src/tables/bom/UsedInTable.tsx:105
 #: src/tables/company/CompanyTable.tsx:66
 #: src/tables/company/CompanyTable.tsx:101
+#: src/tables/company/ParametricCompanyTable.tsx:19
 #: src/tables/machine/MachineListTable.tsx:384
 #: src/tables/machine/MachineListTable.tsx:799
-#: src/tables/part/ParametricPartTable.tsx:19
-#: src/tables/part/PartTable.tsx:215
+#: src/tables/part/PartTableFilters.tsx:11
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
 #: src/tables/plugin/PluginListTable.tsx:420
@@ -3127,7 +3127,7 @@ msgstr "Při načítání obsahu pluginu došlo k chybě"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:255
+#: src/components/render/Instance.tsx:251
 msgid "Unknown model: {model_name}"
 msgstr "Neznámý model: {model_name}"
 
@@ -3164,7 +3164,7 @@ msgid "Inactive"
 msgstr "Neaktivní"
 
 #: src/components/render/Part.tsx:31
-#: src/tables/part/PartTable.tsx:305
+#: src/tables/part/PartTableFilters.tsx:101
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuální"
@@ -3216,21 +3216,21 @@ msgstr "Kategorie"
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:828
 #: src/forms/PurchaseOrderForms.tsx:707
-#: src/forms/StockForms.tsx:801
-#: src/forms/StockForms.tsx:848
-#: src/forms/StockForms.tsx:901
-#: src/forms/StockForms.tsx:947
-#: src/forms/StockForms.tsx:985
-#: src/forms/StockForms.tsx:1028
-#: src/forms/StockForms.tsx:1096
-#: src/forms/StockForms.tsx:1144
-#: src/forms/StockForms.tsx:1188
+#: src/forms/StockForms.tsx:802
+#: src/forms/StockForms.tsx:849
+#: src/forms/StockForms.tsx:902
+#: src/forms/StockForms.tsx:948
+#: src/forms/StockForms.tsx:986
+#: src/forms/StockForms.tsx:1029
+#: src/forms/StockForms.tsx:1097
+#: src/forms/StockForms.tsx:1145
+#: src/forms/StockForms.tsx:1189
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:299
 #: src/tables/ColumnRenderers.tsx:363
 #: src/tables/ColumnRenderers.tsx:372
-#: src/tables/Filter.tsx:460
+#: src/tables/Filter.tsx:478
 #: src/tables/stock/StockTrackingTable.tsx:130
 msgid "Location"
 msgstr "Lokace"
@@ -3252,7 +3252,7 @@ msgstr "Sériové číslo"
 #: src/forms/PurchaseOrderForms.tsx:916
 #: src/forms/ReturnOrderForms.tsx:245
 #: src/forms/SalesOrderForms.tsx:437
-#: src/forms/StockForms.tsx:850
+#: src/forms/StockForms.tsx:851
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
 #: src/pages/part/PartStockHistoryDetail.tsx:265
@@ -3277,15 +3277,15 @@ msgstr "Množství"
 #: src/forms/BuildForms.tsx:360
 #: src/forms/BuildForms.tsx:437
 #: src/forms/BuildForms.tsx:506
-#: src/forms/StockForms.tsx:802
-#: src/forms/StockForms.tsx:849
-#: src/forms/StockForms.tsx:902
-#: src/forms/StockForms.tsx:948
-#: src/forms/StockForms.tsx:986
-#: src/forms/StockForms.tsx:1029
-#: src/forms/StockForms.tsx:1097
-#: src/forms/StockForms.tsx:1145
-#: src/forms/StockForms.tsx:1189
+#: src/forms/StockForms.tsx:803
+#: src/forms/StockForms.tsx:850
+#: src/forms/StockForms.tsx:903
+#: src/forms/StockForms.tsx:949
+#: src/forms/StockForms.tsx:987
+#: src/forms/StockForms.tsx:1030
+#: src/forms/StockForms.tsx:1098
+#: src/forms/StockForms.tsx:1146
+#: src/forms/StockForms.tsx:1190
 #: src/tables/build/BuildLineTable.tsx:96
 msgid "Batch"
 msgstr "Dávka"
@@ -3797,17 +3797,17 @@ msgstr "Již importováno"
 #: src/pages/company/SupplierPartDetail.tsx:238
 #: src/pages/company/SupplierPartDetail.tsx:372
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:157
-#: src/tables/Filter.tsx:420
+#: src/tables/Filter.tsx:438
 #: src/tables/company/CompanyTable.tsx:106
 #: src/tables/part/PartPurchaseOrdersTable.tsx:43
-#: src/tables/purchasing/PurchaseOrderParametricTable.tsx:34
-#: src/tables/purchasing/PurchaseOrderTable.tsx:122
+#: src/tables/purchasing/PurchaseOrderParametricTable.tsx:27
+#: src/tables/purchasing/PurchaseOrderTable.tsx:68
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:40
 msgid "Supplier"
 msgstr "Dodavatel"
 
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:622
+#: src/forms/StockForms.tsx:623
 msgid "Loading..."
 msgstr "Načítání..."
 
@@ -3870,7 +3870,7 @@ msgstr "Další"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:971
-#: src/tables/part/PartTable.tsx:434
+#: src/tables/part/PartTable.tsx:291
 msgid "Edit Part"
 msgstr "Upravit díl"
 
@@ -3953,13 +3953,13 @@ msgid "Sales Requirements"
 msgstr "Požadavky prodeje"
 
 #: src/components/wizards/OrderPartsWizard.tsx:129
-#: src/forms/StockForms.tsx:903
-#: src/forms/StockForms.tsx:949
-#: src/forms/StockForms.tsx:987
-#: src/forms/StockForms.tsx:1030
-#: src/forms/StockForms.tsx:1098
-#: src/forms/StockForms.tsx:1146
-#: src/forms/StockForms.tsx:1190
+#: src/forms/StockForms.tsx:904
+#: src/forms/StockForms.tsx:950
+#: src/forms/StockForms.tsx:988
+#: src/forms/StockForms.tsx:1031
+#: src/forms/StockForms.tsx:1099
+#: src/forms/StockForms.tsx:1147
+#: src/forms/StockForms.tsx:1191
 #: src/pages/company/SupplierPartDetail.tsx:193
 #: src/pages/company/SupplierPartDetail.tsx:386
 #: src/pages/part/PartDetail.tsx:384
@@ -4063,7 +4063,7 @@ msgstr "Opravte chyby ve vybraných položkách"
 
 #: src/components/wizards/OrderPartsWizard.tsx:620
 #: src/tables/build/BuildLineTable.tsx:844
-#: src/tables/part/PartTable.tsx:548
+#: src/tables/part/PartTable.tsx:405
 #: src/tables/sales/SalesOrderLineItemTable.tsx:368
 msgid "Order Parts"
 msgstr "Objednat položky"
@@ -4553,7 +4553,7 @@ msgstr "O InvenTree.org"
 
 #: src/forms/BomForms.tsx:43
 msgid "Required component quantity"
-msgstr ""
+msgstr "Požadované množství komponent"
 
 #: src/forms/BomForms.tsx:123
 msgid "Substitute Part"
@@ -4585,7 +4585,7 @@ msgstr "Náhrada přidána"
 #: src/forms/BuildForms.tsx:435
 #: src/forms/BuildForms.tsx:717
 #: src/tables/build/BuildAllocatedStockTable.tsx:147
-#: src/tables/build/BuildOutputTable.tsx:632
+#: src/tables/build/BuildOutputTable.tsx:635
 #: src/tables/part/PartTestResultTable.tsx:280
 msgid "Build Output"
 msgstr "Výstup sestavy"
@@ -4600,7 +4600,7 @@ msgstr "Množství k dokončení"
 #: src/forms/PurchaseOrderForms.tsx:832
 #: src/forms/ReturnOrderForms.tsx:199
 #: src/forms/ReturnOrderForms.tsx:246
-#: src/forms/StockForms.tsx:721
+#: src/forms/StockForms.tsx:722
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:280
 #: src/pages/core/UserDetail.tsx:151
@@ -4608,8 +4608,8 @@ msgstr "Množství k dokončení"
 #: src/pages/sales/ReturnOrderDetail.tsx:136
 #: src/pages/sales/SalesOrderDetail.tsx:126
 #: src/pages/stock/StockDetail.tsx:171
-#: src/tables/Filter.tsx:334
-#: src/tables/build/BuildOutputTable.tsx:442
+#: src/tables/Filter.tsx:352
+#: src/tables/build/BuildOutputTable.tsx:445
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:318
@@ -4717,7 +4717,7 @@ msgstr "Vyberte umístění pro přiřazení zásob"
 #: src/tables/build/BuildLineTable.tsx:587
 #: src/tables/build/BuildLineTable.tsx:760
 #: src/tables/build/BuildLineTable.tsx:859
-#: src/tables/build/BuildOutputTable.tsx:233
+#: src/tables/build/BuildOutputTable.tsx:236
 #: src/tables/sales/SalesOrderLineItemTable.tsx:378
 #: src/tables/sales/SalesOrderLineItemTable.tsx:404
 msgid "Allocate Stock"
@@ -4772,10 +4772,10 @@ msgstr "Vyberte kód projektu pro tuto položku"
 
 #: src/forms/PartForms.tsx:102
 #: src/forms/PartForms.tsx:231
-#: src/pages/part/CategoryDetail.tsx:127
+#: src/pages/part/CategoryDetail.tsx:129
 #: src/pages/part/PartDetail.tsx:525
 #: src/tables/part/PartCategoryTable.tsx:96
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTableFilters.tsx:141
 msgid "Subscribed"
 msgstr "Odebírané"
 
@@ -4869,12 +4869,12 @@ msgid "Set Expiry Date"
 msgstr "Nastavit datum expirace"
 
 #: src/forms/PurchaseOrderForms.tsx:639
-#: src/forms/StockForms.tsx:702
+#: src/forms/StockForms.tsx:703
 msgid "Adjust Packaging"
 msgstr "Upravit balení"
 
 #: src/forms/PurchaseOrderForms.tsx:648
-#: src/forms/StockForms.tsx:693
+#: src/forms/StockForms.tsx:694
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Změnit stav"
@@ -4936,7 +4936,7 @@ msgid "Enter an expiry date for received items"
 msgstr "Zadejte datum expirace pro přijaté položky"
 
 #: src/forms/PurchaseOrderForms.tsx:818
-#: src/forms/StockForms.tsx:737
+#: src/forms/StockForms.tsx:738
 #: src/pages/company/SupplierPartDetail.tsx:175
 #: src/pages/company/SupplierPartDetail.tsx:239
 #: src/pages/stock/StockDetail.tsx:420
@@ -5050,190 +5050,190 @@ msgstr "Zadejte počáteční množství pro tuto skladovou položku"
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Zadejte sériová čísla pro novou skladbu (nebo ponechte prázdné)"
 
-#: src/forms/StockForms.tsx:246
+#: src/forms/StockForms.tsx:247
 msgid "Stock Status"
 msgstr "Stav skladu"
 
-#: src/forms/StockForms.tsx:324
+#: src/forms/StockForms.tsx:325
 #: src/pages/stock/StockDetail.tsx:708
 #: src/tables/stock/StockItemTable.tsx:406
 #: src/tables/stock/StockItemTable.tsx:455
 msgid "Add Stock Item"
 msgstr "Nová skladová položka"
 
-#: src/forms/StockForms.tsx:369
+#: src/forms/StockForms.tsx:370
 msgid "Select the part to install"
 msgstr "Vyberte skladovou položku k instalaci"
 
-#: src/forms/StockForms.tsx:495
+#: src/forms/StockForms.tsx:496
 msgid "Confirm Stock Transfer"
 msgstr "Potvrdit převod zásob"
 
-#: src/forms/StockForms.tsx:681
+#: src/forms/StockForms.tsx:682
 msgid "Move to default location"
 msgstr "Přesunout do výchozího umístění"
 
-#: src/forms/StockForms.tsx:804
+#: src/forms/StockForms.tsx:805
 msgid "Move"
 msgstr "Přesunout"
 
-#: src/forms/StockForms.tsx:851
+#: src/forms/StockForms.tsx:852
 msgid "Return"
 msgstr "Vrátit"
 
-#: src/forms/StockForms.tsx:988
+#: src/forms/StockForms.tsx:989
 #: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Počet"
 
-#: src/forms/StockForms.tsx:1295
+#: src/forms/StockForms.tsx:1296
 #: src/hooks/UseStockAdjustActions.tsx:112
 msgid "Add Stock"
 msgstr "Přidat zásobu"
 
-#: src/forms/StockForms.tsx:1296
+#: src/forms/StockForms.tsx:1297
 msgid "Stock added"
 msgstr "Zásoba přidána"
 
-#: src/forms/StockForms.tsx:1299
+#: src/forms/StockForms.tsx:1300
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr "Zvyšte množství vybraných skladových položek o danou částku."
 
-#: src/forms/StockForms.tsx:1310
+#: src/forms/StockForms.tsx:1311
 #: src/hooks/UseStockAdjustActions.tsx:122
 msgid "Remove Stock"
 msgstr "Snížit zásobu"
 
-#: src/forms/StockForms.tsx:1311
+#: src/forms/StockForms.tsx:1312
 msgid "Stock removed"
 msgstr "Zásoba snížena"
 
-#: src/forms/StockForms.tsx:1314
+#: src/forms/StockForms.tsx:1315
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr "Snižte množství vybraných skladových položek o danou částku."
 
-#: src/forms/StockForms.tsx:1325
+#: src/forms/StockForms.tsx:1326
 #: src/hooks/UseStockAdjustActions.tsx:132
 msgid "Transfer Stock"
 msgstr "Převést zásobu"
 
-#: src/forms/StockForms.tsx:1326
+#: src/forms/StockForms.tsx:1327
 msgid "Stock transferred"
 msgstr "Skladová položka převedena"
 
-#: src/forms/StockForms.tsx:1329
+#: src/forms/StockForms.tsx:1330
 msgid "Transfer selected items to the specified location."
 msgstr "Přesunout vybrané položky do určeného umístění."
 
-#: src/forms/StockForms.tsx:1340
+#: src/forms/StockForms.tsx:1341
 #: src/hooks/UseStockAdjustActions.tsx:182
 msgid "Return Stock"
 msgstr "Vrátit zásoby"
 
-#: src/forms/StockForms.tsx:1341
+#: src/forms/StockForms.tsx:1342
 msgid "Stock returned"
 msgstr "Zásoby vráceny"
 
-#: src/forms/StockForms.tsx:1344
+#: src/forms/StockForms.tsx:1345
 msgid "Return selected items into stock, to the specified location."
 msgstr "Vrátit vybrané položky do skladu na určené místo."
 
-#: src/forms/StockForms.tsx:1355
+#: src/forms/StockForms.tsx:1356
 #: src/hooks/UseStockAdjustActions.tsx:102
 msgid "Count Stock"
 msgstr "Spočítat zásoby"
 
-#: src/forms/StockForms.tsx:1356
+#: src/forms/StockForms.tsx:1357
 msgid "Stock counted"
 msgstr "Spočítáno"
 
-#: src/forms/StockForms.tsx:1359
+#: src/forms/StockForms.tsx:1360
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr "Spočítat vybrané skladové položky, a podle toho upravit množství."
 
-#: src/forms/StockForms.tsx:1370
+#: src/forms/StockForms.tsx:1371
 msgid "Change Stock Status"
 msgstr "Změnit stav skladu"
 
-#: src/forms/StockForms.tsx:1371
+#: src/forms/StockForms.tsx:1372
 msgid "Stock status changed"
 msgstr "Stav skladu byl změněn"
 
-#: src/forms/StockForms.tsx:1374
+#: src/forms/StockForms.tsx:1375
 msgid "Change the status of the selected stock items."
 msgstr "Změnit stav vybraných skladových položek."
 
-#: src/forms/StockForms.tsx:1397
+#: src/forms/StockForms.tsx:1398
 #: src/hooks/UseStockAdjustActions.tsx:162
 msgid "Change Batch Code"
 msgstr "Změnit kód sarže"
 
-#: src/forms/StockForms.tsx:1400
+#: src/forms/StockForms.tsx:1401
 msgid "Change batch code for the selected stock items"
 msgstr "Změnit kód sarže pro vybrané skladové položky"
 
-#: src/forms/StockForms.tsx:1417
+#: src/forms/StockForms.tsx:1418
 #: src/hooks/UseStockAdjustActions.tsx:142
 msgid "Merge Stock"
 msgstr "Sloučit zásoby"
 
-#: src/forms/StockForms.tsx:1418
+#: src/forms/StockForms.tsx:1419
 msgid "Stock merged"
 msgstr "Zásoby sloučeny"
 
-#: src/forms/StockForms.tsx:1420
+#: src/forms/StockForms.tsx:1421
 msgid "Merge Stock Items"
 msgstr "Sloučit skladové položky"
 
-#: src/forms/StockForms.tsx:1422
+#: src/forms/StockForms.tsx:1423
 msgid "Merge operation cannot be reversed"
 msgstr "Sloučení nelze vrátit zpět"
 
-#: src/forms/StockForms.tsx:1423
+#: src/forms/StockForms.tsx:1424
 msgid "Tracking information may be lost when merging items"
 msgstr "Při slučování položek mohou být informace o sledování ztraceny"
 
-#: src/forms/StockForms.tsx:1424
+#: src/forms/StockForms.tsx:1425
 msgid "Supplier information may be lost when merging items"
 msgstr "Informace o dodavateli mohou být při slučování položek ztraceny"
 
-#: src/forms/StockForms.tsx:1442
+#: src/forms/StockForms.tsx:1443
 msgid "Assign Stock to Customer"
 msgstr "Přiřadit sklad zákazníkovi"
 
-#: src/forms/StockForms.tsx:1443
+#: src/forms/StockForms.tsx:1444
 msgid "Stock assigned to customer"
 msgstr "Zásoby přiřazené zákazníkovi"
 
-#: src/forms/StockForms.tsx:1453
+#: src/forms/StockForms.tsx:1454
 msgid "Delete Stock Items"
 msgstr "Odstranit skladové položky"
 
-#: src/forms/StockForms.tsx:1454
+#: src/forms/StockForms.tsx:1455
 msgid "Stock deleted"
 msgstr "Skladová položka odstraněna"
 
-#: src/forms/StockForms.tsx:1457
+#: src/forms/StockForms.tsx:1458
 msgid "This operation will permanently delete the selected stock items."
 msgstr "Tato operace trvale odstraní vybrané skladové položky."
 
-#: src/forms/StockForms.tsx:1466
+#: src/forms/StockForms.tsx:1467
 msgid "Parent stock location"
 msgstr "Nadřazené skladové umístění"
 
-#: src/forms/StockForms.tsx:1597
+#: src/forms/StockForms.tsx:1598
 msgid "Find Serial Number"
 msgstr "Najít sériové číslo"
 
-#: src/forms/StockForms.tsx:1608
+#: src/forms/StockForms.tsx:1609
 msgid "No matching items"
 msgstr "Žádné odpovídající položky"
 
-#: src/forms/StockForms.tsx:1614
+#: src/forms/StockForms.tsx:1615
 msgid "Multiple matching items"
 msgstr "Více odpovídajících položek"
 
-#: src/forms/StockForms.tsx:1623
+#: src/forms/StockForms.tsx:1624
 msgid "Invalid response from server"
 msgstr "Neplatná odpověď ze serveru"
 
@@ -5442,27 +5442,27 @@ msgstr "Export dat"
 msgid "Export"
 msgstr "Export"
 
-#: src/hooks/UseForm.tsx:102
+#: src/hooks/UseForm.tsx:106
 msgid "Item Created"
 msgstr "Položka vytvořena"
 
-#: src/hooks/UseForm.tsx:122
+#: src/hooks/UseForm.tsx:126
 msgid "Item Updated"
 msgstr "Položka aktualizována"
 
-#: src/hooks/UseForm.tsx:143
+#: src/hooks/UseForm.tsx:147
 msgid "Items Updated"
 msgstr "Položky aktualizovány"
 
-#: src/hooks/UseForm.tsx:145
+#: src/hooks/UseForm.tsx:149
 msgid "Update multiple items"
 msgstr "Aktualizace více položek"
 
-#: src/hooks/UseForm.tsx:175
+#: src/hooks/UseForm.tsx:179
 msgid "Item Deleted"
 msgstr "Položka odstraněna"
 
-#: src/hooks/UseForm.tsx:179
+#: src/hooks/UseForm.tsx:183
 msgid "Are you sure you want to delete this item?"
 msgstr "Opravdu chcete tuto položku odstranit?"
 
@@ -5764,10 +5764,6 @@ msgstr "Došlo k neočekávané chybě"
 #: src/pages/Index/Profile/Profile.tsx:149
 #~ msgid "Global Settings for this instance"
 #~ msgstr "Global Settings for this instance"
-
-#: src/pages/Index/Profile/Profile.tsx:153
-#~ msgid "Server Settings"
-#~ msgstr "Server Settings"
 
 #: src/pages/Index/Profile/Profile.tsx:187
 #~ msgid "Login Settings"
@@ -6708,11 +6704,11 @@ msgstr "Rychlé akce"
 #~ msgid "User Management"
 #~ msgstr "User Management"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:116
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:113
 msgid "Home"
 msgstr "Domů"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:123
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Users / Access"
 msgstr "Uživatelé / Přístup"
 
@@ -6720,27 +6716,27 @@ msgstr "Uživatelé / Přístup"
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:137
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:134
 msgid "Data Import"
 msgstr "Import dat"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:143
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:140
 msgid "Data Export"
 msgstr "Export dat"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:149
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:146
 msgid "Barcode Scans"
 msgstr "Skeny čárového kódu"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:155
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:152
 msgid "Background Tasks"
 msgstr "Úlohy na pozadí"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:161
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:158
 msgid "Error Reports"
 msgstr "Hlášení chyb"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:167
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:164
 msgid "Currencies"
 msgstr "Měny"
 
@@ -6748,11 +6744,11 @@ msgstr "Měny"
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:184
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:181
 msgid "Custom States"
 msgstr "Vlastní stavy"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:190
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:187
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
 msgid "Custom Units"
 msgstr "Vlastní jednotky"
@@ -6762,12 +6758,12 @@ msgstr "Vlastní jednotky"
 #~ msgid "Part Parameters"
 #~ msgstr "Part Parameters"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:203
-#: src/pages/part/CategoryDetail.tsx:326
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:200
+#: src/pages/part/CategoryDetail.tsx:328
 msgid "Category Parameters"
 msgstr "Parametry kategorie"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:222
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:219
 msgid "Location Types"
 msgstr "Typy umístění"
 
@@ -6775,35 +6771,35 @@ msgstr "Typy umístění"
 #~ msgid "Add a new user"
 #~ msgstr "Add a new user"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:236
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:233
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:323
 msgid "Machines"
 msgstr "Stroje"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:248
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:245
 msgid "Operations"
 msgstr "Operace"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:260
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:257
 msgid "Data Management"
 msgstr "Správa dat"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:271
-#: src/pages/Index/Settings/SystemSettings.tsx:177
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:268
+#: src/pages/Index/Settings/SystemSettings.tsx:183
 #: src/pages/Index/Settings/UserSettings.tsx:121
 msgid "Reporting"
 msgstr "Reporty"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:276
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:273
 msgid "PLM"
 msgstr "PLM"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:286
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
 msgid "Extend / Integrate"
 msgstr "Rozšířit / integrovat"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:300
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:297
 msgid "Advanced Options"
 msgstr "Pokročilá nastavení"
 
@@ -6928,6 +6924,7 @@ msgstr "Čekající úkoly"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:50
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:66
+#: src/pages/Index/Settings/SystemSettings.tsx:67
 msgid "Scheduled Tasks"
 msgstr "Naplánované úlohy"
 
@@ -6996,15 +6993,19 @@ msgstr "Tokeny"
 msgid "The settings below are specific to each available plugin"
 msgstr "Níže uvedená nastavení jsou specifická pro každý dostupný plugin"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:78
+#: src/pages/Index/Settings/SystemSettings.tsx:49
+msgid "Server Settings"
+msgstr "Nastavení serveru"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:84
 msgid "Authentication"
 msgstr "Ověření totožnosti"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:93
+#: src/pages/Index/Settings/SystemSettings.tsx:99
 msgid "Single Sign-On (SSO) Settings"
 msgstr "Nastavení jednotného přihlášení (SSO)"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:111
+#: src/pages/Index/Settings/SystemSettings.tsx:117
 msgid "Barcodes"
 msgstr "Čárové kódy"
 
@@ -7017,15 +7018,15 @@ msgstr "Čárové kódy"
 #~ msgstr "This panel is a placeholder."
 
 #: src/pages/Index/Settings/SystemSettings.tsx:135
-#: src/pages/Index/Settings/UserSettings.tsx:115
-msgid "The settings below are specific to each available notification method"
-msgstr "Níže uvedená nastavení jsou specifická pro každou dostupnou metodu oznámení"
-
-#: src/pages/Index/Settings/SystemSettings.tsx:135
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:141
+#: src/pages/Index/Settings/UserSettings.tsx:115
+msgid "The settings below are specific to each available notification method"
+msgstr "Níže uvedená nastavení jsou specifická pro každou dostupnou metodu oznámení"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:147
 msgid "Pricing"
 msgstr "Ceník"
 
@@ -7033,23 +7034,27 @@ msgstr "Ceník"
 #~ msgid "Labels"
 #~ msgstr "Labels"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:219
+#: src/pages/Index/Settings/SystemSettings.tsx:225
 msgid "Part Creation"
 msgstr "Vytvoření dílu"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:267
 msgid "Stock Expiry"
 msgstr "Expirace zásob"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:269
+#: src/pages/Index/Settings/SystemSettings.tsx:276
 msgid "Part Stocktake"
 msgstr "Inventura dílu"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:279
+#: src/pages/Index/Settings/SystemSettings.tsx:286
 #: src/pages/part/PartStockHistoryDetail.tsx:296
 #: src/pages/stock/StockDetail.tsx:533
 msgid "Stock Tracking"
 msgstr "Sledování skladových položek"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr "Externí výrobní příkazy"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
@@ -7163,7 +7168,7 @@ msgstr "Kusovník pro tuto sestavu nebyl potvrzen."
 #: src/pages/part/PartDetail.tsx:330
 #: src/pages/stock/StockDetail.tsx:162
 #: src/tables/bom/UsedInTable.tsx:54
-#: src/tables/build/BuildOrderTable.tsx:87
+#: src/tables/build/BuildOrderTable.tsx:66
 #: src/tables/stock/StockItemTable.tsx:66
 msgid "Revision"
 msgstr "Revize"
@@ -7178,10 +7183,9 @@ msgstr "Vlastní status"
 
 #: src/pages/build/BuildDetail.tsx:295
 #: src/pages/build/BuildDetail.tsx:789
-#: src/pages/build/BuildIndex.tsx:34
-#: src/pages/stock/LocationDetail.tsx:149
-#: src/tables/build/BuildOrderTable.tsx:127
-#: src/tables/build/BuildOrderTable.tsx:188
+#: src/pages/stock/LocationDetail.tsx:151
+#: src/tables/build/BuildOrderFilters.tsx:76
+#: src/tables/build/BuildOrderTable.tsx:106
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "External"
 msgstr "Externí"
@@ -7223,8 +7227,8 @@ msgstr "Dokončené výstupy"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:359
-#: src/tables/Filter.tsx:441
-#: src/tables/build/BuildOrderTable.tsx:147
+#: src/tables/Filter.tsx:459
+#: src/tables/build/BuildOrderTable.tsx:126
 msgid "Issued By"
 msgstr "Vystavil"
 
@@ -7234,7 +7238,7 @@ msgstr "Vystavil"
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:233
 #: src/tables/ColumnRenderers.tsx:665
-#: src/tables/Filter.tsx:379
+#: src/tables/Filter.tsx:397
 msgid "Responsible"
 msgstr "Odpovědný"
 
@@ -7280,7 +7284,7 @@ msgid "Target Date"
 msgstr "Cílové datum"
 
 #: src/pages/build/BuildDetail.tsx:432
-#: src/tables/build/BuildOrderTable.tsx:97
+#: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/sales/SalesOrderLineItemTable.tsx:345
 msgid "Completed"
 msgstr "Dokončeno"
@@ -7319,7 +7323,7 @@ msgstr "Podřízené objednávky sestavy"
 #: src/pages/build/BuildDetail.tsx:573
 #: src/pages/part/PartDetail.tsx:801
 #: src/pages/stock/StockDetail.tsx:588
-#: src/tables/build/BuildOutputTable.tsx:704
+#: src/tables/build/BuildOutputTable.tsx:707
 #: src/tables/stock/StockItemTestResultTable.tsx:173
 msgid "Test Results"
 msgstr "Výsledky testu"
@@ -7329,8 +7333,8 @@ msgid "Edit Build Order"
 msgstr "Upravit výrobní příkaz"
 
 #: src/pages/build/BuildDetail.tsx:638
-#: src/tables/build/BuildOrderTable.tsx:212
-#: src/tables/build/BuildOrderTable.tsx:229
+#: src/tables/build/BuildOrderTable.tsx:150
+#: src/tables/build/BuildOrderTable.tsx:167
 msgid "Add Build Order"
 msgstr "Přidat výrobní příkaz"
 
@@ -7465,47 +7469,42 @@ msgstr "Výrobní příkaz"
 #~ msgid "Build order created"
 #~ msgstr "Build order created"
 
-#: src/pages/build/BuildIndex.tsx:35
-#: src/tables/build/BuildOrderTable.tsx:189
-msgid "Show external build orders"
-msgstr "Zobrazit externí výrobní příkazy"
-
 #: src/pages/build/BuildIndex.tsx:39
 #~ msgid "New Build Order"
 #~ msgstr "New Build Order"
 
-#: src/pages/build/BuildIndex.tsx:74
-#: src/pages/part/CategoryDetail.tsx:289
-#: src/pages/purchasing/PurchasingIndex.tsx:74
-#: src/pages/purchasing/PurchasingIndex.tsx:107
-#: src/pages/purchasing/PurchasingIndex.tsx:136
-#: src/pages/purchasing/PurchasingIndex.tsx:157
-#: src/pages/purchasing/PurchasingIndex.tsx:186
-#: src/pages/sales/SalesIndex.tsx:61
-#: src/pages/sales/SalesIndex.tsx:107
-#: src/pages/sales/SalesIndex.tsx:140
-#: src/pages/stock/LocationDetail.tsx:190
+#: src/pages/build/BuildIndex.tsx:69
+#: src/pages/part/CategoryDetail.tsx:291
+#: src/pages/purchasing/PurchasingIndex.tsx:91
+#: src/pages/purchasing/PurchasingIndex.tsx:118
+#: src/pages/purchasing/PurchasingIndex.tsx:147
+#: src/pages/purchasing/PurchasingIndex.tsx:168
+#: src/pages/purchasing/PurchasingIndex.tsx:197
+#: src/pages/sales/SalesIndex.tsx:93
+#: src/pages/sales/SalesIndex.tsx:133
+#: src/pages/sales/SalesIndex.tsx:160
+#: src/pages/stock/LocationDetail.tsx:192
 msgid "Table View"
 msgstr "Zobrazení tabulky"
 
-#: src/pages/build/BuildIndex.tsx:80
-#: src/pages/purchasing/PurchasingIndex.tsx:80
-#: src/pages/sales/SalesIndex.tsx:67
-#: src/pages/sales/SalesIndex.tsx:113
+#: src/pages/build/BuildIndex.tsx:75
+#: src/pages/purchasing/PurchasingIndex.tsx:97
+#: src/pages/sales/SalesIndex.tsx:99
+#: src/pages/sales/SalesIndex.tsx:139
 msgid "Calendar View"
 msgstr "Zobrazení kalendáře"
 
-#: src/pages/build/BuildIndex.tsx:86
-#: src/pages/part/CategoryDetail.tsx:303
-#: src/pages/purchasing/PurchasingIndex.tsx:92
-#: src/pages/purchasing/PurchasingIndex.tsx:119
-#: src/pages/purchasing/PurchasingIndex.tsx:142
-#: src/pages/purchasing/PurchasingIndex.tsx:169
-#: src/pages/purchasing/PurchasingIndex.tsx:192
-#: src/pages/sales/SalesIndex.tsx:79
-#: src/pages/sales/SalesIndex.tsx:125
-#: src/pages/sales/SalesIndex.tsx:152
-#: src/pages/stock/LocationDetail.tsx:196
+#: src/pages/build/BuildIndex.tsx:81
+#: src/pages/part/CategoryDetail.tsx:305
+#: src/pages/purchasing/PurchasingIndex.tsx:103
+#: src/pages/purchasing/PurchasingIndex.tsx:130
+#: src/pages/purchasing/PurchasingIndex.tsx:153
+#: src/pages/purchasing/PurchasingIndex.tsx:180
+#: src/pages/purchasing/PurchasingIndex.tsx:203
+#: src/pages/sales/SalesIndex.tsx:105
+#: src/pages/sales/SalesIndex.tsx:145
+#: src/pages/sales/SalesIndex.tsx:172
+#: src/pages/stock/LocationDetail.tsx:198
 msgid "Parametric View"
 msgstr "Parametrické zobrazení"
 
@@ -7530,7 +7529,7 @@ msgstr "Výchozí měna"
 #: src/pages/company/ManufacturerPartDetail.tsx:103
 #: src/pages/company/ManufacturerPartDetail.tsx:272
 #: src/pages/company/SupplierPartDetail.tsx:155
-#: src/tables/Filter.tsx:407
+#: src/tables/Filter.tsx:425
 #: src/tables/company/CompanyTable.tsx:111
 #: src/tables/purchasing/SupplierPartTable.tsx:113
 msgid "Manufacturer"
@@ -7544,11 +7543,11 @@ msgstr "Výrobce"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:111
 #: src/pages/stock/StockDetail.tsx:371
 #: src/tables/company/CompanyTable.tsx:116
-#: src/tables/sales/ReturnOrderParametricTable.tsx:32
-#: src/tables/sales/ReturnOrderTable.tsx:125
-#: src/tables/sales/SalesOrderParametricTable.tsx:32
+#: src/tables/sales/ReturnOrderParametricTable.tsx:25
+#: src/tables/sales/ReturnOrderTable.tsx:64
+#: src/tables/sales/SalesOrderParametricTable.tsx:25
 #: src/tables/sales/SalesOrderShipmentTable.tsx:125
-#: src/tables/sales/SalesOrderTable.tsx:148
+#: src/tables/sales/SalesOrderTable.tsx:87
 #: src/tables/stock/StockTrackingTable.tsx:185
 msgid "Customer"
 msgstr "Zákazník"
@@ -7756,34 +7755,35 @@ msgstr "Běžný uživatel"
 #~ msgid "Basic user"
 #~ msgstr "Basic user"
 
-#: src/pages/part/CategoryDetail.tsx:103
-#: src/pages/stock/LocationDetail.tsx:103
+#: src/pages/part/CategoryDetail.tsx:105
+#: src/pages/stock/LocationDetail.tsx:105
+#: src/tables/ColumnRenderers.tsx:333
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
 msgstr "Cesta"
 
-#: src/pages/part/CategoryDetail.tsx:119
+#: src/pages/part/CategoryDetail.tsx:121
 msgid "Parent Category"
 msgstr "Nadřazená kategorie"
 
-#: src/pages/part/CategoryDetail.tsx:142
-#: src/pages/part/CategoryDetail.tsx:276
+#: src/pages/part/CategoryDetail.tsx:144
+#: src/pages/part/CategoryDetail.tsx:278
 msgid "Subcategories"
 msgstr "Podkategorie"
 
-#: src/pages/part/CategoryDetail.tsx:149
-#: src/pages/stock/LocationDetail.tsx:143
+#: src/pages/part/CategoryDetail.tsx:151
+#: src/pages/stock/LocationDetail.tsx:145
 #: src/tables/part/PartCategoryTable.tsx:91
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
 msgstr "Strukturální"
 
-#: src/pages/part/CategoryDetail.tsx:155
+#: src/pages/part/CategoryDetail.tsx:157
 msgid "Parent default location"
 msgstr "Výchozí výchozí umístění nadřazeného zařízení"
 
-#: src/pages/part/CategoryDetail.tsx:162
+#: src/pages/part/CategoryDetail.tsx:164
 msgid "Default location"
 msgstr "Výchozí umístění"
 
@@ -7791,48 +7791,48 @@ msgstr "Výchozí umístění"
 #~ msgid "Top level part category"
 #~ msgstr "Top level part category"
 
-#: src/pages/part/CategoryDetail.tsx:179
-#: src/pages/part/CategoryDetail.tsx:247
+#: src/pages/part/CategoryDetail.tsx:181
+#: src/pages/part/CategoryDetail.tsx:249
 #: src/tables/part/PartCategoryTable.tsx:125
 msgid "Edit Part Category"
 msgstr "Upravit kategorii dílu"
 
-#: src/pages/part/CategoryDetail.tsx:188
+#: src/pages/part/CategoryDetail.tsx:190
 msgid "Move items to parent category"
 msgstr "Přesunout položky do nadřazené kategorie"
 
-#: src/pages/part/CategoryDetail.tsx:192
-#: src/pages/stock/LocationDetail.tsx:259
+#: src/pages/part/CategoryDetail.tsx:194
+#: src/pages/stock/LocationDetail.tsx:261
 msgid "Delete items"
 msgstr "Odstranit položky"
 
-#: src/pages/part/CategoryDetail.tsx:200
-#: src/pages/part/CategoryDetail.tsx:252
+#: src/pages/part/CategoryDetail.tsx:202
+#: src/pages/part/CategoryDetail.tsx:254
 msgid "Delete Part Category"
 msgstr "Odstranit kategorii dílu"
 
-#: src/pages/part/CategoryDetail.tsx:203
+#: src/pages/part/CategoryDetail.tsx:205
 msgid "Parts Action"
 msgstr "Akce s položkou"
 
-#: src/pages/part/CategoryDetail.tsx:204
+#: src/pages/part/CategoryDetail.tsx:206
 msgid "Action for parts in this category"
 msgstr "Akce pro položky v této kategorii"
 
-#: src/pages/part/CategoryDetail.tsx:210
+#: src/pages/part/CategoryDetail.tsx:212
 msgid "Child Categories Action"
 msgstr "Akce pro podkategorie"
 
-#: src/pages/part/CategoryDetail.tsx:211
+#: src/pages/part/CategoryDetail.tsx:213
 msgid "Action for child categories in this category"
 msgstr "Akce pro podkategorie v této kategorii"
 
-#: src/pages/part/CategoryDetail.tsx:243
+#: src/pages/part/CategoryDetail.tsx:245
 #: src/tables/part/PartCategoryTable.tsx:146
 msgid "Category Actions"
 msgstr "Akce kategorie."
 
-#: src/pages/part/CategoryDetail.tsx:269
+#: src/pages/part/CategoryDetail.tsx:271
 msgid "Category Details"
 msgstr "Podrobnosti o kategorii"
 
@@ -7898,7 +7898,7 @@ msgstr "Klíčová slova"
 #: src/pages/part/PartDetail.tsx:392
 #: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:311
-#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTableFilters.tsx:135
 #: src/tables/sales/SalesOrderLineItemTable.tsx:134
 msgid "Available Stock"
 msgstr "Dostupná zásoba"
@@ -7928,12 +7928,11 @@ msgstr "Minimální zásoby"
 
 #: src/pages/part/PartDetail.tsx:462
 msgid "Maximum Stock"
-msgstr ""
+msgstr "Maximální zásoby"
 
 #: src/pages/part/PartDetail.tsx:477
 #: src/tables/bom/UsedInTable.tsx:95
-#: src/tables/part/ParametricPartTable.tsx:24
-#: src/tables/part/PartTable.tsx:221
+#: src/tables/part/PartTableFilters.tsx:17
 msgid "Locked"
 msgstr "Uzamčeno"
 
@@ -7982,7 +7981,7 @@ msgstr "Datum vytvoření"
 
 #: src/pages/part/PartDetail.tsx:540
 #: src/tables/ColumnRenderers.tsx:636
-#: src/tables/Filter.tsx:433
+#: src/tables/Filter.tsx:451
 msgid "Created By"
 msgstr "Vytvořil(a)"
 
@@ -8076,8 +8075,8 @@ msgstr "Deficit"
 #~ msgstr "Transfer part stock"
 
 #: src/pages/part/PartDetail.tsx:983
-#: src/tables/part/PartTable.tsx:421
-#: src/tables/part/PartTable.tsx:475
+#: src/tables/part/PartTable.tsx:278
+#: src/tables/part/PartTable.tsx:332
 msgid "Add Part"
 msgstr "Přidat díl"
 
@@ -8105,7 +8104,7 @@ msgid "Search by serial number"
 msgstr "Vyhledat podle sériového čísla"
 
 #: src/pages/part/PartDetail.tsx:1090
-#: src/tables/part/PartTable.tsx:532
+#: src/tables/part/PartTable.tsx:389
 msgid "Part Actions"
 msgstr "Akce s položkou"
 
@@ -8383,17 +8382,17 @@ msgstr "Vybrat sestavu k zobrazení porovnání Kusovníku"
 #: src/tables/bom/BomTable.tsx:299
 #: src/tables/general/ExtraLineItemTable.tsx:74
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
-#: src/tables/purchasing/PurchaseOrderTable.tsx:155
-#: src/tables/sales/ReturnOrderTable.tsx:160
+#: src/tables/purchasing/PurchaseOrderTable.tsx:101
+#: src/tables/sales/ReturnOrderTable.tsx:99
 #: src/tables/sales/SalesOrderLineItemTable.tsx:120
-#: src/tables/sales/SalesOrderTable.tsx:197
+#: src/tables/sales/SalesOrderTable.tsx:136
 msgid "Total Price"
 msgstr "Celková cena"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
 #: src/tables/bom/UsedInTable.tsx:64
-#: src/tables/part/PartTable.tsx:245
+#: src/tables/part/PartTableFilters.tsx:41
 msgid "Component"
 msgstr "Komponenta"
 
@@ -8583,8 +8582,8 @@ msgid "Edit Purchase Order"
 msgstr "Upravit objednávku"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:126
-#: src/tables/purchasing/PurchaseOrderTable.tsx:172
-#: src/tables/purchasing/PurchaseOrderTable.tsx:186
+#: src/tables/purchasing/PurchaseOrderTable.tsx:118
+#: src/tables/purchasing/PurchaseOrderTable.tsx:132
 msgid "Add Purchase Order"
 msgstr "Přidat do objednávky"
 
@@ -8649,7 +8648,7 @@ msgstr "Datum vystavení"
 #: src/pages/sales/ReturnOrderDetail.tsx:282
 #: src/pages/sales/SalesOrderDetail.tsx:273
 #: src/tables/ColumnRenderers.tsx:712
-#: src/tables/build/BuildOrderTable.tsx:141
+#: src/tables/build/BuildOrderTable.tsx:120
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "Datum dokončení"
@@ -8701,7 +8700,7 @@ msgstr "Akce objednávky"
 #: src/pages/sales/ReturnOrderDetail.tsx:115
 #: src/pages/sales/SalesOrderDetail.tsx:105
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:132
-#: src/tables/sales/SalesOrderTable.tsx:156
+#: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Customer Reference"
 msgstr "Reference zákazníka"
 
@@ -8724,8 +8723,8 @@ msgid "Edit Return Order"
 msgstr "Upravit vratku"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:422
-#: src/tables/sales/ReturnOrderTable.tsx:176
-#: src/tables/sales/ReturnOrderTable.tsx:190
+#: src/tables/sales/ReturnOrderTable.tsx:115
+#: src/tables/sales/ReturnOrderTable.tsx:129
 msgid "Add Return Order"
 msgstr "Přidat vratku"
 
@@ -8759,13 +8758,13 @@ msgid "Edit Sales Order"
 msgstr "Upravit projední objednávky"
 
 #: src/pages/sales/SalesOrderDetail.tsx:348
-#: src/tables/sales/SalesOrderTable.tsx:122
-#: src/tables/sales/SalesOrderTable.tsx:136
+#: src/tables/sales/SalesOrderTable.tsx:61
+#: src/tables/sales/SalesOrderTable.tsx:75
 msgid "Add Sales Order"
 msgstr "Přidat prodejní objednávku"
 
 #: src/pages/sales/SalesOrderDetail.tsx:406
-#: src/tables/sales/SalesOrderTable.tsx:166
+#: src/tables/sales/SalesOrderTable.tsx:105
 msgid "Shipments"
 msgstr "Zásilky"
 
@@ -8910,16 +8909,16 @@ msgstr "Odznačit zkontrolování"
 msgid "Mark shipment as unchecked"
 msgstr "Označit zásilku jako nezkontrolovanou"
 
-#: src/pages/stock/LocationDetail.tsx:119
+#: src/pages/stock/LocationDetail.tsx:121
 msgid "Parent Location"
 msgstr "Nadřazené umístění"
 
-#: src/pages/stock/LocationDetail.tsx:137
-#: src/pages/stock/LocationDetail.tsx:182
+#: src/pages/stock/LocationDetail.tsx:139
+#: src/pages/stock/LocationDetail.tsx:184
 msgid "Sublocations"
 msgstr "Sublokace"
 
-#: src/pages/stock/LocationDetail.tsx:155
+#: src/pages/stock/LocationDetail.tsx:157
 #: src/tables/stock/StockLocationTable.tsx:57
 msgid "Location Type"
 msgstr "Typ umístění"
@@ -8928,11 +8927,11 @@ msgstr "Typ umístění"
 #~ msgid "Top level stock location"
 #~ msgstr "Top level stock location"
 
-#: src/pages/stock/LocationDetail.tsx:175
+#: src/pages/stock/LocationDetail.tsx:177
 msgid "Location Details"
 msgstr "Podrobnosti o umístění"
 
-#: src/pages/stock/LocationDetail.tsx:222
+#: src/pages/stock/LocationDetail.tsx:224
 msgid "Default Parts"
 msgstr "Výchozí součásti"
 
@@ -8940,82 +8939,82 @@ msgstr "Výchozí součásti"
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:246
-#: src/pages/stock/LocationDetail.tsx:408
+#: src/pages/stock/LocationDetail.tsx:248
+#: src/pages/stock/LocationDetail.tsx:410
 #: src/tables/stock/StockLocationTable.tsx:124
 msgid "Edit Stock Location"
 msgstr "Upravit Skladovou pozici"
 
-#: src/pages/stock/LocationDetail.tsx:255
+#: src/pages/stock/LocationDetail.tsx:257
 msgid "Move items to parent location"
 msgstr "Přesunout položky na nadřazenou pozici"
 
-#: src/pages/stock/LocationDetail.tsx:267
-#: src/pages/stock/LocationDetail.tsx:413
+#: src/pages/stock/LocationDetail.tsx:269
+#: src/pages/stock/LocationDetail.tsx:415
 msgid "Delete Stock Location"
 msgstr "Smazat skladovou pozici"
 
-#: src/pages/stock/LocationDetail.tsx:270
+#: src/pages/stock/LocationDetail.tsx:272
 msgid "Items Action"
 msgstr "Akce položek"
 
-#: src/pages/stock/LocationDetail.tsx:272
+#: src/pages/stock/LocationDetail.tsx:274
 msgid "Action for stock items in this location"
 msgstr "Akce pro skladové položky na tomto místě"
 
-#: src/pages/stock/LocationDetail.tsx:277
-#: src/pages/stock/LocationDetail.tsx:404
+#: src/pages/stock/LocationDetail.tsx:279
+#: src/pages/stock/LocationDetail.tsx:406
 #: src/tables/stock/StockLocationTable.tsx:145
 msgid "Location Actions"
 msgstr "Akce umístění"
-
-#: src/pages/stock/LocationDetail.tsx:279
-msgid "Action for child locations in this location"
-msgstr "Akce pro potomky na tomto místě"
 
 #: src/pages/stock/LocationDetail.tsx:280
 #~ msgid "Locations Action"
 #~ msgstr "Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:314
+#: src/pages/stock/LocationDetail.tsx:281
+msgid "Action for child locations in this location"
+msgstr "Akce pro potomky na tomto místě"
+
+#: src/pages/stock/LocationDetail.tsx:316
 msgid "Scan Stock Item"
 msgstr "Skenovat skladovou položku"
 
-#: src/pages/stock/LocationDetail.tsx:332
+#: src/pages/stock/LocationDetail.tsx:334
 #: src/pages/stock/StockDetail.tsx:835
 msgid "Scanned stock item into location"
 msgstr "Skenovat tuto položku do umístění"
 
-#: src/pages/stock/LocationDetail.tsx:338
+#: src/pages/stock/LocationDetail.tsx:340
 #: src/pages/stock/StockDetail.tsx:841
 msgid "Error scanning stock item"
 msgstr "Chyba při skenování skladové položky"
 
-#: src/pages/stock/LocationDetail.tsx:345
+#: src/pages/stock/LocationDetail.tsx:347
 msgid "Scan Stock Location"
 msgstr "Skenovat skladové místo"
 
-#: src/pages/stock/LocationDetail.tsx:357
+#: src/pages/stock/LocationDetail.tsx:359
 msgid "Scanned stock location into location"
 msgstr "Skenovat umístění položky do umístění"
 
-#: src/pages/stock/LocationDetail.tsx:363
+#: src/pages/stock/LocationDetail.tsx:365
 msgid "Error scanning stock location"
 msgstr "Chyba při skenování skladové položky"
 
-#: src/pages/stock/LocationDetail.tsx:381
+#: src/pages/stock/LocationDetail.tsx:383
 msgid "Scan in stock items"
 msgstr "Skenovat skladové položky"
 
-#: src/pages/stock/LocationDetail.tsx:383
+#: src/pages/stock/LocationDetail.tsx:385
 msgid "Scan item into this location"
 msgstr "Skenovat položku do tohoto umístění"
 
-#: src/pages/stock/LocationDetail.tsx:387
+#: src/pages/stock/LocationDetail.tsx:389
 msgid "Scan in container"
 msgstr "Skenovat v kontejneru"
 
-#: src/pages/stock/LocationDetail.tsx:389
+#: src/pages/stock/LocationDetail.tsx:391
 msgid "Scan container into this location"
 msgstr "Skenovat kontejner do tohoto umístění"
 
@@ -9175,7 +9174,7 @@ msgid "Stock Operations"
 msgstr "Úpravy zásob"
 
 #: src/pages/stock/StockDetail.tsx:888
-#: src/tables/build/BuildOutputTable.tsx:571
+#: src/tables/build/BuildOutputTable.tsx:574
 msgid "Serialize"
 msgstr "Serializovat"
 
@@ -9308,7 +9307,7 @@ msgid "Stock Information"
 msgstr "Informace o skladu"
 
 #: src/tables/ColumnRenderers.tsx:542
-#: src/tables/build/BuildOutputTable.tsx:660
+#: src/tables/build/BuildOutputTable.tsx:663
 msgid "Allocated Lines"
 msgstr "Přidělené řádky"
 
@@ -9466,112 +9465,128 @@ msgstr "Datum začátku po"
 msgid "Show items with a start date after this date"
 msgstr "Zobrazit položky s počátečním datem po tomto datu"
 
-#: src/tables/Filter.tsx:256
+#: src/tables/Filter.tsx:257
+msgid "Has Start Date"
+msgstr "Má počáteční datum"
+
+#: src/tables/Filter.tsx:258
+msgid "Show items with a start date"
+msgstr "Zobrazit položky s počátečním datem"
+
+#: src/tables/Filter.tsx:266
+msgid "Has Target Date"
+msgstr "Má cílové datum"
+
+#: src/tables/Filter.tsx:267
+msgid "Show items with a target date"
+msgstr "Zobrazit položky s cílovým datem"
+
+#: src/tables/Filter.tsx:274
 msgid "Target Date Before"
 msgstr "Cílové datum před"
 
-#: src/tables/Filter.tsx:257
+#: src/tables/Filter.tsx:275
 msgid "Show items with a target date before this date"
 msgstr "Zobrazit položky s cílovým datem před tímto datem"
 
-#: src/tables/Filter.tsx:265
+#: src/tables/Filter.tsx:283
 msgid "Target Date After"
 msgstr "Cílové datum po"
 
-#: src/tables/Filter.tsx:266
+#: src/tables/Filter.tsx:284
 msgid "Show items with a target date after this date"
 msgstr "Zobrazit položky s cílovým datem po tomto datu"
 
-#: src/tables/Filter.tsx:274
+#: src/tables/Filter.tsx:292
 msgid "Completed Before"
 msgstr "Dokončeno před"
 
-#: src/tables/Filter.tsx:275
+#: src/tables/Filter.tsx:293
 msgid "Show items completed before this date"
 msgstr "Zobrazit položky dokončené před tímto datem"
 
-#: src/tables/Filter.tsx:283
+#: src/tables/Filter.tsx:301
 msgid "Completed After"
 msgstr "Dokončeno po"
 
-#: src/tables/Filter.tsx:284
+#: src/tables/Filter.tsx:302
 msgid "Show items completed after this date"
 msgstr "Zobrazit položky dokončené po tomto datu"
 
-#: src/tables/Filter.tsx:292
+#: src/tables/Filter.tsx:310
 #: src/tables/stock/StockItemTable.tsx:284
 msgid "Updated After"
 msgstr "Aktualizováno po"
 
-#: src/tables/Filter.tsx:293
+#: src/tables/Filter.tsx:311
 msgid "Show orders updated after this date"
 msgstr "Zobrazit objednávky aktualizované po tomto datu"
 
-#: src/tables/Filter.tsx:301
+#: src/tables/Filter.tsx:319
 #: src/tables/stock/StockItemTable.tsx:278
 msgid "Updated Before"
 msgstr "Aktualizováno před"
 
-#: src/tables/Filter.tsx:302
+#: src/tables/Filter.tsx:320
 msgid "Show orders updated before this date"
 msgstr "Zobrazit objednávky aktualizované před tímto datem"
 
-#: src/tables/Filter.tsx:314
+#: src/tables/Filter.tsx:332
 msgid "Has Project Code"
 msgstr "Má projektový kód"
 
-#: src/tables/Filter.tsx:315
+#: src/tables/Filter.tsx:333
 msgid "Show orders with an assigned project code"
 msgstr "Zobrazit objednávky s přiřazeným kódem projektu"
 
-#: src/tables/Filter.tsx:324
+#: src/tables/Filter.tsx:342
 msgid "Include Variants"
 msgstr "Zahrnout varianty"
 
-#: src/tables/Filter.tsx:325
+#: src/tables/Filter.tsx:343
 msgid "Include results for part variants"
 msgstr "Zahrnout výsledky pro varianty dílu"
 
-#: src/tables/Filter.tsx:335
+#: src/tables/Filter.tsx:353
 #: src/tables/part/PartPurchaseOrdersTable.tsx:133
 msgid "Filter by order status"
 msgstr "Filtrovat podle stavu objednávky"
 
-#: src/tables/Filter.tsx:347
+#: src/tables/Filter.tsx:365
 msgid "Filter by project code"
 msgstr "Filtrovat podle kódu projektu"
 
-#: src/tables/Filter.tsx:380
+#: src/tables/Filter.tsx:398
 msgid "Filter by responsible owner"
 msgstr "Filtrovat podle odpovědného majitele"
 
-#: src/tables/Filter.tsx:396
+#: src/tables/Filter.tsx:414
 #: src/tables/settings/ApiTokenTable.tsx:128
 #: src/tables/stock/StockTrackingTable.tsx:226
 msgid "Filter by user"
 msgstr "Filter by user"
 
-#: src/tables/Filter.tsx:408
+#: src/tables/Filter.tsx:426
 msgid "Filter by manufacturer"
 msgstr "Filtrovat podle výrobce"
 
-#: src/tables/Filter.tsx:421
+#: src/tables/Filter.tsx:439
 msgid "Filter by supplier"
 msgstr "Filtrovat podle dodavatele"
 
-#: src/tables/Filter.tsx:434
+#: src/tables/Filter.tsx:452
 msgid "Filter by user who created the order"
 msgstr "Filtrovat podle uživatele, který vytvořil objednávku"
 
-#: src/tables/Filter.tsx:442
+#: src/tables/Filter.tsx:460
 msgid "Filter by user who issued the order"
 msgstr "Filtrovat podle uživatele, který zadal objednávku"
 
-#: src/tables/Filter.tsx:450
+#: src/tables/Filter.tsx:468
 msgid "Filter by part category"
 msgstr "Filtrovat podle kategorie dílů"
 
-#: src/tables/Filter.tsx:461
+#: src/tables/Filter.tsx:479
 msgid "Filter by stock location"
 msgstr "Filtrovat podle polohy naskladnění"
 
@@ -9614,12 +9629,12 @@ msgstr "Přidat filtr"
 msgid "Clear Filters"
 msgstr "Vymazat filtry"
 
-#: src/tables/InvenTreeTable.tsx:52
-#: src/tables/InvenTreeTable.tsx:526
+#: src/tables/InvenTreeTable.tsx:51
+#: src/tables/InvenTreeTable.tsx:522
 msgid "No records found"
 msgstr "Nebyl nalezen žádný záznam"
 
-#: src/tables/InvenTreeTable.tsx:162
+#: src/tables/InvenTreeTable.tsx:161
 msgid "Error loading table options"
 msgstr "Chyba při načítání možností tabulky"
 
@@ -9647,7 +9662,7 @@ msgstr "Chyba při načítání možností tabulky"
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:571
+#: src/tables/InvenTreeTable.tsx:567
 msgid "Server returned incorrect data type"
 msgstr "Server vrátil nesprávný datový typ"
 
@@ -9656,7 +9671,7 @@ msgstr "Server vrátil nesprávný datový typ"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:604
+#: src/tables/InvenTreeTable.tsx:600
 msgid "Error loading table data"
 msgstr "Chyba při načítání údajů tabulky"
 
@@ -9673,11 +9688,11 @@ msgstr "Chyba při načítání údajů tabulky"
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTable.tsx:733
+#: src/tables/InvenTreeTable.tsx:729
 msgid "View details"
 msgstr "Zobrazit podrobnosti"
 
-#: src/tables/InvenTreeTable.tsx:736
+#: src/tables/InvenTreeTable.tsx:732
 msgid "View {model}"
 msgstr "Zobrazit {model}"
 
@@ -9879,7 +9894,7 @@ msgid "Show consumable items"
 msgstr "Zobrazit spotřební položky"
 
 #: src/tables/bom/BomTable.tsx:497
-#: src/tables/part/PartTable.tsx:333
+#: src/tables/part/PartTableFilters.tsx:129
 msgid "Has Pricing"
 msgstr "Má cenu"
 
@@ -9948,7 +9963,7 @@ msgstr "Přidat jednu BOM položku"
 
 #: src/tables/bom/BomTable.tsx:661
 #: src/tables/general/ParameterTable.tsx:202
-#: src/tables/part/PartTable.tsx:572
+#: src/tables/part/PartTable.tsx:429
 msgid "Import from File"
 msgstr "Importovat ze souboru"
 
@@ -9970,9 +9985,8 @@ msgstr "Kusovník nemůže být upraven, díl je uzamčen"
 
 #: src/tables/bom/UsedInTable.tsx:46
 #: src/tables/build/BuildLineTable.tsx:213
-#: src/tables/part/ParametricPartTable.tsx:29
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
-#: src/tables/part/PartTable.tsx:227
+#: src/tables/part/PartTableFilters.tsx:23
 #: src/tables/stock/StockItemTable.tsx:187
 msgid "Assembly"
 msgstr "Montáž"
@@ -9986,7 +10000,7 @@ msgid "Show active assemblies"
 msgstr "Zobrazit aktivní montáže"
 
 #: src/tables/bom/UsedInTable.tsx:110
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTableFilters.tsx:53
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Sledovatelné"
@@ -9995,23 +10009,31 @@ msgstr "Sledovatelné"
 msgid "Show trackable assemblies"
 msgstr "Zobrazit sledovatelné montáže"
 
-#: src/tables/bom/UsedInTable.tsx:151
-#: src/tables/bom/UsedInTable.tsx:158
-#: src/tables/bom/UsedInTable.tsx:185
+#: src/tables/bom/UsedInTable.tsx:159
+#: src/tables/bom/UsedInTable.tsx:166
+#: src/tables/bom/UsedInTable.tsx:203
 msgid "Replace Component"
 msgstr "Nahradit komponent"
 
-#: src/tables/bom/UsedInTable.tsx:152
+#: src/tables/bom/UsedInTable.tsx:160
 msgid "Replace"
 msgstr "Nahradit"
 
-#: src/tables/bom/UsedInTable.tsx:161
+#: src/tables/bom/UsedInTable.tsx:169
 msgid "This action cannot be easily undone, so please ensure you have selected the correct assemblies."
 msgstr "Tuto akci nelze snadno vrátit zpět, proto se ujistěte, že jste vybrali správné sestavy."
 
-#: src/tables/bom/UsedInTable.tsx:163
+#: src/tables/bom/UsedInTable.tsx:172
 msgid "The selected assemblies will be updated with the new component."
 msgstr "Vybrané sestavy budou aktualizovány s novou komponentou."
+
+#: src/tables/bom/UsedInTable.tsx:177
+msgid "No valid items selected"
+msgstr "Nejsou vybrány žádné platné položky"
+
+#: src/tables/bom/UsedInTable.tsx:179
+msgid "Please select one or more valid assemblies to replace the component."
+msgstr "Vyberte prosím jednu nebo více platných sestav k nahrazení komponenty."
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:67
 msgid "Allocated to Output"
@@ -10122,7 +10144,7 @@ msgid "Show optional lines"
 msgstr "Zobrazit volitelné řádky"
 
 #: src/tables/build/BuildLineTable.tsx:218
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTableFilters.tsx:47
 msgid "Testable"
 msgstr "Testovatelné"
 
@@ -10171,12 +10193,12 @@ msgid "Create Build Order"
 msgstr "Vytvořit výrobní příkaz"
 
 #: src/tables/build/BuildLineTable.tsx:577
-#: src/tables/build/BuildOutputTable.tsx:223
+#: src/tables/build/BuildOutputTable.tsx:226
 msgid "Allocating stock to build order"
 msgstr "Přidělování zásob k sestavě"
 
 #: src/tables/build/BuildLineTable.tsx:578
-#: src/tables/build/BuildOutputTable.tsx:224
+#: src/tables/build/BuildOutputTable.tsx:227
 msgid "Stock allocation complete"
 msgstr "Přidělování zásob dokončeno"
 
@@ -10190,8 +10212,8 @@ msgstr "Přidělování zásob dokončeno"
 
 #: src/tables/build/BuildLineTable.tsx:602
 #: src/tables/build/BuildLineTable.tsx:831
-#: src/tables/build/BuildOutputTable.tsx:247
-#: src/tables/build/BuildOutputTable.tsx:482
+#: src/tables/build/BuildOutputTable.tsx:250
+#: src/tables/build/BuildOutputTable.tsx:485
 msgid "Auto Allocate Stock"
 msgstr "Automatické přiřazení zásob"
 
@@ -10203,8 +10225,8 @@ msgstr "Automaticky přiřadí nesledované položky kusovníku do této sestavy
 #: src/tables/build/BuildLineTable.tsx:637
 #: src/tables/build/BuildLineTable.tsx:780
 #: src/tables/build/BuildLineTable.tsx:881
-#: src/tables/build/BuildOutputTable.tsx:393
-#: src/tables/build/BuildOutputTable.tsx:398
+#: src/tables/build/BuildOutputTable.tsx:396
+#: src/tables/build/BuildOutputTable.tsx:401
 msgid "Deallocate Stock"
 msgstr "Uvolnění zásob"
 
@@ -10228,6 +10250,10 @@ msgstr "Zásoby stavby"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:485
 msgid "View Part"
 msgstr "Zobrazit díl"
+
+#: src/tables/build/BuildOrderFilters.tsx:77
+msgid "Show external build orders"
+msgstr "Zobrazit externí výrobní příkazy"
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
@@ -10256,33 +10282,19 @@ msgstr "Zobrazit díl"
 #~ msgid "Filter by whether the purchase order has a project code"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
-#: src/tables/build/BuildOrderTable.tsx:171
-#: src/tables/purchasing/PurchaseOrderTable.tsx:94
-#: src/tables/sales/ReturnOrderTable.tsx:94
-#: src/tables/sales/SalesOrderTable.tsx:92
-msgid "Has Target Date"
-msgstr "Má cílové datum"
-
 #: src/tables/build/BuildOrderTable.tsx:172
 #: src/tables/purchasing/PurchaseOrderTable.tsx:95
 #: src/tables/sales/ReturnOrderTable.tsx:95
 #: src/tables/sales/SalesOrderTable.tsx:93
-msgid "Show orders with a target date"
-msgstr "Zobrazit objednávky s cílovým datem"
-
-#: src/tables/build/BuildOrderTable.tsx:177
-#: src/tables/purchasing/PurchaseOrderTable.tsx:100
-#: src/tables/sales/ReturnOrderTable.tsx:100
-#: src/tables/sales/SalesOrderTable.tsx:98
-msgid "Has Start Date"
-msgstr "Má počáteční datum"
+#~ msgid "Show orders with a target date"
+#~ msgstr "Show orders with a target date"
 
 #: src/tables/build/BuildOrderTable.tsx:178
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
 #: src/tables/sales/ReturnOrderTable.tsx:101
 #: src/tables/sales/SalesOrderTable.tsx:99
-msgid "Show orders with a start date"
-msgstr "Zobrazit objednávky s počátečním datem"
+#~ msgid "Show orders with a start date"
+#~ msgstr "Show orders with a start date"
 
 #: src/tables/build/BuildOrderTable.tsx:179
 #~ msgid "Filter by user who issued this order"
@@ -10300,7 +10312,7 @@ msgstr "Přiřazení zásob výrobním objednávkám"
 #~ msgid "Auto-allocation in progress"
 #~ msgstr "Auto-allocation in progress"
 
-#: src/tables/build/BuildOutputTable.tsx:248
+#: src/tables/build/BuildOutputTable.tsx:251
 msgid "Automatically allocate tracked BOM items to this build according to the selected options"
 msgstr "Automaticky přiřadí sledované položky kusovníku do této sestavy dle zvolených možností"
 
@@ -10308,35 +10320,35 @@ msgstr "Automaticky přiřadí sledované položky kusovníku do této sestavy d
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:327
-#: src/tables/build/BuildOutputTable.tsx:523
+#: src/tables/build/BuildOutputTable.tsx:330
+#: src/tables/build/BuildOutputTable.tsx:526
 msgid "Add Build Output"
 msgstr "Přidat výstup výroby"
 
-#: src/tables/build/BuildOutputTable.tsx:330
+#: src/tables/build/BuildOutputTable.tsx:333
 msgid "Build output created"
 msgstr "Výstup výroby vytvořen"
 
-#: src/tables/build/BuildOutputTable.tsx:384
-#: src/tables/build/BuildOutputTable.tsx:593
+#: src/tables/build/BuildOutputTable.tsx:387
+#: src/tables/build/BuildOutputTable.tsx:596
 msgid "Edit Build Output"
 msgstr "Upravit výstup výroby"
 
-#: src/tables/build/BuildOutputTable.tsx:400
+#: src/tables/build/BuildOutputTable.tsx:403
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "Tato akce odstraní veškeré přiřazené zásoby z vybraného výstupu výroby"
 
-#: src/tables/build/BuildOutputTable.tsx:425
+#: src/tables/build/BuildOutputTable.tsx:428
 msgid "Serialize Build Output"
 msgstr "Serializovat výstup výroby"
 
-#: src/tables/build/BuildOutputTable.tsx:443
+#: src/tables/build/BuildOutputTable.tsx:446
 #: src/tables/part/PartTestResultTable.tsx:319
 #: src/tables/stock/StockItemTable.tsx:182
 msgid "Filter by stock status"
 msgstr "Filtrovat podle stavu zásob"
 
-#: src/tables/build/BuildOutputTable.tsx:490
+#: src/tables/build/BuildOutputTable.tsx:493
 msgid "Complete selected outputs"
 msgstr "Dokončit vybrané výstupy"
 
@@ -10344,59 +10356,59 @@ msgstr "Dokončit vybrané výstupy"
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:501
+#: src/tables/build/BuildOutputTable.tsx:504
 msgid "Scrap selected outputs"
 msgstr "Vyřadit vybrané výstupy"
 
-#: src/tables/build/BuildOutputTable.tsx:512
+#: src/tables/build/BuildOutputTable.tsx:515
 msgid "Cancel selected outputs"
 msgstr "Zrušit vybrané výstupy"
 
-#: src/tables/build/BuildOutputTable.tsx:543
+#: src/tables/build/BuildOutputTable.tsx:546
 msgid "Allocate"
 msgstr "Přidělit"
 
-#: src/tables/build/BuildOutputTable.tsx:544
+#: src/tables/build/BuildOutputTable.tsx:547
 msgid "Allocate stock to build output"
 msgstr "Přiděleit zásoby k sestavě"
 
-#: src/tables/build/BuildOutputTable.tsx:557
+#: src/tables/build/BuildOutputTable.tsx:560
 msgid "Deallocate"
 msgstr "Dealokovat"
 
-#: src/tables/build/BuildOutputTable.tsx:558
+#: src/tables/build/BuildOutputTable.tsx:561
 msgid "Deallocate stock from build output"
 msgstr "Dealokovat zásoby ze sestavy"
 
-#: src/tables/build/BuildOutputTable.tsx:572
+#: src/tables/build/BuildOutputTable.tsx:575
 msgid "Serialize build output"
 msgstr "Serializovat výstup výroby"
 
-#: src/tables/build/BuildOutputTable.tsx:583
+#: src/tables/build/BuildOutputTable.tsx:586
 msgid "Complete build output"
 msgstr "Dokončit sestavu"
 
-#: src/tables/build/BuildOutputTable.tsx:600
+#: src/tables/build/BuildOutputTable.tsx:603
 msgid "Scrap"
 msgstr "Šrot"
 
-#: src/tables/build/BuildOutputTable.tsx:601
+#: src/tables/build/BuildOutputTable.tsx:604
 msgid "Scrap build output"
 msgstr "Výstup ze šrotu"
 
-#: src/tables/build/BuildOutputTable.tsx:611
+#: src/tables/build/BuildOutputTable.tsx:614
 msgid "Cancel build output"
 msgstr "Zrušit výrobní příkazy"
 
-#: src/tables/build/BuildOutputTable.tsx:675
+#: src/tables/build/BuildOutputTable.tsx:678
 msgid "Required Tests"
 msgstr "Vyžadované testy"
 
-#: src/tables/build/BuildOutputTable.tsx:751
+#: src/tables/build/BuildOutputTable.tsx:754
 msgid "External Build"
 msgstr "Externí výroba"
 
-#: src/tables/build/BuildOutputTable.tsx:753
+#: src/tables/build/BuildOutputTable.tsx:756
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "Tato výrobní objednávka bude vyplněna externím nákupem"
 
@@ -10431,6 +10443,7 @@ msgid "Add Company"
 msgstr "Přidat společnost"
 
 #: src/tables/company/CompanyTable.tsx:102
+#: src/tables/company/ParametricCompanyTable.tsx:20
 msgid "Show active companies"
 msgstr "Zobrazit aktivní společnosti"
 
@@ -10491,51 +10504,51 @@ msgstr "Soubor {name} byl úspěšně nahrán"
 msgid "File could not be uploaded"
 msgstr "Soubor se nepodařilo nahrát"
 
-#: src/tables/general/AttachmentTable.tsx:253
-msgid "Upload Attachment"
-msgstr "Nahrát přílohu"
-
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
 #~ msgstr "Upload attachment"
 
-#: src/tables/general/AttachmentTable.tsx:263
+#: src/tables/general/AttachmentTable.tsx:262
+msgid "Upload Attachment"
+msgstr "Nahrát přílohu"
+
+#: src/tables/general/AttachmentTable.tsx:272
 msgid "Edit Attachment"
 msgstr "Upravit přílohu"
 
-#: src/tables/general/AttachmentTable.tsx:277
+#: src/tables/general/AttachmentTable.tsx:286
 msgid "Delete Attachment"
 msgstr "Smazat přílohu"
 
-#: src/tables/general/AttachmentTable.tsx:287
+#: src/tables/general/AttachmentTable.tsx:296
 msgid "Is Link"
 msgstr "Je odkaz"
 
-#: src/tables/general/AttachmentTable.tsx:288
+#: src/tables/general/AttachmentTable.tsx:297
 msgid "Show link attachments"
 msgstr "Zobrazit odkazy příloh"
 
-#: src/tables/general/AttachmentTable.tsx:292
+#: src/tables/general/AttachmentTable.tsx:301
 msgid "Is File"
 msgstr "Je soubor"
 
-#: src/tables/general/AttachmentTable.tsx:293
+#: src/tables/general/AttachmentTable.tsx:302
 msgid "Show file attachments"
 msgstr "Zobrazit přílohy"
 
-#: src/tables/general/AttachmentTable.tsx:302
+#: src/tables/general/AttachmentTable.tsx:311
 msgid "Add attachment"
 msgstr "Přidat přílohu"
 
-#: src/tables/general/AttachmentTable.tsx:313
+#: src/tables/general/AttachmentTable.tsx:322
 msgid "Add external link"
 msgstr "Přidat externí odkaz"
 
-#: src/tables/general/AttachmentTable.tsx:361
+#: src/tables/general/AttachmentTable.tsx:375
 msgid "No attachments found"
 msgstr "Nebyly nalezeny žádné přílohy"
 
-#: src/tables/general/AttachmentTable.tsx:400
+#: src/tables/general/AttachmentTable.tsx:414
 msgid "Drag attachment file here to upload"
 msgstr "Pro nahrání přetáhněte soubor přílohy zde"
 
@@ -10664,7 +10677,7 @@ msgid "Show templates with choices"
 msgstr "Zobrazit šablony s volbami"
 
 #: src/tables/general/ParameterTemplateTable.tsx:138
-#: src/tables/part/PartTable.tsx:263
+#: src/tables/part/PartTableFilters.tsx:59
 msgid "Has Units"
 msgstr "Má jednotky"
 
@@ -10930,16 +10943,16 @@ msgid "Message"
 msgstr "Zpráva"
 
 #: src/tables/part/ParametricPartTable.tsx:20
-msgid "Show active parts"
-msgstr "Zobrazit aktivní díly"
+#~ msgid "Show active parts"
+#~ msgstr "Show active parts"
 
 #: src/tables/part/ParametricPartTable.tsx:25
-msgid "Show locked parts"
-msgstr "Zobrazit uzamčené díly"
+#~ msgid "Show locked parts"
+#~ msgstr "Show locked parts"
 
 #: src/tables/part/ParametricPartTable.tsx:30
-msgid "Show assembly parts"
-msgstr "Zobrazit díly sestavy"
+#~ msgid "Show assembly parts"
+#~ msgstr "Show assembly parts"
 
 #: src/tables/part/ParametricPartTable.tsx:82
 #~ msgid "Edit parameter"
@@ -10977,7 +10990,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr "Jste přihlášeni k odběru oznámení pro tuto kategorii"
 
 #: src/tables/part/PartCategoryTable.tsx:86
-#: src/tables/part/PartTable.tsx:239
+#: src/tables/part/PartTableFilters.tsx:35
 msgid "Include Subcategories"
 msgstr "Zahrnout podkategorie"
 
@@ -11072,188 +11085,188 @@ msgstr "Minimální zásoby"
 
 #: src/tables/part/PartTable.tsx:119
 msgid "Maximum stock"
-msgstr ""
-
-#: src/tables/part/PartTable.tsx:216
-msgid "Filter by part active status"
-msgstr "Filtrovat podle aktivního stavu dílu"
-
-#: src/tables/part/PartTable.tsx:222
-msgid "Filter by part locked status"
-msgstr "Filtrovat podle stavu uzamčeného dílu"
-
-#: src/tables/part/PartTable.tsx:228
-msgid "Filter by assembly attribute"
-msgstr "Filtrovat podle atributu montáže"
-
-#: src/tables/part/PartTable.tsx:233
-msgid "BOM Valid"
-msgstr "Kusovník schválen"
-
-#: src/tables/part/PartTable.tsx:234
-msgid "Filter by parts with a valid BOM"
-msgstr "Filtrovat podle částí s platným kusovníkem"
-
-#: src/tables/part/PartTable.tsx:240
-msgid "Include parts in subcategories"
-msgstr "Zahrnout díly do podkategorií"
-
-#: src/tables/part/PartTable.tsx:246
-msgid "Filter by component attribute"
-msgstr "Filtrovat podle atributu komponenty"
-
-#: src/tables/part/PartTable.tsx:252
-msgid "Filter by testable attribute"
-msgstr "Filtrovat podle testovatelného atributu"
+msgstr "Maximální zásoby"
 
 #: src/tables/part/PartTable.tsx:258
-msgid "Filter by trackable attribute"
-msgstr "Filtrovat podle sledovatelného atributu"
-
-#: src/tables/part/PartTable.tsx:264
-msgid "Filter by parts which have units"
-msgstr "Filtrovat podle dílů, které mají jednotky"
-
-#: src/tables/part/PartTable.tsx:269
-msgid "Has IPN"
-msgstr "Má IPN"
-
-#: src/tables/part/PartTable.tsx:270
-msgid "Filter by parts which have an internal part number"
-msgstr "Filtrovat podle dílů, které mají interní číslo dílu (IPN)"
-
-#: src/tables/part/PartTable.tsx:275
-msgid "Has Stock"
-msgstr "Má zásoby"
-
-#: src/tables/part/PartTable.tsx:276
-msgid "Filter by parts which have stock"
-msgstr "Zobrazit díly, které jsou skladem"
-
-#: src/tables/part/PartTable.tsx:282
-msgid "Filter by parts which have low stock"
-msgstr "Filtrovat podle dílů, které mají nízké zásoby"
+msgid "Import Parts"
+msgstr "Importovat díly"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
-
-#: src/tables/part/PartTable.tsx:288
-msgid "Filter by parts which have high stock"
-msgstr ""
-
-#: src/tables/part/PartTable.tsx:293
-msgid "Purchaseable"
-msgstr "Možné zakoupit"
-
-#: src/tables/part/PartTable.tsx:294
-msgid "Filter by parts which are purchaseable"
-msgstr "Filtrovat podle dílů, které lze koupit"
-
-#: src/tables/part/PartTable.tsx:299
-msgid "Salable"
-msgstr "Prodejné"
-
-#: src/tables/part/PartTable.tsx:300
-msgid "Filter by parts which are salable"
-msgstr "Filtrovat podle dílů, které lze prodat"
-
-#: src/tables/part/PartTable.tsx:306
-msgid "Filter by parts which are virtual"
-msgstr "Filtrovat podle dílů, které jsou virtuální"
-
-#: src/tables/part/PartTable.tsx:311
-msgid "Is Template"
-msgstr "Je šablonou"
-
-#: src/tables/part/PartTable.tsx:312
-msgid "Filter by parts which are templates"
-msgstr "Filtrovat podle dílů, které jsou šablonami"
-
-#: src/tables/part/PartTable.tsx:317
-msgid "Is Variant"
-msgstr "Je varianta"
-
-#: src/tables/part/PartTable.tsx:318
-msgid "Filter by parts which are variants"
-msgstr "Filtrovat podle dílů, které jsou varianta"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
 #~ msgstr "Has Stocktake"
 
 #: src/tables/part/PartTable.tsx:323
-msgid "Is Revision"
-msgstr "Je revizí"
-
-#: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:324
-msgid "Filter by parts which are revisions"
-msgstr "Filtrovat podle dílů, které jsou revizí"
-
-#: src/tables/part/PartTable.tsx:328
-msgid "Has Revisions"
-msgstr "Má revize"
-
-#: src/tables/part/PartTable.tsx:329
-msgid "Filter by parts which have revisions"
-msgstr "Filtrovat podle dílů, které mají revize"
-
-#: src/tables/part/PartTable.tsx:334
-msgid "Filter by parts which have pricing information"
-msgstr "Filtrovat podle dílů, které mají informace o cenách"
-
-#: src/tables/part/PartTable.tsx:340
-msgid "Filter by parts which have available stock"
-msgstr "Filtrovat podle dílů, které mají k dispozici zásoby"
-
-#: src/tables/part/PartTable.tsx:346
-msgid "Filter by parts to which the user is subscribed"
-msgstr "Filtrovat podle dílů, které uživatel odebírá"
-
-#: src/tables/part/PartTable.tsx:401
-msgid "Import Parts"
-msgstr "Importovat díly"
-
-#: src/tables/part/PartTable.tsx:490
-#: src/tables/part/PartTable.tsx:538
+#: src/tables/part/PartTable.tsx:347
+#: src/tables/part/PartTable.tsx:395
 msgid "Set Category"
 msgstr "Nastavit Kategorii"
 
-#: src/tables/part/PartTable.tsx:540
+#: src/tables/part/PartTable.tsx:397
 msgid "Set category for selected parts"
 msgstr "Nastavit kategorii pro vybrané díly"
 
-#: src/tables/part/PartTable.tsx:550
+#: src/tables/part/PartTable.tsx:407
 msgid "Order selected parts"
 msgstr "Objednat vybrané díly"
 
-#: src/tables/part/PartTable.tsx:560
+#: src/tables/part/PartTable.tsx:417
 msgid "Add Parts"
 msgstr "Přidat díly"
 
-#: src/tables/part/PartTable.tsx:566
+#: src/tables/part/PartTable.tsx:423
 msgid "Create Part"
 msgstr "Vytvořit díl"
 
-#: src/tables/part/PartTable.tsx:568
+#: src/tables/part/PartTable.tsx:425
 msgid "Create a new part"
 msgstr "Vytvořit nový díl"
 
-#: src/tables/part/PartTable.tsx:574
+#: src/tables/part/PartTable.tsx:431
 msgid "Import parts from a file"
 msgstr "Importovat díly ze souboru"
 
-#: src/tables/part/PartTable.tsx:579
+#: src/tables/part/PartTable.tsx:436
 msgid "Import from Supplier"
 msgstr "Importovat od dodavatele"
 
-#: src/tables/part/PartTable.tsx:581
+#: src/tables/part/PartTable.tsx:438
 msgid "Import parts from a supplier plugin"
 msgstr "Importovat od pluginu dodavatele"
+
+#: src/tables/part/PartTableFilters.tsx:12
+msgid "Filter by part active status"
+msgstr "Filtrovat podle aktivního stavu dílu"
+
+#: src/tables/part/PartTableFilters.tsx:18
+msgid "Filter by part locked status"
+msgstr "Filtrovat podle stavu uzamčeného dílu"
+
+#: src/tables/part/PartTableFilters.tsx:24
+msgid "Filter by assembly attribute"
+msgstr "Filtrovat podle atributu montáže"
+
+#: src/tables/part/PartTableFilters.tsx:29
+msgid "BOM Valid"
+msgstr "Kusovník schválen"
+
+#: src/tables/part/PartTableFilters.tsx:30
+msgid "Filter by parts with a valid BOM"
+msgstr "Filtrovat podle částí s platným kusovníkem"
+
+#: src/tables/part/PartTableFilters.tsx:36
+msgid "Include parts in subcategories"
+msgstr "Zahrnout díly do podkategorií"
+
+#: src/tables/part/PartTableFilters.tsx:42
+msgid "Filter by component attribute"
+msgstr "Filtrovat podle atributu komponenty"
+
+#: src/tables/part/PartTableFilters.tsx:48
+msgid "Filter by testable attribute"
+msgstr "Filtrovat podle testovatelného atributu"
+
+#: src/tables/part/PartTableFilters.tsx:54
+msgid "Filter by trackable attribute"
+msgstr "Filtrovat podle sledovatelného atributu"
+
+#: src/tables/part/PartTableFilters.tsx:60
+msgid "Filter by parts which have units"
+msgstr "Filtrovat podle dílů, které mají jednotky"
+
+#: src/tables/part/PartTableFilters.tsx:65
+msgid "Has IPN"
+msgstr "Má IPN"
+
+#: src/tables/part/PartTableFilters.tsx:66
+msgid "Filter by parts which have an internal part number"
+msgstr "Filtrovat podle dílů, které mají interní číslo dílu (IPN)"
+
+#: src/tables/part/PartTableFilters.tsx:71
+msgid "Has Stock"
+msgstr "Má zásoby"
+
+#: src/tables/part/PartTableFilters.tsx:72
+msgid "Filter by parts which have stock"
+msgstr "Zobrazit díly, které jsou skladem"
+
+#: src/tables/part/PartTableFilters.tsx:78
+msgid "Filter by parts which have low stock"
+msgstr "Filtrovat podle dílů, které mají nízké zásoby"
+
+#: src/tables/part/PartTableFilters.tsx:84
+msgid "Filter by parts which have high stock"
+msgstr "Filtrovat podle dílů, které mají vysoké zásoby"
+
+#: src/tables/part/PartTableFilters.tsx:89
+msgid "Purchaseable"
+msgstr "Možné zakoupit"
+
+#: src/tables/part/PartTableFilters.tsx:90
+msgid "Filter by parts which are purchaseable"
+msgstr "Filtrovat podle dílů, které lze koupit"
+
+#: src/tables/part/PartTableFilters.tsx:95
+msgid "Salable"
+msgstr "Prodejné"
+
+#: src/tables/part/PartTableFilters.tsx:96
+msgid "Filter by parts which are salable"
+msgstr "Filtrovat podle dílů, které lze prodat"
+
+#: src/tables/part/PartTableFilters.tsx:102
+msgid "Filter by parts which are virtual"
+msgstr "Filtrovat podle dílů, které jsou virtuální"
+
+#: src/tables/part/PartTableFilters.tsx:107
+msgid "Is Template"
+msgstr "Je šablonou"
+
+#: src/tables/part/PartTableFilters.tsx:108
+msgid "Filter by parts which are templates"
+msgstr "Filtrovat podle dílů, které jsou šablonami"
+
+#: src/tables/part/PartTableFilters.tsx:113
+msgid "Is Variant"
+msgstr "Je varianta"
+
+#: src/tables/part/PartTableFilters.tsx:114
+msgid "Filter by parts which are variants"
+msgstr "Filtrovat podle dílů, které jsou varianta"
+
+#: src/tables/part/PartTableFilters.tsx:119
+msgid "Is Revision"
+msgstr "Je revizí"
+
+#: src/tables/part/PartTableFilters.tsx:120
+msgid "Filter by parts which are revisions"
+msgstr "Filtrovat podle dílů, které jsou revizí"
+
+#: src/tables/part/PartTableFilters.tsx:124
+msgid "Has Revisions"
+msgstr "Má revize"
+
+#: src/tables/part/PartTableFilters.tsx:125
+msgid "Filter by parts which have revisions"
+msgstr "Filtrovat podle dílů, které mají revize"
+
+#: src/tables/part/PartTableFilters.tsx:130
+msgid "Filter by parts which have pricing information"
+msgstr "Filtrovat podle dílů, které mají informace o cenách"
+
+#: src/tables/part/PartTableFilters.tsx:136
+msgid "Filter by parts which have available stock"
+msgstr "Filtrovat podle dílů, které mají k dispozici zásoby"
+
+#: src/tables/part/PartTableFilters.tsx:142
+msgid "Filter by parts to which the user is subscribed"
+msgstr "Filtrovat podle dílů, které uživatel odebírá"
 
 #: src/tables/part/PartTestResultTable.tsx:103
 #: src/tables/part/PartTestResultTable.tsx:181
