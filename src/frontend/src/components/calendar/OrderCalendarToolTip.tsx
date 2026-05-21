@@ -5,6 +5,7 @@ import { t } from '@lingui/core/macro';
 import { Badge, Divider, Group, Stack, Text } from '@mantine/core';
 import { formatDate } from '../../defaults/formatters';
 import { RenderInstance } from '../render/Instance';
+import { RenderOwner } from '../render/User';
 
 export default function OrderCalendarToolTip({
   event,
@@ -47,6 +48,12 @@ export default function OrderCalendarToolTip({
               {t`Overdue`}
             </Badge>
           )}
+        </Group>
+      )}
+      {order.responsible && (
+        <Group gap='xs'>
+          <Text size='sm' fw='bold'>{t`Responsible`}</Text>
+          <RenderOwner instance={order.responsible_detail} />
         </Group>
       )}
     </Stack>
