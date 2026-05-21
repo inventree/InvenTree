@@ -54,6 +54,27 @@ from .models import (
 logger = structlog.get_logger('inventree')
 
 
+class CategoryDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a PartCategory instance."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_child_categories', 'delete_parts']
+
+    delete_child_categories = serializers.BooleanField(
+        label=_('Delete Subcategories'),
+        help_text=_('Delete all sub-categories contained within this category'),
+        required=True,
+    )
+
+    delete_parts = serializers.BooleanField(
+        label=_('Delete Parts'),
+        help_text=_('Delete all parts contained within this category'),
+        required=True,
+    )
+
+
 @register_importer()
 class CategorySerializer(
     InvenTree.serializers.FilterableSerializerMixin,
