@@ -1,4 +1,8 @@
-import type { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
+import type {
+  CalendarOptions,
+  DatesSetArg,
+  EventContentArg
+} from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -15,6 +19,7 @@ import {
   Box,
   Button,
   Group,
+  HoverCard,
   Indicator,
   LoadingOverlay,
   Popover,
@@ -29,7 +34,13 @@ import {
   IconDownload,
   IconFilter
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
   defaultLocale,
@@ -44,6 +55,7 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  eventTooltipContent?: (event: EventContentArg) => ReactNode;
   filters?: TableFilter[];
   isLoading?: boolean;
   state: CalendarState;
@@ -53,6 +65,7 @@ export default function Calendar({
   enableDownload,
   enableFilters = false,
   enableSearch,
+  eventTooltipContent,
   isLoading,
   filters,
   state,
@@ -110,6 +123,36 @@ export default function Calendar({
       calendarProps.datesSet?.(dateInfo);
     },
     [calendarProps.datesSet, state.ref, state.setMonthName]
+  );
+
+  const wrappedEventContent = useCallback(
+    (arg: EventContentArg) => {
+      const inner =
+        typeof calendarProps.eventContent === 'function'
+          ? calendarProps.eventContent(arg, null)
+          : (calendarProps.eventContent ?? null);
+
+      if (!eventTooltipContent) return inner;
+
+      const tooltip = eventTooltipContent(arg);
+
+      if (!tooltip) return inner;
+
+      return (
+        <HoverCard
+          openDelay={300}
+          closeDelay={100}
+          shadow='md'
+          position='top-start'
+        >
+          <HoverCard.Target>
+            <div style={{ width: '100%', overflow: 'hidden' }}>{inner}</div>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>{tooltip}</HoverCard.Dropdown>
+        </HoverCard>
+      );
+    },
+    [calendarProps.eventContent, eventTooltipContent]
   );
 
   return (
@@ -217,6 +260,7 @@ export default function Calendar({
             footerToolbar={false}
             {...calendarProps}
             datesSet={datesSet}
+            eventContent={wrappedEventContent}
           />
         </Box>
       </Stack>

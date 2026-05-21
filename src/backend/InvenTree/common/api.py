@@ -781,8 +781,34 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
 
+    def update(self, request, *args, **kwargs):
+        """Update an existing attachment object."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('change', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
+        partial = kwargs.pop('partial', False)
+        data = self.clean_data(request.data)
+
+        # Extract filename first
+        filename = data.pop('filename', None)
+
+        # Run other validation / updates first, before attempting to rename the file
+        serializer = self.get_serializer(attachment, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # User is attempting to rename the file
+        if filename and attachment.basename and filename != attachment.basename:
+            attachment.rename(filename)
+
+        return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
-        """Check user permissions before deleting an attachment."""
+        """Delete an existing attachment object."""
         attachment = self.get_object()
 
         if not attachment.check_permission('delete', request.user):

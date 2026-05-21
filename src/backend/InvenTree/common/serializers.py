@@ -1,4 +1,4 @@
-"""JSON serializers for common components."""
+"""API serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery

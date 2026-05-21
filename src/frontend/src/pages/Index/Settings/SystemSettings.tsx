@@ -59,15 +59,7 @@ export default function SystemSettings() {
                 'INVENTREE_RESTRICT_ABOUT',
                 'DISPLAY_FULL_NAMES',
                 'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON'
-              ]}
-            />
-            <GlobalSettingList
-              heading={t`Image Download Settings`}
-              keys={[
-                'INVENTREE_DOWNLOAD_FROM_URL',
-                'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
-                'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
+                'WEEK_STARTS_ON',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
@@ -259,6 +251,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'SERIAL_NUMBER_GLOBALLY_UNIQUE',
+                'STOCK_ALLOW_EDIT_SERIAL',
                 'STOCK_ALLOW_DELETE_SERIALIZED',
                 'STOCK_DELETE_DEPLETED_DEFAULT',
                 'STOCK_BATCH_CODE_TEMPLATE',
