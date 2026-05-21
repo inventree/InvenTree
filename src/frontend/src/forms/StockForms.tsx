@@ -232,6 +232,7 @@ export function useStockFields({
       serial: {
         placeholderAutofill: true,
         placeholder: serialGenerator.result,
+        disabled: !create && !globalSettings.isSet('STOCK_ALLOW_EDIT_SERIAL'),
         hidden:
           create ||
           partInstance.trackable == false ||
