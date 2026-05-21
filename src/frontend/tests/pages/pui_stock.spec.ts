@@ -698,6 +698,7 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
   // Duplicate this transfer order, to ensure a fresh run each time
   await page.getByLabel('action-menu-order-actions').click();
   await page.getByLabel('action-menu-order-actions-duplicate').click();
+
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -710,40 +711,31 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
 
   await loadTab(page, 'Line Items');
 
-  // allocate line item 1
+  // Allocate line item 1
   const cell1 = await page.getByText('C_100pF_0402', { exact: true });
   await clickOnRowMenu(cell1);
-  await Promise.all([
-    // Ensure api request which automatically fills in the stockitem to allocate
-    // finishes (so the form is valid) before proceeding
-    page.waitForResponse(
-      (response) =>
-        response.url().includes('/api/stock/') && response.status() === 200
-    ),
-    page.getByRole('menuitem', { name: 'Allocate Stock' }).click()
-  ]);
+  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await page.getByText('C_100pF_0402Location:Offsite').waitFor();
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // allocate line item 1
+  // Allocate line item 1
   const cell2 = await page.getByText('R_2.2K_0603_1%', { exact: true });
   await clickOnRowMenu(cell2);
-  await Promise.all([
-    // Ensure api request which automatically fills in the stockitem to allocate
-    // finishes (so the form is valid) before proceeding
-    page.waitForResponse(
-      (response) =>
-        response.url().includes('/api/stock/') && response.status() === 200
-    ),
-    page.getByRole('menuitem', { name: 'Allocate Stock' }).click()
-  ]);
+  await page.getByRole('menuitem', { name: 'Allocate Stock' }).click();
+  await page.getByText('R_2.2K_0603_1%Location:').waitFor();
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // complete order
+  // Complete the order
   await page.getByRole('button', { name: 'Complete Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Complete', { exact: true }).first().waitFor();
 
-  // tab should have changed to Transferred Stock
+  // Tab should have changed to Transferred Stock
   await loadTab(page, 'Transferred Stock');
+  await page.getByText('C_100pF_0402').waitFor();
+  await page.getByText('2.2K resistor in 0603 SMD').waitFor();
 });
 
 test('Transfer Orders - Duplicate', async ({ browser }) => {
