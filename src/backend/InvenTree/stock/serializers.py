@@ -1167,6 +1167,27 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
+class LocationDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a stock location."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_stock_items', 'delete_sub_locations']
+
+    delete_stock_items = serializers.BooleanField(
+        required=True,
+        label=_('Delete Stock Items'),
+        help_text=_('Delete all stock items contained within this location'),
+    )
+
+    delete_sub_locations = serializers.BooleanField(
+        required=True,
+        label=_('Delete Sublocations'),
+        help_text=_('Delete all sub-locations contained within this location'),
+    )
+
+
 @register_importer()
 class LocationSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
