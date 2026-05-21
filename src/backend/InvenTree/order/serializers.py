@@ -127,6 +127,14 @@ class AbstractOrderSerializer(
     # status field cannot be set directly
     status = serializers.IntegerField(read_only=True, label=_('Order Status'))
 
+    # can be set directly, but must be valid for the current order status
+    status_custom_key = serializers.IntegerField(
+        label=_('Custom Status Key'),
+        help_text=_('Update order status to a custom value for this logical value'),
+        required=False,
+        default=None,
+    )
+
     # Reference string is *required*
     reference = serializers.CharField(required=True)
 
@@ -198,6 +206,31 @@ class AbstractOrderSerializer(
         """Custom validation for the reference field."""
         self.Meta.model.validate_reference_field(reference)
         return reference
+
+    def validate_status_custom_key(self, value):
+        """Validate the status_custom_key field.
+
+        Ensure the custom status key is valid for the logical order status.
+        """
+        if value is None:
+            return value
+
+        from generic.states.custom import get_logical_value
+
+        if not isinstance(value, int):
+            raise ValidationError(_('Custom status key must be an integer'))
+
+        try:
+            custom_status = get_logical_value(
+                value, model=self.Meta.model._meta.model_name
+            )
+        except:
+            raise ValidationError(_('Invalid custom status key'))
+
+        if custom_status.logical_key is not self.instance.status:
+            raise ValidationError(_('Invalid custom status key for this order status'))
+
+        return value
 
     @staticmethod
     def annotate_queryset(queryset):
