@@ -46,12 +46,14 @@ export default function OrderCalendar({
   model,
   role,
   params,
-  filters
+  filters,
+  tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
   const user = useUserState();
@@ -106,6 +108,7 @@ export default function OrderCalendar({
         const end: string = order.target_date || start;
 
         return {
+          order: order,
           id: order.pk,
           title: order.reference,
           description: order.description,
@@ -209,6 +212,7 @@ export default function OrderCalendar({
       state={calendarState}
       filters={calendarFilters}
       editable={true}
+      eventTooltipContent={tooltip}
       eventContent={renderOrder}
       eventClick={onClickOrder}
       eventChange={onEditOrder}
