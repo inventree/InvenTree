@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import EasyMDE, { type default as SimpleMde } from 'easymde';
 import 'easymde/dist/easymde.min.css';
+import { useHotkeys } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
@@ -18,20 +19,22 @@ import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import {
+  ActionIcon,
   Alert,
   Box,
-  Button,
   Flex,
   Group,
   Paper,
   Stack,
   Tabs,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import {
   IconCirclePlus,
+  IconDeviceFloppy,
   IconInfoCircle,
-  IconUpload
+  IconReload
 } from '@tabler/icons-react';
 import { useNoteFields } from '../../forms/CommonForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -52,6 +55,8 @@ export default function NotesEditor({
   const user = useUserState();
 
   const editor = useCreateBlockNote();
+
+  const [isDirty, setIsDirty] = useState(false);
 
   // The ID of the selected note
   const [selectedNote, setSelectedNote] = useState<number | undefined>(
@@ -78,31 +83,43 @@ export default function NotesEditor({
   });
 
   useEffect(() => {
-    const note = notesQuery.data?.find((note: any) => note.pk === selectedNote);
+    return editor.onChange(() => setIsDirty(true));
+  }, [editor]);
 
-    if (note) {
-      const blocks = editor.tryParseHTMLToBlocks(note.content ?? '');
+  const loadNote = useCallback(
+    (noteId: number) => {
+      const note = notesQuery.data?.find((note: any) => note.pk === noteId);
 
-      if (blocks) {
-        editor.replaceBlocks(editor.document, blocks);
+      if (note) {
+        const blocks = editor.tryParseHTMLToBlocks(note.content ?? '');
+
+        if (blocks) {
+          editor.replaceBlocks(editor.document, blocks);
+        }
+      } else {
+        editor.replaceBlocks(editor.document, []);
       }
-    } else {
-      editor.replaceBlocks(editor.document, []);
-    }
+
+      setIsDirty(false);
+    },
+    [editor, notesQuery.data]
+  );
+
+  useEffect(() => {
+    loadNote(selectedNote ?? -1);
   }, [editor, selectedNote, notesQuery.data]);
 
   // Adjust the note selection
   useEffect(() => {
-    // If the currently selected note is not in the list of available notes, then we need to adjust the selection
-    if (
+    if (!notesQuery.data) return;
+
+    const stillExists =
       selectedNote &&
-      notesQuery.data &&
-      !notesQuery.data.some((note: any) => note.pk === selectedNote)
-    ) {
-      setSelectedNote(
-        notesQuery.data.length > 0 ? notesQuery.data[0].pk : undefined
-      );
-    }
+      notesQuery.data.some((note: any) => note.pk === selectedNote);
+    if (stillExists) return;
+
+    const primary = notesQuery.data.find((note: any) => note.primary);
+    setSelectedNote((primary ?? notesQuery.data[0])?.pk ?? undefined);
   }, [notesQuery.data]);
 
   const canEdit = useMemo(
@@ -134,10 +151,14 @@ export default function NotesEditor({
     }
   });
 
+  const reloadNote = useCallback(() => {
+    loadNote(selectedNote ?? -1);
+  }, [selectedNote, loadNote]);
+
   const saveNote = useCallback(() => {
-    // if (!selectedNote) {
-    //   return;
-    // }
+    if (!selectedNote) {
+      return;
+    }
 
     const blocks = editor.document;
     const html = editor.blocksToHTMLLossy(blocks);
@@ -152,6 +173,7 @@ export default function NotesEditor({
       api
         .patch(url, { content: html })
         .then(() => {
+          setIsDirty(false);
           notifications.show({
             title: t`Success`,
             message: t`Note updated`,
@@ -173,7 +195,9 @@ export default function NotesEditor({
           notesQuery.refetch();
         });
     }
-  }, [selectedNote, editor]);
+  }, [selectedNote, editor, setIsDirty]);
+
+  useHotkeys([['mod+s', saveNote]]);
 
   return (
     <>
@@ -198,12 +222,40 @@ export default function NotesEditor({
         </Box>
         <Paper p='sm' shadow='sm' withBorder ml='md' style={{ width: '200px' }}>
           <Stack gap='xs'>
-            <Button leftSection={<IconUpload />} onClick={saveNote}>
-              {t`Save`}
-            </Button>
-            <Button leftSection={<IconCirclePlus />} onClick={createNote.open}>
-              {t`Add Note`}
-            </Button>
+            {canEdit && (
+              <Group justify='space-apart' grow>
+                <Tooltip label={t`Save Notes (Ctrl+S)`}>
+                  <ActionIcon
+                    variant='transparent'
+                    color={isDirty ? 'yellow' : undefined}
+                    onClick={saveNote}
+                    disabled={!canEdit || !isDirty}
+                  >
+                    <IconDeviceFloppy />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t`Reset Notes`}>
+                  <ActionIcon
+                    variant='transparent'
+                    color='red'
+                    onClick={reloadNote}
+                    disabled={!canEdit || !isDirty}
+                  >
+                    <IconReload />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t`New Note`}>
+                  <ActionIcon
+                    variant='transparent'
+                    color='green'
+                    onClick={createNote.open}
+                    disabled={!canEdit || isDirty}
+                  >
+                    <IconCirclePlus />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+            )}
             <Tabs
               orientation='vertical'
               placement='right'
@@ -213,6 +265,7 @@ export default function NotesEditor({
                 {notesQuery.data?.map((note: any) => (
                   <Tabs.Tab
                     key={note.pk}
+                    disabled={isDirty}
                     value={note.pk?.toString()}
                     onClick={() => setSelectedNote(note.pk)}
                   >
