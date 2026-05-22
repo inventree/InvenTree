@@ -17,7 +17,8 @@ import {
   IconAlertCircle,
   IconArrowRight,
   IconNumber,
-  IconQuestionMark
+  IconQuestionMark,
+  IconTruckDelivery
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -33,6 +34,7 @@ import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { MoveStockBarcodeModal } from '../../components/barcodes/MoveStockBarcodeModal';
+import { ReceiveStockBarcodeModal } from '../../components/barcodes/ReceiveStockBarcodeModal';
 import PageTitle from '../../components/nav/PageTitle';
 import { showApiErrorMessage } from '../../functions/notifications';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
@@ -49,6 +51,7 @@ export default function Scan() {
 
   const [selection, setSelection] = useState<string[]>([]);
   const [moveModalOpen, setMoveModalOpen] = useState<boolean>(false);
+  const [receiveModalOpen, setReceiveModalOpen] = useState<boolean>(false);
 
   // Fetch model instance based on scan item
   const fetchInstance = useCallback(
@@ -190,6 +193,8 @@ export default function Scan() {
     const modelType = [...uniqueObjectTypes][0];
     const canMove =
       modelType === ModelType.stockitem || modelType === ModelType.part;
+    const canReceive =
+      modelType === ModelType.part || modelType === ModelType.stockitem;
 
     return (
       <>
@@ -204,6 +209,15 @@ export default function Scan() {
               color='blue'
             >
               <Trans>Move Stock</Trans>
+            </Button>
+          )}
+          {canReceive && (
+            <Button
+              onClick={() => setReceiveModalOpen(true)}
+              leftSection={<IconTruckDelivery size={16} />}
+              color='green'
+            >
+              <Trans>Receive Stock</Trans>
             </Button>
           )}
           {modelType === ModelType.stockitem && (
@@ -306,6 +320,14 @@ export default function Scan() {
         items={selectedItems}
         sourceLocationPk={sourceLocationPk}
         destinationLocationPk={destLocationPk}
+      />
+      <ReceiveStockBarcodeModal
+        opened={receiveModalOpen}
+        onClose={() => setReceiveModalOpen(false)}
+        onSuccess={() => {
+          setSelection([]);
+        }}
+        items={selectedItems}
       />
     </>
   );

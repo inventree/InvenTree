@@ -35,7 +35,7 @@ msgstr "Copy"
 
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:66
+#: src/pages/Index/Scan.tsx:69
 msgid "Duplicate"
 msgstr "Duplicate"
 
@@ -55,7 +55,8 @@ msgid "Delete"
 msgstr "Delete"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:403
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:404
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:598
 #: src/components/details/DetailsImage.tsx:84
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
@@ -119,7 +120,7 @@ msgid "No"
 msgstr "No"
 
 #: lib/enums/ModelInformation.tsx:29
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:307
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:312
 #: src/components/wizards/OrderPartsWizard.tsx:281
 #: src/forms/BuildForms.tsx:357
 #: src/forms/BuildForms.tsx:434
@@ -357,6 +358,7 @@ msgid "Project Codes"
 msgstr "Project Codes"
 
 #: lib/enums/ModelInformation.tsx:159
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:378
 #: src/components/wizards/OrderPartsWizard.tsx:341
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:571
@@ -766,7 +768,7 @@ msgid "Failed to handle barcode"
 msgstr "Failed to handle barcode"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:137
+#: src/pages/Index/Scan.tsx:140
 msgid "Failed to scan barcode"
 msgstr "Failed to scan barcode"
 
@@ -790,7 +792,7 @@ msgstr "Failed to scan barcode"
 #~ msgid "{0} stock item(s) ({totalQty} units) moved successfully"
 #~ msgstr "{0} stock item(s) ({totalQty} units) moved successfully"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:165
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:168
 #: src/forms/BuildForms.tsx:699
 #: src/forms/SalesOrderForms.tsx:424
 #: src/pages/build/BuildDetail.tsx:127
@@ -798,16 +800,16 @@ msgstr "Failed to scan barcode"
 msgid "Source Location"
 msgstr "Source Location"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:166
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:169
 msgid "Show only stock in this location"
 msgstr "Show only stock in this location"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:179
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:182
 #: src/pages/build/BuildDetail.tsx:392
 msgid "Destination Location"
 msgstr "Destination Location"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:180
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:183
 msgid "Stock items will be moved to this location"
 msgstr "Stock items will be moved to this location"
 
@@ -816,14 +818,14 @@ msgstr "Stock items will be moved to this location"
 #~ msgstr "No valid stock items selected"
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:209
-msgid "No Items"
-msgstr "No Items"
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:209
 #~ msgid "None of the selected items are in the source location."
 #~ msgstr "None of the selected items are in the source location."
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:210
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:212
+msgid "No Items"
+msgstr "No Items"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:213
 msgid "Enter a quantity to move"
 msgstr "Enter a quantity to move"
 
@@ -831,28 +833,28 @@ msgstr "Enter a quantity to move"
 #~ msgid "{0} item(s) are not in the source location and will be skipped."
 #~ msgstr "{0} item(s) are not in the source location and will be skipped."
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:227
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+#~ msgid "Current Location"
+#~ msgstr "Current Location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:230
 msgid "Stock Moved"
 msgstr "Stock Moved"
 
 #. placeholder {0}: itemsToMove.length
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:231
 msgid "{0} group(s) ({totalQty} units) moved successfully"
 msgstr "{0} group(s) ({totalQty} units) moved successfully"
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
-#~ msgid "Current Location"
-#~ msgstr "Current Location"
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:231
 #~ msgid "Will move"
 #~ msgstr "Will move"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:237
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:240
 msgid "Move Failed"
 msgstr "Move Failed"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:238
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:241
 msgid "Failed to move stock items"
 msgstr "Failed to move stock items"
 
@@ -860,21 +862,21 @@ msgstr "Failed to move stock items"
 #~ msgid "Move {0} item(s)"
 #~ msgstr "Move {0} item(s)"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:270
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:412
-#: src/pages/Index/Scan.tsx:206
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:277
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:413
+#: src/pages/Index/Scan.tsx:211
 msgid "Move Stock"
 msgstr "Move Stock"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:276
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:281
 msgid "Select a scanned part or stock item to move"
 msgstr "Select a scanned part or stock item to move"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:282
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
 msgid "Loading stock for selected parts..."
 msgstr "Loading stock for selected parts..."
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:292
 msgid "No stock found for the selected parts"
 msgstr "No stock found for the selected parts"
 
@@ -882,7 +884,7 @@ msgstr "No stock found for the selected parts"
 #~ msgid "Max {available}"
 #~ msgstr "Max {available}"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:299
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:304
 msgid "No stock found in the selected source location."
 msgstr "No stock found in the selected source location."
 
@@ -890,7 +892,8 @@ msgstr "No stock found in the selected source location."
 #~ msgid "Skipped"
 #~ msgstr "Skipped"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:310
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:315
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:214
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
@@ -917,7 +920,7 @@ msgstr "No stock found in the selected source location."
 msgid "Location"
 msgstr "Location"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:313
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:318
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:904
@@ -931,7 +934,7 @@ msgstr "Location"
 msgid "Available"
 msgstr "Available"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:316
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:321
 msgid "Qty to Move"
 msgstr "Qty to Move"
 
@@ -940,15 +943,15 @@ msgstr "Qty to Move"
 #~ msgstr "Move {movableItemCount} item(s) ({movableTotalQty} units)"
 
 #. placeholder {0}: group.totalQty
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:376
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:377
 msgid "Max {0}"
 msgstr "Max {0}"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:385
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:386
 msgid "Other location"
 msgstr "Other location"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:414
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:415
 msgid "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
 msgstr "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
 
@@ -1007,6 +1010,189 @@ msgstr "This will remove the link to the associated barcode"
 #: src/forms/PurchaseOrderForms.tsx:664
 msgid "Unlink Barcode"
 msgstr "Unlink Barcode"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:215
+msgid "Where the received stock will be placed"
+msgstr "Where the received stock will be placed"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:225
+msgid "Invalid quantity"
+msgstr "Invalid quantity"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:226
+msgid "Enter a positive quantity to receive"
+msgstr "Enter a positive quantity to receive"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:253
+msgid "Stock Received"
+msgstr "Stock Received"
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:254
+msgid "{quantity} unit(s) received against {0}"
+msgstr "{quantity} unit(s) received against {0}"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:268
+msgid "Unexpected receipt — not on original PO line items"
+msgstr "Unexpected receipt — not on original PO line items"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:274
+msgid "Stock Added"
+msgstr "Stock Added"
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:276
+msgid "{quantity} unit(s) added to inventory (linked to {0})"
+msgstr "{quantity} unit(s) added to inventory (linked to {0})"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:277
+msgid "{quantity} unit(s) added to inventory"
+msgstr "{quantity} unit(s) added to inventory"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:287
+msgid "Receive Failed"
+msgstr "Receive Failed"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:288
+msgid "Failed to receive stock"
+msgstr "Failed to receive stock"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:338
+msgid "Placed"
+msgstr "Placed"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:340
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
+#: src/tables/part/PartPurchaseOrdersTable.tsx:122
+msgid "Pending"
+msgstr "Pending"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:342
+msgid "On Hold"
+msgstr "On Hold"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:352
+#: src/pages/Index/Scan.tsx:220
+msgid "Receive Stock"
+msgstr "Receive Stock"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:358
+msgid "Select a scanned part to receive stock"
+msgstr "Select a scanned part to receive stock"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:364
+msgid "Loading purchase orders..."
+msgstr "Loading purchase orders..."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:379
+msgid "Select a purchase order..."
+msgstr "Select a purchase order..."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:389
+msgid "Receive without PO (add directly to stock)"
+msgstr "Receive without PO (add directly to stock)"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:400
+msgid "No open purchase orders found"
+msgstr "No open purchase orders found"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:422
+msgid "No open purchase orders."
+msgstr "No open purchase orders."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:424
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:562
+msgid "Create a purchase order"
+msgstr "Create a purchase order"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:432
+msgid "This order is not yet placed. Only placed orders can receive stock."
+msgstr "This order is not yet placed. Only placed orders can receive stock."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:437
+msgid "View order"
+msgstr "View order"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:449
+msgid "Loading line items..."
+msgstr "Loading line items..."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:458
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:349
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
+#: src/pages/sales/ReturnOrderDetail.tsx:154
+#: src/pages/sales/ReturnOrderDetail.tsx:327
+#: src/pages/sales/ReturnOrderDetail.tsx:336
+#: src/pages/sales/SalesOrderDetail.tsx:365
+#: src/pages/sales/SalesOrderDetail.tsx:374
+msgid "Line Items"
+msgstr "Line Items"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:465
+msgid "Line"
+msgstr "Line"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:468
+msgid "Expected"
+msgstr "Expected"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:471
+#: src/forms/PurchaseOrderForms.tsx:915
+#: src/tables/part/PartPurchaseOrdersTable.tsx:127
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
+msgid "Received"
+msgstr "Received"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:474
+msgid "Remaining"
+msgstr "Remaining"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:526
+#~ msgid "Stock will be added directly to inventory."
+#~ msgstr "Stock will be added directly to inventory."
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:530
+msgid "This part is not listed on {0}."
+msgstr "This part is not listed on {0}."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:535
+msgid "Stock will be added directly to inventory, linked to this PO with the note \"Unexpected receipt — not on original PO line items\"."
+msgstr "Stock will be added directly to inventory, linked to this PO with the note \"Unexpected receipt — not on original PO line items\"."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:541
+#~ msgid "Stock will be added directly to inventory without a purchase order."
+#~ msgstr "Stock will be added directly to inventory without a purchase order."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:547
+msgid "Add line items to this order"
+msgstr "Add line items to this order"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:556
+msgid "Stock will be added directly to inventory without linking to a purchase order."
+msgstr "Stock will be added directly to inventory without linking to a purchase order."
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:572
+msgid "Quantity to Receive"
+msgstr "Quantity to Receive"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:575
+msgid "Remaining on order: {remaining}"
+msgstr "Remaining on order: {remaining}"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:611
+msgid "Receive {quantity} unit(s)"
+msgstr "Receive {quantity} unit(s)"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:613
+msgid "Add {quantity} unit(s) (unexpected)"
+msgstr "Add {quantity} unit(s) (unexpected)"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:617
+msgid "Add {quantity} unit(s) to stock"
+msgstr "Add {quantity} unit(s) to stock"
 
 #: src/components/buttons/AdminButton.tsx:86
 msgid "Open in admin interface"
@@ -5102,14 +5288,6 @@ msgstr "Note"
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:915
-#: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
-msgid "Received"
-msgstr "Received"
-
 #: src/forms/PurchaseOrderForms.tsx:932
 msgid "Receive Line Items"
 msgstr "Receive Line Items"
@@ -5228,7 +5406,7 @@ msgid "Return"
 msgstr "Return"
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:212
+#: src/pages/Index/Scan.tsx:226
 msgid "Count"
 msgstr "Count"
 
@@ -6004,19 +6182,19 @@ msgstr "An unexpected error has occurred"
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:67
+#: src/pages/Index/Scan.tsx:70
 msgid "Item already scanned"
 msgstr "Item already scanned"
 
-#: src/pages/Index/Scan.tsx:90
+#: src/pages/Index/Scan.tsx:93
 msgid "API Error"
 msgstr "API Error"
 
-#: src/pages/Index/Scan.tsx:91
+#: src/pages/Index/Scan.tsx:94
 msgid "Failed to fetch instance data"
 msgstr "Failed to fetch instance data"
 
-#: src/pages/Index/Scan.tsx:138
+#: src/pages/Index/Scan.tsx:141
 msgid "Scan Error"
 msgstr "Scan Error"
 
@@ -6024,15 +6202,15 @@ msgstr "Scan Error"
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:178
+#: src/pages/Index/Scan.tsx:181
 msgid "Selected elements are not known"
 msgstr "Selected elements are not known"
 
-#: src/pages/Index/Scan.tsx:185
+#: src/pages/Index/Scan.tsx:188
 msgid "Multiple object types selected"
 msgstr "Multiple object types selected"
 
-#: src/pages/Index/Scan.tsx:197
+#: src/pages/Index/Scan.tsx:202
 msgid "Actions ... "
 msgstr "Actions ... "
 
@@ -6044,37 +6222,37 @@ msgstr "Actions ... "
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
-#: src/pages/Index/Scan.tsx:238
-#: src/pages/Index/Scan.tsx:242
+#: src/pages/Index/Scan.tsx:252
+#: src/pages/Index/Scan.tsx:256
 msgid "Barcode Scanning"
 msgstr "Barcode Scanning"
 
-#: src/pages/Index/Scan.tsx:251
+#: src/pages/Index/Scan.tsx:265
 msgid "Barcode Input"
 msgstr "Barcode Input"
 
-#: src/pages/Index/Scan.tsx:258
+#: src/pages/Index/Scan.tsx:272
 msgid "Action"
 msgstr "Action"
 
-#: src/pages/Index/Scan.tsx:261
+#: src/pages/Index/Scan.tsx:275
 msgid "No Items Selected"
 msgstr "No Items Selected"
 
-#: src/pages/Index/Scan.tsx:262
+#: src/pages/Index/Scan.tsx:276
 msgid "Scan and select items to perform actions"
 msgstr "Scan and select items to perform actions"
-
-#. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:267
-msgid "{0} items selected"
-msgstr "{0} items selected"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
 #~ msgstr "Actions for {0}"
 
-#: src/pages/Index/Scan.tsx:279
+#. placeholder {0}: selection.length
+#: src/pages/Index/Scan.tsx:281
+msgid "{0} items selected"
+msgstr "{0} items selected"
+
+#: src/pages/Index/Scan.tsx:293
 msgid "Scanned Items"
 msgstr "Scanned Items"
 
@@ -8869,16 +9047,6 @@ msgstr "Completion Date"
 msgid "Order Details"
 msgstr "Order Details"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:349
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/ReturnOrderDetail.tsx:327
-#: src/pages/sales/ReturnOrderDetail.tsx:336
-#: src/pages/sales/SalesOrderDetail.tsx:365
-#: src/pages/sales/SalesOrderDetail.tsx:374
-msgid "Line Items"
-msgstr "Line Items"
-
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:373
 #: src/pages/sales/ReturnOrderDetail.tsx:351
 #: src/pages/sales/SalesOrderDetail.tsx:388
@@ -9066,11 +9234,6 @@ msgstr "Edit Shipment"
 #: src/tables/sales/SalesOrderShipmentTable.tsx:90
 msgid "Cancel Shipment"
 msgstr "Cancel Shipment"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
-#: src/tables/part/PartPurchaseOrdersTable.tsx:122
-msgid "Pending"
-msgstr "Pending"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:340
 #: src/tables/sales/SalesOrderShipmentTable.tsx:163

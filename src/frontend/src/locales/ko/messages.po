@@ -40,7 +40,7 @@ msgstr "복사"
 
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:66
+#: src/pages/Index/Scan.tsx:69
 msgid "Duplicate"
 msgstr "복제"
 
@@ -60,7 +60,8 @@ msgid "Delete"
 msgstr "삭제"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:403
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:404
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:598
 #: src/components/details/DetailsImage.tsx:84
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
@@ -124,7 +125,7 @@ msgid "No"
 msgstr "아니요"
 
 #: lib/enums/ModelInformation.tsx:29
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:307
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:312
 #: src/components/wizards/OrderPartsWizard.tsx:281
 #: src/forms/BuildForms.tsx:357
 #: src/forms/BuildForms.tsx:434
@@ -362,6 +363,7 @@ msgid "Project Codes"
 msgstr "프로젝트 코드 목록"
 
 #: lib/enums/ModelInformation.tsx:159
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:378
 #: src/components/wizards/OrderPartsWizard.tsx:341
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:571
@@ -771,7 +773,7 @@ msgid "Failed to handle barcode"
 msgstr "바코드 처리에 실패했습니다"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:137
+#: src/pages/Index/Scan.tsx:140
 msgid "Failed to scan barcode"
 msgstr "바코드 스캔 실패"
 
@@ -795,7 +797,7 @@ msgstr "바코드 스캔 실패"
 #~ msgid "{0} stock item(s) ({totalQty} units) moved successfully"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:165
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:168
 #: src/forms/BuildForms.tsx:699
 #: src/forms/SalesOrderForms.tsx:424
 #: src/pages/build/BuildDetail.tsx:127
@@ -803,16 +805,16 @@ msgstr "바코드 스캔 실패"
 msgid "Source Location"
 msgstr "원본 위치"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:166
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:169
 msgid "Show only stock in this location"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:179
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:182
 #: src/pages/build/BuildDetail.tsx:392
 msgid "Destination Location"
 msgstr "목적지 위치"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:180
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:183
 msgid "Stock items will be moved to this location"
 msgstr ""
 
@@ -821,14 +823,14 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:209
-msgid "No Items"
-msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:209
 #~ msgid "None of the selected items are in the source location."
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:210
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:212
+msgid "No Items"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:213
 msgid "Enter a quantity to move"
 msgstr ""
 
@@ -836,28 +838,28 @@ msgstr ""
 #~ msgid "{0} item(s) are not in the source location and will be skipped."
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:227
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+#~ msgid "Current Location"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:230
 msgid "Stock Moved"
 msgstr ""
 
 #. placeholder {0}: itemsToMove.length
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:231
 msgid "{0} group(s) ({totalQty} units) moved successfully"
 msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
-#~ msgid "Current Location"
-#~ msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:231
 #~ msgid "Will move"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:237
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:240
 msgid "Move Failed"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:238
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:241
 msgid "Failed to move stock items"
 msgstr ""
 
@@ -865,21 +867,21 @@ msgstr ""
 #~ msgid "Move {0} item(s)"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:270
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:412
-#: src/pages/Index/Scan.tsx:206
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:277
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:413
+#: src/pages/Index/Scan.tsx:211
 msgid "Move Stock"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:276
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:281
 msgid "Select a scanned part or stock item to move"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:282
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
 msgid "Loading stock for selected parts..."
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:292
 msgid "No stock found for the selected parts"
 msgstr ""
 
@@ -887,7 +889,7 @@ msgstr ""
 #~ msgid "Max {available}"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:299
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:304
 msgid "No stock found in the selected source location."
 msgstr ""
 
@@ -895,7 +897,8 @@ msgstr ""
 #~ msgid "Skipped"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:310
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:315
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:214
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
@@ -922,7 +925,7 @@ msgstr ""
 msgid "Location"
 msgstr "위치"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:313
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:318
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:904
@@ -936,7 +939,7 @@ msgstr "위치"
 msgid "Available"
 msgstr "사용 가능"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:316
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:321
 msgid "Qty to Move"
 msgstr ""
 
@@ -945,15 +948,15 @@ msgstr ""
 #~ msgstr ""
 
 #. placeholder {0}: group.totalQty
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:376
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:377
 msgid "Max {0}"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:385
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:386
 msgid "Other location"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:414
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:415
 msgid "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
 msgstr ""
 
@@ -1012,6 +1015,189 @@ msgstr "연결된 바코드 링크가 제거됩니다"
 #: src/forms/PurchaseOrderForms.tsx:664
 msgid "Unlink Barcode"
 msgstr "바코드 연결 해제"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:215
+msgid "Where the received stock will be placed"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:225
+msgid "Invalid quantity"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:226
+msgid "Enter a positive quantity to receive"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:253
+msgid "Stock Received"
+msgstr ""
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:254
+msgid "{quantity} unit(s) received against {0}"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:268
+msgid "Unexpected receipt — not on original PO line items"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:274
+msgid "Stock Added"
+msgstr ""
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:276
+msgid "{quantity} unit(s) added to inventory (linked to {0})"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:277
+msgid "{quantity} unit(s) added to inventory"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:287
+msgid "Receive Failed"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:288
+msgid "Failed to receive stock"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:338
+msgid "Placed"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:340
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
+#: src/tables/part/PartPurchaseOrdersTable.tsx:122
+msgid "Pending"
+msgstr "보류 중"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:342
+msgid "On Hold"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:352
+#: src/pages/Index/Scan.tsx:220
+msgid "Receive Stock"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:358
+msgid "Select a scanned part to receive stock"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:364
+msgid "Loading purchase orders..."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:379
+msgid "Select a purchase order..."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:389
+msgid "Receive without PO (add directly to stock)"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:400
+msgid "No open purchase orders found"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:422
+msgid "No open purchase orders."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:424
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:562
+msgid "Create a purchase order"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:432
+msgid "This order is not yet placed. Only placed orders can receive stock."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:437
+msgid "View order"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:449
+msgid "Loading line items..."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:458
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:349
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
+#: src/pages/sales/ReturnOrderDetail.tsx:154
+#: src/pages/sales/ReturnOrderDetail.tsx:327
+#: src/pages/sales/ReturnOrderDetail.tsx:336
+#: src/pages/sales/SalesOrderDetail.tsx:365
+#: src/pages/sales/SalesOrderDetail.tsx:374
+msgid "Line Items"
+msgstr "광고 항목"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:465
+msgid "Line"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:468
+msgid "Expected"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:471
+#: src/forms/PurchaseOrderForms.tsx:915
+#: src/tables/part/PartPurchaseOrdersTable.tsx:127
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
+msgid "Received"
+msgstr "받았다"
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:474
+msgid "Remaining"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:526
+#~ msgid "Stock will be added directly to inventory."
+#~ msgstr ""
+
+#. placeholder {0}: selectedPo.reference
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:530
+msgid "This part is not listed on {0}."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:535
+msgid "Stock will be added directly to inventory, linked to this PO with the note \"Unexpected receipt — not on original PO line items\"."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:541
+#~ msgid "Stock will be added directly to inventory without a purchase order."
+#~ msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:547
+msgid "Add line items to this order"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:556
+msgid "Stock will be added directly to inventory without linking to a purchase order."
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:572
+msgid "Quantity to Receive"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:575
+msgid "Remaining on order: {remaining}"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:611
+msgid "Receive {quantity} unit(s)"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:613
+msgid "Add {quantity} unit(s) (unexpected)"
+msgstr ""
+
+#: src/components/barcodes/ReceiveStockBarcodeModal.tsx:617
+msgid "Add {quantity} unit(s) to stock"
+msgstr ""
 
 #: src/components/buttons/AdminButton.tsx:86
 msgid "Open in admin interface"
@@ -5107,14 +5293,6 @@ msgstr "메모"
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:915
-#: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
-msgid "Received"
-msgstr "받았다"
-
 #: src/forms/PurchaseOrderForms.tsx:932
 msgid "Receive Line Items"
 msgstr "항목 입고"
@@ -5233,7 +5411,7 @@ msgid "Return"
 msgstr "반품"
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:212
+#: src/pages/Index/Scan.tsx:226
 msgid "Count"
 msgstr "실사"
 
@@ -6009,19 +6187,19 @@ msgstr "예상치 못한 오류가 발생했습니다."
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:67
+#: src/pages/Index/Scan.tsx:70
 msgid "Item already scanned"
 msgstr "항목이 이미 스캔되었습니다"
 
-#: src/pages/Index/Scan.tsx:90
+#: src/pages/Index/Scan.tsx:93
 msgid "API Error"
 msgstr "API 오류"
 
-#: src/pages/Index/Scan.tsx:91
+#: src/pages/Index/Scan.tsx:94
 msgid "Failed to fetch instance data"
 msgstr "인스턴스 데이터를 불러오지 못했습니다"
 
-#: src/pages/Index/Scan.tsx:138
+#: src/pages/Index/Scan.tsx:141
 msgid "Scan Error"
 msgstr "스캔 오류"
 
@@ -6029,15 +6207,15 @@ msgstr "스캔 오류"
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:178
+#: src/pages/Index/Scan.tsx:181
 msgid "Selected elements are not known"
 msgstr "선택한 요소를 알 수 없습니다."
 
-#: src/pages/Index/Scan.tsx:185
+#: src/pages/Index/Scan.tsx:188
 msgid "Multiple object types selected"
 msgstr "여러 개체 유형이 선택됨"
 
-#: src/pages/Index/Scan.tsx:197
+#: src/pages/Index/Scan.tsx:202
 msgid "Actions ... "
 msgstr "작업 ..."
 
@@ -6049,37 +6227,37 @@ msgstr "작업 ..."
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
-#: src/pages/Index/Scan.tsx:238
-#: src/pages/Index/Scan.tsx:242
+#: src/pages/Index/Scan.tsx:252
+#: src/pages/Index/Scan.tsx:256
 msgid "Barcode Scanning"
 msgstr "바코드 스캐닝"
 
-#: src/pages/Index/Scan.tsx:251
+#: src/pages/Index/Scan.tsx:265
 msgid "Barcode Input"
 msgstr "바코드 입력"
 
-#: src/pages/Index/Scan.tsx:258
+#: src/pages/Index/Scan.tsx:272
 msgid "Action"
 msgstr "행동"
 
-#: src/pages/Index/Scan.tsx:261
+#: src/pages/Index/Scan.tsx:275
 msgid "No Items Selected"
 msgstr "선택한 항목이 없습니다."
 
-#: src/pages/Index/Scan.tsx:262
+#: src/pages/Index/Scan.tsx:276
 msgid "Scan and select items to perform actions"
 msgstr "작업을 수행할 항목을 스캔하고 선택하세요."
-
-#. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:267
-msgid "{0} items selected"
-msgstr "{0}개 항목 선택됨"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
 #~ msgstr "Actions for {0}"
 
-#: src/pages/Index/Scan.tsx:279
+#. placeholder {0}: selection.length
+#: src/pages/Index/Scan.tsx:281
+msgid "{0} items selected"
+msgstr "{0}개 항목 선택됨"
+
+#: src/pages/Index/Scan.tsx:293
 msgid "Scanned Items"
 msgstr "스캔한 항목"
 
@@ -8874,16 +9052,6 @@ msgstr "완료 날짜"
 msgid "Order Details"
 msgstr "주문 상세 정보"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:349
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/ReturnOrderDetail.tsx:327
-#: src/pages/sales/ReturnOrderDetail.tsx:336
-#: src/pages/sales/SalesOrderDetail.tsx:365
-#: src/pages/sales/SalesOrderDetail.tsx:374
-msgid "Line Items"
-msgstr "광고 항목"
-
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:373
 #: src/pages/sales/ReturnOrderDetail.tsx:351
 #: src/pages/sales/SalesOrderDetail.tsx:388
@@ -9071,11 +9239,6 @@ msgstr "출하 편집"
 #: src/tables/sales/SalesOrderShipmentTable.tsx:90
 msgid "Cancel Shipment"
 msgstr "출하 취소"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
-#: src/tables/part/PartPurchaseOrdersTable.tsx:122
-msgid "Pending"
-msgstr "보류 중"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:340
 #: src/tables/sales/SalesOrderShipmentTable.tsx:163
