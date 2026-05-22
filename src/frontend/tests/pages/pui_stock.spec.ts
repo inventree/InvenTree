@@ -100,11 +100,8 @@ test('Stock - Location Delete', async ({ browser }) => {
 
   // Delete this location, and all child locations
   await page
-    .locator('div')
-    .filter({
-      hasText: new RegExp(`^Stock>PCB Assembler>${loc_1}Stock Location$`)
-    })
-    .getByLabel('action-menu-location-actions')
+    .getByRole('button', { name: 'action-menu-location-actions' })
+    .first()
     .click();
   await page
     .getByRole('menuitem', { name: 'action-menu-location-actions-delete' })
