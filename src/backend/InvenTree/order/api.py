@@ -31,6 +31,7 @@ import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
+    BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -1342,13 +1343,21 @@ class SalesOrderAllocationOutputOptions(OutputConfiguration):
 
 
 class SalesOrderAllocationList(
-    SalesOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+    SalesOrderAllocationMixin,
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    OutputOptionsMixin,
+    ListAPI,
 ):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
+
+    def filter_delete_queryset(self, queryset, request):
+        """Prevent deletion of allocations that have already been shipped."""
+        return queryset.filter(shipment__shipment_date__isnull=True)
 
     ordering_fields = [
         'quantity',
