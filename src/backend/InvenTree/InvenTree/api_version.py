@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 492
+INVENTREE_API_VERSION = 493
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v493 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11961
+    - Adds "thumbnail" field to the Attachment API endpoint, which provides a URL to a thumbnail image for image attachments (if available)
 
 v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
     - Add Transfer Order model and associated API endpoint

@@ -25,6 +25,19 @@ The following types of attachments are supported:
 
 File attachments allow users to upload files directly to InvenTree. These files are stored on the server and can be downloaded or viewed by users with appropriate permissions.
 
+### Image Thumbnails
+
+When a file attachment is uploaded, InvenTree automatically determines whether the file is a valid image. If it is, a thumbnail is generated and stored alongside the attachment.
+
+- The thumbnail is created with a reduced image size, while preserving the original aspect ratio.
+- Thumbnail generation is performed in the background after upload.
+- The `is_image` flag on the attachment record is set to `True` for valid images, and `False` for all other file types.
+- If the uploaded file has an image extension but contains invalid or corrupt image data, no thumbnail is generated and `is_image` remains `False`.
+- Link attachments (external URLs) are never assigned a thumbnail.
+
+!!! info "Supported Formats"
+    Any image format recognised by the [Pillow](https://pillow.readthedocs.io/) library (e.g. PNG, JPEG, GIF, BMP, WEBP) will be treated as a valid image and have a thumbnail generated automatically.
+
 ### Link Attachments
 
 Link attachments allow users to associate external URLs with an object. This can be useful for linking to external documentation, resources, or other relevant web content.

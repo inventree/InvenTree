@@ -286,6 +286,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
+        'units': 'MB',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
+    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),

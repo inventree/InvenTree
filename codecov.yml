@@ -1,3 +1,6 @@
+ignore:
+  - "src/backend/InvenTree/**/test_migrations.py"
+
 coverage:
   status:
     project:
