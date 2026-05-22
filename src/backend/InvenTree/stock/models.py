@@ -399,6 +399,19 @@ class StockItemReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartModels.PartTestTemplate]
 
 
+STOCK_SORT_CHOICES = [
+    ('date_oldest', 'updated', _('Oldest stock first (FIFO)')),
+    ('date_newest', '-updated', _('Newest stock first (LIFO)')),
+    ('quantity_asc', 'quantity', _('Smallest quantity first')),
+    ('quantity_desc', '-quantity', _('Largest quantity first')),
+    ('expiry_soonest', 'expiry_date', _('Soonest expiry date first')),
+]
+
+STOCK_SORT_MAP = {key: field for key, field, _ in STOCK_SORT_CHOICES}
+
+STOCK_SORT_DEFAULT = 'date_oldest'
+
+
 class StockItem(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,

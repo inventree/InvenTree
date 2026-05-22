@@ -574,6 +574,9 @@ export default function BuildLineTable({
   });
 
   const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+  const [autoAllocateInitialData, setAutoAllocateInitialData] = useState<
+    Record<string, any>
+  >({});
 
   useBackgroundTask({
     taskId: allocateTaskId,
@@ -583,6 +586,24 @@ export default function BuildLineTable({
       table.refreshTable();
     }
   });
+
+  const autoAllocatePreFormContent = useMemo(() => {
+    const n = table.selectedRecords.length;
+    if (n > 0) {
+      return (
+        <Alert color='blue' title={t`Auto Allocate Stock`}>
+          <Text>
+            {t`Auto-allocating stock for`} {n} {t`selected line item(s)`}
+          </Text>
+        </Alert>
+      );
+    }
+    return (
+      <Alert color='green' title={t`Auto Allocate Stock`}>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
+      </Alert>
+    );
+  }, [table.selectedRecords]);
 
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
@@ -595,7 +616,8 @@ export default function BuildLineTable({
       location: build.take_from,
       interchangeable: true,
       substitutes: true,
-      optional_items: false
+      optional_items: false,
+      ...autoAllocateInitialData
     },
     successMessage: null,
     onFormSuccess: (response: any) => {
@@ -605,11 +627,7 @@ export default function BuildLineTable({
         table.refreshTable();
       }
     },
-    preFormContent: (
-      <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
-      </Alert>
-    )
+    preFormContent: autoAllocatePreFormContent
   });
 
   const allocateStock = useAllocateStockToBuildForm({
@@ -839,6 +857,11 @@ export default function BuildLineTable({
         hidden={!visible || hasOutput}
         color='blue'
         onClick={() => {
+          setAutoAllocateInitialData({
+            build_lines: table.selectedRecords
+              .filter((r) => !r.trackable)
+              .map((r) => r.pk)
+          });
           autoAllocateStock.open();
         }}
       />,
