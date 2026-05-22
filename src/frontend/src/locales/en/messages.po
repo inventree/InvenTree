@@ -35,7 +35,7 @@ msgstr "Copy"
 
 #: lib/components/RowActions.tsx:36
 #: src/components/items/ActionDropdown.tsx:289
-#: src/pages/Index/Scan.tsx:62
+#: src/pages/Index/Scan.tsx:66
 msgid "Duplicate"
 msgstr "Duplicate"
 
@@ -55,6 +55,7 @@ msgid "Delete"
 msgstr "Delete"
 
 #: lib/components/RowActions.tsx:66
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:403
 #: src/components/details/DetailsImage.tsx:84
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
 #: src/components/items/ActionDropdown.tsx:277
@@ -118,6 +119,7 @@ msgid "No"
 msgstr "No"
 
 #: lib/enums/ModelInformation.tsx:29
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:307
 #: src/components/wizards/OrderPartsWizard.tsx:281
 #: src/forms/BuildForms.tsx:357
 #: src/forms/BuildForms.tsx:434
@@ -764,9 +766,191 @@ msgid "Failed to handle barcode"
 msgstr "Failed to handle barcode"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:127
+#: src/pages/Index/Scan.tsx:137
 msgid "Failed to scan barcode"
 msgstr "Failed to scan barcode"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:90
+#~ msgid "Only stock items in this location will be moved"
+#~ msgstr "Only stock items in this location will be moved"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:108
+#~ msgid "No stock items match the selected source location"
+#~ msgstr "No stock items match the selected source location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:129
+#~ msgid "{0} stock item(s) moved successfully"
+#~ msgstr "{0} stock item(s) moved successfully"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:134
+#~ msgid "No stock items selected to move"
+#~ msgstr "No stock items selected to move"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:154
+#~ msgid "{0} stock item(s) ({totalQty} units) moved successfully"
+#~ msgstr "{0} stock item(s) ({totalQty} units) moved successfully"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:165
+#: src/forms/BuildForms.tsx:699
+#: src/forms/SalesOrderForms.tsx:424
+#: src/pages/build/BuildDetail.tsx:127
+#: src/pages/build/BuildDetail.tsx:384
+msgid "Source Location"
+msgstr "Source Location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:166
+msgid "Show only stock in this location"
+msgstr "Show only stock in this location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:179
+#: src/pages/build/BuildDetail.tsx:392
+msgid "Destination Location"
+msgstr "Destination Location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:180
+msgid "Stock items will be moved to this location"
+msgstr "Stock items will be moved to this location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:196
+#~ msgid "No valid stock items selected"
+#~ msgstr "No valid stock items selected"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:209
+msgid "No Items"
+msgstr "No Items"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:209
+#~ msgid "None of the selected items are in the source location."
+#~ msgstr "None of the selected items are in the source location."
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:210
+msgid "Enter a quantity to move"
+msgstr "Enter a quantity to move"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:213
+#~ msgid "{0} item(s) are not in the source location and will be skipped."
+#~ msgstr "{0} item(s) are not in the source location and will be skipped."
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:227
+msgid "Stock Moved"
+msgstr "Stock Moved"
+
+#. placeholder {0}: itemsToMove.length
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+msgid "{0} group(s) ({totalQty} units) moved successfully"
+msgstr "{0} group(s) ({totalQty} units) moved successfully"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:228
+#~ msgid "Current Location"
+#~ msgstr "Current Location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:231
+#~ msgid "Will move"
+#~ msgstr "Will move"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:237
+msgid "Move Failed"
+msgstr "Move Failed"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:238
+msgid "Failed to move stock items"
+msgstr "Failed to move stock items"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:261
+#~ msgid "Move {0} item(s)"
+#~ msgstr "Move {0} item(s)"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:270
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:412
+#: src/pages/Index/Scan.tsx:206
+msgid "Move Stock"
+msgstr "Move Stock"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:276
+msgid "Select a scanned part or stock item to move"
+msgstr "Select a scanned part or stock item to move"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:282
+msgid "Loading stock for selected parts..."
+msgstr "Loading stock for selected parts..."
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
+msgid "No stock found for the selected parts"
+msgstr "No stock found for the selected parts"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:295
+#~ msgid "Max {available}"
+#~ msgstr "Max {available}"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:299
+msgid "No stock found in the selected source location."
+msgstr "No stock found in the selected source location."
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:304
+#~ msgid "Skipped"
+#~ msgstr "Skipped"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:310
+#: src/components/render/Stock.tsx:36
+#: src/components/render/Stock.tsx:114
+#: src/components/render/Stock.tsx:132
+#: src/forms/BuildForms.tsx:828
+#: src/forms/PurchaseOrderForms.tsx:707
+#: src/forms/StockForms.tsx:801
+#: src/forms/StockForms.tsx:848
+#: src/forms/StockForms.tsx:901
+#: src/forms/StockForms.tsx:947
+#: src/forms/StockForms.tsx:985
+#: src/forms/StockForms.tsx:1028
+#: src/forms/StockForms.tsx:1096
+#: src/forms/StockForms.tsx:1144
+#: src/forms/StockForms.tsx:1188
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
+#: src/pages/attendance/ClockPage.tsx:187
+#: src/pages/attendance/ClockPage.tsx:243
+#: src/pages/core/UserDetail.tsx:158
+#: src/pages/stock/StockDetail.tsx:299
+#: src/tables/ColumnRenderers.tsx:363
+#: src/tables/ColumnRenderers.tsx:372
+#: src/tables/Filter.tsx:460
+#: src/tables/stock/StockTrackingTable.tsx:130
+msgid "Location"
+msgstr "Location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:313
+#: src/components/items/TransferList.tsx:161
+#: src/components/render/Stock.tsx:102
+#: src/pages/part/PartDetail.tsx:904
+#: src/pages/stock/StockDetail.tsx:266
+#: src/pages/stock/StockDetail.tsx:966
+#: src/tables/ColumnRenderers.tsx:243
+#: src/tables/build/BuildAllocatedStockTable.tsx:125
+#: src/tables/build/BuildLineTable.tsx:198
+#: src/tables/part/PartTable.tsx:183
+#: src/tables/stock/StockItemTable.tsx:203
+msgid "Available"
+msgstr "Available"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:316
+msgid "Qty to Move"
+msgstr "Qty to Move"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:333
+#~ msgid "Move {movableItemCount} item(s) ({movableTotalQty} units)"
+#~ msgstr "Move {movableItemCount} item(s) ({movableTotalQty} units)"
+
+#. placeholder {0}: group.totalQty
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:376
+msgid "Max {0}"
+msgstr "Max {0}"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:385
+msgid "Other location"
+msgstr "Other location"
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:414
+msgid "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
+msgstr "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
@@ -2400,19 +2584,6 @@ msgstr "Save group roles"
 msgid "No items"
 msgstr "No items"
 
-#: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:904
-#: src/pages/stock/StockDetail.tsx:266
-#: src/pages/stock/StockDetail.tsx:966
-#: src/tables/ColumnRenderers.tsx:243
-#: src/tables/build/BuildAllocatedStockTable.tsx:125
-#: src/tables/build/BuildLineTable.tsx:198
-#: src/tables/part/PartTable.tsx:183
-#: src/tables/stock/StockItemTable.tsx:203
-msgid "Available"
-msgstr "Available"
-
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
 msgstr "Selected"
@@ -3216,32 +3387,6 @@ msgstr "Details"
 #: src/tables/part/PartCategoryTemplateTable.tsx:78
 msgid "Category"
 msgstr "Category"
-
-#: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:114
-#: src/components/render/Stock.tsx:132
-#: src/forms/BuildForms.tsx:828
-#: src/forms/PurchaseOrderForms.tsx:707
-#: src/forms/StockForms.tsx:801
-#: src/forms/StockForms.tsx:848
-#: src/forms/StockForms.tsx:901
-#: src/forms/StockForms.tsx:947
-#: src/forms/StockForms.tsx:985
-#: src/forms/StockForms.tsx:1028
-#: src/forms/StockForms.tsx:1096
-#: src/forms/StockForms.tsx:1144
-#: src/forms/StockForms.tsx:1188
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
-#: src/pages/attendance/ClockPage.tsx:187
-#: src/pages/attendance/ClockPage.tsx:243
-#: src/pages/core/UserDetail.tsx:158
-#: src/pages/stock/StockDetail.tsx:299
-#: src/tables/ColumnRenderers.tsx:363
-#: src/tables/ColumnRenderers.tsx:372
-#: src/tables/Filter.tsx:460
-#: src/tables/stock/StockTrackingTable.tsx:130
-msgid "Location"
-msgstr "Location"
 
 #: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:199
@@ -4708,13 +4853,6 @@ msgstr "IPN"
 msgid "Allocated"
 msgstr "Allocated"
 
-#: src/forms/BuildForms.tsx:699
-#: src/forms/SalesOrderForms.tsx:424
-#: src/pages/build/BuildDetail.tsx:127
-#: src/pages/build/BuildDetail.tsx:384
-msgid "Source Location"
-msgstr "Source Location"
-
 #: src/forms/BuildForms.tsx:700
 #: src/forms/SalesOrderForms.tsx:425
 msgid "Select the source location for the stock allocation"
@@ -5090,7 +5228,7 @@ msgid "Return"
 msgstr "Return"
 
 #: src/forms/StockForms.tsx:988
-#: src/pages/Index/Scan.tsx:180
+#: src/pages/Index/Scan.tsx:212
 msgid "Count"
 msgstr "Count"
 
@@ -5866,58 +6004,37 @@ msgstr "An unexpected error has occurred"
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:63
+#: src/pages/Index/Scan.tsx:67
 msgid "Item already scanned"
 msgstr "Item already scanned"
 
-#: src/pages/Index/Scan.tsx:80
+#: src/pages/Index/Scan.tsx:90
 msgid "API Error"
 msgstr "API Error"
 
-#: src/pages/Index/Scan.tsx:81
+#: src/pages/Index/Scan.tsx:91
 msgid "Failed to fetch instance data"
 msgstr "Failed to fetch instance data"
 
-#: src/pages/Index/Scan.tsx:128
+#: src/pages/Index/Scan.tsx:138
 msgid "Scan Error"
 msgstr "Scan Error"
-
-#: src/pages/Index/Scan.tsx:160
-msgid "Selected elements are not known"
-msgstr "Selected elements are not known"
-
-#: src/pages/Index/Scan.tsx:167
-msgid "Multiple object types selected"
-msgstr "Multiple object types selected"
-
-#: src/pages/Index/Scan.tsx:175
-msgid "Actions ... "
-msgstr "Actions ... "
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
 
-#: src/pages/Index/Scan.tsx:192
-#: src/pages/Index/Scan.tsx:196
-msgid "Barcode Scanning"
-msgstr "Barcode Scanning"
+#: src/pages/Index/Scan.tsx:178
+msgid "Selected elements are not known"
+msgstr "Selected elements are not known"
 
-#: src/pages/Index/Scan.tsx:205
-msgid "Barcode Input"
-msgstr "Barcode Input"
+#: src/pages/Index/Scan.tsx:185
+msgid "Multiple object types selected"
+msgstr "Multiple object types selected"
 
-#: src/pages/Index/Scan.tsx:212
-msgid "Action"
-msgstr "Action"
-
-#: src/pages/Index/Scan.tsx:215
-msgid "No Items Selected"
-msgstr "No Items Selected"
-
-#: src/pages/Index/Scan.tsx:216
-msgid "Scan and select items to perform actions"
-msgstr "Scan and select items to perform actions"
+#: src/pages/Index/Scan.tsx:197
+msgid "Actions ... "
+msgstr "Actions ... "
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
@@ -5927,18 +6044,39 @@ msgstr "Scan and select items to perform actions"
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
+#: src/pages/Index/Scan.tsx:238
+#: src/pages/Index/Scan.tsx:242
+msgid "Barcode Scanning"
+msgstr "Barcode Scanning"
+
+#: src/pages/Index/Scan.tsx:251
+msgid "Barcode Input"
+msgstr "Barcode Input"
+
+#: src/pages/Index/Scan.tsx:258
+msgid "Action"
+msgstr "Action"
+
+#: src/pages/Index/Scan.tsx:261
+msgid "No Items Selected"
+msgstr "No Items Selected"
+
+#: src/pages/Index/Scan.tsx:262
+msgid "Scan and select items to perform actions"
+msgstr "Scan and select items to perform actions"
+
 #. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:221
+#: src/pages/Index/Scan.tsx:267
 msgid "{0} items selected"
 msgstr "{0} items selected"
-
-#: src/pages/Index/Scan.tsx:233
-msgid "Scanned Items"
-msgstr "Scanned Items"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
 #~ msgstr "Actions for {0}"
+
+#: src/pages/Index/Scan.tsx:279
+msgid "Scanned Items"
+msgstr "Scanned Items"
 
 #: src/pages/Index/Scan.tsx:298
 #~ msgid "Scan Page"
@@ -7321,10 +7459,6 @@ msgstr "Responsible"
 #: src/pages/build/BuildDetail.tsx:385
 msgid "Any location"
 msgstr "Any location"
-
-#: src/pages/build/BuildDetail.tsx:392
-msgid "Destination Location"
-msgstr "Destination Location"
 
 #: src/pages/build/BuildDetail.tsx:408
 #: src/tables/settings/ApiTokenTable.tsx:98

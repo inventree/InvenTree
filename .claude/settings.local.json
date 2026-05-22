@@ -22,7 +22,8 @@
       "Bash(sed -n '81,84p' src/backend/InvenTree/attendance/serializers.py)",
       "Bash(sed -n '91,95p' src/backend/InvenTree/attendance/serializers.py)",
       "Bash(sed -n '1086,1092p' src/backend/InvenTree/part/models.py)",
-      "Bash(sed -n '1298,1302p' src/backend/InvenTree/part/models.py)"
+      "Bash(sed -n '1298,1302p' src/backend/InvenTree/part/models.py)",
+      "Bash(npx tsc *)"
     ]
   }
 }
