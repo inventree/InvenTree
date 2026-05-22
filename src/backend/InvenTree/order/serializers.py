@@ -1989,6 +1989,86 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
                 allocation.save()
 
 
+class SalesOrderAutoAllocationSerializer(serializers.Serializer):
+    """DRF serializer for auto-allocating stock items against a SalesOrder."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = [
+            'location',
+            'exclude_location',
+            'shipment',
+            'interchangeable',
+            'stock_sort_by',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Source Location'),
+        help_text=_(
+            'Stock location where items are sourced (leave blank to use any location)'
+        ),
+    )
+
+    exclude_location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Exclude Location'),
+        help_text=_('Exclude stock items from this location'),
+    )
+
+    shipment = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrderShipment.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Shipment'),
+        help_text=_('Assign allocations to this shipment'),
+    )
+
+    interchangeable = serializers.BooleanField(
+        default=True,
+        label=_('Interchangeable Stock'),
+        help_text=_(
+            'Allow stock to be taken from multiple locations to fulfil a single line item'
+        ),
+    )
+
+    stock_sort_by = serializers.ChoiceField(
+        default='date_oldest',
+        choices=[
+            ('date_oldest', _('Oldest stock first (FIFO)')),
+            ('date_newest', _('Newest stock first (LIFO)')),
+            ('quantity_asc', _('Smallest quantity first')),
+            ('quantity_desc', _('Largest quantity first')),
+            ('expiry_soonest', _('Soonest expiry date first')),
+        ],
+        label=_('Stock Priority'),
+        help_text=_('Preferred order in which matching stock items are consumed'),
+    )
+
+    def validate_shipment(self, shipment):
+        """Validate that the shipment belongs to this order and is not yet shipped."""
+        order_obj = self.context.get('order')
+
+        if shipment is None:
+            return shipment
+
+        if shipment.shipment_date is not None:
+            raise ValidationError(_('Shipment has already been shipped'))
+
+        if order_obj and shipment.order != order_obj:
+            raise ValidationError(_('Shipment is not associated with this order'))
+
+        return shipment
+
+
 @register_importer()
 class SalesOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer

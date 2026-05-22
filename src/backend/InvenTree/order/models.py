@@ -1430,6 +1430,123 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return true if any lines in the order are over-allocated."""
         return any(line.is_overallocated() for line in self.lines.all())
 
+    def auto_allocate_stock(
+        self,
+        location: Optional[stock.models.StockLocation] = None,
+        exclude_location: Optional[stock.models.StockLocation] = None,
+        shipment: Optional['SalesOrderShipment'] = None,
+        **kwargs,
+    ):
+        """Automatically allocate stock items against this SalesOrder.
+
+        For each unallocated line item, finds available stock for
+        the line's part, filtered and sorted according to the supplied kwargs, then
+        creates SalesOrderAllocation records in bulk.
+
+        Arguments:
+            location: If provided, only consider stock within this location tree.
+            exclude_location: If provided, exclude stock within this location tree.
+            shipment: Optional shipment to assign allocations to.
+
+        Kwargs:
+            interchangeable (bool): If True (default), consume stock from multiple
+                items/locations to satisfy a line. If False, only allocate when a
+                single item can cover the full remaining quantity.
+        """
+        stock_sort_by = kwargs.get('stock_sort_by', 'date_oldest')
+        interchangeable = kwargs.get('interchangeable', True)
+
+        # Map user-facing sort keys to ORM order_by expressions.
+        SORT_MAP = {
+            'quantity_asc': 'quantity',
+            'quantity_desc': '-quantity',
+            'date_oldest': 'updated',
+            'date_newest': '-updated',
+            'expiry_soonest': 'expiry_date',
+        }
+        sort_field = SORT_MAP.get(stock_sort_by, 'updated')
+
+        new_allocations = []
+
+        for line_item in self.lines.all():
+            if not line_item.part:
+                continue
+
+            if line_item.part.virtual:
+                continue
+
+            unallocated = line_item.quantity - line_item.allocated_quantity()
+
+            if unallocated <= 0:
+                continue
+
+            available_stock = stock.models.StockItem.objects.filter(
+                stock.models.StockItem.IN_STOCK_FILTER, part=line_item.part
+            )
+
+            if location:
+                sublocations = location.get_descendants(include_self=True)
+                available_stock = available_stock.filter(
+                    location__in=list(sublocations)
+                )
+
+            if exclude_location:
+                sublocations = exclude_location.get_descendants(include_self=True)
+                available_stock = available_stock.exclude(
+                    location__in=list(sublocations)
+                )
+
+            # Handle NULL expiry_date last when sorting by expiry.
+            if stock_sort_by == 'expiry_soonest':
+                available_stock = available_stock.order_by(
+                    F('expiry_date').asc(nulls_last=True)
+                )
+            else:
+                available_stock = available_stock.order_by(sort_field)
+
+            stock_count = available_stock.count()
+
+            if stock_count == 0:
+                continue
+
+            if not interchangeable and stock_count > 1:
+                # Only allocate when a single item can fully cover the requirement.
+                single = next(
+                    (
+                        s
+                        for s in available_stock
+                        if s.unallocated_quantity() >= unallocated
+                    ),
+                    None,
+                )
+                if single is None:
+                    continue
+                available_stock = [single]
+
+            for stock_item in available_stock:
+                available_qty = stock_item.unallocated_quantity()
+
+                if available_qty <= 0:
+                    continue
+
+                quantity = min(unallocated, available_qty)
+
+                new_allocations.append(
+                    SalesOrderAllocation(
+                        line=line_item,
+                        item=stock_item,
+                        quantity=quantity,
+                        shipment=shipment,
+                    )
+                )
+
+                unallocated -= quantity
+
+                if unallocated <= 0:
+                    break
+
+        SalesOrderAllocation.objects.bulk_create(new_allocations, batch_size=250)
+
     def is_completed(self) -> bool:
         """Check if this order is "shipped" (all line items delivered).
 
