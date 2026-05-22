@@ -30,6 +30,7 @@ import {
   IconStack2,
   IconTestPipe,
   IconTools,
+  IconTransfer,
   IconTruckDelivery,
   IconTruckReturn,
   IconVersions
@@ -101,6 +102,7 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
@@ -770,6 +772,20 @@ export default function PartDetail() {
         icon: <IconTools />,
         hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'transfer_orders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        hidden:
+          part.virtual ||
+          !globalSettings.isSet('TRANSFERORDER_ENABLED') ||
+          !user.hasViewRole(UserRoles.transfer_order),
+        content: part.pk ? (
+          <TransferOrderTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'stocktake',
