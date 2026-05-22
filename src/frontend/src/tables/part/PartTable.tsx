@@ -69,6 +69,34 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
       copyable: true
     },
+    {
+      accessor: 'length',
+      title: t`Length (m)`,
+      sortable: true,
+      defaultVisible: false
+    },
+    {
+      accessor: 'width',
+      title: t`Width (m)`,
+      sortable: true,
+      defaultVisible: false
+    },
+    {
+      accessor: 'height',
+      title: t`Height (m)`,
+      sortable: true,
+      defaultVisible: false
+    },
+    {
+      accessor: 'volume',
+      title: t`Volume (m³)`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        if (record.volume == null) return '—';
+        return Number(record.volume).toExponential(4);
+      }
+    },
     DescriptionColumn({}),
     CategoryColumn({
       accessor: 'category_detail'

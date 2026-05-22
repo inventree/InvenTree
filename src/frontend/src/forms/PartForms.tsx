@@ -49,6 +49,10 @@ export function usePartFields({
       },
       keywords: {},
       units: {},
+      length: {},
+      width: {},
+      height: {},
+      volume: {},
       link: {},
       default_location: {
         filters: {

@@ -1085,6 +1085,14 @@ class Part(
         # Run custom validation for the name field
         self.validate_name()
 
+        # Auto-calculate volume from L x W x H if all dimensions are set
+        if (
+            self.length is not None
+            and self.width is not None
+            and self.height is not None
+        ):
+            self.volume = self.length * self.width * self.height
+
         if self.pk:
             # Only run if the part already exists in the database
             self.ensure_trackable()
@@ -1250,6 +1258,46 @@ class Part(
         verbose_name=_('Units'),
         help_text=_('Units of measure for this part'),
         validators=[validators.validate_physical_units],
+    )
+
+    length = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name=_('Length'),
+        help_text=_('Part length in meters'),
+    )
+
+    width = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name=_('Width'),
+        help_text=_('Part width in meters'),
+    )
+
+    height = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name=_('Height'),
+        help_text=_('Part height in meters'),
+    )
+
+    volume = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name=_('Volume'),
+        help_text=_('Part volume in cubic meters (auto-calculated from L x W x H)'),
     )
 
     assembly = models.BooleanField(
