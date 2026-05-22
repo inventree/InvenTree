@@ -637,6 +637,7 @@ class PartSerializer(
             'external_stock',
             'unallocated_stock',
             'variant_stock',
+            'manufacturer_names',
             # Fields only used for Part creation
             'duplicate',
             'initial_stock',
@@ -645,6 +646,27 @@ class PartSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
+
+    manufacturer_names = serializers.SerializerMethodField(read_only=True)
+
+    def get_manufacturer_names(self, obj):
+        """Return comma-separated list of manufacturer names and MPNs.
+
+        Includes both direct ManufacturerPart links and indirect
+        links through SupplierPart → ManufacturerPart.
+        """
+        names = set()
+
+        for mp in obj.manufacturer_parts.all():
+            if mp.manufacturer:
+                names.add(f'{mp.manufacturer.name} ({mp.MPN})')
+
+        for sp in obj.supplier_parts.all():
+            mp = sp.manufacturer_part
+            if mp and mp.manufacturer:
+                names.add(f'{mp.manufacturer.name} ({mp.MPN})')
+
+        return ', '.join(sorted(names))
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer.
@@ -690,6 +712,12 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
+        # Prefetch manufacturer / supplier parts for the manufacturer_names field
+        queryset = queryset.prefetch_related(
+            'manufacturer_parts__manufacturer',
+            'supplier_parts__manufacturer_part__manufacturer',
+        )
+
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 

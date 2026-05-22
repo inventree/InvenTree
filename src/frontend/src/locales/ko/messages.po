@@ -604,7 +604,7 @@ msgstr "선택 항목"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:639
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:830
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:189
-#: src/pages/attendance/ClockPage.tsx:155
+#: src/pages/attendance/ClockPage.tsx:153
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -1081,7 +1081,7 @@ msgid "Latest parts"
 msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:63
-#: src/tables/part/PartTable.tsx:281
+#: src/tables/part/PartTable.tsx:293
 msgid "Low Stock"
 msgstr "재고 부족"
 
@@ -1090,7 +1090,7 @@ msgid "Show the number of parts which are low on stock"
 msgstr "재고가 부족한 부품 수 표시"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:74
-#: src/tables/part/PartTable.tsx:287
+#: src/tables/part/PartTable.tsx:299
 msgid "High Stock"
 msgstr ""
 
@@ -2414,7 +2414,7 @@ msgstr "항목 없음"
 #: src/tables/build/BuildAllocatedStockTable.tsx:125
 #: src/tables/build/BuildLineTable.tsx:198
 #: src/tables/part/PartTable.tsx:155
-#: src/tables/stock/StockItemTable.tsx:197
+#: src/tables/stock/StockItemTable.tsx:203
 msgid "Available"
 msgstr "사용 가능"
 
@@ -2948,7 +2948,7 @@ msgid "Attachments"
 msgstr "첨부파일"
 
 #: src/components/panels/NotesPanel.tsx:27
-#: src/pages/attendance/ClockPage.tsx:243
+#: src/pages/attendance/ClockPage.tsx:249
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3036,7 +3036,7 @@ msgstr "날짜"
 #: src/tables/machine/MachineListTable.tsx:384
 #: src/tables/machine/MachineListTable.tsx:799
 #: src/tables/part/ParametricPartTable.tsx:19
-#: src/tables/part/PartTable.tsx:215
+#: src/tables/part/PartTable.tsx:227
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
 #: src/tables/plugin/PluginListTable.tsx:420
@@ -3044,7 +3044,7 @@ msgstr "날짜"
 #: src/tables/purchasing/SupplierPartTable.tsx:249
 #: src/tables/settings/ApiTokenTable.tsx:63
 #: src/tables/settings/UserTable.tsx:401
-#: src/tables/stock/StockItemTable.tsx:176
+#: src/tables/stock/StockItemTable.tsx:182
 msgid "Active"
 msgstr "활동적인"
 
@@ -3175,7 +3175,7 @@ msgid "Inactive"
 msgstr "비활성"
 
 #: src/components/render/Part.tsx:31
-#: src/tables/part/PartTable.tsx:305
+#: src/tables/part/PartTable.tsx:317
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "가상"
@@ -3203,7 +3203,7 @@ msgstr "주문시"
 #: src/pages/part/PartDetail.tsx:937
 #: src/pages/stock/StockDetail.tsx:949
 #: src/tables/part/PartTestResultTable.tsx:306
-#: src/tables/stock/StockItemTable.tsx:213
+#: src/tables/stock/StockItemTable.tsx:219
 msgid "In Production"
 msgstr "생산 중"
 
@@ -3237,8 +3237,8 @@ msgstr "카테고리"
 #: src/forms/StockForms.tsx:1144
 #: src/forms/StockForms.tsx:1188
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
-#: src/pages/attendance/ClockPage.tsx:182
-#: src/pages/attendance/ClockPage.tsx:237
+#: src/pages/attendance/ClockPage.tsx:187
+#: src/pages/attendance/ClockPage.tsx:243
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:299
 #: src/tables/ColumnRenderers.tsx:363
@@ -3883,7 +3883,7 @@ msgstr "다음"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:971
-#: src/tables/part/PartTable.tsx:434
+#: src/tables/part/PartTable.tsx:456
 msgid "Edit Part"
 msgstr "부품 편집"
 
@@ -4076,7 +4076,7 @@ msgstr "선택한 부분의 오류를 수정해주세요"
 
 #: src/components/wizards/OrderPartsWizard.tsx:620
 #: src/tables/build/BuildLineTable.tsx:844
-#: src/tables/part/PartTable.tsx:548
+#: src/tables/part/PartTable.tsx:570
 #: src/tables/sales/SalesOrderLineItemTable.tsx:368
 msgid "Order Parts"
 msgstr "자재 발주"
@@ -4631,7 +4631,7 @@ msgstr "완료할 수량"
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:118
-#: src/tables/stock/StockItemTable.tsx:181
+#: src/tables/stock/StockItemTable.tsx:187
 #: src/tables/stock/StockTrackingTable.tsx:82
 msgid "Status"
 msgstr "상태"
@@ -4709,7 +4709,7 @@ msgstr "품목 번호(IPN)"
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
 #: src/tables/sales/SalesOrderLineItemTable.tsx:340
-#: src/tables/stock/StockItemTable.tsx:192
+#: src/tables/stock/StockItemTable.tsx:198
 msgid "Allocated"
 msgstr "할당됨"
 
@@ -4768,7 +4768,7 @@ msgstr "완전히 소비됨"
 
 #: src/forms/BuildForms.tsx:931
 #: src/tables/build/BuildLineTable.tsx:193
-#: src/tables/stock/StockItemTable.tsx:221
+#: src/tables/stock/StockItemTable.tsx:227
 msgid "Consumed"
 msgstr "소비됨"
 
@@ -4788,7 +4788,7 @@ msgstr "이 품목의 프로젝트 코드를 선택하세요."
 #: src/pages/part/CategoryDetail.tsx:127
 #: src/pages/part/PartDetail.tsx:525
 #: src/tables/part/PartCategoryTable.tsx:96
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTable.tsx:357
 msgid "Subscribed"
 msgstr "구독 중"
 
@@ -4940,7 +4940,7 @@ msgstr "입고된 항목의 시리얼 번호를 입력하세요"
 
 #: src/forms/PurchaseOrderForms.tsx:805
 #: src/pages/stock/StockDetail.tsx:383
-#: src/tables/stock/StockItemTable.tsx:148
+#: src/tables/stock/StockItemTable.tsx:154
 msgid "Expiry Date"
 msgstr "만료 날짜"
 
@@ -5069,8 +5069,8 @@ msgstr "재고현황"
 
 #: src/forms/StockForms.tsx:324
 #: src/pages/stock/StockDetail.tsx:708
-#: src/tables/stock/StockItemTable.tsx:406
-#: src/tables/stock/StockItemTable.tsx:455
+#: src/tables/stock/StockItemTable.tsx:412
+#: src/tables/stock/StockItemTable.tsx:461
 msgid "Add Stock Item"
 msgstr "재고 품목 추가"
 
@@ -7116,63 +7116,63 @@ msgstr "읽지 않은 상태로 표시"
 msgid "Clock Action Failed"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:126
+#: src/pages/attendance/ClockPage.tsx:132
 msgid "Attendance"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:149
+#: src/pages/attendance/ClockPage.tsx:147
 msgid "Loading status..."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:156
+#: src/pages/attendance/ClockPage.tsx:154
 msgid "Could not load clock status. Please try again."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:171
+#: src/pages/attendance/ClockPage.tsx:173
 msgid "Clocked In"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:171
+#: src/pages/attendance/ClockPage.tsx:173
 msgid "Clocked Out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:177
+#: src/pages/attendance/ClockPage.tsx:179
 msgid "Clocked in at"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:194
+#: src/pages/attendance/ClockPage.tsx:199
 msgid "Last clock out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:199
+#: src/pages/attendance/ClockPage.tsx:207
 msgid "Session"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:207
+#: src/pages/attendance/ClockPage.tsx:215
 msgid "Welcome! Clock in to get started."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:219
+#: src/pages/attendance/ClockPage.tsx:227
 msgid "Clock Out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:219
+#: src/pages/attendance/ClockPage.tsx:227
 msgid "Clock In"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:229
+#: src/pages/attendance/ClockPage.tsx:236
 msgid "Hide details"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:230
+#: src/pages/attendance/ClockPage.tsx:236
 msgid "Add location / notes"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:238
+#: src/pages/attendance/ClockPage.tsx:244
 msgid "Stand or area"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:244
+#: src/pages/attendance/ClockPage.tsx:250
 msgid "Optional note"
 msgstr ""
 
@@ -7609,7 +7609,10 @@ msgstr "기본 통화"
 #: src/pages/company/SupplierPartDetail.tsx:155
 #: src/tables/Filter.tsx:407
 #: src/tables/company/CompanyTable.tsx:111
+#: src/tables/part/PartTable.tsx:206
+#: src/tables/part/PartTable.tsx:363
 #: src/tables/purchasing/SupplierPartTable.tsx:113
+#: src/tables/stock/StockItemTable.tsx:113
 msgid "Manufacturer"
 msgstr "제조업체"
 
@@ -7975,7 +7978,7 @@ msgstr "키워드"
 #: src/pages/part/PartDetail.tsx:392
 #: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:311
-#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTable.tsx:351
 #: src/tables/sales/SalesOrderLineItemTable.tsx:134
 msgid "Available Stock"
 msgstr "사용 가능한 재고"
@@ -8010,7 +8013,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:477
 #: src/tables/bom/UsedInTable.tsx:95
 #: src/tables/part/ParametricPartTable.tsx:24
-#: src/tables/part/PartTable.tsx:221
+#: src/tables/part/PartTable.tsx:233
 msgid "Locked"
 msgstr "잠김"
 
@@ -8153,8 +8156,8 @@ msgstr "부족분"
 #~ msgstr "Transfer part stock"
 
 #: src/pages/part/PartDetail.tsx:983
-#: src/tables/part/PartTable.tsx:421
-#: src/tables/part/PartTable.tsx:475
+#: src/tables/part/PartTable.tsx:443
+#: src/tables/part/PartTable.tsx:497
 msgid "Add Part"
 msgstr "부품 추가"
 
@@ -8182,7 +8185,7 @@ msgid "Search by serial number"
 msgstr "시리얼 번호로 검색"
 
 #: src/pages/part/PartDetail.tsx:1090
-#: src/tables/part/PartTable.tsx:532
+#: src/tables/part/PartTable.tsx:554
 msgid "Part Actions"
 msgstr "부품 작업"
 
@@ -8280,7 +8283,7 @@ msgstr "재고 수량"
 #: src/pages/part/PartStockHistoryDetail.tsx:129
 #: src/pages/part/PartStockHistoryDetail.tsx:242
 #: src/pages/stock/StockDetail.tsx:403
-#: src/tables/stock/StockItemTable.tsx:125
+#: src/tables/stock/StockItemTable.tsx:131
 msgid "Stock Value"
 msgstr "재고 가치"
 
@@ -8470,7 +8473,7 @@ msgstr "총가격"
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
 #: src/tables/bom/UsedInTable.tsx:64
-#: src/tables/part/PartTable.tsx:245
+#: src/tables/part/PartTable.tsx:257
 msgid "Component"
 msgstr "요소"
 
@@ -8504,7 +8507,7 @@ msgstr "최고 가격"
 #: src/tables/general/ExtraLineItemTable.tsx:66
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
-#: src/tables/stock/StockItemTable.tsx:113
+#: src/tables/stock/StockItemTable.tsx:119
 msgid "Unit Price"
 msgstr "단가"
 
@@ -8588,7 +8591,7 @@ msgstr "구매 가격"
 #: src/pages/stock/StockDetail.tsx:427
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:250
-#: src/tables/stock/StockItemTable.tsx:154
+#: src/tables/stock/StockItemTable.tsx:160
 msgid "Last Updated"
 msgstr "마지막 업데이트"
 
@@ -9289,12 +9292,12 @@ msgstr ""
 #~ msgstr "Assign to a customer"
 
 #: src/pages/stock/StockDetail.tsx:991
-#: src/tables/stock/StockItemTable.tsx:258
+#: src/tables/stock/StockItemTable.tsx:264
 msgid "Stale"
 msgstr "탁한"
 
 #: src/pages/stock/StockDetail.tsx:997
-#: src/tables/stock/StockItemTable.tsx:252
+#: src/tables/stock/StockItemTable.tsx:258
 msgid "Expired"
 msgstr "만료됨"
 
@@ -9576,7 +9579,7 @@ msgid "Show items completed after this date"
 msgstr "이 날짜 이후에 완료된 항목 표시"
 
 #: src/tables/Filter.tsx:292
-#: src/tables/stock/StockItemTable.tsx:284
+#: src/tables/stock/StockItemTable.tsx:290
 msgid "Updated After"
 msgstr "업데이트일 이후"
 
@@ -9585,7 +9588,7 @@ msgid "Show orders updated after this date"
 msgstr "이 날짜 이후에 업데이트된 주문 표시"
 
 #: src/tables/Filter.tsx:301
-#: src/tables/stock/StockItemTable.tsx:278
+#: src/tables/stock/StockItemTable.tsx:284
 msgid "Updated Before"
 msgstr "업데이트일 이전"
 
@@ -9956,7 +9959,7 @@ msgid "Show consumable items"
 msgstr "소모성 아이템 표시"
 
 #: src/tables/bom/BomTable.tsx:497
-#: src/tables/part/PartTable.tsx:333
+#: src/tables/part/PartTable.tsx:345
 msgid "Has Pricing"
 msgstr "가격 있음"
 
@@ -10025,7 +10028,7 @@ msgstr "단일 BOM 항목 추가"
 
 #: src/tables/bom/BomTable.tsx:661
 #: src/tables/general/ParameterTable.tsx:202
-#: src/tables/part/PartTable.tsx:572
+#: src/tables/part/PartTable.tsx:594
 msgid "Import from File"
 msgstr "파일에서 가져오기"
 
@@ -10049,8 +10052,8 @@ msgstr "부품이 잠겨 있으므로 BOM을 편집할 수 없습니다."
 #: src/tables/build/BuildLineTable.tsx:213
 #: src/tables/part/ParametricPartTable.tsx:29
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
-#: src/tables/part/PartTable.tsx:227
-#: src/tables/stock/StockItemTable.tsx:187
+#: src/tables/part/PartTable.tsx:239
+#: src/tables/stock/StockItemTable.tsx:193
 msgid "Assembly"
 msgstr "조립품"
 
@@ -10063,7 +10066,7 @@ msgid "Show active assemblies"
 msgstr "활성 조립품 표시"
 
 #: src/tables/bom/UsedInTable.tsx:110
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:269
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "추적 가능"
@@ -10199,12 +10202,12 @@ msgid "Show optional lines"
 msgstr "선택 항목 표시"
 
 #: src/tables/build/BuildLineTable.tsx:218
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTable.tsx:263
 msgid "Testable"
 msgstr "테스트 가능"
 
 #: src/tables/build/BuildLineTable.tsx:223
-#: src/tables/stock/StockItemTable.tsx:242
+#: src/tables/stock/StockItemTable.tsx:248
 msgid "Tracked"
 msgstr "추적됨"
 
@@ -10409,7 +10412,7 @@ msgstr "생산 결과물 일련번호 지정"
 
 #: src/tables/build/BuildOutputTable.tsx:443
 #: src/tables/part/PartTestResultTable.tsx:319
-#: src/tables/stock/StockItemTable.tsx:182
+#: src/tables/stock/StockItemTable.tsx:188
 msgid "Filter by stock status"
 msgstr "재고 상태로 필터링"
 
@@ -10741,7 +10744,7 @@ msgid "Show templates with choices"
 msgstr "선택 항목이 있는 템플릿 표시"
 
 #: src/tables/general/ParameterTemplateTable.tsx:138
-#: src/tables/part/PartTable.tsx:263
+#: src/tables/part/PartTable.tsx:275
 msgid "Has Units"
 msgstr "단위 있음"
 
@@ -11054,7 +11057,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr "이 카테고리의 알림을 구독 중입니다"
 
 #: src/tables/part/PartCategoryTable.tsx:86
-#: src/tables/part/PartTable.tsx:239
+#: src/tables/part/PartTable.tsx:251
 msgid "Include Subcategories"
 msgstr "하위 카테고리 포함"
 
@@ -11151,184 +11154,188 @@ msgstr "최소 재고"
 msgid "Maximum stock"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:216
+#: src/tables/part/PartTable.tsx:228
 msgid "Filter by part active status"
 msgstr "부품 활성 상태로 필터링"
 
-#: src/tables/part/PartTable.tsx:222
+#: src/tables/part/PartTable.tsx:234
 msgid "Filter by part locked status"
 msgstr "부품 잠금 상태로 필터링"
 
-#: src/tables/part/PartTable.tsx:228
+#: src/tables/part/PartTable.tsx:240
 msgid "Filter by assembly attribute"
 msgstr "조립 속성으로 필터링"
 
-#: src/tables/part/PartTable.tsx:233
+#: src/tables/part/PartTable.tsx:245
 msgid "BOM Valid"
 msgstr "유효한 BOM"
 
-#: src/tables/part/PartTable.tsx:234
+#: src/tables/part/PartTable.tsx:246
 msgid "Filter by parts with a valid BOM"
 msgstr "유효한 BOM이 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:240
+#: src/tables/part/PartTable.tsx:252
 msgid "Include parts in subcategories"
 msgstr "하위 범주에 부품 포함"
 
-#: src/tables/part/PartTable.tsx:246
+#: src/tables/part/PartTable.tsx:258
 msgid "Filter by component attribute"
 msgstr "구성품 속성으로 필터링"
 
-#: src/tables/part/PartTable.tsx:252
+#: src/tables/part/PartTable.tsx:264
 msgid "Filter by testable attribute"
 msgstr "테스트 가능 속성으로 필터링"
 
-#: src/tables/part/PartTable.tsx:258
+#: src/tables/part/PartTable.tsx:270
 msgid "Filter by trackable attribute"
 msgstr "추적 가능 속성으로 필터링"
 
-#: src/tables/part/PartTable.tsx:264
+#: src/tables/part/PartTable.tsx:276
 msgid "Filter by parts which have units"
 msgstr "단위가 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:281
 msgid "Has IPN"
 msgstr "IPN 있음"
 
-#: src/tables/part/PartTable.tsx:270
+#: src/tables/part/PartTable.tsx:282
 msgid "Filter by parts which have an internal part number"
 msgstr "내부 부품 번호가 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:287
 msgid "Has Stock"
 msgstr "재고 있음"
-
-#: src/tables/part/PartTable.tsx:276
-msgid "Filter by parts which have stock"
-msgstr "재고가 있는 부품으로 필터링"
-
-#: src/tables/part/PartTable.tsx:282
-msgid "Filter by parts which have low stock"
-msgstr "재고가 부족한 부품으로 필터링"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
 
 #: src/tables/part/PartTable.tsx:288
+msgid "Filter by parts which have stock"
+msgstr "재고가 있는 부품으로 필터링"
+
+#: src/tables/part/PartTable.tsx:294
+msgid "Filter by parts which have low stock"
+msgstr "재고가 부족한 부품으로 필터링"
+
+#: src/tables/part/PartTable.tsx:300
 msgid "Filter by parts which have high stock"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:293
+#: src/tables/part/PartTable.tsx:305
 msgid "Purchaseable"
 msgstr "구매 가능"
 
-#: src/tables/part/PartTable.tsx:294
+#: src/tables/part/PartTable.tsx:306
 msgid "Filter by parts which are purchaseable"
 msgstr "구매 가능한 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:299
+#: src/tables/part/PartTable.tsx:311
 msgid "Salable"
 msgstr "팔리는"
 
-#: src/tables/part/PartTable.tsx:300
+#: src/tables/part/PartTable.tsx:312
 msgid "Filter by parts which are salable"
 msgstr "판매 가능한 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:306
+#: src/tables/part/PartTable.tsx:318
 msgid "Filter by parts which are virtual"
 msgstr "가상 부품으로 필터링"
-
-#: src/tables/part/PartTable.tsx:311
-msgid "Is Template"
-msgstr "템플릿임"
-
-#: src/tables/part/PartTable.tsx:312
-msgid "Filter by parts which are templates"
-msgstr "템플릿 부품으로 필터링"
-
-#: src/tables/part/PartTable.tsx:317
-msgid "Is Variant"
-msgstr "변형인가"
-
-#: src/tables/part/PartTable.tsx:318
-msgid "Filter by parts which are variants"
-msgstr "변형 부품으로 필터링"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
 #~ msgstr "Has Stocktake"
 
 #: src/tables/part/PartTable.tsx:323
-msgid "Is Revision"
-msgstr "리비전임"
+msgid "Is Template"
+msgstr "템플릿임"
 
 #: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
 #: src/tables/part/PartTable.tsx:324
+msgid "Filter by parts which are templates"
+msgstr "템플릿 부품으로 필터링"
+
+#: src/tables/part/PartTable.tsx:329
+msgid "Is Variant"
+msgstr "변형인가"
+
+#: src/tables/part/PartTable.tsx:330
+msgid "Filter by parts which are variants"
+msgstr "변형 부품으로 필터링"
+
+#: src/tables/part/PartTable.tsx:335
+msgid "Is Revision"
+msgstr "리비전임"
+
+#: src/tables/part/PartTable.tsx:336
 msgid "Filter by parts which are revisions"
 msgstr "리비전 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:328
+#: src/tables/part/PartTable.tsx:340
 msgid "Has Revisions"
 msgstr "리비전 있음"
 
-#: src/tables/part/PartTable.tsx:329
+#: src/tables/part/PartTable.tsx:341
 msgid "Filter by parts which have revisions"
 msgstr "리비전이 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:334
+#: src/tables/part/PartTable.tsx:346
 msgid "Filter by parts which have pricing information"
 msgstr "가격 정보가 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:340
+#: src/tables/part/PartTable.tsx:352
 msgid "Filter by parts which have available stock"
 msgstr "사용 가능한 재고가 있는 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:346
+#: src/tables/part/PartTable.tsx:358
 msgid "Filter by parts to which the user is subscribed"
 msgstr "사용자가 구독한 부품으로 필터링"
 
-#: src/tables/part/PartTable.tsx:401
+#: src/tables/part/PartTable.tsx:364
+msgid "Filter parts by manufacturer"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:423
 msgid "Import Parts"
 msgstr "부품 수입"
 
-#: src/tables/part/PartTable.tsx:490
-#: src/tables/part/PartTable.tsx:538
+#: src/tables/part/PartTable.tsx:512
+#: src/tables/part/PartTable.tsx:560
 msgid "Set Category"
 msgstr "카테고리 설정"
 
-#: src/tables/part/PartTable.tsx:540
+#: src/tables/part/PartTable.tsx:562
 msgid "Set category for selected parts"
 msgstr "선택한 부품에 대한 카테고리 설정"
 
-#: src/tables/part/PartTable.tsx:550
+#: src/tables/part/PartTable.tsx:572
 msgid "Order selected parts"
 msgstr "선택한 부품 주문"
 
-#: src/tables/part/PartTable.tsx:560
+#: src/tables/part/PartTable.tsx:582
 msgid "Add Parts"
 msgstr "부품 추가"
 
-#: src/tables/part/PartTable.tsx:566
+#: src/tables/part/PartTable.tsx:588
 msgid "Create Part"
 msgstr "부품 생성"
 
-#: src/tables/part/PartTable.tsx:568
+#: src/tables/part/PartTable.tsx:590
 msgid "Create a new part"
 msgstr "새 부품 생성"
 
-#: src/tables/part/PartTable.tsx:574
+#: src/tables/part/PartTable.tsx:596
 msgid "Import parts from a file"
 msgstr "파일에서 부품 가져오기"
 
-#: src/tables/part/PartTable.tsx:579
+#: src/tables/part/PartTable.tsx:601
 msgid "Import from Supplier"
 msgstr "공급업체로부터 수입"
 
-#: src/tables/part/PartTable.tsx:581
+#: src/tables/part/PartTable.tsx:603
 msgid "Import parts from a supplier plugin"
 msgstr "공급업체 플러그인에서 부품 가져오기"
 
@@ -11726,7 +11733,7 @@ msgid "Sample"
 msgstr "견본"
 
 #: src/tables/plugin/PluginListTable.tsx:440
-#: src/tables/stock/StockItemTable.tsx:226
+#: src/tables/stock/StockItemTable.tsx:232
 msgid "Installed"
 msgstr "설치됨"
 
@@ -12640,132 +12647,132 @@ msgstr "위치 유형 삭제"
 msgid "Icon"
 msgstr "상"
 
-#: src/tables/stock/StockItemTable.tsx:159
+#: src/tables/stock/StockItemTable.tsx:165
 msgid "Stocktake Date"
 msgstr "재고 실사일"
 
-#: src/tables/stock/StockItemTable.tsx:177
+#: src/tables/stock/StockItemTable.tsx:183
 msgid "Show stock for active parts"
 msgstr "활성 부품의 재고 표시"
 
-#: src/tables/stock/StockItemTable.tsx:188
+#: src/tables/stock/StockItemTable.tsx:194
 msgid "Show stock for assembled parts"
 msgstr "조립 부품의 재고 표시"
 
-#: src/tables/stock/StockItemTable.tsx:193
+#: src/tables/stock/StockItemTable.tsx:199
 msgid "Show items which have been allocated"
 msgstr "할당된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:198
+#: src/tables/stock/StockItemTable.tsx:204
 msgid "Show items which are available"
 msgstr "사용 가능한 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:202
+#: src/tables/stock/StockItemTable.tsx:208
 #: src/tables/stock/StockLocationTable.tsx:38
 msgid "Include Sublocations"
 msgstr "하위 위치 포함"
 
-#: src/tables/stock/StockItemTable.tsx:203
+#: src/tables/stock/StockItemTable.tsx:209
 msgid "Include stock in sublocations"
 msgstr "하위 위치에 재고 포함"
 
-#: src/tables/stock/StockItemTable.tsx:207
+#: src/tables/stock/StockItemTable.tsx:213
 msgid "Depleted"
 msgstr "고갈됨"
 
-#: src/tables/stock/StockItemTable.tsx:208
+#: src/tables/stock/StockItemTable.tsx:214
 msgid "Show depleted stock items"
 msgstr "소진된 재고 품목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:214
+#: src/tables/stock/StockItemTable.tsx:220
 msgid "Show items which are in production"
 msgstr "생산중인 아이템을 보여주세요"
 
-#: src/tables/stock/StockItemTable.tsx:222
+#: src/tables/stock/StockItemTable.tsx:228
 msgid "Show items which have been consumed by a build order"
 msgstr "생산 주문에서 사용된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:227
+#: src/tables/stock/StockItemTable.tsx:233
 msgid "Show stock items which are installed in other items"
 msgstr "다른 항목에 설치된 재고 품목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:231
+#: src/tables/stock/StockItemTable.tsx:237
 msgid "Sent to Customer"
 msgstr "고객에게 발송됨"
 
-#: src/tables/stock/StockItemTable.tsx:232
+#: src/tables/stock/StockItemTable.tsx:238
 msgid "Show items which have been sent to a customer"
 msgstr "고객에게 발송된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:243
+#: src/tables/stock/StockItemTable.tsx:249
 msgid "Show tracked items"
 msgstr "추적된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:247
+#: src/tables/stock/StockItemTable.tsx:253
 msgid "Has Purchase Price"
 msgstr "구매 가격 있음"
 
-#: src/tables/stock/StockItemTable.tsx:248
+#: src/tables/stock/StockItemTable.tsx:254
 msgid "Show items which have a purchase price"
 msgstr "구매 가격이 있는 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:253
+#: src/tables/stock/StockItemTable.tsx:259
 msgid "Show items which have expired"
 msgstr "만료된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:259
+#: src/tables/stock/StockItemTable.tsx:265
 msgid "Show items which are stale"
 msgstr "오래된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:264
+#: src/tables/stock/StockItemTable.tsx:270
 msgid "Expired Before"
 msgstr "만료일 이전"
 
-#: src/tables/stock/StockItemTable.tsx:265
+#: src/tables/stock/StockItemTable.tsx:271
 msgid "Show items which expired before this date"
 msgstr "이 날짜 이전에 만료된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:271
+#: src/tables/stock/StockItemTable.tsx:277
 msgid "Expired After"
 msgstr "만료일 이후"
 
-#: src/tables/stock/StockItemTable.tsx:272
+#: src/tables/stock/StockItemTable.tsx:278
 msgid "Show items which expired after this date"
 msgstr "이 날짜 이후에 만료된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:279
+#: src/tables/stock/StockItemTable.tsx:285
 msgid "Show items updated before this date"
 msgstr "이 날짜 이전에 업데이트된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:285
+#: src/tables/stock/StockItemTable.tsx:291
 msgid "Show items updated after this date"
 msgstr "이 날짜 이후에 업데이트된 항목 표시"
 
-#: src/tables/stock/StockItemTable.tsx:290
+#: src/tables/stock/StockItemTable.tsx:296
 msgid "Stocktake Before"
 msgstr "재고 실사일 이전"
 
-#: src/tables/stock/StockItemTable.tsx:291
+#: src/tables/stock/StockItemTable.tsx:297
 msgid "Show items counted before this date"
 msgstr "이 날짜 이전에 실사된 항목 표시"
-
-#: src/tables/stock/StockItemTable.tsx:296
-msgid "Stocktake After"
-msgstr "재고 실사일 이후"
-
-#: src/tables/stock/StockItemTable.tsx:297
-msgid "Show items counted after this date"
-msgstr "이 날짜 이후에 실사된 항목 표시"
 
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
 #: src/tables/stock/StockItemTable.tsx:302
+msgid "Stocktake After"
+msgstr "재고 실사일 이후"
+
+#: src/tables/stock/StockItemTable.tsx:303
+msgid "Show items counted after this date"
+msgstr "이 날짜 이후에 실사된 항목 표시"
+
+#: src/tables/stock/StockItemTable.tsx:308
 msgid "External Location"
 msgstr "외부 위치"
 
-#: src/tables/stock/StockItemTable.tsx:303
+#: src/tables/stock/StockItemTable.tsx:309
 msgid "Show items in an external location"
 msgstr "외부 위치에 항목 표시"
 
@@ -12781,11 +12788,11 @@ msgstr "외부 위치에 항목 표시"
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
-#: src/tables/stock/StockItemTable.tsx:420
+#: src/tables/stock/StockItemTable.tsx:426
 msgid "Stock item created"
 msgstr "재고 품목이 생성되었습니다"
 
-#: src/tables/stock/StockItemTable.tsx:442
+#: src/tables/stock/StockItemTable.tsx:448
 msgid "Order items"
 msgstr "주문 항목"
 

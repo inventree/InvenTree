@@ -201,6 +201,18 @@ function partTableColumns(): TableColumn[] {
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
+    {
+      accessor: 'manufacturer_names',
+      title: t`Manufacturer`,
+      sortable: false,
+      defaultVisible: true,
+      render: (record: any) => {
+        if (!record.manufacturer_names) {
+          return '—';
+        }
+        return record.manufacturer_names;
+      }
+    },
     LinkColumn({})
   ];
 }
@@ -345,6 +357,16 @@ function partTableFilters(): TableFilter[] {
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
       type: 'boolean'
+    },
+    {
+      name: 'manufacturer',
+      label: t`Manufacturer`,
+      description: t`Filter parts by manufacturer`,
+      type: 'api',
+      apiUrl: apiUrl(ApiEndpoints.company_list),
+      apiFilter: { is_manufacturer: true },
+      model: ModelType.company,
+      modelRenderer: (instance: any) => instance?.name || String(instance)
     }
   ];
 }

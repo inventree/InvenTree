@@ -13,6 +13,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 import common.serializers
+import company.models
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
@@ -906,6 +907,20 @@ class PartFilter(FilterSet):
     locked = rest_filters.BooleanFilter()
 
     virtual = rest_filters.BooleanFilter()
+
+    manufacturer = rest_filters.ModelChoiceFilter(
+        queryset=company.models.Company.objects.filter(is_manufacturer=True),
+        method='filter_manufacturer',
+        label=_('Manufacturer'),
+        help_text=_('Filter parts by manufacturer (direct or via supplier)'),
+    )
+
+    def filter_manufacturer(self, queryset, name, value):
+        """Filter parts linked to a manufacturer directly or through a supplier part."""
+        return queryset.filter(
+            Q(manufacturer_parts__manufacturer=value)
+            | Q(supplier_parts__manufacturer_part__manufacturer=value)
+        ).distinct()
 
     tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
 

@@ -604,7 +604,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:639
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:830
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:189
-#: src/pages/attendance/ClockPage.tsx:155
+#: src/pages/attendance/ClockPage.tsx:153
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -1081,7 +1081,7 @@ msgid "Latest parts"
 msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:63
-#: src/tables/part/PartTable.tsx:281
+#: src/tables/part/PartTable.tsx:293
 msgid "Low Stock"
 msgstr "Lage voorraad"
 
@@ -1090,7 +1090,7 @@ msgid "Show the number of parts which are low on stock"
 msgstr "Toon het aantal onderdelen die lage voorraad hebben"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:74
-#: src/tables/part/PartTable.tsx:287
+#: src/tables/part/PartTable.tsx:299
 msgid "High Stock"
 msgstr ""
 
@@ -2414,7 +2414,7 @@ msgstr "Geen artikelen"
 #: src/tables/build/BuildAllocatedStockTable.tsx:125
 #: src/tables/build/BuildLineTable.tsx:198
 #: src/tables/part/PartTable.tsx:155
-#: src/tables/stock/StockItemTable.tsx:197
+#: src/tables/stock/StockItemTable.tsx:203
 msgid "Available"
 msgstr "Beschikbaar"
 
@@ -2948,7 +2948,7 @@ msgid "Attachments"
 msgstr "Bijlagen"
 
 #: src/components/panels/NotesPanel.tsx:27
-#: src/pages/attendance/ClockPage.tsx:243
+#: src/pages/attendance/ClockPage.tsx:249
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Notes"
@@ -3036,7 +3036,7 @@ msgstr "Datum"
 #: src/tables/machine/MachineListTable.tsx:384
 #: src/tables/machine/MachineListTable.tsx:799
 #: src/tables/part/ParametricPartTable.tsx:19
-#: src/tables/part/PartTable.tsx:215
+#: src/tables/part/PartTable.tsx:227
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
 #: src/tables/plugin/PluginListTable.tsx:420
@@ -3044,7 +3044,7 @@ msgstr "Datum"
 #: src/tables/purchasing/SupplierPartTable.tsx:249
 #: src/tables/settings/ApiTokenTable.tsx:63
 #: src/tables/settings/UserTable.tsx:401
-#: src/tables/stock/StockItemTable.tsx:176
+#: src/tables/stock/StockItemTable.tsx:182
 msgid "Active"
 msgstr "Actief"
 
@@ -3175,7 +3175,7 @@ msgid "Inactive"
 msgstr "Inactief"
 
 #: src/components/render/Part.tsx:31
-#: src/tables/part/PartTable.tsx:305
+#: src/tables/part/PartTable.tsx:317
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtueel"
@@ -3203,7 +3203,7 @@ msgstr "In bestelling"
 #: src/pages/part/PartDetail.tsx:937
 #: src/pages/stock/StockDetail.tsx:949
 #: src/tables/part/PartTestResultTable.tsx:306
-#: src/tables/stock/StockItemTable.tsx:213
+#: src/tables/stock/StockItemTable.tsx:219
 msgid "In Production"
 msgstr "In productie"
 
@@ -3237,8 +3237,8 @@ msgstr "Categorie"
 #: src/forms/StockForms.tsx:1144
 #: src/forms/StockForms.tsx:1188
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
-#: src/pages/attendance/ClockPage.tsx:182
-#: src/pages/attendance/ClockPage.tsx:237
+#: src/pages/attendance/ClockPage.tsx:187
+#: src/pages/attendance/ClockPage.tsx:243
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:299
 #: src/tables/ColumnRenderers.tsx:363
@@ -3883,7 +3883,7 @@ msgstr "Volgende"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:971
-#: src/tables/part/PartTable.tsx:434
+#: src/tables/part/PartTable.tsx:456
 msgid "Edit Part"
 msgstr "Onderdeel bewerken"
 
@@ -4076,7 +4076,7 @@ msgstr "Corrigeer de fouten in de geselecteerde onderdelen"
 
 #: src/components/wizards/OrderPartsWizard.tsx:620
 #: src/tables/build/BuildLineTable.tsx:844
-#: src/tables/part/PartTable.tsx:548
+#: src/tables/part/PartTable.tsx:570
 #: src/tables/sales/SalesOrderLineItemTable.tsx:368
 msgid "Order Parts"
 msgstr "Onderdelen bestellen"
@@ -4631,7 +4631,7 @@ msgstr "Te voltooien hoeveelheid"
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:118
-#: src/tables/stock/StockItemTable.tsx:181
+#: src/tables/stock/StockItemTable.tsx:187
 #: src/tables/stock/StockTrackingTable.tsx:82
 msgid "Status"
 msgstr "Status"
@@ -4709,7 +4709,7 @@ msgstr "IPN"
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
 #: src/tables/sales/SalesOrderLineItemTable.tsx:340
-#: src/tables/stock/StockItemTable.tsx:192
+#: src/tables/stock/StockItemTable.tsx:198
 msgid "Allocated"
 msgstr "Toegewezen"
 
@@ -4768,7 +4768,7 @@ msgstr "Volledig verbruikt"
 
 #: src/forms/BuildForms.tsx:931
 #: src/tables/build/BuildLineTable.tsx:193
-#: src/tables/stock/StockItemTable.tsx:221
+#: src/tables/stock/StockItemTable.tsx:227
 msgid "Consumed"
 msgstr "Verbruikt"
 
@@ -4788,7 +4788,7 @@ msgstr "Selecteer projectcode voor deze bestelling"
 #: src/pages/part/CategoryDetail.tsx:127
 #: src/pages/part/PartDetail.tsx:525
 #: src/tables/part/PartCategoryTable.tsx:96
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTable.tsx:357
 msgid "Subscribed"
 msgstr "Geabonneerd"
 
@@ -4940,7 +4940,7 @@ msgstr "Voer serienummers in voor ontvangen items"
 
 #: src/forms/PurchaseOrderForms.tsx:805
 #: src/pages/stock/StockDetail.tsx:383
-#: src/tables/stock/StockItemTable.tsx:148
+#: src/tables/stock/StockItemTable.tsx:154
 msgid "Expiry Date"
 msgstr "Vervaldatum"
 
@@ -5069,8 +5069,8 @@ msgstr "Voorraad status"
 
 #: src/forms/StockForms.tsx:324
 #: src/pages/stock/StockDetail.tsx:708
-#: src/tables/stock/StockItemTable.tsx:406
-#: src/tables/stock/StockItemTable.tsx:455
+#: src/tables/stock/StockItemTable.tsx:412
+#: src/tables/stock/StockItemTable.tsx:461
 msgid "Add Stock Item"
 msgstr "Voorraad item toevoegen"
 
@@ -7116,63 +7116,63 @@ msgstr "Markeren als ongelezen"
 msgid "Clock Action Failed"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:126
+#: src/pages/attendance/ClockPage.tsx:132
 msgid "Attendance"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:149
+#: src/pages/attendance/ClockPage.tsx:147
 msgid "Loading status..."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:156
+#: src/pages/attendance/ClockPage.tsx:154
 msgid "Could not load clock status. Please try again."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:171
+#: src/pages/attendance/ClockPage.tsx:173
 msgid "Clocked In"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:171
+#: src/pages/attendance/ClockPage.tsx:173
 msgid "Clocked Out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:177
+#: src/pages/attendance/ClockPage.tsx:179
 msgid "Clocked in at"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:194
+#: src/pages/attendance/ClockPage.tsx:199
 msgid "Last clock out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:199
+#: src/pages/attendance/ClockPage.tsx:207
 msgid "Session"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:207
+#: src/pages/attendance/ClockPage.tsx:215
 msgid "Welcome! Clock in to get started."
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:219
+#: src/pages/attendance/ClockPage.tsx:227
 msgid "Clock Out"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:219
+#: src/pages/attendance/ClockPage.tsx:227
 msgid "Clock In"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:229
+#: src/pages/attendance/ClockPage.tsx:236
 msgid "Hide details"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:230
+#: src/pages/attendance/ClockPage.tsx:236
 msgid "Add location / notes"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:238
+#: src/pages/attendance/ClockPage.tsx:244
 msgid "Stand or area"
 msgstr ""
 
-#: src/pages/attendance/ClockPage.tsx:244
+#: src/pages/attendance/ClockPage.tsx:250
 msgid "Optional note"
 msgstr ""
 
@@ -7609,7 +7609,10 @@ msgstr "Standaard valuta"
 #: src/pages/company/SupplierPartDetail.tsx:155
 #: src/tables/Filter.tsx:407
 #: src/tables/company/CompanyTable.tsx:111
+#: src/tables/part/PartTable.tsx:206
+#: src/tables/part/PartTable.tsx:363
 #: src/tables/purchasing/SupplierPartTable.tsx:113
+#: src/tables/stock/StockItemTable.tsx:113
 msgid "Manufacturer"
 msgstr "Fabrikant"
 
@@ -7975,7 +7978,7 @@ msgstr "Trefwoorden"
 #: src/pages/part/PartDetail.tsx:392
 #: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:311
-#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTable.tsx:351
 #: src/tables/sales/SalesOrderLineItemTable.tsx:134
 msgid "Available Stock"
 msgstr "Beschikbare voorraad"
@@ -8010,7 +8013,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:477
 #: src/tables/bom/UsedInTable.tsx:95
 #: src/tables/part/ParametricPartTable.tsx:24
-#: src/tables/part/PartTable.tsx:221
+#: src/tables/part/PartTable.tsx:233
 msgid "Locked"
 msgstr "Vergrendeld"
 
@@ -8153,8 +8156,8 @@ msgstr "Tekort"
 #~ msgstr "Transfer part stock"
 
 #: src/pages/part/PartDetail.tsx:983
-#: src/tables/part/PartTable.tsx:421
-#: src/tables/part/PartTable.tsx:475
+#: src/tables/part/PartTable.tsx:443
+#: src/tables/part/PartTable.tsx:497
 msgid "Add Part"
 msgstr "Onderdeel toevoegen"
 
@@ -8182,7 +8185,7 @@ msgid "Search by serial number"
 msgstr "Zoek op serienummer"
 
 #: src/pages/part/PartDetail.tsx:1090
-#: src/tables/part/PartTable.tsx:532
+#: src/tables/part/PartTable.tsx:554
 msgid "Part Actions"
 msgstr "Acties van onderdeel"
 
@@ -8280,7 +8283,7 @@ msgstr ""
 #: src/pages/part/PartStockHistoryDetail.tsx:129
 #: src/pages/part/PartStockHistoryDetail.tsx:242
 #: src/pages/stock/StockDetail.tsx:403
-#: src/tables/stock/StockItemTable.tsx:125
+#: src/tables/stock/StockItemTable.tsx:131
 msgid "Stock Value"
 msgstr "Voorraad waarde"
 
@@ -8470,7 +8473,7 @@ msgstr "Totale prijs"
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
 #: src/tables/bom/UsedInTable.tsx:64
-#: src/tables/part/PartTable.tsx:245
+#: src/tables/part/PartTable.tsx:257
 msgid "Component"
 msgstr "Onderdeel"
 
@@ -8504,7 +8507,7 @@ msgstr "Maximale prijs"
 #: src/tables/general/ExtraLineItemTable.tsx:66
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
-#: src/tables/stock/StockItemTable.tsx:113
+#: src/tables/stock/StockItemTable.tsx:119
 msgid "Unit Price"
 msgstr "Prijs per stuk"
 
@@ -8588,7 +8591,7 @@ msgstr "Inkoopprijs"
 #: src/pages/stock/StockDetail.tsx:427
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:250
-#: src/tables/stock/StockItemTable.tsx:154
+#: src/tables/stock/StockItemTable.tsx:160
 msgid "Last Updated"
 msgstr "Laatst bijgewerkt"
 
@@ -9289,12 +9292,12 @@ msgstr ""
 #~ msgstr "Assign to a customer"
 
 #: src/pages/stock/StockDetail.tsx:991
-#: src/tables/stock/StockItemTable.tsx:258
+#: src/tables/stock/StockItemTable.tsx:264
 msgid "Stale"
 msgstr "Verouderd"
 
 #: src/pages/stock/StockDetail.tsx:997
-#: src/tables/stock/StockItemTable.tsx:252
+#: src/tables/stock/StockItemTable.tsx:258
 msgid "Expired"
 msgstr "Verlopen"
 
@@ -9576,7 +9579,7 @@ msgid "Show items completed after this date"
 msgstr "Toon items voltooid na deze datum"
 
 #: src/tables/Filter.tsx:292
-#: src/tables/stock/StockItemTable.tsx:284
+#: src/tables/stock/StockItemTable.tsx:290
 msgid "Updated After"
 msgstr "Bijgewerkt na"
 
@@ -9585,7 +9588,7 @@ msgid "Show orders updated after this date"
 msgstr ""
 
 #: src/tables/Filter.tsx:301
-#: src/tables/stock/StockItemTable.tsx:278
+#: src/tables/stock/StockItemTable.tsx:284
 msgid "Updated Before"
 msgstr "Bijgewerkt voor"
 
@@ -9956,7 +9959,7 @@ msgid "Show consumable items"
 msgstr "Toon verbruikte items"
 
 #: src/tables/bom/BomTable.tsx:497
-#: src/tables/part/PartTable.tsx:333
+#: src/tables/part/PartTable.tsx:345
 msgid "Has Pricing"
 msgstr "Heeft prijzen"
 
@@ -10025,7 +10028,7 @@ msgstr "Voeg een enkel BOM artikel toe"
 
 #: src/tables/bom/BomTable.tsx:661
 #: src/tables/general/ParameterTable.tsx:202
-#: src/tables/part/PartTable.tsx:572
+#: src/tables/part/PartTable.tsx:594
 msgid "Import from File"
 msgstr "Importeren uit bestand"
 
@@ -10049,8 +10052,8 @@ msgstr "Factuur van materialen kan niet worden bewerkt, omdat het onderdeel is v
 #: src/tables/build/BuildLineTable.tsx:213
 #: src/tables/part/ParametricPartTable.tsx:29
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
-#: src/tables/part/PartTable.tsx:227
-#: src/tables/stock/StockItemTable.tsx:187
+#: src/tables/part/PartTable.tsx:239
+#: src/tables/stock/StockItemTable.tsx:193
 msgid "Assembly"
 msgstr "Assemblage"
 
@@ -10063,7 +10066,7 @@ msgid "Show active assemblies"
 msgstr "Toon actieve assemblage orders"
 
 #: src/tables/bom/UsedInTable.tsx:110
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:269
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Volgbaar"
@@ -10199,12 +10202,12 @@ msgid "Show optional lines"
 msgstr "Toon optionele regels"
 
 #: src/tables/build/BuildLineTable.tsx:218
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTable.tsx:263
 msgid "Testable"
 msgstr "Testbaar"
 
 #: src/tables/build/BuildLineTable.tsx:223
-#: src/tables/stock/StockItemTable.tsx:242
+#: src/tables/stock/StockItemTable.tsx:248
 msgid "Tracked"
 msgstr "Gevolgd"
 
@@ -10409,7 +10412,7 @@ msgstr "Serialiseren Build uitvoer"
 
 #: src/tables/build/BuildOutputTable.tsx:443
 #: src/tables/part/PartTestResultTable.tsx:319
-#: src/tables/stock/StockItemTable.tsx:182
+#: src/tables/stock/StockItemTable.tsx:188
 msgid "Filter by stock status"
 msgstr "Filter op voorraad status"
 
@@ -10741,7 +10744,7 @@ msgid "Show templates with choices"
 msgstr "Toon sjablonen met keuzes"
 
 #: src/tables/general/ParameterTemplateTable.tsx:138
-#: src/tables/part/PartTable.tsx:263
+#: src/tables/part/PartTable.tsx:275
 msgid "Has Units"
 msgstr "Heeft eenheden"
 
@@ -11054,7 +11057,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr "Abonneer je op meldingen voor deze categorie"
 
 #: src/tables/part/PartCategoryTable.tsx:86
-#: src/tables/part/PartTable.tsx:239
+#: src/tables/part/PartTable.tsx:251
 msgid "Include Subcategories"
 msgstr "Inclusief subcategorieën"
 
@@ -11151,184 +11154,188 @@ msgstr "Minimale voorraad"
 msgid "Maximum stock"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:216
+#: src/tables/part/PartTable.tsx:228
 msgid "Filter by part active status"
 msgstr "Filter op actieve status van onderdeel"
 
-#: src/tables/part/PartTable.tsx:222
+#: src/tables/part/PartTable.tsx:234
 msgid "Filter by part locked status"
 msgstr "Filter op vergrendelde status van onderdeel"
 
-#: src/tables/part/PartTable.tsx:228
+#: src/tables/part/PartTable.tsx:240
 msgid "Filter by assembly attribute"
 msgstr "Filteren op samenvoegen attribuut"
 
-#: src/tables/part/PartTable.tsx:233
+#: src/tables/part/PartTable.tsx:245
 msgid "BOM Valid"
 msgstr "BOM Valid"
 
-#: src/tables/part/PartTable.tsx:234
+#: src/tables/part/PartTable.tsx:246
 msgid "Filter by parts with a valid BOM"
 msgstr "Filter op onderdelen met een geldige BOM"
 
-#: src/tables/part/PartTable.tsx:240
+#: src/tables/part/PartTable.tsx:252
 msgid "Include parts in subcategories"
 msgstr "Inclusief onderdelen in subcategorieën"
 
-#: src/tables/part/PartTable.tsx:246
+#: src/tables/part/PartTable.tsx:258
 msgid "Filter by component attribute"
 msgstr "Filter op component kenmerk"
 
-#: src/tables/part/PartTable.tsx:252
+#: src/tables/part/PartTable.tsx:264
 msgid "Filter by testable attribute"
 msgstr "Filter op testbare eigenschap"
 
-#: src/tables/part/PartTable.tsx:258
+#: src/tables/part/PartTable.tsx:270
 msgid "Filter by trackable attribute"
 msgstr "Filteren op traceerbare kenmerk"
 
-#: src/tables/part/PartTable.tsx:264
+#: src/tables/part/PartTable.tsx:276
 msgid "Filter by parts which have units"
 msgstr "Filter op onderdelen die eenheden bevatten"
 
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:281
 msgid "Has IPN"
 msgstr "Heeft IPN"
 
-#: src/tables/part/PartTable.tsx:270
+#: src/tables/part/PartTable.tsx:282
 msgid "Filter by parts which have an internal part number"
 msgstr "Filter op onderdelen met een intern deelnummer"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:287
 msgid "Has Stock"
 msgstr "Heeft voorraad"
-
-#: src/tables/part/PartTable.tsx:276
-msgid "Filter by parts which have stock"
-msgstr "Filter op onderdelen die voorraad hebben"
-
-#: src/tables/part/PartTable.tsx:282
-msgid "Filter by parts which have low stock"
-msgstr "Filter op onderdelen met een lage voorraad"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
 
 #: src/tables/part/PartTable.tsx:288
+msgid "Filter by parts which have stock"
+msgstr "Filter op onderdelen die voorraad hebben"
+
+#: src/tables/part/PartTable.tsx:294
+msgid "Filter by parts which have low stock"
+msgstr "Filter op onderdelen met een lage voorraad"
+
+#: src/tables/part/PartTable.tsx:300
 msgid "Filter by parts which have high stock"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:293
+#: src/tables/part/PartTable.tsx:305
 msgid "Purchaseable"
 msgstr "Aankoopbaar"
 
-#: src/tables/part/PartTable.tsx:294
+#: src/tables/part/PartTable.tsx:306
 msgid "Filter by parts which are purchaseable"
 msgstr "Filteren op onderdelen die aankoopbaar zijn"
 
-#: src/tables/part/PartTable.tsx:299
+#: src/tables/part/PartTable.tsx:311
 msgid "Salable"
 msgstr "Verkoopbaar"
 
-#: src/tables/part/PartTable.tsx:300
+#: src/tables/part/PartTable.tsx:312
 msgid "Filter by parts which are salable"
 msgstr "Filter op delen die verkoopbaar zijn"
 
-#: src/tables/part/PartTable.tsx:306
+#: src/tables/part/PartTable.tsx:318
 msgid "Filter by parts which are virtual"
 msgstr "Filter op virtuele onderdelen"
-
-#: src/tables/part/PartTable.tsx:311
-msgid "Is Template"
-msgstr "Is een sjabloon"
-
-#: src/tables/part/PartTable.tsx:312
-msgid "Filter by parts which are templates"
-msgstr "Filter op onderdelen die sjablonen zijn"
-
-#: src/tables/part/PartTable.tsx:317
-msgid "Is Variant"
-msgstr "Is een variant"
-
-#: src/tables/part/PartTable.tsx:318
-msgid "Filter by parts which are variants"
-msgstr "Filter op onderdelen die sjablonen zijn"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
 #~ msgstr "Has Stocktake"
 
 #: src/tables/part/PartTable.tsx:323
-msgid "Is Revision"
-msgstr "Is revisie"
+msgid "Is Template"
+msgstr "Is een sjabloon"
 
 #: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
 #: src/tables/part/PartTable.tsx:324
+msgid "Filter by parts which are templates"
+msgstr "Filter op onderdelen die sjablonen zijn"
+
+#: src/tables/part/PartTable.tsx:329
+msgid "Is Variant"
+msgstr "Is een variant"
+
+#: src/tables/part/PartTable.tsx:330
+msgid "Filter by parts which are variants"
+msgstr "Filter op onderdelen die sjablonen zijn"
+
+#: src/tables/part/PartTable.tsx:335
+msgid "Is Revision"
+msgstr "Is revisie"
+
+#: src/tables/part/PartTable.tsx:336
 msgid "Filter by parts which are revisions"
 msgstr "Filter op onderdelen die revisies zijn"
 
-#: src/tables/part/PartTable.tsx:328
+#: src/tables/part/PartTable.tsx:340
 msgid "Has Revisions"
 msgstr "Heeft revisies"
 
-#: src/tables/part/PartTable.tsx:329
+#: src/tables/part/PartTable.tsx:341
 msgid "Filter by parts which have revisions"
 msgstr "Filter op onderdelen die revisies hebben"
 
-#: src/tables/part/PartTable.tsx:334
+#: src/tables/part/PartTable.tsx:346
 msgid "Filter by parts which have pricing information"
 msgstr "Filter op onderdelen met prijsinformatie"
 
-#: src/tables/part/PartTable.tsx:340
+#: src/tables/part/PartTable.tsx:352
 msgid "Filter by parts which have available stock"
 msgstr "Filter op onderdelen die beschikbare voorraad hebben"
 
-#: src/tables/part/PartTable.tsx:346
+#: src/tables/part/PartTable.tsx:358
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Filter op delen waarop de gebruiker geabonneerd is"
 
-#: src/tables/part/PartTable.tsx:401
+#: src/tables/part/PartTable.tsx:364
+msgid "Filter parts by manufacturer"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:423
 msgid "Import Parts"
 msgstr "Importeren onderdelen"
 
-#: src/tables/part/PartTable.tsx:490
-#: src/tables/part/PartTable.tsx:538
+#: src/tables/part/PartTable.tsx:512
+#: src/tables/part/PartTable.tsx:560
 msgid "Set Category"
 msgstr "Categorie instellen"
 
-#: src/tables/part/PartTable.tsx:540
+#: src/tables/part/PartTable.tsx:562
 msgid "Set category for selected parts"
 msgstr "Categorie voor geselecteerde onderdelen instellen"
 
-#: src/tables/part/PartTable.tsx:550
+#: src/tables/part/PartTable.tsx:572
 msgid "Order selected parts"
 msgstr "Geselecteerde delen bestellen"
 
-#: src/tables/part/PartTable.tsx:560
+#: src/tables/part/PartTable.tsx:582
 msgid "Add Parts"
 msgstr "Voeg onderdelen toe"
 
-#: src/tables/part/PartTable.tsx:566
+#: src/tables/part/PartTable.tsx:588
 msgid "Create Part"
 msgstr "Onderdeel maken"
 
-#: src/tables/part/PartTable.tsx:568
+#: src/tables/part/PartTable.tsx:590
 msgid "Create a new part"
 msgstr "Maak een nieuw onderdeel maken"
 
-#: src/tables/part/PartTable.tsx:574
+#: src/tables/part/PartTable.tsx:596
 msgid "Import parts from a file"
 msgstr "Importeer onderdelen van een bestand"
 
-#: src/tables/part/PartTable.tsx:579
+#: src/tables/part/PartTable.tsx:601
 msgid "Import from Supplier"
 msgstr "Importeren van leverancier"
 
-#: src/tables/part/PartTable.tsx:581
+#: src/tables/part/PartTable.tsx:603
 msgid "Import parts from a supplier plugin"
 msgstr "Onderdelen van een leverancierspagina importeren"
 
@@ -11726,7 +11733,7 @@ msgid "Sample"
 msgstr "Voorbeeld"
 
 #: src/tables/plugin/PluginListTable.tsx:440
-#: src/tables/stock/StockItemTable.tsx:226
+#: src/tables/stock/StockItemTable.tsx:232
 msgid "Installed"
 msgstr "Geïnstalleerd"
 
@@ -12640,132 +12647,132 @@ msgstr "Locatie type verwijderen"
 msgid "Icon"
 msgstr "Pictogram"
 
-#: src/tables/stock/StockItemTable.tsx:159
+#: src/tables/stock/StockItemTable.tsx:165
 msgid "Stocktake Date"
 msgstr "Voorraadcontrole datum"
 
-#: src/tables/stock/StockItemTable.tsx:177
+#: src/tables/stock/StockItemTable.tsx:183
 msgid "Show stock for active parts"
 msgstr "Voorraad voor actieve onderdelen tonen"
 
-#: src/tables/stock/StockItemTable.tsx:188
+#: src/tables/stock/StockItemTable.tsx:194
 msgid "Show stock for assembled parts"
 msgstr "Voorraad tonen van gemonteerde onderdelen"
 
-#: src/tables/stock/StockItemTable.tsx:193
+#: src/tables/stock/StockItemTable.tsx:199
 msgid "Show items which have been allocated"
 msgstr "Toon items die zijn toegewezen"
 
-#: src/tables/stock/StockItemTable.tsx:198
+#: src/tables/stock/StockItemTable.tsx:204
 msgid "Show items which are available"
 msgstr "Toon items die beschikbaar zijn"
 
-#: src/tables/stock/StockItemTable.tsx:202
+#: src/tables/stock/StockItemTable.tsx:208
 #: src/tables/stock/StockLocationTable.tsx:38
 msgid "Include Sublocations"
 msgstr "Inclusief sub locaties"
 
-#: src/tables/stock/StockItemTable.tsx:203
+#: src/tables/stock/StockItemTable.tsx:209
 msgid "Include stock in sublocations"
 msgstr "Voorraad bij sub locaties opnemen"
 
-#: src/tables/stock/StockItemTable.tsx:207
+#: src/tables/stock/StockItemTable.tsx:213
 msgid "Depleted"
 msgstr "Uitgeput"
 
-#: src/tables/stock/StockItemTable.tsx:208
+#: src/tables/stock/StockItemTable.tsx:214
 msgid "Show depleted stock items"
 msgstr "Toon lege voorraad items"
 
-#: src/tables/stock/StockItemTable.tsx:214
+#: src/tables/stock/StockItemTable.tsx:220
 msgid "Show items which are in production"
 msgstr "Toon artikelen die in productie zijn"
 
-#: src/tables/stock/StockItemTable.tsx:222
+#: src/tables/stock/StockItemTable.tsx:228
 msgid "Show items which have been consumed by a build order"
 msgstr "Toon items die zijn verbruikt bij een bouw bestelling"
 
-#: src/tables/stock/StockItemTable.tsx:227
+#: src/tables/stock/StockItemTable.tsx:233
 msgid "Show stock items which are installed in other items"
 msgstr "Toon voorraaditems die geïnstalleerd zijn in andere artikelen"
 
-#: src/tables/stock/StockItemTable.tsx:231
+#: src/tables/stock/StockItemTable.tsx:237
 msgid "Sent to Customer"
 msgstr "Verzonden naar klant"
 
-#: src/tables/stock/StockItemTable.tsx:232
+#: src/tables/stock/StockItemTable.tsx:238
 msgid "Show items which have been sent to a customer"
 msgstr "Toon de items die naar een klant zijn gestuurd"
 
-#: src/tables/stock/StockItemTable.tsx:243
+#: src/tables/stock/StockItemTable.tsx:249
 msgid "Show tracked items"
 msgstr "Toon gevolgde objecten"
 
-#: src/tables/stock/StockItemTable.tsx:247
+#: src/tables/stock/StockItemTable.tsx:253
 msgid "Has Purchase Price"
 msgstr "Heeft aanschaf prijs"
 
-#: src/tables/stock/StockItemTable.tsx:248
+#: src/tables/stock/StockItemTable.tsx:254
 msgid "Show items which have a purchase price"
 msgstr "Toon items met een aankoopprijs"
 
-#: src/tables/stock/StockItemTable.tsx:253
+#: src/tables/stock/StockItemTable.tsx:259
 msgid "Show items which have expired"
 msgstr "Toon items die verlopen zijn"
 
-#: src/tables/stock/StockItemTable.tsx:259
+#: src/tables/stock/StockItemTable.tsx:265
 msgid "Show items which are stale"
 msgstr "Toon items die verouderd zijn"
 
-#: src/tables/stock/StockItemTable.tsx:264
+#: src/tables/stock/StockItemTable.tsx:270
 msgid "Expired Before"
 msgstr "Verloopt voor"
 
-#: src/tables/stock/StockItemTable.tsx:265
+#: src/tables/stock/StockItemTable.tsx:271
 msgid "Show items which expired before this date"
 msgstr "Toon items die voor deze datum verlopen zijn"
 
-#: src/tables/stock/StockItemTable.tsx:271
+#: src/tables/stock/StockItemTable.tsx:277
 msgid "Expired After"
 msgstr "Vervallen na"
 
-#: src/tables/stock/StockItemTable.tsx:272
+#: src/tables/stock/StockItemTable.tsx:278
 msgid "Show items which expired after this date"
 msgstr "Toon items die vervallen na deze datum"
 
-#: src/tables/stock/StockItemTable.tsx:279
+#: src/tables/stock/StockItemTable.tsx:285
 msgid "Show items updated before this date"
 msgstr "Toon items bijgewerkt voor deze datum"
 
-#: src/tables/stock/StockItemTable.tsx:285
+#: src/tables/stock/StockItemTable.tsx:291
 msgid "Show items updated after this date"
 msgstr "Toon items bijgewerkt na deze datum"
 
-#: src/tables/stock/StockItemTable.tsx:290
+#: src/tables/stock/StockItemTable.tsx:296
 msgid "Stocktake Before"
 msgstr "Voorraadcontrole voor"
 
-#: src/tables/stock/StockItemTable.tsx:291
+#: src/tables/stock/StockItemTable.tsx:297
 msgid "Show items counted before this date"
 msgstr "Toon items geteld voor deze datum"
-
-#: src/tables/stock/StockItemTable.tsx:296
-msgid "Stocktake After"
-msgstr "Voorraadcontrole na"
-
-#: src/tables/stock/StockItemTable.tsx:297
-msgid "Show items counted after this date"
-msgstr "Items geteld na deze datum weergeven"
 
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
 #: src/tables/stock/StockItemTable.tsx:302
+msgid "Stocktake After"
+msgstr "Voorraadcontrole na"
+
+#: src/tables/stock/StockItemTable.tsx:303
+msgid "Show items counted after this date"
+msgstr "Items geteld na deze datum weergeven"
+
+#: src/tables/stock/StockItemTable.tsx:308
 msgid "External Location"
 msgstr "Externe locatie"
 
-#: src/tables/stock/StockItemTable.tsx:303
+#: src/tables/stock/StockItemTable.tsx:309
 msgid "Show items in an external location"
 msgstr "Toon items op een externe locatie"
 
@@ -12781,11 +12788,11 @@ msgstr "Toon items op een externe locatie"
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
-#: src/tables/stock/StockItemTable.tsx:420
+#: src/tables/stock/StockItemTable.tsx:426
 msgid "Stock item created"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:442
+#: src/tables/stock/StockItemTable.tsx:448
 msgid "Order items"
 msgstr "Bestelde items"
 
