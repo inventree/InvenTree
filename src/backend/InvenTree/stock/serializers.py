@@ -520,6 +520,8 @@ class StockItemSerializer(
             allocated=Coalesce(
                 SubquerySum('sales_order_allocations__quantity'), Decimal(0)
             )
+            # For now, stock allocated to a transfer order will not impact its availability
+            # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
         )
 
@@ -1167,6 +1169,27 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
+class LocationDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a stock location."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_stock_items', 'delete_sub_locations']
+
+    delete_stock_items = serializers.BooleanField(
+        required=True,
+        label=_('Delete Stock Items'),
+        help_text=_('Delete all stock items contained within this location'),
+    )
+
+    delete_sub_locations = serializers.BooleanField(
+        required=True,
+        label=_('Delete Sublocations'),
+        help_text=_('Delete all sub-locations contained within this location'),
+    )
+
+
 @register_importer()
 class LocationSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
@@ -1368,6 +1391,10 @@ class StockAssignmentItemSerializer(serializers.Serializer):
         # The item must not be allocated to a sales order
         if item.sales_order_allocations.count() > 0:
             raise ValidationError(_('Item is allocated to a sales order'))
+
+        # The item must not be allocated to a transfer order
+        if item.transfer_order_allocations.count() > 0:
+            raise ValidationError(_('Item is allocated to a transfer order'))
 
         # The item must not be allocated to a build order
         if item.allocations.count() > 0:

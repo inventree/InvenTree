@@ -293,26 +293,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 10,
         'validator': [int, MinValueValidator(1)],
     },
-    'INVENTREE_DOWNLOAD_FROM_URL': {
-        'name': _('Download from URL'),
-        'description': _('Allow download of remote images and files from external URL'),
-        'validator': bool,
-        'default': False,
-    },
-    'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-        'name': _('Download Size Limit'),
-        'description': _('Maximum allowable download size for remote image'),
-        'units': 'MB',
-        'default': 1,
-        'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-    },
-    'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-        'name': _('User-agent used to download from URL'),
-        'description': _(
-            'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-        ),
-        'default': '',
-    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),
@@ -723,6 +703,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'STOCK_ALLOW_EDIT_SERIAL': {
+        'name': _('Allow Edit Serial Number'),
+        'description': _('Allow editing of serial number for stock items'),
+        'default': True,
+        'validator': bool,
+    },
     'STOCK_ALLOW_DELETE_SERIALIZED': {
         'name': _('Delete Serialized Stock'),
         'description': _('Allow deletion of stock items which have a serial number'),
@@ -922,6 +908,26 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
         ),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
         'default': False,
         'validator': bool,
     },

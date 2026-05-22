@@ -341,3 +341,24 @@ def schema_for_view_output_options(view_class):
         view_class
     )
     return extended_view
+
+
+def exclude_from_schema(klass: type, alternative_path: str) -> type:
+    """Decorator to exclude a view from the OpenAPI schema.
+
+    This is used to hide legacy endpoints from the schema, while still retaining them for backwards compatibility.
+    """
+
+    class LegacyView(klass):
+        """Dummy doc."""
+
+    LegacyView.__name__ = klass.__name__ + ' - Legacy'
+    LegacyView.__doc__ = f'This is a legacy endpoint, retained for backwards compatibility. Consider migrating to the new endpoint under {alternative_path}.'
+
+    # Exclude all default operations from the schema
+    for operation in ['get', 'post', 'put', 'patch', 'delete']:
+        if hasattr(klass, operation):
+            LegacyView = extend_schema_view(**{operation: extend_schema(exclude=True)})(
+                LegacyView
+            )
+    return LegacyView

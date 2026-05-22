@@ -4,8 +4,13 @@ import { useHotkeys } from '@mantine/hooks';
 import { StylishText } from '@lib/components/StylishText';
 import { shortenString } from '@lib/functions/String';
 import { Fragment, type ReactNode, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
+import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
+import { ApiIcon } from '../items/ApiIcon';
+import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
 
@@ -45,6 +50,8 @@ export function PageDetail({
   editEnabled
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
+  const navigate = useNavigate();
+  const location = useLocation();
   useHotkeys([
     [
       'mod+E',
@@ -85,6 +92,39 @@ export function PageDetail({
       return breadcrumbs;
     }
   }, [breadcrumbs, last_crumb, userSettings]);
+
+  const extraActions = usePluginUIFeature<PrimaryActionUIFeature>({
+    featureType: 'primary_action',
+    context: { location: location.pathname }
+  });
+
+  // action caching
+  const computedActions = useMemo(() => {
+    const extraActionArray: ReactNode[] = extraActions.map((action) => {
+      const { options: opts, func } = action;
+      const { title, icon, context, options } = opts;
+
+      const click = () => {
+        const url = options?.url;
+        if (url) {
+          navigate(url);
+        } else if (func) {
+          func(context);
+        }
+      };
+
+      return (
+        <PrimaryActionButton
+          title={title}
+          leftSection={<ApiIcon name={icon as string} />}
+          color={options?.color}
+          onClick={click}
+          key={title}
+        />
+      );
+    });
+    return [...(extraActionArray ?? []), ...(actions ?? [])];
+  }, [extraActions, actions]);
 
   return (
     <>
@@ -140,9 +180,9 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {actions && (
+            {computedActions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {actions.map((action, idx) => (
+                {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
               </Group>
