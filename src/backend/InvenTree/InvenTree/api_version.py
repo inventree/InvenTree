@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 491
+INVENTREE_API_VERSION = 492
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v491 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
+v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
     - Add Transfer Order model and associated API endpoint
+
+v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
+    - Add API serializer for deleting a part category
+    - Add API serializer for deleting a stock location
 
 v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
     - moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer

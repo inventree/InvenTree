@@ -431,11 +431,15 @@ class StockLocationDetail(
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
+        serializer = StockSerializers.LocationDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         delete_stock_items = InvenTree.helpers.str2bool(
-            request.data.get('delete_stock_items', False)
+            serializer.validated_data.get('delete_stock_items', False)
         )
+
         delete_sub_locations = InvenTree.helpers.str2bool(
-            request.data.get('delete_sub_locations', False)
+            serializer.validated_data.get('delete_sub_locations', False)
         )
 
         return super().destroy(

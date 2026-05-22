@@ -536,7 +536,10 @@ export default function BuildLineTable({
         minWidth: 125,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            <Text
+              size='sm'
+              style={{ fontStyle: 'italic' }}
+            >{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
