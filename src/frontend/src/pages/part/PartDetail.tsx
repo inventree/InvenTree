@@ -23,6 +23,7 @@ import {
   IconListDetails,
   IconListTree,
   IconLock,
+  IconLockOpen,
   IconPackages,
   IconSearch,
   IconShoppingCart,
@@ -1148,9 +1149,20 @@ export default function PartDetail() {
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
-              part?.locked ? (
-                <IconLock aria-label='part-lock-icon' />
-              ) : undefined
+              <ActionIcon
+                aria-label='part-lock-icon'
+                variant='transparent'
+                disabled={!user.hasChangeRole(UserRoles.part)}
+                onClick={() => {
+                  api
+                    .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                      locked: !part.locked
+                    })
+                    .then(refreshInstance);
+                }}
+              >
+                {part?.locked ? <IconLock /> : <IconLockOpen />}
+              </ActionIcon>
             }
             subtitle={part.description}
             imageUrl={part.image}
