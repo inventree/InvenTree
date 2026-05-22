@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         ("order", "0117_purchaseorderextraline_line_int_and_more"),
         ("part", "0146_auto_20251203_1241"),
         ("stock", "0116_alter_stockitem_link"),
-        ("users", "0015_alter_userprofile_type"),
+        ("users", "0005_owner_model"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
