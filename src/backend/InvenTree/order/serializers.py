@@ -2043,14 +2043,8 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
     )
 
     stock_sort_by = serializers.ChoiceField(
-        default='date_oldest',
-        choices=[
-            ('date_oldest', _('Oldest stock first (FIFO)')),
-            ('date_newest', _('Newest stock first (LIFO)')),
-            ('quantity_asc', _('Smallest quantity first')),
-            ('quantity_desc', _('Largest quantity first')),
-            ('expiry_soonest', _('Soonest expiry date first')),
-        ],
+        default=order.models.STOCK_SORT_DEFAULT,
+        choices=[(key, label) for key, _, label in order.models.STOCK_SORT_CHOICES],
         label=_('Stock Priority'),
         help_text=_('Preferred order in which matching stock items are consumed'),
     )

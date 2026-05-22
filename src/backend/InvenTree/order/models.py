@@ -1317,6 +1317,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
         )
 
 
+STOCK_SORT_CHOICES = [
+    ('date_oldest', 'updated', _('Oldest stock first (FIFO)')),
+    ('date_newest', '-updated', _('Newest stock first (LIFO)')),
+    ('quantity_asc', 'quantity', _('Smallest quantity first')),
+    ('quantity_desc', '-quantity', _('Largest quantity first')),
+    ('expiry_soonest', 'expiry_date', _('Soonest expiry date first')),
+]
+
+STOCK_SORT_MAP = {key: field for key, field, _ in STOCK_SORT_CHOICES}
+
+STOCK_SORT_DEFAULT = 'date_oldest'
+
+
 class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
@@ -1469,6 +1482,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return true if any lines in the order are over-allocated."""
         return any(line.is_overallocated() for line in self.lines.all())
 
+    @transaction.atomic
     def auto_allocate_stock(
         self,
         location: Optional[stock.models.StockLocation] = None,
@@ -1494,18 +1508,12 @@ class SalesOrder(TotalPriceMixin, Order):
                 items/locations to satisfy a line. If False, only allocate when a
                 single item can cover the full remaining quantity.
         """
-        stock_sort_by = kwargs.get('stock_sort_by', 'date_oldest')
+        stock_sort_by = kwargs.get('stock_sort_by', STOCK_SORT_DEFAULT)
         interchangeable = kwargs.get('interchangeable', True)
 
-        # Map user-facing sort keys to ORM order_by expressions.
-        SORT_MAP = {
-            'quantity_asc': 'quantity',
-            'quantity_desc': '-quantity',
-            'date_oldest': 'updated',
-            'date_newest': '-updated',
-            'expiry_soonest': 'expiry_date',
-        }
-        sort_field = SORT_MAP.get(stock_sort_by, 'updated')
+        sort_field = STOCK_SORT_MAP.get(
+            stock_sort_by, STOCK_SORT_MAP[STOCK_SORT_DEFAULT]
+        )
 
         new_allocations = []
 
