@@ -86,9 +86,9 @@ def validate_attachment_file(attachment):
             _(f'File size exceeds maximum upload limit of {max_size} MB')
         )
 
-    try:  # pragma: no cover
+    try:
         default_storage.generate_filename(attachment.name)
-    except SuspiciousFileOperation:
+    except SuspiciousFileOperation:  # pragma: no cover
         raise ValidationError(_('Invalid file name'))
 
 

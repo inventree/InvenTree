@@ -21,8 +21,10 @@ def update_image_attachments(apps, schema_editor):
 
     Note: This function mirrors the logic used in the Attachment model's
     check_is_image method, at the time of writing this migration (2026-05-18).
-
     """
+
+    import common.tasks
+
     Attachment = apps.get_model('common', 'Attachment')
 
     # Find all Attachment instances which (potentially) have a file attached
@@ -42,28 +44,7 @@ def update_image_attachments(apps, schema_editor):
         if not attachment.attachment.name or not default_storage.exists(attachment.attachment.name):
             continue
 
-        img_data = default_storage.open(attachment.attachment.name).read()
-
-        try:
-            with Image.open(io.BytesIO(img_data)) as img:
-                img.verify()  # Verify that this is an image
-
-
-            # Re-open after verify(), as Pillow invalidates the image object
-            with Image.open(io.BytesIO(img_data)) as img:
-                img.thumbnail((128, 128))
-                thumbnail = io.BytesIO()
-                img.save(thumbnail, format='PNG')
-                thumbnail.seek(0)
-
-            attachment.thumbnail.save(
-                f"thumb_{os.path.basename(attachment.attachment.name)}",
-                ContentFile(thumbnail.read())
-            )
-
-        except Exception:
-            # Not an image, skip this attachment
-            continue
+        common.tasks.rebuild_attachment(attachment.pk)
 
 
 class Migration(migrations.Migration):
