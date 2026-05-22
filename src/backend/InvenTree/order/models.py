@@ -1329,6 +1329,14 @@ STOCK_SORT_MAP = {key: field for key, field, _ in STOCK_SORT_CHOICES}
 
 STOCK_SORT_DEFAULT = 'date_oldest'
 
+SERIALIZED_STOCK_CHOICES = [
+    ('any', _('Allow any stock (serialized or unserialized)')),
+    ('serialized', _('Serialized stock only')),
+    ('unserialized', _('Unserialized stock only')),
+]
+
+SERIALIZED_STOCK_DEFAULT = 'any'
+
 
 class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
@@ -1510,6 +1518,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """
         stock_sort_by = kwargs.get('stock_sort_by', STOCK_SORT_DEFAULT)
         interchangeable = kwargs.get('interchangeable', True)
+        serialized_stock = kwargs.get('serialized_stock', SERIALIZED_STOCK_DEFAULT)
 
         sort_field = STOCK_SORT_MAP.get(
             stock_sort_by, STOCK_SORT_MAP[STOCK_SORT_DEFAULT]
@@ -1547,6 +1556,15 @@ class SalesOrder(TotalPriceMixin, Order):
                 sublocations = exclude_location.get_descendants(include_self=True)
                 available_stock = available_stock.exclude(
                     location__in=list(sublocations)
+                )
+
+            if serialized_stock == 'serialized':
+                available_stock = available_stock.filter(
+                    serial__isnull=False, quantity=1
+                ).exclude(serial='')
+            elif serialized_stock == 'unserialized':
+                available_stock = available_stock.filter(
+                    Q(serial__isnull=True) | Q(serial='')
                 )
 
             # Handle NULL expiry_date last when sorting by expiry.

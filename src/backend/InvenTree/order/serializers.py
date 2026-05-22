@@ -2049,6 +2049,15 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Preferred order in which matching stock items are consumed'),
     )
 
+    serialized_stock = serializers.ChoiceField(
+        default=order.models.SERIALIZED_STOCK_DEFAULT,
+        choices=order.models.SERIALIZED_STOCK_CHOICES,
+        label=_('Serialized Stock'),
+        help_text=_(
+            'Control whether serialized stock items are included in auto-allocation'
+        ),
+    )
+
     line_items = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderLineItem.objects.all(),
         many=True,

@@ -596,6 +596,7 @@ export function useSalesOrderAutoAllocateFields({
       exclude_location: {},
       interchangeable: {},
       stock_sort_by: {},
+      serialized_stock: {},
       shipment: {
         filters: {
           order: orderId,

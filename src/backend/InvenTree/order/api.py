@@ -1208,6 +1208,7 @@ class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
             line_ids=[item.pk for item in line_items] if line_items else None,
             interchangeable=data['interchangeable'],
             stock_sort_by=data['stock_sort_by'],
+            serialized_stock=data['serialized_stock'],
             group='sales_order',
         )
 
