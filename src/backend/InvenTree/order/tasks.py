@@ -282,20 +282,30 @@ def auto_allocate_sales_order(
     location_id: Optional[int] = None,
     exclude_location_id: Optional[int] = None,
     shipment_id: Optional[int] = None,
+    line_ids: Optional[list] = None,
     **kwargs,
 ):
     """Run auto-allocation for a specified SalesOrder."""
     sales_order = order.models.SalesOrder.objects.get(pk=order_id)
 
-    if location_id:
-        kwargs['location'] = stock_models.StockLocation.objects.get(pk=location_id)
+    location = (
+        stock_models.StockLocation.objects.get(pk=location_id) if location_id else None
+    )
+    exclude_location = (
+        stock_models.StockLocation.objects.get(pk=exclude_location_id)
+        if exclude_location_id
+        else None
+    )
+    shipment = (
+        order.models.SalesOrderShipment.objects.get(pk=shipment_id)
+        if shipment_id
+        else None
+    )
 
-    if exclude_location_id:
-        kwargs['exclude_location'] = stock_models.StockLocation.objects.get(
-            pk=exclude_location_id
-        )
-
-    if shipment_id:
-        kwargs['shipment'] = order.models.SalesOrderShipment.objects.get(pk=shipment_id)
-
-    sales_order.auto_allocate_stock(**kwargs)
+    sales_order.auto_allocate_stock(
+        location=location,
+        exclude_location=exclude_location,
+        shipment=shipment,
+        line_ids=line_ids or None,
+        **kwargs,
+    )

@@ -1435,6 +1435,7 @@ class SalesOrder(TotalPriceMixin, Order):
         location: Optional[stock.models.StockLocation] = None,
         exclude_location: Optional[stock.models.StockLocation] = None,
         shipment: Optional['SalesOrderShipment'] = None,
+        line_ids: Optional[list] = None,
         **kwargs,
     ):
         """Automatically allocate stock items against this SalesOrder.
@@ -1447,6 +1448,7 @@ class SalesOrder(TotalPriceMixin, Order):
             location: If provided, only consider stock within this location tree.
             exclude_location: If provided, exclude stock within this location tree.
             shipment: Optional shipment to assign allocations to.
+            line_ids: If provided, only allocate against these specific line item PKs.
 
         Kwargs:
             interchangeable (bool): If True (default), consume stock from multiple
@@ -1468,7 +1470,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
         new_allocations = []
 
-        for line_item in self.lines.all():
+        lines = self.lines.all()
+        if line_ids:
+            lines = lines.filter(pk__in=line_ids)
+
+        for line_item in lines:
             if not line_item.part:
                 continue
 

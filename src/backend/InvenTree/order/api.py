@@ -1192,6 +1192,7 @@ class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
         location = data.get('location')
         exclude_location = data.get('exclude_location')
         shipment = data.get('shipment')
+        line_items = data.get('line_items', [])
 
         # Offload to the background worker
         # Note: We provide the model ID values, not the model instances
@@ -1201,6 +1202,7 @@ class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
             location_id=location.pk if location else None,
             exclude_location_id=exclude_location.pk if exclude_location else None,
             shipment_id=shipment.pk if shipment else None,
+            line_ids=[item.pk for item in line_items] if line_items else None,
             interchangeable=data['interchangeable'],
             stock_sort_by=data['stock_sort_by'],
             group='sales_order',

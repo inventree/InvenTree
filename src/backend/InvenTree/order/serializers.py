@@ -2001,6 +2001,7 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
             'shipment',
             'interchangeable',
             'stock_sort_by',
+            'line_items',
         ]
 
     location = serializers.PrimaryKeyRelatedField(
@@ -2053,6 +2054,17 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Preferred order in which matching stock items are consumed'),
     )
 
+    line_items = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrderLineItem.objects.all(),
+        many=True,
+        required=False,
+        default=list,
+        label=_('Line Items'),
+        help_text=_(
+            'Limit allocation to these line items (leave blank to allocate all lines)'
+        ),
+    )
+
     def validate_shipment(self, shipment):
         """Validate that the shipment belongs to this order and is not yet shipped."""
         order_obj = self.context.get('order')
@@ -2067,6 +2079,17 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
+
+    def validate_line_items(self, line_items):
+        """Validate that all provided line items belong to this order."""
+        order_obj = self.context.get('order')
+
+        if order_obj and line_items:
+            for line in line_items:
+                if line.order != order_obj:
+                    raise ValidationError(_('Line item does not belong to this order'))
+
+        return line_items
 
 
 @register_importer()

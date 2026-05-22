@@ -601,6 +601,9 @@ export function useSalesOrderAutoAllocateFields({
           order: orderId,
           shipped: false
         }
+      },
+      line_items: {
+        hidden: true
       }
     };
   }, [orderId]);

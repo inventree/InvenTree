@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Paper, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -341,18 +341,38 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const [autoAllocateInitialData, setAutoAllocateInitialData] = useState<any>(
+    {}
+  );
+
+  const autoAllocatePreFormContent = useMemo(() => {
+    const count = table.selectedRecords.length;
+    if (count > 0) {
+      return (
+        <Alert color='blue'>
+          <Text size='sm'>
+            {t`${count} line item(s) selected — only these lines will be allocated`}
+          </Text>
+        </Alert>
+      );
+    }
+    return (
+      <Alert color='green'>
+        <Text size='sm'>{t`All unallocated line items will be allocated`}</Text>
+      </Alert>
+    );
+  }, [table.selectedRecords.length]);
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_auto_allocate,
     pk: orderId,
     title: t`Auto Allocate Stock`,
     fields: useSalesOrderAutoAllocateFields({ orderId }),
+    initialData: autoAllocateInitialData,
+    preFormContent: autoAllocatePreFormContent,
     successMessage: null,
     onFormSuccess: (response: any) => {
-      if (response.task_id) {
-        setAllocateTaskId(response.task_id);
-      } else {
-        table.refreshTable();
-      }
+      setAllocateTaskId(response.task_id);
     }
   });
 
@@ -421,7 +441,12 @@ export default function SalesOrderLineItemTable({
         icon={<IconWand />}
         color='blue'
         hidden={!editable || !user.hasChangeRole(UserRoles.sales_order)}
-        onClick={() => autoAllocateStock.open()}
+        onClick={() => {
+          setAutoAllocateInitialData({
+            line_items: table.selectedRecords.map((r) => r.pk)
+          });
+          autoAllocateStock.open();
+        }}
       />
     ];
   }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
