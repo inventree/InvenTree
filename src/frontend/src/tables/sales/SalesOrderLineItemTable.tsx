@@ -5,7 +5,8 @@ import {
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
-  IconTools
+  IconTools,
+  IconWand
 } from '@tabler/icons-react';
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -35,8 +36,10 @@ import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
   useSalesOrderAllocateSerialsFields,
+  useSalesOrderAutoAllocateFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -327,6 +330,28 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to sales order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const autoAllocateStock = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_auto_allocate,
+    pk: orderId,
+    title: t`Auto Allocate Stock`,
+    fields: useSalesOrderAutoAllocateFields({ orderId }),
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
+    }
+  });
+
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
 
   const orderPartsWizard = OrderPartsWizard({
@@ -385,6 +410,14 @@ export default function SalesOrderLineItemTable({
           );
           allocateStock.open();
         }}
+      />,
+      <ActionButton
+        key='auto-allocate-stock'
+        tooltip={t`Auto Allocate Stock`}
+        icon={<IconWand />}
+        color='blue'
+        hidden={!editable || !user.hasChangeRole(UserRoles.sales_order)}
+        onClick={() => autoAllocateStock.open()}
       />
     ];
   }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
@@ -529,6 +562,7 @@ export default function SalesOrderLineItemTable({
       {newBuildOrder.modal}
       {allocateBySerials.modal}
       {allocateStock.modal}
+      {autoAllocateStock.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}

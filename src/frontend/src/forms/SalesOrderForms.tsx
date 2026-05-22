@@ -584,3 +584,24 @@ export function useSalesOrderAllocationFields({
     };
   }, [orderId, shipment]);
 }
+
+export function useSalesOrderAutoAllocateFields({
+  orderId
+}: {
+  orderId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      interchangeable: {},
+      stock_sort_by: {},
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      }
+    };
+  }, [orderId]);
+}
