@@ -599,7 +599,11 @@ export default function BuildLineTable({
     },
     successMessage: null,
     onFormSuccess: (response: any) => {
-      setAllocateTaskId(response.task_id);
+      if (response.task_id) {
+        setAllocateTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     },
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
