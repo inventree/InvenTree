@@ -219,7 +219,7 @@ def cancel_build(
     Arguments:
         build_id: The ID of the BuildOrder which has been cancelled
         user_id: The ID of the user who cancelled the BuildOrder
-        remove_allocated_stock: If True, deallocate any allocated stock
+        remove_allocated_stock: If True, consume any allocated stock
         remove_incomplete_outputs: If True, delete any incomplete build outputs
 
     """
