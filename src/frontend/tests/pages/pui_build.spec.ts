@@ -699,6 +699,40 @@ test('Build Order - Duplicate', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Build Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+
+  // Create a build output
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-batch_code' })
+    .fill('BATCH-001');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Cancel (delete) the build output
+  const cell = await page.getByRole('cell', { name: 'BATCH-001' }).first();
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // no more build outputs
+  await page.getByText('No records found').waitFor();
+
+  // Cancel the build
+  await page.getByRole('button', { name: 'action-menu-build-order-' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-build-order-actions-cancel' })
+    .click();
+
+  await page
+    .getByRole('switch', { name: 'boolean-field-remove_allocated_stock' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-remove_incomplete_outputs' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
 });
 
 // Tests for external build orders
