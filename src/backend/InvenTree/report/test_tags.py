@@ -15,7 +15,7 @@ from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 from InvenTree.unit_test import InvenTreeTestCase
-from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
+from part.models import Part
 from part.test_api import PartImageTestMixin
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
