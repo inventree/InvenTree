@@ -178,7 +178,7 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
 
     # Iterate through all available tasks, with the most recent first
     for task in OrmQ.objects.all().order_by('-id'):
-        if task.func() != taskname and task.task['func'] != taskname:
+        if task.func() != taskname and task.task.get('func') != taskname:
             # Task does not match
             continue
 
