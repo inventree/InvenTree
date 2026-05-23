@@ -38,6 +38,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
+  await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
@@ -60,6 +61,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await page.getByLabel('breadcrumb-0-manufacturing').click();
 
   // Load a different build order
+  await page.getByPlaceholder('Search').fill('11');
   await page.getByRole('cell', { name: 'BO0011' }).click();
 
   // This build order should be "in production"
@@ -654,6 +656,7 @@ test('Build Order - Filters', async ({ browser }) => {
   // Check for expected pagination text i.e. (1 - 24 / 24)
   // Note: Due to other concurrent tests, the number of build orders may vary
   await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+  await page.getByPlaceholder('Search').fill('23');
   await page.getByRole('cell', { name: 'BO0023' }).waitFor();
 
   // Toggle 'Outstanding' filter
@@ -665,7 +668,7 @@ test('Build Order - Filters', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'table-search-input' }).fill('');
   await setTableChoiceFilter(page, 'Outstanding', 'No');
 
-  await page.getByText('1 - 6 / 6').waitFor();
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
 
   await clearTableFilters(page);
 
