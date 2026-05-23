@@ -650,7 +650,6 @@ class Build(
 
         return self.is_fully_allocated(tracked=False)
 
-    @transaction.atomic
     def complete_allocations(self, user) -> None:
         """Complete all stock allocations for this build order.
 
@@ -661,7 +660,7 @@ class Build(
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
-        self.allocated_stock.delete()
+        self.allocated_stock.all().delete()
 
     @transaction.atomic
     def complete_build(self, user: User, trim_allocated_stock: bool = False):
@@ -1015,7 +1014,6 @@ class Build(
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
-    @transaction.atomic
     def subtract_allocated_stock(self, user) -> None:
         """Removes the allocated untracked items from stock."""
         # Find all BuildItem objects which point to this build
