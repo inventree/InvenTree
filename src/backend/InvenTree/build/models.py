@@ -700,11 +700,6 @@ class Build(
                 _('Cannot complete build order with incomplete outputs')
             )
 
-        self.completion_date = InvenTree.helpers.current_date()
-        self.completed_by = user
-        self.status = BuildStatus.COMPLETE.value
-        self.save()
-
         # Offload background task to complete build allocations
         InvenTree.tasks.offload_task(
             build.tasks.complete_build,
@@ -713,6 +708,11 @@ class Build(
             trim_allocated_stock=trim_allocated_stock,
             group='build',
         )
+
+        self.completion_date = InvenTree.helpers.current_date()
+        self.completed_by = user
+        self.status = BuildStatus.COMPLETE.value
+        self.save()
 
     @transaction.atomic
     def issue_build(self):
@@ -791,13 +791,6 @@ class Build(
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Date of 'completion' is the date the build was cancelled
-        self.completion_date = InvenTree.helpers.current_date()
-        self.completed_by = user
-
-        self.status = BuildStatus.CANCELLED.value
-        self.save()
-
         # Offload background task to take care of the expensive operations
         InvenTree.tasks.offload_task(
             build.tasks.cancel_build,
@@ -807,6 +800,13 @@ class Build(
             remove_incomplete_outputs=remove_incomplete_outputs,
             group='build',
         )
+
+        # Date of 'completion' is the date the build was cancelled
+        self.completion_date = InvenTree.helpers.current_date()
+        self.completed_by = user
+
+        self.status = BuildStatus.CANCELLED.value
+        self.save()
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):
