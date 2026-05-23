@@ -212,6 +212,7 @@ export default function SystemSettings() {
                 'PART_ALLOW_DUPLICATE_IPN',
                 'PART_ALLOW_EDIT_IPN',
                 'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+                'PART_ENABLE_LOCKING',
                 'PART_ENABLE_REVISION',
                 'PART_REVISION_ASSEMBLY_ONLY',
                 'PART_SHOW_RELATED',
