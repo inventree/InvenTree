@@ -37,7 +37,7 @@ from build.validators import (
     validate_build_order_reference,
 )
 from common.models import ProjectCode
-from common.notifications import InvenTreeNotificationBodies, trigger_notification
+from common.notifications import trigger_notification
 from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
@@ -839,27 +839,6 @@ class Build(
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        if remove_allocated_stock:
-            # Offload task to remove allocated stock
-            if not InvenTree.tasks.offload_task(
-                build.tasks.complete_build_allocations,
-                self.pk,
-                user.pk if user else None,
-                group='build',
-            ):
-                raise ValidationError(
-                    _('Failed to offload task to complete build allocations')
-                )
-
-        else:
-            self.allocated_stock.all().delete()
-
-        # Remove incomplete outputs (if required)
-        if remove_incomplete_outputs:
-            outputs = self.build_outputs.filter(is_building=True)
-
-            outputs.delete()
-
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
@@ -867,16 +846,16 @@ class Build(
         self.status = BuildStatus.CANCELLED.value
         self.save()
 
-        # Notify users that the order has been canceled
-        InvenTree.helpers_model.notify_responsible(
-            self,
-            Build,
-            exclude=self.issued_by,
-            content=InvenTreeNotificationBodies.OrderCanceled,
-            extra_users=self.part.get_subscribers(),
+        # Offload background task to take care of the expensive operations
+        InvenTree.tasks.offload_task(
+            build.tasks.cancel_build(
+                self.pk,
+                user.pk if user else None,
+                remove_allocated_stock=remove_allocated_stock,
+                remove_incomplete_outputs=remove_incomplete_outputs,
+                group='build',
+            )
         )
-
-        trigger_event(BuildEvents.CANCELLED, id=self.pk)
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):

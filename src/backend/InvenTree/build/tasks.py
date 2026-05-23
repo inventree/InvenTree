@@ -207,6 +207,46 @@ def complete_build_outputs(
                 )
 
 
+@tracer.start_as_current_span('cancel_build')
+def cancel_build(
+    build_id: int,
+    user_id: int,
+    remove_allocated_stock: bool = False,
+    remove_incomplete_outputs: bool = False,
+):
+    """Tasks to run after a BuildOrder is cancelled.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been cancelled
+        user_id: The ID of the user who cancelled the BuildOrder
+        remove_allocated_stock: If True, deallocate any allocated stock
+        remove_incomplete_outputs: If True, delete any incomplete build outputs
+
+    """
+    from build.models import Build
+
+    build = Build.objects.get(pk=build_id)
+
+    if remove_allocated_stock:
+        complete_build_allocations(build_id, user_id)
+    else:
+        build.allocated_stock.all().delete()
+
+    if remove_incomplete_outputs:
+        build.build_outputs.filter(is_building=True).delete()
+
+    # Notify users that the order has been canceled
+    InvenTree.helpers_model.notify_responsible(
+        build,
+        Build,
+        exclude=build.issued_by,
+        content=common.notifications.InvenTreeNotificationBodies.OrderCanceled,
+        extra_users=build.part.get_subscribers(),
+    )
+
+    trigger_event(BuildEvents.CANCELLED, id=build.pk)
+
+
 @tracer.start_as_current_span('update_build_order_lines')
 def update_build_order_lines(bom_item_pk: int):
     """Update all BuildOrderLineItem objects which reference a particular BomItem.
