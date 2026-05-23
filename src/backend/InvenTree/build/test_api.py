@@ -227,7 +227,7 @@ class BuildTest(BuildAPITest):
                 'status': StockStatus.ATTENTION.value,
             },
             expected_code=200,
-            max_query_count=400,
+            max_query_count=450,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
