@@ -11,10 +11,12 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { identifierString } from '@lib/functions/Conversion';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -29,7 +31,6 @@ import type {
 } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   getPluginTemplateEditor,
   getPluginTemplatePreview
@@ -47,7 +48,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,

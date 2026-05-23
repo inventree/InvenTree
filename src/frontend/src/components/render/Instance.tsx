@@ -21,8 +21,8 @@ import type {
   RenderInstanceProps
 } from '@lib/types/Rendering';
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
+import { shortenString } from '@lib/functions/String';
 import { useApi } from '../../contexts/ApiContext';
-import { shortenString } from '../../functions/tables';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {

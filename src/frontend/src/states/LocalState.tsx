@@ -36,8 +36,6 @@ interface LocalStateProps {
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
-  detailDrawerStack: number;
-  addDetailDrawer: (value: number | false) => void;
   navigationOpen: boolean;
   setNavigationOpen: (value: boolean) => void;
   allowMobile: boolean;
@@ -134,15 +132,6 @@ export const useLocalState = create<LocalStateProps>()(
           });
         }
       },
-
-      // detail drawers
-      detailDrawerStack: 0,
-      addDetailDrawer: (value) => {
-        set({
-          detailDrawerStack:
-            value === false ? 0 : get().detailDrawerStack + value
-        });
-      },
       // navigation
       navigationOpen: false,
       setNavigationOpen: (value) => {
@@ -162,7 +151,7 @@ export const useLocalState = create<LocalStateProps>()(
 /*
 pushes changes in user profile to backend
 */
-function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
+export function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
     api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });

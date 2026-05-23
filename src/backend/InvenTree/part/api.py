@@ -599,6 +599,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
+    role_required = 'bom.change'
 
     @extend_schema(
         responses={
@@ -1056,6 +1057,7 @@ class PartList(
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
+        'id',
         'name',
         'creation_date',
         'IPN',

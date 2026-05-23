@@ -33,6 +33,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
@@ -48,7 +49,6 @@ import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { getModelInfo } from '../render/ModelType';
 

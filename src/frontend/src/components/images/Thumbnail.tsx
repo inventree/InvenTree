@@ -56,7 +56,7 @@ export function Thumbnail({
             w={size}
             fit='contain'
             radius='xs'
-            style={{ maxHeight: size }}
+            style={{ maxHeight: size, height: size }}
           />
           {inner}
         </Group>

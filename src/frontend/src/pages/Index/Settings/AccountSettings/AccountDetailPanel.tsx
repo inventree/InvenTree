@@ -5,13 +5,13 @@ import { IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
 import { YesNoUndefinedButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
-import { StylishText } from '../../../../components/items/StylishText';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
