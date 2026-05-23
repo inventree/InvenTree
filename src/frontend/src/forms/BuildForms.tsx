@@ -385,7 +385,7 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been completed`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -466,7 +466,7 @@ export function useScrapBuildOutputsForm({
     ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been scrapped`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -527,7 +527,7 @@ export function useCancelBuildOutputsForm({
     ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`,
+    successMessage: null,
     size: '80%'
   });
 }

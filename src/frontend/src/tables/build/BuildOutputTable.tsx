@@ -346,31 +346,62 @@ export default function BuildOutputTable({
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
+  const [completeTaskId, setCompleteTaskId] = useState<string>('');
+  const [scrapTaskId, setScrapTaskId] = useState<string>('');
+  const [deleteTaskId, setDeleteTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: completeTaskId,
+    message: t`Completing build outputs`,
+    successMessage: t`Build outputs have been completed`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: scrapTaskId,
+    message: t`Scrapping build outputs`,
+    successMessage: t`Build outputs have been scrapped`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: deleteTaskId,
+    message: t`Cancelling build outputs`,
+    successMessage: t`Build outputs have been cancelled`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
     hasTrackedItems: hasTrackedItems,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      setCompleteTaskId(response.task_id);
     }
   });
 
   const scrapBuildOutputsForm = useScrapBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      setScrapTaskId(response.task_id);
     }
   });
 
   const cancelBuildOutputsForm = useCancelBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      setDeleteTaskId(response.task_id);
     }
   });
 

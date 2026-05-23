@@ -100,6 +100,113 @@ def complete_build_allocations(build_id: int, user_id: int):
     build_order.complete_allocations(user)
 
 
+@tracer.start_as_current_span('delete_build_outputs')
+def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
+    """Delete (cancel) specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        output_ids: List of StockItem PKs to delete
+    """
+    from build.models import Build
+    from stock.models import StockItem
+
+    build = Build.objects.get(pk=build_id)
+
+    with transaction.atomic():
+        for output_id in output_ids:
+            output = StockItem.objects.filter(pk=output_id).first()
+            if output:
+                build.delete_output(output)
+
+
+@tracer.start_as_current_span('scrap_build_outputs')
+def scrap_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int,
+    notes: str = '',
+    discard_allocations: bool = False,
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Scrap specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and 'quantity'
+        location_id: PK of the destination StockLocation
+        notes: Reason for scrapping
+        discard_allocations: If True, discard (not consume) allocations
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = StockLocation.objects.get(pk=location_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    with transaction.atomic():
+        for item in outputs:
+            output = StockItem.objects.filter(pk=item['output_id']).first()
+            if output:
+                build.scrap_build_output(
+                    output,
+                    item.get('quantity'),
+                    location,
+                    user=user,
+                    notes=notes,
+                    discard_allocations=discard_allocations,
+                )
+
+
+@tracer.start_as_current_span('complete_build_outputs')
+def complete_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int | None,
+    status: int,
+    notes: str = '',
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Complete specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and optional 'quantity'
+        location_id: PK of the destination StockLocation (or None)
+        status: Stock status code to assign to completed outputs
+        notes: Completion notes
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = (
+        StockLocation.objects.filter(pk=location_id).first() if location_id else None
+    )
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    required_tests = build.part.getRequiredTests()
+
+    with transaction.atomic():
+        for item in outputs:
+            output = StockItem.objects.filter(pk=item['output_id']).first()
+            if output:
+                build.complete_build_output(
+                    output,
+                    user,
+                    quantity=item.get('quantity'),
+                    location=location,
+                    status=status,
+                    notes=notes,
+                    required_tests=required_tests,
+                )
+
+
 @tracer.start_as_current_span('update_build_order_lines')
 def update_build_order_lines(bom_item_pk: int):
     """Update all BuildOrderLineItem objects which reference a particular BomItem.
