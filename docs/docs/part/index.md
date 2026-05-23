@@ -6,6 +6,18 @@ title: Parts
 
 The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organize and filter parts by function.
 
+## Part Stock
+
+Each part can have multiple [stock items](../stock/index.md) associated with it, which represent the physical quantity of that part in various locations. The total stock level for a given part is the sum of all stock items associated with that part.
+
+### Minimum Stock
+
+A part may have a specified "minimum stock" level. This is a user-defined value which indicates the minimum quantity of that part which should be kept in stock at all times. If the total stock level for a given part falls below the minimum stock level, the part is flagged as "low stock" and can be easily identified in the interface.
+
+### Maximum Stock
+
+A part may also have a specified "maximum stock" level. This is a user-defined value which indicates the maximum quantity of that part which should be kept in stock at all times. If the total stock level for a given part exceeds the maximum stock level, the part is flagged as "overstocked" and can be easily identified in the interface.
+
 ## Part Category
 
 Part categories are very flexible and can be easily arranged to match a particular user requirement. Each part category displays a list of all parts *under* that given category. This means that any part belonging to a particular category, or belonging to a sub-category, will be displayed.
@@ -27,7 +39,7 @@ Clicking on the part name links to the [*Part Detail*](./views.md) view.
 
 ## Part Attributes
 
-Each *Part* defined in the database provides a number of different attributes which determine how that part can be used. Configuring these attributes for a given part will impact the available functions that can be perform on (or using) that part).
+Each *Part* defined in the database provides a number of different attributes which determine how that part can be used. Configuring these attributes for a given part will impact the available functions that can be perform on (or using) that part.
 
 ### Virtual
 
@@ -74,6 +86,7 @@ A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered f
 ### Salable
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
+
 
 ## Locked Parts
 

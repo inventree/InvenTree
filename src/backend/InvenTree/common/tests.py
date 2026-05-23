@@ -86,6 +86,11 @@ class AttachmentTest(InvenTreeAPITestCase):
         }
 
         for fn, expected in filenames.items():
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            # Remove the file if it already exists (i.e. from a previous test run)
+            if default_storage.exists(expected_path):
+                default_storage.delete(expected_path)
+
             attachment = Attachment.objects.create(
                 attachment=self.generate_file(fn),
                 comment=f'Testing filename: {fn}',
@@ -93,7 +98,6 @@ class AttachmentTest(InvenTreeAPITestCase):
                 model_id=part.pk,
             )
 
-            expected_path = f'attachments/part/{part.pk}/{expected}'
             self.assertEqual(attachment.attachment.name, expected_path)
             self.assertEqual(attachment.file_size, 15)
 

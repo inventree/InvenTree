@@ -10,12 +10,15 @@ import {
   IconShoppingCart,
   IconTable
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import type { EventContentArg } from '@fullcalendar/core';
 import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
@@ -25,10 +28,35 @@ import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import ManufacturerPartParametricTable from '../../tables/purchasing/ManufacturerPartParametricTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
+import PurchaseOrderFilters from '../../tables/purchasing/PurchaseOrderFilters';
 import PurchaseOrderParametricTable from '../../tables/purchasing/PurchaseOrderParametricTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPartParametricTable from '../../tables/purchasing/SupplierPartParametricTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+
+function PurchaseOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return PurchaseOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'supplier_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.purchaseorder}
+      role={UserRoles.purchase_order}
+      params={{ outstanding: true, supplier_detail: true }}
+      filters={calendarFilters}
+      tooltip={renderTooltip}
+    />
+  );
+}
 
 export default function PurchasingIndex() {
   const user = useUserState();
@@ -79,13 +107,7 @@ export default function PurchasingIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.purchaseorder}
-                role={UserRoles.purchase_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <PurchaseOrderCalendar />
           },
           {
             value: 'parametric',

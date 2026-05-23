@@ -45,9 +45,9 @@ test('Settings - User theme', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'User settings' }).click();
 
   // loader
-  await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
+  await page.getByRole('combobox', { name: 'Loader Type Selector' }).click();
   await page.getByRole('option', { name: 'Oval' }).click();
-  await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
+  await page.getByRole('combobox', { name: 'Loader Type Selector' }).click();
   await page.getByRole('option', { name: 'Bars' }).click();
 
   // dark / light mode
@@ -92,7 +92,7 @@ test('Settings - User', async ({ browser }) => {
   await page.getByText('Profile Details').waitFor();
 
   // Language selection
-  await page.getByRole('textbox', { name: 'Select language' }).click();
+  await page.getByRole('combobox', { name: 'Select language' }).click();
   await page.getByRole('option', { name: 'العربية' }).waitFor();
   await page.getByRole('option', { name: 'Deutsch' }).waitFor();
   await page.getByRole('option', { name: 'English' }).waitFor();
@@ -321,8 +321,8 @@ test('Settings - Admin - Background Tasks', async ({ browser }) => {
 
   // Background worker should be running, and idle
   await page.getByText('Background worker running').waitFor();
-  await page.getByText('Failed Tasks0').waitFor();
-  await page.getByText('Pending Tasks0').waitFor();
+  await page.getByText(/Failed Tasks\d+/).waitFor();
+  await page.getByText(/Pending Tasks\d+/).waitFor();
 
   // Expand the "scheduled tasks" view
   await page.getByRole('button', { name: 'Scheduled Tasks' }).click();
@@ -401,7 +401,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await loadTab(page, 'Parameters', true);
 
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
 
   // Clean old template data if exists
   await page

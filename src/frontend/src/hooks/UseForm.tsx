@@ -62,14 +62,18 @@ export function useApiFormModal(props: ApiFormModalProps) {
     id: modalId,
     title: formProps.title,
     onOpen: () => {
-      setIsOpen(true);
-      modalState.setModalOpen(modalId, true);
-      formProps.onOpen?.();
+      queueMicrotask(() => {
+        setIsOpen(true);
+        modalState.setModalOpen(modalId, true);
+        formProps.onOpen?.();
+      });
     },
     onClose: () => {
-      setIsOpen(false);
-      modalState.setModalOpen(modalId, false);
-      formProps.onClose?.();
+      queueMicrotask(() => {
+        setIsOpen(false);
+        modalState.setModalOpen(modalId, false);
+        formProps.onClose?.();
+      });
     },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',

@@ -217,7 +217,7 @@ export default function NotesEditor({
         const sibling =
           mdeInstance?.codemirror.getWrapperElement()?.nextSibling;
 
-        if (sibling != null) {
+        if (sibling != null && editable != false) {
           EasyMDE.togglePreview(mdeInstance);
         }
       }

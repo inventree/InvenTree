@@ -1181,3 +1181,18 @@ def plugins_info(*args, **kwargs):
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
+
+
+def sanitize_token(token_value: str, front=8, back=12) -> str:
+    """Sanitize a token by replacing the middle characters with asterisks.
+
+    Args:
+        token_value: The token string to sanitize
+        front: Number of characters to show at the start of the token (default = 8)
+        back: Number of characters to show at the end of the token (default = 12)
+
+    Returns:
+        The sanitized token string
+    """
+    middle = len(token_value) - (front + back)
+    return token_value[:front] + '*' * middle + token_value[-back:]

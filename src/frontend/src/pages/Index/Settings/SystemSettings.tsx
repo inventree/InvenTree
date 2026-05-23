@@ -13,25 +13,22 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
+  IconTransfer,
   IconTruckDelivery
 } from '@tabler/icons-react';
-import { lazy, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { PluginPanelKey } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
-import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { Loadable } from '../../../functions/loading';
 import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
-
-const PluginSettingsGroup = Loadable(
-  lazy(() => import('./PluginSettingsGroup'))
-);
+import PluginSettingsGroup from './PluginSettingsGroup';
 
 /**
  * System settings page
@@ -44,33 +41,40 @@ export default function SystemSettings() {
         label: t`Server`,
         icon: <IconServerCog />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'INVENTREE_BASE_URL',
-              'INVENTREE_COMPANY_NAME',
-              'INVENTREE_INSTANCE',
-              'INVENTREE_INSTANCE_TITLE',
-              'INVENTREE_INSTANCE_ID',
-              'INVENTREE_ANNOUNCE_ID',
-              'INVENTREE_SHOW_SUPERUSER_BANNER',
-              'INVENTREE_SHOW_ADMIN_BANNER',
-              'INVENTREE_RESTRICT_ABOUT',
-              'DISPLAY_FULL_NAMES',
-              'DISPLAY_PROFILE_INFO',
-              'INVENTREE_UPDATE_CHECK_INTERVAL',
-              'INVENTREE_DOWNLOAD_FROM_URL',
-              'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
-              'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
-              'INVENTREE_STRICT_URLS',
-              'INVENTREE_BACKUP_ENABLE',
-              'INVENTREE_BACKUP_DAYS',
-              'INVENTREE_DELETE_TASKS_DAYS',
-              'INVENTREE_DELETE_ERRORS_DAYS',
-              'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
-              'INVENTREE_DELETE_EMAIL_DAYS',
-              'INVENTREE_PROTECT_EMAIL_LOG'
-            ]}
-          />
+          <>
+            <GlobalSettingList
+              heading={t`Server Settings`}
+              keys={[
+                'INVENTREE_BASE_URL',
+                'INVENTREE_COMPANY_NAME',
+                'INVENTREE_INSTANCE',
+                'INVENTREE_INSTANCE_TITLE',
+                'INVENTREE_INSTANCE_ID',
+                'INVENTREE_ANNOUNCE_ID',
+                'INVENTREE_SHOW_SUPERUSER_BANNER',
+                'INVENTREE_SHOW_ADMIN_BANNER',
+                'INVENTREE_RESTRICT_ABOUT',
+                'DISPLAY_FULL_NAMES',
+                'DISPLAY_PROFILE_INFO',
+                'WEEK_STARTS_ON',
+                'INVENTREE_UPLOAD_MAX_SIZE',
+                'INVENTREE_STRICT_URLS'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`Scheduled Tasks`}
+              keys={[
+                'INVENTREE_UPDATE_CHECK_INTERVAL',
+                'INVENTREE_BACKUP_ENABLE',
+                'INVENTREE_BACKUP_DAYS',
+                'INVENTREE_DELETE_TASKS_DAYS',
+                'INVENTREE_DELETE_ERRORS_DAYS',
+                'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
+                'INVENTREE_DELETE_EMAIL_DAYS',
+                'INVENTREE_PROTECT_EMAIL_LOG'
+              ]}
+            />
+          </>
         )
       },
       {
@@ -245,6 +249,8 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'SERIAL_NUMBER_GLOBALLY_UNIQUE',
+                'STOCK_ALLOW_EDIT_SERIAL',
+                'STOCK_ALLOW_DELETE_SERIALIZED',
                 'STOCK_DELETE_DEPLETED_DEFAULT',
                 'STOCK_BATCH_CODE_TEMPLATE',
                 'STOCK_OWNERSHIP_CONTROL',
@@ -289,19 +295,27 @@ export default function SystemSettings() {
         label: t`Manufacturing`,
         icon: <IconBuildingFactory2 />,
         content: (
-          <GlobalSettingList
-            heading={t`Build Orders`}
-            keys={[
-              'BUILDORDER_REFERENCE_PATTERN',
-              'BUILDORDER_EXTERNAL_BUILDS',
-              'BUILDORDER_REQUIRE_RESPONSIBLE',
-              'BUILDORDER_REQUIRE_ACTIVE_PART',
-              'BUILDORDER_REQUIRE_LOCKED_PART',
-              'BUILDORDER_REQUIRE_VALID_BOM',
-              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
-              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
-            ]}
-          />
+          <>
+            <GlobalSettingList
+              heading={t`Build Orders`}
+              keys={[
+                'BUILDORDER_REFERENCE_PATTERN',
+                'BUILDORDER_REQUIRE_RESPONSIBLE',
+                'BUILDORDER_REQUIRE_ACTIVE_PART',
+                'BUILDORDER_REQUIRE_LOCKED_PART',
+                'BUILDORDER_REQUIRE_VALID_BOM',
+                'BUILDORDER_REQUIRE_CLOSED_CHILDS',
+                'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+              ]}
+            />
+            <GlobalSettingList
+              heading={t`External Build Orders`}
+              keys={[
+                'BUILDORDER_EXTERNAL_BUILDS',
+                'BUILDORDER_EXTERNAL_REQUIRED'
+              ]}
+            />
+          </>
         )
       },
       {
@@ -335,7 +349,8 @@ export default function SystemSettings() {
                 'SALESORDER_DEFAULT_SHIPMENT',
                 'SALESORDER_EDIT_COMPLETED_ORDERS',
                 'SALESORDER_SHIP_COMPLETE',
-                'SALESORDER_SHIPMENT_REQUIRES_CHECK'
+                'SALESORDER_SHIPMENT_REQUIRES_CHECK',
+                'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'
               ]}
             />
             <GlobalSettingList
@@ -351,10 +366,26 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'transferorders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'TRANSFERORDER_ENABLED',
+              'TRANSFERORDER_REFERENCE_PATTERN',
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+            ]}
+          />
+        )
+      },
+      {
         name: 'plugins',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginSettingsGroup global={true} />
+        content: (
+          <PluginSettingsGroup global={true} includeBaseSettings={true} />
+        )
       }
     ];
   }, []);

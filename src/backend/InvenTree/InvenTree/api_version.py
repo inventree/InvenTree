@@ -1,10 +1,47 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 482
+INVENTREE_API_VERSION = 493
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v493 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11961
+    - Adds "thumbnail" field to the Attachment API endpoint, which provides a URL to a thumbnail image for image attachments (if available)
+
+v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
+
+v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
+    - Add API serializer for deleting a part category
+    - Add API serializer for deleting a stock location
+
+v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
+    - moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
+    - Removes the "remote_image" field from the Part API endpoint
+    - Removes the "remote_image" field from the Company API endpoint
+
+v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
+    - Allow renaming of attachments after upload via the API
+
+v487 -> 2026-05-15 : https://github.com/inventree/InvenTree/pull/11948
+    - Make SelectionList default nullable
+    - Add icon to TreePath schema
+
+v486 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11914
+    - Adds "maximum_stock" field to the Part model and associated API endpoints
+    - Adds "high_stock" filter to the Part API endpoint to filter parts which are above their maximum stock level
+
+v485 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11631
+    - Adds "raw_amount" field to the BomItem API endpoint
+
+v484 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11910
+    - Adds more docstrings to (scheduled) tasks
+
+v483 -> 2026-05-04 : https://github.com/inventree/InvenTree/pull/11861
+    - Enable bulk-update operations on the BomItem API endpoint, allowing multiple BOM items to be updated in a single API call
 
 v482 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11540
     - Add id to the ordering fields of the Parts model

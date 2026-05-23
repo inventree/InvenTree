@@ -3,7 +3,6 @@
 import os
 from datetime import datetime
 from decimal import Decimal
-from enum import IntEnum
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -331,116 +330,94 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
     def test_category_delete(self):
         """Test category deletion with different parameters."""
-
-        class Target(IntEnum):
-            move_subcategories_to_parent_move_parts_to_parent = (0,)
-            move_subcategories_to_parent_delete_parts = (1,)
-            delete_subcategories_move_parts_to_parent = (2,)
-            delete_subcategories_delete_parts = (3,)
-
-        for i in range(4):
-            delete_child_categories: bool = False
-            delete_parts: bool = False
-
-            if i in (
-                Target.move_subcategories_to_parent_delete_parts,
-                Target.delete_subcategories_delete_parts,
-            ):
-                delete_parts = True
-            if i in (
-                Target.delete_subcategories_move_parts_to_parent,
-                Target.delete_subcategories_delete_parts,
-            ):
-                delete_child_categories = True
-
-            # Create a parent category
-            parent_category = PartCategory.objects.create(
-                name='Parent category',
-                description='This is the parent category where the child categories and parts are moved to',
-                parent=None,
-            )
-
-            category_count_before = PartCategory.objects.count()
-            part_count_before = Part.objects.count()
-
-            # Create a category to delete
-            cat_to_delete = PartCategory.objects.create(
-                name='Category to delete',
-                description='This is the category to be deleted',
-                parent=parent_category,
-            )
-
-            url = reverse('api-part-category-detail', kwargs={'pk': cat_to_delete.id})
-
-            parts = []
-            # Create parts in the category to be deleted
-            for jj in range(3):
-                parts.append(
-                    Part.objects.create(
-                        name=f'Part xyz {i}_{jj}',
-                        description='Child part of the deleted category',
-                        category=cat_to_delete,
-                    )
+        for delete_child_categories in [False, True]:
+            for delete_parts in [False, True]:
+                # Create a parent category
+                parent_category = PartCategory.objects.create(
+                    name='Parent category',
+                    description='This is the parent category where the child categories and parts are moved to',
+                    parent=None,
                 )
 
-            child_categories = []
-            child_categories_parts = []
-            # Create child categories under the category to be deleted
-            for ii in range(3):
-                child = PartCategory.objects.create(
-                    name=f'Child parent_cat {i}_{ii}',
-                    description='A child category of the deleted category',
-                    parent=cat_to_delete,
-                )
-                child_categories.append(child)
+                category_count_before = PartCategory.objects.count()
 
-                # Create parts in the child categories
+                # Create a category to delete
+                cat_to_delete = PartCategory.objects.create(
+                    name='Category to delete',
+                    description='This is the category to be deleted',
+                    parent=parent_category,
+                )
+
+                url = reverse(
+                    'api-part-category-detail', kwargs={'pk': cat_to_delete.id}
+                )
+
+                parts = []
+                # Create parts in the category to be deleted
                 for jj in range(3):
-                    child_categories_parts.append(
+                    parts.append(
                         Part.objects.create(
-                            name=f'Part xyz {i}_{jj}_{ii}',
-                            description='Child part in the child category of the deleted category',
-                            category=child,
+                            name=f'Part {"A" if delete_child_categories else "B"}{"C" if delete_parts else "D"}-{jj}',
+                            description='Child part of the deleted category',
+                            category=cat_to_delete,
                         )
                     )
 
-            # Delete the created category (sub categories and their parts will be moved under the parent)
-            params = {}
-            if delete_parts:
-                params['delete_parts'] = '1'
-            if delete_child_categories:
-                params['delete_child_categories'] = '1'
-            self.delete(url, params, expected_code=204)
-
-            if delete_parts:
-                if i == Target.delete_subcategories_delete_parts:
-                    # Check if all parts deleted
-                    self.assertEqual(Part.objects.count(), part_count_before)
-                elif i == Target.move_subcategories_to_parent_delete_parts:
-                    # Check if all parts deleted
-                    self.assertEqual(
-                        Part.objects.count(),
-                        part_count_before + len(child_categories_parts),
+                child_categories = []
+                child_categories_parts = []
+                # Create child categories under the category to be deleted
+                for ii in range(3):
+                    child = PartCategory.objects.create(
+                        name=f'Child parent_cat {ii}',
+                        description='A child category of the deleted category',
+                        parent=cat_to_delete,
                     )
-            else:
-                # parts moved to the parent category
-                for part in parts:
-                    part.refresh_from_db()
-                    self.assertEqual(part.category, parent_category)
+                    child_categories.append(child)
 
-                if delete_child_categories:
-                    for part in child_categories_parts:
+                    # Create parts in the child categories
+                    for jj in range(3):
+                        child_categories_parts.append(
+                            Part.objects.create(
+                                name=f'Part xyz {jj}_{ii}-{"E" if delete_child_categories else "F"}{"G" if delete_parts else "H"}',
+                                description='Child part in the child category of the deleted category',
+                                category=child,
+                            )
+                        )
+
+                # Delete the created category (sub categories and their parts will be moved under the parent)
+                params = {
+                    'delete_parts': delete_parts,
+                    'delete_child_categories': delete_child_categories,
+                }
+
+                self.delete(url, params, expected_code=204)
+
+                if delete_parts:
+                    # Check if all parts deleted
+                    for p in parts:
+                        with self.assertRaises(Part.DoesNotExist):
+                            p.refresh_from_db()
+                else:
+                    # parts moved to the parent category
+                    for part in parts:
                         part.refresh_from_db()
                         self.assertEqual(part.category, parent_category)
 
-            if delete_child_categories:
-                # Check if all categories are deleted
-                self.assertEqual(PartCategory.objects.count(), category_count_before)
-            else:
-                #  Check if all subcategories to parent moved to parent and all parts deleted
-                for child in child_categories:
-                    child.refresh_from_db()
-                    self.assertEqual(child.parent, parent_category)
+                    if delete_child_categories:
+                        for part in child_categories_parts:
+                            part.refresh_from_db()
+                            self.assertEqual(part.category, parent_category)
+
+                if delete_child_categories:
+                    # Check if all categories are deleted
+                    self.assertEqual(
+                        PartCategory.objects.count(), category_count_before
+                    )
+                else:
+                    #  Check if all subcategories to parent moved to parent and all parts deleted
+                    for child in child_categories:
+                        child.refresh_from_db()
+                        self.assertEqual(child.parent, parent_category)
 
     def test_structural(self):
         """Test the effectiveness of structural categories.
@@ -1005,7 +982,9 @@ class PartAPITest(PartAPITestBase):
         sub_part.refresh_from_db()
 
         # Link the sub part to the assembly via a BOM
-        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=10)
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=sub_part, raw_amount='10', quantity=10
+        )
 
         filters = {'active': True, 'assembly': True, 'bom_valid': True}
 
@@ -1023,14 +1002,14 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(response.data[0]['pk'], assembly.pk)
 
         # Adjust the 'quantity' of the BOM item to make it invalid
-        bom_item.quantity = 15
+        bom_item.set_quantity(15)
         bom_item.save()
 
         response = self.get(url, filters)
         self.assertEqual(len(response.data), 0)
 
         # Adjust it back again - should be valid again
-        bom_item.quantity = 10
+        bom_item.set_quantity(10)
         bom_item.save()
 
         response = self.get(url, filters)
@@ -1054,7 +1033,7 @@ class PartAPITest(PartAPITestBase):
         self.assertIsNotNone(data['bom_checked_date'])
 
         # Now, let's try to validate and invalidate the assembly BOM via the API
-        bom_item.quantity = 99
+        bom_item.raw_amount = '  99'
         bom_item.save()
 
         data = self.get(bom_url, expected_code=200).data
@@ -2647,6 +2626,58 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['building'], 55)
         self.assertEqual(data['scheduled_to_build'], 32)
 
+    def test_low_stock(self):
+        """Test the 'low_stock' filter."""
+        part = Part.objects.create(
+            name='Low Stock Part',
+            description='A part which is low on stock',
+            category=PartCategory.objects.get(pk=1),
+            minimum_stock=10,
+        )
+
+        response = self.get(
+            reverse('api-part-list'), {'low_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], part.pk)
+
+        StockItem.objects.create(part=part, quantity=20)
+
+        response = self.get(
+            reverse('api-part-list'), {'low_stock': True}, expected_code=200
+        )
+
+        # No results should be returned, as the part is no longer low on stock
+        self.assertEqual(len(response.data), 0)
+
+    def test_high_stock(self):
+        """Test the 'high_stock' filter."""
+        part = Part.objects.create(
+            name='High Stock Part',
+            description='A part which is high on stock',
+            category=PartCategory.objects.get(pk=1),
+        )
+
+        StockItem.objects.create(part=part, quantity=100)
+
+        response = self.get(
+            reverse('api-part-list'), {'high_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 0)
+
+        # Set a "maximum stock" threshold for the part
+        part.maximum_stock = 50
+        part.save()
+
+        response = self.get(
+            reverse('api-part-list'), {'high_stock': True}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], part.pk)
+
 
 class BomItemTest(InvenTreeAPITestCase):
     """Unit tests for the BomItem API."""
@@ -2796,6 +2827,7 @@ class BomItemTest(InvenTreeAPITestCase):
             'rounding_multiple',
             'pk',
             'part',
+            'raw_amount',
             'quantity',
             'reference',
             'sub_part',
@@ -2821,6 +2853,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Increase the quantity
         data = response.data
+        del data['raw_amount']
         data['quantity'] = 57
         data['note'] = 'Added a note'
 
@@ -2828,6 +2861,14 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+        # Provide a conflicting "raw_amount" and "quantity" field
+        data['raw_amount'] = '   123.45  '
+        data['quantity'] = 99.99
+        response = self.patch(url, data, expected_code=200)
+
+        self.assertEqual(response.data['raw_amount'], '123.45')
+        self.assertAlmostEqual(response.data['quantity'], 123.45, places=2)
 
     def test_output_options(self):
         """Test that various output options work as expected."""
@@ -2846,14 +2887,57 @@ class BomItemTest(InvenTreeAPITestCase):
         """Test that we can create a new BomItem via the API."""
         url = reverse('api-bom-list')
 
+        # Test with legacy format (only the 'quantity' field is supplied)
         data = {'part': 100, 'sub_part': 4, 'quantity': 777}
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['raw_amount'], '777')
+        self.assertEqual(response.data['quantity'], 777)
 
-        self.post(url, data, expected_code=201)
+        # Test with the 'modern' format (accepts a raw_amount field)
+        data = {'part': 100, 'sub_part': 4, 'raw_amount': '123.45'}
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['raw_amount'], '123.45')
+        self.assertEqual(response.data['quantity'], 123.45)
+
+        # First, let's assign some units to the sub_part
+        sub_part = Part.objects.get(pk=4)
+        sub_part.units = 'metres'
+        sub_part.save()
+
+        # Test with a bunch of invalid 'raw_amount' values
+        for value in [
+            '3 ampere',
+            '17 degrees',
+            '1 kg',
+            '-4',
+            'yak',
+            '*****',
+            '$$$$$',
+            '',
+        ]:
+            data = {'part': 100, 'sub_part': 4, 'raw_amount': value}
+            self.post(url, data, expected_code=400)
+
+        # Test with a bunch of valid 'raw_amount' values
+        test_values = [
+            (5, 5),
+            ('3.14cm', 0.0314),
+            ('10 metres   ', 10),
+            ('2 inches', 0.0508),
+            ('1/7', 0.142857),
+            ('14 ', 14),
+        ]
+
+        for raw_amount, quantity in test_values:
+            data = {'part': 100, 'sub_part': 4, 'raw_amount': raw_amount}
+            response = self.post(url, data, expected_code=201)
+            self.assertEqual(response.data['raw_amount'], str(raw_amount).strip())
+            self.assertAlmostEqual(response.data['quantity'], quantity, places=4)
 
         # Now try to create a BomItem which references itself
-        data['part'] = 100
-        data['sub_part'] = 100
-        self.post(url, data, expected_code=400)
+        data = {'part': 100, 'sub_part': 100, 'quantity': 1}
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('(recursive)', str(response.data))
 
     def test_variants(self):
         """Tests for BomItem use with variants."""

@@ -55,7 +55,7 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
                 )
             )
 
-        NotificationMessage.objects.bulk_create(entries)
+        NotificationMessage.objects.bulk_create(entries, batch_size=250)
 
         return True
 

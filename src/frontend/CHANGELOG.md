@@ -2,6 +2,31 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.0 - May 2026
+
+#### Version Numbering
+
+This update brings the version numbering in-line with the core InvenTree server version, which is currently at `1.4.0`. This versioning scheme will be maintained going forward, with the UI components library version matching the core server version.
+
+Thus, version `1.4.x` of the UI components library will be compatible with version `1.4.x` of the InvenTree server, and so on.
+
+#### Mantine Library Update
+
+The underlying Mantine library has been updated from version `8.x` to version `9.x`. This update may introduce breaking changes for plugins that rely on the InvenTree UI components library, as the Mantine library is a core dependency. Plugin developers should test their plugins against this new version to ensure compatibility.
+
+#### New Components
+
+Adds additional functions in the plugin context related to form rendering and API invocation:
+- `useInstance`
+- `renderRemoteInstance`
+- `EditApiForm`
+- `RenderInlineModel`
+- `Thumbnail`
+
+Exposes sub-components related to DetailDrawer rendering:
+- `DetailDrawerComponent`
+- `useLocalLibState`
+
 ### 0.11.3 - April 2026
 
 Exposes additional type definitions related to rendering drawers from tables:

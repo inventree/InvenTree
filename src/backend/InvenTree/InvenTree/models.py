@@ -594,7 +594,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             parameters.append(parameter)
 
         if len(parameters) > 0:
-            common.models.Parameter.objects.bulk_create(parameters)
+            common.models.Parameter.objects.bulk_create(parameters, batch_size=250)
 
     def get_parameter(self, name: str):
         """Return a Parameter instance for the given parameter name.
@@ -661,7 +661,9 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
 
         Before deleting the model instance, delete any associated attachments.
         """
-        self.attachments.all().delete()
+        for attachment in list(self.attachments.all()):
+            attachment.delete()
+
         super().delete(*args, **kwargs)
 
     @property

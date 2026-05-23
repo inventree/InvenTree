@@ -38,19 +38,25 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import {
   type ImporterOpenOptions,
   closeGlobalImporter,
   getGlobalImporterState,
   openGlobalImporter
 } from '../../states/ImporterState';
+import { usePluginState } from '../../states/PluginState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
-import { RenderInstance } from '../render/Instance';
+import { EditApiForm } from '../forms/ApiForm';
+import { Thumbnail } from '../images/Thumbnail';
+import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
+import { RenderInlineModel } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
   const [server] = useServerApiState(useShallow((s) => [s.server]));
+  const [setRenderer] = usePluginState(useShallow((s) => [s.setRenderer]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -77,7 +83,11 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      useInstance: useInstance,
       renderInstance: RenderInstance,
+      renderRemoteInstance: RenderRemoteInstance,
+      renderInlineModel: RenderInlineModel,
+      thumbnail: Thumbnail,
       theme: theme,
       colorScheme: colorScheme,
       importer: {
@@ -100,6 +110,7 @@ export const useInvenTreeContext = () => {
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
         edit: useEditApiFormModal,
+        editApiForm: EditApiForm,
         stockActions: {
           addStock: useAddStockItem,
           assignStock: useAssignStockItem,
@@ -111,6 +122,9 @@ export const useInvenTreeContext = () => {
           transferStock: useTransferStockItem,
           returnStock: useReturnStockItem
         }
+      },
+      stateFnc: {
+        setRenderer: setRenderer
       }
     };
   }, [

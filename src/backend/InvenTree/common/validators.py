@@ -2,7 +2,8 @@
 
 import re
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
+from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
@@ -74,6 +75,21 @@ def validate_attachment_model_type(value):
     model_names = [el[0] for el in attachment_model_options()]
     if value not in model_names:
         raise ValidationError('Model type does not support attachments')
+
+
+def validate_attachment_file(attachment):
+    """Ensure that the provided attachment file is valid."""
+    max_size = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE', create=False)
+
+    if attachment.size > (max_size * 1024 * 1024):
+        raise ValidationError(
+            _(f'File size exceeds maximum upload limit of {max_size} MB')
+        )
+
+    try:
+        default_storage.generate_filename(attachment.name)
+    except SuspiciousFileOperation:  # pragma: no cover
+        raise ValidationError(_('Invalid file name'))
 
 
 def validate_notes_model_type(value):

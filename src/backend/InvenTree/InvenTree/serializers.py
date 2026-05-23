@@ -26,7 +26,6 @@ from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
-import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
@@ -315,13 +314,16 @@ class TreePathSerializer(serializers.Serializer):
 
         allowed_fields = ['pk', 'name', *(extra_fields or [])]
 
+        if InvenTree.ready.isGeneratingSchema():
+            return
+
         for field in list(self.fields.keys()):
             if field not in allowed_fields:
                 self.fields.pop(field, None)
 
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
-    icon = serializers.CharField(required=False, read_only=True)
+    icon = serializers.CharField(required=False, read_only=True, allow_null=True)
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -780,51 +782,6 @@ class NotesFieldMixin:
                     and not InvenTree.ready.isGeneratingSchema()
                 ):
                     self.fields.pop('notes', None)
-
-
-class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
-    """Mixin class which allows downloading an 'image' from a remote URL.
-
-    Adds the optional, write-only `remote_image` field to the serializer
-    """
-
-    def skip_create_fields(self):
-        """Ensure the 'remote_image' field is skipped when creating a new instance."""
-        return ['remote_image']
-
-    remote_image = serializers.URLField(
-        required=False,
-        allow_blank=True,
-        write_only=True,
-        label=_('Remote Image'),
-        help_text=_('URL of remote image file'),
-    )
-
-    def validate_remote_image(self, url):
-        """Perform custom validation for the remote image URL.
-
-        - Attempt to download the image and store it against this object instance
-        - Catches and re-throws any errors
-        """
-        from InvenTree.helpers_model import download_image_from_url
-
-        if not url:
-            return
-
-        if not common_models.InvenTreeSetting.get_setting(
-            'INVENTREE_DOWNLOAD_FROM_URL'
-        ):
-            raise ValidationError(
-                _('Downloading images from remote URL is not enabled')
-            )
-
-        try:
-            self.remote_image_file = download_image_from_url(url)
-        except Exception:
-            self.remote_image_file = None
-            raise ValidationError(_('Failed to download image from remote URL'))
-
-        return url
 
 
 class ContentTypeField(serializers.ChoiceField):

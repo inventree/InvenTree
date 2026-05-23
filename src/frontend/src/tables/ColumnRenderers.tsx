@@ -323,15 +323,15 @@ export function PathColumn(props: TableColumnProps): TableColumn {
       const pathstring = instance.pathstring || name;
 
       if (name == pathstring) {
-        return <Text>{name}</Text>;
+        return <Text size='sm'>{name}</Text>;
       }
 
       return (
         <TableHoverCard
-          value={<Text>{instance.name}</Text>}
+          value={<Text size='sm'>{instance.name}</Text>}
           icon='sitemap'
-          title={props.title}
-          extra={[<Text>{instance.pathstring}</Text>]}
+          title={props.title?.toLocaleString() ?? t`Path`}
+          extra={[<Text size='sm'>{instance.pathstring}</Text>]}
         />
       );
     }

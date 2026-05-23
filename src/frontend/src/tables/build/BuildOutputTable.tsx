@@ -122,6 +122,9 @@ function OutputAllocationDrawer({
       opened={opened}
       onClose={close}
       withCloseButton
+      closeButtonProps={{
+        'aria-label': 'close-allocation-drawer'
+      }}
       closeOnEscape
       closeOnClickOutside
       styles={{

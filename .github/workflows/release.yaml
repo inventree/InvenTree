@@ -78,26 +78,21 @@ jobs:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # pin@2.11.5
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: src/backend/InvenTree/web/static/frontend-build.zip
-          asset_name: frontend-build.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} src/backend/InvenTree/web/static/frontend-build.zip#frontend-build.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload frontend to artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # pin@2.11.5
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          asset_name: frontend-build.intoto.jsonl
-          file: ${{ steps.attest.outputs.bundle-path}}
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} ${BUNDLE_PATH}#frontend-build.intoto.jsonl
+        env:
+          REF: ${{ github.ref_name }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path}}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs:
     runs-on: ubuntu-24.04
@@ -134,13 +129,10 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # pin@2.11.5
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: docs/site/docs-html.zip
-          asset_name: docs-html.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} docs/site/docs-html.zip#docs-html.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-pkgr:
     if: github.repository == 'inventree/InvenTree'
@@ -244,10 +236,9 @@ jobs:
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
-        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # pin@2.11.5
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.package.outputs.package_path }}
-          asset_name: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
+        env:
+          REF: ${{ github.ref_name }}
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

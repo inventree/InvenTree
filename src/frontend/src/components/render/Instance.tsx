@@ -15,14 +15,18 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
+  InstanceRenderInterface,
   ModelRendererDict,
+  RemoteInstanceProps,
+  RenderInlineModelProps,
   RenderInstanceProps
 } from '@lib/types/Rendering';
+
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
-import { shortenString } from '@lib/functions/String';
+import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
 import { useApi } from '../../contexts/ApiContext';
+import { usePluginState } from '../../states/PluginState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -47,7 +51,9 @@ import {
   RenderReturnOrder,
   RenderReturnOrderLineItem,
   RenderSalesOrder,
-  RenderSalesOrderShipment
+  RenderSalesOrderShipment,
+  RenderTransferOrder,
+  RenderTransferOrderLineItem
 } from './Order';
 import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
 import { RenderPlugin } from './Plugin';
@@ -83,6 +89,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
+  [ModelType.transferorder]: RenderTransferOrder,
+  [ModelType.transferorderlineitem]: RenderTransferOrderLineItem,
   [ModelType.stocklocation]: RenderStockLocation,
   [ModelType.stocklocationtype]: RenderStockLocationType,
   [ModelType.stockitem]: RenderStockItem,
@@ -104,18 +112,23 @@ export const RendererLookup: ModelRendererDict = {
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  if (props.model === undefined) {
-    return <UnknownRenderer model={props.model} />;
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
+    RenderComponent =
+      RendererLookup[props.model.toString().toLowerCase() as ModelType];
   }
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
 
-  const model_name = props.model.toString().toLowerCase() as ModelType;
-
-  const RenderComponent = RendererLookup[model_name];
-
+  // provider component
   if (!RenderComponent) {
     return <UnknownRenderer model={props.model} />;
   }
-
   return <RenderComponent {...props} />;
 }
 
@@ -124,12 +137,7 @@ export function RenderRemoteInstance({
   modelUrl,
   modelRenderer,
   pk
-}: Readonly<{
-  model: ModelType;
-  modelUrl?: string;
-  modelRenderer?: (instance: any) => ReactNode;
-  pk: number;
-}>): ReactNode {
+}: Readonly<RemoteInstanceProps>): ReactNode {
   const api = useApi();
 
   const { data, isLoading, isFetching } = useQuery({
@@ -176,20 +184,8 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: Readonly<{
-  primary: ReactNode;
-  secondary?: ReactNode;
-  showSecondary?: boolean;
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-  image?: string;
-  labels?: string[];
-  url?: string;
-  navigate?: any;
-  tooltip?: string;
-}>): ReactNode {
+}: Readonly<RenderInlineModelProps>): ReactNode {
   // TODO: Handle labels
-
   const onClick = useCallback(
     (event: any) => {
       if (url && navigate) {

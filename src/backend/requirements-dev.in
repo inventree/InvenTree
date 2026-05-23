@@ -6,7 +6,7 @@ django-slowtests                        # Show which unit tests are running slow
 django-test-migrations                  # Unit testing for database migrations
 isort                                   # python import sorting
 pip-tools                               # Compile pip requirements
-pre-commit                              # Git pre-commit
+prek                                    # Git pre commit hooks
 setuptools                              # Standard dependency
 pdfminer.six                            # PDF validation
 ty                                      # type checking

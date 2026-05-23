@@ -3,7 +3,6 @@
 import os
 import random
 from datetime import datetime, timedelta
-from enum import IntEnum
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -142,13 +141,6 @@ class StockLocationTest(StockAPITestCase):
 
     def test_stock_location_delete(self):
         """Test stock location deletion with different parameters."""
-
-        class Target(IntEnum):
-            move_sub_locations_to_parent_move_stockitems_to_parent = (0,)
-            move_sub_locations_to_parent_delete_stockitems = (1,)
-            delete_sub_locations_move_stockitems_to_parent = (2,)
-            delete_sub_locations_delete_stockitems = (3,)
-
         # First, construct a set of template / variant parts
         part = Part.objects.create(
             name='Part for stock item creation',
@@ -157,117 +149,95 @@ class StockLocationTest(StockAPITestCase):
             is_template=False,
         )
 
-        for i in range(4):
-            delete_sub_locations: bool = False
-            delete_stock_items: bool = False
-
-            if i in (
-                Target.move_sub_locations_to_parent_delete_stockitems,
-                Target.delete_sub_locations_delete_stockitems,
-            ):
-                delete_stock_items = True
-            if i in (
-                Target.delete_sub_locations_move_stockitems_to_parent,
-                Target.delete_sub_locations_delete_stockitems,
-            ):
-                delete_sub_locations = True
-
-            # Create a parent stock location
-            parent_stock_location = StockLocation.objects.create(
-                name='Parent stock location',
-                description='This is the parent stock location where the sub categories and stock items are moved to',
-                parent=None,
-            )
-
-            stocklocation_count_before = StockLocation.objects.count()
-            stock_location_count_before = StockItem.objects.count()
-
-            # Create a stock location to be deleted
-            stock_location_to_delete = StockLocation.objects.create(
-                name='Stock location to delete',
-                description='This is the stock location to be deleted',
-                parent=parent_stock_location,
-            )
-
-            url = reverse(
-                'api-location-detail', kwargs={'pk': stock_location_to_delete.id}
-            )
-
-            stock_items = []
-            # Create stock items in the location to be deleted
-            for jj in range(3):
-                stock_items.append(
-                    StockItem.objects.create(
-                        batch=f'Batch xyz {jj}',
-                        location=stock_location_to_delete,
-                        part=part,
-                    )
+        for delete_sub_locations in [False, True]:
+            for delete_stock_items in [False, True]:
+                # Create a parent stock location
+                parent_stock_location = StockLocation.objects.create(
+                    name='Parent stock location',
+                    description='This is the parent stock location where the sub categories and stock items are moved to',
+                    parent=None,
                 )
 
-            child_stock_locations = []
-            child_stock_locations_items = []
-            # Create sub location under the stock location to be deleted
-            for ii in range(3):
-                child = StockLocation.objects.create(
-                    name=f'Sub-location {ii}',
-                    description='A sub-location of the deleted stock location',
-                    parent=stock_location_to_delete,
-                )
-                child_stock_locations.append(child)
+                location_count_before = StockLocation.objects.count()
+                item_count_before = StockItem.objects.count()
 
-                # Create stock items in the sub locations
+                # Create a stock location to be deleted
+                location_to_delete = StockLocation.objects.create(
+                    name='Stock location to delete',
+                    description='This is the stock location to be deleted',
+                    parent=parent_stock_location,
+                )
+
+                url = reverse(
+                    'api-location-detail', kwargs={'pk': location_to_delete.id}
+                )
+
+                stock_items = []
+
+                # Create stock items in the location to be deleted
                 for jj in range(3):
-                    child_stock_locations_items.append(
+                    stock_items.append(
                         StockItem.objects.create(
-                            batch=f'B xyz {jj}', part=part, location=child
+                            batch=f'Batch xyz {jj}',
+                            location=location_to_delete,
+                            part=part,
                         )
                     )
 
-            # Delete the created stock location
-            params = {}
-            if delete_stock_items:
-                params['delete_stock_items'] = '1'
-            if delete_sub_locations:
-                params['delete_sub_locations'] = '1'
-            response = self.delete(url, params, expected_code=204)
+                child_locations = []
+                child_locations_items = []
 
-            self.assertEqual(response.status_code, 204)
+                # Create sub location under the stock location to be deleted
+                for ii in range(3):
+                    child = StockLocation.objects.create(
+                        name=f'Sub-location {ii}',
+                        description='A sub-location of the deleted stock location',
+                        parent=location_to_delete,
+                    )
+                    child_locations.append(child)
 
-            if delete_stock_items:
-                if i == Target.delete_sub_locations_delete_stockitems:
-                    # Check if all sub-categories deleted
+                    # Create stock items in the sub locations
+                    for jj in range(3):
+                        child_locations_items.append(
+                            StockItem.objects.create(
+                                batch=f'B xyz {jj}', part=part, location=child
+                            )
+                        )
+
+                # Delete the created stock location
+                params = {
+                    'delete_stock_items': delete_stock_items,
+                    'delete_sub_locations': delete_sub_locations,
+                }
+
+                response = self.delete(url, data=params, expected_code=204)
+
+                self.assertEqual(response.status_code, 204)
+
+                # If we were deleting stock items, the count must not have changed
+                if delete_stock_items:
+                    extra_items = 0 if delete_sub_locations else 9
                     self.assertEqual(
-                        StockItem.objects.count(), stock_location_count_before
+                        StockItem.objects.count(), item_count_before + extra_items
                     )
-                elif i == Target.move_sub_locations_to_parent_delete_stockitems:
-                    # Check if all stock locations deleted
-                    self.assertEqual(
-                        StockItem.objects.count(),
-                        stock_location_count_before + len(child_stock_locations_items),
-                    )
-            else:
-                # Stock locations moved to the parent location
-                for stock_item in stock_items:
-                    stock_item.refresh_from_db()
-                    self.assertEqual(stock_item.location, parent_stock_location)
+                else:
+                    # Stock items moved to the parent location
+                    self.assertGreater(StockItem.objects.count(), item_count_before)
+
+                    for stock_item in stock_items:
+                        stock_item.refresh_from_db()
+                        self.assertEqual(stock_item.location, parent_stock_location)
 
                 if delete_sub_locations:
-                    for child_stock_location_item in child_stock_locations_items:
-                        child_stock_location_item.refresh_from_db()
-                        self.assertEqual(
-                            child_stock_location_item.location, parent_stock_location
-                        )
-
-            if delete_sub_locations:
-                # Check if all sub-locations are deleted
-                self.assertEqual(
-                    StockLocation.objects.count(), stocklocation_count_before
-                )
-            else:
-                #  Check if all sub-locations moved to the parent
-                for child in child_stock_locations:
-                    child.refresh_from_db()
-                    self.assertEqual(child.parent, parent_stock_location)
+                    # Check if all sub-categories deleted
+                    self.assertEqual(
+                        StockLocation.objects.count(), location_count_before
+                    )
+                else:
+                    # Check if all sub-categories moved to the parent category
+                    for location in child_locations:
+                        location.refresh_from_db()
+                        self.assertEqual(location.parent, parent_stock_location)
 
     def test_output_options(self):
         """Test output options."""
@@ -602,9 +572,7 @@ class StockItemListTest(StockAPITestCase):
                 )
             )
 
-            if len(items) >= 100:
-                StockItem.objects.bulk_create(items)
-                items = []
+        StockItem.objects.bulk_create(items, batch_size=250)
 
         self.assertEqual(StockItem.objects.count(), 1000)
 
@@ -1646,6 +1614,36 @@ class StockItemTest(StockAPITestCase):
         )
         self.assertEqual(trackable_part.get_stock_count(), 10)
 
+    def test_edit_serial(self):
+        """Test that we can edit serial numbers via the API."""
+        item = StockItem.objects.create(
+            part=Part.objects.filter(trackable=True).first(),
+            quantity=1,
+            location=StockLocation.objects.first(),
+        )
+
+        set_global_setting('STOCK_ALLOW_EDIT_SERIAL', False)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        # Edit the serial number
+        # This should succeed, as the initial serial number is blank
+        response = self.patch(url, {'serial': '54321'}, expected_code=200)
+        self.assertEqual(response.data['serial'], '54321')
+
+        # Edit it again - this time, should fail as the serial number is already set
+        response = self.patch(url, {'serial': '98765'}, expected_code=400)
+        self.assertIn('Editing of serial numbers is not allowed', str(response.data))
+
+        # Ensure that changing a different field does not cause an error
+        response = self.patch(url, {'batch': 'abcde'}, expected_code=200)
+        self.assertEqual(response.data['batch'], 'abcde')
+
+        # Adjust the setting to allow serial editing
+        set_global_setting('STOCK_ALLOW_EDIT_SERIAL', True)
+        response = self.patch(url, {'serial': '98765'}, expected_code=200)
+        self.assertEqual(response.data['serial'], '98765')
+
     def test_default_expiry(self):
         """Test that the "default_expiry" functionality works via the API.
 
@@ -2182,6 +2180,37 @@ class StockItemDeletionTest(StockAPITestCase):
             )
 
         self.assertEqual(StockItem.objects.count(), n)
+
+    def test_delete_serialized(self):
+        """Test deletion of serialized stock items."""
+        trackable_part = part.models.Part.objects.create(
+            name='My part',
+            description='A trackable part',
+            trackable=True,
+            default_location=StockLocation.objects.get(pk=1),
+        )
+
+        stock_item = StockItem.objects.create(
+            part=trackable_part, quantity=1, serial='12345'
+        )
+
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
+
+        response = self.delete(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=400
+        )
+
+        self.assertIn('Serialized stock items cannot be deleted', str(response.data))
+
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
+
+        response = self.delete(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=204
+        )
+
+        self.get(
+            reverse('api-stock-detail', kwargs={'pk': stock_item.pk}), expected_code=404
+        )
 
 
 class StockTestResultTest(StockAPITestCase):
