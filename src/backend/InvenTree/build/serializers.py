@@ -475,18 +475,6 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
-        """'save' the serializer to delete the build outputs."""
-        data = self.validated_data
-        outputs = data.get('outputs', [])
-
-        build = self.context['build']
-
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                build.delete_output(output)
-
 
 class BuildOutputScrapSerializer(serializers.Serializer):
     """Scrapping one or more build outputs."""
@@ -530,27 +518,6 @@ class BuildOutputScrapSerializer(serializers.Serializer):
             raise ValidationError(_('A list of build outputs must be provided'))
 
         return data
-
-    def save(self):
-        """Save the serializer to scrap the build outputs."""
-        build = self.context['build']
-        request = self.context.get('request')
-        data = self.validated_data
-        outputs = data.get('outputs', [])
-
-        # Scrap the build outputs
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                quantity = item.get('quantity', None)
-                build.scrap_build_output(
-                    output,
-                    quantity,
-                    data.get('location', None),
-                    user=request.user if request else None,
-                    notes=data.get('notes', ''),
-                    discard_allocations=data.get('discard_allocations', False),
-                )
 
 
 class BuildOutputCompleteSerializer(serializers.Serializer):
@@ -622,42 +589,6 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             raise ValidationError(_('A list of build outputs must be provided'))
 
         return data
-
-    def save(self):
-        """Save the serializer to complete the build outputs."""
-        build = self.context['build']
-        request = self.context.get('request')
-
-        data = self.validated_data
-
-        location = data.get('location', None)
-        status = data.get('status_custom_key', StockStatus.OK.value)
-        notes = data.get('notes', '')
-
-        outputs = data.get('outputs', [])
-
-        # Cache some calculated values which can be passed to each output
-        required_tests = outputs[0]['output'].part.getRequiredTests()
-        prevent_on_incomplete = (
-            common.settings.prevent_build_output_complete_on_incompleted_tests()
-        )
-
-        # Mark the specified build outputs as "complete"
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                quantity = item.get('quantity', None)
-
-                build.complete_build_output(
-                    output,
-                    request.user if request else None,
-                    quantity=quantity,
-                    location=location,
-                    status=status,
-                    notes=notes,
-                    required_tests=required_tests,
-                    prevent_on_incomplete=prevent_on_incomplete,
-                )
 
 
 class BuildIssueSerializer(serializers.Serializer):

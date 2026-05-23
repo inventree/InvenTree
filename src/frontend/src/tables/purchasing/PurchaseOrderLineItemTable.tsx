@@ -207,8 +207,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'received',
         title: t`Received`,
-        sortable: false,
-
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}

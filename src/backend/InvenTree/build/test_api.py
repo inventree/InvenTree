@@ -155,7 +155,7 @@ class BuildTest(BuildAPITest):
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=400,
+            expected_code=404,
         )
 
         data = self.post(self.url, {}, expected_code=400).data
@@ -225,7 +225,7 @@ class BuildTest(BuildAPITest):
                 'location': 1,
                 'status': StockStatus.ATTENTION.value,
             },
-            expected_code=201,
+            expected_code=200,
             max_query_count=300,
         )
 
@@ -445,7 +445,7 @@ class BuildTest(BuildAPITest):
         self.post(
             delete_url,
             {'outputs': [{'output': output.pk} for output in outputs[1:3]]},
-            expected_code=201,
+            expected_code=200,
         )
 
         # Two build outputs have been removed
@@ -472,7 +472,7 @@ class BuildTest(BuildAPITest):
                 'outputs': [{'output': output.pk} for output in outputs[3:]],
                 'location': 4,
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # Check that the outputs have been completed
@@ -1352,7 +1352,7 @@ class BuildOutputCreateTest(BuildAPITest):
             url, data={'quantity': 5, 'serial_numbers': '1,2,3-5'}, expected_code=201
         )
 
-        # Build outputs have incdeased
+        # Build outputs have increased
         self.assertEqual(n_outputs + 5, build.output_count)
 
         # Stock items have increased
@@ -1465,7 +1465,7 @@ class BuildOutputScrapTest(BuildAPITest):
                 'location': 1,
                 'notes': 'Should succeed',
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # There should still be three outputs associated with this build
@@ -1533,7 +1533,7 @@ class BuildOutputScrapTest(BuildAPITest):
 
         # Partially complete the output (with a valid quantity)
         data['outputs'][0]['quantity'] = 4
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         build.refresh_from_db()
         output.refresh_from_db()
@@ -1570,13 +1570,22 @@ class BuildOutputCancelTest(BuildAPITest):
         set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
         url = reverse('api-build-output-delete', kwargs={'pk': build.pk})
 
-        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=201)
+        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=200)
 
         # Prevent deletion of serialized stock items, and try again
         # Note that this should still succeed, independent of the global setting
         set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
 
-        self.post(url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=201)
+        response = self.post(
+            url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=200
+        )
+
+        # Response should be the task info - the cancellation is performed asynchronously
+        self.assertIn('task_id', response.data)
+        self.assertFalse(response.data['exists'])
+        self.assertFalse(response.data['pending'])
+        self.assertTrue(response.data['complete'])
+        self.assertTrue(response.data['success'])
 
         # The outputs should have been scrapped
         self.assertEqual(build.build_outputs.count(), N)

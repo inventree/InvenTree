@@ -402,6 +402,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
     },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
+    },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),
         'description': _('Enable revision field for Part'),
