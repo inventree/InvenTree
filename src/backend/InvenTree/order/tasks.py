@@ -291,10 +291,8 @@ def complete_purchase_order(order_id: int):
     for part in unique_parts:
         part.schedule_pricing_update(create=True, refresh=False)
 
-    trigger_event(PurchaseOrderEvents.COMPLETED, id=order_id)
-
     # Trigger event signalling that the purchase order has been completed
-    trigger_event(PurchaseOrderEvents.COMPLETE, id=order_id)
+    trigger_event(PurchaseOrderEvents.COMPLETED, id=order_id)
 
 
 @tracer.start_as_current_span('complete_sales_order')
