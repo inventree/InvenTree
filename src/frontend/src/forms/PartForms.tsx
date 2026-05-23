@@ -145,6 +145,10 @@ export function usePartFields({
           }
         };
       }
+
+      if (globalSettings.isSet('PART_INTERNAL_PRICE')) {
+        fields.initial_internal_price = {};
+      }
     }
 
     // Additional fields for part duplication

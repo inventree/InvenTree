@@ -23,7 +23,15 @@
       "Bash(sed -n '91,95p' src/backend/InvenTree/attendance/serializers.py)",
       "Bash(sed -n '1086,1092p' src/backend/InvenTree/part/models.py)",
       "Bash(sed -n '1298,1302p' src/backend/InvenTree/part/models.py)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(python -c \"import part.filters; import part.serializers; import part.api; print\\('OK'\\)\")",
+      "Bash(python3 -c \"import part.filters; import part.serializers; import part.api; print\\('OK'\\)\")",
+      "Bash(DJANGO_SETTINGS_MODULE=InvenTree.settings python3 -c ' *)",
+      "Bash(/home/thegreatcensor/InvenTree/venv/bin/python3 -c ' *)",
+      "Bash(/home/thegreatcensor/InvenTree/venv/bin/pip list *)",
+      "Bash(/home/thegreatcensor/InvenTree/dev/venv/bin/pip list *)",
+      "Bash(./node_modules/.bin/tsc --noEmit --pretty)",
+      "Bash(node_modules/.bin/tsc --noEmit --pretty)"
     ]
   }
 }

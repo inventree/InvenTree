@@ -641,11 +641,14 @@ class PartSerializer(
             'external_stock',
             'unallocated_stock',
             'variant_stock',
+            'internal_price',
+            'unrealized_value',
             'manufacturer_names',
             # Fields only used for Part creation
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'initial_internal_price',
             'copy_category_parameters',
             'tags',
         ]
@@ -704,6 +707,7 @@ class PartSerializer(
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'initial_internal_price',
             'copy_category_parameters',
             'existing_image',
         ]
@@ -792,6 +796,16 @@ class PartSerializer(
             category_default_location=part_filters.annotate_default_location(
                 'category__'
             )
+        )
+
+        # Annotate with internal price (from PartPricing cache)
+        queryset = queryset.annotate(
+            internal_price=part_filters.annotate_internal_price()
+        )
+
+        # Annotate with unrealized stock value
+        queryset = queryset.annotate(
+            unrealized_value=part_filters.annotate_unrealized_value()
         )
 
         return queryset
@@ -930,6 +944,22 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Variant Stock')
     )
 
+    internal_price = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        read_only=True,
+        allow_null=True,
+        label=_('Internal Price'),
+    )
+
+    unrealized_value = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        read_only=True,
+        allow_null=True,
+        label=_('Unrealized Value'),
+    )
+
     minimum_stock = serializers.FloatField(
         required=False, label=_('Minimum Stock'), default=0
     )
@@ -1022,6 +1052,16 @@ class PartSerializer(
         required=False,
     )
 
+    initial_internal_price = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        required=False,
+        write_only=True,
+        allow_null=True,
+        label=_('Initial Internal Price'),
+        help_text=_('Set an initial internal price for this part (quantity=1)'),
+    )
+
     copy_category_parameters = serializers.BooleanField(
         default=True,
         required=False,
@@ -1060,6 +1100,7 @@ class PartSerializer(
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
+        initial_internal_price = validated_data.pop('initial_internal_price', None)
         copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
         instance = super().create(validated_data)
@@ -1130,6 +1171,14 @@ class PartSerializer(
                     SKU=sku,
                     manufacturer_part=manufacturer_part,
                 )
+
+        # Create initial internal price break
+        if initial_internal_price is not None:
+            PartInternalPriceBreak.objects.create(
+                part=instance, quantity=1, price=initial_internal_price
+            )
+            # Refresh the pricing cache (uses the property that auto-creates PartPricing)
+            instance.pricing.update_pricing()
 
         return instance
 

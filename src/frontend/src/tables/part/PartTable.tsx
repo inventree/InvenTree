@@ -24,7 +24,11 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -221,6 +225,16 @@ function partTableColumns(): TableColumn[] {
       }
     },
     {
+      accessor: 'unrealized_value',
+      title: t`Unrealized Value`,
+      sortable: true,
+      hidden: !useGlobalSettingsState.getState().isSet('PART_INTERNAL_PRICE'),
+      render: (record: any) => {
+        if (record.unrealized_value == null) return '-';
+        return formatCurrency(record.unrealized_value);
+      }
+    },
+    {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: true,
@@ -228,6 +242,17 @@ function partTableColumns(): TableColumn[] {
       defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
+    },
+    {
+      accessor: 'internal_price',
+      title: t`Internal Price`,
+      sortable: true,
+      defaultVisible: false,
+      hidden: !useGlobalSettingsState.getState().isSet('PART_INTERNAL_PRICE'),
+      render: (record: any) => {
+        if (record.internal_price == null) return '-';
+        return formatCurrency(record.internal_price);
+      }
     },
     {
       accessor: 'manufacturer_names',

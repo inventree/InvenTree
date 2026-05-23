@@ -367,6 +367,31 @@ def annotate_default_location(reference: str = '') -> QuerySet:
     )
 
 
+def annotate_internal_price(reference: str = '') -> QuerySet:
+    """Annotate the internal price for each part in a queryset.
+
+    Uses the cached PartPricing.internal_cost_min value.
+    Returns None if no internal price has been set.
+    """
+    return Coalesce(
+        F(f'{reference}pricing_data__internal_cost_min'),
+        Value(None),
+        output_field=DecimalField(),
+    )
+
+
+def annotate_unrealized_value() -> QuerySet:
+    """Annotate the total unrealized stock value for each part.
+
+    Computes total_in_stock * internal_price.
+    Requires total_in_stock and internal_price annotations to already be applied.
+    """
+    return ExpressionWrapper(
+        F('total_in_stock') * Coalesce(F('internal_price'), Decimal(0)),
+        output_field=DecimalField(),
+    )
+
+
 def annotate_sub_categories() -> QuerySet:
     """Construct a queryset annotation which returns the number of subcategories for each provided category."""
     subquery = part.models.PartCategory.objects.filter(

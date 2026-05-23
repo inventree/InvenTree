@@ -376,6 +376,17 @@ class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
     queryset = PartInternalPriceBreak.objects.all()
     serializer_class = part_serializers.PartInternalPriceSerializer
 
+    def perform_update(self, serializer):
+        """Update the price break and refresh the pricing cache."""
+        instance = serializer.save()
+        instance.part.update_pricing()
+
+    def perform_destroy(self, instance):
+        """Delete the price break and refresh the pricing cache."""
+        part = instance.part
+        instance.delete()
+        part.update_pricing()
+
 
 class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of PartInternalPriceBreak model."""
@@ -388,6 +399,11 @@ class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     filterset_fields = ['part']
     ordering_fields = ['quantity', 'price']
     ordering = 'quantity'
+
+    def perform_create(self, serializer):
+        """Create a new price break and refresh the pricing cache."""
+        instance = serializer.save()
+        instance.part.update_pricing()
 
 
 class PartTestTemplateFilter(FilterSet):
@@ -1102,6 +1118,8 @@ class PartList(
         'pricing_min',
         'pricing_max',
         'pricing_updated',
+        'internal_price',
+        'unrealized_value',
         'revision',
         'revision_count',
     ]
