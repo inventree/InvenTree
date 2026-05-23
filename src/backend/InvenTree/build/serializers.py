@@ -208,7 +208,7 @@ class BuildOutputSerializer(serializers.Serializer):
         fields = ['output']
 
     output = serializers.PrimaryKeyRelatedField(
-        queryset=StockItem.objects.all(),
+        queryset=StockItem.objects.select_related('build', 'part'),
         many=False,
         allow_null=False,
         required=True,
@@ -235,8 +235,21 @@ class BuildOutputSerializer(serializers.Serializer):
             raise ValidationError(_('This build output has already been completed'))
 
         if to_complete:
+            # Pre-fetch trackable build lines once and cache them in the shared
+            # serializer context so that subsequent outputs in the same request
+            # reuse the result instead of each issuing an identical DB query.
+            if 'tracked_build_lines' not in self.context:
+                self.context['tracked_build_lines'] = list(
+                    build.build_lines
+                    .select_related('bom_item')
+                    .filter(bom_item__sub_part__trackable=True)
+                    .exclude(bom_item__consumable=True)
+                )
+
             # The build output must have all tracked parts allocated
-            if not build.is_output_fully_allocated(output):
+            if not build.is_output_fully_allocated(
+                output, tracked_lines=self.context['tracked_build_lines']
+            ):
                 # Check if the user has specified that incomplete allocations are ok
                 if request := self.context.get('request'):
                     accept_incomplete = InvenTree.helpers.str2bool(

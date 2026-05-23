@@ -218,7 +218,6 @@ class BuildTest(BuildAPITest):
         # We shall complete 4 of these outputs
         outputs = self.build.incomplete_outputs.all()
 
-        # TODO: (2025-07-15) Try to optimize this API query to reduce DB hits
         self.post(
             self.url,
             {
@@ -227,7 +226,7 @@ class BuildTest(BuildAPITest):
                 'status': StockStatus.ATTENTION.value,
             },
             expected_code=201,
-            max_query_count=400,
+            max_query_count=300,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)

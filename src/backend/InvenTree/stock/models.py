@@ -471,11 +471,11 @@ class StockItem(
 
         notes = kwargs.pop('notes', '')
 
-        if self.pk:
-            # StockItem has already been saved
-
-            # Check if "interesting" fields have been changed
-            # (we wish to record these as historical records)
+        if self.pk and add_note:
+            # StockItem has already been saved — check if "interesting" fields
+            # have changed so we can record them as historical tracking entries.
+            # Skip the DB read entirely when add_note=False; there is nothing to
+            # record in that case so the SELECT would be pure waste.
 
             try:
                 old = StockItem.objects.get(pk=self.pk)
@@ -502,7 +502,7 @@ class StockItem(
                         deltas['old_status'] = old.status
                         deltas['old_status_logical'] = old.status
 
-                if add_note and len(deltas) > 0:
+                if len(deltas) > 0:
                     self.add_tracking_entry(
                         StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
                     )

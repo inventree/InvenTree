@@ -1566,20 +1566,28 @@ class Build(
         """
         return self.unallocated_lines(tracked=tracked).count() == 0
 
-    def is_output_fully_allocated(self, output) -> bool:
+    def is_output_fully_allocated(self, output, tracked_lines=None) -> bool:
         """Determine if the specified output (StockItem) has been fully allocated for this build.
 
         Arguments:
             output: StockItem object (the "in production" output to test against)
+            tracked_lines: Optional pre-fetched list of trackable BuildLine objects.
+                Callers validating many outputs should fetch once and pass here to
+                avoid an identical query per output.
 
         To determine if the output has been fully allocated,
         we need to test all "trackable" BuildLine objects
         """
-        lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
-        lines = lines.exclude(bom_item__consumable=True)
+        if tracked_lines is None:
+            tracked_lines = list(
+                self.build_lines
+                .select_related('bom_item')
+                .filter(bom_item__sub_part__trackable=True)
+                .exclude(bom_item__consumable=True)
+            )
 
         # Find any lines which have not been fully allocated
-        for line in lines:
+        for line in tracked_lines:
             # Grab all BuildItem objects which point to this output
             allocations = BuildItem.objects.filter(build_line=line, install_into=output)
 
@@ -1667,7 +1675,7 @@ class Build(
         """Rebuild required quantity field for each BuildLine object."""
         lines_to_update = []
 
-        for line in self.build_lines.all():
+        for line in self.build_lines.select_related('bom_item').all():
             line.quantity = line.bom_item.get_required_quantity(self.quantity)
             lines_to_update.append(line)
 
