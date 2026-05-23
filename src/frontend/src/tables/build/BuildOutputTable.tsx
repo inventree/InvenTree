@@ -385,7 +385,13 @@ export default function BuildOutputTable({
     outputs: selectedOutputs,
     hasTrackedItems: hasTrackedItems,
     onFormSuccess: (response: any) => {
-      setCompleteTaskId(response.task_id);
+      if (response.task_id) {
+        setCompleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
@@ -393,7 +399,13 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: (response: any) => {
-      setScrapTaskId(response.task_id);
+      if (response.task_id) {
+        setScrapTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
@@ -401,7 +413,13 @@ export default function BuildOutputTable({
     build: build,
     outputs: selectedOutputs,
     onFormSuccess: (response: any) => {
-      setDeleteTaskId(response.task_id);
+      if (response.task_id) {
+        setDeleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
