@@ -849,24 +849,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PLACED.
         """
-        if self.status == PurchaseOrderStatus.PLACED:
-            self.status = PurchaseOrderStatus.COMPLETE.value
-            self.complete_date = InvenTree.helpers.current_date()
+        if self.status != PurchaseOrderStatus.PLACED:
+            return
 
-            self.save()
+        # Schedule the order completion task, which will perform the necessary stock movements and other related actions
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_purchase_order, self.pk, group='purchase_order'
+        )
 
-            unique_parts = set()
-
-            # Schedule pricing update for any referenced parts
-            for line in self.lines.all().prefetch_related('part__part'):
-                # Ensure we only check 'unique' parts
-                if line.part and line.part.part:
-                    unique_parts.add(line.part.part)
-
-            for part in unique_parts:
-                part.schedule_pricing_update(create=True, refresh=False)
-
-            trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
+        self.status = PurchaseOrderStatus.COMPLETE.value
+        self.complete_date = InvenTree.helpers.current_date()
+        self.save()
 
     @transaction.atomic
     def issue_order(self):
@@ -1584,19 +1577,14 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
+        # Offload task to process the shipment lines
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_sales_order, self.pk, group='sales_order'
+        )
+
         bypass_shipped = InvenTree.helpers.str2bool(
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
-
-        # Update line items
-        for line in self.lines.all():
-            # Mark any "virtual" parts as shipped at this point
-            if line.part and line.part.virtual and line.shipped != line.quantity:
-                line.shipped = line.quantity
-                line.save()
-
-            if line.part:
-                line.part.schedule_pricing_update(create=True)
 
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
@@ -1608,9 +1596,6 @@ class SalesOrder(TotalPriceMixin, Order):
             self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
-
-        trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
-
         return True
 
     @property
@@ -3459,19 +3444,23 @@ class TransferOrder(Order):
         if not self.can_complete(raise_error=True, **kwargs):
             return False
 
-        if self.status == TransferOrderStatus.ISSUED:
-            for allocation in self.allocations():
-                # execute each transfer
-                allocation.complete_allocation(user)
+        if self.status != TransferOrderStatus.ISSUED:
+            return
 
-            self.status = TransferOrderStatus.COMPLETE.value
-            self.complete_date = InvenTree.helpers.current_date()
+        # Offload task to perform the transfer of each allocated stock item
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_transfer_order,
+            self.pk,
+            user.pk if user else None,
+            group='transfer_order',
+        )
 
-            self.save()
+        self.status = TransferOrderStatus.COMPLETE.value
+        self.complete_date = InvenTree.helpers.current_date()
 
-            trigger_event(TransferOrderEvents.COMPLETED, id=self.pk)
+        self.save()
 
-            return True
+        return True
 
     @transaction.atomic
     def complete_order(self, user, **kwargs):

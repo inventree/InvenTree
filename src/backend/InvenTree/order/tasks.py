@@ -15,7 +15,7 @@ import common.notifications
 import InvenTree.helpers_model
 import order.models
 from InvenTree.tasks import ScheduledTask, scheduled_task
-from order.events import PurchaseOrderEvents, SalesOrderEvents
+from order.events import PurchaseOrderEvents, SalesOrderEvents, TransferOrderEvents
 from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderStatusGroups,
@@ -273,3 +273,56 @@ def complete_sales_order_shipment(
 
     # Trigger event signalling that the shipment has been completed
     trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=shipment.pk)
+
+
+@tracer.start_as_current_span('complete_purchase_order')
+def complete_purchase_order(order_id: int):
+    """Run completion tasks for a PurchaseOrder that has just been marked as complete."""
+    po = order.models.PurchaseOrder.objects.get(pk=order_id)
+
+    unique_parts = set()
+
+    # Schedule pricing update for any referenced parts
+    for line in po.lines.all().prefetch_related('part__part'):
+        # Ensure we only check 'unique' parts
+        if line.part and line.part.part:
+            unique_parts.add(line.part.part)
+
+    for part in unique_parts:
+        part.schedule_pricing_update(create=True, refresh=False)
+
+    trigger_event(PurchaseOrderEvents.COMPLETED, id=order_id)
+
+    # Trigger event signalling that the purchase order has been completed
+    trigger_event(PurchaseOrderEvents.COMPLETE, id=order_id)
+
+
+@tracer.start_as_current_span('complete_sales_order')
+def complete_sales_order(order_id: int):
+    """Run completion tasks for a SalesOrder that has just been marked as complete."""
+    so = order.models.SalesOrder.objects.get(pk=order_id)
+
+    # Update line items
+    for line in so.lines.all():
+        # Mark any "virtual" parts as shipped at this point
+        if line.part and line.part.virtual and line.shipped != line.quantity:
+            line.shipped = line.quantity
+            line.save()
+
+        if line.part:
+            line.part.schedule_pricing_update(create=True)
+
+    trigger_event(SalesOrderEvents.COMPLETED, id=order_id)
+
+
+@tracer.start_as_current_span('complete_transfer_order')
+def complete_transfer_order(order_id: int, user_id: int):
+    """Run completion tasks for a TransferOrder that has just been marked as complete."""
+    transfer_order = order.models.TransferOrder.objects.get(pk=order_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    for allocation in transfer_order.allocations():
+        # execute each transfer
+        allocation.complete_allocation(user)
+
+    trigger_event(TransferOrderEvents.COMPLETED, id=order_id)
