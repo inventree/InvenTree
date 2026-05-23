@@ -20,7 +20,7 @@ v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
     - Add API serializer for deleting a stock location
 
 v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
-    - moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
+    - Moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
 
 v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
     - Removes the "remote_image" field from the Part API endpoint
