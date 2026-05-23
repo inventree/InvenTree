@@ -247,6 +247,67 @@ def cancel_build(
     trigger_event(BuildEvents.CANCELLED, id=build.pk)
 
 
+@tracer.start_as_current_span('complete_build')
+def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = False):
+    """Tasks to run after a BuildOrder is completed.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been completed
+        user_id: The ID of the user who completed the BuildOrder
+        trim_allocated_stock: If True, trim any allocated stock which was not consumed
+    """
+    from build.models import Build
+
+    build = Build.objects.get(pk=build_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    if trim_allocated_stock:
+        build.trim_allocated_stock()
+
+    # Complete any remaining allocations for this build order
+    complete_build_allocations(build_id, user_id)
+
+    # Register an event
+    trigger_event(BuildEvents.COMPLETED, id=build.pk)
+
+    # Notify users that this build has been completed
+    targets = [build.issued_by, build.responsible]
+
+    # Also inform anyone subscribed to the assembly part
+    targets.extend(build.part.get_subscribers())
+
+    # Notify those users interested in the parent build
+    if build.parent:
+        targets.append(build.parent.issued_by)
+        targets.append(build.parent.responsible)
+
+    # Notify users if this build points to a sales order
+    if build.sales_order:
+        targets.append(build.sales_order.created_by)
+        targets.append(build.sales_order.responsible)
+
+    name = _(f'Build order {build} has been completed')
+
+    context = {
+        'build': build,
+        'name': name,
+        'slug': 'build.completed',
+        'message': _('A build order has been completed'),
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'template': {'html': 'email/build_order_completed.html', 'subject': name},
+    }
+
+    common.notifications.trigger_notification(
+        build,
+        'build.completed',
+        targets=targets,
+        context=context,
+        target_exclude=[user],
+    )
+
+
 @tracer.start_as_current_span('update_build_order_lines')
 def update_build_order_lines(bom_item_pk: int):
     """Update all BuildOrderLineItem objects which reference a particular BomItem.

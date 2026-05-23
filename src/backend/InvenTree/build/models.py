@@ -37,7 +37,6 @@ from build.validators import (
     validate_build_order_reference,
 )
 from common.models import ProjectCode
-from common.notifications import trigger_notification
 from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
@@ -702,64 +701,18 @@ class Build(
                 _('Cannot complete build order with incomplete outputs')
             )
 
-        if trim_allocated_stock:
-            self.trim_allocated_stock()
-
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
         self.status = BuildStatus.COMPLETE.value
         self.save()
 
-        # Offload task to complete build allocations
-        if not InvenTree.tasks.offload_task(
-            build.tasks.complete_build_allocations,
+        # Offload background task to complete build allocations
+        InvenTree.tasks.offload_task(
+            build.tasks.complete_build,
             self.pk,
             user.pk if user else None,
+            trim_allocated_stock=trim_allocated_stock,
             group='build',
-        ):
-            raise ValidationError(
-                _('Failed to offload task to complete build allocations')
-            )
-
-        # Register an event
-        trigger_event(BuildEvents.COMPLETED, id=self.pk)
-
-        # Notify users that this build has been completed
-        targets = [self.issued_by, self.responsible]
-
-        # Also inform anyone subscribed to the assembly part
-        targets.extend(self.part.get_subscribers())
-
-        # Notify those users interested in the parent build
-        if self.parent:
-            targets.append(self.parent.issued_by)
-            targets.append(self.parent.responsible)
-
-        # Notify users if this build points to a sales order
-        if self.sales_order:
-            targets.append(self.sales_order.created_by)
-            targets.append(self.sales_order.responsible)
-
-        build = self
-        name = _(f'Build order {build} has been completed')
-
-        context = {
-            'build': build,
-            'name': name,
-            'slug': 'build.completed',
-            'message': _('A build order has been completed'),
-            'link': InvenTree.helpers_model.construct_absolute_url(
-                self.get_absolute_url()
-            ),
-            'template': {'html': 'email/build_order_completed.html', 'subject': name},
-        }
-
-        trigger_notification(
-            build,
-            'build.completed',
-            targets=targets,
-            context=context,
-            target_exclude=[user],
         )
 
     @transaction.atomic
