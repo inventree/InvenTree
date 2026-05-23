@@ -571,13 +571,13 @@ class Part(
         }
 
     def check_parameter_delete(self, parameter):
-        """Custom delete check for Paramteter instances associated with this Part."""
-        if self.locked:
+        """Custom delete check for Parameter instances associated with this Part."""
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete parameters of a locked part'))
 
     def check_parameter_save(self, parameter):
         """Custom save check for Parameter instances associated with this Part."""
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot modify parameters of a locked part'))
 
     def delete(self, **kwargs):
@@ -588,7 +588,7 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete this part as it is locked'))
 
         if self.active:
@@ -4067,7 +4067,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         Raises:
             ValidationError: If the assembly is locked
         """
-        # TODO: Perhaps control this with a global setting?
+        if not get_global_setting('PART_ENABLE_LOCKING'):
+            return
 
         if assembly.locked:
             raise ValidationError(_('BOM item cannot be modified - assembly is locked'))

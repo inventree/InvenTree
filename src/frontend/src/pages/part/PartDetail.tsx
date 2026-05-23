@@ -202,6 +202,11 @@ export default function PartDetail() {
       refetchOnMount: true
     });
 
+  const lockingEnabled = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_LOCKING'),
+    [globalSettings]
+  );
+
   const revisionsEnabled = useMemo(
     () => globalSettings.isSet('PART_ENABLE_REVISION'),
     [globalSettings]
@@ -808,7 +813,12 @@ export default function PartDetail() {
         icon: <IconTestPipe />,
         hidden: !part.testable,
         content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+          <PartTestTemplateTable
+            partId={part?.pk}
+            partLocked={
+              globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked
+            }
+          />
         ) : (
           <Skeleton />
         )
@@ -836,7 +846,7 @@ export default function PartDetail() {
         icon: <IconListDetails />,
         content: (
           <>
-            {part.locked && (
+            {lockingEnabled && part.locked && (
               <Alert
                 title={t`Part is Locked`}
                 color='orange'
@@ -849,7 +859,7 @@ export default function PartDetail() {
             <ParameterTable
               modelType={ModelType.part}
               modelId={part?.pk}
-              allowEdit={part?.locked != true}
+              allowEdit={!lockingEnabled || part?.locked != true}
             />
           </>
         )
@@ -1149,20 +1159,22 @@ export default function PartDetail() {
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
-              <ActionIcon
-                aria-label='part-lock-icon'
-                variant='transparent'
-                disabled={!user.hasChangeRole(UserRoles.part)}
-                onClick={() => {
-                  api
-                    .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
-                      locked: !part.locked
-                    })
-                    .then(refreshInstance);
-                }}
-              >
-                {part?.locked ? <IconLock /> : <IconLockOpen />}
-              </ActionIcon>
+              lockingEnabled ? (
+                <ActionIcon
+                  aria-label='part-lock-icon'
+                  variant='transparent'
+                  disabled={!user.hasChangeRole(UserRoles.part)}
+                  onClick={() => {
+                    api
+                      .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                        locked: !part.locked
+                      })
+                      .then(refreshInstance);
+                  }}
+                >
+                  {part?.locked ? <IconLock /> : <IconLockOpen />}
+                </ActionIcon>
+              ) : undefined
             }
             subtitle={part.description}
             imageUrl={part.image}

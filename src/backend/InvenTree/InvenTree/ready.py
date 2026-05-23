@@ -37,7 +37,9 @@ def isAppLoaded(app_name: str) -> bool:
 
 def isInTestMode():
     """Returns True if the database is in testing mode."""
-    return 'test' in sys.argv or sys.argv[0].endswith('pytest')
+    return any(x in sys.argv for x in ['test', 'pytest']) or sys.argv[0].endswith(
+        'pytest'
+    )
 
 
 def isWaitingForDatabase():
