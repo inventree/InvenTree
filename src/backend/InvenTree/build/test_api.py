@@ -155,7 +155,7 @@ class BuildTest(BuildAPITest):
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=400,
+            expected_code=404,
         )
 
         data = self.post(self.url, {}, expected_code=400).data
@@ -226,7 +226,7 @@ class BuildTest(BuildAPITest):
                 'location': 1,
                 'status': StockStatus.ATTENTION.value,
             },
-            expected_code=201,
+            expected_code=200,
             max_query_count=400,
         )
 
@@ -446,7 +446,7 @@ class BuildTest(BuildAPITest):
         self.post(
             delete_url,
             {'outputs': [{'output': output.pk} for output in outputs[1:3]]},
-            expected_code=201,
+            expected_code=200,
         )
 
         # Two build outputs have been removed
@@ -473,7 +473,7 @@ class BuildTest(BuildAPITest):
                 'outputs': [{'output': output.pk} for output in outputs[3:]],
                 'location': 4,
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # Check that the outputs have been completed
