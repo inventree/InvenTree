@@ -800,13 +800,12 @@ class Build(
 
         # Offload background task to take care of the expensive operations
         InvenTree.tasks.offload_task(
-            build.tasks.cancel_build(
-                self.pk,
-                user.pk if user else None,
-                remove_allocated_stock=remove_allocated_stock,
-                remove_incomplete_outputs=remove_incomplete_outputs,
-                group='build',
-            )
+            build.tasks.cancel_build,
+            self.pk,
+            user.pk if user else None,
+            remove_allocated_stock=remove_allocated_stock,
+            remove_incomplete_outputs=remove_incomplete_outputs,
+            group='build',
         )
 
     @transaction.atomic
