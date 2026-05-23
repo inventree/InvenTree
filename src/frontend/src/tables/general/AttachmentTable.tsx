@@ -49,7 +49,12 @@ function attachmentTableColumns(): TableColumn[] {
       noWrap: true,
       render: (record: any) => {
         if (record.attachment) {
-          return <AttachmentLink attachment={record.attachment} />;
+          return (
+            <AttachmentLink
+              thumbnail={record.thumbnail}
+              attachment={record.attachment}
+            />
+          );
         } else if (record.link) {
           return <AttachmentLink attachment={record.link} external />;
         } else {
@@ -300,6 +305,11 @@ export function AttachmentTable({
         name: 'is_file',
         label: t`Is File`,
         description: t`Show file attachments`
+      },
+      {
+        name: 'is_image',
+        label: t`Is Image`,
+        description: t`Show image attachments`
       }
     ];
   }, []);

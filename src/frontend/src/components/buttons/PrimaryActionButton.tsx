@@ -12,7 +12,8 @@ export default function PrimaryActionButton({
   icon,
   color,
   hidden,
-  onClick
+  onClick,
+  leftSection
 }: Readonly<{
   title: string;
   tooltip?: string;
@@ -20,6 +21,7 @@ export default function PrimaryActionButton({
   color?: string;
   hidden?: boolean;
   onClick: () => void;
+  leftSection?: React.ReactNode;
 }>) {
   if (hidden) {
     return null;
@@ -28,7 +30,7 @@ export default function PrimaryActionButton({
   return (
     <Tooltip label={tooltip ?? title} position='bottom' hidden={!tooltip}>
       <Button
-        leftSection={icon && <InvenTreeIcon icon={icon} />}
+        leftSection={leftSection ?? (icon && <InvenTreeIcon icon={icon} />)}
         color={color}
         radius='sm'
         p='xs'

@@ -54,6 +54,27 @@ from .models import (
 logger = structlog.get_logger('inventree')
 
 
+class CategoryDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a PartCategory instance."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_child_categories', 'delete_parts']
+
+    delete_child_categories = serializers.BooleanField(
+        label=_('Delete Subcategories'),
+        help_text=_('Delete all sub-categories contained within this category'),
+        required=True,
+    )
+
+    delete_parts = serializers.BooleanField(
+        label=_('Delete Parts'),
+        help_text=_('Delete all parts contained within this category'),
+        required=True,
+    )
+
+
 @register_importer()
 class CategorySerializer(
     InvenTree.serializers.FilterableSerializerMixin,
@@ -714,6 +735,8 @@ class PartSerializer(
             ordering=part_filters.annotate_on_order_quantity(),
             in_stock=part_filters.annotate_total_stock(),
             allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(),
+            # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+            # allocated_to_transfer_orders=part_filters.annotate_transfer_order_allocations(),
             allocated_to_build_orders=part_filters.annotate_build_order_allocations(),
         )
 
@@ -738,6 +761,8 @@ class PartSerializer(
                 ExpressionWrapper(
                     F('total_in_stock')
                     - F('allocated_to_sales_orders')
+                    # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+                    # - F('allocated_to_transfer_orders'),
                     - F('allocated_to_build_orders'),
                     output_field=models.DecimalField(),
                 ),
@@ -747,6 +772,8 @@ class PartSerializer(
         )
 
         # Annotate with the total 'required for builds' quantity
+        # NOTE: for now, we don't consider transfer orders for required quantities
+        #       and they are assumed to operate on stock that already exists.
         queryset = queryset.annotate(
             required_for_build_orders=part_filters.annotate_build_order_requirements(),
             required_for_sales_orders=part_filters.annotate_sales_order_requirements(),
@@ -1886,6 +1913,7 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
+            'sub_part__stock_items__transfer_order_allocations',
         )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity

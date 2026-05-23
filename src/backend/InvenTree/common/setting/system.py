@@ -286,6 +286,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
+        'units': 'MB',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
+    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),
@@ -901,6 +908,26 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
         ),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
         'default': False,
         'validator': bool,
     },
