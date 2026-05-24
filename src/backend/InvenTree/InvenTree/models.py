@@ -707,9 +707,23 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin):
         if len(notes) > 0:
             common.models.Note.objects.bulk_create(notes, batch_size=250)
 
-    def get_note(self, title: str):
-        """Return a Note instance for the given note title."""
-        return self.notes_list.filter(title=title).first()
+    @property
+    def primary_note(self):
+        """Return the primary note for this model instance, if it exists."""
+        return self.notes_list.all().order_by('-primary').first()
+
+    def get_note(self, title: Optional[str] = None):
+        """Return a Note instance for the given note title.
+
+        Arguments:
+            title: Title of the note to retrieve. If None, returns the primary note (if it exists)
+        """
+        notes = self.notes_list.all().order_by('-primary')
+
+        if title:
+            notes = notes.filter(title=title)
+
+        return notes.first()
 
     def check_note_delete(self, note) -> bool:
         """Run a check to determine if the provided note can be deleted.
