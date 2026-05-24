@@ -813,6 +813,14 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     );
   }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
 
+  // When sticky headers are enabled, we adjust the maximum viewport height,
+  // based on the number of records being displayed (up to a maximum of 60vh)
+  const autoHeight = useMemo(() => {
+    const rows = Math.max(10, Math.min(tableState.records.length, 60));
+
+    return `${rows}vh`;
+  }, [tableState.records]);
+
   return (
     <>
       <Stack gap='xs'>
@@ -838,7 +846,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
                 stickyHeader: stickyTableHeader ? 'top' : undefined
               }}
               height={
-                tableProps.height ?? (stickyTableHeader ? '80vh' : undefined)
+                tableProps.height ??
+                (stickyTableHeader ? autoHeight : undefined)
               }
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
