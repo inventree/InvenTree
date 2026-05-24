@@ -18,10 +18,12 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
 import common.models
+import common.serializers
 import common.settings
 import company.models
 import stock.models as stock_models
@@ -30,12 +32,8 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import (
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-    InvenTreeDateFilter,
-)
-from InvenTree.helpers import str2bool
+from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
+from InvenTree.helpers import current_date, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -53,6 +51,8 @@ from order.status_codes import (
     ReturnOrderStatus,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
+    TransferOrderStatusGroups,
 )
 from part.models import Part
 from users.models import Owner
@@ -79,7 +79,9 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['quantity', 'notes', 'reference']
+    ordering_fields = ['quantity', 'notes', 'reference', 'line']
+
+    ordering_field_aliases = {'line': ['line_int', 'line']}
 
     search_fields = ['quantity', 'notes', 'reference', 'description']
 
@@ -221,6 +223,14 @@ class OrderFilter(FilterSet):
 
     target_date_after = InvenTreeDateFilter(
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
+    )
+
+    updated_before = InvenTreeDateFilter(
+        label=_('Updated Before'), field_name='updated_at', lookup_expr='lt'
+    )
+
+    updated_after = InvenTreeDateFilter(
+        label=_('Updated After'), field_name='updated_at', lookup_expr='gt'
     )
 
     min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
@@ -386,7 +396,7 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
 
     ordering_field_aliases = {
@@ -415,6 +425,7 @@ class PurchaseOrderList(
         'responsible',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     ordering = '-reference'
@@ -695,7 +706,7 @@ class PurchaseOrderLineItemList(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
@@ -705,6 +716,7 @@ class PurchaseOrderLineItemList(
         'order': 'order__reference',
         'status': 'order__status',
         'complete_date': 'order__complete_date',
+        'line': ['line_int', 'line', 'part__SKU'],
     }
 
     ordering_fields = [
@@ -721,6 +733,7 @@ class PurchaseOrderLineItemList(
         'order',
         'status',
         'complete_date',
+        'line',
     ]
 
     search_fields = [
@@ -854,7 +867,7 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -877,6 +890,7 @@ class SalesOrderList(
         'shipment_date',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1038,7 +1052,7 @@ class SalesOrderLineItemList(
 
     filterset_class = SalesOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = SalesOrderLineItemOutputOptions
 
@@ -1054,6 +1068,7 @@ class SalesOrderLineItemList(
         'reference',
         'sale_price',
         'target_date',
+        'line',
     ]
 
     ordering_field_aliases = {
@@ -1061,6 +1076,7 @@ class SalesOrderLineItemList(
         'part': 'part__name',
         'IPN': 'part__IPN',
         'order': 'order__reference',
+        'line': ['line_int', 'line', 'part__name'],
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1284,7 +1300,7 @@ class SalesOrderAllocationList(
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
 
     ordering_fields = [
@@ -1394,7 +1410,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
     search_fields = [
@@ -1415,19 +1431,45 @@ class SalesOrderShipmentComplete(CreateAPI):
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
+    def get_shipment(self):
+        """Return the shipment associated with this endpoint."""
+        try:
+            shipment = models.SalesOrderShipment.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except (ValueError, models.SalesOrderShipment.DoesNotExist):
+            raise NotFound(detail=_('Shipment not found'))
+
+        return shipment
+
     def get_serializer_context(self):
         """Pass the request object to the serializer."""
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
-
-        try:
-            ctx['shipment'] = models.SalesOrderShipment.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
-            pass
+        ctx['shipment'] = self.get_shipment()
 
         return ctx
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, request, *args, **kwargs):
+        """Override the post method to handle shipment completion."""
+        shipment = self.get_shipment()
+
+        serializer = self.get_serializer(shipment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        task_id = shipment.complete_shipment(
+            request.user,
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
+            invoice_number=data.get('invoice_number', shipment.invoice_number),
+            link=data.get('link', shipment.link),
+            shipment_date=data.get('shipment_date', None) or current_date(),
+            delivery_date=data.get('delivery_date', shipment.delivery_date),
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class ReturnOrderFilter(OrderFilter):
@@ -1523,7 +1565,7 @@ class ReturnOrderList(
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderOutputOptions
 
@@ -1544,6 +1586,7 @@ class ReturnOrderList(
         'target_date',
         'complete_date',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1669,7 +1712,7 @@ class ReturnOrderLineItemList(
 
     filterset_class = ReturnOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     output_options = ReturnOrderLineItemOutputOptions
 
@@ -1680,9 +1723,11 @@ class ReturnOrderLineItemList(
         'reference',
         'target_date',
         'received_date',
+        'line',
     ]
 
     ordering_field_aliases = {
+        'line': ['line_int', 'line', 'item__part__name'],
         'part': 'item__part__name',
         'IPN': 'item__part__IPN',
         'stock': ['item__quantity', 'item__serial_int', 'item__serial'],
@@ -1716,6 +1761,521 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.ReturnOrderExtraLine.objects.all()
     serializer_class = serializers.ReturnOrderExtraLineSerializer
+
+
+class TransferOrderFilter(OrderFilter):
+    """Custom API filters for the TransferOrderList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrder
+        fields = []
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        # Now that we have a queryset of parts, find all the matching return orders
+        line_items = models.TransferOrderLineItem.objects.filter(part__in=parts)
+
+        # Generate a list of ID values for the matching transfer orders
+        transfer_orders = line_items.values_list('order', flat=True).distinct()
+
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=transfer_orders)
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
+
+
+class TransferOrderMixin(SerializerContextMixin):
+    """Mixin class for TransferOrder endpoints."""
+
+    queryset = models.TransferOrder.objects.all()
+    serializer_class = serializers.TransferOrderSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.TransferOrderSerializer.annotate_queryset(queryset)
+        queryset = queryset.prefetch_related('created_by', 'responsible')
+
+        return queryset
+
+
+class TransferOrderList(
+    TransferOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of TransferOrder objects."""
+
+    filterset_class = TransferOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    # TODO:
+    # output_options = TransferOrderOutputOptions
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
+    }
+
+    ordering_fields = [
+        'creation_date',
+        'created_by',
+        'reference',
+        'line_items',
+        'status',
+        'start_date',
+        'target_date',
+        'complete_date',
+        'project_code',
+    ]
+
+    search_fields = ['reference', 'description', 'project_code__code']
+
+    ordering = '-reference'
+
+
+class TransferOrderDetail(
+    TransferOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a single TransferOrder object."""
+
+    # output_options = TransferOrderOutputOptions
+
+
+class TransferOrderContextMixin:
+    """Simple mixin class to add a TransferOrder to the serializer context."""
+
+    queryset = models.TransferOrder.objects.all()
+
+    def get_serializer_context(self):
+        """Add the TransferOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the Transfer instance through to the serializer for validation
+        try:
+            context['order'] = models.TransferOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except Exception:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class TransferOrderCancel(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderCancelSerializer
+
+
+class TransferOrderHold(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to hold a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderHoldSerializer
+
+
+class TransferOrderComplete(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to complete a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderCompleteSerializer
+
+
+class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to issue a Transfer Order."""
+
+    serializer_class = serializers.TransferOrderIssueSerializer
+
+
+class TransferOrderAllocateSerials(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocation stock items against a TransferOrder, by specifying serial numbers."""
+
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderSerialAllocationSerializer
+
+
+class TransferOrderAllocate(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocate stock items against a TransferOrder.
+
+    - The TransferOrder is specified in the URL
+    - See the TransferOrderAllocationSerializer class
+    """
+
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderLineItemAllocationSerializer
+
+
+class TransferOrderAllocationFilter(FilterSet):
+    """Custom filterset for the TransferOrderAllocationList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderAllocation
+        fields = ['line', 'item']
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='line__order',
+        label=_('Order'),
+    )
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+            return queryset.filter(item__part__in=parts)
+        else:
+            return queryset.filter(item__part=part)
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by "outstanding" status (boolean)."""
+        if str2bool(value):
+            return queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+                # TODO: is there an additional filter here if we aren't using a "shipment"
+                # shipment__shipment_date=None,
+            )
+        return queryset.exclude(
+            # TODO: is there an additional filter here if we aren't using a "shipment"
+            # shipment__shipment_date=None,
+            line__order__status__in=TransferOrderStatusGroups.OPEN
+        )
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
+
+
+class TransferOrderAllocationMixin:
+    """Mixin class for TransferOrderAllocation endpoints."""
+
+    queryset = models.TransferOrderAllocation.objects.all()
+    serializer_class = serializers.TransferOrderAllocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'item',
+            'item__sales_order',
+            'item__part',
+            'line__part',
+            'item__location',
+            'line__order',
+            'line__order__responsible',
+            'line__order__project_code',
+            'line__order__project_code__responsible',
+        ).select_related('line__part__pricing_data', 'item__part__pricing_data')
+
+        return queryset
+
+
+class TransferOrderAllocationOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('location_detail'),
+    ]
+
+
+class TransferOrderAllocationList(
+    TransferOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+):
+    """API endpoint for listing TransferOrderAllocation objects."""
+
+    filterset_class = TransferOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    output_options = TransferOrderAllocationOutputOptions
+
+    ordering_fields = [
+        'quantity',
+        'part',
+        'serial',
+        'IPN',
+        'batch',
+        'location',
+        'order',
+    ]
+
+    ordering_field_aliases = {
+        'IPN': 'item__part__IPN',
+        'part': 'item__part__name',
+        'serial': ['item__serial_int', 'item__serial'],
+        'batch': 'item__batch',
+        'location': 'item__location__name',
+        'order': 'line__order__reference',
+    }
+
+    search_fields = {
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+        'item__batch',
+    }
+
+
+class TransferOrderAllocationDetail(
+    TransferOrderAllocationMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderAllocation object."""
+
+
+class TransferOrderLineItemFilter(LineItemFilter):
+    """Custom filters for TransferOrderLineItemList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderLineItem
+        fields = []
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='order',
+        label=_('Order'),
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter TransferOrderLineItem by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        return queryset.filter(part__in=parts)
+
+    allocated = rest_filters.BooleanFilter(
+        label=_('Allocated'), method='filter_allocated'
+    )
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by lines which are 'allocated'.
+
+        A line is 'allocated' when allocated >= quantity
+        """
+        q = Q(allocated__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    completed = rest_filters.BooleanFilter(
+        label=_('Completed'), method='filter_completed'
+    )
+
+    def filter_completed(self, queryset, name, value):
+        """Filter by lines which are "completed".
+
+        A line is 'completed' when transferred >= quantity
+        """
+        q = Q(transferred__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'), method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the order is 'outstanding' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.OPEN)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.OPEN)
+
+
+class TransferOrderLineItemMixin(SerializerContextMixin):
+    """Mixin class for TransferOrderLineItem endpoints."""
+
+    queryset = models.TransferOrderLineItem.objects.all()
+    serializer_class = serializers.TransferOrderLineItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'part',
+            'allocations',
+            # 'allocations__transfer',
+            'allocations__item__part',
+            'allocations__item__location',
+            'order',
+        )
+
+        queryset = serializers.TransferOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+
+        return queryset
+
+
+class TransferOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
+class TransferOrderLineItemList(
+    TransferOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+):
+    """API endpoint for accessing a list of TransferOrderLineItem objects."""
+
+    filterset_class = TransferOrderLineItemFilter
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    output_options = TransferOrderLineItemOutputOptions
+
+    ordering_fields = [
+        'order',
+        'part',
+        'part__name',
+        'quantity',
+        'allocated',
+        'transferred',
+        'reference',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {'part': 'part__name', 'order': 'order__reference'}
+
+    search_fields = ['part__name', 'quantity', 'reference']
+
+
+class TransferOrderLineItemDetail(
+    TransferOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderLineItem object."""
+
+    output_options = TransferOrderLineItemOutputOptions
 
 
 class OrderCalendarExport(ICalFeed):
@@ -1796,6 +2356,8 @@ class OrderCalendarExport(ICalFeed):
             ordertype_title = _('Sales Order')
         elif obj['ordertype'] == 'return-order':
             ordertype_title = _('Return Order')
+        elif obj['ordertype'] == 'transfer-order':
+            ordertype_title = _('Transfer Order')
         else:
             ordertype_title = _('Unknown')
 
@@ -1841,6 +2403,15 @@ class OrderCalendarExport(ICalFeed):
                 ).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
+        elif obj['ordertype'] == 'transfer-order':
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Complete status = 30
+                outlist = models.TransferOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=TransferOrderStatus.COMPLETE.value)
+            else:
+                outlist = models.TransferOrder.objects.filter(target_date__isnull=False)
         else:
             outlist = []
 
@@ -1852,7 +2423,12 @@ class OrderCalendarExport(ICalFeed):
 
     def item_description(self, item):
         """Set the event description."""
-        return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        if hasattr(item, 'company') and item.company:
+            return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        else:
+            return (
+                f'Status: {item.get_status_display()}\nDescription: {item.description}'
+            )
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -2128,9 +2704,97 @@ order_api_urls = [
             ),
         ]),
     ),
+    # API endpoints for transfer orders
+    path(
+        'transfer-order/',
+        include([
+            # Transfer Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'allocate/',
+                        TransferOrderAllocate.as_view(),
+                        name='api-transfer-order-allocate',
+                    ),
+                    path(
+                        'allocate-serials/',
+                        TransferOrderAllocateSerials.as_view(),
+                        name='api-transfer-order-allocate-serials',
+                    ),
+                    path(
+                        'cancel/',
+                        TransferOrderCancel.as_view(),
+                        name='api-transfer-order-cancel',
+                    ),
+                    path(
+                        'hold/',
+                        TransferOrderHold.as_view(),
+                        name='api-transfer-order-hold',
+                    ),
+                    path(
+                        'complete/',
+                        TransferOrderComplete.as_view(),
+                        name='api-transfer-order-complete',
+                    ),
+                    path(
+                        'issue/',
+                        TransferOrderIssue.as_view(),
+                        name='api-transfer-order-issue',
+                    ),
+                    meta_path(models.TransferOrder),
+                    path(
+                        '',
+                        TransferOrderDetail.as_view(),
+                        name='api-transfer-order-detail',
+                    ),
+                ]),
+            ),
+            # Transfer Order list
+            path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
+        ]),
+    ),
+    # API endpoints for transfer order line items
+    path(
+        'transfer-order-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.TransferOrderLineItem),
+                    path(
+                        '',
+                        TransferOrderLineItemDetail.as_view(),
+                        name='api-transfer-order-line-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '',
+                TransferOrderLineItemList.as_view(),
+                name='api-transfer-order-line-list',
+            ),
+        ]),
+    ),
+    # API endpoints for sales order allocations
+    path(
+        'transfer-order-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                TransferOrderAllocationDetail.as_view(),
+                name='api-transfer-order-allocation-detail',
+            ),
+            path(
+                '',
+                TransferOrderAllocationList.as_view(),
+                name='api-transfer-order-allocation-list',
+            ),
+        ]),
+    ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
     re_path(
-        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics',
+        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order|transfer-order)/calendar.ics',
         OrderCalendarExport(),
         name='api-po-so-calendar',
     ),

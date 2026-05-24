@@ -1,10 +1,10 @@
 import test from '@playwright/test';
+import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/admin/import'
   });
 
@@ -16,10 +16,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
 
   await page
-    .locator('label')
-    .filter({ hasText: 'Update Existing RecordsIf' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-update_records' })
     .click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -29,7 +26,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Errors exist for one or more').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-model_type' })
+    .getByRole('combobox', { name: 'choice-field-model_type' })
     .fill('bom');
   await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -39,7 +36,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Existing database identifier for the record').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .getByRole('combobox', { name: 'import-column-map-reference' })
     .click();
   await page.getByRole('option', { name: 'Ignore this field' }).click();
 
@@ -66,7 +63,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
 
   // Manually delete records
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-delete-selected' })
     .click();
@@ -75,10 +72,15 @@ test('Importing - Admin Center', async ({ browser }) => {
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'part/109/bom'
   });
+
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
 
   // Open the BOM importer wizard
   await page.getByRole('button', { name: 'action-menu-add-bom-items' }).click();
@@ -98,7 +100,7 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
   await page.waitForTimeout(500);
 
-  await page.getByText('Importing Data').waitFor();
+  await page.getByText('Importing Data').first().waitFor();
   await page.getByText('0 / 3').waitFor();
 
   await page.getByText('Screw for fixing wood').first().waitFor();
@@ -136,7 +138,7 @@ test('Importing - BOM', async ({ browser }) => {
     .getByLabel('row-action-menu-')
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('12');
+  await page.getByRole('textbox', { name: 'text-field-raw_amount' }).fill('12');
 
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -156,8 +158,7 @@ test('Importing - BOM', async ({ browser }) => {
 
 test('Importing - Purchase Order', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
@@ -169,14 +170,13 @@ test('Importing - Purchase Order', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/po_data.csv');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('cell', { name: 'Database Field' }).waitFor();
-  await page.getByRole('cell', { name: 'Field Description' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Database Field' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Field Description' }).waitFor();
 });
 
 test('Importing - Natural Keys', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
@@ -195,7 +195,7 @@ test('Importing - Natural Keys', async ({ browser }) => {
 
   // Select different columns for data import
   // We will use the "SKU" field to map to the supplier part
-  await page.getByRole('textbox', { name: 'import-column-map-part' }).click();
+  await page.getByRole('combobox', { name: 'import-column-map-part' }).click();
   await page.getByRole('option', { name: 'SKU' }).click();
 
   // Other import fields will be left as default

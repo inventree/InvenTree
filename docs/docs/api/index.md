@@ -54,7 +54,7 @@ Each user is assigned an authentication token which can be used to access the AP
 
 If a user does not know their access token, it can be requested via the API interface itself, using a basic authentication request.
 
-To obtain a valid token, perform a GET request to `/api/user/token/`. No data are required, but a valid username / password combination must be supplied in the authentication headers.
+To obtain a valid token, perform a GET request to `/api/user/me/token/`. No data are required, but a valid username / password combination must be supplied in the authentication headers.
 
 !!! info "Credentials"
 	Ensure that a valid username:password combination are supplied as basic authorization headers.
@@ -146,7 +146,7 @@ r:delete:stock
 Users can only perform REST API actions which align with their assigned [role permissions](../settings/permissions.md#roles).
 Once a user has *authenticated* via the API, a list of the available roles can be retrieved from:
 
-`/api/user/roles/`
+`/api/user/me/roles/`
 
 For example, when accessing the API from a *superuser* account:
 

@@ -5,7 +5,7 @@ from django.http import Http404
 from django.urls import reverse
 
 import structlog
-from rest_framework import exceptions, serializers
+from rest_framework import exceptions, permissions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.request import clone_request
@@ -131,9 +131,25 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
+                # general model / role permission
                 result = check_user_permission(user, self.model, permission) or (
                     role_required and check_user_role(user, role_required, permission)
                 )
+
+                # check if simple IsAuthenticated permission class is used
+                if not result:
+                    result = (
+                        view.permission_classes
+                        and len(view.permission_classes) == 1
+                        and any(
+                            perm
+                            in [
+                                permissions.IsAuthenticated,
+                                InvenTree.permissions.IsAuthenticatedOrReadScope,
+                            ]
+                            for perm in view.permission_classes
+                        )
+                    )
 
                 if method in actions and not result:
                     del actions[method]
@@ -364,6 +380,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        from InvenTree.serializers import OptionalField
+
+        if isinstance(field, OptionalField) or issubclass(
+            field.__class__, OptionalField
+        ):
+            # Rehydrate the OptionalField for proper introspection
+            rehydrated_field = field.serializer_class(**(field.serializer_kwargs or {}))
+            return self.get_field_info(rehydrated_field)
+
         # Try to add the child property to the dependent field to be used by the super call
         if self.label_lookup[field] == 'dependent field':
             field.get_child(raise_exception=True)

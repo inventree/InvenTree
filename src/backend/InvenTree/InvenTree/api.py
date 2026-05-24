@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -297,7 +297,7 @@ class InfoView(APIView):
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
-            'worker_count': settings.BACKGROUND_WORKER_COUNT,
+            'worker_count': settings.Q_CLUSTER['workers'],
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
@@ -423,23 +423,19 @@ class BulkOperationMixin:
     def get_bulk_queryset(self, request):
         """Return a queryset based on the selection made in the request.
 
-        Selection can be made by providing either:
-
-        - items: A list of primary key values
-        - filters: A dictionary of filter values
+        Selection can be made by providing a list of primary key values,
+        which will be used to filter the queryset.
         """
-        model = self.serializer_class.Meta.model
-
         items = request.data.pop('items', None)
-        filters = request.data.pop('filters', None)
         all_filter = request.GET.get('all', None)
 
-        queryset = model.objects.all()
+        # Return the base queryset for this model
+        queryset = self.get_queryset()
 
-        if not items and not filters and all_filter is None:
+        if not items and all_filter is None:
             raise ValidationError({
                 'non_field_errors': _(
-                    'List of items or filters must be provided for bulk operation'
+                    'List of items must be provided for bulk operation'
                 )
             })
 
@@ -455,19 +451,6 @@ class BulkOperationMixin:
             except Exception:
                 raise ValidationError({
                     'non_field_errors': _('Invalid items list provided')
-                })
-
-        if filters:
-            if type(filters) is not dict:
-                raise ValidationError({
-                    'non_field_errors': _('Filters must be provided as a dict')
-                })
-
-            try:
-                queryset = queryset.filter(**filters)
-            except Exception:
-                raise ValidationError({
-                    'non_field_errors': _('Invalid filters provided')
                 })
 
         if all_filter and not helpers.str2bool(all_filter):
@@ -507,7 +490,7 @@ class BulkCreateMixin:
             if unique_create_fields := getattr(self, 'unique_create_fields', None):
                 existing = collections.defaultdict(list)
                 for idx, item in enumerate(data):
-                    key = tuple(item[v] for v in unique_create_fields)
+                    key = tuple(item[v] for v in list(unique_create_fields))  # type: ignore[not-subscriptable]
                     existing[key].append(idx)
 
                 unique_errors = [[] for _ in range(len(data))]
@@ -594,17 +577,24 @@ class BulkUpdateMixin(BulkOperationMixin):
 
         n = queryset.count()
 
+        instance_data = []
+
         with transaction.atomic():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
+
+            # Run validation first
             for instance in queryset:
                 serializer = self.get_serializer(instance, data=data, partial=True)
-
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
 
-        return Response({'success': f'Updated {n} items'}, status=200)
+                instance_data.append(serializer.data)
+
+        return Response(
+            {'success': f'Updated {n} items', 'items': instance_data}, status=200
+        )
 
 
 class ParameterListMixin:
@@ -635,12 +625,8 @@ class ParameterListMixin:
         return queryset
 
 
-class BulkDeleteMixin(BulkOperationMixin):
-    """Mixin class for enabling 'bulk delete' operations for various models.
-
-    Bulk delete allows for multiple items to be deleted in a single API query,
-    rather than using multiple API calls to the various detail endpoints.
-    """
+class CommonBulkDeleteMixin(BulkOperationMixin):
+    """Helper for creating bulk delete operation on classic cbv and viewsets."""
 
     def validate_delete(self, queryset, request) -> None:
         """Perform validation right before deletion.
@@ -665,7 +651,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         return queryset
 
     @extend_schema(request=BulkRequestSerializer)
-    def delete(self, request, *args, **kwargs):
+    def _delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
         Note that the typical DRF list endpoint does not support DELETE,
@@ -687,6 +673,37 @@ class BulkDeleteMixin(BulkOperationMixin):
                 item.delete()
 
         return Response({'success': f'Deleted {n_deleted} items'}, status=200)
+
+
+class BulkDeleteMixin(CommonBulkDeleteMixin):
+    """Mixin class for enabling 'bulk delete' operations for various models.
+
+    Bulk delete allows for multiple items to be deleted in a single API query,
+    rather than using multiple API calls to the various detail endpoints.
+    """
+
+    @extend_schema(request=BulkRequestSerializer)
+    def delete(self, request, *args, **kwargs):
+        """Perform a DELETE operation against this list endpoint.
+
+        Note that the typical DRF list endpoint does not support DELETE,
+        so this method is provided as a custom implementation.
+        """
+        return self._delete(request, *args, **kwargs)
+
+
+class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
+    """Mixin class for enabling 'bulk delete' operations for viewsets."""
+
+    @extend_schema(request=BulkRequestSerializer)
+    def bulk_delete(self, request, *args, **kwargs):
+        """Perform a bulk delete operation.
+
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+        """
+        return self._delete(request, *args, **kwargs)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):

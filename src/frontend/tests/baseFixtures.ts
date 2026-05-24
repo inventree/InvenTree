@@ -70,7 +70,7 @@ export const test = baseTest.extend({
         !msg.text().includes('/this/does/not/exist.js') &&
         !url.includes('/this/does/not/exist.js') &&
         !url.includes('/api/user/me/') &&
-        !url.includes('/api/user/token/') &&
+        !url.includes('/api/user/me/token/') &&
         !url.includes('/api/auth/v1/auth/login') &&
         !url.includes('/api/auth/v1/auth/session') &&
         !url.includes('/api/auth/v1/account/authenticators/totp') &&
@@ -78,6 +78,7 @@ export const test = baseTest.extend({
         !url.includes('/api/barcode/') &&
         !url.includes('/favicon.ico') &&
         !url.startsWith('https://api.github.com/repos/inventree') &&
+        !url.startsWith('https://github.com/inventree/demo-data') &&
         !url.includes('/api/news/') &&
         !url.includes('/api/notifications/') &&
         !url.startsWith('chrome://') &&

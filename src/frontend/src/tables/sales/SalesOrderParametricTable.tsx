@@ -9,15 +9,8 @@ import {
   DescriptionColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter
-} from '../Filter';
 import ParametricDataTable from '../general/ParametricDataTable';
+import SalesOrderFilters from './SalesOrderFilters';
 
 export default function SalesOrderParametricTable({
   queryParams
@@ -40,14 +33,7 @@ export default function SalesOrderParametricTable({
   }, []);
 
   const customFilters: TableFilter[] = useMemo(() => {
-    return [
-      OrderStatusFilter({ model: ModelType.salesorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      ProjectCodeFilter(),
-      ResponsibleFilter()
-    ];
+    return SalesOrderFilters({ includeDateFilters: true });
   }, []);
 
   return (

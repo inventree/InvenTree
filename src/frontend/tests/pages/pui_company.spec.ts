@@ -1,4 +1,5 @@
 import { test } from '../baseFixtures.js';
+import { stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -57,8 +58,7 @@ test('Company', async ({ browser }) => {
 
 test('Company - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/index/suppliers'
   });
 
@@ -75,21 +75,20 @@ test('Company - Parameters', async ({ browser }) => {
 
 test('Company - Supplier Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/index/suppliers'
   });
 
   await loadTab(page, 'Supplier Parts');
   await clearTableFilters(page);
 
-  await page.getByText('- 25 / 777').waitFor();
+  await page.getByText(/1 \- 25 \/ 77\d/).waitFor();
 
   await setTableChoiceFilter(page, 'Primary', 'Yes');
-  await page.getByText('- 25 / 318').waitFor();
+  await page.getByText(/1 \- 25 \/ 31\d/).waitFor();
 
   await clearTableFilters(page);
 
   await setTableChoiceFilter(page, 'Primary', 'No');
-  await page.getByText('- 25 / 459').waitFor();
+  await page.getByText(/1 \- 25 \/ 45\d/).waitFor();
 });

@@ -10,7 +10,10 @@ import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
-import { defaultHostKey } from '../../defaults/defaultHostList';
+import {
+  defaultHostKey,
+  translateHostName
+} from '../../defaults/defaultHostList';
 import {
   checkLoginState,
   doBasicLogin,
@@ -29,7 +32,9 @@ export default function Login() {
   );
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const hostname =
-    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
+    hostList[hostKey] === undefined
+      ? t`No selection`
+      : translateHostName(hostList[hostKey]?.name);
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const navigate = useNavigate();
   const location = useLocation();

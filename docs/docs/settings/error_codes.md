@@ -105,6 +105,11 @@ A potentially critical mismatch between the backup environment and the current r
 
 While using [invoke](../start/invoke.md), this can be overridden with the `--restore-allow-newer-version` flag.
 
+#### INVE-E17
+**Error rendering component**
+
+An error occurred while rendering a component in the frontend. Typically this is caused by a browser caching issue, and can be resolved by clearing the browser cache and refreshing the page. If the issue persists, check the browser console for more information about the error.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -209,6 +214,17 @@ To enable registration, adjust the relevant settings (for regular or SSO registr
 The environment in which the backup was taken does not match the current environment. This might lead to issues with restoring the backup, as the backup might contain data that is not compatible with the current environment. Plugins for example might be missing or are present in a different version - this can lead to issues with restoring the backup.
 
 This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
+
+#### INVE-W14
+**Elevated privileges - Backend**
+
+A user is logged in with elevated privileges. This might be a superuser or a administrator user. These types of users have elevated permissions and should not be used for regular usage.
+Use separate accounts for administrative tasks and regular usage to reduce risk. Make sure to review the [permission documentation](../settings/permissions.md#dangerous-user-flags).
+
+#### INVE-W15
+**Process interrupted by user - Backend**
+
+A process was interrupted by the user, likely by a keyboard interrupt. This might lead to issues with the process that was interrupted, as it might not have completed its task. This is especially relevant for processes that are not idempotent or that do not have a good rollback mechanism.
 
 
 ### INVE-I (InvenTree Information)

@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import decimal
 import hashlib
 import inspect
 import math
 import os
 import re
 from datetime import timedelta
-from decimal import Decimal, InvalidOperation
-from typing import cast
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
+from typing import TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -61,6 +60,7 @@ from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from stock import models as StockModels
 
@@ -427,7 +427,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class PartReportContext(report.mixins.BaseReportContext):
+class PartReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Part model.
 
     Attributes:
@@ -491,6 +491,7 @@ class Part(
         default_location: Where the item is normally stored (may be null)
         default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
+        maximum_stock: Maximum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
         assembly: Can this part be build from other parts?
@@ -569,13 +570,13 @@ class Part(
         }
 
     def check_parameter_delete(self, parameter):
-        """Custom delete check for Paramteter instances associated with this Part."""
-        if self.locked:
+        """Custom delete check for Parameter instances associated with this Part."""
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete parameters of a locked part'))
 
     def check_parameter_save(self, parameter):
         """Custom save check for Parameter instances associated with this Part."""
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot modify parameters of a locked part'))
 
     def delete(self, **kwargs):
@@ -586,7 +587,7 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete this part as it is locked'))
 
         if self.active:
@@ -776,18 +777,12 @@ class Part(
                     'revision_of': _('Part cannot be a revision of itself')
                 })
 
-            # Part cannot be a revision of a part which is itself a revision
-            if self.revision_of.revision_of:
-                raise ValidationError({
-                    'revision_of': _(
-                        'Cannot make a revision of a part which is already a revision'
-                    )
-                })
-
             # If this part is a revision, it must have a revision code
             if not self.revision:
                 raise ValidationError({
-                    'revision': _('Revision code must be specified')
+                    'revision': _(
+                        'Revision code must be specified for a part marked as a revision'
+                    )
                 })
 
             if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
@@ -1236,6 +1231,15 @@ class Part(
         validators=[MinValueValidator(0)],
         verbose_name=_('Minimum Stock'),
         help_text=_('Minimum allowed stock level'),
+    )
+
+    maximum_stock = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Maximum Stock'),
+        help_text=_('Maximum allowed stock level'),
     )
 
     units = models.CharField(
@@ -1765,8 +1769,50 @@ class Part(
 
         return query['total']
 
+    def transfer_order_allocations(self, **kwargs):
+        """Return all transfer-order-allocation objects which allocate this part to a TransferOrder."""
+        include_variants = kwargs.get('include_variants', True)
+
+        queryset = OrderModels.TransferOrderAllocation.objects.all()
+
+        if include_variants:
+            # Include allocations for all variants
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(item__part__in=variants)
+        else:
+            # Only look at this part
+            queryset = queryset.filter(item__part=self)
+
+        # Default behaviour is to only return *pending* allocations
+        pending = kwargs.get('pending', True)
+
+        if pending is True:
+            # Look only for 'open' orders
+            queryset = queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+        elif pending is False:
+            # Look only for 'closed' orders
+            queryset = queryset.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return queryset
+
+    def transfer_order_allocation_count(self, **kwargs):
+        """Return the total quantity of this part allocated to transfer orders."""
+        query = self.transfer_order_allocations(**kwargs).aggregate(
+            total=Coalesce(
+                Sum('quantity', output_field=models.DecimalField()),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return query['total']
+
     def allocation_count(self, **kwargs):
-        """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
+        """Return the total quantity of stock allocated for this part, against build orders, sales orders, and transfer orders."""
         if self.id is None:
             # If this instance has not been saved, foreign-key lookups will fail
             return 0
@@ -1774,6 +1820,8 @@ class Part(
         return sum([
             self.build_order_allocation_count(**kwargs),
             self.sales_order_allocation_count(**kwargs),
+            # For now, stock allocated to a transfer order will not impact its availability
+            # self.transfer_order_allocation_count(**kwargs),
         ])
 
     def stock_entries(
@@ -2048,8 +2096,9 @@ class Part(
             'part', 'sub_part'
         )
 
-        for item in bom_items:
-            item.validate_hash(valid=valid)
+        if valid:
+            for item in bom_items:
+                item.validate_hash(valid=True)
 
         self.bom_validated = valid
         self.bom_checksum = self.get_bom_hash() if valid else ''
@@ -2064,7 +2113,12 @@ class Part(
 
         Note: Does *NOT* delete inherited BOM items!
         """
+        import part.tasks as part_tasks
+
         self.bom_items.all().delete()
+
+        # Offload task to re-validate the BOM for this assembly
+        InvenTree.tasks.offload_task(part_tasks.check_bom_valid, self.pk, group='part')
 
     def getRequiredParts(self, recursive=False, parts=None):
         """Return a list of parts required to make this part (i.e. BOM items).
@@ -2224,8 +2278,8 @@ class Part(
                 logger.warning('WARNING: BomItem ID %s contains itself in BOM', item.pk)
                 continue
 
-            q = decimal.Decimal(quantity)
-            i = decimal.Decimal(item.quantity)
+            q = Decimal(quantity)
+            i = Decimal(item.quantity)
 
             prices = item.sub_part.get_price_range(
                 q * i, internal=internal, purchase=purchase
@@ -2463,7 +2517,7 @@ class Part(
             templates.append(template)
 
         if len(templates) > 0:
-            PartTestTemplate.objects.bulk_create(templates)
+            PartTestTemplate.objects.bulk_create(templates, batch_size=250)
 
     @transaction.atomic
     def copy_category_parameters(self, category: PartCategory):
@@ -2479,6 +2533,7 @@ class Part(
             category__in=categories
         ).order_by('-category__level')
 
+        template_ids = set()
         parameters = []
         content_type = ContentType.objects.get_for_model(Part)
 
@@ -2489,6 +2544,12 @@ class Part(
             ).exists():
                 continue
 
+            # Ensure we do not create duplicate parameters if multiple categories have the same template
+            if category_template.template.pk in template_ids:
+                continue
+
+            template_ids.add(category_template.template.pk)
+
             parameters.append(
                 Parameter(
                     template=category_template.template,
@@ -2498,8 +2559,7 @@ class Part(
                 )
             )
 
-        if len(parameters) > 0:
-            Parameter.objects.bulk_create(parameters)
+        Parameter.objects.bulk_create(parameters, batch_size=250)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -2582,21 +2642,22 @@ class Part(
         Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
+        from order.models import PurchaseOrderLineItem
+
         quantity = 0
 
-        # Iterate through all supplier parts
-        for sp in self.supplier_parts.all():
-            # Look at any incomplete line item for open orders
-            lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatusGroups.OPEN,
-                quantity__gt=F('received'),
-            )
+        # Find all outstanding PurchaseOrderLineItem objects which reference this part
+        lines = PurchaseOrderLineItem.objects.filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
+            part__part_id=self.pk,
+            quantity__gt=F('received'),
+        ).prefetch_related('part')
 
-            for line in lines:
-                remaining = line.quantity - line.received
+        for line in lines:
+            remaining = line.quantity - line.received
 
-                if remaining > 0:
-                    quantity += sp.base_quantity(remaining)
+            if remaining > 0:
+                quantity += line.part.base_quantity(remaining)
 
         return quantity
 
@@ -2630,9 +2691,7 @@ class Part(
         parts = []
 
         # Child parts
-        children = self.get_descendants(include_self=False)
-
-        for child in children:
+        for child in self.get_descendants(include_self=False):
             parts.append(child)
 
         # Immediate parent, and siblings
@@ -3778,7 +3837,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     Attributes:
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
-        quantity: Number of 'sub_parts' consumed to produce one 'part'
+        raw_amount: Raw amount of 'sub_part' consumed to produce one 'part' (can be fractional, or use an associated unit)
+        quantity: Numerical quantity of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
@@ -3880,6 +3940,61 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def set_quantity(self, quantity: Decimal | str | float):
+        """Update the 'quantity' for this BomItem."""
+        self.raw_amount = quantity
+        self.recalculate_quantity()
+
+    def recalculate_quantity(self):
+        """Recalculate the 'quantity' field based on the 'raw_amount' field."""
+        if self.raw_amount is None or self.raw_amount == '':
+            self.raw_amount = self.quantity
+
+        # Convert from the "raw amount" to a numerical quantity, using the associated unit (if specified)
+        try:
+            quantity = InvenTree.conversion.convert_physical_value(
+                self.raw_amount, self.sub_part.units, strip_units=False
+            )
+
+            if not self.sub_part.units and not InvenTree.conversion.is_dimensionless(
+                quantity
+            ):
+                raise ValidationError({
+                    'raw_amount': _('Invalid quantity - no units specified for part')
+                })
+
+            allow_zero_qty = get_global_setting('PART_BOM_ALLOW_ZERO_QUANTITY', False)
+
+            if allow_zero_qty:
+                if float(quantity.magnitude) < 0:
+                    raise ValidationError({
+                        'raw_amount': _(
+                            'Quantity must be greater than or equal to zero'
+                        )
+                    })
+
+            else:
+                if float(quantity.magnitude) <= 0:
+                    raise ValidationError({
+                        'raw_amount': _('Quantity must be greater than zero')
+                    })
+
+            # Normalize the quantity, to maximum 5 decimal places
+            quantity = Decimal(quantity.magnitude)
+
+        except ValidationError as e:
+            raise ValidationError({'raw_amount': e.messages})
+
+        # Ensure that the raw_amount is converted to a Decimal value
+        # and quantized to a maximum of 5 decimal places (to avoid floating point issues)
+        try:
+            self.quantity = Decimal(quantity).quantize(
+                Decimal('0.00001'), rounding=ROUND_HALF_UP
+            )
+        except InvalidOperation:
+            msg = _('Invalid quantity provided')
+            raise ValidationError({'quantity': msg, 'raw_amount': msg})
+
     def delete(self):
         """Check if this item can be deleted."""
         import part.tasks as part_tasks
@@ -3928,8 +4043,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             assemblies = set()
 
             if db_instance:
-                # Find all assemblies which use this BomItem *after* we save
+                # Find all assemblies which use this BomItem *before* we save
                 assemblies.update(db_instance.get_assemblies())
+
+            # Update the set of assemblies to include those which use this BomItem *after* we save
+            assemblies.update(self.get_assemblies())
 
             for assembly in assemblies:
                 # Offload task to update the checksum for this assembly
@@ -3948,7 +4066,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         Raises:
             ValidationError: If the assembly is locked
         """
-        # TODO: Perhaps control this with a global setting?
+        if not get_global_setting('PART_ENABLE_LOCKING'):
+            return
 
         if assembly.locked:
             raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
@@ -3983,7 +4102,15 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         limit_choices_to={'component': True},
     )
 
-    # Quantity required
+    raw_amount = models.CharField(
+        max_length=25,
+        verbose_name=_('Amount'),
+        help_text=_('Amount of sub-part consumed to produce one part'),
+        blank=False,
+        null=False,
+    )
+
+    # Native quantity required
     quantity = models.DecimalField(
         default=1.0,
         max_digits=15,
@@ -4084,7 +4211,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         These fields are used to calculate the checksum hash of this BOM item.
         """
         return [
+            'part',
             'part_id',
+            'sub_part',
             'sub_part_id',
             'quantity',
             'setup_quantity',
@@ -4167,10 +4296,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         super().clean()
 
-        try:
-            self.quantity = Decimal(self.quantity)
-        except InvalidOperation:
-            raise ValidationError({'quantity': _('Must be a valid number')})
+        # Recalculate the 'quantity' field based on the 'raw_amount' field
+        self.recalculate_quantity()
 
         try:
             # Check for circular BOM references
@@ -4215,7 +4342,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if n <= 0:
             return 0.0
 
-        return int(available_stock / n)
+        return int(Decimal(available_stock) / n)
 
     def get_required_quantity(self, build_quantity: float) -> float:
         """Calculate the required part quantity, based on the supplied build_quantity.

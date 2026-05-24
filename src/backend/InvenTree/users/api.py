@@ -33,6 +33,7 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
+from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
@@ -256,7 +257,7 @@ class UserList(ListCreateAPI):
     - Otherwise authenticated users have read-only access
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().prefetch_related('groups')
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only
@@ -367,49 +368,44 @@ class GetAuthToken(GenericAPIView):
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-        if request.user.is_authenticated:
-            user = request.user
-            name = request.query_params.get('name', '')
+        if not request.user.is_authenticated:
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
-            name = ApiToken.sanitize_name(name)
+        user = request.user
+        name = request.query_params.get('name', '')
 
-            today = datetime.date.today()
+        name = ApiToken.sanitize_name(name)
 
-            # Find existing token, which has not expired
-            token = ApiToken.objects.filter(
-                user=user, name=name, revoked=False, expiry__gte=today
-            ).first()
+        today = datetime.date.today()
 
-            if not token:
-                # User is authenticated, and requesting a token against the provided name.
-                token = ApiToken.objects.create(user=request.user, name=name)
+        # Find existing token, which has not expired
+        token = ApiToken.objects.filter(
+            user=user, name=name, revoked=False, expiry__gte=today
+        ).first()
 
-                logger.info(
-                    "Created new API token for user '%s' (name='%s')",
-                    user.username,
-                    name,
-                )
+        if not token:
+            # User is authenticated, and requesting a token against the provided name.
+            token = ApiToken.objects.create(user=request.user, name=name)
+
+            logger.info(
+                "Created new API token for user '%s' (name='%s')", user.username, name
+            )
 
             # Add some metadata about the request
-            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
-            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
-            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
-            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
-            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
-            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
+        token.set_metadata('user_agent', request.headers.get('user-agent', ''))
+        token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+        token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+        token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+        token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+        token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-            data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
+        data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            # Ensure that the users session is logged in
-            if not get_user(request).is_authenticated:
-                login(
-                    request, user, backend='django.contrib.auth.backends.ModelBackend'
-                )
+        # Ensure that the users session is logged in
+        if not get_user(request).is_authenticated:
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-            return Response(data)
-
-        else:
-            raise exceptions.NotAuthenticated()  # pragma: no cover
+        return Response(data)
 
 
 class TokenMixin:
@@ -506,8 +502,38 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
 
 user_urls = [
-    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
+    # Legacy endpoints (to avoid breaking existing API clients)
+    # TODO @matmair - remove these legacy endpoints in the next breaking release
+    path(
+        'roles/',
+        exclude_from_schema(RoleDetails, '/api/user/me/roles/').as_view(),
+        name='api-user-roles_legacy',
+    ),
+    path(
+        'token/',
+        ensure_csrf_cookie(
+            exclude_from_schema(GetAuthToken, '/api/user/me/token/').as_view()
+        ),
+        name='api-token_legacy',
+    ),
+    path(
+        'profile/',
+        exclude_from_schema(UserProfileDetail, '/api/user/me/profile/').as_view(),
+        name='api-user-profile_legacy',
+    ),
+    # Individual user endpoints
+    path(
+        'me/',
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
+    ),
+    # User related endpoints
     path(
         'tokens/',
         include([
@@ -515,8 +541,6 @@ user_urls = [
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
-    path('me/', MeUserDetail.as_view(), name='api-user-me'),
-    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([

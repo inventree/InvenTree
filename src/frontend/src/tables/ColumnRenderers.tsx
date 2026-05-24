@@ -52,6 +52,8 @@ export function RenderPartColumn({
   part: any;
   full_name?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState.getState();
+
   if (!part) {
     return <Skeleton />;
   }
@@ -69,7 +71,7 @@ export function RenderPartColumn({
             <IconExclamationCircle color='red' size={16} />
           </Tooltip>
         )}
-        {part?.locked && (
+        {globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked && (
           <Tooltip label={t`Part is Locked`}>
             <IconLock size={16} />
           </Tooltip>
@@ -272,16 +274,13 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         <TableHoverCard
           value={
             <Group gap='xs' justify='left' wrap='nowrap'>
-              <Text c={color}>{text}</Text>
-              {part.units && (
-                <Text size='xs' c={color}>
-                  [{part.units}]
-                </Text>
-              )}
+              <Text>{text}</Text>
+              {part.units && <Text size='xs'>[{part.units}]</Text>}
             </Group>
           }
           title={t`Stock Information`}
           extra={extra}
+          iconColor={color}
         />
       );
     }
@@ -326,15 +325,15 @@ export function PathColumn(props: TableColumnProps): TableColumn {
       const pathstring = instance.pathstring || name;
 
       if (name == pathstring) {
-        return <Text>{name}</Text>;
+        return <Text size='sm'>{name}</Text>;
       }
 
       return (
         <TableHoverCard
-          value={<Text>{instance.name}</Text>}
+          value={<Text size='sm'>{instance.name}</Text>}
           icon='sitemap'
-          title={props.title}
-          extra={[<Text>{instance.pathstring}</Text>]}
+          title={props.title?.toLocaleString() ?? t`Path`}
+          extra={[<Text size='sm'>{instance.pathstring}</Text>]}
         />
       );
     }
@@ -725,6 +724,16 @@ export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   });
 }
 
+export function UpdatedAtColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'updated_at',
+    title: t`Updated`,
+    defaultVisible: false,
+    extra: { showTime: true },
+    ...props
+  });
+}
+
 export function CurrencyColumn({
   accessor,
   title,
@@ -756,4 +765,14 @@ export function TotalPriceColumn(): TableColumn {
     accessor: 'total_price',
     title: t`Total Price`
   });
+}
+
+export function LineItemColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'line',
+    title: t`Line Item`,
+    sortable: true,
+    switchable: true,
+    ...props
+  };
 }

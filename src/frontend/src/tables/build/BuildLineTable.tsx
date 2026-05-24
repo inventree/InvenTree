@@ -22,6 +22,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -31,13 +32,13 @@ import {
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
@@ -535,7 +536,10 @@ export default function BuildLineTable({
         minWidth: 125,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            <Text
+              size='sm'
+              style={{ fontStyle: 'italic' }}
+            >{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
@@ -569,6 +573,17 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to build order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
@@ -582,8 +597,10 @@ export default function BuildLineTable({
       substitutes: true,
       optional_items: false
     },
-    successMessage: t`Auto allocation in progress`,
-    table: table,
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
+    },
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
         <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
@@ -669,12 +686,28 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const [consumeTaskId, setConsumeTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: consumeTaskId,
+    message: t`Consuming allocated stock`,
+    successMessage: t`Stock consumed successfully`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const consumeLines = useConsumeBuildLinesForm({
     buildId: build.pk,
     buildLines: selectedRows,
-    onFormSuccess: () => {
+    onFormSuccess: (response: any) => {
       table.clearSelectedRecords();
-      table.refreshTable();
+
+      if (response.task_id) {
+        setConsumeTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     }
   });
 

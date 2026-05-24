@@ -32,9 +32,8 @@ from generic.states.api import StatusView
 from InvenTree.api import BulkCreateMixin, BulkUpdateMixin, ListCreateDestroyAPIView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    ORDER_FILTER_ALIAS,
+    ORDER_FILTER,
     SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     NumberOrNullFilter,
 )
@@ -49,11 +48,12 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
     ReturnOrderSerializer,
     SalesOrderSerializer,
+    TransferOrderSerializer,
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -426,11 +426,15 @@ class StockLocationDetail(
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
+        serializer = StockSerializers.LocationDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         delete_stock_items = InvenTree.helpers.str2bool(
-            request.data.get('delete_stock_items', False)
+            serializer.validated_data.get('delete_stock_items', False)
         )
+
         delete_sub_locations = InvenTree.helpers.str2bool(
-            request.data.get('delete_sub_locations', False)
+            serializer.validated_data.get('delete_sub_locations', False)
         )
 
         return super().destroy(
@@ -450,7 +454,7 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = ORDER_FILTER_ALIAS
+    filter_backends = ORDER_FILTER
 
     ordering_fields = ['level', 'name', 'sublocations']
 
@@ -664,13 +668,17 @@ class StockFilter(FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
-            # Filter StockItem with either build allocations or sales order allocations
+            # Filter StockItem with either build allocations or transfer order allocations or sales order allocations
             return queryset.filter(
-                Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)
+                Q(sales_order_allocations__isnull=False)
+                | Q(transfer_order_allocations__isnull=False)
+                | Q(allocations__isnull=False)
             ).distinct()
-        # Filter StockItem without build allocations or sales order allocations
+        # Filter StockItem without build allocations or transfer order allocations or sales order allocations
         return queryset.filter(
-            Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True)
+            Q(sales_order_allocations__isnull=True)
+            & Q(transfer_order_allocations__isnull=True)
+            & Q(allocations__isnull=True)
         )
 
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
@@ -681,8 +689,8 @@ class StockFilter(FilterSet):
             return queryset
 
         if str2bool(value):
-            return queryset.filter(StockItem.EXPIRED_FILTER)
-        return queryset.exclude(StockItem.EXPIRED_FILTER)
+            return queryset.filter(StockItem.get_expired_filter())
+        return queryset.exclude(StockItem.get_expired_filter())
 
     external = rest_filters.BooleanFilter(
         label=_('External Location'), method='filter_external'
@@ -1046,7 +1054,11 @@ class StockOutputOptions(OutputConfiguration):
 
 
 class StockList(
-    DataExportViewMixin, StockApiMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockApiMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of Stock objects.
 
@@ -1226,7 +1238,7 @@ class StockList(
                     ):
                         tracking.append(entry)
 
-                StockItemTracking.objects.bulk_create(tracking)
+                StockItemTracking.objects.bulk_create(tracking, batch_size=250)
 
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
@@ -1240,14 +1252,19 @@ class StockList(
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
-                item = serializer.save()
+                item = StockItem(**serializer.validated_data)
 
                 if status_value and not item.compare_status(status_value):
                     item.set_status(status_value)
 
                 item.save(user=user)
+                item.refresh_from_db()
 
-                response_data = [serializer.data]
+                response_data = [
+                    StockSerializers.StockItemSerializer(
+                        item, context=self.get_serializer_context()
+                    ).data
+                ]
 
         return Response(
             response_data,
@@ -1255,7 +1272,7 @@ class StockList(
             headers=self.get_success_headers(serializer.data),
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'part': 'part__name',
@@ -1567,6 +1584,7 @@ class StockTrackingList(
             'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
             'salesorder': (SalesOrder, SalesOrderSerializer),
             'returnorder': (ReturnOrder, ReturnOrderSerializer),
+            'transferorder': (TransferOrder, TransferOrderSerializer),
             'buildorder': (Build, BuildSerializer),
             'item': (StockItem, StockSerializers.StockItemSerializer),
             'stockitem': (StockItem, StockSerializers.StockItemSerializer),

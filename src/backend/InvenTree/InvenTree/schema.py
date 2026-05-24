@@ -55,9 +55,17 @@ class ExtendedAutoSchema(AutoSchema):
         result_id = super().get_operation_id()
 
         # rename bulk actions to deconflict with single action operation_id
-        if (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin')) or (
-            (self.method == 'PUT' or self.method == 'PATCH')
-            and self.is_bulk_action('BulkUpdateMixin')
+        if (
+            (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin'))
+            or (
+                self.method == 'DELETE'
+                and self.is_bulk_action('BulkDeleteViewsetMixin')
+                and self.view.action == 'bulk_delete'
+            )
+            or (
+                (self.method == 'PUT' or self.method == 'PATCH')
+                and self.is_bulk_action('BulkUpdateMixin')
+            )
         ):
             action = self.method_mapping[self.method.lower()]
             result_id = result_id.replace(action, 'bulk_' + action)
@@ -81,7 +89,11 @@ class ExtendedAutoSchema(AutoSchema):
 
         # drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and
         # OpenAPI recommends against it. This allows us to generate a schema that follows existing behavior.
-        if self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin'):
+        if (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin')) or (
+            self.method == 'DELETE'
+            and getattr(self.view, 'action', None) == 'bulk_delete'
+            and self.is_bulk_action('BulkDeleteViewsetMixin')
+        ):
             original_method = self.method
             self.method = 'PUT'
             request_body = self._get_request_body()
@@ -329,3 +341,24 @@ def schema_for_view_output_options(view_class):
         view_class
     )
     return extended_view
+
+
+def exclude_from_schema(klass: type, alternative_path: str) -> type:
+    """Decorator to exclude a view from the OpenAPI schema.
+
+    This is used to hide legacy endpoints from the schema, while still retaining them for backwards compatibility.
+    """
+
+    class LegacyView(klass):
+        """Dummy doc."""
+
+    LegacyView.__name__ = klass.__name__ + ' - Legacy'
+    LegacyView.__doc__ = f'This is a legacy endpoint, retained for backwards compatibility. Consider migrating to the new endpoint under {alternative_path}.'
+
+    # Exclude all default operations from the schema
+    for operation in ['get', 'post', 'put', 'patch', 'delete']:
+        if hasattr(klass, operation):
+            LegacyView = extend_schema_view(**{operation: extend_schema(exclude=True)})(
+                LegacyView
+            )
+    return LegacyView

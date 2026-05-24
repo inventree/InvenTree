@@ -1,12 +1,12 @@
 import test from 'playwright/test';
+import { adminuser } from './defaults';
 import { clickOnRowMenu, navigate } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
 test('Machines - Admin Panel', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: 'settings/admin/machine'
   });
 
@@ -20,8 +20,7 @@ test('Machines - Admin Panel', async ({ browser }) => {
 
 test('Machines - Activation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: 'settings/admin/machine'
   });
 
@@ -48,14 +47,17 @@ test('Machines - Activation', async ({ browser }) => {
       .getByRole('textbox', { name: 'text-field-name' })
       .fill('my-dummy-machine');
     await page
-      .getByRole('textbox', { name: 'choice-field-machine_type' })
+      .getByRole('combobox', { name: 'choice-field-machine_type' })
       .fill('label');
     await page.getByRole('option', { name: 'Label Printer' }).click();
 
-    await page.getByRole('textbox', { name: 'choice-field-driver' }).click();
+    await page.getByRole('combobox', { name: 'choice-field-driver' }).click();
+    await page.waitForTimeout(200);
     await page
       .getByRole('option', { name: 'Sample Label Printer Driver' })
       .click();
+    await page.waitForTimeout(200);
+
     await page.getByRole('button', { name: 'Submit' }).click();
   } else {
     // Machine already exists - just click on it to open the "machine drawer"
@@ -65,10 +67,13 @@ test('Machines - Activation', async ({ browser }) => {
   // Creating the new machine opens the "machine drawer"
 
   // Check for "machine type" settings
-  await page.getByText('Scope the printer to a specific location').waitFor();
+  await page
+    .getByText('Scope the printer to a specific location')
+    .first()
+    .waitFor();
 
   // Check for "machine driver" settings
-  await page.getByText('Custom string for connecting').waitFor();
+  await page.getByText('Custom string for connecting').first().waitFor();
 
   // Edit the available setting
   await page.getByRole('button', { name: 'edit-setting-CONNECTION' }).click();
@@ -95,8 +100,9 @@ test('Machines - Activation', async ({ browser }) => {
 
   // Let's print something with the machine
   await navigate(page, 'stock/location/1/stock-items');
+  await page.getByText('Blue plastic enclosure').first().waitFor();
 
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('tabpanel', { name: 'Stock Items' })
     .getByLabel('action-menu-printing-actions')
@@ -111,7 +117,7 @@ test('Machines - Activation', async ({ browser }) => {
   await page.getByText('InvenTreeLabelMachine').click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-machine' })
+    .getByRole('combobox', { name: 'choice-field-machine' })
     .fill('dummy');
   await page.getByRole('option', { name: 'my-dummy-machine' }).click();
 

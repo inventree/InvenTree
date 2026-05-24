@@ -1,11 +1,13 @@
 import test from '@playwright/test';
+import { stevenuser } from './defaults';
 import { globalSearch, loadTab, navigate } from './helpers';
 import { doCachedLogin } from './login';
 
 // Helper function to open the export data dialog
 const openExportDialog = async (page) => {
   await page.waitForLoadState('networkidle');
-  await page.getByLabel('table-export-data').click();
+
+  await page.getByRole('button', { name: 'table-export-data' }).click();
   await page.getByText('Export Format *', { exact: true }).waitFor();
   await page.getByText('Export Plugin *', { exact: true }).waitFor();
 };
@@ -13,8 +15,7 @@ const openExportDialog = async (page) => {
 // Test data export for various order types
 test('Exporting - Orders', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/index/purchase-orders'
   });
 
@@ -63,7 +64,7 @@ test('Exporting - Orders', async ({ browser }) => {
     .waitFor();
 
   // Delete all exported file outputs
-  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page.getByLabel('action-button-delete-selected').click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByText('Items Deleted').waitFor();
@@ -72,8 +73,7 @@ test('Exporting - Orders', async ({ browser }) => {
 // Test for custom BOM exporter
 test('Exporting - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   await globalSearch(page, 'MAST');

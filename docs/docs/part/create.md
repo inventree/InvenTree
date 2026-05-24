@@ -20,7 +20,7 @@ New parts can be created manually by selecting the *Create Part* option from the
 {{ image("part/part_create_form.png", "New part form") }}
 
 
-Fill out the required part parameters and then press *Submit* to create the new part. If there are any form errors, you must fix these before the form can be successfully submitted.
+Fill out the required attributes and then press *Submit* to create the new part. If there are any form errors, you must fix these before the form can be successfully submitted.
 
 Once the form is completed, the browser window is redirected to the new part detail page.
 
@@ -48,7 +48,7 @@ If the *Add Supplier Data* option is checked, then supplier part and manufacture
 
 Parts can be imported from an external file, by selecting the *Import from File* option.
 
-This action opens the [data import wizard](../settings/import.md), which steps the user through the process of importing parts from the selected file.
+This action opens the [data import wizard](../concepts/data_import.md), which steps the user through the process of importing parts from the selected file.
 
 ## Import from Supplier
 

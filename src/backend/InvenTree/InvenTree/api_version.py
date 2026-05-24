@@ -1,10 +1,126 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 459
+INVENTREE_API_VERSION = 494
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
+    - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task
+
+v493 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11961
+    - Adds "thumbnail" field to the Attachment API endpoint, which provides a URL to a thumbnail image for image attachments (if available)
+
+v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
+
+v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
+    - Add API serializer for deleting a part category
+    - Add API serializer for deleting a stock location
+
+v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
+    - Moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
+    - Removes the "remote_image" field from the Part API endpoint
+    - Removes the "remote_image" field from the Company API endpoint
+
+v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
+    - Allow renaming of attachments after upload via the API
+
+v487 -> 2026-05-15 : https://github.com/inventree/InvenTree/pull/11948
+    - Make SelectionList default nullable
+    - Add icon to TreePath schema
+
+v486 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11914
+    - Adds "maximum_stock" field to the Part model and associated API endpoints
+    - Adds "high_stock" filter to the Part API endpoint to filter parts which are above their maximum stock level
+
+v485 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11631
+    - Adds "raw_amount" field to the BomItem API endpoint
+
+v484 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11910
+    - Adds more docstrings to (scheduled) tasks
+
+v483 -> 2026-05-04 : https://github.com/inventree/InvenTree/pull/11861
+    - Enable bulk-update operations on the BomItem API endpoint, allowing multiple BOM items to be updated in a single API call
+
+v482 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11540
+    - Add id to the ordering fields of the Parts model
+
+v481 -> 2026-04-28 : https://github.com/inventree/InvenTree/pull/11825
+    - Adds new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management
+
+v480 -> 2026-04-27 : https://github.com/inventree/InvenTree/pull/11816
+    - The "issued_by" field on the Build API endpoint is now read-only, and is automatically set to the current user when a build is created
+
+v479 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11723
+    - POST /api/notifications/readall/ now requires a POST action
+    - POST /api/admin/email/test/ - now returns a 200 on. a successful test
+    - GET /api/notifications/ - now uses user-centric permissions, not a general read
+
+v478 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11073
+    - Add OptionalField class for cleaner handling of optional fields in serializers
+
+v477 -> 2026-04-11 : https://github.com/inventree/InvenTree/pull/11617
+    - Non-functional refactor, adaptations of descriptions
+
+v476 -> 2026-04-09 : https://github.com/inventree/InvenTree/pull/11705
+    - Adds sorting / filtering / searching functionality to the SelectionListEntry API endpoint
+
+v475 -> 2026-04-09 : https://github.com/inventree/InvenTree/pull/11702
+    - Adds "updated" and "updated_by" fields to the LabelTemplate and ReportTemplate API endpoints
+
+v474 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11693
+    - Adds DataImportMixin to the ManufacturerPartList API endpoint
+
+v473 -> 2026-04-08 : https://github.com/inventree/InvenTree/pull/11692
+    - Adds "line" field to PurchaseOrderLineItem and PurchaseOrderExtraLineItem API endpoints
+    - Adds "line" field to SalesOrderLineItem and SalesOrderExtraLineItem API endpoints
+    - Adds "line" field to ReturnOrderLineItem and ReturnOrderExtraLineItem API endpoints
+
+v472 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/xxxx
+    - Fixes writable fields on the user detail endpoint
+
+v471 -> 2026-04-07 : https://github.com/inventree/InvenTree/pull/11685
+    - Adds data importer support for the "SalesOrderShipment" model
+
+v470 -> 2026-04-01 : https://github.com/inventree/InvenTree/pull/11659
+    - Renames "is_staff" field to "is_admin" and updates help texts accordingly to highlight current security boundaries
+
+v469 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11641
+    - Adds parameter support to the SalesOrderShipment model and API endpoints
+
+v468 -> 2026-03-31 : https://github.com/inventree/InvenTree/pull/11649
+    - Add ordering to contentype related fields - no functional changes
+
+v467 -> 2026-03-20 : https://github.com/inventree/InvenTree/pull/11573
+    - Fix definition for the "parent" field on the StockItemSerializer
+
+v466 -> 2026-03-17 : https://github.com/inventree/InvenTree/pull/11525
+    - SalesOrderShipmentComplete endpoint now returns a task ID which can be used to track the progress of the shipment completion process
+
+v465 -> 2026-03-16 : https://github.com/inventree/InvenTree/pull/11529/
+    - BuildOrderAutoAllocate endpoint now returns a task ID which can be used to track the progress of the auto-allocation process
+    - BuildOrderConsume endpoint now returns a task ID which can be used to track the progress of the stock consumption process
+
+v464 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11527
+    - Add API endpoint for monitoring the progress of a particular background task
+
+v463 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11499
+    - Allow "bulk update" actions against StockItem endpoint
+
+v462 -> 2026-03-12 : https://github.com/inventree/InvenTree/pull/11497
+    - Allow "ScheduledTask" API endpoint to be filtered by "name" field
+
+v461 -> 2026-03-10 : https://github.com/inventree/InvenTree/pull/11479
+    - Adds option to copy parameters when duplicating an order via the API
+
+v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/11374
+    - Adds "updated_at" field to PurchaseOrder, SalesOrder and ReturnOrder API endpoints
+    - Adds "updated_before" and "updated_after" date filters to all three order list endpoints
+    - Adds "updated_at" ordering option to all three order list endpoints
 
 v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
     - Changed PurchaseOrderLine "auto_pricing" default value from true to false
@@ -291,12 +407,6 @@ v382 -> 2025-08-07 : https://github.com/inventree/InvenTree/pull/10146
     - Removes legacy functionality to auto-create test result templates based on provided test names
 
 v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
-    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
-
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
-    - Fixes "issued_by" filter for the BuildOrder list API endpoint
-
-v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
     - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
 
 v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135

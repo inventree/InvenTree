@@ -1,9 +1,11 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
 import io
+import ipaddress
+import socket
 from decimal import Decimal
 from typing import Optional, cast
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -88,7 +90,42 @@ def construct_absolute_url(*arg, base_url=None, request=None):
     return urljoin(base_url, relative_url)
 
 
-def download_image_from_url(remote_url, timeout=2.5):
+def validate_url_no_ssrf(url):
+    """Validate that a URL does not point to a private/internal network address.
+
+    Resolves the hostname to an IP address and checks it against private,
+    loopback, link-local, and reserved IP ranges to prevent SSRF attacks.
+
+    Arguments:
+        url: The URL to validate
+
+    Raises:
+        ValueError: If the URL resolves to a private or reserved IP address
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+
+    if not hostname:
+        raise ValueError(_('Invalid URL: no hostname'))
+
+    try:
+        addrinfo = socket.getaddrinfo(hostname, None)
+    except socket.gaierror:
+        raise ValueError(_('Invalid URL: hostname could not be resolved'))
+
+    for _family, _type, _proto, _canonname, sockaddr in addrinfo:
+        ip = ipaddress.ip_address(sockaddr[0])
+
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+            raise ValueError(_('URL points to a private or reserved IP address'))
+
+
+def download_image_from_url(
+    remote_url: str,
+    timeout: float = 2.5,
+    user_agent: str = '',
+    max_size: Optional[int] = None,
+):
     """Download an image file from a remote URL.
 
     This is a potentially dangerous operation, so we must perform some checks:
@@ -98,8 +135,9 @@ def download_image_from_url(remote_url, timeout=2.5):
 
     Arguments:
         remote_url: The remote URL to retrieve image
-        max_size: Maximum allowed image size (default = 1MB)
         timeout: Connection timeout in seconds (default = 5)
+        user_agent: User-Agent string to use for the request (optional)
+        max_size: Maximum allowed image size (in bytes) (default = 1MB)
 
     Returns:
         An in-memory PIL image file, if the download was successful
@@ -115,24 +153,49 @@ def download_image_from_url(remote_url, timeout=2.5):
     validator = URLValidator()
     validator(remote_url)
 
+    # SSRF protection: validate the resolved IP is not private/internal
+    validate_url_no_ssrf(remote_url)
+
     # Calculate maximum allowable image size (in bytes)
-    max_size = (
-        int(get_global_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
-    )
+    max_size = max_size or 1 * 1024 * 1024  # Default to 1MB if not provided
 
     # Add user specified user-agent to request (if specified)
-    user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
-
     headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
         response = requests.get(
             remote_url,
             timeout=timeout,
-            allow_redirects=True,
+            allow_redirects=False,
             stream=True,
             headers=headers,
         )
+
+        # Handle redirects manually to validate each destination
+        max_redirects = 5
+        redirect_count = 0
+
+        while response.is_redirect and redirect_count < max_redirects:
+            redirect_url = response.headers.get('Location')
+            if not redirect_url:
+                break
+
+            # Validate the redirect destination against SSRF
+            validator(redirect_url)
+            validate_url_no_ssrf(redirect_url)
+
+            redirect_count += 1
+            response = requests.get(
+                redirect_url,
+                timeout=timeout,
+                allow_redirects=False,
+                stream=True,
+                headers=headers,
+            )
+
+        if redirect_count >= max_redirects:
+            raise ValueError(_('Too many redirects'))
+
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
@@ -143,6 +206,8 @@ def download_image_from_url(remote_url, timeout=2.5):
         raise requests.exceptions.HTTPError(
             _('Server responded with invalid status code') + f': {response.status_code}'
         )
+    except ValueError:
+        raise
     except Exception as exc:
         raise Exception(_('Exception occurred') + f': {exc!s}')
 
@@ -288,6 +353,8 @@ def getModelsWithMixin(mixin_class) -> list:
     models_with_mixin = [
         x for x in db_models if x is not None and issubclass(x, mixin_class)
     ]
+    # sort to make resulting list deterministic (and easier to test)
+    models_with_mixin.sort(key=lambda x: x._meta.label_lower)
 
     # Store the result in the session cache
     set_session_cache(cache_key, models_with_mixin)

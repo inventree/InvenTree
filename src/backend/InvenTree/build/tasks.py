@@ -2,8 +2,10 @@
 
 from datetime import timedelta
 from decimal import Decimal
+from typing import Optional
 
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -27,61 +29,53 @@ def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
-
-    if not build_order:
-        logger.warning(
-            'Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
-
+    build_order = Build.objects.get(pk=build_id)
     build_order.auto_allocate_stock(**kwargs)
 
 
-@tracer.start_as_current_span('consume_build_item')
-def consume_build_item(
-    item_id: str, quantity, notes: str = '', user_id: int | None = None
+@tracer.start_as_current_span('consume_build_stock')
+def consume_build_stock(
+    build_id: int,
+    lines: Optional[list[int]] = None,
+    items: Optional[dict] = None,
+    user_id: int | None = None,
+    **kwargs,
 ):
-    """Consume stock against a particular BuildOrderLineItem allocation."""
-    from build.models import BuildItem
+    """Consume stock for the specified BuildOrder.
 
-    item = BuildItem.objects.filter(pk=item_id).first()
+    Arguments:
+        build_id: The ID of the BuildOrder to consume stock for
+        lines: Optional list of BuildLine IDs to consume
+        items: Optional dict of BuildItem IDs (and quantities)to consume
+        user_id: The ID of the user who initiated the stock consumption
+    """
+    from build.models import Build, BuildItem, BuildLine
 
-    if not item:
-        logger.warning(
-            'Could not consume stock for BuildItem <%s> - BuildItem does not exist',
-            item_id,
-        )
-        return
+    build = Build.objects.get(pk=build_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    item.complete_allocation(
-        quantity=quantity,
-        notes=notes,
-        user=User.objects.filter(pk=user_id).first() if user_id else None,
-    )
+    lines = lines or []
+    items = items or {}
+    notes = kwargs.pop('notes', '')
 
+    # Extract the relevant BuildLine and BuildItem objects
+    with transaction.atomic():
+        # Consume each of the specified BuildLine objects
+        for line_id in lines:
+            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
+                for item in build_line.allocations.all():
+                    item.complete_allocation(
+                        quantity=item.quantity, notes=notes, user=user
+                    )
 
-@tracer.start_as_current_span('consume_build_line')
-def consume_build_line(line_id: int, notes: str = '', user_id: int | None = None):
-    """Consume stock against a particular BuildOrderLineItem."""
-    from build.models import BuildLine
-
-    line_item = BuildLine.objects.filter(pk=line_id).first()
-
-    if not line_item:
-        logger.warning(
-            'Could not consume stock for LineItem <%s> - LineItem does not exist',
-            line_id,
-        )
-        return
-
-    for item in line_item.allocations.all():
-        item.complete_allocation(
-            quantity=item.quantity,
-            notes=notes,
-            user=User.objects.filter(pk=user_id).first() if user_id else None,
-        )
+        # Consume each of the specified BuildItem objects
+        for item_id, quantity in items.items():
+            if build_item := BuildItem.objects.filter(
+                pk=item_id, build_line__build=build
+            ).first():
+                build_item.complete_allocation(
+                    quantity=quantity, notes=notes, user=user
+                )
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -89,7 +83,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
     from build.models import Build
 
-    build_order = Build.objects.filter(pk=build_id).first()
+    build_order = Build.objects.get(pk=build_id)
 
     if user_id:
         try:
@@ -103,14 +97,215 @@ def complete_build_allocations(build_id: int, user_id: int):
     else:
         user = None
 
-    if not build_order:
-        logger.warning(
-            'Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist',
-            build_id,
-        )
-        return
-
     build_order.complete_allocations(user)
+
+
+@tracer.start_as_current_span('delete_build_outputs')
+def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
+    """Delete (cancel) specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        output_ids: List of StockItem PKs to delete
+    """
+    from build.models import Build
+    from stock.models import StockItem
+
+    build = Build.objects.get(pk=build_id)
+
+    with transaction.atomic():
+        for output_id in output_ids:
+            output = StockItem.objects.filter(pk=output_id).first()
+            if output:
+                build.delete_output(output)
+
+
+@tracer.start_as_current_span('scrap_build_outputs')
+def scrap_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int,
+    notes: str = '',
+    discard_allocations: bool = False,
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Scrap specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and 'quantity'
+        location_id: PK of the destination StockLocation
+        notes: Reason for scrapping
+        discard_allocations: If True, discard (not consume) allocations
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = StockLocation.objects.get(pk=location_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    with transaction.atomic():
+        for item in outputs:
+            output = StockItem.objects.filter(pk=item['output_id']).first()
+            if output:
+                build.scrap_build_output(
+                    output,
+                    item.get('quantity'),
+                    location,
+                    user=user,
+                    notes=notes,
+                    discard_allocations=discard_allocations,
+                )
+
+
+@tracer.start_as_current_span('complete_build_outputs')
+def complete_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int | None,
+    status: int,
+    notes: str = '',
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Complete specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and optional 'quantity'
+        location_id: PK of the destination StockLocation (or None)
+        status: Stock status code to assign to completed outputs
+        notes: Completion notes
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = (
+        StockLocation.objects.filter(pk=location_id).first() if location_id else None
+    )
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    required_tests = build.part.getRequiredTests()
+
+    with transaction.atomic():
+        for item in outputs:
+            output = StockItem.objects.filter(pk=item['output_id']).first()
+            if output:
+                build.complete_build_output(
+                    output,
+                    user,
+                    quantity=item.get('quantity'),
+                    location=location,
+                    status=status,
+                    notes=notes,
+                    required_tests=required_tests,
+                )
+
+
+@tracer.start_as_current_span('cancel_build')
+def cancel_build(
+    build_id: int,
+    user_id: int,
+    remove_allocated_stock: bool = False,
+    remove_incomplete_outputs: bool = False,
+):
+    """Tasks to run after a BuildOrder is cancelled.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been cancelled
+        user_id: The ID of the user who cancelled the BuildOrder
+        remove_allocated_stock: If True, consume any allocated stock
+        remove_incomplete_outputs: If True, delete any incomplete build outputs
+
+    """
+    from build.models import Build
+
+    build = Build.objects.get(pk=build_id)
+
+    if remove_allocated_stock:
+        complete_build_allocations(build_id, user_id)
+    else:
+        build.allocated_stock.all().delete()
+
+    if remove_incomplete_outputs:
+        build.build_outputs.filter(is_building=True).delete()
+
+    # Notify users that the order has been canceled
+    InvenTree.helpers_model.notify_responsible(
+        build,
+        Build,
+        exclude=build.issued_by,
+        content=common.notifications.InvenTreeNotificationBodies.OrderCanceled,
+        extra_users=build.part.get_subscribers(),
+    )
+
+    trigger_event(BuildEvents.CANCELLED, id=build.pk)
+
+
+@tracer.start_as_current_span('complete_build')
+def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = False):
+    """Tasks to run after a BuildOrder is completed.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been completed
+        user_id: The ID of the user who completed the BuildOrder
+        trim_allocated_stock: If True, trim any allocated stock which was not consumed
+    """
+    from build.models import Build
+
+    build = Build.objects.get(pk=build_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    if trim_allocated_stock:
+        build.trim_allocated_stock()
+
+    # Complete any remaining allocations for this build order
+    complete_build_allocations(build_id, user_id)
+
+    # Register an event
+    trigger_event(BuildEvents.COMPLETED, id=build.pk)
+
+    # Notify users that this build has been completed
+    targets = [build.issued_by, build.responsible]
+
+    # Also inform anyone subscribed to the assembly part
+    targets.extend(build.part.get_subscribers())
+
+    # Notify those users interested in the parent build
+    if build.parent:
+        targets.append(build.parent.issued_by)
+        targets.append(build.parent.responsible)
+
+    # Notify users if this build points to a sales order
+    if build.sales_order:
+        targets.append(build.sales_order.created_by)
+        targets.append(build.sales_order.responsible)
+
+    name = _(f'Build order {build} has been completed')
+
+    context = {
+        'build': build,
+        'name': name,
+        'slug': 'build.completed',
+        'message': _('A build order has been completed'),
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'template': {'html': 'email/build_order_completed.html', 'subject': name},
+    }
+
+    common.notifications.trigger_notification(
+        build,
+        'build.completed',
+        targets=targets,
+        context=context,
+        target_exclude=[user],
+    )
 
 
 @tracer.start_as_current_span('update_build_order_lines')

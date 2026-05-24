@@ -3,9 +3,15 @@ title: InvenTree Installer
 ---
 
 ## Installer
+
 The InvenTree installer automates the installation procedure for a production InvenTree server.
 
-Supported OSs are Debian 10, 11, 12 and Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS.
+The installer supports the following Linux distributions:
+
+- Debian 11, 12
+- Ubuntu 22.04 LTS, 24.04 LTS
+
+Support for other OS versions is not currently planned. If you are using a different distribution, you can still follow the [docker](./docker.md) or [bare metal](./install.md) installation instructions.
 
 ### Quick Script
 
@@ -117,6 +123,9 @@ Extra python packages can be installed by setting the environment variable `SETU
 #### Database Options
 
 The used database backend can be configured with environment variables (before the first setup) or in the config file after the installation. Check the [configuration section](./config.md#database-options) for more information.
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, as it is not designed for high concurrency.
 
 ## Moving Data
 

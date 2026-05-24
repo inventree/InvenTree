@@ -49,7 +49,8 @@ def validate_part_name_format(value):
                 })
 
     # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
+    # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated
+    p = Part(pk=1, name='test part', description='some test part')
 
     try:
         SandboxedEnvironment().from_string(value).render({'part': p})
@@ -234,6 +235,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': False,
     },
+    'INVENTREE_SHOW_SUPERUSER_BANNER': {
+        'name': _('Show superuser banner'),
+        'description': _('Show a warning banner in the UI when logged in as superuser'),
+        'validator': bool,
+        'default': True,
+    },
+    'INVENTREE_SHOW_ADMIN_BANNER': {
+        'name': _('Show admin banner'),
+        'description': _('Show a warning banner in the UI when logged in as admin'),
+        'validator': bool,
+        'default': False,
+    },
     'INVENTREE_COMPANY_NAME': {
         'name': _('Company name'),
         'description': _('Internal company name'),
@@ -273,25 +286,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
-    'INVENTREE_DOWNLOAD_FROM_URL': {
-        'name': _('Download from URL'),
-        'description': _('Allow download of remote images and files from external URL'),
-        'validator': bool,
-        'default': False,
-    },
-    'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-        'name': _('Download Size Limit'),
-        'description': _('Maximum allowable download size for remote image'),
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
         'units': 'MB',
-        'default': 1,
-        'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-    },
-    'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-        'name': _('User-agent used to download from URL'),
-        'description': _(
-            'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-        ),
-        'default': '',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
     },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
@@ -401,6 +401,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Plugin to use for internal barcode data generation'),
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
+    },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
     },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),
@@ -637,6 +643,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PART_BOM_ALLOW_ZERO_QUANTITY': {
+        'name': _('Allow BOM Zero Quantity'),
+        'description': _(
+            'Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'LABEL_ENABLE': {
         'name': _('Enable label printing'),
         'description': _('Enable label printing from the web interface'),
@@ -692,6 +706,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),
+        'default': True,
+        'validator': bool,
+    },
+    'STOCK_ALLOW_EDIT_SERIAL': {
+        'name': _('Allow Edit Serial Number'),
+        'description': _('Allow editing of serial number for stock items'),
+        'default': True,
+        'validator': bool,
+    },
+    'STOCK_ALLOW_DELETE_SERIALIZED': {
+        'name': _('Delete Serialized Stock'),
+        'description': _('Allow deletion of stock items which have a serial number'),
         'default': True,
         'validator': bool,
     },
@@ -805,6 +831,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'BUILDORDER_EXTERNAL_REQUIRED': {
+        'name': _('Require External Build Orders'),
+        'description': _(
+            'Require an external build order when ordering assembled parts from an external supplier'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
         'name': _('Block Until Tests Pass'),
         'description': _(
@@ -879,6 +913,34 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Mark Shipped Orders as Complete'),
         'description': _(
             'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
+    'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
+        'name': _('Block Incomplete Item Tests'),
+        'description': _(
+            'Prevent allocation of stock items to sales orders if required item tests are incomplete'
         ),
         'default': False,
         'validator': bool,
@@ -1166,6 +1228,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Display Users Profiles on their profile page'),
         'default': True,
         'validator': bool,
+    },
+    'WEEK_STARTS_ON': {
+        'name': _('Week Starts On'),
+        'description': _('Starting day of the week, for display in calendar views'),
+        'default': '1',
+        'choices': [
+            ('0', _('Sunday')),
+            ('1', _('Monday')),
+            ('2', _('Tuesday')),
+            ('3', _('Wednesday')),
+            ('4', _('Thursday')),
+            ('5', _('Friday')),
+            ('6', _('Saturday')),
+        ],
     },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),

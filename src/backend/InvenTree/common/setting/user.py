@@ -251,6 +251,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_BOM_SUBASSEMBLY_LEVELS': {
+        'name': _('Show Subassemblies in BOM table'),
+        'description': _('Enable display of subassemblies in the BOM table'),
+        'default': True,
+        'validator': bool,
+    },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
         'description': _('Receive notifications for system errors'),
@@ -261,5 +267,13 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Last used printing machines'),
         'description': _('Save the last used printing machines for a user'),
         'default': '',
+    },
+    'DISPLAY_ITEMS_FINAL_LEVEL': {
+        'name': _('Display Items at Final Level'),
+        'description': _(
+            'Automatically default to showing items/parts instead of sub-levels for locations or categories with no children'
+        ),
+        'default': False,
+        'validator': bool,
     },
 }

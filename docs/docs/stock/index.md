@@ -24,7 +24,7 @@ Each *Stock Item* is linked to the following information:
 
 **Last Updated** - Date that the stock quantity was last updated
 
-**Last Stocktake** - Date of most recent stocktake (count) of this item
+**Last Stocktake** - Date that this stock item was last counted
 
 **Status** - Status of this stock item
 

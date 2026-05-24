@@ -20,6 +20,7 @@ import build.api
 import common.api
 import company.api
 import importer.api
+import InvenTree.logging  # noqa: F401 - ensure logging handlers are registered
 import machine.api
 import order.api
 import part.api

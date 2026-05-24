@@ -58,11 +58,11 @@ class MachineDetail(RetrieveUpdateDestroyAPI):
 def get_machine(machine_pk):
     """Get machine by pk.
 
-    Raises:
-        NotFound: If machine is not found
-
     Returns:
         BaseMachineType: The machine instance in the registry
+
+    Raises:
+        NotFound: If machine is not found
     """
     machine = registry.get_machine(machine_pk)
 
@@ -98,7 +98,7 @@ class MachineSettingList(APIView):
             all_settings.extend(list(settings_dict.values()))
 
         results = MachineSerializers.MachineSettingSerializer(
-            all_settings, many=True
+            list(all_settings), many=True
         ).data
         return Response(results)
 

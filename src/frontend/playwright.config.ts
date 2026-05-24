@@ -96,6 +96,15 @@ export default defineConfig({
       stdout: 'pipe',
       stderr: 'pipe',
       timeout: 120 * 1000
+    },
+    {
+      command: 'invoke worker',
+      env: {
+        INVENTREE_DEBUG: 'True',
+        INVENTREE_LOG_LEVEL: 'INFO',
+        INVENTREE_PLUGINS_ENABLED: 'True',
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+      }
     }
   ],
   globalSetup: './playwright/global-setup.ts',

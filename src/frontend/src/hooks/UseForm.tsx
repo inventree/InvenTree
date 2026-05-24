@@ -24,9 +24,15 @@ export function useApiFormModal(props: ApiFormModalProps) {
     return props.modalId ?? id;
   }, [props.modalId, id]);
 
+  const keepOpenRef = useRef(false);
+  const setKeepOpen = (v: boolean) => {
+    keepOpenRef.current = v;
+  };
+
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
       ...props,
+      onKeepOpenChange: setKeepOpen,
       actions: [
         ...(props.actions || []),
         {
@@ -38,7 +44,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
         }
       ],
       onFormSuccess: (data, form) => {
-        if (props.checkClose?.(data, form) ?? true) {
+        if (!keepOpenRef.current && (props.checkClose?.(data, form) ?? true)) {
           modalClose.current();
         }
         props.onFormSuccess?.(data, form);
@@ -56,14 +62,18 @@ export function useApiFormModal(props: ApiFormModalProps) {
     id: modalId,
     title: formProps.title,
     onOpen: () => {
-      setIsOpen(true);
-      modalState.setModalOpen(modalId, true);
-      formProps.onOpen?.();
+      queueMicrotask(() => {
+        setIsOpen(true);
+        modalState.setModalOpen(modalId, true);
+        formProps.onOpen?.();
+      });
     },
     onClose: () => {
-      setIsOpen(false);
-      modalState.setModalOpen(modalId, false);
-      formProps.onClose?.();
+      queueMicrotask(() => {
+        setIsOpen(false);
+        modalState.setModalOpen(modalId, false);
+        formProps.onClose?.();
+      });
     },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',

@@ -1,9 +1,10 @@
-import { ActionIcon, Anchor, Group, Loader } from '@mantine/core';
+import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -13,7 +14,6 @@ import { useDocumentVisibility } from '@mantine/hooks';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
-import { StylishText } from '../../items/StylishText';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**
@@ -40,8 +40,10 @@ function QueryCountWidget({
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
     enabled: user.hasViewPermission(modelType) && visibility === 'visible',
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
+    staleTime: 5 * 60 * 1000, // 5 minute stale time
     queryFn: () => {
       if (visibility !== 'visible') {
         return null;
@@ -54,7 +56,9 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data);
+        .then((res) => {
+          return res.data?.count ?? 0;
+        });
     }
   });
 
@@ -81,16 +85,16 @@ function QueryCountWidget({
   );
 
   const result: ReactNode = useMemo(() => {
-    if (query.isFetching) {
-      return <Loader size='xs' />;
-    } else if (query.isError) {
+    if (query.isError) {
       return (
         <ActionIcon color='red' variant='transparent' size='lg'>
           <IconExclamationCircle />
         </ActionIcon>
       );
     } else {
-      return <StylishText size='xl'>{query.data?.count ?? '-'}</StylishText>;
+      return (
+        <RollingNumber value={query.isFetching ? 0 : query.data} fz='20px' />
+      );
     }
   }, [query.isFetching, query.isError, query.data]);
 
