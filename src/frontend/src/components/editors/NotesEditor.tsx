@@ -236,9 +236,9 @@ export default function NotesEditor({
       {createNote.modal}
       {deleteNote.modal}
       {editNote.modal}
-      <Flex align='left'>
-        <Box style={{ flex: 1 }} p='sm'>
-          <Stack gap='xs'>
+      <Flex align='left' gap={5}>
+        <Box style={{ flex: 1 }}>
+          <Stack gap={5}>
             {selectedNote && (
               <Paper p='xs' shadow='sm' withBorder>
                 <Group justify='space-between'>
@@ -255,7 +255,7 @@ export default function NotesEditor({
                         <Tooltip label={t`Save Notes (Ctrl+S)`}>
                           <ActionIcon
                             variant='transparent'
-                            color={isDirty ? 'yellow' : undefined}
+                            color={'green'}
                             onClick={saveNote}
                             disabled={!canEdit || !isDirty}
                           >
@@ -267,7 +267,6 @@ export default function NotesEditor({
                         <Tooltip label={t`Reset Notes`}>
                           <ActionIcon
                             variant='transparent'
-                            color='red'
                             onClick={reloadNote}
                             disabled={!canEdit || !isDirty}
                           >
@@ -318,7 +317,7 @@ export default function NotesEditor({
             </Paper>
           </Stack>
         </Box>
-        <Paper p='sm' shadow='sm' withBorder ml='md' style={{ width: '200px' }}>
+        <Paper p='xs' shadow='sm' withBorder style={{ width: '200px' }}>
           <Stack gap='xs'>
             <Button
               color='green'
