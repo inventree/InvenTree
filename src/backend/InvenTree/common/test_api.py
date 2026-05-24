@@ -1,6 +1,13 @@
 """API unit tests for InvenTree common functionality."""
 
+import io
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+
+from PIL import Image
 
 import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -675,3 +682,320 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(template=template.pk).exists()
         )
+
+
+class AttachmentAPITests(InvenTreeAPITestCase):
+    """Tests for the Attachment API."""
+
+    def test_attachments(self):
+        """Test API functionality for attachments."""
+        from common.models import Attachment
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        part = Part.objects.create(name='Test Part', description='A part for testing')
+
+        N = Attachment.objects.count()
+
+        # Upload multiple attachments against the part instance
+        for ii in range(5):
+            file_object = io.StringIO('Hello world')
+            file_object.seek(0)
+
+            fn = f'test_file_{ii}.txt'
+
+            content_file = ContentFile(file_object.read(), name=fn)
+
+            url = reverse('api-attachment-list')
+
+            response = self.post(
+                url,
+                data={
+                    'model_type': 'part',
+                    'model_id': part.pk,
+                    'attachment': content_file,
+                    'comment': f'This is test file {ii}',
+                },
+                format='multipart',
+                expected_code=201,
+            )
+
+            data = response.data
+
+            # Check that the file has actually been created
+            self.assertEqual(data['filename'], fn)
+            self.assertTrue(
+                default_storage.exists(data['attachment'].replace('/media/', ''))
+            )
+
+        # Check that we have the expected number of attachments
+        self.assertEqual(Attachment.objects.count(), N + 5)
+        self.assertEqual(part.attachments.count(), 5)
+
+        # Let's rename one of the attachments
+        att = part.attachments.first()
+        self.assertEqual(att.basename, 'test_file_0.txt')
+
+        url = reverse('api-attachment-detail', kwargs={'pk': att.pk})
+
+        # A few failed attempts
+        for new_name in [
+            'different_ext.docx',
+            'test_file_1.txt',
+            '../../test_file.txt',
+        ]:
+            print('- ATTEMPTING:', new_name)
+            response = self.patch(url, data={'filename': new_name}, expected_code=400)
+
+        att.refresh_from_db()
+        self.assertEqual(att.basename, 'test_file_0.txt')
+
+        # Let's try seriously this time
+        new_name = 'a_new_file.txt'
+        response = self.patch(url, data={'filename': new_name}, expected_code=200)
+
+        att.refresh_from_db()
+        self.assertEqual(att.basename, new_name)
+
+        # Check that the file has been renamed on disk
+        self.assertTrue(
+            default_storage.exists(f'attachments/part/{part.pk}/{new_name}')
+        )
+        self.assertFalse(
+            default_storage.exists(f'attachments/part/{part.pk}/test_file_0.txt')
+        )
+
+        # Next, let's delete the attachment manually - via the API
+        response = self.delete(url, expected_code=403)
+        self.assignRole('part.delete')
+        response = self.delete(url, expected_code=204)
+
+        # Check that the file has been deleted from disk
+        self.assertFalse(
+            default_storage.exists(f'attachments/part/{part.pk}/{new_name}')
+        )
+
+        self.assertEqual(Attachment.objects.count(), N + 4)
+        self.assertEqual(part.attachments.count(), 4)
+
+        # Fetch the remaining attachments
+        attachments = list(part.attachments.all())
+
+        # Now, delete the part instance
+        part.active = False
+        part.save()
+        part.delete()
+
+        self.assertEqual(Attachment.objects.count(), N)
+
+        for att in attachments:
+            # Ensure that the file associated with each attachment has been removed
+            self.assertFalse(default_storage.exists(att.attachment.path))
+
+
+class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
+    """Tests for thumbnail generation when uploading attachments via the API."""
+
+    def setUp(self):
+        """Set up a Part instance and required roles."""
+        from part.models import Part
+
+        super().setUp()
+        self.assignRole('part.add')
+        self.assignRole('part.delete')
+        self.part = Part.objects.create(
+            name='Thumbnail Test Part', description='Part for thumbnail testing'
+        )
+
+    def _make_image_file(self, name='test.png', size=(100, 100), color='red'):
+        """Return a SimpleUploadedFile containing a valid PNG image."""
+        buf = io.BytesIO()
+        Image.new('RGB', size, color=color).save(buf, format='PNG')
+        return SimpleUploadedFile(name, buf.getvalue(), content_type='image/png')
+
+    def _upload_attachment(self, file_obj, expected_code=201):
+        """Upload a file attachment against the test part and return the response."""
+        return self.post(
+            reverse('api-attachment-list'),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'attachment': file_obj,
+            },
+            format='multipart',
+            expected_code=expected_code,
+        )
+
+    def test_thumbnail_valid_image(self):
+        """Uploading a valid image file should set is_image=True and generate a thumbnail."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file())
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.is_image)
+        self.assertTrue(att.thumbnail)
+        self.assertTrue(default_storage.exists(att.thumbnail.name))
+
+    def test_thumbnail_invalid_image(self):
+        """Uploading a file with an image extension but invalid image data should not create a thumbnail."""
+        from common.models import Attachment
+
+        bad_file = SimpleUploadedFile(
+            'corrupt.png', b'this is not image data', content_type='image/png'
+        )
+        response = self._upload_attachment(bad_file)
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_thumbnail_non_image_file(self):
+        """Uploading a non-image file should leave is_image=False with no thumbnail."""
+        from common.models import Attachment
+
+        txt_file = SimpleUploadedFile(
+            'document.txt', b'Hello, InvenTree!', content_type='text/plain'
+        )
+        response = self._upload_attachment(txt_file)
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_thumbnail_large_image(self):
+        """A large image attachment should produce a thumbnail no larger than THUMBNAIL_SIZE on each side."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file(size=(1000, 1000)))
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.is_image)
+        self.assertTrue(att.thumbnail)
+
+        thumb_data = default_storage.open(att.thumbnail.name).read()
+        thumb_img = Image.open(io.BytesIO(thumb_data))
+        self.assertLessEqual(thumb_img.width, Attachment.THUMBNAIL_SIZE)
+        self.assertLessEqual(thumb_img.height, Attachment.THUMBNAIL_SIZE)
+
+    def test_thumbnail_deleted_with_attachment(self):
+        """Deleting an attachment via the API should also remove its thumbnail from storage."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file())
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.thumbnail)
+        thumb_name = att.thumbnail.name
+        att_name = att.attachment.name
+
+        self.assertTrue(default_storage.exists(att_name))
+        self.assertTrue(default_storage.exists(thumb_name))
+
+        self.delete(
+            reverse('api-attachment-detail', kwargs={'pk': att.pk}), expected_code=204
+        )
+
+        self.assertFalse(default_storage.exists(att_name))
+        self.assertFalse(default_storage.exists(thumb_name))
+
+    def test_thumbnail_zero_byte_file(self):
+        """Uploading a zero-byte file should be rejected by Django's file validation before reaching thumbnail logic."""
+        empty_file = SimpleUploadedFile('empty.png', b'', content_type='image/png')
+        # Django's FileField rejects empty uploads at the serializer/validation layer
+        response = self._upload_attachment(empty_file, expected_code=400)
+        self.assertIn('attachment', response.data)
+
+    def test_thumbnail_link_attachment(self):
+        """An attachment created with an external link (no file) should not generate a thumbnail."""
+        from common.models import Attachment
+
+        response = self.post(
+            reverse('api-attachment-list'),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'link': 'https://example.com/some/resource',
+            },
+            format='multipart',
+            expected_code=201,
+        )
+
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_is_image_filter(self):
+        """The is_image filter on the attachment list endpoint should return only matching attachments."""
+        url = reverse('api-attachment-list')
+        base_filters = {'model_type': 'part', 'model_id': self.part.pk}
+
+        # Upload one valid image and three non-image attachments
+        self._upload_attachment(self._make_image_file('img1.png'))
+        self._upload_attachment(
+            SimpleUploadedFile(
+                'corrupt.png', b'not image data', content_type='image/png'
+            )
+        )
+        self._upload_attachment(
+            SimpleUploadedFile('doc.txt', b'hello', content_type='text/plain')
+        )
+        self.post(
+            url,
+            data={**base_filters, 'link': 'https://example.com/resource'},
+            format='multipart',
+            expected_code=201,
+        )
+
+        all_attachments = self.get(url, base_filters, expected_code=200).data
+        self.assertEqual(len(all_attachments), 4)
+
+        # is_image=true → only the valid image
+        images = self.get(
+            url, {**base_filters, 'is_image': 'true'}, expected_code=200
+        ).data
+        self.assertEqual(len(images), 1)
+        self.assertTrue(images[0]['is_image'])
+
+        # is_image=false → the three non-image attachments
+        non_images = self.get(
+            url, {**base_filters, 'is_image': 'false'}, expected_code=200
+        ).data
+        self.assertEqual(len(non_images), 3)
+        self.assertTrue(all(not a['is_image'] for a in non_images))
+
+    def test_upload_exceeds_size_limit(self):
+        """Uploading a file that exceeds INVENTREE_UPLOAD_MAX_SIZE should be rejected with a 400 error."""
+        from common.settings import get_global_setting, set_global_setting
+
+        original_limit = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE')
+        # Use a 1 MB ceiling so the test file stays small and fast
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        limit_bytes = 1 * 1024 * 1024
+
+        try:
+            # File exactly at the limit — validator uses >, so this must be accepted
+            self._upload_attachment(
+                SimpleUploadedFile(
+                    'at_limit.txt', b'\x00' * limit_bytes, content_type='text/plain'
+                ),
+                expected_code=201,
+            )
+
+            # File one byte over the limit — must be rejected
+            response = self._upload_attachment(
+                SimpleUploadedFile(
+                    'over_limit.txt',
+                    b'\x00' * (limit_bytes + 1),
+                    content_type='text/plain',
+                ),
+                expected_code=400,
+            )
+            self.assertIn('attachment', response.data)
+        finally:
+            set_global_setting(
+                'INVENTREE_UPLOAD_MAX_SIZE', original_limit, change_user=None
+            )

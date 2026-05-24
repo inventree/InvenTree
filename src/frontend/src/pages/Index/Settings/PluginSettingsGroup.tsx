@@ -70,10 +70,12 @@ function PluginSettingGroupItem({
 export default function PluginSettingsGroup({
   mixin,
   message,
+  includeBaseSettings,
   global
 }: {
   global: boolean;
   message?: string;
+  includeBaseSettings?: boolean;
   mixin?: string;
 }) {
   const mixins: string = useMemo(() => {
@@ -99,16 +101,18 @@ export default function PluginSettingsGroup({
 
   return (
     <Stack gap='xs'>
-      <Accordion defaultValue='plugin-settings'>
-        <Accordion.Item value='plugin-settings'>
-          <Accordion.Control>
-            <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+      {includeBaseSettings == true && (
+        <Accordion defaultValue='plugin-settings'>
+          <Accordion.Item value='plugin-settings'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      )}
       <Alert color='blue' icon={<IconInfoCircle />}>
         <Text>
           {message ??

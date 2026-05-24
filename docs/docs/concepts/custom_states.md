@@ -4,16 +4,70 @@ title: Custom States
 
 ## Custom States
 
-Several models within InvenTree support the use of custom states. The custom states are display only - the business logic is not affected by the state.
+Several models within InvenTree support the use of *custom states*. Custom states extend the built-in status system by adding extra labels and colours that are displayed in the user interface.
 
-States can be added in the [Admin Center](../settings/admin.md#admin-center) under the "Custom States" section. Each state has a name, label and a color that are used to display the state in the user interface. Changes to these settings will only be reflected in the user interface after a full reload of the interface.
+!!! info "Display Only"
+    Custom states affect display only — they do not add new workflow steps or change business logic. Every custom state is mapped to an existing built-in state (its *logical key*), and the system uses that built-in state for all decisions such as availability counts, order transitions, and filtering.
 
-States need to be assigned to a model, state (for example status on a StockItem) and a logical key - that will be used for business logic. These 3 values combined need to be unique throughout the system.
+### Example
 
-Custom states can be defined for the following models:
+Suppose you want to track stock items that are physically present and available, but are waiting for a quality inspection before use. The built-in `OK` status is the closest match — the item is available — but you want it to appear distinctly in the interface.
 
-- [Stock Item](../stock/index.md)
-- [Build Order](../manufacturing/build.md)
-- [Purchase Order](../purchasing/purchase_order.md)
-- [Sales Order](../sales/sales_order.md)
-- [Return Order](../sales/return_order.md)
+You would create a custom state:
+
+- **Logical key**: `OK` — the system treats the item as available stock
+- **Label**: `Awaiting Inspection` — shown in the interface instead of "OK"
+- **Colour**: `warning` — displayed in amber to draw attention
+
+The item is counted as available stock in all reports and filters, but is visually distinguished from items with a standard `OK` status.
+
+## Managing Custom States
+
+Custom states are managed in the [Admin Center](../settings/admin.md#admin-center) under the *Custom States* section.
+
+!!! warning "Page Reload Required"
+    Changes to custom states are only reflected in the user interface after a full page reload.
+
+## State Fields
+
+When creating a custom state, the following fields must be provided:
+
+| Field | Description |
+|-------|-------------|
+| **Model** | The model type this state applies to (e.g. *Stock Item*, *Build Order*) |
+| **Reference Status** | The status class being extended (e.g. `StockStatus`, `BuildStatus`) |
+| **Logical Key** | The built-in status value this custom state maps to for business logic |
+| **Key** | A unique integer that identifies this custom state in the database |
+| **Name** | An uppercase Python identifier for this state (e.g. `AWAITING_INSPECTION`) |
+| **Label** | The human-readable text displayed in the interface |
+| **Colour** | The badge colour used to display the state |
+
+### Key
+
+The *Key* is the integer value stored in the database when this custom state is active. It must satisfy all of the following:
+
+- Must be a positive integer
+- Must not be equal to the *Logical Key*
+- Must not conflict with any existing built-in status values for the selected model
+
+### Name
+
+The *Name* field is used internally to identify the state. It must:
+
+- Be uppercase (e.g. `AWAITING_INSPECTION`, not `awaiting_inspection`)
+- Be a valid Python identifier (letters, digits, underscores; no spaces or hyphens)
+- Not conflict with any existing status names for the selected model
+
+### Colours
+
+The following colour values are available:
+
+| Colour | Appearance |
+|--------|------------|
+| `primary` | Blue |
+| `secondary` | Grey |
+| `success` | Green |
+| `warning` | Amber |
+| `danger` | Red |
+| `info` | Cyan |
+| `dark` | Dark grey / black |

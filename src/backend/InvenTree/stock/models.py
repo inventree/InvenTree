@@ -47,6 +47,7 @@ from InvenTree.status_codes import (
     StockStatus,
     StockStatusGroups,
 )
+from order.status_codes import TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
@@ -449,6 +450,81 @@ class StockItem(
 
         order_insertion_by = ['part']
 
+    def save(self, *args, **kwargs):
+        """Save this StockItem to the database.
+
+        Performs a number of checks:
+        - Unique serial number requirement
+        - Adds a transaction note when the item is first created.
+        """
+        self.validate_unique()
+        self.clean()
+        self.update_serial_number()
+
+        user = kwargs.pop('user', None)
+
+        if user is None:
+            user = getattr(self, '_user', None)
+
+        # If 'add_note = False' specified, then no tracking note will be added for item creation
+        add_note = kwargs.pop('add_note', True)
+
+        notes = kwargs.pop('notes', '')
+
+        if self.pk:
+            # StockItem has already been saved
+
+            # Check if "interesting" fields have been changed
+            # (we wish to record these as historical records)
+
+            try:
+                old = StockItem.objects.get(pk=self.pk)
+                old_custom_status = old.get_custom_status()
+                custom_status = self.get_custom_status()
+
+                deltas = {}
+
+                # Status changed?
+                if old.status != self.status:
+                    # Custom status changed?
+                    # Matches custom status tracking behavior of StockChangeStatusSerializer
+                    if old_custom_status != custom_status:
+                        deltas['status'] = custom_status
+                        deltas['status_logical'] = self.status
+                    else:
+                        deltas['status'] = self.status
+                        deltas['status_logical'] = self.status
+
+                    if old_custom_status:
+                        deltas['old_status'] = old_custom_status
+                        deltas['old_status_logical'] = old.status
+                    else:
+                        deltas['old_status'] = old.status
+                        deltas['old_status_logical'] = old.status
+
+                if add_note and len(deltas) > 0:
+                    self.add_tracking_entry(
+                        StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
+                    )
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        super().save(*args, **kwargs)
+
+        # If user information is provided, and no existing note exists, create one!
+        if add_note and self.tracking_info.count() == 0:
+            tracking_info = {'status': self.status}
+
+            self.add_tracking_entry(
+                StockHistoryCode.CREATED,
+                user,
+                deltas=tracking_info,
+                notes=notes,
+                location=self.location,
+                quantity=float(self.quantity),
+            )
+
     def delete(self, ignore_serial_check: bool = False, **kwargs):
         """Custom delete method for StockItem model.
 
@@ -784,82 +860,6 @@ class StockItem(
         """Return the 'previous' stock item (based on serial number)."""
         return self.get_next_serialized_item(reverse=True)
 
-    def save(self, *args, **kwargs):
-        """Save this StockItem to the database.
-
-        Performs a number of checks:
-        - Unique serial number requirement
-        - Adds a transaction note when the item is first created.
-        """
-        self.validate_unique()
-        self.clean()
-
-        self.update_serial_number()
-
-        user = kwargs.pop('user', None)
-
-        if user is None:
-            user = getattr(self, '_user', None)
-
-        # If 'add_note = False' specified, then no tracking note will be added for item creation
-        add_note = kwargs.pop('add_note', True)
-
-        notes = kwargs.pop('notes', '')
-
-        if self.pk:
-            # StockItem has already been saved
-
-            # Check if "interesting" fields have been changed
-            # (we wish to record these as historical records)
-
-            try:
-                old = StockItem.objects.get(pk=self.pk)
-                old_custom_status = old.get_custom_status()
-                custom_status = self.get_custom_status()
-
-                deltas = {}
-
-                # Status changed?
-                if old.status != self.status:
-                    # Custom status changed?
-                    # Matches custom status tracking behavior of StockChangeStatusSerializer
-                    if old_custom_status != custom_status:
-                        deltas['status'] = custom_status
-                        deltas['status_logical'] = self.status
-                    else:
-                        deltas['status'] = self.status
-                        deltas['status_logical'] = self.status
-
-                    if old_custom_status:
-                        deltas['old_status'] = old_custom_status
-                        deltas['old_status_logical'] = old.status
-                    else:
-                        deltas['old_status'] = old.status
-                        deltas['old_status_logical'] = old.status
-
-                if add_note and len(deltas) > 0:
-                    self.add_tracking_entry(
-                        StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
-                    )
-
-            except (ValueError, StockItem.DoesNotExist):
-                pass
-
-        super().save(*args, **kwargs)
-
-        # If user information is provided, and no existing note exists, create one!
-        if add_note and self.tracking_info.count() == 0:
-            tracking_info = {'status': self.status}
-
-            self.add_tracking_entry(
-                StockHistoryCode.CREATED,
-                user,
-                deltas=tracking_info,
-                notes=notes,
-                location=self.location,
-                quantity=float(self.quantity),
-            )
-
     @property
     def status_label(self):
         """Return label."""
@@ -935,6 +935,17 @@ class StockItem(
         # Strip batch code field
         if type(self.batch) is str:
             self.batch = self.batch.strip()
+
+        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL'):
+            deltas = self.get_field_deltas()
+
+            # Prevent editing of serial numbers if the item already has a serial number assigned
+            if 'serial' in deltas and deltas['serial']['old'] not in [None, '']:
+                raise ValidationError({
+                    'serial': _(
+                        'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
+                    )
+                })
 
         # Custom validation of batch code
         self.validate_batch_code()
@@ -1525,7 +1536,7 @@ class StockItem(
             item.save(add_note=False)
 
     def is_allocated(self):
-        """Return True if this StockItem is allocated to a SalesOrder or a Build."""
+        """Return True if this StockItem is allocated to a SalesOrder, TransferOrder, or a Build."""
         return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
@@ -1585,12 +1596,48 @@ class StockItem(
 
         return total
 
+    def get_transfer_order_allocations(self, active=True, **kwargs):
+        """Return a queryset for TransferOrderAllocations against this StockItem, with optional filters.
+
+        Arguments:
+            active: Filter by 'active' status of the allocation
+        """
+        query = self.transfer_order_allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
+
+        if active is True:
+            query = query.filter(line__order__status__in=TransferOrderStatusGroups.OPEN)
+        elif active is False:
+            query = query.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return query
+
+    def transfer_order_allocation_count(self, active=True, **kwargs):
+        """Return the total quantity allocated to TransferOrders."""
+        query = self.get_transfer_order_allocations(active=active, **kwargs)
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
+
     def allocation_count(self):
         """Return the total quantity allocated to builds or orders."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
+        to = self.transfer_order_allocation_count()
 
-        return bo + so
+        return bo + so + to
 
     def unallocated_quantity(self):
         """Return the quantity of this StockItem which is *not* allocated."""
@@ -2320,6 +2367,10 @@ class StockItem(
 
         deltas = {'stockitem': self.pk}
 
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            deltas['transferorder'] = transferorder.pk
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2467,6 +2518,10 @@ class StockItem(
                 old_custom_status if old_custom_status else old_status_logical
             )
             tracking_info['old_status_logical'] = old_status_logical
+
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            tracking_info['transferorder'] = transferorder.pk
 
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
@@ -2706,6 +2761,10 @@ class StockItem(
                 if field in kwargs:
                     setattr(self, field, kwargs[field])
                     deltas[field] = kwargs[field]
+
+            transferorder = kwargs.pop('transferorder', None)
+            if transferorder:
+                deltas['transferorder'] = transferorder.pk
 
             self.save(add_note=False)
 

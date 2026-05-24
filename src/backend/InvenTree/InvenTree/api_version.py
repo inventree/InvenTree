@@ -1,10 +1,33 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 487
+INVENTREE_API_VERSION = 494
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
+    - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task
+
+v493 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11961
+    - Adds "thumbnail" field to the Attachment API endpoint, which provides a URL to a thumbnail image for image attachments (if available)
+
+v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
+
+v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
+    - Add API serializer for deleting a part category
+    - Add API serializer for deleting a stock location
+
+v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
+    - Moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
+    - Removes the "remote_image" field from the Part API endpoint
+    - Removes the "remote_image" field from the Company API endpoint
+
+v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
+    - Allow renaming of attachments after upload via the API
 
 v487 -> 2026-05-15 : https://github.com/inventree/InvenTree/pull/11948
     - Make SelectionList default nullable

@@ -717,7 +717,17 @@ class AttachmentFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.Attachment
-        fields = ['model_type', 'model_id', 'upload_user']
+        fields = ['model_type', 'model_id', 'upload_user', 'is_image']
+
+    has_thumbnail = rest_filters.BooleanFilter(
+        label=_('Has Thumbnail'), method='filter_has_thumbnail'
+    )
+
+    def filter_has_thumbnail(self, queryset, name, value):
+        """Filter attachments based on whether they have a thumbnail or not."""
+        if value:
+            return queryset.exclude(thumbnail=None).exclude(thumbnail='')
+        return queryset.filter(Q(thumbnail=None) | Q(thumbnail='')).distinct()
 
     is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
 
@@ -781,8 +791,34 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
 
+    def update(self, request, *args, **kwargs):
+        """Update an existing attachment object."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('change', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
+        partial = kwargs.pop('partial', False)
+        data = self.clean_data(request.data)
+
+        # Extract filename first
+        filename = data.pop('filename', None)
+
+        # Run other validation / updates first, before attempting to rename the file
+        serializer = self.get_serializer(attachment, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # User is attempting to rename the file
+        if filename and attachment.basename and filename != attachment.basename:
+            attachment.rename(filename)
+
+        return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
-        """Check user permissions before deleting an attachment."""
+        """Delete an existing attachment object."""
         attachment = self.get_object()
 
         if not attachment.check_permission('delete', request.user):

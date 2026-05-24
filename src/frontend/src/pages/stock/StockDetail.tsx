@@ -36,6 +36,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
 import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -60,7 +61,6 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -88,6 +88,7 @@ import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
+import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -476,6 +477,13 @@ export default function StockDetail() {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
 
+  const showTransferAllocations: boolean = useMemo(() => {
+    return (
+      !stockitem?.part_detail?.virtual &&
+      globalSettings.isSet('TRANSFERORDER_ENABLED')
+    );
+  }, [stockitem]);
+
   // API query to determine if this stock item has trackable BOM items
   const trackedBomItemQuery = useQuery({
     queryKey: ['tracked-bom-item', stockitem.pk, stockitem.part],
@@ -544,11 +552,17 @@ export default function StockDetail() {
         icon: <IconBookmark />,
         hidden:
           !stockitem.in_stock ||
-          (!showSalesAllocations && !showBuildAllocations),
+          (!showSalesAllocations &&
+            !showBuildAllocations &&
+            !showTransferAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildAllocations', 'salesAllocations']}
+            defaultValue={[
+              'buildAllocations',
+              'salesAllocations',
+              'transferAllocations'
+            ]}
           >
             {showBuildAllocations && (
               <Accordion.Item value='buildAllocations' key='buildAllocations'>
@@ -575,6 +589,24 @@ export default function StockDetail() {
                     stockId={stockitem.pk}
                     modelField='order'
                     modelTarget={ModelType.salesorder}
+                    showOrderInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+            {showTransferAllocations && (
+              <Accordion.Item
+                value='transferAllocations'
+                key='transferAllocations'
+              >
+                <Accordion.Control>
+                  <StylishText size='lg'>{t`Transfer Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <TransferOrderAllocationTable
+                    stockId={stockitem.pk}
+                    modelField='order'
+                    modelTarget={ModelType.transferorder}
                     showOrderInfo
                   />
                 </Accordion.Panel>

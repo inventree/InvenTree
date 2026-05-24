@@ -188,6 +188,11 @@ export function usePartFields({
       delete fields['default_expiry'];
     }
 
+    // Remove "locked" field if locking not enabled
+    if (!globalSettings.isSet('PART_ENABLE_LOCKING')) {
+      delete fields['locked'];
+    }
+
     if (create) {
       delete fields['starred'];
     }
