@@ -22,6 +22,7 @@ import {
   Button,
   Flex,
   Group,
+  HoverCard,
   Paper,
   Stack,
   Tabs,
@@ -35,6 +36,7 @@ import {
   IconReload,
   IconStar
 } from '@tabler/icons-react';
+import { formatDate } from '../../defaults/formatters';
 import { useNoteFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -47,6 +49,43 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../items/ActionDropdown';
+import { RenderUser } from '../render/User';
+
+function NoteInfoHover({ note }: { note: any }) {
+  if (!note?.pk) {
+    return null;
+  }
+
+  return (
+    <HoverCard position='top-start'>
+      <HoverCard.Target>
+        <ActionIcon variant='transparent'>
+          <IconInfoCircle />
+        </ActionIcon>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <Paper p='sm' shadow='sm' withBorder>
+          <Stack gap='xs'>
+            {note.updated && (
+              <Group gap='xs' justify='space-between'>
+                <Text fw='bold'>{t`Updated`}</Text>
+                <Text size='xs'>
+                  {formatDate(note.updated, { showTime: true })}
+                </Text>
+              </Group>
+            )}
+            {note.updated_by_detail && (
+              <Group gap='xs' justify='space-between'>
+                <Text fw='bold'>{t`Updated by`}</Text>
+                <RenderUser instance={note.updated_by_detail} />
+              </Group>
+            )}
+          </Stack>
+        </Paper>
+      </HoverCard.Dropdown>
+    </HoverCard>
+  );
+}
 
 export default function NotesEditor({
   modelType,
@@ -67,7 +106,7 @@ export default function NotesEditor({
   const [isDirty, setIsDirty] = useState(false);
 
   // The ID of the selected note
-  const [selectedNote, setSelectedNote] = useState<number | undefined>(
+  const [selectedNoteId, setSelectedNoteId] = useState<number | undefined>(
     undefined
   );
 
@@ -94,9 +133,13 @@ export default function NotesEditor({
     return editor.onChange(() => setIsDirty(true));
   }, [editor]);
 
+  const [selectedNote, setSelectedNote] = useState<any>(undefined);
+
   const loadNote = useCallback(
     (noteId: number) => {
       const note = notesQuery.data?.find((note: any) => note.pk === noteId);
+
+      setSelectedNote(note);
 
       if (note) {
         const blocks = editor.tryParseHTMLToBlocks(note.content ?? '');
@@ -114,20 +157,20 @@ export default function NotesEditor({
   );
 
   useEffect(() => {
-    loadNote(selectedNote ?? -1);
-  }, [editor, selectedNote, notesQuery.data]);
+    loadNote(selectedNoteId ?? -1);
+  }, [editor, selectedNoteId, notesQuery.data]);
 
   // Adjust the note selection
   useEffect(() => {
     if (!notesQuery.data) return;
 
     const stillExists =
-      selectedNote &&
-      notesQuery.data.some((note: any) => note.pk === selectedNote);
+      selectedNoteId &&
+      notesQuery.data.some((note: any) => note.pk === selectedNoteId);
     if (stillExists) return;
 
     const primary = notesQuery.data.find((note: any) => note.primary);
-    setSelectedNote((primary ?? notesQuery.data[0])?.pk ?? undefined);
+    setSelectedNoteId((primary ?? notesQuery.data[0])?.pk ?? undefined);
   }, [notesQuery.data]);
 
   const canEdit = useMemo(
@@ -154,7 +197,7 @@ export default function NotesEditor({
     onFormSuccess: (response: any) => {
       notesQuery.refetch().then(() => {
         // Select the newly created note
-        setSelectedNote(response.pk);
+        setSelectedNoteId(response.pk);
       });
     }
   });
@@ -162,9 +205,9 @@ export default function NotesEditor({
   const deleteNote = useDeleteApiFormModal({
     title: t`Delete Note`,
     url: apiUrl(ApiEndpoints.note_list),
-    pk: selectedNote,
+    pk: selectedNoteId,
     onFormSuccess: () => {
-      setSelectedNote(undefined);
+      setSelectedNoteId(undefined);
       notesQuery.refetch();
     }
   });
@@ -173,21 +216,21 @@ export default function NotesEditor({
     title: t`Edit Note`,
     fields: noteFields,
     url: apiUrl(ApiEndpoints.note_list),
-    pk: selectedNote,
+    pk: selectedNoteId,
     onFormSuccess: (response: any) => {
       notesQuery.refetch().then(() => {
         // Select the updated note
-        setSelectedNote(response.pk);
+        setSelectedNoteId(response.pk);
       });
     }
   });
 
   const reloadNote = useCallback(() => {
-    loadNote(selectedNote ?? -1);
-  }, [selectedNote, loadNote]);
+    loadNote(selectedNoteId ?? -1);
+  }, [selectedNoteId, loadNote]);
 
   const saveNote = useCallback(() => {
-    if (!selectedNote) {
+    if (!selectedNoteId || !editor) {
       return;
     }
 
@@ -197,8 +240,8 @@ export default function NotesEditor({
 
     // Sanitize the HTML content before sending to the server (or ensure it's sanitized on the back-end)
 
-    if (selectedNote) {
-      const url = apiUrl(ApiEndpoints.note_list, selectedNote);
+    if (selectedNoteId) {
+      const url = apiUrl(ApiEndpoints.note_list, selectedNoteId);
 
       notifications.hide('note-update-status');
 
@@ -227,7 +270,7 @@ export default function NotesEditor({
           notesQuery.refetch();
         });
     }
-  }, [selectedNote, editor, setIsDirty]);
+  }, [selectedNoteId, editor, setIsDirty]);
 
   useHotkeys([['mod+s', saveNote]]);
 
@@ -243,8 +286,9 @@ export default function NotesEditor({
               <Paper p='xs' shadow='sm' withBorder>
                 <Group justify='space-between'>
                   <Group justify='left' gap='lg'>
-                    <Text>Note Title Here</Text>
-                    <Text size='sm'>Note description here</Text>
+                    <NoteInfoHover note={selectedNote} />
+                    <Text fw='bold'>{selectedNote?.title}</Text>
+                    <Text size='sm'>{selectedNote?.description}</Text>
                   </Group>
                   {canEdit && (
                     <Group justify='right' gap='xs'>
@@ -331,7 +375,7 @@ export default function NotesEditor({
             <Tabs
               orientation='vertical'
               placement='right'
-              value={selectedNote?.toString()}
+              value={selectedNoteId?.toString()}
             >
               <Tabs.List style={{ width: '100%' }}>
                 {notesQuery.data?.map((note: any) => (
@@ -339,7 +383,7 @@ export default function NotesEditor({
                     key={note.pk}
                     disabled={isDirty}
                     value={note.pk?.toString()}
-                    onClick={() => setSelectedNote(note.pk)}
+                    onClick={() => setSelectedNoteId(note.pk)}
                   >
                     <Group gap='xs' wrap='nowrap' justify='space-between'>
                       <Text size='sm'>{note.title}</Text>
