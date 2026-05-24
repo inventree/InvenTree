@@ -160,4 +160,4 @@ The [InvenTree mobile app](../app/part.md#part-image-view) allows part images to
 
 ## Part Import
 
-*Parts* can be imported by staff-members on the part-list-view (this feature must be enabled in the part-settings), in the part-settings or on the [admin-page for parts](../settings/import.md) (only accessible if you are also an admin). The first two options provide a multi-stage wizard that enables mapping fields from various spreadsheet or table-data formats while the latter requires a well-formatted file but is much more performant.
+*Part* data can be imported using the [data import wizard](../concepts/data_import.md). This allows part data to be imported from an external file, which can be useful for bulk importing of part data.
