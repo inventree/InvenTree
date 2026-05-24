@@ -42,6 +42,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import nh3
 import structlog
 from anymail.signals import inbound, tracking
 from django_q.signals import post_spawn
@@ -3045,6 +3046,8 @@ class Note(
         if not others.exists():
             self.primary = True
 
+        self.clean()
+
         super().save(*args, **kwargs)
 
         # Once this note is saved, mark other notes as non-primary
@@ -3060,7 +3063,9 @@ class Note(
 
     def clean(self):
         """Clean / validate the note before saving to the database."""
-        # TODO: Implement this
+        if self.content:
+            self.content = self.content.strip()
+            self.content = nh3.clean(self.content)
 
     def check_save(self):
         """Check if this note can be saved."""

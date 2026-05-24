@@ -30,7 +30,7 @@ from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
 from InvenTree.sanitizer import (
-    DEAFAULT_ATTRS,
+    DEFAULT_ATTRS,
     DEFAULT_CSS,
     DEFAULT_PROTOCOLS,
     DEFAULT_TAGS,
@@ -963,7 +963,7 @@ def clean_markdown(value: str) -> str:
 
     # nh3 sanitizer settings
     whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
-    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
+    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEFAULT_ATTRS)
     whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
     whitelist_protocols = markdownify_settings.get(
         'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
