@@ -17,7 +17,9 @@ import { useCreateBlockNote } from '@blocknote/react';
 import {
   ActionIcon,
   Alert,
+  Badge,
   Box,
+  Button,
   Flex,
   Group,
   Paper,
@@ -30,11 +32,21 @@ import {
   IconCirclePlus,
   IconDeviceFloppy,
   IconInfoCircle,
-  IconReload
+  IconReload,
+  IconStar
 } from '@tabler/icons-react';
 import { useNoteFields } from '../../forms/CommonForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
+import {
+  DeleteItemAction,
+  EditItemAction,
+  OptionsActionDropdown
+} from '../items/ActionDropdown';
 
 export default function NotesEditor({
   modelType,
@@ -91,9 +103,9 @@ export default function NotesEditor({
 
         if (blocks) {
           editor.replaceBlocks(editor.document, blocks);
+        } else {
+          editor.replaceBlocks(editor.document, []);
         }
-      } else {
-        editor.replaceBlocks(editor.document, []);
       }
 
       setIsDirty(false);
@@ -142,6 +154,29 @@ export default function NotesEditor({
     onFormSuccess: (response: any) => {
       notesQuery.refetch().then(() => {
         // Select the newly created note
+        setSelectedNote(response.pk);
+      });
+    }
+  });
+
+  const deleteNote = useDeleteApiFormModal({
+    title: t`Delete Note`,
+    url: apiUrl(ApiEndpoints.note_list),
+    pk: selectedNote,
+    onFormSuccess: () => {
+      setSelectedNote(undefined);
+      notesQuery.refetch();
+    }
+  });
+
+  const editNote = useEditApiFormModal({
+    title: t`Edit Note`,
+    fields: noteFields,
+    url: apiUrl(ApiEndpoints.note_list),
+    pk: selectedNote,
+    onFormSuccess: (response: any) => {
+      notesQuery.refetch().then(() => {
+        // Select the updated note
         setSelectedNote(response.pk);
       });
     }
@@ -199,60 +234,101 @@ export default function NotesEditor({
   return (
     <>
       {createNote.modal}
+      {deleteNote.modal}
+      {editNote.modal}
       <Flex align='left'>
-        <Box style={{ flex: 1 }}>
-          <Paper p='sm' shadow='sm' withBorder>
-            {hasNotes ? (
-              <Stack gap='xs'>
-                <BlockNoteView
-                  editor={editor}
-                  editable={canEdit}
-                  style={{ minHeight: '400px' }}
-                />
-              </Stack>
-            ) : (
-              <Alert title={t`Notes`} icon={<IconInfoCircle />}>
-                {t`There are no notes yet for this item.`}
-              </Alert>
+        <Box style={{ flex: 1 }} p='sm'>
+          <Stack gap='xs'>
+            {selectedNote && (
+              <Paper p='xs' shadow='sm' withBorder>
+                <Group justify='space-between'>
+                  <Group justify='left' gap='lg'>
+                    <Text>Note Title Here</Text>
+                    <Text size='sm'>Note description here</Text>
+                  </Group>
+                  {canEdit && (
+                    <Group justify='right' gap='xs'>
+                      {isDirty && (
+                        <Badge color='yellow'>{t`Unsaved Changes`}</Badge>
+                      )}
+                      {isDirty && (
+                        <Tooltip label={t`Save Notes (Ctrl+S)`}>
+                          <ActionIcon
+                            variant='transparent'
+                            color={isDirty ? 'yellow' : undefined}
+                            onClick={saveNote}
+                            disabled={!canEdit || !isDirty}
+                          >
+                            <IconDeviceFloppy />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                      {isDirty && (
+                        <Tooltip label={t`Reset Notes`}>
+                          <ActionIcon
+                            variant='transparent'
+                            color='red'
+                            onClick={reloadNote}
+                            disabled={!canEdit || !isDirty}
+                          >
+                            <IconReload />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                      <OptionsActionDropdown
+                        tooltip={t`Note Actions`}
+                        actions={[
+                          EditItemAction({
+                            hidden:
+                              !selectedNote ||
+                              !user.hasChangePermission(modelType),
+                            onClick: () => {
+                              editNote.open();
+                            }
+                          }),
+                          DeleteItemAction({
+                            hidden:
+                              !selectedNote ||
+                              !user.hasDeletePermission(modelType),
+                            onClick: () => {
+                              deleteNote.open();
+                            }
+                          })
+                        ]}
+                      />
+                    </Group>
+                  )}
+                </Group>
+              </Paper>
             )}
-          </Paper>
+            <Paper p='xs' shadow='sm' withBorder>
+              {hasNotes ? (
+                <Stack gap='xs'>
+                  <BlockNoteView
+                    editor={editor}
+                    editable={canEdit}
+                    style={{ minHeight: '400px' }}
+                  />
+                </Stack>
+              ) : (
+                <Alert title={t`Notes`} icon={<IconInfoCircle />}>
+                  {t`There are no notes yet for this item.`}
+                </Alert>
+              )}
+            </Paper>
+          </Stack>
         </Box>
         <Paper p='sm' shadow='sm' withBorder ml='md' style={{ width: '200px' }}>
           <Stack gap='xs'>
-            {canEdit && (
-              <Group justify='space-apart' grow>
-                <Tooltip label={t`Save Notes (Ctrl+S)`}>
-                  <ActionIcon
-                    variant='transparent'
-                    color={isDirty ? 'yellow' : undefined}
-                    onClick={saveNote}
-                    disabled={!canEdit || !isDirty}
-                  >
-                    <IconDeviceFloppy />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={t`Reset Notes`}>
-                  <ActionIcon
-                    variant='transparent'
-                    color='red'
-                    onClick={reloadNote}
-                    disabled={!canEdit || !isDirty}
-                  >
-                    <IconReload />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={t`New Note`}>
-                  <ActionIcon
-                    variant='transparent'
-                    color='green'
-                    onClick={createNote.open}
-                    disabled={!canEdit || isDirty}
-                  >
-                    <IconCirclePlus />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-            )}
+            <Button
+              color='green'
+              leftSection={<IconCirclePlus />}
+              onClick={createNote.open}
+              disabled={!canEdit || isDirty}
+            >
+              {t`Add Note`}
+            </Button>
+
             <Tabs
               orientation='vertical'
               placement='right'
@@ -266,8 +342,17 @@ export default function NotesEditor({
                     value={note.pk?.toString()}
                     onClick={() => setSelectedNote(note.pk)}
                   >
-                    <Group gap='xs' wrap='nowrap'>
+                    <Group gap='xs' wrap='nowrap' justify='space-between'>
                       <Text size='sm'>{note.title}</Text>
+                      {note.primary && (
+                        <ActionIcon
+                          size='xs'
+                          color='yellow'
+                          variant='transparent'
+                        >
+                          <IconStar />
+                        </ActionIcon>
+                      )}
                     </Group>
                   </Tabs.Tab>
                 ))}

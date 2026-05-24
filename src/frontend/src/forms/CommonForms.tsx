@@ -302,7 +302,8 @@ export function useNoteFields({
         value: modelId
       },
       title: {},
-      description: {}
+      description: {},
+      primary: {}
     };
   }, [modelType, modelId]);
 }

@@ -865,7 +865,8 @@ class NoteList(NoteMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = NoteFilter
 
-    ordering_fields = ['model_id', 'model_type', 'user', 'creation']
+    ordering = '-primary'
+    ordering_fields = ['model_id', 'model_type', 'user', 'creation', 'primary']
     search_fields = ['content', 'model_id', 'model_type', 'user__username']
     unique_create_fields = ['model_type', 'model_id']
 
