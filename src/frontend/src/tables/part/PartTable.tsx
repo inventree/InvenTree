@@ -7,7 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import type { TableFilter } from '@lib/types/Filters';
+import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
@@ -20,7 +20,6 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -34,7 +33,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
@@ -47,6 +46,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
+import { PartTableFilters } from './PartTableFilters';
 
 /**
  * Construct a list of columns for the part table
@@ -81,6 +81,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
 
       render: (record) => {
+        if (record.virtual) {
+          return (
+            <Text size='sm' c='dimmed' fs='italic'>
+              {t`Virtual part`}
+            </Text>
+          );
+        }
+
         const extra: ReactNode[] = [];
 
         const stock = record?.total_in_stock ?? 0;
@@ -89,6 +97,7 @@ function partTableColumns(): TableColumn[] {
           (record?.allocated_to_sales_orders ?? 0);
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
+        const max_stock = record?.maximum_stock ?? 0;
 
         let text = String(formatDecimal(stock));
 
@@ -102,6 +111,14 @@ function partTableColumns(): TableColumn[] {
           );
 
           color = 'orange';
+        }
+
+        if (max_stock > 0 && stock > max_stock) {
+          extra.push(
+            <Text key='max-stock' c='teal'>
+              {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
+            </Text>
+          );
         }
 
         if (record.ordering > 0) {
@@ -189,148 +206,6 @@ function partTableColumns(): TableColumn[] {
 }
 
 /**
- * Construct a set of filters for the part table
- */
-function partTableFilters(): TableFilter[] {
-  return [
-    {
-      name: 'active',
-      label: t`Active`,
-      description: t`Filter by part active status`,
-      type: 'boolean'
-    },
-    {
-      name: 'locked',
-      label: t`Locked`,
-      description: t`Filter by part locked status`,
-      type: 'boolean'
-    },
-    {
-      name: 'assembly',
-      label: t`Assembly`,
-      description: t`Filter by assembly attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'bom_valid',
-      label: t`BOM Valid`,
-      description: t`Filter by parts with a valid BOM`,
-      type: 'boolean'
-    },
-    {
-      name: 'cascade',
-      label: t`Include Subcategories`,
-      description: t`Include parts in subcategories`,
-      type: 'boolean'
-    },
-    {
-      name: 'component',
-      label: t`Component`,
-      description: t`Filter by component attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'testable',
-      label: t`Testable`,
-      description: t`Filter by testable attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'trackable',
-      label: t`Trackable`,
-      description: t`Filter by trackable attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_units',
-      label: t`Has Units`,
-      description: t`Filter by parts which have units`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_ipn',
-      label: t`Has IPN`,
-      description: t`Filter by parts which have an internal part number`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_stock',
-      label: t`Has Stock`,
-      description: t`Filter by parts which have stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'low_stock',
-      label: t`Low Stock`,
-      description: t`Filter by parts which have low stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'purchaseable',
-      label: t`Purchaseable`,
-      description: t`Filter by parts which are purchaseable`,
-      type: 'boolean'
-    },
-    {
-      name: 'salable',
-      label: t`Salable`,
-      description: t`Filter by parts which are salable`,
-      type: 'boolean'
-    },
-    {
-      name: 'virtual',
-      label: t`Virtual`,
-      description: t`Filter by parts which are virtual`,
-      type: 'choice',
-      choices: [
-        { value: 'true', label: t`Virtual` },
-        { value: 'false', label: t`Not Virtual` }
-      ]
-    },
-    {
-      name: 'is_template',
-      label: t`Is Template`,
-      description: t`Filter by parts which are templates`,
-      type: 'boolean'
-    },
-    {
-      name: 'is_variant',
-      label: t`Is Variant`,
-      description: t`Filter by parts which are variants`,
-      type: 'boolean'
-    },
-    {
-      name: 'is_revision',
-      label: t`Is Revision`,
-      description: t`Filter by parts which are revisions`
-    },
-    {
-      name: 'has_revisions',
-      label: t`Has Revisions`,
-      description: t`Filter by parts which have revisions`
-    },
-    {
-      name: 'has_pricing',
-      label: t`Has Pricing`,
-      description: t`Filter by parts which have pricing information`,
-      type: 'boolean'
-    },
-    {
-      name: 'unallocated_stock',
-      label: t`Available Stock`,
-      description: t`Filter by parts which have available stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'starred',
-      label: t`Subscribed`,
-      description: t`Filter by parts to which the user is subscribed`,
-      type: 'boolean'
-    }
-  ];
-}
-
-/**
  * PartListTable - Displays a list of parts, based on the provided parameters
  * @param {Object} params - The query parameters to pass to the API
  * @returns
@@ -349,7 +224,8 @@ export function PartListTable({
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
-  const tableFilters = useMemo(() => partTableFilters(), []);
+
+  const tableFilters = useMemo(() => PartTableFilters(), []);
 
   const table = useTable(tableName ?? 'part-list', {
     initialFilters: [
@@ -361,12 +237,7 @@ export function PartListTable({
   });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -387,8 +258,9 @@ export function PartListTable({
     title: t`Import Parts`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
@@ -407,7 +279,8 @@ export function PartListTable({
     fields: newPartFields,
     initialData: initialPartData,
     follow: true,
-    modelType: ModelType.part
+    modelType: ModelType.part,
+    keepOpenOption: true
   });
 
   const [selectedPart, setSelectedPart] = useState<any>({});
@@ -599,15 +472,6 @@ export function PartListTable({
             category_detail: true,
             location_detail: true
           }
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

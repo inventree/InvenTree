@@ -186,6 +186,7 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Sales Order Shipments`,
     url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
+    admin_url: '/order/salesordershipment/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
     supports_barcode: true,
     icon: 'shipment'
@@ -205,6 +206,22 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Return Order Line Items`,
     api_endpoint: ApiEndpoints.return_order_line_list,
     icon: 'return_orders'
+  },
+  transferorder: {
+    label: () => t`Transfer Order`,
+    label_multiple: () => t`Transfer Orders`,
+    url_overview: '/stock/location/index/transfer-orders',
+    url_detail: '/stock/transfer-order/:pk/',
+    api_endpoint: ApiEndpoints.transfer_order_list,
+    admin_url: '/order/transferorder/',
+    supports_barcode: true,
+    icon: 'transfer_orders'
+  },
+  transferorderlineitem: {
+    label: () => t`Transfer Order Line Item`,
+    label_multiple: () => t`Transfer Order Line Items`,
+    api_endpoint: ApiEndpoints.transfer_order_line_list,
+    icon: 'transfer-orders'
   },
   address: {
     label: () => t`Address`,
@@ -285,6 +302,13 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Selection Lists`,
     url_overview: '/settings/admin/part-parameters',
     api_endpoint: ApiEndpoints.selectionlist_list,
+    icon: 'list_details'
+  },
+  selectionentry: {
+    label: () => t`Selection Entry`,
+    label_multiple: () => t`Selection Entries`,
+    url_overview: '/settings/admin/part-parameters',
+    api_endpoint: ApiEndpoints.selectionentry_list,
     icon: 'list_details'
   },
   error: {

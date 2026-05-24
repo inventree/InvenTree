@@ -28,6 +28,7 @@ def global_setting_overrides() -> dict:
 
 def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
+    import InvenTree.ready
     from common.models import InvenTreeSetting
 
     if environment_key:
@@ -37,6 +38,10 @@ def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
 
     if backup_value is not None:
         kwargs['backup_value'] = backup_value
+
+    # Prevent database writes if we are in a read-only command
+    if InvenTree.ready.isReadOnlyCommand():
+        kwargs['create'] = False
 
     return InvenTreeSetting.get_setting(key, **kwargs)
 
@@ -52,6 +57,12 @@ def set_global_setting(key, value, change_user=None, create=True, **kwargs):
 
     kwargs['change_user'] = change_user
     kwargs['create'] = create
+
+    if get_global_setting(key, create=False, cache=False) == value:
+        logger.debug(
+            f'Global setting "{key}" already has the desired value, no update needed'
+        )
+        return True
 
     return InvenTreeSetting.set_setting(key, value, **kwargs)
 
@@ -70,11 +81,11 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         key (str): The key for the warning.
         options (dict or bool): Options for the warning, or True to set a default warning.
 
-    Raises:
-        ValueError: If the key is not provided.
-
     Returns:
         bool: True if the warning was checked / set successfully, False if no check was performed.
+
+    Raises:
+        ValueError: If the key is not provided.
     """
     if not key:
         raise ValueError('Key must be provided for global warning setting.')

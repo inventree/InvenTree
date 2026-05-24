@@ -65,7 +65,7 @@ export enum ApiEndpoints {
   content_type_list = 'contenttype/',
   icons = 'icons/',
   selectionlist_list = 'selection/',
-  selectionlist_detail = 'selection/:id/',
+  selectionentry_list = 'selection/:id/entry/',
 
   // Barcode API endpoints
   barcode = 'barcode/',
@@ -154,6 +154,7 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
+  stock_convert = 'stock/:id/convert/',
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
@@ -197,6 +198,17 @@ export enum ApiEndpoints {
   return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
+
+  transfer_order_list = 'order/transfer-order/',
+  transfer_order_issue = 'order/transfer-order/:id/issue/',
+  transfer_order_hold = 'order/transfer-order/:id/hold/',
+  transfer_order_cancel = 'order/transfer-order/:id/cancel/',
+  transfer_order_complete = 'order/transfer-order/:id/complete/',
+  transfer_order_allocate = 'order/transfer-order/:id/allocate/',
+  transfer_order_allocate_serials = 'order/transfer-order/:id/allocate-serials/',
+
+  transfer_order_line_list = 'order/transfer-order-line/',
+  transfer_order_allocation_list = 'order/transfer-order-allocation/',
 
   // Template API endpoints
   label_list = 'label/template/',

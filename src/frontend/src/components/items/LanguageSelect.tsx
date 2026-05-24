@@ -49,7 +49,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       defaultValue={''}
       onChange={setValue}
       searchable
-      aria-label='Select language'
+      aria-label={t`Select language`}
     />
   );
 }

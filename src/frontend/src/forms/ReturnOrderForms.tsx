@@ -91,7 +91,8 @@ export function useReturnOrderFields({
             value: false,
             hidden: true
           },
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {}
         }
       };
     }
@@ -127,8 +128,9 @@ export function useReturnOrderLineItemFields({
           part_detail: true
         }
       },
-      quantity: {},
+      line: {},
       reference: {},
+      quantity: {},
       outcome: {
         hidden: create == true
       },

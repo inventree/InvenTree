@@ -2,6 +2,78 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.0 - May 2026
+
+#### Version Numbering
+
+This update brings the version numbering in-line with the core InvenTree server version, which is currently at `1.4.0`. This versioning scheme will be maintained going forward, with the UI components library version matching the core server version.
+
+Thus, version `1.4.x` of the UI components library will be compatible with version `1.4.x` of the InvenTree server, and so on.
+
+#### Mantine Library Update
+
+The underlying Mantine library has been updated from version `8.x` to version `9.x`. This update may introduce breaking changes for plugins that rely on the InvenTree UI components library, as the Mantine library is a core dependency. Plugin developers should test their plugins against this new version to ensure compatibility.
+
+#### New Components
+
+Adds additional functions in the plugin context related to form rendering and API invocation:
+- `useInstance`
+- `renderRemoteInstance`
+- `EditApiForm`
+- `RenderInlineModel`
+- `Thumbnail`
+
+Exposes sub-components related to DetailDrawer rendering:
+- `DetailDrawerComponent`
+- `useLocalLibState`
+
+### 0.11.3 - April 2026
+
+Exposes additional type definitions related to rendering drawers from tables:
+- `DetailDrawer`
+- `TableState`
+
+Also exposes `StylishText`, which is required downstream for rendering the DetailDrawer component, and is used in a number of places within the InvenTree UI.
+
+### 0.11.2 - April 2026
+
+Exposes additional type definitions related to tables and filters:
+
+- TableFilterChoice
+- TableFilterType
+- TableFilter
+- FilterSetState
+
+### 0.11.1 - April 2026
+
+Fixes dependency issues for the `InvenTreeTable` component, which were introduced in `0.11.0`. This ensures that the component works correctly and does not cause issues with plugin builds.
+
+### 0.11.0 - April 2026
+
+Adds the `InvenTreeTable` component, which provides plugins with a method of implementing an API-driven data table which is consistent with the rest of the InvenTree UI. This component supports features such as pagination, sorting, and filtering, and can be used to display data from the InvenTree API in a tabular format.
+
+### 0.10.1 - April 2026
+
+Allows plugins to specify custom model rendering functions within the data import wizard, allowing import of data models not defined in the core InvenTree codebase.
+
+### 0.10.0 - April 2026
+
+Exposes the `importer` object to the plugin context, allow plugins to initialize a data import session using the data importer wizard.
+
+### 0.9.0 - March 2026
+
+Exposes the `useMonitorBackgroundTask` hook, which allows plugins to monitor the status of a background task and display notifications when the task is complete. This is useful for plugins that offload long-running tasks to the background and want to provide feedback to the user when the task is complete.
+
+Renames the `monitorDataOutput` hook to `useMonitorDataOutput` to better reflect the fact that this is a React hook, and to provide a more consistent naming convention for hooks in the library.
+
+### 0.8.2 - March 2026
+
+Bug fixes for the `monitorDataOutput` hook - https://github.com/inventree/InvenTree/pull/11458
+
+### 0.8.0 - March 2026
+
+Exposes the `monitorDataOutput` hook, which allows plugins to monitor the output of a long-running task and display notifications when the task is complete. This is useful for plugins that need to perform long-running tasks and want to provide feedback to the user when the task is complete.
+
 ### 0.7.0 - October 2025
 
 Exposes stock adjustment forms to plugins, allowing plugins to adjust stock adjustments using the common InvenTree UI form components.

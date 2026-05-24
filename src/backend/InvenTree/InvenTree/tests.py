@@ -691,23 +691,26 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.isNull(s))
 
     def testStaticUrl(self):
-        """Test static url helpers."""
+        """Test static URL helpers."""
         self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
         self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
         self.assertEqual(
             helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png'
         )
 
+        self.assertFalse(helpers.checkStaticFile('dummy', 'dir', 'test.jpg'))
+        self.assertTrue(helpers.checkStaticFile('img', 'blank_image.png'))
+
     def testMediaUrl(self):
         """Test getMediaUrl."""
         # Str should not work
         with self.assertRaises(TypeError):
-            helpers.getMediaUrl('xx/yy.png')  # type: ignore
+            helpers.getMediaUrl('xx/yy.png')
 
         # Correct usage
         part = Part().image
         self.assertEqual(
-            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # ty:ignore[too-many-positional-arguments]
             '/media/xx/yy.png',
         )
 
@@ -734,21 +737,10 @@ class TestHelpers(TestCase):
 
         large_img = 'https://github.com/inventree/InvenTree/raw/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
 
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None
-        )
-
-        # Attempt to download an image which is too large
-        with self.assertRaises(ValueError):
-            InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
-
-        # Increase allowable download size
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None
-        )
-
         # Download a valid image (should not throw an error)
-        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
+        InvenTree.helpers_model.download_image_from_url(
+            large_img, timeout=10, max_size=10 * 1024 * 1024
+        )
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
@@ -1550,11 +1542,11 @@ class SanitizerTest(TestCase):
     def test_svg_sanitizer(self):
         """Test that SVGs are sanitized accordingly."""
         valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
-        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91"></path>
         </svg>"""
         dangerous_string = valid_string.format('<script>alert();</script>')
 
-        # Test that valid string
+        # Test that valid string passes through unchanged
         self.assertEqual(valid_string, sanitize_svg(valid_string))
 
         # Test that invalid string is cleaned

@@ -8,7 +8,6 @@ import {
   IconList,
   IconSitemap,
   IconTruckDelivery,
-  IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -127,12 +126,6 @@ export function useBuildOrderFields({
       },
       link: {
         icon: <IconLink />
-      },
-      issued_by: {
-        icon: <IconUser />,
-        filters: {
-          is_active: true
-        }
       },
       responsible: {
         icon: <IconUsersGroup />,
@@ -392,7 +385,7 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been completed`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -473,7 +466,7 @@ export function useScrapBuildOutputsForm({
     ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been scrapped`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -534,7 +527,7 @@ export function useCancelBuildOutputsForm({
     ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -741,6 +734,7 @@ export function useAllocateStockToBuildForm({
     preFormContent: preFormContent,
     successMessage: t`Stock items allocated`,
     onFormSuccess: onFormSuccess,
+    keepOpenOption: true,
     initialData: {
       items: lineItems
         .filter((item) => {
@@ -853,7 +847,7 @@ export function useConsumeBuildItemsForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items scheduled to be consumed`,
+    successMessage: null,
     onFormSuccess: onFormSuccess,
     size: '80%',
     fields: consumeFields,
@@ -954,7 +948,7 @@ export function useConsumeBuildLinesForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items scheduled to be consumed`,
+    successMessage: null,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
     initialData: {

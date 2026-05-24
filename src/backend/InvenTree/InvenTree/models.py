@@ -594,7 +594,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             parameters.append(parameter)
 
         if len(parameters) > 0:
-            common.models.Parameter.objects.bulk_create(parameters)
+            common.models.Parameter.objects.bulk_create(parameters, batch_size=250)
 
     def get_parameter(self, name: str):
         """Return a Parameter instance for the given parameter name.
@@ -661,7 +661,9 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
 
         Before deleting the model instance, delete any associated attachments.
         """
-        self.attachments.all().delete()
+        for attachment in list(self.attachments.all()):
+            attachment.delete()
+
         super().delete(*args, **kwargs)
 
     @property
@@ -1410,32 +1412,22 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
     """Callback when a new task failure log is generated."""
     from django.conf import settings
 
+    from InvenTree.exceptions import log_error
+
     max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
     n = instance.attempt_count
 
     # Only notify once the maximum number of attempts has been reached
     if not instance.success and n >= max_attempts:
-        try:
-            url = InvenTree.helpers_model.construct_absolute_url(
-                reverse(
-                    'admin:django_q_failure_change', kwargs={'object_id': instance.pk}
-                )
-            )
-        except (ValueError, NoReverseMatch):
-            url = ''
+        # Create a new Error object associated with this failed task
+        # This will, in turn, trigger a notification to staff users via the Error post_save signal
 
-        # Function name
-        f = instance.func
-
-        notify_staff_users_of_error(
-            instance,
-            'inventree.task_failure',
-            {
-                'failure': instance,
-                'name': _('Task Failure'),
-                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
-                'link': url,
-            },
+        log_error(
+            'task_failure',
+            scope='worker',
+            error_name='Task Failure',
+            error_info=f"Task '{instance.pk}' failed after {n} attempts",
+            error_data=str(instance.result) if instance.result else '',
         )
 
 
@@ -1495,7 +1487,7 @@ class InvenTreeImageMixin(models.Model):
 
     def rename_image(self, filename):
         """Rename the uploaded image file using the IMAGE_RENAME function."""
-        return self.IMAGE_RENAME(filename)  # type: ignore
+        return self.IMAGE_RENAME(filename)
 
     image = StdImageField(
         upload_to=rename_image,

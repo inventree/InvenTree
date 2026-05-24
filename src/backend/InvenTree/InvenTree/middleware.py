@@ -10,15 +10,21 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
-from django.utils.http import is_same_domain
+from django.utils.http import is_same_domain, url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
 
+import InvenTree.helpers
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
+from InvenTree.version import (
+    inventreeApiVersion,
+    inventreePythonVersion,
+    inventreeVersion,
+)
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -121,7 +127,8 @@ class AuthRequiredMiddleware:
                     return True
             except ApiToken.DoesNotExist:  # pragma: no cover
                 logger.warning(
-                    'Access denied for unknown token %s', token
+                    'Access denied for unknown token %s',
+                    InvenTree.helpers.sanitize_token(str(token)),
                 )  # pragma: no cover
 
         return False
@@ -158,9 +165,16 @@ class AuthRequiredMiddleware:
             if path not in urls and not any(
                 path.startswith(p) for p in paths_ignore_handling
             ):
+                # Validate next url is safe to redirect to
+                next_url = request.path
+                if not url_has_allowed_host_and_scheme(
+                    url=next_url,
+                    allowed_hosts=settings.ALLOWED_HOSTS,
+                    require_https=request.is_secure(),
+                ):
+                    return redirect(str(reverse_lazy('account_login')))
                 # Save the 'next' parameter to pass through to the login view
-
-                return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+                return redirect(f'{reverse_lazy("account_login")}?next={next_url}')
             # Return a 401 (Unauthorized) response code for this request
             return HttpResponse('Unauthorized', status=401)
 
@@ -393,3 +407,15 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
 
         # All checks passed
         return None
+
+
+class InvenTreeVersionHeaderMiddleware(MiddlewareMixin):
+    """Middleware to add the InvenTree version header to all responses."""
+
+    def process_response(self, request, response):
+        """Add the InvenTree version header to the response."""
+        response['X-InvenTree-Version'] = inventreeVersion()
+        response['X-InvenTree-API'] = inventreeApiVersion()
+        response['X-InvenTree-Python'] = inventreePythonVersion()
+        response['X-InvenTree-Installer'] = inventreeInstaller()
+        return response

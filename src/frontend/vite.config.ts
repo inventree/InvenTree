@@ -13,7 +13,7 @@ import { __INVENTREE_VERSION_INFO__ } from './version-info';
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
 if (IS_IN_WSL) {
-  console.log('WSL detected: using polling for file system events');
+  console.debug('WSL detected: using polling for file system events');
 }
 
 // Output directory for the built files

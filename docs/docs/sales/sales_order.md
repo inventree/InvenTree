@@ -234,3 +234,4 @@ The following [global settings](../settings/global.md) are available for sales o
 {{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
 {{ globalsetting("SALESORDER_SHIPMENT_REQUIRES_CHECK") }}
+{{ globalsetting("SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS")}}

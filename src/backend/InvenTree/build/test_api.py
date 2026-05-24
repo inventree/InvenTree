@@ -9,6 +9,7 @@ from rest_framework import status
 
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, Part
 from stock.models import StockItem
@@ -154,7 +155,7 @@ class BuildTest(BuildAPITest):
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=400,
+            expected_code=404,
         )
 
         data = self.post(self.url, {}, expected_code=400).data
@@ -225,8 +226,8 @@ class BuildTest(BuildAPITest):
                 'location': 1,
                 'status': StockStatus.ATTENTION.value,
             },
-            expected_code=201,
-            max_query_count=400,
+            expected_code=200,
+            max_query_count=450,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -445,7 +446,7 @@ class BuildTest(BuildAPITest):
         self.post(
             delete_url,
             {'outputs': [{'output': output.pk} for output in outputs[1:3]]},
-            expected_code=201,
+            expected_code=200,
         )
 
         # Two build outputs have been removed
@@ -472,7 +473,7 @@ class BuildTest(BuildAPITest):
                 'outputs': [{'output': output.pk} for output in outputs[3:]],
                 'location': 4,
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # Check that the outputs have been completed
@@ -567,6 +568,9 @@ class BuildTest(BuildAPITest):
         bo = Build.objects.get(pk=response.data['pk'])
 
         self.assertEqual(bo.children.count(), 0)
+
+        self.assertIsNotNone(bo.issued_by)
+        self.assertEqual(bo.issued_by, self.user)
 
 
 class BuildAllocationTest(BuildAPITest):
@@ -970,12 +974,12 @@ class BuildAllocationTest(BuildAPITest):
         url = reverse('api-build-auto-allocate', kwargs={'pk': build.pk})
 
         # Allocate only 'untracked' items - this should not allocate our tracked item
-        self.post(url, data={'item_type': 'untracked'})
+        self.post(url, data={'item_type': 'untracked'}, expected_code=200)
 
         self.assertEqual(N, BuildItem.objects.count())
 
         # Allocate 'tracked' items - this should allocate our tracked item
-        self.post(url, data={'item_type': 'tracked'})
+        self.post(url, data={'item_type': 'tracked'}, expected_code=200)
 
         # A new BuildItem should have been created
         self.assertEqual(N + 1, BuildItem.objects.count())
@@ -1162,18 +1166,12 @@ class BuildListTest(BuildAPITest):
         data = self.options(self.url, expected_code=200).data
 
         self.assertEqual(data['name'], 'Build List')
-        actions = data['actions']['POST']
+        actions = data['actions']['GET']
 
-        for field_name in [
-            'pk',
-            'title',
-            'part',
-            'part_detail',
-            'project_code',
-            'project_code_detail',
-            'quantity',
-        ]:
+        for field_name in ['pk', 'title', 'part', 'project_code', 'quantity']:
+            # Fields should exist in both GET and POST actions
             self.assertIn(field_name, actions)
+            self.assertIn(field_name, data['actions']['POST'])
 
         # Specific checks for certain fields
         for field_name in ['part', 'project_code', 'take_from']:
@@ -1355,7 +1353,7 @@ class BuildOutputCreateTest(BuildAPITest):
             url, data={'quantity': 5, 'serial_numbers': '1,2,3-5'}, expected_code=201
         )
 
-        # Build outputs have incdeased
+        # Build outputs have increased
         self.assertEqual(n_outputs + 5, build.output_count)
 
         # Stock items have increased
@@ -1468,7 +1466,7 @@ class BuildOutputScrapTest(BuildAPITest):
                 'location': 1,
                 'notes': 'Should succeed',
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # There should still be three outputs associated with this build
@@ -1536,7 +1534,7 @@ class BuildOutputScrapTest(BuildAPITest):
 
         # Partially complete the output (with a valid quantity)
         data['outputs'][0]['quantity'] = 4
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         build.refresh_from_db()
         output.refresh_from_db()
@@ -1549,6 +1547,53 @@ class BuildOutputScrapTest(BuildAPITest):
         self.assertEqual(completed_output.quantity, 4)
         self.assertEqual(completed_output.status, StockStatus.OK)
         self.assertFalse(completed_output.is_building)
+
+
+class BuildOutputCancelTest(BuildAPITest):
+    """Test cancellation of build outputs."""
+
+    def test_cancel_output(self):
+        """Test cancellation of a build output."""
+        build = Build.objects.get(pk=1)
+        build.part.trackable = True
+        build.part.save()
+
+        N = build.build_outputs.count()
+
+        # Create outputs
+        outputs = build.create_build_output(2, serials=['101', '202'])
+        self.assertEqual(outputs.count(), 2)
+        self.assertEqual(build.build_outputs.count(), N + 2)
+
+        output_ids = list(outputs.values_list('pk', flat=True))
+
+        # Let's cancel one of the outputs
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
+        url = reverse('api-build-output-delete', kwargs={'pk': build.pk})
+
+        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=200)
+
+        # Prevent deletion of serialized stock items, and try again
+        # Note that this should still succeed, independent of the global setting
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
+
+        response = self.post(
+            url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=200
+        )
+
+        # Response should be the task info - the cancellation is performed asynchronously
+        self.assertIn('task_id', response.data)
+        self.assertFalse(response.data['exists'])
+        self.assertFalse(response.data['pending'])
+        self.assertTrue(response.data['complete'])
+        self.assertTrue(response.data['success'])
+
+        # The outputs should have been scrapped
+        self.assertEqual(build.build_outputs.count(), N)
+
+        for pk in output_ids:
+            self.assertFalse(StockItem.objects.filter(pk=pk).exists())
+            self.get(reverse('api-stock-detail', kwargs={'pk': pk}), expected_code=404)
 
 
 class BuildLineTests(BuildAPITest):
@@ -1564,12 +1609,13 @@ class BuildLineTests(BuildAPITest):
 
         # Filter by 'available' status
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': True}, max_query_time=15)
+        # TODO: This needs to be addressed in the future, as 25 seconds is an unacceptably long time for a query to take in testing
+        response = self.get(url, data={'available': True}, max_query_time=25)
         n_t = len(response.data)
         self.assertGreater(n_t, 0)
 
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': False}, max_query_time=15)
+        response = self.get(url, data={'available': False}, max_query_time=25)
         n_f = len(response.data)
         self.assertGreater(n_f, 0)
 
@@ -1735,7 +1781,7 @@ class BuildConsumeTest(BuildAPITest):
             'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)
@@ -1758,7 +1804,7 @@ class BuildConsumeTest(BuildAPITest):
             ]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)

@@ -152,7 +152,7 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def get_related_model(self, field_name: str) -> models.Model:
+    def get_related_model(self, field_name: str) -> Optional[models.Model]:
         """Return the related model for a given field name.
 
         Arguments:
@@ -241,7 +241,7 @@ class DataImportSession(models.Model):
             )
 
         # Create the column mappings
-        DataImportColumnMap.objects.bulk_create(column_mappings)
+        DataImportColumnMap.objects.bulk_create(column_mappings, batch_size=250)
 
         self.status = DataImportStatusCode.MAPPING.value
         self.save()
@@ -337,7 +337,7 @@ class DataImportSession(models.Model):
             imported_rows.append(row)
 
         # Perform database writes as a single operation
-        DataImportRow.objects.bulk_create(imported_rows)
+        DataImportRow.objects.bulk_create(imported_rows, batch_size=250)
 
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value
@@ -394,7 +394,14 @@ class DataImportSession(models.Model):
 
         if serializer_class := self.serializer_class:
             serializer = serializer_class(data={}, importing=True)
-            fields.update(metadata.get_serializer_info(serializer))
+            serializer_fields = metadata.get_serializer_info(serializer)
+
+            for field_name, field in serializer_fields.items():
+                # Skip read-only fields
+                if field.get('read_only', False):
+                    continue
+
+                fields[field_name] = field
 
         # Cache the available fields against this instance
         self._available_fields = fields
@@ -552,6 +559,12 @@ class DataImportRow(models.Model):
         self.valid = self.validate()
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        """Update the session progress when a row is deleted."""
+        session = self.session
+        super().delete(*args, **kwargs)
+        session.check_complete()
+
     session = models.ForeignKey(
         DataImportSession,
         on_delete=models.CASCADE,
@@ -693,7 +706,7 @@ class DataImportRow(models.Model):
         if commit:
             self.save()
 
-    def convert_date_field(self, value: str) -> str:
+    def convert_date_field(self, value: str) -> Optional[str]:
         """Convert an incoming date field to the correct format for the database."""
         if value in [None, '']:
             return None

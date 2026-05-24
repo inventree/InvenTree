@@ -2,15 +2,17 @@
 
 import base64
 import logging
-import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
+from io import BytesIO
+from pathlib import Path
 from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
-from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
+from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
@@ -145,32 +147,154 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
     return container.get(key, backup_value)
 
 
+def media_file_exists(path: Path | str) -> bool:
+    """Check if a media file exists at the specified path.
+
+    Arguments:
+        path: The path to the media file, relative to the media storage root
+
+    Returns:
+        True if the file exists, False otherwise
+    """
+    if not path:
+        return False
+
+    try:
+        return default_storage.exists(str(path))
+    except SuspiciousFileOperation:
+        # Prevent path traversal attacks
+        raise ValidationError(_('Invalid media file path') + f": '{path}'")
+
+
+def static_file_exists(path: Path | str) -> bool:
+    """Check if a static file exists at the specified path.
+
+    Arguments:
+        path: The path to the static file, relative to the static storage root
+
+    Returns:
+        True if the file exists, False otherwise
+    """
+    if not path:
+        return False
+
+    try:
+        return staticfiles_storage.exists(str(path))
+    except SuspiciousFileOperation:
+        # Prevent path traversal attacks
+        raise ValidationError(_('Invalid static file path') + f": '{path}'")
+
+
+def get_static_file_contents(
+    path: Path | str, raise_error: bool = False
+) -> bytes | None:
+    """Return the contents of a static file.
+
+    Arguments:
+        path: The path to the static file, relative to the static storage root
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+
+    Returns:
+        The contents of the static file, or None if the file cannot be found
+    """
+    if not path:
+        if raise_error:
+            raise ValueError('No static file specified')
+        else:
+            return None
+
+    if not staticfiles_storage.exists(path):
+        if raise_error:
+            raise FileNotFoundError(f'Static file does not exist: {path!s}')
+        else:
+            return None
+
+    with staticfiles_storage.open(str(path)) as f:
+        file_data = f.read()
+
+    return file_data
+
+
+def get_media_file_contents(
+    path: Path | str, raise_error: bool = False
+) -> bytes | None:
+    """Return the fully qualified file path to an uploaded media file.
+
+    Arguments:
+        path: The path to the media file, relative to the media storage root
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+
+    Returns:
+        The contents of the media file, or None if the file cannot be found
+
+    Raises:
+        FileNotFoundError: If the requested media file cannot be loaded
+        PermissionError: If the requested media file is outside of the media root
+        ValidationError: If the provided path is invalid
+
+    Notes:
+        - The resulting path is resolved against the media root directory
+    """
+    if not path:
+        if raise_error:
+            raise ValueError('No media file specified')
+        else:
+            return None
+
+    if not media_file_exists(path):
+        if raise_error:
+            raise FileNotFoundError(f'Media file does not exist: {path!s}')
+        else:
+            return None
+
+    # Load the file - and return the contents
+    with default_storage.open(str(path)) as f:
+        file_data = f.read()
+
+    return file_data
+
+
 @register.simple_tag()
-def asset(filename):
+def asset(filename: str, raise_error: bool = False) -> str | None:
     """Return fully-qualified path for an upload report asset file.
 
     Arguments:
         filename: Asset filename (relative to the 'assets' media directory)
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Raises:
         FileNotFoundError: If file does not exist
+        ValueError: If an invalid filename is provided (e.g. empty string)
+        ValidationError: If the filename is invalid (e.g. path traversal attempt)
     """
+    if not filename:
+        if raise_error:
+            raise ValueError('No asset file specified')
+        else:
+            return None
+
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
-    # If in debug mode, return URL to the image, not a local file
-    debug_mode = get_global_setting('REPORT_DEBUG_MODE', cache=False)
+    # Remove any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
 
-    # Test if the file actually exists
-    full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
+    full_path = Path('report', 'assets', filename)
 
-    if not full_path.exists() or not full_path.is_file():
-        raise FileNotFoundError(_('Asset file does not exist') + f": '{filename}'")
+    if not media_file_exists(full_path):
+        if raise_error:
+            raise FileNotFoundError(_('Asset file not found') + f": '{filename}'")
+        else:
+            return None
 
-    if debug_mode:
-        return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
-    return f'file://{full_path}'
+    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    if get_global_setting('REPORT_DEBUG_MODE', cache=False):
+        return default_storage.url(str(full_path))
+
+    storage_path = default_storage.path(str(full_path))
+
+    return f'file://{storage_path}'
 
 
 @register.simple_tag()
@@ -182,61 +306,72 @@ def uploaded_image(
     width: Optional[int] = None,
     height: Optional[int] = None,
     rotate: Optional[float] = None,
+    raise_error: bool = False,
     **kwargs,
 ) -> str:
     """Return raw image data from an 'uploaded' image.
 
     Arguments:
-        filename: The filename of the image relative to the MEDIA_ROOT directory
+        filename: The filename of the image relative to the media root directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
         replacement_file: The filename of the placeholder image (default = 'blank_image.png')
         validate: Optionally validate that the file is a valid image file
         width: Optional width of the image
         height: Optional height of the image
         rotate: Optional rotation to apply to the image
+        raise_error: If True, raise an error if the file cannot be found (default = False)
 
     Returns:
         Binary image data to be rendered directly in a <img> tag
 
     Raises:
         FileNotFoundError: If the file does not exist
+        ValueError: If an invalid filename is provided (e.g. empty string)
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
+    # Strip out any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
+
     # If in debug mode, return URL to the image, not a local file
     debug_mode = get_global_setting('REPORT_DEBUG_MODE', cache=False)
 
-    # Check if the file exists
-    if not filename:
-        exists = False
-    else:
-        try:
-            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-            exists = full_path.exists() and full_path.is_file()
-        except Exception:  # pragma: no cover
-            exists = False  # pragma: no cover
-
-    if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
-        logger.warning("File '%s' is not a valid image", filename)
-        exists = False
+    # Load image data - this will check if the file exists
+    exists = bool(filename) and media_file_exists(filename)
 
     if not exists and not replace_missing:
         raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
 
+    if exists:
+        img_data = get_media_file_contents(filename, raise_error=raise_error)
+
+        # Check if the image data is valid
+        if (
+            img_data
+            and validate
+            and not InvenTree.helpers.TestIfImage(BytesIO(img_data))
+        ):
+            logger.warning("File '%s' is not a valid image", filename)
+            img_data = None
+            exists = False
+    else:
+        # Load the backup image from the static files directory
+        replacement_file_path = Path('img', replacement_file)
+        img_data = get_static_file_contents(
+            replacement_file_path, raise_error=raise_error
+        )
+
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
         if exists:
-            return os.path.join(settings.MEDIA_URL, filename)
-        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+            return default_storage.url(filename)
 
-    elif not exists:
-        full_path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
+        return staticfiles_storage.url(str(Path('img', replacement_file)))
 
-    # Load the image, check that it is valid
-    if full_path.exists() and full_path.is_file():
-        img = Image.open(full_path)
+    if img_data:
+        img = Image.open(BytesIO(img_data))
     else:
         # A placeholder image showing that the image is missing
         img = Image.new('RGB', (64, 64), color='red')
@@ -288,22 +423,15 @@ def encode_svg_image(filename: str) -> str:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
 
-    # Check if the file exists
+    # Remove any leading slash characters from the filename, to prevent path traversal attacks
+    filename = str(filename).lstrip('/\\')
+
     if not filename:
-        exists = False
-    else:
-        try:
-            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-            exists = full_path.exists() and full_path.is_file()
-        except Exception:
-            exists = False
+        raise FileNotFoundError(_('No image file specified'))
 
-    if not exists:
-        raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
-
-    # Read the file data
-    with open(full_path, 'rb') as f:
-        data = f.read()
+    # Read out the file contents
+    # Note: This will check if the file exists, and raise an error if it does not
+    data = get_media_file_contents(filename)
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
@@ -323,8 +451,15 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     Raises:
         TypeError: If provided part is not a Part instance
     """
-    if type(part) is not Part:
+    if not part or not isinstance(part, Part):
         raise TypeError(_('part_image tag requires a Part instance'))
+
+    image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
+
+    if kwargs.get('check_exists'):
+        if not media_file_exists(image_filename):
+            raise FileNotFoundError(_('Image file not found') + f": '{image_filename}'")
+
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
     )
@@ -338,10 +473,10 @@ def parameter(
 
     Arguments:
         instance: A Model object
-        parameter_name: The name of the parameter to retrieve
+        parameter_name: The name of the parameter to retrieve (case insensitive)
 
     Returns:
-        A Parameter object, or None if not found
+        A Parameter object, or the provided default value if not found
     """
     if instance is None:
         raise ValueError('parameter tag requires a valid Model instance')
@@ -349,12 +484,46 @@ def parameter(
     if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
         raise TypeError("parameter tag requires a Model with 'parameters' attribute")
 
-    return (
-        instance.parameters
+    # First try with exact match
+    if (
+        parameter := instance.parameters
         .prefetch_related('template')
         .filter(template__name=parameter_name)
         .first()
-    )
+    ):
+        return parameter
+
+    # Next, try with case-insensitive match
+    if (
+        parameter := instance.parameters
+        .prefetch_related('template')
+        .filter(template__name__iexact=parameter_name)
+        .first()
+    ):
+        return parameter
+
+    return None
+
+
+@register.simple_tag()
+def parameter_value(
+    instance: Model, parameter_name: str, backup_value: Optional[Any] = None
+) -> str:
+    """Return the value of a Parameter for the given part and parameter name.
+
+    Arguments:
+        instance: A Model object
+        parameter_name: The name of the parameter to retrieve (case insensitive)
+        backup_value: A backup value to return if the parameter is not found
+
+    Returns:
+        The value of the Parameter, or the backup_value if not found
+    """
+    if param := parameter(instance, parameter_name):
+        return param.data
+
+    # If the matching parameter is not found, return the backup value
+    return backup_value
 
 
 @register.simple_tag()
@@ -867,3 +1036,196 @@ def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """
 
     return mark_safe(icon_class + '\n'.join(fonts))
+
+
+@register.simple_tag()
+def lowercase(value: str) -> str:
+    """Convert a string to lowercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).lower()
+
+
+@register.simple_tag()
+def uppercase(value: str) -> str:
+    """Convert a string to uppercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).upper()
+
+
+@register.simple_tag()
+def titlecase(value: str) -> str:
+    """Convert a string to title case.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).title()
+
+
+@register.simple_tag()
+def strip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading and trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).strip(chars)
+
+
+@register.simple_tag()
+def lstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).lstrip(chars)
+
+
+@register.simple_tag()
+def rstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).rstrip(chars)
+
+
+@register.simple_tag()
+def split(value: str, separator: str = ',') -> list:
+    """Split a string into a list, using the provided separator (default = ',').
+
+    Arguments:
+        value: The string to be split
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return []
+    return [v.strip() for v in str(value).split(separator)]
+
+
+@register.simple_tag()
+def join(value: list, separator: str = ',') -> str:
+    """Join a list of items into a string, using the provided separator (default = ',').
+
+    Arguments:
+        value: The list of items to be joined
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return ''
+    return separator.join(str(v) for v in value)
+
+
+@register.simple_tag()
+def length(value: Any) -> int:
+    """Return the length of a list or string.
+
+    Arguments:
+        value: The value to be measured (e.g. a list or string)
+    """
+    if value is None:
+        return 0
+    try:
+        return len(value)
+    except TypeError:
+        return 0
+
+
+@register.simple_tag()
+def replace(value: str, old: str, new: str = '') -> str:
+    """Replace occurrences of a substring within a string with a new value.
+
+    Arguments:
+        value: The original string
+        old: The substring to be replaced
+        new: The value to replace the old substring with (default = "")
+    """
+    if not value:
+        return ''
+    return str(value).replace(old, new)
+
+
+@register.simple_tag()
+def first(value: list, default: Any = None) -> Any:
+    """Return the first item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the first item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[0]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def last(value: list, default: Any = None) -> Any:
+    """Return the last item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the last item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[-1]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def reverse(value: list) -> list:
+    """Return a reversed version of the provided list.
+
+    Arguments:
+        value: The list to be reversed
+    """
+    if not value:
+        return []
+    try:
+        return value[::-1]
+    except TypeError:
+        return []
+
+
+@register.simple_tag()
+def truncate(value: list, length: int) -> list:
+    """Return a truncated version of the provided list.
+
+    Arguments:
+        value: The list to be truncated
+        length: The maximum length of the returned list
+    """
+    if not value:
+        return []
+    try:
+        return value[:length]
+    except TypeError:
+        return []

@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -11,6 +12,16 @@ export default function ParametricCompanyTable({
 }: {
   queryParams?: any;
 }) {
+  const customFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active companies`
+      }
+    ];
+  }, []);
+
   const customColumns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -31,6 +42,7 @@ export default function ParametricCompanyTable({
       modelType={ModelType.company}
       endpoint={ApiEndpoints.company_list}
       customColumns={customColumns}
+      customFilters={customFilters}
       queryParams={{
         ...queryParams
       }}

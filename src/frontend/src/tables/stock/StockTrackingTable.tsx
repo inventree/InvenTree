@@ -7,6 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderBuildOrder } from '../../components/render/Build';
@@ -14,7 +15,8 @@ import { RenderCompany } from '../../components/render/Company';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
-  RenderSalesOrder
+  RenderSalesOrder,
+  RenderTransferOrder
 } from '../../components/render/Order';
 import { RenderPart } from '../../components/render/Part';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -23,7 +25,6 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { useTable } from '../../hooks/UseTable';
 import {
   DateColumn,
   DescriptionColumn,
@@ -177,6 +178,17 @@ export function StockTrackingTable({
             deltas.returnorder_detail &&
             RenderReturnOrder({
               instance: deltas.returnorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Transfer Order`,
+          key: 'transferorder',
+          details:
+            deltas.transferorder_detail &&
+            RenderTransferOrder({
+              instance: deltas.transferorder_detail,
               link: true,
               navigate: navigate
             })

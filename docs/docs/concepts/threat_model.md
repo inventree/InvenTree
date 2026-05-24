@@ -16,7 +16,7 @@ Deploying InvenTree to production requires to knowledge of the security assumpti
 
 2. All users are trusted - therefore user uploaded files can be assumed to be safe. There are basic checks in place to ensure that the files are not using common attack vectors but those are not exhaustive.
 
-3. Superuser permissions are only given to trusted users and not used for daily operations. A superuser account can manipulate or extract all files on the server that the InvenTree server process have access to.
+3. Superuser or staff permissions are only given to trusted users and not used for daily operations. A superuser account can manipulate or extract all files on the server that the InvenTree server process have access to. See [dangerous user flags](../settings/permissions.md#dangerous-user-flags) for more details on user permissions and flags.
 
 4. All templates and plugins are trusted.
 

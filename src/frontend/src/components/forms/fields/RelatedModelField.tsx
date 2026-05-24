@@ -8,17 +8,32 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {
   type FieldValues,
   type UseControllerReturn,
+  type UseFormReturn,
   useFormContext
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '@lib/enums/ModelInformation';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { IconPlus } from '@tabler/icons-react';
 import { useApi } from '../../../contexts/ApiContext';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -54,6 +69,10 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  function setValueFromPK(pk: number) {
+    fetchSingleField(pk);
+  }
+
   // Handle condition where the form is rebuilt dynamically
   useEffect(() => {
     const value = field.value || pk;
@@ -75,42 +94,55 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 250);
 
+  // Response to fetching a single instance
+  const fetchSingleCallback = useCallback(
+    (instance: any) => {
+      const pk_field = definition.pk_field ?? 'pk';
+
+      if (instance?.[pk_field]) {
+        // Convert the response into the format expected by the select field
+        const value = {
+          value: instance[pk_field],
+          data: instance
+        };
+
+        // Run custom callback for this field (if provided)
+        if (definition.onValueChange) {
+          definition.onValueChange(instance[pk_field], instance);
+        }
+
+        setInitialData(value);
+        dataRef.current = [value];
+        setPk(instance[pk_field]);
+      }
+    },
+    [definition.pk_field, definition.onValueChange, setInitialData, setPk]
+  );
+
   // Fetch a single field by primary key, using the provided API filters
   const fetchSingleField = useCallback(
-    (pk: number) => {
-      if (!definition?.api_url) {
-        return;
-      }
-
-      const params = definition?.filters ?? {};
-      const url = `${definition.api_url}${pk}/`;
-
-      api
-        .get(url, {
-          params: params
-        })
-        .then((response) => {
-          const pk_field = definition.pk_field ?? 'pk';
-          if (response.data?.[pk_field]) {
-            const value = {
-              value: response.data[pk_field],
-              data: response.data
-            };
-
-            // Run custom callback for this field (if provided)
-            if (definition.onValueChange) {
-              definition.onValueChange(response.data[pk_field], response.data);
-            }
-
-            setInitialData(value);
-            dataRef.current = [value];
-            setPk(response.data[pk_field]);
-          }
+    (pk: number | string) => {
+      if (definition.singleFetchFunction) {
+        definition.singleFetchFunction(pk)?.then((instance: any) => {
+          fetchSingleCallback(instance);
         });
+      } else if (!!definition.api_url) {
+        const params = definition?.filters ?? {};
+        const url = `${definition.api_url}${pk}/`;
+        api.get(url, { params: params }).then((response) => {
+          const instance = response.data;
+          fetchSingleCallback(instance);
+        });
+      } else {
+        console.error(
+          `No API URL provided for related field ${fieldName}, cannot fetch data`
+        );
+      }
     },
     [
       definition.api_url,
       definition.filters,
+      definition.singleFetchFunction,
       definition.onValueChange,
       definition.pk_field,
       setValue,
@@ -125,6 +157,17 @@ export function RelatedModelField({
     }
     return ModelInformationDict[definition.model];
   }, [definition.model]);
+
+  // Determine whether an add button should be added for this field
+  const addButton = useMemo(() => {
+    if (!modelInfo) {
+      return false;
+    }
+    if (definition.addCreateFields) {
+      return true;
+    }
+    return false;
+  }, [definition.addCreateFields, modelInfo]);
 
   // Determine whether a barcode field should be added
   const addBarcodeField: boolean = useMemo(() => {
@@ -283,15 +326,7 @@ export function RelatedModelField({
         return null;
       }
 
-      let _filters = definition.filters ?? {};
-
-      if (definition.adjustFilters) {
-        _filters =
-          definition.adjustFilters({
-            filters: _filters,
-            data: form.getValues()
-          }) ?? _filters;
-      }
+      const _filters = retrieveFilters(definition, form);
 
       // If the filters have changed, clear the data
       if (JSON.stringify(_filters) !== JSON.stringify(filters)) {
@@ -349,10 +384,14 @@ export function RelatedModelField({
       }
 
       return (
-        <RenderInstance instance={data} model={definition.model ?? undefined} />
+        <RenderInstance
+          instance={data}
+          model={definition.model ?? undefined}
+          custom_model={definition.custom_model ?? undefined}
+        />
       );
     },
-    [definition.model, definition.modelRenderer]
+    [definition.model, definition.modelRenderer, definition.custom_model]
   );
 
   // Update form values when the selected value changes
@@ -375,11 +414,19 @@ export function RelatedModelField({
   const fieldDefinition = useMemo(() => {
     return {
       ...definition,
+      addCreateFields: undefined,
       autoFill: undefined,
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
+      placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
+      singleFetchFunction: undefined,
       exclude: undefined,
+      allow_blank: undefined,
+      allow_null: undefined,
       read_only: undefined
     };
   }, [definition]);
@@ -447,6 +494,14 @@ export function RelatedModelField({
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Group justify='space-between' wrap='nowrap' gap={3}>
+        {addButton && modelInfo && (
+          <InlineCreateButton
+            definition={definition}
+            modelInfo={modelInfo}
+            form={form}
+            setValue={setValueFromPK}
+          />
+        )}
         <Expand>
           <Select
             id={fieldId}
@@ -509,5 +564,83 @@ export function RelatedModelField({
         )}
       </Group>
     </Input.Wrapper>
+  );
+}
+
+function InlineCreateButton({
+  definition,
+  modelInfo,
+  form,
+  setValue
+}: {
+  definition: ApiFormFieldType;
+  modelInfo: TranslatableModelInformationInterface;
+  form: UseFormReturn<FieldValues, any, FieldValues>;
+  setValue: (value: number) => void;
+}): ReactNode {
+  const relatedInitialData = useMemo(
+    () => calculateModalData(definition, form),
+    [definition.filters, definition.addCreateFields, form]
+  );
+
+  const title: string = useMemo(() => {
+    const model = modelInfo?.label() ?? t`Item`;
+    return t`Create New ${model}`;
+  }, [modelInfo]);
+
+  const create_modal = useCreateApiFormModal({
+    title: title,
+    url: apiUrl(modelInfo.api_endpoint),
+    modelType: definition.model,
+    initialData: relatedInitialData,
+    fields: definition.addCreateFields,
+    onFormSuccess: (response: any) => {
+      setValue(response.pk);
+    }
+  });
+  return (
+    <>
+      {create_modal.modal}
+      <ActionButton
+        tooltip={title}
+        tooltipAlignment='top-start'
+        onClick={() => {
+          create_modal.open();
+        }}
+        color='green'
+        icon={<IconPlus />}
+      />
+    </>
+  );
+}
+
+function retrieveFilters(
+  definition: ApiFormFieldType,
+  form: UseFormReturn<FieldValues, any, FieldValues>
+) {
+  let _filters = definition.filters ?? {};
+
+  if (definition.adjustFilters) {
+    _filters =
+      definition.adjustFilters({
+        filters: _filters,
+        data: form.getValues()
+      }) ?? _filters;
+  }
+  return _filters;
+}
+
+function calculateModalData(
+  definition: ApiFormFieldType,
+  form: UseFormReturn<FieldValues, any, FieldValues>
+) {
+  if (!definition.addCreateFields) {
+    return {};
+  }
+  const fields = new Set(Object.keys(definition.addCreateFields));
+  return Object.fromEntries(
+    Object.entries(retrieveFilters(definition, form)).filter(([key]) =>
+      fields.has(key)
+    )
   );
 }

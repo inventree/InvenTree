@@ -1,5 +1,8 @@
 import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { createApi } from '../api.js';
 import { test } from '../baseFixtures.js';
+import { allaccessuser } from '../defaults.js';
 import { doCachedLogin } from '../login.js';
 import { setPluginState } from '../settings.js';
 

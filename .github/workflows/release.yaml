@@ -28,7 +28,7 @@ jobs:
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # pin@v1.0.0
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # pin@v1.1.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@28d71544de8eaf1b958d335707167c5f783590ad # pin@v0
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # pin@v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
@@ -73,31 +73,26 @@ jobs:
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # pin@v1
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: src/backend/InvenTree/web/static/frontend-build.zip
-          asset_name: frontend-build.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} src/backend/InvenTree/web/static/frontend-build.zip#frontend-build.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload frontend to artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          asset_name: frontend-build.intoto.jsonl
-          file: ${{ steps.attest.outputs.bundle-path}}
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} ${BUNDLE_PATH}#frontend-build.intoto.jsonl
+        env:
+          REF: ${{ github.ref_name }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path}}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs:
     runs-on: ubuntu-24.04
@@ -134,13 +129,10 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: docs/site/docs-html.zip
-          asset_name: docs-html.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} docs/site/docs-html.zip#docs-html.zip
+        env:
+          REF: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-pkgr:
     if: github.repository == 'inventree/InvenTree'
@@ -163,7 +155,7 @@ jobs:
           persist-credentials: false
 
       - name: Get frontend artifact
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # pin@v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
         with:
           name: frontend-build
       - name: Setup
@@ -244,10 +236,9 @@ jobs:
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.package.outputs.package_path }}
-          asset_name: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
-          tag: ${{ github.ref }}
-          overwrite: true
+        run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
+        env:
+          REF: ${{ github.ref_name }}
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

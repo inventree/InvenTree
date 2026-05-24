@@ -4,10 +4,12 @@ import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -25,12 +27,10 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -304,6 +304,15 @@ export default function PurchaseOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
+      },
+      {
+        type: 'date',
+        name: 'updated_at',
+        label: t`Last Updated`,
+        icon: 'calendar',
+        copy: true,
+        showTime: true,
+        hidden: !order.updated_at
       }
     ];
 
@@ -401,7 +410,13 @@ export default function PurchaseOrderDetail() {
       NotesPanel({
         model_type: ModelType.purchaseorder,
         model_id: order.pk,
-        has_note: !!order.notes
+        has_note: !!order.notes,
+        // TODO @matmair - change API to include a "locked" attribute that we can check here
+        editable:
+          order.status == poStatus.COMPLETE &&
+          !globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS')
+            ? false
+            : undefined
       })
     ];
   }, [order, id, user]);

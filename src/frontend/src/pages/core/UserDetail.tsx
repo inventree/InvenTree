@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Badge, Group, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -13,7 +14,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -84,14 +84,14 @@ export default function UserDetail() {
       {
         type: 'boolean',
         name: 'is_staff',
-        label: t`Staff`,
-        icon: 'info'
+        label: t`Administrator`,
+        icon: 'warning'
       },
       {
         type: 'boolean',
         name: 'is_superuser',
         label: t`Superuser`,
-        icon: 'info'
+        icon: 'warning'
       },
       {
         type: 'text',
@@ -197,13 +197,13 @@ export default function UserDetail() {
       ? []
       : [
           instance.is_staff && (
-            <Badge key='is_staff' color='blue'>{t`Staff`}</Badge>
+            <Badge key='is_staff' color='orange'>{t`Administrator`}</Badge>
           ),
           instance.is_superuser && (
             <Badge key='is_superuser' color='red'>{t`Superuser`}</Badge>
           ),
           !instance.is_staff && !instance.is_superuser && (
-            <Badge key='is_normal' color='yellow'>{t`Basic user`}</Badge>
+            <Badge key='is_normal' color='yellow'>{t`Normal user`}</Badge>
           ),
           instance.is_active ? (
             <Badge key='is_active' color='green'>{t`Active`}</Badge>
