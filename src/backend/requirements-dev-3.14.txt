@@ -107,7 +107,6 @@ cffi==2.0.0 \
     #   -c src/backend/requirements-3.14.txt
     #   -c src/backend/requirements.txt
     #   cryptography
-    #   pytest-codspeed
 charset-normalizer==3.4.7 \
     --hash=sha256:007d05ec7321d12a40227aae9e2bc6dca73f3cb21058999a1df9e193555a9dcc \
     --hash=sha256:03853ed82eeebbce3c2abfdbc98c96dc205f32a79627688ac9a27370ea61a49c \
