@@ -4,6 +4,7 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
+import copy
 import hashlib
 import hmac
 import json
@@ -3027,8 +3028,67 @@ class Note(
     def clean(self):
         """Clean / validate the note before saving to the database."""
         if self.content:
-            self.content = self.content.strip()
-            self.content = nh3.clean(self.content)
+            attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
+
+            data_attrs = {
+                'data-name',
+                'data-level',
+                'data-value',
+                'data-style-type',
+                'data-editable',
+            }
+
+            for tag_attrs in attrs.values():
+                tag_attrs.update(data_attrs)
+
+            for tag in (
+                'span',
+                'p',
+                'div',
+                'img',
+                'a',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+                'ul',
+                'ol',
+                'li',
+                'blockquote',
+                'pre',
+                'table',
+                'thead',
+                'tbody',
+                'tr',
+                'td',
+                'th',
+            ):
+                attrs.setdefault(tag, set()).update({'style'} | data_attrs)
+
+            self.content = nh3.clean(
+                self.content.strip(),
+                attributes=attrs,
+                filter_style_properties={
+                    'color',
+                    'background-color',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'font-family',
+                    'text-decoration',
+                    'text-align',
+                    'border',
+                    'border-color',
+                    'border-style',
+                    'border-width',
+                    'margin',
+                    'padding',
+                    'width',
+                    'height',
+                },
+            )
 
     def check_save(self):
         """Check if this note can be saved."""
