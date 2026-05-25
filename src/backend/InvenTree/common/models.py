@@ -2987,6 +2987,8 @@ class Note(
         created: Date/time that the note was created
     """
 
+    NOTES_MAX_LENGTH = 50000
+
     class Meta:
         """Meta options for Note model."""
 
@@ -3138,7 +3140,10 @@ class Note(
     )
 
     content = models.TextField(
-        blank=True, verbose_name=_('Content'), help_text=_('Note content')
+        blank=True,
+        verbose_name=_('Content'),
+        help_text=_('Note content'),
+        max_length=NOTES_MAX_LENGTH,
     )
 
 

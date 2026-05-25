@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 (
                     "content",
                     models.TextField(
-                        blank=True, help_text="Note content", verbose_name="Content"
+                        blank=True, help_text="Note content", verbose_name="Content", max_length=50000
                     ),
                 ),
                 (
