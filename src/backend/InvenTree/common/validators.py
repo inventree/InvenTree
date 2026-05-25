@@ -109,28 +109,6 @@ def validate_attachment_file(attachment):
         raise ValidationError(_('Invalid file name'))
 
 
-def validate_notes_model_type(value):
-    """Ensure that the provided model type is valid.
-
-    The provided value must map to a model which implements the 'InvenTreeNoteMixin'.
-    """
-    import InvenTree.helpers_model
-    import InvenTree.models
-
-    if not value:
-        # Empty values are allowed
-        return
-
-    model_types = list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNoteMixin)
-    )
-
-    model_names = [model.__name__.lower() for model in model_types]
-
-    if value.lower() not in model_names:
-        raise ValidationError(f"Invalid model type '{value}'")
-
-
 def validate_decimal_places_min(value):
     """Validator for PRICING_DECIMAL_PLACES_MIN setting."""
     try:

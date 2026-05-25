@@ -2922,7 +2922,6 @@ class Parameter(
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_delete(self)
 
-    # TODO: Reintroduce validator for model_type
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField(
@@ -3055,11 +3054,7 @@ class Note(
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_delete(self)
 
-    model_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        validators=[common.validators.validate_notes_model_type],
-    )
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField()
 
@@ -3118,7 +3113,6 @@ class NotesImage(models.Model):
         max_length=100,
         blank=True,
         null=True,
-        validators=[common.validators.validate_notes_model_type],
         help_text=_('Target model type for this image'),
     )
 
