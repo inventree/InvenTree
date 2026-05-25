@@ -1177,7 +1177,6 @@ class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
     - Offloads work to a background task and returns task detail
     """
 
-    queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderAutoAllocationSerializer
 
     @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
@@ -1186,7 +1185,7 @@ class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
         from InvenTree.tasks import offload_task
         from order.tasks import auto_allocate_sales_order
 
-        order_obj = models.SalesOrder.objects.get(pk=self.kwargs['pk'])
+        order_obj = self.get_object()
         serializer = self.get_serializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
