@@ -2044,7 +2044,7 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
 
     stock_sort_by = serializers.ChoiceField(
         default=stock.models.STOCK_SORT_DEFAULT,
-        choices=[(key, label) for key, _, label in stock.models.STOCK_SORT_CHOICES],
+        choices=stock.models.STOCK_SORT_CHOICES,
         label=_('Stock Priority'),
         help_text=_('Preferred order in which matching stock items are consumed'),
     )

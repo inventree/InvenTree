@@ -1137,7 +1137,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     stock_sort_by = serializers.ChoiceField(
         default=stock_models.STOCK_SORT_DEFAULT,
-        choices=[(key, label) for key, _, label in stock_models.STOCK_SORT_CHOICES],
+        choices=stock_models.STOCK_SORT_CHOICES,
         label=_('Stock Priority'),
         help_text=_('Preferred order in which matching stock items are consumed'),
     )

@@ -38,6 +38,7 @@ import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -399,17 +400,25 @@ class StockItemReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartModels.PartTestTemplate]
 
 
+class StockSortOrder(StringEnum):
+    """Enum of ORM sort fields available for stock auto-allocation."""
+
+    DATE_OLDEST = 'updated'
+    DATE_NEWEST = '-updated'
+    QUANTITY_ASC = 'quantity'
+    QUANTITY_DESC = '-quantity'
+    EXPIRY_SOONEST = 'expiry_date'
+
+
 STOCK_SORT_CHOICES = [
-    ('date_oldest', 'updated', _('Oldest stock first (FIFO)')),
-    ('date_newest', '-updated', _('Newest stock first (LIFO)')),
-    ('quantity_asc', 'quantity', _('Smallest quantity first')),
-    ('quantity_desc', '-quantity', _('Largest quantity first')),
-    ('expiry_soonest', 'expiry_date', _('Soonest expiry date first')),
+    (StockSortOrder.DATE_OLDEST, _('Oldest stock first (FIFO)')),
+    (StockSortOrder.DATE_NEWEST, _('Newest stock first (LIFO)')),
+    (StockSortOrder.QUANTITY_ASC, _('Smallest quantity first')),
+    (StockSortOrder.QUANTITY_DESC, _('Largest quantity first')),
+    (StockSortOrder.EXPIRY_SOONEST, _('Soonest expiry date first')),
 ]
 
-STOCK_SORT_MAP = {key: field for key, field, _ in STOCK_SORT_CHOICES}
-
-STOCK_SORT_DEFAULT = 'date_oldest'
+STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(

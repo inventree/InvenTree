@@ -793,7 +793,7 @@ class SalesOrderAutoAllocateTest(InvenTreeTestCase):
         small = StockItem.objects.create(part=self.part, quantity=5)
         StockItem.objects.create(part=self.part, quantity=100)
 
-        order.auto_allocate_stock(stock_sort_by='quantity_asc', interchangeable=True)
+        order.auto_allocate_stock(stock_sort_by='quantity', interchangeable=True)
 
         allocs = SalesOrderAllocation.objects.filter(line=line).order_by('quantity')
         self.assertTrue(allocs.exists())
@@ -806,7 +806,7 @@ class SalesOrderAutoAllocateTest(InvenTreeTestCase):
         StockItem.objects.create(part=self.part, quantity=5)
         large = StockItem.objects.create(part=self.part, quantity=100)
 
-        order.auto_allocate_stock(stock_sort_by='quantity_desc', interchangeable=True)
+        order.auto_allocate_stock(stock_sort_by='-quantity', interchangeable=True)
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
         self.assertTrue(allocs.exists())

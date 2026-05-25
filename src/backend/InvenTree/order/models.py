@@ -1318,7 +1318,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
 
 STOCK_SORT_CHOICES = stock.models.STOCK_SORT_CHOICES
-STOCK_SORT_MAP = stock.models.STOCK_SORT_MAP
 STOCK_SORT_DEFAULT = stock.models.STOCK_SORT_DEFAULT
 
 SERIALIZED_STOCK_CHOICES = [
@@ -1512,10 +1511,6 @@ class SalesOrder(TotalPriceMixin, Order):
         interchangeable = kwargs.get('interchangeable', True)
         serialized_stock = kwargs.get('serialized_stock', SERIALIZED_STOCK_DEFAULT)
 
-        sort_field = STOCK_SORT_MAP.get(
-            stock_sort_by, STOCK_SORT_MAP[STOCK_SORT_DEFAULT]
-        )
-
         new_allocations = []
 
         lines = self.lines.all()
@@ -1560,12 +1555,12 @@ class SalesOrder(TotalPriceMixin, Order):
                 )
 
             # Handle NULL expiry_date last when sorting by expiry.
-            if stock_sort_by == 'expiry_soonest':
+            if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
                 available_stock = available_stock.order_by(
                     F('expiry_date').asc(nulls_last=True)
                 )
             else:
-                available_stock = available_stock.order_by(sort_field)
+                available_stock = available_stock.order_by(stock_sort_by)
 
             stock_count = available_stock.count()
 

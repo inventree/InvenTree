@@ -1488,17 +1488,12 @@ class Build(
                 )
 
             # Apply secondary ORM ordering before the Python match-quality stable-sort.
-            if stock_sort_by == 'expiry_soonest':
+            if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
                 available_stock = available_stock.order_by(
                     F('expiry_date').asc(nulls_last=True)
                 )
             else:
-                available_stock = available_stock.order_by(
-                    stock.models.STOCK_SORT_MAP.get(
-                        stock_sort_by,
-                        stock.models.STOCK_SORT_MAP[stock.models.STOCK_SORT_DEFAULT],
-                    )
-                )
+                available_stock = available_stock.order_by(stock_sort_by)
 
             """
             Next, we sort the available stock items with the following priority:
