@@ -194,7 +194,6 @@ export function ApiFormField({
               onChange(value);
             }}
             selectAndFocus={selectAndFocus}
-            apiTriggerValue={definition.value}
           />
         );
       case 'choice':
