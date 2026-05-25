@@ -29,7 +29,8 @@ import {
   Stack,
   Tabs,
   Text,
-  Tooltip
+  Tooltip,
+  useMantineColorScheme
 } from '@mantine/core';
 import {
   IconCirclePlus,
@@ -105,6 +106,7 @@ export default function NotesEditor({
   const api = useApi();
   const user = useUserState();
   const [language] = useLocalState(useShallow((s) => [s.language]));
+  const { colorScheme } = useMantineColorScheme();
 
   const editor = useCreateBlockNote({
     dictionary:
@@ -359,6 +361,7 @@ export default function NotesEditor({
                   <BlockNoteView
                     editor={editor}
                     editable={canEdit}
+                    theme={colorScheme === 'dark' ? 'dark' : 'light'}
                     style={{ minHeight: '400px' }}
                   />
                 </Stack>
