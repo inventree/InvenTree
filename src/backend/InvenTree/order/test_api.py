@@ -4009,3 +4009,109 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
 
         self.assertFalse(line.is_fully_allocated())
         self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 0)
+
+
+class SalesOrderAllocationBulkDeleteAPITest(InvenTreeAPITestCase):
+    """API integration tests for bulk-delete of SalesOrderAllocation, verifying shipped allocations are protected."""
+
+    fixtures = ['company', 'users']
+
+    roles = ['sales_order.add', 'sales_order.change', 'sales_order.delete']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create shared order, part and stock for all tests."""
+        super().setUpTestData()
+
+        cls.customer = models.Company.objects.create(
+            name='BulkDelete Customer', is_customer=True, description=''
+        )
+        cls.part = Part.objects.create(
+            name='BulkDelete Part', salable=True, description=''
+        )
+
+    def _make_order_with_allocations(self, n_unshipped=2, n_shipped=1):
+        """Return (order, unshipped_allocations, shipped_allocations)."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer,
+            reference=f'SO-BD-{models.SalesOrder.objects.count()}',
+        )
+        line = SalesOrderLineItem.objects.create(
+            order=order, part=self.part, quantity=100
+        )
+        unshipped_shipment = models.SalesOrderShipment.objects.create(
+            order=order, reference='1'
+        )
+
+        shipped_shipment = models.SalesOrderShipment.objects.create(
+            order=order, reference='2'
+        )
+        shipped_shipment.shipment_date = date.today()
+        shipped_shipment.save()
+
+        unshipped = []
+        for _ in range(n_unshipped):
+            item = StockItem.objects.create(part=self.part, quantity=10)
+            alloc = SalesOrderAllocation.objects.create(
+                line=line, item=item, quantity=10, shipment=unshipped_shipment
+            )
+            unshipped.append(alloc)
+
+        shipped = []
+        for _ in range(n_shipped):
+            item = StockItem.objects.create(part=self.part, quantity=10)
+            alloc = SalesOrderAllocation.objects.create(
+                line=line, item=item, quantity=10, shipment=shipped_shipment
+            )
+            shipped.append(alloc)
+
+        return order, unshipped, shipped
+
+    def _url(self):
+        return reverse('api-so-allocation-list')
+
+    # ------------------------------------------------------------------
+    # Basic bulk-delete
+    # ------------------------------------------------------------------
+
+    def test_bulk_delete_unshipped_allocations(self):
+        """Unshipped allocations can be bulk-deleted."""
+        _, unshipped, _ = self._make_order_with_allocations(n_unshipped=2, n_shipped=0)
+        ids = [a.pk for a in unshipped]
+
+        self.delete(self._url(), {'items': ids}, expected_code=200)
+
+        self.assertFalse(SalesOrderAllocation.objects.filter(pk__in=ids).exists())
+
+    # ------------------------------------------------------------------
+    # Shipped allocation protection
+    # ------------------------------------------------------------------
+
+    def test_shipped_allocations_are_not_deleted(self):
+        """Shipped allocations are silently skipped when included in a bulk-delete request."""
+        _, _, shipped = self._make_order_with_allocations(n_unshipped=0, n_shipped=2)
+        ids = [a.pk for a in shipped]
+
+        self.delete(self._url(), {'items': ids}, expected_code=200)
+
+        # All shipped allocations should still exist
+        self.assertEqual(SalesOrderAllocation.objects.filter(pk__in=ids).count(), 2)
+
+    def test_mixed_delete_removes_only_unshipped(self):
+        """A bulk-delete of mixed shipped/unshipped allocations removes only the unshipped ones."""
+        _, unshipped, shipped = self._make_order_with_allocations(
+            n_unshipped=2, n_shipped=2
+        )
+        all_ids = [a.pk for a in unshipped] + [a.pk for a in shipped]
+
+        self.delete(self._url(), {'items': all_ids}, expected_code=200)
+
+        # Unshipped should be gone
+        for alloc in unshipped:
+            self.assertFalse(SalesOrderAllocation.objects.filter(pk=alloc.pk).exists())
+
+        # Shipped should remain
+        shipped_ids = [a.pk for a in shipped]
+        self.assertEqual(
+            SalesOrderAllocation.objects.filter(pk__in=shipped_ids).count(), 2
+        )

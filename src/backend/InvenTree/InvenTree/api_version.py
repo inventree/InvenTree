@@ -8,6 +8,8 @@ INVENTREE_API_TEXT = """
 
 v495 -> 2026-05-25 : https://github.com/inventree/InvenTree/pull/12000
     - Adds "auto-allocate" API endpoint for sales orders
+    - Allow bulk-delete of SalesOrderAllocation objects via the API
+    - Add new allocation options to the Build auto-allocate API endpoint
 
 v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
     - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task
