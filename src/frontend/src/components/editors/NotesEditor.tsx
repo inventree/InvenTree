@@ -13,7 +13,9 @@ import { useApi } from '../../contexts/ApiContext';
 import '@blocknote/core/fonts/inter.css';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
+import * as BlockNoteLocales from '@blocknote/core/locales';
 import { useCreateBlockNote } from '@blocknote/react';
+
 import {
   ActionIcon,
   Alert,
@@ -36,6 +38,7 @@ import {
   IconReload,
   IconStar
 } from '@tabler/icons-react';
+import { useShallow } from 'zustand/react/shallow';
 import { formatDate } from '../../defaults/formatters';
 import { useNoteFields } from '../../forms/CommonForms';
 import {
@@ -43,6 +46,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import {
   DeleteItemAction,
@@ -100,8 +104,13 @@ export default function NotesEditor({
 }>) {
   const api = useApi();
   const user = useUserState();
+  const [language] = useLocalState(useShallow((s) => [s.language]));
 
-  const editor = useCreateBlockNote();
+  const editor = useCreateBlockNote({
+    dictionary:
+      BlockNoteLocales[language as keyof typeof BlockNoteLocales] ||
+      BlockNoteLocales.en
+  });
 
   const [isDirty, setIsDirty] = useState(false);
 
