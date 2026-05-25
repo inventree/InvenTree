@@ -2742,7 +2742,6 @@ order_api_urls = [
                         TransferOrderIssue.as_view(),
                         name='api-transfer-order-issue',
                     ),
-                    meta_path(models.TransferOrder),
                     path(
                         '',
                         TransferOrderDetail.as_view(),
@@ -2760,14 +2759,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.TransferOrderLineItem),
-                    path(
-                        '',
-                        TransferOrderLineItemDetail.as_view(),
-                        name='api-transfer-order-line-detail',
-                    ),
-                ]),
+                TransferOrderLineItemDetail.as_view(),
+                name='api-transfer-order-line-detail',
             ),
             path(
                 '',
