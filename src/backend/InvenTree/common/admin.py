@@ -50,6 +50,16 @@ class SelectionListAdmin(admin.ModelAdmin):
     inlines = [SelectionListEntryInlineAdmin]
 
 
+@admin.register(common.models.Note)
+class NoteAdmin(admin.ModelAdmin):
+    """Admin interface for Note objects."""
+
+    list_display = ('title', 'model_type', 'model_id')
+
+    list_filter = ('model_type',)
+    search_fields = ('title', 'description')
+
+
 @admin.register(common.models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     """Admin interface for Attachment objects."""

@@ -3055,7 +3055,11 @@ class Note(
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_delete(self)
 
-    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        validators=[common.validators.validate_notes_model_type],
+    )
 
     model_id = models.PositiveIntegerField()
 

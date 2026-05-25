@@ -4,40 +4,72 @@ from tqdm import tqdm
 
 from django.db import migrations
 
+from InvenTree.helpers import markdown_to_html
+
 
 def migrate_notes(apps, schema_editor):
     """Migrate existing notes to the new Note model."""
+
+    ContentType = apps.get_model("contenttypes", "ContentType")
 
     # New target models
     Note = apps.get_model('common', 'Note')
     NotesImage = apps.get_model('common', 'NotesImage')
 
     for app, model in [
-        ('build', 'Build'),
-        ('company', 'Company'),
-        ('company', 'ManufacturerPart'),
-        ('company', 'SupplierPart'),
-        ('order', 'PurchaseOrder'),
-        ('order', 'ReturnOrder'),
-        ('order', 'SalesOrder'),
-        ('order', 'TransferOrder'),
-        ('part', 'Part'),
-        ('stock', 'StockItem'),
+        ('build', 'build'),
+        ('company', 'company'),
+        ('company', 'manufacturerpart'),
+        ('company', 'supplierpart'),
+        ('order', 'purchaseorder'),
+        ('order', 'returnorder'),
+        ('order', 'salesorder'),
+        ('order', 'transferorder'),
+        ('part', 'part'),
+        ('stock', 'stockitem'),
     ]:
         # Find old model which contains the 'notes' field
         OldModel = apps.get_model(app, model)
         with_notes = OldModel.objects.exclude(notes__isnull=True).exclude(notes='')
+        content_type, _created = ContentType.objects.get_or_create(app_label=app, model=model)
 
         if not with_notes.exists():
             continue
 
         progress = tqdm(total=with_notes.count(), desc=f'Migrating notes for {app}.{model}')
 
-        for obj in with_notes:
-            # TODO ...
+        initial_note_count = Note.objects.count()
+        expected_note_count = initial_note_count + with_notes.count()
+
+        for instance in with_notes:
+            # Tasks:
+            # [x] - Convert markdown notes to HTML format
+            # [x] - Create a new Note instance (mark it as 'primary')
+            # [x] - Copy the content of the 'notes' field to the Note instance
+            # [x] - Link the Note instance to the original object (using GenericForeignKey)
+            # [ ] - Handle any associated images (if applicable)
+
+            content = markdown_to_html(instance.notes)
+
+            note = Note.objects.create(
+                title="Note",  # We don't have a title field in the old model, so we'll just use a default value
+                content=content,
+                model_type=content_type,
+                model_id=instance.pk,
+                primary=True
+            )
 
             progress.update(1)
 
+            # Find any existing NotesImage objects associated with this instance
+            images = NotesImage.objects.filter(model_type__iexact=model, model_id=instance.pk)
+
+            # Point any associated images to the new Note instance
+            for image in images:
+                image.note = note
+                image.save()
+
+        assert Note.objects.count() == expected_note_count, f"Expected {expected_note_count} notes, but found {Note.objects.count()} after migration."
 
 class Migration(migrations.Migration):
 

@@ -937,23 +937,25 @@ def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     return cleaned
 
 
-def clean_markdown(value: str) -> str:
-    """Clean a markdown string.
+def get_markdownify_settings() -> dict:
+    """Return the settings for markdownify, or an empty dict if not defined."""
+    try:
+        return settings.MARKDOWNIFY['default']
+    except (AttributeError, KeyError):
+        return {}
+
+
+def markdown_to_html(value: str) -> str:
+    """Convert a markdown string to HTML.
 
     This function will remove javascript and other potentially harmful content from the markdown string.
     """
     import markdown
 
-    try:
-        markdownify_settings = settings.MARKDOWNIFY['default']
-    except (AttributeError, KeyError):
-        markdownify_settings = {}
-
+    markdownify_settings = get_markdownify_settings()
     extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
     extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
 
-    # Generate raw HTML from provided markdown (without sanitizing)
-    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
     html = markdown.markdown(
         value or '',
         extensions=extensions,
@@ -961,7 +963,18 @@ def clean_markdown(value: str) -> str:
         output_format='html',
     )
 
-    # nh3 sanitizer settings
+    return html
+
+
+def clean_markdown(value: str) -> str:
+    """Clean a markdown string.
+
+    This function will remove javascript and other potentially harmful content from the markdown string.
+    """
+    html = markdown_to_html(value)
+
+    markdownify_settings = get_markdownify_settings()
+
     whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
     whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEFAULT_ATTRS)
     whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
