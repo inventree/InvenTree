@@ -206,3 +206,13 @@ Sometimes, following a software update, you may find that certain components of 
 This is often due to a caching issue with your web browser. Try performing a hard refresh of the page to clear the cache, this should resolve the issue in most cases.
 
 If the problem persists, refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
+
+## Expression tree is too large
+
+If you are running a large InvenTree deployment on an SQLite database, you may encounter an error similar to:
+
+```
+Expression tree is too large (maximum depth 1000)
+```
+
+This is a [known limitation of SQLite](https://www.sqlite.org/limits.html) which can occur when performing complex queries on a large database. Due to [structural limitations](./start/processes.md#sqlite-limitations) of SQLite, it is recommended to use a more robust database backend such as PostgreSQL for larger deployments.
