@@ -27,7 +27,6 @@ from stdimage.models import StdImageField
 
 import common.settings
 import InvenTree.exceptions
-import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
@@ -664,16 +663,15 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin):
         'common.Note', content_type_field='model_type', object_id_field='model_id'
     )
 
-    # TODO: Un-comment this once the InvenTreeNotesMixin class is removed
-    # @property
-    # def notes(self) -> QuerySet:
-    #     """Return a queryset containing all notes for this model."""
-    #     # Check the query cache for pre-fetched parameters
-    #     if cache := getattr(self, '_prefetched_objects_cache', None):
-    #         if 'notes_list' in cache:
-    #             return cache['notes_list']
+    @property
+    def notes(self) -> QuerySet:
+        """Return a queryset containing all notes for this model."""
+        # Check the query cache for pre-fetched parameters
+        if cache := getattr(self, '_prefetched_objects_cache', None):
+            if 'notes_list' in cache:
+                return cache['notes_list']
 
-    #     return self.notes_list.all()
+        return self.notes_list.all()
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
@@ -1282,53 +1280,6 @@ class PathStringMixin(models.Model):
             }
             for item in self.path
         ]
-
-
-class InvenTreeNotesMixin(models.Model):
-    """A mixin class for adding notes functionality to a model class.
-
-    The following fields are added to any model which implements this mixin:
-
-    - notes : A text field for storing notes
-    """
-
-    # TODO: THIS MIXIN IS TO BE REMOVED IN FAVOUR OF THE GENERIC RELATIONSHIP TO THE Note MODEL
-
-    class Meta:
-        """Metaclass options for this mixin.
-
-        Note: abstract must be true, as this is only a mixin, not a separate table
-        """
-
-        abstract = True
-
-    def delete(self, *args, **kwargs):
-        """Custom delete method for InvenTreeNotesMixin.
-
-        - Before deleting the object, check if there are any uploaded images associated with it.
-        - If so, delete the notes first
-        """
-        from common.models import NotesImage
-
-        images = NotesImage.objects.filter(
-            model_type=self.__class__.__name__.lower(), model_id=self.pk
-        )
-
-        if images.exists():
-            logger.info(
-                'Deleting %s uploaded images associated with %s <%s>',
-                images.count(),
-                self.__class__.__name__,
-                self.pk,
-            )
-
-            images.delete()
-
-        super().delete(*args, **kwargs)
-
-    notes = InvenTree.fields.InvenTreeNotesField(
-        verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
-    )
 
 
 class InvenTreeBarcodeMixin(models.Model):

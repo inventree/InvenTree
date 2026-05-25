@@ -80,7 +80,6 @@ class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -488,7 +487,6 @@ class ManufacturerPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -606,7 +604,6 @@ class SupplierPart(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
