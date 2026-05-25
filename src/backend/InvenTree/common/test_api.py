@@ -890,6 +890,364 @@ class NoteAPITests(InvenTreeAPITestCase):
         self.assertTrue(note_a_detail.data['primary'])
 
 
+class NoteContentSanitizationTests(InvenTreeAPITestCase):
+    """Security tests for the Note API 'content' field.
+
+    The content field accepts raw HTML which is sanitized by nh3 before
+    persistence. These tests verify that known XSS vectors are neutralised
+    both at the model level (Note.clean()) and through the API (POST/PATCH).
+    """
+
+    def setUp(self):
+        """Create a Part instance to attach notes to."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.assignRole('part.add')
+
+        self.part = Part.objects.create(
+            name='Security Test Part', description='Part for note security testing'
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_note_with_content(self, content, expected_code=201):
+        return self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Security Test Note',
+                'content': content,
+            },
+            expected_code=expected_code,
+        )
+
+    # -------------------------------------------------------------------------
+    # Model-level sanitization (Note.clean() called directly)
+    # -------------------------------------------------------------------------
+
+    def test_model_clean_strips_script_tags(self):
+        """Note.clean() removes <script> tags, preserving safe surrounding content."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Model-level test',
+            content="<script>alert('xss')</script><p>Safe content</p>",
+        )
+        note.clean()
+        self.assertNotIn('<script', note.content.lower())
+        self.assertIn('Safe content', note.content)
+
+    def test_model_clean_strips_event_handlers(self):
+        """Note.clean() strips inline event-handler attributes from allowed tags."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Event handler test',
+            content='<p onclick="alert(\'xss\')">text</p>',
+        )
+        note.clean()
+        self.assertNotIn('onclick', note.content.lower())
+        self.assertIn('text', note.content)
+
+    def test_model_clean_strips_javascript_protocol(self):
+        """Note.clean() removes javascript: from href attributes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Protocol test',
+            content='<a href="javascript:alert(\'xss\')">link</a>',
+        )
+        note.clean()
+        self.assertNotIn('javascript:', note.content.lower())
+
+    # -------------------------------------------------------------------------
+    # API - script injection (POST)
+    # -------------------------------------------------------------------------
+
+    def test_api_script_tag_stripped(self):
+        """<script> tags are stripped when content is submitted via the API."""
+        response = self._create_note_with_content(
+            "<script>alert('xss')</script><p>hello</p>"
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        self.assertIn('hello', content)
+
+    def test_api_uppercase_script_stripped(self):
+        """Uppercase <SCRIPT> tags are stripped."""
+        response = self._create_note_with_content("<SCRIPT>alert('xss')</SCRIPT>")
+        self.assertNotIn('<script', response.data['content'].lower())
+
+    def test_api_mixed_case_script_stripped(self):
+        """Mixed-case <ScRiPt> tags are stripped."""
+        response = self._create_note_with_content("<ScRiPt>alert('xss')</ScRiPt>")
+        self.assertNotIn('<script', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - event handler injection
+    # -------------------------------------------------------------------------
+
+    def test_api_onerror_handler_stripped(self):
+        """Onerror attribute is stripped from img tags."""
+        response = self._create_note_with_content("<img src='x' onerror='alert(1)'>")
+        self.assertNotIn('onerror', response.data['content'].lower())
+
+    def test_api_onload_handler_stripped(self):
+        """Onload attribute is stripped (e.g. on svg tags)."""
+        response = self._create_note_with_content(
+            "<svg onload='alert(1)'><rect/></svg>"
+        )
+        self.assertNotIn('onload', response.data['content'].lower())
+
+    def test_api_onclick_handler_stripped(self):
+        """Onclick attribute is stripped from otherwise-allowed tags."""
+        response = self._create_note_with_content("<p onclick='alert(1)'>click me</p>")
+        self.assertNotIn('onclick', response.data['content'].lower())
+
+    def test_api_onmouseover_handler_stripped(self):
+        """Onmouseover attribute is stripped."""
+        response = self._create_note_with_content("<a onmouseover='alert(1)'>hover</a>")
+        self.assertNotIn('onmouseover', response.data['content'].lower())
+
+    def test_api_onfocus_handler_stripped(self):
+        """Onfocus attribute on an input element is stripped."""
+        response = self._create_note_with_content(
+            "<input onfocus='alert(1)' autofocus>"
+        )
+        self.assertNotIn('onfocus', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - javascript: / vbscript: protocol injection
+    # -------------------------------------------------------------------------
+
+    def test_api_javascript_href_stripped(self):
+        """javascript: href is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='javascript:alert(1)'>click</a>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_javascript_href_uppercase_stripped(self):
+        """JAVASCRIPT: href (uppercase) is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='JAVASCRIPT:alert(1)'>click</a>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_vbscript_href_stripped(self):
+        """vbscript: href is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='vbscript:msgbox(1)'>click</a>"
+        )
+        self.assertNotIn('vbscript:', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - dangerous tag removal
+    # -------------------------------------------------------------------------
+
+    def test_api_iframe_stripped(self):
+        """<iframe> tags are stripped entirely."""
+        response = self._create_note_with_content(
+            "<iframe src='https://evil.example.com'></iframe>"
+        )
+        self.assertNotIn('<iframe', response.data['content'].lower())
+
+    def test_api_object_stripped(self):
+        """<object> tags are stripped entirely."""
+        response = self._create_note_with_content("<object data='evil.swf'></object>")
+        self.assertNotIn('<object', response.data['content'].lower())
+
+    def test_api_embed_stripped(self):
+        """<embed> tags are stripped entirely."""
+        response = self._create_note_with_content("<embed src='evil.swf'>")
+        self.assertNotIn('<embed', response.data['content'].lower())
+
+    def test_api_base_tag_stripped(self):
+        """<base> tags are stripped (prevents base-URL hijacking)."""
+        response = self._create_note_with_content(
+            "<base href='https://evil.example.com'>"
+        )
+        self.assertNotIn('<base', response.data['content'].lower())
+
+    def test_api_link_tag_stripped(self):
+        """<link> tags are stripped (prevents external stylesheet injection)."""
+        response = self._create_note_with_content(
+            "<link rel='stylesheet' href='evil.css'>"
+        )
+        self.assertNotIn('<link', response.data['content'].lower())
+
+    def test_api_meta_refresh_stripped(self):
+        """<meta http-equiv=refresh> tags are stripped."""
+        response = self._create_note_with_content(
+            "<meta http-equiv='refresh' content='0;url=https://evil.example.com'>"
+        )
+        self.assertNotIn('<meta', response.data['content'].lower())
+
+    def test_api_form_stripped(self):
+        """<form> tags are stripped (prevents CSRF / phishing via injected forms)."""
+        response = self._create_note_with_content(
+            "<form action='https://evil.example.com'><input name='x'></form>"
+        )
+        self.assertNotIn('<form', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - CSS / style injection
+    # -------------------------------------------------------------------------
+
+    def test_api_style_attribute_javascript_stripped(self):
+        """Style attributes containing javascript: expressions are stripped."""
+        response = self._create_note_with_content(
+            "<div style='background:url(javascript:alert(1))'>x</div>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_style_expression_stripped(self):
+        """IE-era CSS expression() is stripped from style attributes."""
+        response = self._create_note_with_content(
+            '<p style="width:expression(alert(\'xss\'))">x</p>'
+        )
+        self.assertNotIn('expression(', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - SVG-based XSS
+    # -------------------------------------------------------------------------
+
+    def test_api_svg_onload_stripped(self):
+        """SVG with onload handler is sanitized."""
+        response = self._create_note_with_content(
+            "<svg xmlns='http://www.w3.org/2000/svg' onload='alert(1)'>"
+            "<rect width='100' height='100'/></svg>"
+        )
+        self.assertNotIn('onload', response.data['content'].lower())
+
+    def test_api_svg_animate_javascript_stripped(self):
+        """SVG animate element with javascript: href value is stripped."""
+        response = self._create_note_with_content(
+            "<svg><animate attributeName='href' values='javascript:alert(1)'/></svg>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - data URI injection
+    # -------------------------------------------------------------------------
+
+    def test_api_data_uri_in_img_src_stripped(self):
+        """data: URI in img src containing a script payload is stripped."""
+        response = self._create_note_with_content(
+            '<img src="data:text/html,<script>alert(1)</script>">'
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        # The data: URI should be stripped from the src attribute
+        self.assertNotIn('data:text/html', content.lower())
+
+    # -------------------------------------------------------------------------
+    # API - PATCH also sanitizes (not just POST)
+    # -------------------------------------------------------------------------
+
+    def test_api_patch_sanitizes_content(self):
+        """Updating note content via PATCH also sanitises the payload."""
+        note = self._create_note_with_content('<p>Original safe content</p>')
+        pk = note.data['pk']
+
+        response = self.patch(
+            self._note_url(pk),
+            data={'content': "<script>alert('xss')</script><p>Updated</p>"},
+            expected_code=200,
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        self.assertIn('Updated', content)
+
+    # -------------------------------------------------------------------------
+    # API - sanitized content is persisted, not just masked in response
+    # -------------------------------------------------------------------------
+
+    def test_sanitized_content_persisted_in_database(self):
+        """Sanitization is applied before DB write, not only in the API response."""
+        from common.models import Note
+
+        payload = "<script>alert('xss')</script><p>Safe text</p>"
+        response = self._create_note_with_content(payload)
+        pk = response.data['pk']
+
+        note = Note.objects.get(pk=pk)
+        self.assertNotIn('<script', note.content.lower())
+        self.assertIn('Safe text', note.content)
+
+    # -------------------------------------------------------------------------
+    # Regression - safe HTML is not over-sanitized
+    # -------------------------------------------------------------------------
+
+    def test_safe_inline_formatting_preserved(self):
+        """Legitimate inline HTML (strong, em) survives sanitization."""
+        safe_html = '<p>Normal <strong>bold</strong> and <em>italic</em> text</p>'
+        response = self._create_note_with_content(safe_html)
+        content = response.data['content']
+        self.assertIn('<strong>', content)
+        self.assertIn('<em>', content)
+
+    def test_safe_https_link_preserved(self):
+        """An anchor with an https:// href is kept after sanitization."""
+        response = self._create_note_with_content(
+            '<a href="https://example.com">documentation</a>'
+        )
+        content = response.data['content']
+        self.assertIn('https://example.com', content)
+        self.assertIn('documentation', content)
+
+    def test_blockquote_preserved(self):
+        """Block-level formatting elements such as blockquote are preserved."""
+        response = self._create_note_with_content(
+            '<blockquote><p>Quoted text</p></blockquote>'
+        )
+        content = response.data['content']
+        self.assertIn('<blockquote>', content)
+        self.assertIn('Quoted text', content)
+
+    def test_empty_content_accepted(self):
+        """An empty content field is valid and stored as-is."""
+        response = self._create_note_with_content('')
+        self.assertEqual(response.data['content'], '')
+
+    def test_plain_text_content_preserved(self):
+        """Plain text with no HTML tags is stored without modification."""
+        plain = 'Just plain text, no HTML here.'
+        response = self._create_note_with_content(plain)
+        self.assertEqual(response.data['content'], plain)
+
+    def test_html_entities_in_plain_text_not_executed(self):
+        """HTML-entity-encoded script tags in plain text are not executed as markup."""
+        # &lt;script&gt; is already-escaped user text — it should be stored
+        # safely and not interpreted as a tag.
+        entity_payload = '&lt;script&gt;alert(1)&lt;/script&gt;'
+        response = self._create_note_with_content(entity_payload)
+        content = response.data['content']
+        # Must not contain a live <script> tag
+        self.assertNotIn('<script', content.lower())
+
+
 class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
     """Tests for thumbnail generation when uploading attachments via the API."""
 
