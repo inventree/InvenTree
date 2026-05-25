@@ -3095,6 +3095,13 @@ class NotesImage(models.Model):
     Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
+    def delete(self, *args, **kwargs):
+        """Ensure that the image file is deleted from storage when the NotesImage instance is deleted."""
+        if self.image:
+            self.image.delete(save=False)
+
+        super().delete(*args, **kwargs)
+
     image = models.ImageField(
         upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
     )
@@ -3119,7 +3126,7 @@ class NotesImage(models.Model):
     )
 
     note = models.ForeignKey(
-        Note, on_delete=models.SET_NULL, null=True, blank=True, related_name='images'
+        Note, on_delete=models.CASCADE, null=True, blank=True, related_name='images'
     )
 
 
