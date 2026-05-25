@@ -108,18 +108,38 @@ export default function NotesEditor({
   const [language] = useLocalState(useShallow((s) => [s.language]));
   const { colorScheme } = useMantineColorScheme();
 
-  const editor = useCreateBlockNote({
-    dictionary:
-      BlockNoteLocales[language as keyof typeof BlockNoteLocales] ||
-      BlockNoteLocales.en
-  });
-
   const [isDirty, setIsDirty] = useState(false);
 
   // The ID of the selected note
   const [selectedNoteId, setSelectedNoteId] = useState<number | undefined>(
     undefined
   );
+
+  // Callback to upload an image file against the currently selected note
+  // Returns the URL of the uploaded image on success, or throws an error on failure
+  const uploadFile = useCallback(
+    (file: File) => {
+      const formData = new FormData();
+      formData.append('note', String(selectedNoteId));
+      formData.append('image', file);
+
+      return api
+        .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        .then((response) => response.data.image);
+    },
+    [selectedNoteId]
+  );
+
+  const editor = useCreateBlockNote({
+    dictionary:
+      BlockNoteLocales[language as keyof typeof BlockNoteLocales] ||
+      BlockNoteLocales.en,
+    uploadFile: async (file: File) => {
+      return uploadFile(file);
+    }
+  });
 
   // Fetch the available notes for the given model type and ID
   const notesQuery = useQuery({
