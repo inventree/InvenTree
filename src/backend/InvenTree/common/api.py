@@ -465,16 +465,37 @@ class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
 admin_router.register('config', ConfigViewSet, basename='api-config')
 
 
+class NotesImageFilter(FilterSet):
+    """Filterset for the NotesImage API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.NotesImage
+        fields = ['user', 'note']
+
+    model_id = rest_filters.NumberFilter(
+        label=_('Model ID'), field_name='note__model_id'
+    )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'note__model_type', value, allow_null=False
+        )
+
+
 class NotesImageList(ListCreateAPI):
     """List view for all notes images."""
 
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+    filterset_class = NotesImageFilter
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['user', 'model_type', 'model_id']
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
@@ -1501,7 +1522,7 @@ common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
     # Uploaded images for notes
-    path('notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
+    path('notes-image/', NotesImageList.as_view(), name='api-notes-image-list'),
     # Background task information
     path(
         'background-task/',

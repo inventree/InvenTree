@@ -3109,22 +3109,8 @@ class NotesImage(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
 
-    model_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text=_('Target model type for this image'),
-    )
-
-    model_id = models.IntegerField(
-        help_text=_('Target model ID for this image'),
-        blank=True,
-        null=True,
-        default=None,
-    )
-
     note = models.ForeignKey(
-        Note, on_delete=models.CASCADE, null=True, blank=True, related_name='images'
+        Note, on_delete=models.CASCADE, null=False, blank=False, related_name='images'
     )
 
 

@@ -120,11 +120,11 @@ export default function NotesEditor({
   const uploadFile = useCallback(
     (file: File) => {
       const formData = new FormData();
-      formData.append('note', String(selectedNoteId));
+      formData.append('note', selectedNoteId?.toString() ?? '');
       formData.append('image', file);
 
       return api
-        .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
+        .post(apiUrl(ApiEndpoints.notes_image_list), formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         .then((response) => response.data.image);

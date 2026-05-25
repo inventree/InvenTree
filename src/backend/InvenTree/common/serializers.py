@@ -400,7 +400,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         """Meta options for NotesImageSerializer."""
 
         model = common_models.NotesImage
-        fields = ['pk', 'image', 'user', 'date', 'model_type', 'model_id']
+        fields = ['pk', 'image', 'user', 'date', 'note']
 
         read_only_fields = ['date', 'user']
 
