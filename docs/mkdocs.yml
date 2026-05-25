@@ -96,6 +96,8 @@ nav:
     - Physical Units: concepts/units.md
     - Companies: concepts/company.md
     - Custom States: concepts/custom_states.md
+    - Data Export: concepts/data_export.md
+    - Data Import: concepts/data_import.md
     - Pricing: concepts/pricing.md
     - Project Codes: concepts/project_codes.md
     - Attachments: concepts/attachments.md
@@ -186,8 +188,6 @@ nav:
       - Multi Factor Authentication: settings/MFA.md
       - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
-    - Export Data: settings/export.md
-    - Import Data: settings/import.md
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md

@@ -162,6 +162,7 @@ Configuration of label printing:
 {{ globalsetting("PART_ALLOW_DUPLICATE_IPN") }}
 {{ globalsetting("PART_ALLOW_EDIT_IPN") }}
 {{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
+{{ globalsetting("PART_ENABLE_LOCKING") }}
 {{ globalsetting("PART_ENABLE_REVISION") }}
 {{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 {{ globalsetting("PART_NAME_FORMAT") }}
