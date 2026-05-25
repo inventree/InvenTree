@@ -4,6 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -16,6 +17,7 @@ import '@blocknote/mantine/style.css';
 import * as BlockNoteLocales from '@blocknote/core/locales';
 import { useCreateBlockNote } from '@blocknote/react';
 
+import { identifierString } from '@lib/functions/Conversion';
 import {
   ActionIcon,
   Alert,
@@ -107,6 +109,7 @@ export default function NotesEditor({
   const user = useUserState();
   const [language] = useLocalState(useShallow((s) => [s.language]));
   const { colorScheme } = useMantineColorScheme();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isDirty, setIsDirty] = useState(false);
 
@@ -199,6 +202,18 @@ export default function NotesEditor({
       selectedNoteId &&
       notesQuery.data.some((note: any) => note.pk === selectedNoteId);
     if (stillExists) return;
+
+    const paramSlug = searchParams.get('note');
+    const fromParam =
+      paramSlug &&
+      notesQuery.data.find(
+        (note: any) => identifierString(note.title ?? '') === paramSlug
+      );
+
+    if (fromParam) {
+      setSelectedNoteId(fromParam.pk);
+      return;
+    }
 
     const primary = notesQuery.data.find((note: any) => note.primary);
     setSelectedNoteId((primary ?? notesQuery.data[0])?.pk ?? undefined);
@@ -415,7 +430,16 @@ export default function NotesEditor({
                     key={note.pk}
                     disabled={isDirty}
                     value={note.pk?.toString()}
-                    onClick={() => setSelectedNoteId(note.pk)}
+                    onClick={() => {
+                      setSelectedNoteId(note.pk);
+                      setSearchParams(
+                        (prev) => {
+                          prev.set('note', identifierString(note.title ?? ''));
+                          return prev;
+                        },
+                        { replace: true }
+                      );
+                    }}
                   >
                     <Group gap='xs' wrap='nowrap' justify='space-between'>
                       <Text size='sm'>{note.title}</Text>
