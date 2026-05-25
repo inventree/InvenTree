@@ -33,7 +33,6 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
-from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
