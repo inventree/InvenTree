@@ -57,6 +57,7 @@ export default function SystemSettings() {
                 'DISPLAY_FULL_NAMES',
                 'DISPLAY_PROFILE_INFO',
                 'WEEK_STARTS_ON',
+                'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
@@ -211,6 +212,7 @@ export default function SystemSettings() {
                 'PART_ALLOW_DUPLICATE_IPN',
                 'PART_ALLOW_EDIT_IPN',
                 'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+                'PART_ENABLE_LOCKING',
                 'PART_ENABLE_REVISION',
                 'PART_REVISION_ASSEMBLY_ONLY',
                 'PART_SHOW_RELATED',

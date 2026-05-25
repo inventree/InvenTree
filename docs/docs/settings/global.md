@@ -33,6 +33,7 @@ Configuration of basic server settings:
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
 {{ globalsetting("WEEK_STARTS_ON") }}
+{{ globalsetting("INVENTREE_UPLOAD_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
 
 Configuration of various scheduled tasks:
@@ -161,6 +162,7 @@ Configuration of label printing:
 {{ globalsetting("PART_ALLOW_DUPLICATE_IPN") }}
 {{ globalsetting("PART_ALLOW_EDIT_IPN") }}
 {{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
+{{ globalsetting("PART_ENABLE_LOCKING") }}
 {{ globalsetting("PART_ENABLE_REVISION") }}
 {{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 {{ globalsetting("PART_NAME_FORMAT") }}

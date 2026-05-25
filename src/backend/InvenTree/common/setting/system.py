@@ -286,6 +286,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
+        'units': 'MB',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
+    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),
@@ -394,6 +401,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Plugin to use for internal barcode data generation'),
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
+    },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
     },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),

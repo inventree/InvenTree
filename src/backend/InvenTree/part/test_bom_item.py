@@ -8,6 +8,7 @@ from django.test import TestCase
 
 import build.models
 import stock.models
+from common.settings import set_global_setting
 
 from .models import BomItem, BomItemSubstitute, Part
 
@@ -390,6 +391,44 @@ class BomItemTest(TestCase):
 
         # Delete the new BOM item
         bom_item.delete()
+
+    def test_locked_assembly_locking_disabled(self):
+        """Test that a locked assembly is not enforced when PART_ENABLE_LOCKING is disabled."""
+        assembly = Part.objects.create(
+            name='Assembly3', description='An assembly part', assembly=True
+        )
+        sub_part = Part.objects.create(
+            name='SubPart2', description='A sub-part', component=True
+        )
+
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        assembly.locked = True
+        assembly.save()
+
+        # With locking enabled (default), editing is blocked
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item.quantity = 5
+            bom_item.save()
+
+        # Disable locking globally — all BOM operations should now be allowed
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+        bom_item.quantity = 5
+        bom_item.save()
+
+        BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=2)
+
+        bom_item.delete()
+
+        # Re-enable for other tests
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        # Confirm locking is enforced again
+        bom_item2 = BomItem.objects.get(part=assembly, sub_part=sub_part, quantity=2)
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item2.quantity = 99
+            bom_item2.save()
 
     def test_bom_validated(self):
         """Test for caching of 'bom_validated' property."""
