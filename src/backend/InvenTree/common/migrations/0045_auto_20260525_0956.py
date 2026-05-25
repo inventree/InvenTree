@@ -42,12 +42,6 @@ def migrate_notes(apps, schema_editor):
         expected_note_count = initial_note_count + with_notes.count()
 
         for instance in with_notes:
-            # Tasks:
-            # [x] - Convert markdown notes to HTML format
-            # [x] - Create a new Note instance (mark it as 'primary')
-            # [x] - Copy the content of the 'notes' field to the Note instance
-            # [x] - Link the Note instance to the original object (using GenericForeignKey)
-            # [ ] - Handle any associated images (if applicable)
 
             content = markdown_to_html(instance.notes)
 
@@ -59,17 +53,39 @@ def migrate_notes(apps, schema_editor):
                 primary=True
             )
 
-            progress.update(1)
-
             # Find any existing NotesImage objects associated with this instance
             images = NotesImage.objects.filter(model_type__iexact=model, model_id=instance.pk)
+            images.update(note=note)
 
-            # Point any associated images to the new Note instance
-            for image in images:
-                image.note = note
-                image.save()
+            # Find any notes images which do not directly reference the model instance, but are still referenced in the markdown content
+            unlinked_images = NotesImage.objects.filter(
+                note__isnull=True,
+                model_id__isnull=True
+            ).exclude(
+                image__isnull=True
+            )
+
+            for image in unlinked_images:
+                # If the image is referenced in the markdown content, link it to the note
+                if image.image.url in instance.notes:
+                    image.note = note
+                    image.save()
+
+            progress.update(1)
 
         assert Note.objects.count() == expected_note_count, f"Expected {expected_note_count} notes, but found {Note.objects.count()} after migration."
+
+
+def remove_unlinked_images(apps, schema_editor):
+    """Remove any NoteImage objects which are not linked to a Note instance."""
+
+    NotesImage = apps.get_model('common', 'NotesImage')
+
+    unlinked_images = NotesImage.objects.filter(note__isnull=True)
+
+    for image in unlinked_images:
+        image.delete()
+
 
 class Migration(migrations.Migration):
 
@@ -86,6 +102,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             code=migrate_notes,
+            reverse_code=migrations.RunPython.noop,
+        ),
+        migrations.RunPython(
+            code=remove_unlinked_images,
             reverse_code=migrations.RunPython.noop,
         )
     ]
