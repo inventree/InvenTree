@@ -1767,42 +1767,6 @@ class NewsFeedEntry(models.Model):
     )
 
 
-def rename_notes_image(instance, filename):
-    """Function for renaming uploading image file. Will store in the 'notes' directory."""
-    fname = os.path.basename(filename)
-    return os.path.join('notes', fname)
-
-
-class NotesImage(models.Model):
-    """Model for storing uploading images for the 'notes' fields of various models.
-
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
-    """
-
-    image = models.ImageField(
-        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
-    )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-
-    date = models.DateTimeField(auto_now_add=True)
-
-    model_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        validators=[common.validators.validate_notes_model_type],
-        help_text=_('Target model type for this image'),
-    )
-
-    model_id = models.IntegerField(
-        help_text=_('Target model ID for this image'),
-        blank=True,
-        null=True,
-        default=None,
-    )
-
-
 class CustomUnit(models.Model):
     """Model for storing custom physical unit definitions.
 
@@ -3116,6 +3080,46 @@ class Note(
 
     content = models.TextField(
         blank=True, verbose_name=_('Content'), help_text=_('Note content')
+    )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)
+
+    model_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        validators=[common.validators.validate_notes_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.IntegerField(
+        help_text=_('Target model ID for this image'),
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    note = models.ForeignKey(
+        Note, on_delete=models.SET_NULL, null=True, blank=True, related_name='images'
     )
 
 

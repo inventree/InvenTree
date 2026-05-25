@@ -106,4 +106,18 @@ class Migration(migrations.Migration):
                 models.Model,
             ),
         ),
+        # Once the 'Note' model has been created, we can add the foreign key to the 'NotesImage' model
+        # This will (initially) allow null values, so that existing images are not affected
+        # After the data migration, we will come back and mark this field as non-nullable
+        migrations.AddField(
+            model_name="notesimage",
+            name="note",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="common.note",
+                related_name='images',
+            ),
+        ),
     ]
