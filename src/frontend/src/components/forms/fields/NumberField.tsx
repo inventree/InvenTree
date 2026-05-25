@@ -15,8 +15,7 @@ export default function NumberField({
   placeholderWarningCompare,
   placeholderWarning,
   onChange,
-  selectAndFocus = false,
-  apiTriggerValue
+  selectAndFocus = false
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
@@ -26,7 +25,6 @@ export default function NumberField({
   placeholderWarning?: string;
   onChange: (value: any) => void;
   selectAndFocus?: boolean;
-  apiTriggerValue?: any;
 }>) {
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -68,7 +66,6 @@ export default function NumberField({
 
   useEffect(() => {
     if (!selectAndFocus) return;
-    if (apiTriggerValue === undefined) return;
     if (!inputRef.current) return;
 
     inputRef.current.focus();
@@ -77,7 +74,7 @@ export default function NumberField({
       if (!el) return;
       el.setSelectionRange(0, el.value.length);
     });
-  }, [apiTriggerValue, selectAndFocus]);
+  }, [selectAndFocus]);
 
   const rightSection = useMemo(() => {
     if (
