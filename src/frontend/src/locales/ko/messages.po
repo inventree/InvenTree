@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-19 07:10\n"
+"PO-Revision-Date: 2026-05-23 23:30\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -70,7 +70,7 @@ msgstr "삭제"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
 #: src/tables/FilterSelectDrawer.tsx:382
-#: src/tables/build/BuildOutputTable.tsx:613
+#: src/tables/build/BuildOutputTable.tsx:662
 msgid "Cancel"
 msgstr "취소"
 
@@ -92,8 +92,8 @@ msgstr "작업"
 #: src/components/nav/Header.tsx:192
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:77
-#: src/pages/part/PartDetail.tsx:1081
+#: src/pages/Index/Settings/UserSettings.tsx:73
+#: src/pages/part/PartDetail.tsx:1108
 msgid "Search"
 msgstr "찾다"
 
@@ -143,28 +143,29 @@ msgstr "아니요"
 #: src/forms/StockForms.tsx:1096
 #: src/forms/StockForms.tsx:1144
 #: src/forms/StockForms.tsx:1188
+#: src/forms/TransferOrderForms.tsx:232
 #: src/pages/build/BuildDetail.tsx:258
-#: src/pages/part/PartDetail.tsx:1133
+#: src/pages/part/PartDetail.tsx:1160
 #: src/pages/part/bom/BomCompare.tsx:203
-#: src/tables/ColumnRenderers.tsx:91
+#: src/tables/ColumnRenderers.tsx:93
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:247
 #: src/tables/part/RelatedPartTable.tsx:53
-#: src/tables/stock/StockTrackingTable.tsx:119
-#: src/tables/stock/StockTrackingTable.tsx:237
+#: src/tables/stock/StockTrackingTable.tsx:120
+#: src/tables/stock/StockTrackingTable.tsx:249
 msgid "Part"
 msgstr "부품"
 
 #: lib/enums/ModelInformation.tsx:30
-#: lib/enums/Roles.tsx:36
+#: lib/enums/Roles.tsx:37
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
-#: src/pages/Index/Settings/SystemSettings.tsx:206
+#: src/pages/Index/Settings/SystemSettings.tsx:204
 #: src/pages/part/CategoryDetail.tsx:137
 #: src/pages/part/CategoryDetail.tsx:284
 #: src/pages/part/CategoryDetail.tsx:339
 #: src/pages/part/CategoryDetail.tsx:381
-#: src/pages/part/PartDetail.tsx:862
+#: src/pages/part/PartDetail.tsx:889
 msgid "Parts"
 msgstr "부품"
 
@@ -185,8 +186,8 @@ msgstr "매개변수"
 #: src/components/panels/ParametersPanel.tsx:24
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:193
-#: src/pages/Index/Settings/SystemSettings.tsx:200
-#: src/pages/part/PartDetail.tsx:818
+#: src/pages/Index/Settings/SystemSettings.tsx:198
+#: src/pages/part/PartDetail.tsx:845
 msgid "Parameters"
 msgstr "매개변수"
 
@@ -211,7 +212,7 @@ msgstr "부품 테스트 템플릿 목록"
 #: lib/enums/ModelInformation.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:293
 #: src/pages/company/SupplierPartDetail.tsx:421
-#: src/pages/stock/StockDetail.tsx:290
+#: src/pages/stock/StockDetail.tsx:291
 #: src/tables/build/BuildAllocatedStockTable.tsx:152
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
 #: src/tables/purchasing/SupplierPartParametricTable.tsx:29
@@ -221,7 +222,7 @@ msgid "Supplier Part"
 msgstr "공급업체 부품"
 
 #: lib/enums/ModelInformation.tsx:60
-#: src/pages/purchasing/PurchasingIndex.tsx:140
+#: src/pages/purchasing/PurchasingIndex.tsx:151
 msgid "Supplier Parts"
 msgstr "공급업체 부품 목록"
 
@@ -234,7 +235,7 @@ msgid "Manufacturer Part"
 msgstr "제조업체 부품"
 
 #: lib/enums/ModelInformation.tsx:70
-#: src/pages/purchasing/PurchasingIndex.tsx:190
+#: src/pages/purchasing/PurchasingIndex.tsx:201
 msgid "Manufacturer Parts"
 msgstr "제조업체 부품"
 
@@ -245,10 +246,10 @@ msgid "Part Category"
 msgstr "부품 카테고리"
 
 #: lib/enums/ModelInformation.tsx:80
-#: lib/enums/Roles.tsx:38
+#: lib/enums/Roles.tsx:39
 #: src/pages/part/CategoryDetail.tsx:278
 #: src/pages/part/CategoryDetail.tsx:372
-#: src/pages/part/PartDetail.tsx:1122
+#: src/pages/part/PartDetail.tsx:1149
 msgid "Part Categories"
 msgstr "부품 카테고리 목록"
 
@@ -257,36 +258,37 @@ msgstr "부품 카테고리 목록"
 #: src/forms/BuildForms.tsx:665
 #: src/forms/BuildForms.tsx:827
 #: src/forms/SalesOrderForms.tsx:436
-#: src/pages/stock/StockDetail.tsx:1030
-#: src/tables/ColumnRenderers.tsx:129
+#: src/forms/TransferOrderForms.tsx:234
+#: src/pages/stock/StockDetail.tsx:1062
+#: src/tables/ColumnRenderers.tsx:131
 #: src/tables/part/PartTestResultTable.tsx:256
 #: src/tables/stock/InstalledItemsTable.tsx:66
-#: src/tables/stock/StockTrackingTable.tsx:65
-#: src/tables/stock/StockTrackingTable.tsx:72
-#: src/tables/stock/StockTrackingTable.tsx:247
+#: src/tables/stock/StockTrackingTable.tsx:66
+#: src/tables/stock/StockTrackingTable.tsx:73
+#: src/tables/stock/StockTrackingTable.tsx:259
 msgid "Stock Item"
 msgstr "재고 항목"
 
 #: lib/enums/ModelInformation.tsx:89
-#: lib/enums/Roles.tsx:46
+#: lib/enums/Roles.tsx:49
 #: src/pages/company/CompanyDetail.tsx:211
 #: src/pages/part/CategoryDetail.tsx:313
 #: src/pages/part/PartStockHistoryDetail.tsx:117
-#: src/pages/stock/LocationDetail.tsx:132
-#: src/pages/stock/LocationDetail.tsx:210
+#: src/pages/stock/LocationDetail.tsx:139
+#: src/pages/stock/LocationDetail.tsx:218
 msgid "Stock Items"
 msgstr "재고 품목"
 
 #: lib/enums/ModelInformation.tsx:98
-#: lib/enums/Roles.tsx:48
-#: src/pages/stock/LocationDetail.tsx:467
+#: lib/enums/Roles.tsx:51
+#: src/pages/stock/LocationDetail.tsx:511
 msgid "Stock Location"
 msgstr "재고 위치"
 
 #: lib/enums/ModelInformation.tsx:99
-#: src/pages/stock/LocationDetail.tsx:184
-#: src/pages/stock/LocationDetail.tsx:459
-#: src/pages/stock/StockDetail.tsx:1021
+#: src/pages/stock/LocationDetail.tsx:192
+#: src/pages/stock/LocationDetail.tsx:503
+#: src/pages/stock/StockDetail.tsx:1053
 msgid "Stock Locations"
 msgstr "재고 위치 목록"
 
@@ -299,7 +301,7 @@ msgid "Stock Location Types"
 msgstr "재고 위치 유형 목록"
 
 #: lib/enums/ModelInformation.tsx:114
-#: src/pages/part/PartDetail.tsx:775
+#: src/pages/part/PartDetail.tsx:797
 msgid "Stock History"
 msgstr "재고 이력"
 
@@ -348,7 +350,8 @@ msgstr "회사 목록"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:254
 #: src/pages/sales/ReturnOrderDetail.tsx:232
 #: src/pages/sales/SalesOrderDetail.tsx:225
-#: src/tables/ColumnRenderers.tsx:563
+#: src/pages/stock/TransferOrderDetail.tsx:178
+#: src/tables/ColumnRenderers.tsx:565
 #: src/tables/Filter.tsx:364
 #: src/tables/TableHoverCard.tsx:101
 msgid "Project Code"
@@ -363,21 +366,21 @@ msgstr "프로젝트 코드 목록"
 #: src/components/wizards/OrderPartsWizard.tsx:341
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:571
-#: src/pages/stock/StockDetail.tsx:353
+#: src/pages/stock/StockDetail.tsx:354
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
 #: src/tables/stock/StockItemTable.tsx:91
-#: src/tables/stock/StockTrackingTable.tsx:152
+#: src/tables/stock/StockTrackingTable.tsx:153
 msgid "Purchase Order"
 msgstr "발주서"
 
 #: lib/enums/ModelInformation.tsx:160
-#: lib/enums/Roles.tsx:40
+#: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/SystemSettings.tsx:329
+#: src/pages/Index/Settings/SystemSettings.tsx:328
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:269
-#: src/pages/part/PartDetail.tsx:739
-#: src/pages/purchasing/PurchasingIndex.tsx:83
+#: src/pages/part/PartDetail.tsx:747
+#: src/pages/purchasing/PurchasingIndex.tsx:94
 msgid "Purchase Orders"
 msgstr "발주서"
 
@@ -395,21 +398,21 @@ msgstr "발주서 항목"
 #: src/pages/sales/SalesOrderDetail.tsx:635
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:103
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:442
-#: src/pages/stock/StockDetail.tsx:362
+#: src/pages/stock/StockDetail.tsx:363
 #: src/tables/part/PartSalesAllocationsTable.tsx:42
 #: src/tables/sales/SalesOrderAllocationTable.tsx:111
 #: src/tables/sales/SalesOrderShipmentTable.tsx:136
-#: src/tables/stock/StockTrackingTable.tsx:163
+#: src/tables/stock/StockTrackingTable.tsx:164
 msgid "Sales Order"
 msgstr "판매 주문서"
 
 #: lib/enums/ModelInformation.tsx:176
-#: lib/enums/Roles.tsx:44
+#: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:116
-#: src/pages/Index/Settings/SystemSettings.tsx:347
+#: src/pages/Index/Settings/SystemSettings.tsx:346
 #: src/pages/company/CompanyDetail.tsx:224
-#: src/pages/part/PartDetail.tsx:751
-#: src/pages/sales/SalesIndex.tsx:85
+#: src/pages/part/PartDetail.tsx:759
+#: src/pages/sales/SalesIndex.tsx:105
 msgid "Sales Orders"
 msgstr "판매 주문서"
 
@@ -424,17 +427,17 @@ msgstr "판매 주문 출하 목록"
 
 #: lib/enums/ModelInformation.tsx:195
 #: src/pages/sales/ReturnOrderDetail.tsx:564
-#: src/tables/stock/StockTrackingTable.tsx:174
+#: src/tables/stock/StockTrackingTable.tsx:175
 msgid "Return Order"
 msgstr "반품 주문"
 
 #: lib/enums/ModelInformation.tsx:196
-#: lib/enums/Roles.tsx:42
+#: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:127
-#: src/pages/Index/Settings/SystemSettings.tsx:359
+#: src/pages/Index/Settings/SystemSettings.tsx:358
 #: src/pages/company/CompanyDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:758
-#: src/pages/sales/SalesIndex.tsx:125
+#: src/pages/part/PartDetail.tsx:766
+#: src/pages/sales/SalesIndex.tsx:145
 msgid "Return Orders"
 msgstr "반품 주문 목록"
 
@@ -447,16 +450,39 @@ msgid "Return Order Line Items"
 msgstr "반품 주문 라인 항목 목록"
 
 #: lib/enums/ModelInformation.tsx:211
+#: src/pages/stock/TransferOrderDetail.tsx:524
+#: src/tables/stock/StockTrackingTable.tsx:186
+#: src/tables/stock/TransferOrderAllocationTable.tsx:95
+msgid "Transfer Order"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:212
+#: lib/enums/Roles.tsx:45
+#: src/pages/Index/Settings/SystemSettings.tsx:371
+#: src/pages/part/PartDetail.tsx:783
+#: src/pages/stock/LocationDetail.tsx:232
+msgid "Transfer Orders"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:221
+msgid "Transfer Order Line Item"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:222
+msgid "Transfer Order Line Items"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:227
 #: src/tables/company/AddressTable.tsx:52
 msgid "Address"
 msgstr "주소"
 
-#: lib/enums/ModelInformation.tsx:212
+#: lib/enums/ModelInformation.tsx:228
 #: src/pages/company/CompanyDetail.tsx:266
 msgid "Addresses"
 msgstr "주소 목록"
 
-#: lib/enums/ModelInformation.tsx:218
+#: lib/enums/ModelInformation.tsx:234
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:135
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:230
@@ -465,37 +491,37 @@ msgstr "주소 목록"
 msgid "Contact"
 msgstr "연락"
 
-#: lib/enums/ModelInformation.tsx:219
+#: lib/enums/ModelInformation.tsx:235
 #: src/pages/company/CompanyDetail.tsx:260
 #: src/pages/core/CoreIndex.tsx:34
 msgid "Contacts"
 msgstr "연락처 목록"
 
-#: lib/enums/ModelInformation.tsx:225
-#: src/tables/ColumnRenderers.tsx:645
+#: lib/enums/ModelInformation.tsx:241
+#: src/tables/ColumnRenderers.tsx:647
 msgid "Owner"
 msgstr "소유자"
 
-#: lib/enums/ModelInformation.tsx:226
+#: lib/enums/ModelInformation.tsx:242
 msgid "Owners"
 msgstr "소유자 목록"
 
-#: lib/enums/ModelInformation.tsx:232
+#: lib/enums/ModelInformation.tsx:248
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
-#: src/tables/ColumnRenderers.tsx:596
+#: src/tables/ColumnRenderers.tsx:598
 #: src/tables/Filter.tsx:413
 #: src/tables/settings/ApiTokenTable.tsx:107
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:78
-#: src/tables/stock/StockTrackingTable.tsx:225
-#: src/tables/stock/StockTrackingTable.tsx:273
+#: src/tables/stock/StockTrackingTable.tsx:237
+#: src/tables/stock/StockTrackingTable.tsx:285
 msgid "User"
 msgstr "사용자"
 
-#: lib/enums/ModelInformation.tsx:233
+#: lib/enums/ModelInformation.tsx:249
 #: src/components/nav/NavigationDrawer.tsx:105
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
@@ -503,12 +529,12 @@ msgstr "사용자"
 msgid "Users"
 msgstr "사용자 목록"
 
-#: lib/enums/ModelInformation.tsx:239
+#: lib/enums/ModelInformation.tsx:255
 #: src/pages/core/GroupDetail.tsx:78
 msgid "Group"
 msgstr "그룹"
 
-#: lib/enums/ModelInformation.tsx:240
+#: lib/enums/ModelInformation.tsx:256
 #: src/components/nav/NavigationDrawer.tsx:111
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
@@ -518,67 +544,67 @@ msgstr "그룹"
 msgid "Groups"
 msgstr "그룹 목록"
 
-#: lib/enums/ModelInformation.tsx:247
+#: lib/enums/ModelInformation.tsx:263
 msgid "Import Session"
 msgstr "세션 가져오기"
 
-#: lib/enums/ModelInformation.tsx:248
+#: lib/enums/ModelInformation.tsx:264
 msgid "Import Sessions"
 msgstr "세션 목록 가져오기"
 
-#: lib/enums/ModelInformation.tsx:255
+#: lib/enums/ModelInformation.tsx:271
 msgid "Label Template"
 msgstr "라벨 템플릿"
 
-#: lib/enums/ModelInformation.tsx:256
+#: lib/enums/ModelInformation.tsx:272
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:207
 msgid "Label Templates"
 msgstr "라벨 템플릿 목록"
 
-#: lib/enums/ModelInformation.tsx:263
+#: lib/enums/ModelInformation.tsx:279
 msgid "Report Template"
 msgstr "보고서 템플릿"
 
-#: lib/enums/ModelInformation.tsx:264
+#: lib/enums/ModelInformation.tsx:280
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:213
 msgid "Report Templates"
 msgstr "리포트 템플릿 목록"
 
-#: lib/enums/ModelInformation.tsx:271
+#: lib/enums/ModelInformation.tsx:287
 #: src/components/plugins/PluginDrawer.tsx:153
 msgid "Plugin Configuration"
 msgstr "플러그인  구성"
 
-#: lib/enums/ModelInformation.tsx:272
+#: lib/enums/ModelInformation.tsx:288
 msgid "Plugin Configurations"
 msgstr "플러그인 구성 목록"
 
-#: lib/enums/ModelInformation.tsx:279
+#: lib/enums/ModelInformation.tsx:295
 msgid "Content Type"
 msgstr "콘텐츠 타입"
 
-#: lib/enums/ModelInformation.tsx:280
+#: lib/enums/ModelInformation.tsx:296
 msgid "Content Types"
 msgstr "콘텐츠 타입 목록"
 
-#: lib/enums/ModelInformation.tsx:285
+#: lib/enums/ModelInformation.tsx:301
 msgid "Selection List"
 msgstr "선택 목록"
 
-#: lib/enums/ModelInformation.tsx:286
+#: lib/enums/ModelInformation.tsx:302
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:21
 msgid "Selection Lists"
 msgstr "선택 목록"
 
-#: lib/enums/ModelInformation.tsx:292
+#: lib/enums/ModelInformation.tsx:308
 msgid "Selection Entry"
 msgstr "선택 항목"
 
-#: lib/enums/ModelInformation.tsx:293
+#: lib/enums/ModelInformation.tsx:309
 msgid "Selection Entries"
 msgstr "선택 항목"
 
-#: lib/enums/ModelInformation.tsx:299
+#: lib/enums/ModelInformation.tsx:315
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:295
@@ -608,27 +634,27 @@ msgstr "선택 항목"
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
 #: src/tables/InvenTreeTableHeader.tsx:128
-#: src/tables/bom/BomTable.tsx:581
+#: src/tables/bom/BomTable.tsx:591
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
 msgid "Error"
 msgstr "오류"
 
-#: lib/enums/ModelInformation.tsx:300
+#: lib/enums/ModelInformation.tsx:316
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
 msgstr "오류 목록"
 
-#: lib/enums/Roles.tsx:32
+#: lib/enums/Roles.tsx:33
 msgid "Admin"
 msgstr "관리"
 
-#: lib/enums/Roles.tsx:34
+#: lib/enums/Roles.tsx:35
 #: src/defaults/actions.tsx:146
-#: src/pages/Index/Settings/SystemSettings.tsx:302
-#: src/pages/build/BuildIndex.tsx:62
-#: src/pages/part/PartDetail.tsx:768
+#: src/pages/Index/Settings/SystemSettings.tsx:301
+#: src/pages/build/BuildIndex.tsx:73
+#: src/pages/part/PartDetail.tsx:776
 #: src/pages/sales/SalesOrderDetail.tsx:431
 msgid "Build Orders"
 msgstr "생산 오더"
@@ -758,7 +784,7 @@ msgstr "바코드가 예상 모델 유형과 일치하지 않습니다."
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:572
+#: src/tables/bom/BomTable.tsx:582
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "성공"
@@ -809,12 +835,13 @@ msgid "Failed to link barcode"
 msgstr "바코드 연결 실패"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetail.tsx:371
+#: src/pages/part/PartDetail.tsx:379
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:223
 #: src/pages/sales/ReturnOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderDetail.tsx:182
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:120
-#: src/pages/stock/StockDetail.tsx:187
+#: src/pages/stock/StockDetail.tsx:188
+#: src/pages/stock/TransferOrderDetail.tsx:171
 msgid "Link"
 msgstr "링크"
 
@@ -949,45 +976,82 @@ msgstr "알림 구독 취소"
 msgid "Subscribe to notifications"
 msgstr "알림 구독"
 
-#: src/components/calendar/Calendar.tsx:121
-#: src/components/calendar/Calendar.tsx:184
+#: src/components/calendar/Calendar.tsx:164
+#: src/components/calendar/Calendar.tsx:227
 msgid "Calendar Filters"
 msgstr "달력 필터 편집"
-
-#: src/components/calendar/Calendar.tsx:136
-msgid "Previous month"
-msgstr "지난달"
-
-#: src/components/calendar/Calendar.tsx:145
-msgid "Select month"
-msgstr "월 선택"
-
-#: src/components/calendar/Calendar.tsx:166
-msgid "Next month"
-msgstr "다음 달"
 
 #: src/components/calendar/Calendar.tsx:178
 #: src/tables/InvenTreeTableHeader.tsx:294
 #~ msgid "Download data"
 #~ msgstr "Download data"
 
-#: src/components/calendar/Calendar.tsx:197
-#: src/tables/InvenTreeTableHeader.tsx:292
+#: src/components/calendar/Calendar.tsx:179
+msgid "Previous month"
+msgstr "지난달"
+
+#: src/components/calendar/Calendar.tsx:188
+msgid "Select month"
+msgstr "월 선택"
+
+#: src/components/calendar/Calendar.tsx:209
+msgid "Next month"
+msgstr "다음 달"
+
+#: src/components/calendar/Calendar.tsx:240
+#: src/tables/InvenTreeTableHeader.tsx:293
 msgid "Export data"
 msgstr "1"
 
-#: src/components/calendar/OrderCalendar.tsx:141
+#: src/components/calendar/OrderCalendar.tsx:144
 msgid "Order Updated"
 msgstr "주문이 업데이트되었습니다"
 
-#: src/components/calendar/OrderCalendar.tsx:151
+#: src/components/calendar/OrderCalendar.tsx:154
 msgid "Error updating order"
 msgstr "주문 업데이트 중 오류가 발생했습니다"
 
-#: src/components/calendar/OrderCalendar.tsx:187
+#: src/components/calendar/OrderCalendar.tsx:190
+#: src/components/calendar/OrderCalendarToolTip.tsx:48
 #: src/tables/Filter.tsx:194
 msgid "Overdue"
 msgstr "지연"
+
+#: src/components/calendar/OrderCalendarToolTip.tsx:38
+#: src/pages/build/BuildDetail.tsx:416
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:287
+#: src/pages/sales/ReturnOrderDetail.tsx:266
+#: src/pages/sales/SalesOrderDetail.tsx:258
+#: src/pages/stock/TransferOrderDetail.tsx:212
+#: src/tables/ColumnRenderers.tsx:690
+msgid "Start Date"
+msgstr "시작일"
+
+#: src/components/calendar/OrderCalendarToolTip.tsx:44
+#: src/pages/build/BuildDetail.tsx:424
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:295
+#: src/pages/sales/ReturnOrderDetail.tsx:274
+#: src/pages/sales/SalesOrderDetail.tsx:266
+#: src/pages/stock/TransferOrderDetail.tsx:220
+#: src/tables/ColumnRenderers.tsx:698
+#: src/tables/part/PartPurchaseOrdersTable.tsx:101
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:153
+#: src/tables/sales/SalesOrderLineItemTable.tsx:130
+#: src/tables/stock/TransferOrderLineItemTable.tsx:114
+msgid "Target Date"
+msgstr "목표 날짜"
+
+#: src/components/calendar/OrderCalendarToolTip.tsx:55
+#: src/pages/build/BuildDetail.tsx:367
+#: src/pages/part/PartDetail.tsx:556
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
+#: src/pages/sales/ReturnOrderDetail.tsx:240
+#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/pages/stock/TransferOrderDetail.tsx:186
+#: src/tables/ColumnRenderers.tsx:667
+#: src/tables/Filter.tsx:397
+msgid "Responsible"
+msgstr "책임이 있는"
 
 #: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Failed to load dashboard widgets."
@@ -1170,7 +1234,7 @@ msgid "Show the number of sales orders which are assigned to you"
 msgstr "나에게 할당된 판매 주문 수를 표시합니다"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:150
-#: src/pages/sales/SalesIndex.tsx:113
+#: src/pages/sales/SalesIndex.tsx:133
 msgid "Pending Shipments"
 msgstr "배송 대기 중"
 
@@ -1362,9 +1426,11 @@ msgstr "이 항목에 연결된 이미지를 제거하시겠습니까?"
 #: src/tables/build/BuildAllocatedStockTable.tsx:180
 #: src/tables/build/BuildAllocatedStockTable.tsx:276
 #: src/tables/build/BuildLineTable.tsx:116
-#: src/tables/build/BuildLineTable.tsx:671
+#: src/tables/build/BuildLineTable.tsx:674
 #: src/tables/sales/SalesOrderAllocationTable.tsx:223
 #: src/tables/sales/SalesOrderAllocationTable.tsx:246
+#: src/tables/stock/TransferOrderAllocationTable.tsx:180
+#: src/tables/stock/TransferOrderAllocationTable.tsx:196
 msgid "Remove"
 msgstr "제거하다"
 
@@ -1397,7 +1463,7 @@ msgid "Image has been uploaded successfully"
 msgstr "이미지가 성공적으로 업로드되었습니다."
 
 #: src/components/details/DetailsImage.tsx:229
-#: src/tables/general/AttachmentTable.tsx:201
+#: src/tables/general/AttachmentTable.tsx:206
 msgid "Upload Error"
 msgstr "업로드 오류"
 
@@ -1859,8 +1925,8 @@ msgstr "주인"
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:93
-#: src/pages/part/PartDetail.tsx:294
-#: src/pages/stock/LocationDetail.tsx:93
+#: src/pages/part/PartDetail.tsx:302
+#: src/pages/stock/LocationDetail.tsx:100
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
 #: src/tables/machine/MachineTypeTable.tsx:252
@@ -1928,7 +1994,7 @@ msgstr "호스트 선택 저장"
 #~ msgstr "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/InstanceOptions.tsx:119
-#: src/pages/Index/Settings/SystemSettings.tsx:44
+#: src/pages/Index/Settings/SystemSettings.tsx:41
 msgid "Server"
 msgstr "섬기는 사람"
 
@@ -1949,7 +2015,7 @@ msgstr "API 버전"
 #: src/defaults/actions.tsx:173
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:226
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:372
+#: src/pages/Index/Settings/SystemSettings.tsx:385
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -2101,7 +2167,7 @@ msgstr "행 검증 상태로 필터링"
 
 #: src/components/importer/ImportDataSelector.tsx:405
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:585
+#: src/tables/build/BuildOutputTable.tsx:634
 msgid "Complete"
 msgstr "완벽한"
 
@@ -2359,7 +2425,7 @@ msgstr "그룹 역할 업데이트 중"
 #: src/components/settings/ConfigValueList.tsx:42
 #: src/pages/part/pricing/BomPricingPanel.tsx:151
 #: src/pages/part/pricing/VariantPricingPanel.tsx:51
-#: src/tables/ColumnRenderers.tsx:728
+#: src/tables/ColumnRenderers.tsx:730
 #: src/tables/purchasing/SupplierPartTable.tsx:186
 msgid "Updated"
 msgstr "업데이트됨"
@@ -2405,10 +2471,10 @@ msgstr "항목 없음"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:904
-#: src/pages/stock/StockDetail.tsx:266
-#: src/pages/stock/StockDetail.tsx:966
-#: src/tables/ColumnRenderers.tsx:243
+#: src/pages/part/PartDetail.tsx:931
+#: src/pages/stock/StockDetail.tsx:267
+#: src/pages/stock/StockDetail.tsx:998
+#: src/tables/ColumnRenderers.tsx:245
 #: src/tables/build/BuildAllocatedStockTable.tsx:125
 #: src/tables/build/BuildLineTable.tsx:198
 #: src/tables/part/PartTable.tsx:155
@@ -2666,8 +2732,8 @@ msgstr "{code}에 대해 더 알아보기"
 #: src/components/nav/Header.tsx:211
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:135
-#: src/pages/Index/Settings/UserSettings.tsx:109
+#: src/pages/Index/Settings/SystemSettings.tsx:133
+#: src/pages/Index/Settings/UserSettings.tsx:105
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -2714,8 +2780,8 @@ msgstr "설정"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:86
-#: src/pages/Index/Settings/UserSettings.tsx:144
-#: src/pages/Index/Settings/UserSettings.tsx:148
+#: src/pages/Index/Settings/UserSettings.tsx:142
+#: src/pages/Index/Settings/UserSettings.tsx:146
 msgid "User Settings"
 msgstr "사용자 설정"
 
@@ -2732,8 +2798,8 @@ msgstr "사용자 설정"
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:155
-#: src/pages/Index/Settings/SystemSettings.tsx:389
-#: src/pages/Index/Settings/SystemSettings.tsx:394
+#: src/pages/Index/Settings/SystemSettings.tsx:404
+#: src/pages/Index/Settings/SystemSettings.tsx:409
 msgid "System Settings"
 msgstr "시스템 설정"
 
@@ -2783,41 +2849,42 @@ msgstr "로그아웃"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:804
-#: src/pages/Index/Settings/SystemSettings.tsx:247
-#: src/pages/part/PartDetail.tsx:651
-#: src/pages/stock/LocationDetail.tsx:426
-#: src/pages/stock/LocationDetail.tsx:467
-#: src/pages/stock/StockDetail.tsx:644
+#: src/pages/Index/Settings/SystemSettings.tsx:246
+#: src/pages/part/PartDetail.tsx:659
+#: src/pages/stock/LocationDetail.tsx:470
+#: src/pages/stock/LocationDetail.tsx:511
+#: src/pages/stock/StockDetail.tsx:676
+#: src/pages/stock/TransferOrderDetail.tsx:530
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Stock"
 msgstr "재고"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:48
-#: src/pages/Index/Settings/SystemSettings.tsx:297
+#: src/pages/Index/Settings/SystemSettings.tsx:296
 #: src/pages/build/BuildDetail.tsx:814
-#: src/pages/build/BuildIndex.tsx:96
+#: src/pages/build/BuildIndex.tsx:107
 msgid "Manufacturing"
 msgstr "조작"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:54
-#: src/pages/Index/Settings/SystemSettings.tsx:325
+#: src/pages/Index/Settings/SystemSettings.tsx:324
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:268
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:368
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:574
-#: src/pages/purchasing/PurchasingIndex.tsx:225
+#: src/pages/purchasing/PurchasingIndex.tsx:236
 msgid "Purchasing"
 msgstr "구매"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:60
-#: src/pages/Index/Settings/SystemSettings.tsx:342
+#: src/pages/Index/Settings/SystemSettings.tsx:341
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:569
-#: src/pages/sales/SalesIndex.tsx:189
+#: src/pages/sales/SalesIndex.tsx:209
 #: src/pages/sales/SalesOrderDetail.tsx:640
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:444
 msgid "Sales"
@@ -2874,20 +2941,20 @@ msgstr "검색 그룹 제거"
 
 #: src/components/nav/SearchDrawer.tsx:304
 #: src/pages/company/ManufacturerPartDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:726
+#: src/pages/part/PartDetail.tsx:734
 #: src/pages/part/PartSupplierDetail.tsx:15
-#: src/pages/purchasing/PurchasingIndex.tsx:111
+#: src/pages/purchasing/PurchasingIndex.tsx:122
 msgid "Suppliers"
 msgstr "공급자"
 
 #: src/components/nav/SearchDrawer.tsx:314
 #: src/pages/part/PartSupplierDetail.tsx:23
-#: src/pages/purchasing/PurchasingIndex.tsx:161
+#: src/pages/purchasing/PurchasingIndex.tsx:172
 msgid "Manufacturers"
 msgstr "제조사"
 
 #: src/components/nav/SearchDrawer.tsx:324
-#: src/pages/sales/SalesIndex.tsx:153
+#: src/pages/sales/SalesIndex.tsx:173
 msgid "Customers"
 msgstr "고객"
 
@@ -2939,7 +3006,7 @@ msgstr "첨부파일"
 
 #: src/components/panels/NotesPanel.tsx:27
 #: src/tables/part/PartTestResultTable.tsx:214
-#: src/tables/stock/StockTrackingTable.tsx:267
+#: src/tables/stock/StockTrackingTable.tsx:279
 msgid "Notes"
 msgstr "메모"
 
@@ -2988,12 +3055,13 @@ msgstr "플러그인 정보"
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:148
 #: src/pages/part/CategoryDetail.tsx:113
-#: src/pages/part/PartDetail.tsx:308
+#: src/pages/part/PartDetail.tsx:316
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
-#: src/pages/stock/LocationDetail.tsx:113
-#: src/tables/ColumnRenderers.tsx:456
+#: src/pages/stock/LocationDetail.tsx:120
+#: src/pages/stock/TransferOrderDetail.tsx:123
+#: src/tables/ColumnRenderers.tsx:458
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:159
 #: src/tables/machine/MachineTypeTable.tsx:255
@@ -3008,7 +3076,7 @@ msgstr "작가"
 #: src/components/plugins/PluginDrawer.tsx:83
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:38
-#: src/tables/ColumnRenderers.tsx:674
+#: src/tables/ColumnRenderers.tsx:676
 #: src/tables/part/PartTestResultTable.tsx:222
 msgid "Date"
 msgstr "날짜"
@@ -3018,7 +3086,7 @@ msgstr "날짜"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
-#: src/pages/part/PartDetail.tsx:472
+#: src/pages/part/PartDetail.tsx:480
 #: src/tables/bom/UsedInTable.tsx:105
 #: src/tables/company/CompanyTable.tsx:66
 #: src/tables/company/CompanyTable.tsx:101
@@ -3065,8 +3133,8 @@ msgstr "패키지"
 
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
-#: src/pages/Index/Settings/PluginSettingsGroup.tsx:105
-#: src/pages/Index/Settings/UserSettings.tsx:131
+#: src/pages/Index/Settings/PluginSettingsGroup.tsx:108
+#: src/pages/Index/Settings/UserSettings.tsx:127
 msgid "Plugin Settings"
 msgstr "플러그인 설정"
 
@@ -3095,19 +3163,19 @@ msgstr "플러그인 설정"
 #~ msgid "Plugin did not provide settings rendering function"
 #~ msgstr "Plugin did not provide settings rendering function"
 
-#: src/components/plugins/PluginUIFeature.tsx:103
+#: src/components/plugins/PluginUIFeature.tsx:104
 msgid "Error occurred while rendering the template editor."
 msgstr "템플릿 편집기를 렌더링하는 중 오류가 발생했습니다"
 
-#: src/components/plugins/PluginUIFeature.tsx:120
+#: src/components/plugins/PluginUIFeature.tsx:121
 msgid "Error Loading Plugin Editor"
 msgstr "플러그인 편집기 불러오기 오류"
 
-#: src/components/plugins/PluginUIFeature.tsx:158
+#: src/components/plugins/PluginUIFeature.tsx:159
 msgid "Error occurred while rendering the template preview."
 msgstr "템플릿 미리보기를 렌더링하는 중 오류가 발생했습니다"
 
-#: src/components/plugins/PluginUIFeature.tsx:169
+#: src/components/plugins/PluginUIFeature.tsx:170
 msgid "Error Loading Plugin Preview"
 msgstr "플러그인 미리보기 불러오기 오류"
 
@@ -3127,7 +3195,7 @@ msgstr "플러그인 콘텐츠를 불러오는 중 오류가 발생했습니다"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:251
+#: src/components/render/Instance.tsx:255
 msgid "Unknown model: {model_name}"
 msgstr "알 수 없는 모델: {model_name}"
 
@@ -3158,8 +3226,8 @@ msgstr "선적"
 #: src/pages/company/CompanyDetail.tsx:330
 #: src/pages/company/SupplierPartDetail.tsx:381
 #: src/pages/core/UserDetail.tsx:211
-#: src/pages/part/PartDetail.tsx:949
-#: src/tables/ColumnRenderers.tsx:611
+#: src/pages/part/PartDetail.tsx:976
+#: src/tables/ColumnRenderers.tsx:613
 msgid "Inactive"
 msgstr "비활성"
 
@@ -3170,7 +3238,7 @@ msgid "Virtual"
 msgstr "가상"
 
 #: src/components/render/Part.tsx:34
-#: src/tables/bom/BomTable.tsx:324
+#: src/tables/bom/BomTable.tsx:334
 #: src/tables/part/PartTable.tsx:170
 msgid "No stock"
 msgstr "재고 없음"
@@ -3179,8 +3247,8 @@ msgstr "재고 없음"
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:200
 #: src/pages/company/SupplierPartDetail.tsx:402
-#: src/pages/part/PartDetail.tsx:931
-#: src/tables/bom/BomTable.tsx:467
+#: src/pages/part/PartDetail.tsx:958
+#: src/tables/bom/BomTable.tsx:477
 #: src/tables/build/BuildLineTable.tsx:228
 #: src/tables/part/PartTable.tsx:126
 msgid "On Order"
@@ -3188,24 +3256,24 @@ msgstr "주문시"
 
 #: src/components/render/Part.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/part/PartDetail.tsx:437
-#: src/pages/part/PartDetail.tsx:937
-#: src/pages/stock/StockDetail.tsx:949
+#: src/pages/part/PartDetail.tsx:445
+#: src/pages/part/PartDetail.tsx:964
+#: src/pages/stock/StockDetail.tsx:981
 #: src/tables/part/PartTestResultTable.tsx:306
 #: src/tables/stock/StockItemTable.tsx:213
 msgid "In Production"
 msgstr "생산 중"
 
 #: src/components/render/Part.tsx:78
-#: src/tables/stock/StockTrackingTable.tsx:261
+#: src/tables/stock/StockTrackingTable.tsx:273
 msgid "Details"
 msgstr "상세 정보"
 
 #: src/components/render/Part.tsx:116
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/part/PartDetail.tsx:337
-#: src/tables/ColumnRenderers.tsx:411
-#: src/tables/ColumnRenderers.tsx:420
+#: src/pages/part/PartDetail.tsx:345
+#: src/tables/ColumnRenderers.tsx:413
+#: src/tables/ColumnRenderers.tsx:422
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:78
 msgid "Category"
@@ -3227,19 +3295,20 @@ msgstr "카테고리"
 #: src/forms/StockForms.tsx:1189
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
-#: src/pages/stock/StockDetail.tsx:299
-#: src/tables/ColumnRenderers.tsx:363
-#: src/tables/ColumnRenderers.tsx:372
+#: src/pages/stock/StockDetail.tsx:300
+#: src/tables/ColumnRenderers.tsx:365
+#: src/tables/ColumnRenderers.tsx:374
 #: src/tables/Filter.tsx:478
-#: src/tables/stock/StockTrackingTable.tsx:130
+#: src/tables/stock/StockTrackingTable.tsx:131
 msgid "Location"
 msgstr "위치"
 
 #: src/components/render/Stock.tsx:99
-#: src/pages/stock/StockDetail.tsx:199
-#: src/pages/stock/StockDetail.tsx:954
+#: src/pages/stock/StockDetail.tsx:200
+#: src/pages/stock/StockDetail.tsx:986
 #: src/tables/build/BuildOutputTable.tsx:109
 #: src/tables/sales/SalesOrderAllocationTable.tsx:139
+#: src/tables/stock/TransferOrderAllocationTable.tsx:127
 msgid "Serial Number"
 msgstr "시리얼 번호"
 
@@ -3253,6 +3322,7 @@ msgstr "시리얼 번호"
 #: src/forms/ReturnOrderForms.tsx:245
 #: src/forms/SalesOrderForms.tsx:437
 #: src/forms/StockForms.tsx:851
+#: src/forms/TransferOrderForms.tsx:235
 #: src/pages/part/PartStockHistoryDetail.tsx:61
 #: src/pages/part/PartStockHistoryDetail.tsx:241
 #: src/pages/part/PartStockHistoryDetail.tsx:265
@@ -3261,15 +3331,15 @@ msgstr "시리얼 번호"
 #: src/pages/part/pricing/BomPricingPanel.tsx:106
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
-#: src/pages/stock/StockDetail.tsx:259
-#: src/pages/stock/StockDetail.tsx:960
+#: src/pages/stock/StockDetail.tsx:260
+#: src/pages/stock/StockDetail.tsx:992
 #: src/tables/build/BuildLineTable.tsx:86
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:277
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:202
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
-#: src/tables/stock/StockTrackingTable.tsx:104
+#: src/tables/stock/StockTrackingTable.tsx:105
 msgid "Quantity"
 msgstr "수량"
 
@@ -3869,7 +3939,7 @@ msgid "Next"
 msgstr "다음"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:971
+#: src/pages/part/PartDetail.tsx:998
 #: src/tables/part/PartTable.tsx:291
 msgid "Edit Part"
 msgstr "부품 편집"
@@ -3962,8 +4032,8 @@ msgstr "판매 요건"
 #: src/forms/StockForms.tsx:1191
 #: src/pages/company/SupplierPartDetail.tsx:193
 #: src/pages/company/SupplierPartDetail.tsx:386
-#: src/pages/part/PartDetail.tsx:384
-#: src/pages/part/PartDetail.tsx:898
+#: src/pages/part/PartDetail.tsx:392
+#: src/pages/part/PartDetail.tsx:925
 #: src/tables/Filter.tsx:134
 #: src/tables/purchasing/SupplierPartTable.tsx:269
 msgid "In Stock"
@@ -4062,9 +4132,10 @@ msgid "Please correct the errors in the selected parts"
 msgstr "선택한 부분의 오류를 수정해주세요"
 
 #: src/components/wizards/OrderPartsWizard.tsx:620
-#: src/tables/build/BuildLineTable.tsx:844
+#: src/tables/build/BuildLineTable.tsx:847
 #: src/tables/part/PartTable.tsx:405
 #: src/tables/sales/SalesOrderLineItemTable.tsx:368
+#: src/tables/stock/TransferOrderLineItemTable.tsx:330
 msgid "Order Parts"
 msgstr "자재 발주"
 
@@ -4585,7 +4656,7 @@ msgstr "대체 부품이 추가되었습니다"
 #: src/forms/BuildForms.tsx:435
 #: src/forms/BuildForms.tsx:717
 #: src/tables/build/BuildAllocatedStockTable.tsx:147
-#: src/tables/build/BuildOutputTable.tsx:635
+#: src/tables/build/BuildOutputTable.tsx:684
 #: src/tables/part/PartTestResultTable.tsx:280
 msgid "Build Output"
 msgstr "생산 결과물"
@@ -4607,9 +4678,10 @@ msgstr "완료할 수량"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:169
 #: src/pages/sales/ReturnOrderDetail.tsx:136
 #: src/pages/sales/SalesOrderDetail.tsx:126
-#: src/pages/stock/StockDetail.tsx:171
+#: src/pages/stock/StockDetail.tsx:172
+#: src/pages/stock/TransferOrderDetail.tsx:129
 #: src/tables/Filter.tsx:352
-#: src/tables/build/BuildOutputTable.tsx:445
+#: src/tables/build/BuildOutputTable.tsx:494
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:318
@@ -4619,17 +4691,13 @@ msgstr "완료할 수량"
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:118
 #: src/tables/stock/StockItemTable.tsx:181
-#: src/tables/stock/StockTrackingTable.tsx:82
+#: src/tables/stock/StockTrackingTable.tsx:83
 msgid "Status"
 msgstr "상태"
 
 #: src/forms/BuildForms.tsx:385
 msgid "Complete Build Outputs"
 msgstr "생산 결과물 완료"
-
-#: src/forms/BuildForms.tsx:388
-msgid "Build outputs have been completed"
-msgstr "생산 결과물이 완료되었습니다"
 
 #: src/forms/BuildForms.tsx:408
 #~ msgid "Selected build outputs will be deleted"
@@ -4652,10 +4720,6 @@ msgstr "선택한 생산 결과물은 완료 처리되지만 폐기된 것으로
 msgid "Allocated stock items will be consumed"
 msgstr "할당된 재고 품목이 소모됩니다"
 
-#: src/forms/BuildForms.tsx:469
-msgid "Build outputs have been scrapped"
-msgstr "생산 결과물이 폐기되었습니다"
-
 #: src/forms/BuildForms.tsx:470
 #~ msgid "Remove line"
 #~ msgstr "Remove line"
@@ -4673,18 +4737,16 @@ msgstr "선택한 생산 결과물이 제거됩니다"
 msgid "Allocated stock items will be returned to stock"
 msgstr "할당된 재고 품목은 재고로 반환됩니다."
 
-#: src/forms/BuildForms.tsx:530
-msgid "Build outputs have been cancelled"
-msgstr "생산 결과물이 취소되었습니다"
-
 #: src/forms/BuildForms.tsx:663
 #: src/pages/build/BuildDetail.tsx:265
 #: src/pages/company/ManufacturerPartDetail.tsx:84
 #: src/pages/company/SupplierPartDetail.tsx:99
-#: src/pages/part/PartDetail.tsx:301
-#: src/pages/stock/StockDetail.tsx:154
-#: src/tables/ColumnRenderers.tsx:116
+#: src/pages/part/PartDetail.tsx:309
+#: src/pages/stock/StockDetail.tsx:155
+#: src/tables/ColumnRenderers.tsx:118
 #: src/tables/part/RelatedPartTable.tsx:73
+#: src/tables/stock/TransferOrderAllocationTable.tsx:120
+#: src/tables/stock/TransferOrderLineItemTable.tsx:95
 msgid "IPN"
 msgstr "품목 번호(IPN)"
 
@@ -4692,39 +4754,49 @@ msgstr "품목 번호(IPN)"
 #: src/forms/BuildForms.tsx:829
 #: src/forms/BuildForms.tsx:930
 #: src/forms/SalesOrderForms.tsx:435
-#: src/pages/part/PartDetail.tsx:919
+#: src/forms/TransferOrderForms.tsx:233
+#: src/pages/part/PartDetail.tsx:946
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:188
 #: src/tables/sales/SalesOrderLineItemTable.tsx:340
 #: src/tables/stock/StockItemTable.tsx:192
+#: src/tables/stock/TransferOrderLineItemTable.tsx:490
 msgid "Allocated"
 msgstr "할당됨"
 
 #: src/forms/BuildForms.tsx:699
 #: src/forms/SalesOrderForms.tsx:424
+#: src/forms/TransferOrderForms.tsx:222
 #: src/pages/build/BuildDetail.tsx:127
 #: src/pages/build/BuildDetail.tsx:384
+#: src/pages/stock/TransferOrderDetail.tsx:110
+#: src/tables/stock/TransferOrderTable.tsx:105
 msgid "Source Location"
 msgstr "원본 위치"
 
 #: src/forms/BuildForms.tsx:700
 #: src/forms/SalesOrderForms.tsx:425
+#: src/forms/TransferOrderForms.tsx:223
 msgid "Select the source location for the stock allocation"
 msgstr "재고 할당의 원본 위치를 선택하세요"
 
 #: src/forms/BuildForms.tsx:732
 #: src/forms/SalesOrderForms.tsx:466
-#: src/tables/build/BuildLineTable.tsx:587
-#: src/tables/build/BuildLineTable.tsx:760
-#: src/tables/build/BuildLineTable.tsx:859
+#: src/forms/TransferOrderForms.tsx:256
+#: src/tables/build/BuildLineTable.tsx:590
+#: src/tables/build/BuildLineTable.tsx:763
+#: src/tables/build/BuildLineTable.tsx:862
 #: src/tables/build/BuildOutputTable.tsx:236
 #: src/tables/sales/SalesOrderLineItemTable.tsx:378
 #: src/tables/sales/SalesOrderLineItemTable.tsx:404
+#: src/tables/stock/TransferOrderLineItemTable.tsx:340
+#: src/tables/stock/TransferOrderLineItemTable.tsx:366
 msgid "Allocate Stock"
 msgstr "재고 할당"
 
 #: src/forms/BuildForms.tsx:735
 #: src/forms/SalesOrderForms.tsx:471
+#: src/forms/TransferOrderForms.tsx:261
 msgid "Stock items allocated"
 msgstr "재고 품목이 할당되었습니다"
 
@@ -4735,10 +4807,12 @@ msgstr "재고 품목이 할당되었습니다"
 
 #: src/forms/BuildForms.tsx:849
 #: src/forms/BuildForms.tsx:950
+#: src/pages/stock/TransferOrderDetail.tsx:148
 #: src/tables/build/BuildAllocatedStockTable.tsx:261
 #: src/tables/build/BuildAllocatedStockTable.tsx:297
-#: src/tables/build/BuildLineTable.tsx:770
-#: src/tables/build/BuildLineTable.tsx:893
+#: src/tables/build/BuildLineTable.tsx:773
+#: src/tables/build/BuildLineTable.tsx:896
+#: src/tables/stock/TransferOrderTable.tsx:113
 msgid "Consume Stock"
 msgstr "재고 소비"
 
@@ -4763,6 +4837,7 @@ msgstr "소비됨"
 #: src/forms/PurchaseOrderForms.tsx:194
 #: src/forms/ReturnOrderForms.tsx:140
 #: src/forms/SalesOrderForms.tsx:196
+#: src/forms/TransferOrderForms.tsx:93
 msgid "Select project code for this line item"
 msgstr "이 품목의 프로젝트 코드를 선택하세요."
 
@@ -4771,9 +4846,9 @@ msgstr "이 품목의 프로젝트 코드를 선택하세요."
 #~ msgstr "Company updated"
 
 #: src/forms/PartForms.tsx:102
-#: src/forms/PartForms.tsx:231
+#: src/forms/PartForms.tsx:236
 #: src/pages/part/CategoryDetail.tsx:129
-#: src/pages/part/PartDetail.tsx:525
+#: src/pages/part/PartDetail.tsx:533
 #: src/tables/part/PartCategoryTable.tsx:96
 #: src/tables/part/PartTableFilters.tsx:141
 msgid "Subscribed"
@@ -4791,11 +4866,11 @@ msgstr "이 부품의 알림을 구독"
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:217
+#: src/forms/PartForms.tsx:222
 msgid "Parent part category"
 msgstr "상위 부품 카테고리"
 
-#: src/forms/PartForms.tsx:232
+#: src/forms/PartForms.tsx:237
 msgid "Subscribe to notifications for this category"
 msgstr "이 카테고리의 알림을 구독"
 
@@ -4833,10 +4908,10 @@ msgid "Default location selected"
 msgstr "기본 위치가 선택되었습니다"
 
 #: src/forms/PurchaseOrderForms.tsx:563
-#: src/pages/part/PartDetail.tsx:520
-#: src/pages/part/PartDetail.tsx:955
-#: src/tables/bom/BomTable.tsx:167
-#: src/tables/bom/BomTable.tsx:457
+#: src/pages/part/PartDetail.tsx:528
+#: src/pages/part/PartDetail.tsx:982
+#: src/tables/bom/BomTable.tsx:177
+#: src/tables/bom/BomTable.tsx:467
 msgid "Virtual Part"
 msgstr "가상 부품"
 
@@ -4901,14 +4976,15 @@ msgstr "이미 입고된 재고로 보관"
 
 #: src/forms/PurchaseOrderForms.tsx:773
 #: src/pages/build/BuildDetail.tsx:398
-#: src/pages/stock/StockDetail.tsx:281
-#: src/pages/stock/StockDetail.tsx:976
+#: src/pages/stock/StockDetail.tsx:282
+#: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/Filter.tsx:125
 #: src/tables/build/BuildAllocatedStockTable.tsx:116
 #: src/tables/build/BuildOutputTable.tsx:114
 #: src/tables/part/PartTestResultTable.tsx:268
 #: src/tables/part/PartTestResultTable.tsx:289
 #: src/tables/sales/SalesOrderAllocationTable.tsx:146
+#: src/tables/stock/TransferOrderAllocationTable.tsx:134
 msgid "Batch Code"
 msgstr "배치 코드"
 
@@ -4926,7 +5002,7 @@ msgid "Enter serial numbers for received items"
 msgstr "입고된 항목의 시리얼 번호를 입력하세요"
 
 #: src/forms/PurchaseOrderForms.tsx:805
-#: src/pages/stock/StockDetail.tsx:383
+#: src/pages/stock/StockDetail.tsx:384
 #: src/tables/stock/StockItemTable.tsx:148
 msgid "Expiry Date"
 msgstr "만료 날짜"
@@ -4939,14 +5015,14 @@ msgstr "입고된 항목의 만료일을 입력하세요"
 #: src/forms/StockForms.tsx:738
 #: src/pages/company/SupplierPartDetail.tsx:175
 #: src/pages/company/SupplierPartDetail.tsx:239
-#: src/pages/stock/StockDetail.tsx:420
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:223
+#: src/pages/stock/StockDetail.tsx:421
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:222
 msgid "Packaging"
 msgstr "포장"
 
 #: src/forms/PurchaseOrderForms.tsx:842
 #: src/pages/company/SupplierPartDetail.tsx:123
-#: src/tables/ColumnRenderers.tsx:514
+#: src/tables/ColumnRenderers.tsx:516
 msgid "Note"
 msgstr "메모"
 
@@ -4959,7 +5035,7 @@ msgstr "SKU"
 #: src/forms/PurchaseOrderForms.tsx:915
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:280
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:170
 msgid "Received"
 msgstr "받았다"
@@ -5055,7 +5131,7 @@ msgid "Stock Status"
 msgstr "재고현황"
 
 #: src/forms/StockForms.tsx:325
-#: src/pages/stock/StockDetail.tsx:708
+#: src/pages/stock/StockDetail.tsx:740
 #: src/tables/stock/StockItemTable.tsx:406
 #: src/tables/stock/StockItemTable.tsx:455
 msgid "Add Stock Item"
@@ -5519,7 +5595,7 @@ msgid "Delete selected stock items"
 msgstr "선택한 재고 품목 삭제"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:1063
+#: src/pages/part/PartDetail.tsx:1090
 msgid "Stock Actions"
 msgstr "재고 작업"
 
@@ -6204,8 +6280,9 @@ msgstr "WebAuthn 자격 증명 제거"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
-#: src/tables/build/BuildLineTable.tsx:674
+#: src/tables/build/BuildLineTable.tsx:677
 #: src/tables/sales/SalesOrderAllocationTable.tsx:219
+#: src/tables/stock/TransferOrderAllocationTable.tsx:176
 msgid "Confirm Removal"
 msgstr "제거 확인"
 
@@ -6636,7 +6713,7 @@ msgstr "도트"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:28
-#: src/tables/ColumnRenderers.tsx:750
+#: src/tables/ColumnRenderers.tsx:752
 msgid "Currency"
 msgstr "통화"
 
@@ -6786,8 +6863,8 @@ msgid "Data Management"
 msgstr "데이터 관리"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:268
-#: src/pages/Index/Settings/SystemSettings.tsx:183
-#: src/pages/Index/Settings/UserSettings.tsx:121
+#: src/pages/Index/Settings/SystemSettings.tsx:181
+#: src/pages/Index/Settings/UserSettings.tsx:117
 msgid "Reporting"
 msgstr "보고"
 
@@ -6924,7 +7001,7 @@ msgstr "보류 중인 작업"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:50
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:66
-#: src/pages/Index/Settings/SystemSettings.tsx:67
+#: src/pages/Index/Settings/SystemSettings.tsx:65
 msgid "Scheduled Tasks"
 msgstr "예약된 작업"
 
@@ -6989,23 +7066,23 @@ msgstr "토큰"
 #~ msgid "System settings"
 #~ msgstr "System settings"
 
-#: src/pages/Index/Settings/PluginSettingsGroup.tsx:115
+#: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
 msgid "The settings below are specific to each available plugin"
 msgstr "아래 설정은 각 사용 가능한 플러그인에 따라 다릅니다"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:49
+#: src/pages/Index/Settings/SystemSettings.tsx:46
 msgid "Server Settings"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:84
+#: src/pages/Index/Settings/SystemSettings.tsx:82
 msgid "Authentication"
 msgstr "입증"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:99
+#: src/pages/Index/Settings/SystemSettings.tsx:97
 msgid "Single Sign-On (SSO) Settings"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:117
+#: src/pages/Index/Settings/SystemSettings.tsx:115
 msgid "Barcodes"
 msgstr "바코드"
 
@@ -7021,12 +7098,12 @@ msgstr "바코드"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:141
-#: src/pages/Index/Settings/UserSettings.tsx:115
+#: src/pages/Index/Settings/SystemSettings.tsx:139
+#: src/pages/Index/Settings/UserSettings.tsx:111
 msgid "The settings below are specific to each available notification method"
 msgstr "아래 설정은 각 사용 가능한 알림 방식에 따라 다릅니다"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:147
+#: src/pages/Index/Settings/SystemSettings.tsx:145
 msgid "Pricing"
 msgstr "가격"
 
@@ -7034,25 +7111,25 @@ msgstr "가격"
 #~ msgid "Labels"
 #~ msgstr "Labels"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:225
+#: src/pages/Index/Settings/SystemSettings.tsx:224
 msgid "Part Creation"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:267
+#: src/pages/Index/Settings/SystemSettings.tsx:266
 msgid "Stock Expiry"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:276
+#: src/pages/Index/Settings/SystemSettings.tsx:275
 msgid "Part Stocktake"
 msgstr "부품 재고 실사"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:286
+#: src/pages/Index/Settings/SystemSettings.tsx:285
 #: src/pages/part/PartStockHistoryDetail.tsx:296
-#: src/pages/stock/StockDetail.tsx:533
+#: src/pages/stock/StockDetail.tsx:541
 msgid "Stock Tracking"
 msgstr "재고 추적"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:314
+#: src/pages/Index/Settings/SystemSettings.tsx:313
 msgid "External Build Orders"
 msgstr ""
 
@@ -7060,15 +7137,15 @@ msgstr ""
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
 
-#: src/pages/Index/Settings/UserSettings.tsx:42
+#: src/pages/Index/Settings/UserSettings.tsx:38
 msgid "Account"
 msgstr "계정"
 
-#: src/pages/Index/Settings/UserSettings.tsx:48
+#: src/pages/Index/Settings/UserSettings.tsx:44
 msgid "Security"
 msgstr "보안"
 
-#: src/pages/Index/Settings/UserSettings.tsx:54
+#: src/pages/Index/Settings/UserSettings.tsx:50
 msgid "Display Options"
 msgstr "표시 옵션"
 
@@ -7121,14 +7198,14 @@ msgstr "조립된 부품에 BOM(재료 명세서)이 정의되어 있지 않거�
 #~ msgstr "Build Status"
 
 #: src/pages/build/BuildDetail.tsx:121
-#: src/pages/part/PartDetail.tsx:697
+#: src/pages/part/PartDetail.tsx:705
 #: src/pages/part/bom/BomActions.tsx:115
 #: src/pages/part/bom/BomActions.tsx:120
 msgid "BOM Not Validated"
 msgstr "BOM이 검증되지 않음"
 
 #: src/pages/build/BuildDetail.tsx:123
-#: src/pages/part/PartDetail.tsx:699
+#: src/pages/part/PartDetail.tsx:707
 msgid "The Bill of Materials for this assembly has not been validated."
 msgstr ""
 
@@ -7165,8 +7242,8 @@ msgstr ""
 #~ msgstr "Delete build order"
 
 #: src/pages/build/BuildDetail.tsx:273
-#: src/pages/part/PartDetail.tsx:330
-#: src/pages/stock/StockDetail.tsx:162
+#: src/pages/part/PartDetail.tsx:338
+#: src/pages/stock/StockDetail.tsx:163
 #: src/tables/bom/UsedInTable.tsx:54
 #: src/tables/build/BuildOrderTable.tsx:66
 #: src/tables/stock/StockItemTable.tsx:66
@@ -7177,13 +7254,14 @@ msgstr "개정"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:175
 #: src/pages/sales/ReturnOrderDetail.tsx:142
 #: src/pages/sales/SalesOrderDetail.tsx:132
-#: src/pages/stock/StockDetail.tsx:177
+#: src/pages/stock/StockDetail.tsx:178
+#: src/pages/stock/TransferOrderDetail.tsx:135
 msgid "Custom Status"
 msgstr "사용자 지정 상태"
 
 #: src/pages/build/BuildDetail.tsx:295
 #: src/pages/build/BuildDetail.tsx:789
-#: src/pages/stock/LocationDetail.tsx:151
+#: src/pages/stock/LocationDetail.tsx:158
 #: src/tables/build/BuildOrderFilters.tsx:76
 #: src/tables/build/BuildOrderTable.tsx:106
 #: src/tables/stock/StockLocationTable.tsx:48
@@ -7195,7 +7273,8 @@ msgstr "외부"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:142
 #: src/pages/sales/ReturnOrderDetail.tsx:109
 #: src/pages/sales/SalesOrderDetail.tsx:99
-#: src/tables/ColumnRenderers.tsx:502
+#: src/pages/stock/TransferOrderDetail.tsx:103
+#: src/tables/ColumnRenderers.tsx:504
 #: src/tables/build/BuildAllocatedStockTable.tsx:110
 #: src/tables/build/BuildLineTable.tsx:354
 msgid "Reference"
@@ -7210,9 +7289,9 @@ msgid "Build Quantity"
 msgstr "생산 수량"
 
 #: src/pages/build/BuildDetail.tsx:333
-#: src/pages/part/PartDetail.tsx:448
-#: src/tables/bom/BomTable.tsx:382
-#: src/tables/bom/BomTable.tsx:425
+#: src/pages/part/PartDetail.tsx:456
+#: src/tables/bom/BomTable.tsx:392
+#: src/tables/bom/BomTable.tsx:435
 msgid "Can Build"
 msgstr "생산 가능"
 
@@ -7232,16 +7311,6 @@ msgstr "완료된 생산 결과물"
 msgid "Issued By"
 msgstr "발행자"
 
-#: src/pages/build/BuildDetail.tsx:367
-#: src/pages/part/PartDetail.tsx:548
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
-#: src/pages/sales/ReturnOrderDetail.tsx:240
-#: src/pages/sales/SalesOrderDetail.tsx:233
-#: src/tables/ColumnRenderers.tsx:665
-#: src/tables/Filter.tsx:397
-msgid "Responsible"
-msgstr "책임이 있는"
-
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
@@ -7255,6 +7324,8 @@ msgid "Any location"
 msgstr "모든 위치"
 
 #: src/pages/build/BuildDetail.tsx:392
+#: src/pages/stock/TransferOrderDetail.tsx:117
+#: src/tables/stock/TransferOrderTable.tsx:109
 msgid "Destination Location"
 msgstr "목적지 위치"
 
@@ -7264,28 +7335,10 @@ msgstr "목적지 위치"
 msgid "Created"
 msgstr "생성됨"
 
-#: src/pages/build/BuildDetail.tsx:416
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:287
-#: src/pages/sales/ReturnOrderDetail.tsx:266
-#: src/pages/sales/SalesOrderDetail.tsx:258
-#: src/tables/ColumnRenderers.tsx:688
-msgid "Start Date"
-msgstr "시작일"
-
-#: src/pages/build/BuildDetail.tsx:424
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:295
-#: src/pages/sales/ReturnOrderDetail.tsx:274
-#: src/pages/sales/SalesOrderDetail.tsx:266
-#: src/tables/ColumnRenderers.tsx:696
-#: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:153
-#: src/tables/sales/SalesOrderLineItemTable.tsx:130
-msgid "Target Date"
-msgstr "목표 날짜"
-
 #: src/pages/build/BuildDetail.tsx:432
 #: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/sales/SalesOrderLineItemTable.tsx:345
+#: src/tables/stock/TransferOrderLineItemTable.tsx:495
 msgid "Completed"
 msgstr "완전한"
 
@@ -7300,6 +7353,7 @@ msgstr "필요한 부품"
 #: src/pages/build/BuildDetail.tsx:486
 #: src/pages/sales/SalesOrderDetail.tsx:417
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:259
+#: src/pages/stock/TransferOrderDetail.tsx:316
 #: src/tables/part/PartSalesAllocationsTable.tsx:71
 msgid "Allocated Stock"
 msgstr "할당된 재고"
@@ -7321,9 +7375,9 @@ msgid "Child Build Orders"
 msgstr "하위 생산 주문"
 
 #: src/pages/build/BuildDetail.tsx:573
-#: src/pages/part/PartDetail.tsx:801
-#: src/pages/stock/StockDetail.tsx:588
-#: src/tables/build/BuildOutputTable.tsx:707
+#: src/pages/part/PartDetail.tsx:828
+#: src/pages/stock/StockDetail.tsx:620
+#: src/tables/build/BuildOutputTable.tsx:756
 #: src/tables/stock/StockItemTestResultTable.tsx:173
 msgid "Test Results"
 msgstr "테스트 결과"
@@ -7346,6 +7400,7 @@ msgstr "생산 주문 취소"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:437
 #: src/pages/sales/ReturnOrderDetail.tsx:442
 #: src/pages/sales/SalesOrderDetail.tsx:475
+#: src/pages/stock/TransferOrderDetail.tsx:408
 msgid "Order cancelled"
 msgstr "주문이 취소되었습니다."
 
@@ -7353,6 +7408,7 @@ msgstr "주문이 취소되었습니다."
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:436
 #: src/pages/sales/ReturnOrderDetail.tsx:441
 #: src/pages/sales/SalesOrderDetail.tsx:474
+#: src/pages/stock/TransferOrderDetail.tsx:407
 msgid "Cancel this order"
 msgstr "이 주문 취소"
 
@@ -7364,6 +7420,7 @@ msgstr "생산 주문 보류"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:444
 #: src/pages/sales/ReturnOrderDetail.tsx:449
 #: src/pages/sales/SalesOrderDetail.tsx:482
+#: src/pages/stock/TransferOrderDetail.tsx:415
 msgid "Place this order on hold"
 msgstr "이 주문을 보류 상태로 전환"
 
@@ -7371,6 +7428,7 @@ msgstr "이 주문을 보류 상태로 전환"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:445
 #: src/pages/sales/ReturnOrderDetail.tsx:450
 #: src/pages/sales/SalesOrderDetail.tsx:483
+#: src/pages/stock/TransferOrderDetail.tsx:416
 msgid "Order placed on hold"
 msgstr "주문이 보류되었습니다."
 
@@ -7382,6 +7440,7 @@ msgstr "생산 주문 발행"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:428
 #: src/pages/sales/ReturnOrderDetail.tsx:433
 #: src/pages/sales/SalesOrderDetail.tsx:466
+#: src/pages/stock/TransferOrderDetail.tsx:399
 msgid "Issue this order"
 msgstr "이 주문을 발행하세요"
 
@@ -7389,6 +7448,7 @@ msgstr "이 주문을 발행하세요"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:429
 #: src/pages/sales/ReturnOrderDetail.tsx:434
 #: src/pages/sales/SalesOrderDetail.tsx:467
+#: src/pages/stock/TransferOrderDetail.tsx:400
 msgid "Order issued"
 msgstr "주문이 발행되었습니다."
 
@@ -7400,6 +7460,7 @@ msgstr "생산 주문 완료"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:457
 #: src/pages/sales/ReturnOrderDetail.tsx:457
 #: src/pages/sales/SalesOrderDetail.tsx:501
+#: src/pages/stock/TransferOrderDetail.tsx:423
 msgid "Mark this order as complete"
 msgstr "이 주문을 완료로 표시"
 
@@ -7407,6 +7468,7 @@ msgstr "이 주문을 완료로 표시"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:451
 #: src/pages/sales/ReturnOrderDetail.tsx:458
 #: src/pages/sales/SalesOrderDetail.tsx:502
+#: src/pages/stock/TransferOrderDetail.tsx:424
 msgid "Order completed"
 msgstr "주문이 완료되었습니다."
 
@@ -7414,6 +7476,7 @@ msgstr "주문이 완료되었습니다."
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:480
 #: src/pages/sales/ReturnOrderDetail.tsx:485
 #: src/pages/sales/SalesOrderDetail.tsx:537
+#: src/pages/stock/TransferOrderDetail.tsx:449
 msgid "Issue Order"
 msgstr "주문 발행"
 
@@ -7421,6 +7484,7 @@ msgstr "주문 발행"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:487
 #: src/pages/sales/ReturnOrderDetail.tsx:492
 #: src/pages/sales/SalesOrderDetail.tsx:551
+#: src/pages/stock/TransferOrderDetail.tsx:456
 msgid "Complete Order"
 msgstr "주문 완료"
 
@@ -7432,6 +7496,7 @@ msgstr "생산 주문 작업"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:510
 #: src/pages/sales/ReturnOrderDetail.tsx:515
 #: src/pages/sales/SalesOrderDetail.tsx:575
+#: src/pages/stock/TransferOrderDetail.tsx:479
 msgid "Edit order"
 msgstr "주문 수정"
 
@@ -7439,6 +7504,7 @@ msgstr "주문 수정"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:518
 #: src/pages/sales/ReturnOrderDetail.tsx:521
 #: src/pages/sales/SalesOrderDetail.tsx:580
+#: src/pages/stock/TransferOrderDetail.tsx:485
 msgid "Duplicate order"
 msgstr "중복 주문"
 
@@ -7446,6 +7512,7 @@ msgstr "중복 주문"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:521
 #: src/pages/sales/ReturnOrderDetail.tsx:526
 #: src/pages/sales/SalesOrderDetail.tsx:583
+#: src/pages/stock/TransferOrderDetail.tsx:490
 msgid "Hold order"
 msgstr "주문 보류"
 
@@ -7453,15 +7520,16 @@ msgstr "주문 보류"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:526
 #: src/pages/sales/ReturnOrderDetail.tsx:531
 #: src/pages/sales/SalesOrderDetail.tsx:588
+#: src/pages/stock/TransferOrderDetail.tsx:495
 msgid "Cancel order"
 msgstr "주문 취소"
 
 #: src/pages/build/BuildDetail.tsx:808
-#: src/pages/stock/StockDetail.tsx:345
+#: src/pages/stock/StockDetail.tsx:346
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:153
-#: src/tables/stock/StockTrackingTable.tsx:141
+#: src/tables/stock/StockTrackingTable.tsx:142
 msgid "Build Order"
 msgstr "생산 주문"
 
@@ -7473,38 +7541,41 @@ msgstr "생산 주문"
 #~ msgid "New Build Order"
 #~ msgstr "New Build Order"
 
-#: src/pages/build/BuildIndex.tsx:69
+#: src/pages/build/BuildIndex.tsx:80
 #: src/pages/part/CategoryDetail.tsx:291
-#: src/pages/purchasing/PurchasingIndex.tsx:91
-#: src/pages/purchasing/PurchasingIndex.tsx:118
-#: src/pages/purchasing/PurchasingIndex.tsx:147
-#: src/pages/purchasing/PurchasingIndex.tsx:168
-#: src/pages/purchasing/PurchasingIndex.tsx:197
-#: src/pages/sales/SalesIndex.tsx:93
-#: src/pages/sales/SalesIndex.tsx:133
-#: src/pages/sales/SalesIndex.tsx:160
-#: src/pages/stock/LocationDetail.tsx:192
+#: src/pages/purchasing/PurchasingIndex.tsx:102
+#: src/pages/purchasing/PurchasingIndex.tsx:129
+#: src/pages/purchasing/PurchasingIndex.tsx:158
+#: src/pages/purchasing/PurchasingIndex.tsx:179
+#: src/pages/purchasing/PurchasingIndex.tsx:208
+#: src/pages/sales/SalesIndex.tsx:113
+#: src/pages/sales/SalesIndex.tsx:153
+#: src/pages/sales/SalesIndex.tsx:180
+#: src/pages/stock/LocationDetail.tsx:200
+#: src/pages/stock/LocationDetail.tsx:242
 msgid "Table View"
 msgstr "테이블 보기"
 
-#: src/pages/build/BuildIndex.tsx:75
-#: src/pages/purchasing/PurchasingIndex.tsx:97
-#: src/pages/sales/SalesIndex.tsx:99
-#: src/pages/sales/SalesIndex.tsx:139
+#: src/pages/build/BuildIndex.tsx:86
+#: src/pages/purchasing/PurchasingIndex.tsx:108
+#: src/pages/sales/SalesIndex.tsx:119
+#: src/pages/sales/SalesIndex.tsx:159
+#: src/pages/stock/LocationDetail.tsx:248
 msgid "Calendar View"
 msgstr "캘린더 보기"
 
-#: src/pages/build/BuildIndex.tsx:81
+#: src/pages/build/BuildIndex.tsx:92
 #: src/pages/part/CategoryDetail.tsx:305
-#: src/pages/purchasing/PurchasingIndex.tsx:103
-#: src/pages/purchasing/PurchasingIndex.tsx:130
-#: src/pages/purchasing/PurchasingIndex.tsx:153
-#: src/pages/purchasing/PurchasingIndex.tsx:180
-#: src/pages/purchasing/PurchasingIndex.tsx:203
-#: src/pages/sales/SalesIndex.tsx:105
-#: src/pages/sales/SalesIndex.tsx:145
-#: src/pages/sales/SalesIndex.tsx:172
-#: src/pages/stock/LocationDetail.tsx:198
+#: src/pages/purchasing/PurchasingIndex.tsx:114
+#: src/pages/purchasing/PurchasingIndex.tsx:141
+#: src/pages/purchasing/PurchasingIndex.tsx:164
+#: src/pages/purchasing/PurchasingIndex.tsx:191
+#: src/pages/purchasing/PurchasingIndex.tsx:214
+#: src/pages/sales/SalesIndex.tsx:125
+#: src/pages/sales/SalesIndex.tsx:165
+#: src/pages/sales/SalesIndex.tsx:192
+#: src/pages/stock/LocationDetail.tsx:206
+#: src/pages/stock/LocationDetail.tsx:260
 msgid "Parametric View"
 msgstr "파라미터 보기"
 
@@ -7541,14 +7612,14 @@ msgstr "제조업체"
 #: src/pages/sales/ReturnOrderDetail.tsx:124
 #: src/pages/sales/SalesOrderDetail.tsx:114
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:111
-#: src/pages/stock/StockDetail.tsx:371
+#: src/pages/stock/StockDetail.tsx:372
 #: src/tables/company/CompanyTable.tsx:116
 #: src/tables/sales/ReturnOrderParametricTable.tsx:25
 #: src/tables/sales/ReturnOrderTable.tsx:64
 #: src/tables/sales/SalesOrderParametricTable.tsx:25
 #: src/tables/sales/SalesOrderShipmentTable.tsx:125
 #: src/tables/sales/SalesOrderTable.tsx:87
-#: src/tables/stock/StockTrackingTable.tsx:185
+#: src/tables/stock/StockTrackingTable.tsx:197
 msgid "Customer"
 msgstr "고객"
 
@@ -7605,7 +7676,7 @@ msgstr "외부링크"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:147
 #: src/pages/company/SupplierPartDetail.tsx:235
-#: src/pages/part/PartDetail.tsx:645
+#: src/pages/part/PartDetail.tsx:653
 msgid "Part Details"
 msgstr "부품 상세 정보"
 
@@ -7656,7 +7727,7 @@ msgstr "부품 설명"
 #: src/pages/company/SupplierPartDetail.tsx:182
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:187
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:229
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
 #: src/tables/purchasing/SupplierPartTable.tsx:169
 msgid "Pack Quantity"
 msgstr "팩 수량"
@@ -7704,7 +7775,7 @@ msgid "Add Supplier Part"
 msgstr "협력업체 부품 추가"
 
 #: src/pages/company/SupplierPartDetail.tsx:396
-#: src/pages/part/PartDetail.tsx:913
+#: src/pages/part/PartDetail.tsx:940
 msgid "No Stock"
 msgstr "재고 없음"
 
@@ -7730,7 +7801,7 @@ msgid "Group Roles"
 msgstr "그룹 역할"
 
 #: src/pages/core/UserDetail.tsx:175
-#: src/tables/ColumnRenderers.tsx:619
+#: src/tables/ColumnRenderers.tsx:621
 msgid "User Information"
 msgstr "사용자 정보"
 
@@ -7756,8 +7827,8 @@ msgstr "일반 사용자"
 #~ msgstr "Basic user"
 
 #: src/pages/part/CategoryDetail.tsx:105
-#: src/pages/stock/LocationDetail.tsx:105
-#: src/tables/ColumnRenderers.tsx:333
+#: src/pages/stock/LocationDetail.tsx:112
+#: src/tables/ColumnRenderers.tsx:335
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
@@ -7773,7 +7844,7 @@ msgid "Subcategories"
 msgstr "하위 카테고리"
 
 #: src/pages/part/CategoryDetail.tsx:151
-#: src/pages/stock/LocationDetail.tsx:145
+#: src/pages/stock/LocationDetail.tsx:152
 #: src/tables/part/PartCategoryTable.tsx:91
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
@@ -7802,7 +7873,7 @@ msgid "Move items to parent category"
 msgstr "항목을 상위 카테고리로 이동"
 
 #: src/pages/part/CategoryDetail.tsx:194
-#: src/pages/stock/LocationDetail.tsx:261
+#: src/pages/stock/LocationDetail.tsx:305
 msgid "Delete items"
 msgstr "항목 삭제"
 
@@ -7837,13 +7908,13 @@ msgid "Category Details"
 msgstr "카테고리 상세 정보"
 
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:556
+#: src/pages/stock/StockDetail.tsx:570
 #: src/tables/part/PartTable.tsx:139
 msgid "Build Order Allocations"
 msgstr "생산 주문 할당"
 
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:571
+#: src/pages/stock/StockDetail.tsx:585
 #: src/tables/part/PartTable.tsx:147
 msgid "Sales Order Allocations"
 msgstr "판매 주문 할당"
@@ -7860,13 +7931,9 @@ msgstr "판매 주문 할당"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:314
+#: src/pages/part/PartDetail.tsx:322
 msgid "Variant of"
 msgstr "다음의 변형"
-
-#: src/pages/part/PartDetail.tsx:322
-msgid "Revision of"
-msgstr "다음의 리비전"
 
 #: src/pages/part/PartDetail.tsx:322
 #~ msgid "Duplicate part"
@@ -7876,152 +7943,159 @@ msgstr "다음의 리비전"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:343
-#: src/tables/ColumnRenderers.tsx:387
-#: src/tables/ColumnRenderers.tsx:396
+#: src/pages/part/PartDetail.tsx:330
+msgid "Revision of"
+msgstr "다음의 리비전"
+
+#: src/pages/part/PartDetail.tsx:351
+#: src/tables/ColumnRenderers.tsx:389
+#: src/tables/ColumnRenderers.tsx:398
 msgid "Default Location"
 msgstr "기본 위치"
 
-#: src/pages/part/PartDetail.tsx:350
+#: src/pages/part/PartDetail.tsx:358
 msgid "Category Default Location"
 msgstr "범주 기본 위치"
 
-#: src/pages/part/PartDetail.tsx:357
+#: src/pages/part/PartDetail.tsx:365
 msgid "Units"
 msgstr "단위"
 
-#: src/pages/part/PartDetail.tsx:364
+#: src/pages/part/PartDetail.tsx:372
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "키워드"
 
-#: src/pages/part/PartDetail.tsx:392
-#: src/tables/bom/BomTable.tsx:462
+#: src/pages/part/PartDetail.tsx:400
+#: src/tables/bom/BomTable.tsx:472
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTableFilters.tsx:135
 #: src/tables/sales/SalesOrderLineItemTable.tsx:134
+#: src/tables/stock/TransferOrderLineItemTable.tsx:118
 msgid "Available Stock"
 msgstr "사용 가능한 재고"
 
-#: src/pages/part/PartDetail.tsx:398
-#: src/tables/bom/BomTable.tsx:358
+#: src/pages/part/PartDetail.tsx:406
+#: src/tables/bom/BomTable.tsx:368
 #: src/tables/build/BuildLineTable.tsx:273
 #: src/tables/sales/SalesOrderLineItemTable.tsx:176
+#: src/tables/stock/TransferOrderLineItemTable.tsx:160
 msgid "On order"
 msgstr "주문시"
 
-#: src/pages/part/PartDetail.tsx:405
+#: src/pages/part/PartDetail.tsx:413
 msgid "Required for Orders"
 msgstr "주문에 필수"
 
-#: src/pages/part/PartDetail.tsx:416
+#: src/pages/part/PartDetail.tsx:424
 msgid "Allocated to Build Orders"
 msgstr "생산 주문에 할당됨"
 
-#: src/pages/part/PartDetail.tsx:428
+#: src/pages/part/PartDetail.tsx:436
 msgid "Allocated to Sales Orders"
 msgstr "판매 주문에 할당됨"
 
-#: src/pages/part/PartDetail.tsx:455
+#: src/pages/part/PartDetail.tsx:463
 msgid "Minimum Stock"
 msgstr "최소 재고"
 
-#: src/pages/part/PartDetail.tsx:462
+#: src/pages/part/PartDetail.tsx:470
 msgid "Maximum Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:477
+#: src/pages/part/PartDetail.tsx:485
 #: src/tables/bom/UsedInTable.tsx:95
 #: src/tables/part/PartTableFilters.tsx:17
 msgid "Locked"
 msgstr "잠김"
 
-#: src/pages/part/PartDetail.tsx:483
+#: src/pages/part/PartDetail.tsx:491
 msgid "Template Part"
 msgstr "템플릿 부분"
 
-#: src/pages/part/PartDetail.tsx:488
-#: src/tables/bom/BomTable.tsx:452
+#: src/pages/part/PartDetail.tsx:496
+#: src/tables/bom/BomTable.tsx:462
 msgid "Assembled Part"
 msgstr "조립부품"
 
-#: src/pages/part/PartDetail.tsx:493
+#: src/pages/part/PartDetail.tsx:501
 msgid "Component Part"
 msgstr "구성 부품"
 
-#: src/pages/part/PartDetail.tsx:498
-#: src/tables/bom/BomTable.tsx:437
+#: src/pages/part/PartDetail.tsx:506
+#: src/tables/bom/BomTable.tsx:447
 msgid "Testable Part"
 msgstr "테스트 가능한 부분"
-
-#: src/pages/part/PartDetail.tsx:504
-#: src/tables/bom/BomTable.tsx:442
-msgid "Trackable Part"
-msgstr "추적 가능한 부분"
-
-#: src/pages/part/PartDetail.tsx:509
-msgid "Purchaseable Part"
-msgstr "구매 가능한 부품"
 
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
 
-#: src/pages/part/PartDetail.tsx:515
+#: src/pages/part/PartDetail.tsx:512
+#: src/tables/bom/BomTable.tsx:452
+msgid "Trackable Part"
+msgstr "추적 가능한 부분"
+
+#: src/pages/part/PartDetail.tsx:517
+msgid "Purchaseable Part"
+msgstr "구매 가능한 부품"
+
+#: src/pages/part/PartDetail.tsx:523
 msgid "Saleable Part"
 msgstr "판매 가능 부품"
 
-#: src/pages/part/PartDetail.tsx:535
+#: src/pages/part/PartDetail.tsx:543
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:272
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:243
-#: src/tables/ColumnRenderers.tsx:704
+#: src/pages/stock/TransferOrderDetail.tsx:196
+#: src/tables/ColumnRenderers.tsx:706
 msgid "Creation Date"
 msgstr "생성 날짜"
 
-#: src/pages/part/PartDetail.tsx:540
-#: src/tables/ColumnRenderers.tsx:636
+#: src/pages/part/PartDetail.tsx:548
+#: src/tables/ColumnRenderers.tsx:638
 #: src/tables/Filter.tsx:451
 msgid "Created By"
 msgstr "작성자"
 
-#: src/pages/part/PartDetail.tsx:554
+#: src/pages/part/PartDetail.tsx:562
 msgid "Default Expiry"
 msgstr "기본 만료"
 
-#: src/pages/part/PartDetail.tsx:559
+#: src/pages/part/PartDetail.tsx:567
 msgid "days"
 msgstr "날"
 
-#: src/pages/part/PartDetail.tsx:569
+#: src/pages/part/PartDetail.tsx:577
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:197
 msgid "Price Range"
 msgstr "가격대"
 
-#: src/pages/part/PartDetail.tsx:579
+#: src/pages/part/PartDetail.tsx:587
 msgid "Latest Serial Number"
 msgstr "최신 시리얼 번호"
-
-#: src/pages/part/PartDetail.tsx:613
-msgid "Select Part Revision"
-msgstr "부품 리비전 선택"
 
 #: src/pages/part/PartDetail.tsx:613
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:621
+msgid "Select Part Revision"
+msgstr "부품 리비전 선택"
+
+#: src/pages/part/PartDetail.tsx:678
 msgid "Variants"
 msgstr "변형"
 
-#: src/pages/part/PartDetail.tsx:677
-#: src/pages/stock/StockDetail.tsx:543
+#: src/pages/part/PartDetail.tsx:685
+#: src/pages/stock/StockDetail.tsx:551
 msgid "Allocations"
 msgstr "할당"
 
-#: src/pages/part/PartDetail.tsx:684
+#: src/pages/part/PartDetail.tsx:692
 msgid "Bill of Materials"
 msgstr "BOM"
 
@@ -8029,42 +8103,38 @@ msgstr "BOM"
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:713
+#: src/pages/part/PartDetail.tsx:721
 msgid "Used In"
 msgstr "사용 위치"
 
-#: src/pages/part/PartDetail.tsx:720
+#: src/pages/part/PartDetail.tsx:728
 msgid "Part Pricing"
 msgstr "부품 가격"
 
-#: src/pages/part/PartDetail.tsx:790
+#: src/pages/part/PartDetail.tsx:812
 msgid "Test Templates"
 msgstr "테스트 템플릿"
 
-#: src/pages/part/PartDetail.tsx:812
+#: src/pages/part/PartDetail.tsx:839
 msgid "Related Parts"
 msgstr "관련 부품"
 
-#: src/pages/part/PartDetail.tsx:824
-#: src/tables/ColumnRenderers.tsx:73
-#: src/tables/bom/BomTable.tsx:704
+#: src/pages/part/PartDetail.tsx:851
+#: src/tables/ColumnRenderers.tsx:75
+#: src/tables/bom/BomTable.tsx:712
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "부품이 잠겨 있습니다"
 
-#: src/pages/part/PartDetail.tsx:829
+#: src/pages/part/PartDetail.tsx:856
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "부품이 잠겨 있어 파라미터를 편집할 수 없습니다"
 
-#: src/pages/part/PartDetail.tsx:925
+#: src/pages/part/PartDetail.tsx:952
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:405
 msgid "Required"
 msgstr "필요"
-
-#: src/pages/part/PartDetail.tsx:943
-msgid "Deficit"
-msgstr "부족분"
 
 #: src/pages/part/PartDetail.tsx:956
 #~ msgid "Count part stock"
@@ -8074,36 +8144,40 @@ msgstr "부족분"
 #~ msgid "Transfer part stock"
 #~ msgstr "Transfer part stock"
 
-#: src/pages/part/PartDetail.tsx:983
+#: src/pages/part/PartDetail.tsx:970
+msgid "Deficit"
+msgstr "부족분"
+
+#: src/pages/part/PartDetail.tsx:1010
 #: src/tables/part/PartTable.tsx:278
 #: src/tables/part/PartTable.tsx:332
 msgid "Add Part"
 msgstr "부품 추가"
 
-#: src/pages/part/PartDetail.tsx:997
+#: src/pages/part/PartDetail.tsx:1024
 msgid "Delete Part"
 msgstr "부품 삭제"
 
-#: src/pages/part/PartDetail.tsx:1006
+#: src/pages/part/PartDetail.tsx:1033
 msgid "Deleting this part cannot be reversed"
 msgstr "이 부분을 삭제하면 되돌릴 수 없습니다."
 
-#: src/pages/part/PartDetail.tsx:1069
-#: src/pages/stock/StockDetail.tsx:900
+#: src/pages/part/PartDetail.tsx:1096
+#: src/pages/stock/StockDetail.tsx:932
 msgid "Order"
 msgstr "주문하다"
 
-#: src/pages/part/PartDetail.tsx:1070
-#: src/pages/stock/StockDetail.tsx:901
-#: src/tables/build/BuildLineTable.tsx:790
+#: src/pages/part/PartDetail.tsx:1097
+#: src/pages/stock/StockDetail.tsx:933
+#: src/tables/build/BuildLineTable.tsx:793
 msgid "Order Stock"
 msgstr "재고 주문"
 
-#: src/pages/part/PartDetail.tsx:1082
+#: src/pages/part/PartDetail.tsx:1109
 msgid "Search by serial number"
 msgstr "시리얼 번호로 검색"
 
-#: src/pages/part/PartDetail.tsx:1090
+#: src/pages/part/PartDetail.tsx:1117
 #: src/tables/part/PartTable.tsx:389
 msgid "Part Actions"
 msgstr "부품 작업"
@@ -8201,7 +8275,7 @@ msgstr "재고 수량"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:129
 #: src/pages/part/PartStockHistoryDetail.tsx:242
-#: src/pages/stock/StockDetail.tsx:403
+#: src/pages/stock/StockDetail.tsx:404
 #: src/tables/stock/StockItemTable.tsx:125
 msgid "Stock Value"
 msgstr "재고 가치"
@@ -8282,25 +8356,25 @@ msgid "Validated By"
 msgstr "검증자"
 
 #: src/pages/part/bom/BomCompare.tsx:35
-#: src/tables/bom/BomTable.tsx:482
+#: src/tables/bom/BomTable.tsx:492
 msgid "Allow Variants"
 msgstr "변형 허용"
 
 #: src/pages/part/bom/BomCompare.tsx:36
-#: src/tables/bom/BomTable.tsx:477
+#: src/tables/bom/BomTable.tsx:487
 #: src/tables/bom/UsedInTable.tsx:90
 msgid "Inherited"
 msgstr "상속됨"
 
 #: src/pages/part/bom/BomCompare.tsx:37
-#: src/tables/bom/BomTable.tsx:487
+#: src/tables/bom/BomTable.tsx:497
 #: src/tables/bom/UsedInTable.tsx:100
 #: src/tables/build/BuildLineTable.tsx:208
 msgid "Optional"
 msgstr "선택 사항"
 
 #: src/pages/part/bom/BomCompare.tsx:38
-#: src/tables/bom/BomTable.tsx:492
+#: src/tables/bom/BomTable.tsx:502
 #: src/tables/build/BuildLineTable.tsx:203
 msgid "Consumable"
 msgstr "소모품"
@@ -8378,10 +8452,10 @@ msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:57
 #: src/pages/part/pricing/BomPricingPanel.tsx:135
-#: src/tables/ColumnRenderers.tsx:764
-#: src/tables/bom/BomTable.tsx:299
+#: src/tables/ColumnRenderers.tsx:766
+#: src/tables/bom/BomTable.tsx:309
 #: src/tables/general/ExtraLineItemTable.tsx:74
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:258
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
 #: src/tables/sales/ReturnOrderTable.tsx:99
 #: src/tables/sales/SalesOrderLineItemTable.tsx:120
@@ -8421,10 +8495,10 @@ msgstr "최고 가격"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:71
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
-#: src/pages/stock/StockDetail.tsx:391
-#: src/tables/bom/BomTable.tsx:289
+#: src/pages/stock/StockDetail.tsx:392
+#: src/tables/bom/BomTable.tsx:299
 #: src/tables/general/ExtraLineItemTable.tsx:66
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:254
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:113
 msgid "Unit Price"
@@ -8507,7 +8581,7 @@ msgstr "구매 가격"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:311
 #: src/pages/sales/ReturnOrderDetail.tsx:289
 #: src/pages/sales/SalesOrderDetail.tsx:280
-#: src/pages/stock/StockDetail.tsx:427
+#: src/pages/stock/StockDetail.tsx:428
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:250
 #: src/tables/stock/StockItemTable.tsx:154
@@ -8600,11 +8674,12 @@ msgstr "공급업체 참조"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:188
 #: src/pages/sales/ReturnOrderDetail.tsx:161
 #: src/pages/sales/SalesOrderDetail.tsx:145
+#: src/pages/stock/TransferOrderDetail.tsx:160
 msgid "Completed Line Items"
 msgstr "완료된 광고 항목"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:197
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:270
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:269
 msgid "Destination"
 msgstr "목적지"
 
@@ -8641,13 +8716,15 @@ msgstr "연락 전화"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:279
 #: src/pages/sales/ReturnOrderDetail.tsx:258
 #: src/pages/sales/SalesOrderDetail.tsx:250
+#: src/pages/stock/TransferOrderDetail.tsx:204
 msgid "Issue Date"
 msgstr "발행일"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:304
 #: src/pages/sales/ReturnOrderDetail.tsx:282
 #: src/pages/sales/SalesOrderDetail.tsx:273
-#: src/tables/ColumnRenderers.tsx:712
+#: src/pages/stock/TransferOrderDetail.tsx:228
+#: src/tables/ColumnRenderers.tsx:714
 #: src/tables/build/BuildOrderTable.tsx:120
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
@@ -8656,6 +8733,7 @@ msgstr "완료 날짜"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:343
 #: src/pages/sales/ReturnOrderDetail.tsx:321
 #: src/pages/sales/SalesOrderDetail.tsx:359
+#: src/pages/stock/TransferOrderDetail.tsx:259
 msgid "Order Details"
 msgstr "주문 상세 정보"
 
@@ -8666,6 +8744,8 @@ msgstr "주문 상세 정보"
 #: src/pages/sales/ReturnOrderDetail.tsx:336
 #: src/pages/sales/SalesOrderDetail.tsx:365
 #: src/pages/sales/SalesOrderDetail.tsx:374
+#: src/pages/stock/TransferOrderDetail.tsx:153
+#: src/pages/stock/TransferOrderDetail.tsx:265
 msgid "Line Items"
 msgstr "광고 항목"
 
@@ -8694,6 +8774,7 @@ msgstr "발주서 완료"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:506
 #: src/pages/sales/ReturnOrderDetail.tsx:511
 #: src/pages/sales/SalesOrderDetail.tsx:570
+#: src/pages/stock/TransferOrderDetail.tsx:475
 msgid "Order Actions"
 msgstr "주문 조치"
 
@@ -8826,7 +8907,7 @@ msgid "Not checked"
 msgstr "확인되지 않음"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:206
-#: src/tables/ColumnRenderers.tsx:720
+#: src/tables/ColumnRenderers.tsx:722
 #: src/tables/sales/SalesOrderAllocationTable.tsx:181
 #: src/tables/sales/SalesOrderShipmentTable.tsx:184
 msgid "Shipment Date"
@@ -8909,16 +8990,16 @@ msgstr "선택 취소"
 msgid "Mark shipment as unchecked"
 msgstr "출하를 미확인으로 표시"
 
-#: src/pages/stock/LocationDetail.tsx:121
+#: src/pages/stock/LocationDetail.tsx:128
 msgid "Parent Location"
 msgstr "상위 위치"
 
-#: src/pages/stock/LocationDetail.tsx:139
-#: src/pages/stock/LocationDetail.tsx:184
+#: src/pages/stock/LocationDetail.tsx:146
+#: src/pages/stock/LocationDetail.tsx:192
 msgid "Sublocations"
 msgstr "하위 위치"
 
-#: src/pages/stock/LocationDetail.tsx:157
+#: src/pages/stock/LocationDetail.tsx:164
 #: src/tables/stock/StockLocationTable.tsx:57
 msgid "Location Type"
 msgstr "위치 유형"
@@ -8927,98 +9008,98 @@ msgstr "위치 유형"
 #~ msgid "Top level stock location"
 #~ msgstr "Top level stock location"
 
-#: src/pages/stock/LocationDetail.tsx:177
+#: src/pages/stock/LocationDetail.tsx:185
 msgid "Location Details"
 msgstr "위치 상세 정보"
-
-#: src/pages/stock/LocationDetail.tsx:224
-msgid "Default Parts"
-msgstr "기본 부품"
 
 #: src/pages/stock/LocationDetail.tsx:243
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:248
-#: src/pages/stock/LocationDetail.tsx:410
-#: src/tables/stock/StockLocationTable.tsx:124
-msgid "Edit Stock Location"
-msgstr "재고 위치 편집"
-
-#: src/pages/stock/LocationDetail.tsx:257
-msgid "Move items to parent location"
-msgstr "항목을 상위 위치로 이동"
-
-#: src/pages/stock/LocationDetail.tsx:269
-#: src/pages/stock/LocationDetail.tsx:415
-msgid "Delete Stock Location"
-msgstr "재고 위치 삭제"
-
-#: src/pages/stock/LocationDetail.tsx:272
-msgid "Items Action"
-msgstr "항목 작업"
-
-#: src/pages/stock/LocationDetail.tsx:274
-msgid "Action for stock items in this location"
-msgstr "이 위치의 재고 품목에 대한 작업"
-
-#: src/pages/stock/LocationDetail.tsx:279
-#: src/pages/stock/LocationDetail.tsx:406
-#: src/tables/stock/StockLocationTable.tsx:145
-msgid "Location Actions"
-msgstr "위치 작업"
+#: src/pages/stock/LocationDetail.tsx:268
+msgid "Default Parts"
+msgstr "기본 부품"
 
 #: src/pages/stock/LocationDetail.tsx:280
 #~ msgid "Locations Action"
 #~ msgstr "Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:281
+#: src/pages/stock/LocationDetail.tsx:292
+#: src/pages/stock/LocationDetail.tsx:454
+#: src/tables/stock/StockLocationTable.tsx:124
+msgid "Edit Stock Location"
+msgstr "재고 위치 편집"
+
+#: src/pages/stock/LocationDetail.tsx:301
+msgid "Move items to parent location"
+msgstr "항목을 상위 위치로 이동"
+
+#: src/pages/stock/LocationDetail.tsx:313
+#: src/pages/stock/LocationDetail.tsx:459
+msgid "Delete Stock Location"
+msgstr "재고 위치 삭제"
+
+#: src/pages/stock/LocationDetail.tsx:316
+msgid "Items Action"
+msgstr "항목 작업"
+
+#: src/pages/stock/LocationDetail.tsx:318
+msgid "Action for stock items in this location"
+msgstr "이 위치의 재고 품목에 대한 작업"
+
+#: src/pages/stock/LocationDetail.tsx:323
+#: src/pages/stock/LocationDetail.tsx:450
+#: src/tables/stock/StockLocationTable.tsx:145
+msgid "Location Actions"
+msgstr "위치 작업"
+
+#: src/pages/stock/LocationDetail.tsx:325
 msgid "Action for child locations in this location"
 msgstr "이 위치의 하위 위치에 대한 작업"
 
-#: src/pages/stock/LocationDetail.tsx:316
+#: src/pages/stock/LocationDetail.tsx:360
 msgid "Scan Stock Item"
 msgstr "재고 품목 스캔"
 
-#: src/pages/stock/LocationDetail.tsx:334
-#: src/pages/stock/StockDetail.tsx:835
+#: src/pages/stock/LocationDetail.tsx:378
+#: src/pages/stock/StockDetail.tsx:867
 msgid "Scanned stock item into location"
 msgstr "재고 품목을 위치로 스캔했습니다."
 
-#: src/pages/stock/LocationDetail.tsx:340
-#: src/pages/stock/StockDetail.tsx:841
+#: src/pages/stock/LocationDetail.tsx:384
+#: src/pages/stock/StockDetail.tsx:873
 msgid "Error scanning stock item"
 msgstr "재고 품목 스캔 중 오류 발생"
 
-#: src/pages/stock/LocationDetail.tsx:347
+#: src/pages/stock/LocationDetail.tsx:391
 msgid "Scan Stock Location"
 msgstr "재고 위치 스캔"
 
-#: src/pages/stock/LocationDetail.tsx:359
+#: src/pages/stock/LocationDetail.tsx:403
 msgid "Scanned stock location into location"
 msgstr "스캔된 재고 위치를 위치로"
 
-#: src/pages/stock/LocationDetail.tsx:365
+#: src/pages/stock/LocationDetail.tsx:409
 msgid "Error scanning stock location"
 msgstr "재고 위치 스캔 중 오류 발생"
 
-#: src/pages/stock/LocationDetail.tsx:383
+#: src/pages/stock/LocationDetail.tsx:427
 msgid "Scan in stock items"
 msgstr "재고 품목 스캔하여 넣기"
 
-#: src/pages/stock/LocationDetail.tsx:385
+#: src/pages/stock/LocationDetail.tsx:429
 msgid "Scan item into this location"
 msgstr "이 위치로 항목 스캔"
 
-#: src/pages/stock/LocationDetail.tsx:389
+#: src/pages/stock/LocationDetail.tsx:433
 msgid "Scan in container"
 msgstr "컨테이너 스캔하여 넣기"
 
-#: src/pages/stock/LocationDetail.tsx:391
+#: src/pages/stock/LocationDetail.tsx:435
 msgid "Scan container into this location"
 msgstr "이 위치로 컨테이너 스캔"
 
-#: src/pages/stock/StockDetail.tsx:148
+#: src/pages/stock/StockDetail.tsx:149
 msgid "Base Part"
 msgstr "베이스 부분"
 
@@ -9038,7 +9119,7 @@ msgstr "베이스 부분"
 #~ msgid "Edit stock item"
 #~ msgstr "Edit stock item"
 
-#: src/pages/stock/StockDetail.tsx:207
+#: src/pages/stock/StockDetail.tsx:208
 msgid "Previous serial number"
 msgstr "이전 시리얼 번호"
 
@@ -9046,43 +9127,43 @@ msgstr "이전 시리얼 번호"
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:229
+#: src/pages/stock/StockDetail.tsx:230
 msgid "Find serial number"
 msgstr "시리얼 번호 찾기"
 
-#: src/pages/stock/StockDetail.tsx:235
+#: src/pages/stock/StockDetail.tsx:236
 msgid "Next serial number"
 msgstr "다음 시리얼 번호"
 
-#: src/pages/stock/StockDetail.tsx:273
+#: src/pages/stock/StockDetail.tsx:274
 msgid "Allocated to Orders"
 msgstr "주문에 할당됨"
 
-#: src/pages/stock/StockDetail.tsx:306
+#: src/pages/stock/StockDetail.tsx:307
 msgid "Installed In"
 msgstr "설치 위치"
 
-#: src/pages/stock/StockDetail.tsx:326
+#: src/pages/stock/StockDetail.tsx:327
 msgid "Parent Item"
 msgstr "상위 항목"
 
-#: src/pages/stock/StockDetail.tsx:330
+#: src/pages/stock/StockDetail.tsx:331
 msgid "Parent stock item"
 msgstr "모재품목"
 
-#: src/pages/stock/StockDetail.tsx:336
+#: src/pages/stock/StockDetail.tsx:337
 msgid "Consumed By"
 msgstr "사용한 대상"
-
-#: src/pages/stock/StockDetail.tsx:433
-msgid "Last Stocktake"
-msgstr "최근 재고 실사"
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:527
+#: src/pages/stock/StockDetail.tsx:434
+msgid "Last Stocktake"
+msgstr "최근 재고 실사"
+
+#: src/pages/stock/StockDetail.tsx:535
 msgid "Stock Details"
 msgstr "재고 상세 정보"
 
@@ -9090,17 +9171,17 @@ msgstr "재고 상세 정보"
 #~ msgid "Test Data"
 #~ msgstr "Test Data"
 
-#: src/pages/stock/StockDetail.tsx:602
+#: src/pages/stock/StockDetail.tsx:603
+msgid "Transfer Order Allocations"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:634
 msgid "Installed Items"
 msgstr "설치된 항목"
 
-#: src/pages/stock/StockDetail.tsx:609
+#: src/pages/stock/StockDetail.tsx:641
 msgid "Child Items"
 msgstr "하위 항목"
-
-#: src/pages/stock/StockDetail.tsx:663
-msgid "Edit Stock Item"
-msgstr "재고 품목 편집"
 
 #: src/pages/stock/StockDetail.tsx:671
 #: src/tables/stock/StockItemTable.tsx:452
@@ -9112,26 +9193,26 @@ msgstr "재고 품목 편집"
 #~ msgid "Remove stock"
 #~ msgstr "Remove stock"
 
-#: src/pages/stock/StockDetail.tsx:683
-msgid "Convert Stock Item"
-msgstr ""
+#: src/pages/stock/StockDetail.tsx:695
+msgid "Edit Stock Item"
+msgstr "재고 품목 편집"
 
 #: src/pages/stock/StockDetail.tsx:698
 #: src/tables/stock/StockItemTable.tsx:481
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:725
+#: src/pages/stock/StockDetail.tsx:715
+msgid "Convert Stock Item"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:757
 msgid "Items Created"
 msgstr "항목이 생성되었습니다"
 
-#: src/pages/stock/StockDetail.tsx:726
+#: src/pages/stock/StockDetail.tsx:758
 msgid "Created {n} stock items"
 msgstr "재고 품목 {n}개가 생성되었습니다"
-
-#: src/pages/stock/StockDetail.tsx:743
-msgid "Delete Stock Item"
-msgstr "재고 품목 삭제"
 
 #: src/pages/stock/StockDetail.tsx:762
 #~ msgid "Return Stock Item"
@@ -9141,46 +9222,29 @@ msgstr "재고 품목 삭제"
 #~ msgid "Return this item into stock. This will remove the customer assignment."
 #~ msgstr "Return this item into stock. This will remove the customer assignment."
 
+#: src/pages/stock/StockDetail.tsx:775
+msgid "Delete Stock Item"
+msgstr "재고 품목 삭제"
+
 #: src/pages/stock/StockDetail.tsx:777
 #~ msgid "Item returned to stock"
 #~ msgstr "Item returned to stock"
 
-#: src/pages/stock/StockDetail.tsx:793
+#: src/pages/stock/StockDetail.tsx:825
 msgid "Serialize Stock Item"
 msgstr "재고 품목 일련번호 지정"
 
-#: src/pages/stock/StockDetail.tsx:809
+#: src/pages/stock/StockDetail.tsx:841
 msgid "Stock item serialized"
 msgstr "재고 품목에 일련번호가 지정되었습니다"
 
-#: src/pages/stock/StockDetail.tsx:817
+#: src/pages/stock/StockDetail.tsx:849
 msgid "Scan Into Location"
 msgstr "위치로 스캔"
 
 #: src/pages/stock/StockDetail.tsx:868
 #~ msgid "Count stock"
 #~ msgstr "Count stock"
-
-#: src/pages/stock/StockDetail.tsx:869
-msgid "Scan into location"
-msgstr "스캔하여 위치로 이동"
-
-#: src/pages/stock/StockDetail.tsx:871
-msgid "Scan this item into a location"
-msgstr "이 항목을 위치로 스캔"
-
-#: src/pages/stock/StockDetail.tsx:883
-msgid "Stock Operations"
-msgstr "재고 운영"
-
-#: src/pages/stock/StockDetail.tsx:888
-#: src/tables/build/BuildOutputTable.tsx:574
-msgid "Serialize"
-msgstr "일련번호 지정"
-
-#: src/pages/stock/StockDetail.tsx:889
-msgid "Serialize stock"
-msgstr "재고에 일련번호 지정"
 
 #: src/pages/stock/StockDetail.tsx:890
 #~ msgid "Return from customer"
@@ -9190,17 +9254,30 @@ msgstr "재고에 일련번호 지정"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
-#: src/pages/stock/StockDetail.tsx:914
+#: src/pages/stock/StockDetail.tsx:901
+msgid "Scan into location"
+msgstr "스캔하여 위치로 이동"
+
+#: src/pages/stock/StockDetail.tsx:903
+msgid "Scan this item into a location"
+msgstr "이 항목을 위치로 스캔"
+
+#: src/pages/stock/StockDetail.tsx:915
+msgid "Stock Operations"
+msgstr "재고 운영"
+
+#: src/pages/stock/StockDetail.tsx:920
+#: src/tables/build/BuildOutputTable.tsx:623
+msgid "Serialize"
+msgstr "일련번호 지정"
+
+#: src/pages/stock/StockDetail.tsx:921
+msgid "Serialize stock"
+msgstr "재고에 일련번호 지정"
+
+#: src/pages/stock/StockDetail.tsx:946
 msgid "Stock Item Actions"
 msgstr "재고 품목 작업"
-
-#: src/pages/stock/StockDetail.tsx:925
-msgid "Convert"
-msgstr ""
-
-#: src/pages/stock/StockDetail.tsx:926
-msgid "Convert this stock item to a different part"
-msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
@@ -9210,19 +9287,57 @@ msgstr ""
 #~ msgid "Assign to a customer"
 #~ msgstr "Assign to a customer"
 
-#: src/pages/stock/StockDetail.tsx:991
+#: src/pages/stock/StockDetail.tsx:957
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:958
+msgid "Convert this stock item to a different part"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:1023
 #: src/tables/stock/StockItemTable.tsx:258
 msgid "Stale"
 msgstr "탁한"
 
-#: src/pages/stock/StockDetail.tsx:997
+#: src/pages/stock/StockDetail.tsx:1029
 #: src/tables/stock/StockItemTable.tsx:252
 msgid "Expired"
 msgstr "만료됨"
 
-#: src/pages/stock/StockDetail.tsx:1003
+#: src/pages/stock/StockDetail.tsx:1035
 msgid "Unavailable"
 msgstr "없는"
+
+#: src/pages/stock/TransferOrderDetail.tsx:317
+msgid "Transferred Stock"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:370
+msgid "Edit Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:388
+#: src/tables/stock/TransferOrderTable.tsx:143
+#: src/tables/stock/TransferOrderTable.tsx:154
+msgid "Add Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:397
+msgid "Issue Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:405
+msgid "Cancel Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:413
+msgid "Hold Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetail.tsx:421
+msgid "Complete Transfer Order"
+msgstr ""
 
 #: src/states/IconState.tsx:47
 #: src/states/IconState.tsx:77
@@ -9233,11 +9348,11 @@ msgstr "서버에서 아이콘 패키지를 불러오는 중 오류 발생"
 #~ msgid "Part is locked"
 #~ msgstr "Part is locked"
 
-#: src/tables/ColumnRenderers.tsx:68
+#: src/tables/ColumnRenderers.tsx:70
 msgid "Part is not active"
 msgstr "부품이 활성화되지 않았습니다."
 
-#: src/tables/ColumnRenderers.tsx:78
+#: src/tables/ColumnRenderers.tsx:80
 msgid "You are subscribed to notifications for this part"
 msgstr "이 부품의 알림을 구독 중입니다"
 
@@ -9245,73 +9360,75 @@ msgstr "이 부품의 알림을 구독 중입니다"
 #~ msgid "No location set"
 #~ msgstr "No location set"
 
-#: src/tables/ColumnRenderers.tsx:162
+#: src/tables/ColumnRenderers.tsx:164
 msgid "This stock item is in production"
 msgstr "이 재고 품목은 생산 중입니다."
 
-#: src/tables/ColumnRenderers.tsx:169
+#: src/tables/ColumnRenderers.tsx:171
 msgid "This stock item has been assigned to a sales order"
 msgstr "이 재고 품목은 판매 주문에 지정되었습니다."
 
-#: src/tables/ColumnRenderers.tsx:176
+#: src/tables/ColumnRenderers.tsx:178
 msgid "This stock item has been assigned to a customer"
 msgstr "이 재고 품목은 고객에게 할당되었습니다."
 
-#: src/tables/ColumnRenderers.tsx:183
+#: src/tables/ColumnRenderers.tsx:185
 msgid "This stock item is installed in another stock item"
 msgstr "이 재고 품목은 다른 재고 품목에 설치되어 있습니다."
 
-#: src/tables/ColumnRenderers.tsx:190
+#: src/tables/ColumnRenderers.tsx:192
 msgid "This stock item has been consumed by a build order"
 msgstr "이 재고 품목은 생산 주문에서 사용되었습니다"
 
-#: src/tables/ColumnRenderers.tsx:197
+#: src/tables/ColumnRenderers.tsx:199
 msgid "This stock item is unavailable"
 msgstr "이 재고 품목을 이용할 수 없습니다"
 
-#: src/tables/ColumnRenderers.tsx:203
+#: src/tables/ColumnRenderers.tsx:205
 msgid "This stock item has expired"
 msgstr "이 재고 품목은 만료되었습니다."
 
-#: src/tables/ColumnRenderers.tsx:207
+#: src/tables/ColumnRenderers.tsx:209
 msgid "This stock item is stale"
 msgstr "이 재고 품목은 오래되었습니다."
 
-#: src/tables/ColumnRenderers.tsx:219
+#: src/tables/ColumnRenderers.tsx:221
 msgid "This stock item is over-allocated"
 msgstr "이 재고 항목은 초과 할당되었습니다."
 
-#: src/tables/ColumnRenderers.tsx:227
+#: src/tables/ColumnRenderers.tsx:229
 msgid "This stock item is fully allocated"
 msgstr "이 재고 품목은 전부 할당되었습니다"
 
-#: src/tables/ColumnRenderers.tsx:234
+#: src/tables/ColumnRenderers.tsx:236
 msgid "This stock item is partially allocated"
 msgstr "이 재고 품목은 일부 할당되었습니다"
 
-#: src/tables/ColumnRenderers.tsx:252
+#: src/tables/ColumnRenderers.tsx:254
 #: src/tables/build/BuildLineTable.tsx:308
 #: src/tables/sales/SalesOrderLineItemTable.tsx:156
+#: src/tables/stock/TransferOrderLineItemTable.tsx:140
 msgid "No stock available"
 msgstr "재고가 없습니다"
 
-#: src/tables/ColumnRenderers.tsx:262
+#: src/tables/ColumnRenderers.tsx:264
 msgid "This stock item has been depleted"
 msgstr "본 상품은 재고가 소진되었습니다"
 
-#: src/tables/ColumnRenderers.tsx:279
-#: src/tables/bom/BomTable.tsx:375
+#: src/tables/ColumnRenderers.tsx:281
+#: src/tables/bom/BomTable.tsx:385
 #: src/tables/part/PartTable.tsx:189
 #: src/tables/sales/SalesOrderLineItemTable.tsx:185
+#: src/tables/stock/TransferOrderLineItemTable.tsx:169
 msgid "Stock Information"
 msgstr "재고 정보"
 
-#: src/tables/ColumnRenderers.tsx:542
-#: src/tables/build/BuildOutputTable.tsx:663
+#: src/tables/ColumnRenderers.tsx:544
+#: src/tables/build/BuildOutputTable.tsx:712
 msgid "Allocated Lines"
 msgstr "할당된 항목"
 
-#: src/tables/ColumnRenderers.tsx:771
+#: src/tables/ColumnRenderers.tsx:773
 msgid "Line Item"
 msgstr "광고 항목"
 
@@ -9406,6 +9523,7 @@ msgstr "나에게 할당된 주문 표시"
 
 #: src/tables/Filter.tsx:186
 #: src/tables/sales/SalesOrderAllocationTable.tsx:89
+#: src/tables/stock/TransferOrderAllocationTable.tsx:78
 msgid "Outstanding"
 msgstr "미처리"
 
@@ -9466,6 +9584,7 @@ msgid "Show items with a start date after this date"
 msgstr "이 날짜 이후 시작일을 가진 항목 표시"
 
 #: src/tables/Filter.tsx:257
+#: src/tables/stock/TransferOrderTable.tsx:81
 msgid "Has Start Date"
 msgstr "시작일이 있음"
 
@@ -9474,6 +9593,7 @@ msgid "Show items with a start date"
 msgstr ""
 
 #: src/tables/Filter.tsx:266
+#: src/tables/stock/TransferOrderTable.tsx:75
 msgid "Has Target Date"
 msgstr "목표 날짜 있음"
 
@@ -9562,7 +9682,7 @@ msgstr "책임 소유자별로 필터링"
 
 #: src/tables/Filter.tsx:414
 #: src/tables/settings/ApiTokenTable.tsx:128
-#: src/tables/stock/StockTrackingTable.tsx:226
+#: src/tables/stock/StockTrackingTable.tsx:238
 msgid "Filter by user"
 msgstr "사용자별로 필터링"
 
@@ -9742,19 +9862,19 @@ msgstr "활성 필터"
 #~ msgid "Upload Data"
 #~ msgstr "Upload Data"
 
-#: src/tables/bom/BomTable.tsx:115
+#: src/tables/bom/BomTable.tsx:125
 msgid "This BOM item is defined for a different parent"
 msgstr "이 BOM 항목은 다른 상위 항목에 대해 정의되었습니다."
 
-#: src/tables/bom/BomTable.tsx:122
+#: src/tables/bom/BomTable.tsx:132
 msgid "This BOM item has not been validated"
 msgstr "이 BOM 항목은 아직 검증되지 않았습니다"
 
-#: src/tables/bom/BomTable.tsx:145
+#: src/tables/bom/BomTable.tsx:155
 msgid "Part Information"
 msgstr "부품정보"
 
-#: src/tables/bom/BomTable.tsx:257
+#: src/tables/bom/BomTable.tsx:267
 msgid "Substitutes"
 msgstr "대체 부품"
 
@@ -9766,11 +9886,14 @@ msgstr "대체 부품"
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:319
+#: src/tables/bom/BomTable.tsx:329
 #: src/tables/part/PartTable.tsx:87
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
 #: src/tables/sales/SalesOrderLineItemTable.tsx:195
 #: src/tables/sales/SalesOrderLineItemTable.tsx:212
+#: src/tables/stock/TransferOrderLineItemTable.tsx:121
+#: src/tables/stock/TransferOrderLineItemTable.tsx:180
+#: src/tables/stock/TransferOrderLineItemTable.tsx:198
 msgid "Virtual part"
 msgstr "가상 부품"
 
@@ -9778,34 +9901,28 @@ msgstr "가상 부품"
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
 
-#: src/tables/bom/BomTable.tsx:332
-#: src/tables/build/BuildLineTable.tsx:282
-#: src/tables/part/PartTable.tsx:163
-msgid "External stock"
-msgstr "외부 재고"
-
 #: src/tables/bom/BomTable.tsx:333
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:340
-#: src/tables/build/BuildLineTable.tsx:245
-msgid "Includes substitute stock"
-msgstr "대체재고 포함"
+#: src/tables/bom/BomTable.tsx:342
+#: src/tables/build/BuildLineTable.tsx:282
+#: src/tables/part/PartTable.tsx:163
+msgid "External stock"
+msgstr "외부 재고"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
 
 #: src/tables/bom/BomTable.tsx:349
-#: src/tables/build/BuildLineTable.tsx:255
-#: src/tables/sales/SalesOrderLineItemTable.tsx:162
-msgid "Includes variant stock"
-msgstr "변형 재고 포함"
-
-#: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
 #~ msgstr "Bom item deleted"
+
+#: src/tables/bom/BomTable.tsx:350
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "대체재고 포함"
 
 #: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
@@ -9815,171 +9932,178 @@ msgstr "변형 재고 포함"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:366
+#: src/tables/bom/BomTable.tsx:359
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+#: src/tables/stock/TransferOrderLineItemTable.tsx:146
+msgid "Includes variant stock"
+msgstr "변형 재고 포함"
+
+#: src/tables/bom/BomTable.tsx:376
 #: src/tables/part/PartTable.tsx:132
 msgid "Building"
 msgstr "생산 중"
 
-#: src/tables/bom/BomTable.tsx:417
+#: src/tables/bom/BomTable.tsx:427
 #: src/tables/build/BuildLineTable.tsx:498
-#: src/tables/build/BuildLineTable.tsx:539
+#: src/tables/build/BuildLineTable.tsx:542
 msgid "Consumable item"
 msgstr "소모성 아이템"
 
-#: src/tables/bom/BomTable.tsx:420
+#: src/tables/bom/BomTable.tsx:430
 msgid "No available stock"
 msgstr "사용 가능한 재고 없음"
 
-#: src/tables/bom/BomTable.tsx:438
+#: src/tables/bom/BomTable.tsx:448
 #: src/tables/build/BuildLineTable.tsx:219
 msgid "Show testable items"
 msgstr "테스트 가능한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:443
+#: src/tables/bom/BomTable.tsx:453
 msgid "Show trackable items"
 msgstr "추적 가능한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:447
+#: src/tables/bom/BomTable.tsx:457
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:42
 #: src/tables/purchasing/ManufacturerPartTable.tsx:154
 #: src/tables/purchasing/SupplierPartTable.tsx:259
 msgid "Active Part"
 msgstr "활성 부품"
 
-#: src/tables/bom/BomTable.tsx:448
+#: src/tables/bom/BomTable.tsx:458
 msgid "Show active items"
 msgstr "활성 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:453
+#: src/tables/bom/BomTable.tsx:463
 #: src/tables/build/BuildLineTable.tsx:214
 msgid "Show assembled items"
 msgstr "조립 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:458
+#: src/tables/bom/BomTable.tsx:468
 msgid "Show virtual items"
 msgstr "가상 아이템 표시"
 
-#: src/tables/bom/BomTable.tsx:463
+#: src/tables/bom/BomTable.tsx:473
 msgid "Show items with available stock"
 msgstr "재고가 있는 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:468
+#: src/tables/bom/BomTable.tsx:478
 msgid "Show items on order"
 msgstr "주문한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:472
+#: src/tables/bom/BomTable.tsx:482
 msgid "Validated"
 msgstr "검증됨"
 
-#: src/tables/bom/BomTable.tsx:473
+#: src/tables/bom/BomTable.tsx:483
 msgid "Show validated items"
 msgstr "검증된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:478
+#: src/tables/bom/BomTable.tsx:488
 #: src/tables/bom/UsedInTable.tsx:91
 msgid "Show inherited items"
 msgstr "상속된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:483
+#: src/tables/bom/BomTable.tsx:493
 msgid "Show items which allow variant substitution"
 msgstr "변형 대체를 허용하는 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:488
+#: src/tables/bom/BomTable.tsx:498
 #: src/tables/bom/UsedInTable.tsx:101
 msgid "Show optional items"
 msgstr "선택 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:493
+#: src/tables/bom/BomTable.tsx:503
 msgid "Show consumable items"
 msgstr "소모성 아이템 표시"
 
-#: src/tables/bom/BomTable.tsx:497
+#: src/tables/bom/BomTable.tsx:507
 #: src/tables/part/PartTableFilters.tsx:129
 msgid "Has Pricing"
 msgstr "가격 있음"
 
-#: src/tables/bom/BomTable.tsx:498
+#: src/tables/bom/BomTable.tsx:508
 msgid "Show items with pricing"
 msgstr "가격이 포함된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:520
+#: src/tables/bom/BomTable.tsx:530
 msgid "Import BOM Data"
 msgstr "BOM 데이터 가져오기"
 
-#: src/tables/bom/BomTable.tsx:531
-#: src/tables/bom/BomTable.tsx:655
+#: src/tables/bom/BomTable.tsx:541
+#: src/tables/bom/BomTable.tsx:663
 msgid "Add BOM Item"
 msgstr "BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:536
+#: src/tables/bom/BomTable.tsx:546
 msgid "BOM item created"
 msgstr "BOM 항목이 생성되었습니다."
 
-#: src/tables/bom/BomTable.tsx:543
+#: src/tables/bom/BomTable.tsx:553
 #: src/tables/bom/UsedInTable.tsx:121
 msgid "Edit BOM Item"
 msgstr "BOM 항목 편집"
 
-#: src/tables/bom/BomTable.tsx:545
+#: src/tables/bom/BomTable.tsx:555
 #: src/tables/bom/UsedInTable.tsx:125
 msgid "BOM item updated"
 msgstr "BOM 항목이 업데이트되었습니다."
 
-#: src/tables/bom/BomTable.tsx:552
+#: src/tables/bom/BomTable.tsx:562
 msgid "Delete BOM Item"
 msgstr "BOM 항목 삭제"
 
-#: src/tables/bom/BomTable.tsx:553
+#: src/tables/bom/BomTable.tsx:563
 msgid "BOM item deleted"
 msgstr "BOM 항목이 삭제되었습니다."
 
-#: src/tables/bom/BomTable.tsx:573
+#: src/tables/bom/BomTable.tsx:583
 msgid "BOM item validated"
 msgstr "BOM 항목이 검증되었습니다."
 
-#: src/tables/bom/BomTable.tsx:582
+#: src/tables/bom/BomTable.tsx:592
 msgid "Failed to validate BOM item"
 msgstr "BOM 항목을 검증하지 못했습니다."
 
-#: src/tables/bom/BomTable.tsx:594
+#: src/tables/bom/BomTable.tsx:604
 msgid "View BOM"
 msgstr "BOM 보기"
 
-#: src/tables/bom/BomTable.tsx:605
+#: src/tables/bom/BomTable.tsx:615
 msgid "Validate BOM Line"
 msgstr "BOM 행 검증"
 
-#: src/tables/bom/BomTable.tsx:624
+#: src/tables/bom/BomTable.tsx:632
 msgid "Edit Substitutes"
 msgstr "대체 부품 편집"
 
-#: src/tables/bom/BomTable.tsx:649
+#: src/tables/bom/BomTable.tsx:657
 msgid "Add BOM Items"
 msgstr "BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:657
+#: src/tables/bom/BomTable.tsx:665
 msgid "Add a single BOM item"
 msgstr "단일 BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:661
+#: src/tables/bom/BomTable.tsx:669
 #: src/tables/general/ParameterTable.tsx:202
 #: src/tables/part/PartTable.tsx:429
 msgid "Import from File"
 msgstr "파일에서 가져오기"
 
-#: src/tables/bom/BomTable.tsx:663
+#: src/tables/bom/BomTable.tsx:671
 msgid "Import BOM items from a file"
 msgstr "파일에서 BOM 항목 가져오기"
 
-#: src/tables/bom/BomTable.tsx:671
+#: src/tables/bom/BomTable.tsx:679
 msgid "Edit BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:681
+#: src/tables/bom/BomTable.tsx:689
 msgid "Finish Editing BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:709
+#: src/tables/bom/BomTable.tsx:717
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "부품이 잠겨 있으므로 BOM을 편집할 수 없습니다."
 
@@ -10058,6 +10182,7 @@ msgstr "생산 결과물에 할당된 항목 표시"
 #: src/tables/part/PartSalesAllocationsTable.tsx:67
 #: src/tables/sales/SalesOrderAllocationTable.tsx:123
 #: src/tables/sales/SalesOrderShipmentTable.tsx:145
+#: src/tables/stock/TransferOrderAllocationTable.tsx:107
 msgid "Order Status"
 msgstr "주문 상태"
 
@@ -10066,7 +10191,7 @@ msgstr "주문 상태"
 #~ msgstr "Edit Build Item"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:166
-#: src/tables/build/BuildLineTable.tsx:657
+#: src/tables/build/BuildLineTable.tsx:660
 msgid "Edit Stock Allocation"
 msgstr "재고 할당 편집"
 
@@ -10075,8 +10200,9 @@ msgstr "재고 할당 편집"
 #~ msgstr "Delete Build Item"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:179
-#: src/tables/build/BuildLineTable.tsx:670
+#: src/tables/build/BuildLineTable.tsx:673
 #: src/tables/sales/SalesOrderAllocationTable.tsx:217
+#: src/tables/stock/TransferOrderAllocationTable.tsx:174
 msgid "Remove Allocated Stock"
 msgstr "할당된 재고 제거"
 
@@ -10086,18 +10212,19 @@ msgstr "할당된 재고 제거"
 #~ msgstr "Delete Stock Allocation"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:184
-#: src/tables/build/BuildLineTable.tsx:675
+#: src/tables/build/BuildLineTable.tsx:678
 #: src/tables/sales/SalesOrderAllocationTable.tsx:220
+#: src/tables/stock/TransferOrderAllocationTable.tsx:177
 msgid "Are you sure you want to remove this allocated stock from the order?"
 msgstr "할당된 재고를 주문에서 제거하시겠습니까?"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:199
-#: src/tables/build/BuildLineTable.tsx:690
+#: src/tables/build/BuildLineTable.tsx:693
 msgid "Consuming allocated stock"
 msgstr "할당된 재고를 소비합니다."
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:200
-#: src/tables/build/BuildLineTable.tsx:691
+#: src/tables/build/BuildLineTable.tsx:694
 msgid "Stock consumed successfully"
 msgstr "재고가 성공적으로 소비되었습니다."
 
@@ -10108,6 +10235,7 @@ msgstr "소비하다"
 #: src/tables/build/BuildAllocatedStockTable.tsx:277
 #: src/tables/build/BuildLineTable.tsx:117
 #: src/tables/sales/SalesOrderAllocationTable.tsx:247
+#: src/tables/stock/TransferOrderAllocationTable.tsx:197
 msgid "Remove allocated stock"
 msgstr "할당된 재고 제거"
 
@@ -10163,6 +10291,7 @@ msgstr "주문된 재고가 있는 항목 표시"
 
 #: src/tables/build/BuildLineTable.tsx:264
 #: src/tables/sales/SalesOrderLineItemTable.tsx:168
+#: src/tables/stock/TransferOrderLineItemTable.tsx:152
 msgid "In production"
 msgstr "생산 중"
 
@@ -10187,17 +10316,18 @@ msgstr "BOM 정보"
 msgid "Fully allocated"
 msgstr "완전히 할당됨"
 
-#: src/tables/build/BuildLineTable.tsx:565
+#: src/tables/build/BuildLineTable.tsx:568
 #: src/tables/sales/SalesOrderLineItemTable.tsx:309
+#: src/tables/stock/TransferOrderLineItemTable.tsx:248
 msgid "Create Build Order"
 msgstr "생산 주문 생성"
 
-#: src/tables/build/BuildLineTable.tsx:577
+#: src/tables/build/BuildLineTable.tsx:580
 #: src/tables/build/BuildOutputTable.tsx:226
 msgid "Allocating stock to build order"
 msgstr "생산 주문에 재고 할당 중"
 
-#: src/tables/build/BuildLineTable.tsx:578
+#: src/tables/build/BuildLineTable.tsx:581
 #: src/tables/build/BuildOutputTable.tsx:227
 msgid "Stock allocation complete"
 msgstr "재고 할당이 완료되었습니다"
@@ -10210,44 +10340,45 @@ msgstr "재고 할당이 완료되었습니다"
 #~ msgid "Automatically allocate stock to this build according to the selected options"
 #~ msgstr "Automatically allocate stock to this build according to the selected options"
 
-#: src/tables/build/BuildLineTable.tsx:602
-#: src/tables/build/BuildLineTable.tsx:831
+#: src/tables/build/BuildLineTable.tsx:605
+#: src/tables/build/BuildLineTable.tsx:834
 #: src/tables/build/BuildOutputTable.tsx:250
-#: src/tables/build/BuildOutputTable.tsx:485
+#: src/tables/build/BuildOutputTable.tsx:534
 msgid "Auto Allocate Stock"
 msgstr "재고 자동 할당"
 
-#: src/tables/build/BuildLineTable.tsx:603
+#: src/tables/build/BuildLineTable.tsx:606
 msgid "Automatically allocate untracked BOM items to this build according to the selected options"
 msgstr "선택한 옵션에 따라 추적되지 않는 BOM 항목을 이 생산에 자동 할당합니다"
 
-#: src/tables/build/BuildLineTable.tsx:623
-#: src/tables/build/BuildLineTable.tsx:637
-#: src/tables/build/BuildLineTable.tsx:780
-#: src/tables/build/BuildLineTable.tsx:881
-#: src/tables/build/BuildOutputTable.tsx:396
-#: src/tables/build/BuildOutputTable.tsx:401
+#: src/tables/build/BuildLineTable.tsx:626
+#: src/tables/build/BuildLineTable.tsx:640
+#: src/tables/build/BuildLineTable.tsx:783
+#: src/tables/build/BuildLineTable.tsx:884
+#: src/tables/build/BuildOutputTable.tsx:445
+#: src/tables/build/BuildOutputTable.tsx:450
 msgid "Deallocate Stock"
 msgstr "재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:639
+#: src/tables/build/BuildLineTable.tsx:642
 msgid "Deallocate all untracked stock for this build order"
 msgstr "이 생산 주문의 모든 비추적 재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:641
+#: src/tables/build/BuildLineTable.tsx:644
 msgid "Deallocate stock from the selected line item"
 msgstr "선택한 항목에서 재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:645
+#: src/tables/build/BuildLineTable.tsx:648
 msgid "Stock has been deallocated"
 msgstr "재고 할당이 취소되었습니다"
 
-#: src/tables/build/BuildLineTable.tsx:800
+#: src/tables/build/BuildLineTable.tsx:803
 msgid "Build Stock"
 msgstr "생산 재고"
 
-#: src/tables/build/BuildLineTable.tsx:813
+#: src/tables/build/BuildLineTable.tsx:816
 #: src/tables/sales/SalesOrderLineItemTable.tsx:485
+#: src/tables/stock/TransferOrderLineItemTable.tsx:447
 msgid "View Part"
 msgstr "부품 보기"
 
@@ -10282,20 +10413,6 @@ msgstr "외부 생산 주문 표시"
 #~ msgid "Filter by whether the purchase order has a project code"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
-#: src/tables/build/BuildOrderTable.tsx:172
-#: src/tables/purchasing/PurchaseOrderTable.tsx:95
-#: src/tables/sales/ReturnOrderTable.tsx:95
-#: src/tables/sales/SalesOrderTable.tsx:93
-#~ msgid "Show orders with a target date"
-#~ msgstr "Show orders with a target date"
-
-#: src/tables/build/BuildOrderTable.tsx:178
-#: src/tables/purchasing/PurchaseOrderTable.tsx:101
-#: src/tables/sales/ReturnOrderTable.tsx:101
-#: src/tables/sales/SalesOrderTable.tsx:99
-#~ msgid "Show orders with a start date"
-#~ msgstr "Show orders with a start date"
-
 #: src/tables/build/BuildOrderTable.tsx:179
 #~ msgid "Filter by user who issued this order"
 #~ msgstr "Filter by user who issued this order"
@@ -10321,7 +10438,7 @@ msgstr "선택한 옵션에 따라 추적되는 BOM 항목을 이 생산에 자�
 #~ msgstr "Edit build output"
 
 #: src/tables/build/BuildOutputTable.tsx:330
-#: src/tables/build/BuildOutputTable.tsx:526
+#: src/tables/build/BuildOutputTable.tsx:575
 msgid "Add Build Output"
 msgstr "생산 결과물 추가"
 
@@ -10329,86 +10446,110 @@ msgstr "생산 결과물 추가"
 msgid "Build output created"
 msgstr "생산 결과물이 생성되었습니다"
 
-#: src/tables/build/BuildOutputTable.tsx:387
-#: src/tables/build/BuildOutputTable.tsx:596
+#: src/tables/build/BuildOutputTable.tsx:355
+msgid "Completing build outputs"
+msgstr ""
+
+#: src/tables/build/BuildOutputTable.tsx:356
+msgid "Build outputs have been completed"
+msgstr "생산 결과물이 완료되었습니다"
+
+#: src/tables/build/BuildOutputTable.tsx:365
+msgid "Scrapping build outputs"
+msgstr ""
+
+#: src/tables/build/BuildOutputTable.tsx:366
+msgid "Build outputs have been scrapped"
+msgstr "생산 결과물이 폐기되었습니다"
+
+#: src/tables/build/BuildOutputTable.tsx:375
+msgid "Cancelling build outputs"
+msgstr ""
+
+#: src/tables/build/BuildOutputTable.tsx:376
+msgid "Build outputs have been cancelled"
+msgstr "생산 결과물이 취소되었습니다"
+
+#: src/tables/build/BuildOutputTable.tsx:436
+#: src/tables/build/BuildOutputTable.tsx:645
 msgid "Edit Build Output"
 msgstr "생산 결과물 편집"
 
-#: src/tables/build/BuildOutputTable.tsx:403
+#: src/tables/build/BuildOutputTable.tsx:452
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "이 작업은 선택한 생산 결과물의 모든 재고 할당을 해제합니다"
 
-#: src/tables/build/BuildOutputTable.tsx:428
+#: src/tables/build/BuildOutputTable.tsx:477
 msgid "Serialize Build Output"
 msgstr "생산 결과물 일련번호 지정"
 
-#: src/tables/build/BuildOutputTable.tsx:446
+#: src/tables/build/BuildOutputTable.tsx:495
 #: src/tables/part/PartTestResultTable.tsx:319
 #: src/tables/stock/StockItemTable.tsx:182
 msgid "Filter by stock status"
 msgstr "재고 상태로 필터링"
 
-#: src/tables/build/BuildOutputTable.tsx:493
-msgid "Complete selected outputs"
-msgstr "선택한 결과물 완료"
-
 #: src/tables/build/BuildOutputTable.tsx:498
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:504
+#: src/tables/build/BuildOutputTable.tsx:542
+msgid "Complete selected outputs"
+msgstr "선택한 결과물 완료"
+
+#: src/tables/build/BuildOutputTable.tsx:553
 msgid "Scrap selected outputs"
 msgstr "선택한 결과물 폐기"
 
-#: src/tables/build/BuildOutputTable.tsx:515
+#: src/tables/build/BuildOutputTable.tsx:564
 msgid "Cancel selected outputs"
 msgstr "선택한 결과물 취소"
 
-#: src/tables/build/BuildOutputTable.tsx:546
+#: src/tables/build/BuildOutputTable.tsx:595
 msgid "Allocate"
 msgstr "할당하다"
 
-#: src/tables/build/BuildOutputTable.tsx:547
+#: src/tables/build/BuildOutputTable.tsx:596
 msgid "Allocate stock to build output"
 msgstr "생산 결과물에 재고 할당"
 
-#: src/tables/build/BuildOutputTable.tsx:560
+#: src/tables/build/BuildOutputTable.tsx:609
 msgid "Deallocate"
 msgstr "할당 해제"
 
-#: src/tables/build/BuildOutputTable.tsx:561
+#: src/tables/build/BuildOutputTable.tsx:610
 msgid "Deallocate stock from build output"
 msgstr "생산 결과물에서 재고 할당 해제"
 
-#: src/tables/build/BuildOutputTable.tsx:575
+#: src/tables/build/BuildOutputTable.tsx:624
 msgid "Serialize build output"
 msgstr "생산 결과물 일련번호 지정"
 
-#: src/tables/build/BuildOutputTable.tsx:586
+#: src/tables/build/BuildOutputTable.tsx:635
 msgid "Complete build output"
 msgstr "생산 결과물 완료"
 
-#: src/tables/build/BuildOutputTable.tsx:603
+#: src/tables/build/BuildOutputTable.tsx:652
 msgid "Scrap"
 msgstr "권투 시합"
 
-#: src/tables/build/BuildOutputTable.tsx:604
+#: src/tables/build/BuildOutputTable.tsx:653
 msgid "Scrap build output"
 msgstr "생산 결과물 폐기"
 
-#: src/tables/build/BuildOutputTable.tsx:614
+#: src/tables/build/BuildOutputTable.tsx:663
 msgid "Cancel build output"
 msgstr "생산 결과물 취소"
 
-#: src/tables/build/BuildOutputTable.tsx:678
+#: src/tables/build/BuildOutputTable.tsx:727
 msgid "Required Tests"
 msgstr "필수 테스트"
 
-#: src/tables/build/BuildOutputTable.tsx:754
+#: src/tables/build/BuildOutputTable.tsx:803
 msgid "External Build"
 msgstr "외부 생산"
 
-#: src/tables/build/BuildOutputTable.tsx:756
+#: src/tables/build/BuildOutputTable.tsx:805
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "이 생산 주문은 외부 발주서로 이행됩니다"
 
@@ -10475,7 +10616,7 @@ msgstr "연락처 삭제"
 msgid "Add contact"
 msgstr "연락처 추가"
 
-#: src/tables/general/AttachmentTable.tsx:108
+#: src/tables/general/AttachmentTable.tsx:113
 msgid "Uploading file {filename}"
 msgstr "{filename} 파일 업로드 중"
 
@@ -10487,20 +10628,20 @@ msgstr "{filename} 파일 업로드 중"
 #~ msgid "File {0} uploaded successfully"
 #~ msgstr "File {0} uploaded successfully"
 
-#: src/tables/general/AttachmentTable.tsx:160
-#: src/tables/general/AttachmentTable.tsx:174
+#: src/tables/general/AttachmentTable.tsx:165
+#: src/tables/general/AttachmentTable.tsx:179
 msgid "Uploading File"
 msgstr "파일 업로드 중"
 
-#: src/tables/general/AttachmentTable.tsx:185
+#: src/tables/general/AttachmentTable.tsx:190
 msgid "File Uploaded"
 msgstr "파일이 업로드됨"
 
-#: src/tables/general/AttachmentTable.tsx:186
+#: src/tables/general/AttachmentTable.tsx:191
 msgid "File {name} uploaded successfully"
 msgstr "{name} 파일이 성공적으로 업로드되었습니다"
 
-#: src/tables/general/AttachmentTable.tsx:202
+#: src/tables/general/AttachmentTable.tsx:207
 msgid "File could not be uploaded"
 msgstr "파일을 업로드할 수 없습니다."
 
@@ -10508,47 +10649,55 @@ msgstr "파일을 업로드할 수 없습니다."
 #~ msgid "Upload attachment"
 #~ msgstr "Upload attachment"
 
-#: src/tables/general/AttachmentTable.tsx:262
+#: src/tables/general/AttachmentTable.tsx:267
 msgid "Upload Attachment"
 msgstr "첨부파일 업로드"
 
-#: src/tables/general/AttachmentTable.tsx:272
+#: src/tables/general/AttachmentTable.tsx:277
 msgid "Edit Attachment"
 msgstr "첨부파일 편집"
 
-#: src/tables/general/AttachmentTable.tsx:286
+#: src/tables/general/AttachmentTable.tsx:291
 msgid "Delete Attachment"
 msgstr "첨부파일 삭제"
 
-#: src/tables/general/AttachmentTable.tsx:296
+#: src/tables/general/AttachmentTable.tsx:301
 msgid "Is Link"
 msgstr "링크인가"
 
-#: src/tables/general/AttachmentTable.tsx:297
+#: src/tables/general/AttachmentTable.tsx:302
 msgid "Show link attachments"
 msgstr "링크 첨부파일 표시"
 
-#: src/tables/general/AttachmentTable.tsx:301
+#: src/tables/general/AttachmentTable.tsx:306
 msgid "Is File"
 msgstr "파일임"
 
-#: src/tables/general/AttachmentTable.tsx:302
+#: src/tables/general/AttachmentTable.tsx:307
 msgid "Show file attachments"
 msgstr "파일 첨부파일 표시"
 
 #: src/tables/general/AttachmentTable.tsx:311
+msgid "Is Image"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:312
+msgid "Show image attachments"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:321
 msgid "Add attachment"
 msgstr "첨부파일 추가"
 
-#: src/tables/general/AttachmentTable.tsx:322
+#: src/tables/general/AttachmentTable.tsx:332
 msgid "Add external link"
 msgstr "외부 링크 추가"
 
-#: src/tables/general/AttachmentTable.tsx:375
+#: src/tables/general/AttachmentTable.tsx:385
 msgid "No attachments found"
 msgstr "첨부파일이 없습니다."
 
-#: src/tables/general/AttachmentTable.tsx:414
+#: src/tables/general/AttachmentTable.tsx:424
 msgid "Drag attachment file here to upload"
 msgstr "첨부파일을 여기에 끌어다 놓아 업로드하세요"
 
@@ -10561,26 +10710,30 @@ msgid "View Item"
 msgstr "항목 보기"
 
 #: src/tables/general/ExtraLineItemTable.tsx:97
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:298
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:404
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:297
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:403
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:85
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:186
 #: src/tables/sales/SalesOrderLineItemTable.tsx:248
 #: src/tables/sales/SalesOrderLineItemTable.tsx:355
+#: src/tables/stock/TransferOrderLineItemTable.tsx:263
+#: src/tables/stock/TransferOrderLineItemTable.tsx:317
 msgid "Add Line Item"
 msgstr "항목 추가"
 
 #: src/tables/general/ExtraLineItemTable.tsx:110
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:321
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:320
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:267
+#: src/tables/stock/TransferOrderLineItemTable.tsx:280
 msgid "Edit Line Item"
 msgstr "항목 편집"
 
 #: src/tables/general/ExtraLineItemTable.tsx:119
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:330
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:329
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
 #: src/tables/sales/SalesOrderLineItemTable.tsx:276
+#: src/tables/stock/TransferOrderLineItemTable.tsx:289
 msgid "Delete Line Item"
 msgstr "항목 삭제"
 
@@ -10981,7 +11134,7 @@ msgid "Required Stock"
 msgstr "필수재고"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:382
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:381
 msgid "View Build Order"
 msgstr "생산 주문 보기"
 
@@ -11720,23 +11873,23 @@ msgstr "활성 제조사의 제조사 부품 표시"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:398
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:397
 msgid "Import Line Items"
 msgstr "항목 가져오기"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:232
 msgid "Supplier Code"
 msgstr "공급업체 코드"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:241
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:240
 msgid "Supplier Link"
 msgstr "공급업체 링크"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:248
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:247
 msgid "Manufacturer Code"
 msgstr "제조업체 코드"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
 msgid "Show line items which have been received"
 msgstr "입고된 항목 표시"
 
@@ -11746,11 +11899,11 @@ msgstr "입고된 항목 표시"
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:351
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:350
 msgid "Receive line item"
 msgstr "항목 입고"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:415
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:414
 msgid "Receive items"
 msgstr "항목 입고"
 
@@ -11823,6 +11976,7 @@ msgid "Receive Item"
 msgstr "항목 입고"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:90
+#: src/tables/stock/TransferOrderAllocationTable.tsx:79
 msgid "Show outstanding allocations"
 msgstr "미해결 할당 표시"
 
@@ -11835,10 +11989,12 @@ msgid "Show allocations assigned to a shipment"
 msgstr "출하에 할당된 항목 표시"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:155
+#: src/tables/stock/TransferOrderAllocationTable.tsx:141
 msgid "Available Quantity"
 msgstr "사용 가능 수량"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:162
+#: src/tables/stock/TransferOrderAllocationTable.tsx:148
 msgid "Allocated Quantity"
 msgstr "할당 수량"
 
@@ -11853,6 +12009,8 @@ msgstr "출하되지 않음"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:210
 #: src/tables/sales/SalesOrderAllocationTable.tsx:234
+#: src/tables/stock/TransferOrderAllocationTable.tsx:167
+#: src/tables/stock/TransferOrderAllocationTable.tsx:188
 msgid "Edit Allocation"
 msgstr "할당 편집"
 
@@ -11879,6 +12037,7 @@ msgstr "출하에 할당"
 #~ msgstr "Allocate stock"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:289
+#: src/tables/stock/TransferOrderLineItemTable.tsx:302
 msgid "Allocate Serial Numbers"
 msgstr "일련번호 할당"
 
@@ -11891,22 +12050,27 @@ msgid "Stock allocated successfully"
 msgstr "재고 할당이 성공적으로 완료되었습니다."
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:341
+#: src/tables/stock/TransferOrderLineItemTable.tsx:491
 msgid "Show lines which are fully allocated"
 msgstr "완전히 할당된 항목 표시"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:346
+#: src/tables/stock/TransferOrderLineItemTable.tsx:496
 msgid "Show lines which are completed"
 msgstr "완료된 항목 표시"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:419
+#: src/tables/stock/TransferOrderLineItemTable.tsx:381
 msgid "Allocate serials"
 msgstr "시리얼 번호 할당"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:437
+#: src/tables/stock/TransferOrderLineItemTable.tsx:399
 msgid "Build stock"
 msgstr "생산 재고"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:455
+#: src/tables/stock/TransferOrderLineItemTable.tsx:417
 msgid "Order stock"
 msgstr "주문 재고"
 
@@ -12892,23 +13056,23 @@ msgstr "상위 위치 설정"
 msgid "Set parent location for the selected items"
 msgstr "선택한 항목의 상위 위치 설정"
 
-#: src/tables/stock/StockTrackingTable.tsx:93
+#: src/tables/stock/StockTrackingTable.tsx:94
 msgid "Old Status"
 msgstr "이전 상태"
 
-#: src/tables/stock/StockTrackingTable.tsx:109
+#: src/tables/stock/StockTrackingTable.tsx:110
 msgid "Added"
 msgstr "추가됨"
 
-#: src/tables/stock/StockTrackingTable.tsx:114
+#: src/tables/stock/StockTrackingTable.tsx:115
 msgid "Removed"
 msgstr "제거됨"
 
-#: src/tables/stock/StockTrackingTable.tsx:250
+#: src/tables/stock/StockTrackingTable.tsx:262
 msgid "Stock item no longer exists"
 msgstr "재고 품목이 더 이상 존재하지 않습니다"
 
-#: src/tables/stock/StockTrackingTable.tsx:276
+#: src/tables/stock/StockTrackingTable.tsx:288
 msgid "No user information"
 msgstr "사용자 정보 없음"
 
@@ -12916,6 +13080,18 @@ msgstr "사용자 정보 없음"
 #: src/tables/stock/TestStatisticsTable.tsx:64
 #~ msgid "Total"
 #~ msgstr "Total"
+
+#: src/tables/stock/TransferOrderLineItemTable.tsx:194
+msgid "Transferred"
+msgstr ""
+
+#: src/tables/stock/TransferOrderTable.tsx:76
+msgid "Show orders with a target date"
+msgstr ""
+
+#: src/tables/stock/TransferOrderTable.tsx:82
+msgid "Show orders with a start date"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:25
 msgid "Mobile viewport detected"
