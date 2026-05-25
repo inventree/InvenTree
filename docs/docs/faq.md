@@ -199,7 +199,7 @@ In either case, ensure that the directory is available *on your local machine* a
 
 ## Error Rendering Component
 
-Sometimes, following a software update, you may find that certain components of the web interface are not rendering correctly, and presented with a message similar to the screenshow below:
+Sometimes, following a software update, you may find that certain components of the web interface are not rendering correctly, and presented with a message similar to the screenshot below:
 
 {{ image("faq/boundary.png", "Error Rendering Component") }}
 
