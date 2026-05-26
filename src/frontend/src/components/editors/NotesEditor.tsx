@@ -468,10 +468,6 @@ export default function NotesEditor({
                         <RichTextEditor.Unlink />
                       </RichTextEditor.ControlsGroup>
                       <RichTextEditor.ControlsGroup>
-                        <RichTextEditor.Undo />
-                        <RichTextEditor.Redo />
-                      </RichTextEditor.ControlsGroup>
-                      <RichTextEditor.ControlsGroup>
                         <FileButton
                           onChange={handleImageUpload}
                           accept='image/*'
@@ -587,6 +583,10 @@ export default function NotesEditor({
                         >
                           <IconTableOff size='0.9rem' />
                         </RichTextEditor.Control>
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Undo />
+                        <RichTextEditor.Redo />
                       </RichTextEditor.ControlsGroup>
                     </RichTextEditor.Toolbar>
                   )}
