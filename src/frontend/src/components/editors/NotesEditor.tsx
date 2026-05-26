@@ -37,7 +37,6 @@ import {
   Tooltip
 } from '@mantine/core';
 import {
-  IconArrowMerge,
   IconCirclePlus,
   IconColumnInsertLeft,
   IconColumnInsertRight,
@@ -164,7 +163,7 @@ export default function NotesEditor({
         }
       }),
       TableKit.configure({
-        table: { resizable: true, renderWrapper: true, cellMinWidth: 50 }
+        table: { resizable: false, renderWrapper: true, cellMinWidth: 50 }
       })
     ],
     content: '',
@@ -563,16 +562,6 @@ export default function NotesEditor({
                           title={t`Delete row`}
                         >
                           <IconRowRemove size='0.9rem' />
-                        </RichTextEditor.Control>
-                        <RichTextEditor.Control
-                          disabled={!isInTable}
-                          onClick={() =>
-                            editor?.chain().focus().mergeOrSplit().run()
-                          }
-                          aria-label={t`Merge or split cells`}
-                          title={t`Merge or split cells`}
-                        >
-                          <IconArrowMerge size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
                           disabled={!isInTable}
