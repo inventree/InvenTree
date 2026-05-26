@@ -545,6 +545,62 @@ class StockItemListTest(StockAPITestCase):
         for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
             self.run_ordering_test(self.list_url, ordering)
 
+    def test_creation_date_filter_and_ordering(self):
+        """Test created_before / created_after filters and ordering by creation_date."""
+        import datetime
+
+        part = Part.objects.first()
+        location = StockLocation.objects.first()
+
+        # Create items with known, spread-out creation_dates via UPDATE after insert
+        dates = [
+            datetime.date(2020, 1, 1),
+            datetime.date(2021, 6, 15),
+            datetime.date(2023, 3, 30),
+        ]
+        pks = []
+        for d in dates:
+            item = StockItem.objects.create(part=part, location=location, quantity=1)
+            StockItem.objects.filter(pk=item.pk).update(creation_date=d)
+            pks.append(item.pk)
+
+        # created_after=2020-12-31 should exclude the 2020 item
+        result_pks = [r['pk'] for r in self.get_stock(created_after='2020-12-31')]
+        self.assertNotIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertIn(pks[2], result_pks)
+
+        # created_before=2022-01-01 should exclude the 2023 item
+        result_pks = [r['pk'] for r in self.get_stock(created_before='2022-01-01')]
+        self.assertIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertNotIn(pks[2], result_pks)
+
+        # combined: only the 2021 item falls in the window
+        result_pks = [
+            r['pk']
+            for r in self.get_stock(
+                created_after='2020-12-31', created_before='2022-01-01'
+            )
+        ]
+        self.assertNotIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertNotIn(pks[2], result_pks)
+
+        # ordering=creation_date: our three items must appear in ascending date order
+        results = self.get(
+            self.list_url, {'ordering': 'creation_date'}, expected_code=200
+        ).data
+        ordered_pks = [r['pk'] for r in results if r['pk'] in pks]
+        self.assertEqual(ordered_pks, pks)
+
+        # ordering=-creation_date: descending
+        results = self.get(
+            self.list_url, {'ordering': '-creation_date'}, expected_code=200
+        ).data
+        ordered_pks = [r['pk'] for r in results if r['pk'] in pks]
+        self.assertEqual(ordered_pks, list(reversed(pks)))
+
     def test_pagination(self):
         """Test that pagination boundaries are observed correctly.
 
@@ -1454,6 +1510,49 @@ class StockItemTest(StockAPITestCase):
             data={'part': 1, 'location': 1, 'quantity': 10},
             expected_code=201,
         )
+        # creation_date must be populated on the newly created item
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertIsNotNone(item.creation_date)
+
+    def test_creation_date_is_readonly(self):
+        """creation_date must not be modifiable via the API."""
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=StockLocation.objects.get(pk=1),
+            quantity=1,
+        )
+        original_date = item.creation_date
+        self.assertIsNotNone(original_date)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+        self.patch(
+            url, data={'creation_date': '2000-01-01T00:00:00Z'}, expected_code=200
+        )
+        # Field is read-only; the DB value must be unchanged
+        item.refresh_from_db()
+        self.assertEqual(item.creation_date, original_date)
+
+    def test_creation_date_set_on_serialize(self):
+        """creation_date must be set on items produced by the serialize endpoint."""
+        # Stock item 100: part 25 (trackable), quantity 10, location 7
+        item = StockItem.objects.get(pk=100)
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        self.post(
+            url,
+            data={
+                'quantity': 3,
+                'serial_numbers': '901,902,903',
+                'destination': item.location.pk,
+            },
+            expected_code=201,
+        )
+        new_items = StockItem.objects.filter(
+            part=item.part, serial__in=['901', '902', '903']
+        )
+        self.assertEqual(new_items.count(), 3)
+        for new_item in new_items:
+            self.assertIsNotNone(new_item.creation_date)
 
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
@@ -1597,6 +1696,7 @@ class StockItemTest(StockAPITestCase):
             # Item location should have been set automatically
             self.assertIsNotNone(item.location)
             self.assertIn(item.serial, serials)
+            self.assertIsNotNone(item.creation_date)
 
         # There now should be 10 unique stock entries for this part
         self.assertEqual(trackable_part.stock_entries().count(), 10)

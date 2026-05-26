@@ -1359,9 +1359,10 @@ class BuildOutputCreateTest(BuildAPITest):
         # Stock items have increased
         self.assertEqual(n_items + 5, part.stock_items.count())
 
-        # Serial numbers have been created
+        # Serial numbers have been created, each with a creation_date
         for sn in range(1, 6):
             self.assertTrue(part.stock_items.filter(serial=sn).exists())
+            self.assertIsNotNone(part.stock_items.get(serial=sn).creation_date)
 
     def test_create_unserialized_output(self):
         """Create an unserialized build output via the API."""
@@ -1382,6 +1383,9 @@ class BuildOutputCreateTest(BuildAPITest):
 
         # Stock items have increased
         self.assertEqual(n_items + 1, part.stock_items.count())
+
+        # The new output must have a creation_date set
+        self.assertIsNotNone(part.stock_items.order_by('-pk').first().creation_date)
 
 
 class BuildOutputScrapTest(BuildAPITest):
