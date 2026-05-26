@@ -642,7 +642,11 @@ class PartSerializer(
             'unallocated_stock',
             'variant_stock',
             'internal_price',
+            'sale_price',
+            'stock_cost',
             'unrealized_value',
+            'markup_fy',
+            'markup_prior_fy',
             'manufacturer_names',
             # Fields only used for Part creation
             'duplicate',
@@ -798,14 +802,46 @@ class PartSerializer(
             )
         )
 
-        # Annotate with internal price (from PartPricing cache)
+        # Annotate with unit prices (from PartPricing cache)
         queryset = queryset.annotate(
-            internal_price=part_filters.annotate_internal_price()
+            internal_price=part_filters.annotate_internal_price(),
+            sale_price=part_filters.annotate_sale_price(),
         )
 
-        # Annotate with unrealized stock value
+        # Annotate with aggregate value columns
         queryset = queryset.annotate(
-            unrealized_value=part_filters.annotate_unrealized_value()
+            stock_cost=part_filters.annotate_stock_cost(),
+            unrealized_value=part_filters.annotate_unrealized_value(),
+        )
+
+        # Annotate with FY-scoped markup percentages
+        fy_start, fy_end = part_filters._get_fiscal_year_bounds(offset=0)
+        prior_fy_start, prior_fy_end = part_filters._get_fiscal_year_bounds(offset=-1)
+
+        queryset = queryset.annotate(
+            fy_po_price=part_filters._annotate_latest_po_price_for_period(
+                fy_start, fy_end
+            ),
+            prior_fy_po_price=part_filters._annotate_latest_po_price_for_period(
+                prior_fy_start, prior_fy_end
+            ),
+        )
+
+        # Annotate FY sale prices
+        queryset = queryset.annotate(
+            sale_price_fy=F('pricing_data__sale_price_min'),
+            sale_price_prior_fy=part_filters._annotate_latest_so_price_for_period(
+                prior_fy_start, prior_fy_end
+            ),
+        )
+
+        queryset = queryset.annotate(
+            markup_fy=part_filters._annotate_markup_for_period(
+                'fy_po_price', 'sale_price_fy'
+            ),
+            markup_prior_fy=part_filters._annotate_markup_for_period(
+                'prior_fy_po_price', 'sale_price_prior_fy'
+            ),
         )
 
         return queryset
@@ -957,7 +993,39 @@ class PartSerializer(
         decimal_places=6,
         read_only=True,
         allow_null=True,
-        label=_('Unrealized Value'),
+        label=_('Retail Value'),
+    )
+
+    sale_price = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        read_only=True,
+        allow_null=True,
+        label=_('Sale Price'),
+    )
+
+    stock_cost = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        read_only=True,
+        allow_null=True,
+        label=_('Stock Cost'),
+    )
+
+    markup_fy = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+        allow_null=True,
+        label=_('Markup (Current)'),
+    )
+
+    markup_prior_fy = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+        allow_null=True,
+        label=_('Markup (Prior Fiscal Year)'),
     )
 
     minimum_stock = serializers.FloatField(

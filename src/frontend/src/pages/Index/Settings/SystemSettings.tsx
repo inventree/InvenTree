@@ -148,6 +148,7 @@ export default function SystemSettings() {
                 'CURRENCY_CODES',
                 'PART_INTERNAL_PRICE',
                 'PART_BOM_USE_INTERNAL_PRICE',
+                'FISCAL_YEAR_START',
                 'PRICING_DECIMAL_PLACES_MIN',
                 'PRICING_DECIMAL_PLACES',
                 'PRICING_AUTO_UPDATE',

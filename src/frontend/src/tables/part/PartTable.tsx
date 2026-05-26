@@ -225,13 +225,52 @@ function partTableColumns(): TableColumn[] {
       }
     },
     {
-      accessor: 'unrealized_value',
-      title: t`Unrealized Value`,
+      accessor: 'sale_price',
+      title: t`Sale Price`,
       sortable: true,
-      hidden: !useGlobalSettingsState.getState().isSet('PART_INTERNAL_PRICE'),
+      defaultVisible: false,
+      render: (record: any) => {
+        if (record.sale_price == null) return '-';
+        return formatCurrency(record.sale_price);
+      }
+    },
+    {
+      accessor: 'unrealized_value',
+      title: t`Retail Value`,
+      sortable: true,
       render: (record: any) => {
         if (record.unrealized_value == null) return '-';
         return formatCurrency(record.unrealized_value);
+      }
+    },
+    {
+      accessor: 'markup_fy',
+      title: t`Markup (Current)`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        if (record.markup_fy == null) return '-';
+        return `${Number(record.markup_fy).toFixed(1)}%`;
+      }
+    },
+    {
+      accessor: 'markup_prior_fy',
+      title: t`Markup (Prior Fiscal Year)`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        if (record.markup_prior_fy == null) return '-';
+        return `${Number(record.markup_prior_fy).toFixed(1)}%`;
+      }
+    },
+    {
+      accessor: 'stock_cost',
+      title: t`Stock Cost`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        if (record.stock_cost == null) return '-';
+        return formatCurrency(record.stock_cost);
       }
     },
     {
@@ -242,17 +281,6 @@ function partTableColumns(): TableColumn[] {
       defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
-    },
-    {
-      accessor: 'internal_price',
-      title: t`Internal Price`,
-      sortable: true,
-      defaultVisible: false,
-      hidden: !useGlobalSettingsState.getState().isSet('PART_INTERNAL_PRICE'),
-      render: (record: any) => {
-        if (record.internal_price == null) return '-';
-        return formatCurrency(record.internal_price);
-      }
     },
     {
       accessor: 'manufacturer_names',

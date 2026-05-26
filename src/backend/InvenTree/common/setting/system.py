@@ -650,6 +650,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'FISCAL_YEAR_START': {
+        'name': _('Fiscal Year Start'),
+        'description': _('Month and day that the fiscal year begins (MM-DD format)'),
+        'default': '01-01',
+        'validator': str,
+    },
     'PART_BOM_ALLOW_ZERO_QUANTITY': {
         'name': _('Allow BOM Zero Quantity'),
         'description': _(

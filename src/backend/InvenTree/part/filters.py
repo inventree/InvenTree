@@ -11,6 +11,7 @@ Useful References:
 
 """
 
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Optional
 
@@ -26,6 +27,7 @@ from django.db.models import (
     OuterRef,
     Q,
     Subquery,
+    Sum,
     Value,
     When,
 )
@@ -34,6 +36,7 @@ from django.db.models.query import QuerySet
 
 from sql_util.utils import SubquerySum
 
+import order.models as order_models
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
@@ -380,14 +383,198 @@ def annotate_internal_price(reference: str = '') -> QuerySet:
     )
 
 
-def annotate_unrealized_value() -> QuerySet:
-    """Annotate the total unrealized stock value for each part.
+def annotate_sale_price(reference: str = '') -> QuerySet:
+    """Annotate the sale price for each part from price break minimum."""
+    return Coalesce(
+        F(f'{reference}pricing_data__sale_price_min'),
+        Value(None),
+        output_field=DecimalField(),
+    )
 
-    Computes total_in_stock * internal_price.
-    Requires total_in_stock and internal_price annotations to already be applied.
+
+def annotate_stock_cost() -> QuerySet:
+    """Annotate the total cost of stock on hand for each part.
+
+    Uses a database-level annotation that sums (quantity * purchase_price)
+    across all in-stock items for each part via a correlated subquery.
+
+    The subquery uses the part FK field name to ensure proper OuterRef
+    correlation, matching the pattern used by SubquerySum.
+    """
+    from sql_util.aggregates import Subquery as SqlUtilSubquery
+
+    stock_filter = stock.models.StockItem.IN_STOCK_FILTER
+
+    qs = (
+        stock.models.StockItem.objects
+        .filter(part=OuterRef('pk'))
+        .filter(stock_filter)
+        .annotate(
+            line_cost=ExpressionWrapper(
+                F('quantity') * Coalesce(F('purchase_price'), Decimal(0)),
+                output_field=DecimalField(),
+            )
+        )
+        .order_by()
+        .values('part')
+        .annotate(total=Sum('line_cost'))
+        .values('total')
+    )
+
+    return Coalesce(
+        SqlUtilSubquery(qs, output_field=DecimalField()),
+        Decimal(0),
+        output_field=DecimalField(),
+    )
+
+
+def annotate_unrealized_value() -> QuerySet:
+    """Annotate the total potential revenue from stock on hand.
+
+    Computes total_in_stock * sale_price.
+    Requires total_in_stock and sale_price annotations to already be applied.
     """
     return ExpressionWrapper(
-        F('total_in_stock') * Coalesce(F('internal_price'), Decimal(0)),
+        F('total_in_stock') * Coalesce(F('sale_price'), Decimal(0)),
+        output_field=DecimalField(),
+    )
+
+
+def annotate_markup_pct() -> QuerySet:
+    """Annotate the markup percentage for each part.
+
+    Computes ((sale_price / avg_purchase_cost) - 1) * 100
+
+    Requires sale_price, stock_cost, and total_in_stock annotations
+    to already be applied.
+
+    Returns None when any required input is missing or zero.
+    """
+    avg_purchase_cost = ExpressionWrapper(
+        F('stock_cost')
+        / Case(
+            When(total_in_stock__gt=0, then=F('total_in_stock')),
+            default=Value(Decimal(1)),
+        ),
+        output_field=DecimalField(),
+    )
+
+    return Case(
+        When(
+            Q(total_in_stock__gt=0) & Q(stock_cost__gt=0) & Q(sale_price__isnull=False),
+            then=ExpressionWrapper(
+                ((F('sale_price') / avg_purchase_cost) - Value(Decimal(1)))
+                * Value(Decimal(100)),
+                output_field=DecimalField(),
+            ),
+        ),
+        default=Value(None),
+        output_field=DecimalField(),
+    )
+
+
+def _get_fiscal_year_bounds(offset: int = 0):
+    """Return (start_date, end_date) for a fiscal year.
+
+    offset=0 returns current FY, offset=-1 returns prior FY.
+    Reads FISCAL_YEAR_START setting (MM-DD format).
+    Returns timezone-aware datetimes.
+    """
+    from django.utils import timezone
+
+    from common.settings import get_global_setting
+
+    fy_start_str = get_global_setting('FISCAL_YEAR_START', '01-01')
+    month, day = map(int, fy_start_str.split('-'))
+    today = date.today()
+
+    # Determine the FY start year for today
+    fy_start_d = date(today.year, month, day)
+    if today < fy_start_d:
+        fy_start_d = date(today.year - 1, month, day)
+
+    # Apply offset
+    fy_start_d = date(fy_start_d.year + offset, month, day)
+    fy_end_d = date(fy_start_d.year + 1, month, day) - timedelta(days=1)
+
+    fy_start = timezone.make_aware(datetime.combine(fy_start_d, datetime.min.time()))
+    fy_end = timezone.make_aware(datetime.combine(fy_end_d, datetime.max.time()))
+
+    return fy_start, fy_end
+
+
+def _annotate_latest_po_price_for_period(start_date, end_date, reference=''):
+    """Annotate the latest purchase order line item unit price within a date range.
+
+    Finds the most recent completed PO line item for each part and returns
+    its purchase_price. Uses complete_date on the PO to determine recency.
+    """
+    from sql_util.aggregates import Subquery as SqlUtilSubquery
+
+    qs = (
+        order_models.PurchaseOrderLineItem.objects
+        .filter(
+            part__part=OuterRef(f'{reference}pk'),
+            order__status__in=PurchaseOrderStatusGroups.COMPLETE,
+            order__complete_date__gte=start_date,
+            order__complete_date__lte=end_date,
+            purchase_price__isnull=False,
+        )
+        .order_by('-order__complete_date')
+        .values('purchase_price')[:1]
+    )
+
+    return Coalesce(
+        SqlUtilSubquery(qs, output_field=DecimalField()),
+        Value(None),
+        output_field=DecimalField(),
+    )
+
+
+def _annotate_latest_so_price_for_period(start_date, end_date, reference=''):
+    """Annotate the latest sales order line item unit price within a date range.
+
+    Finds the most recent completed SO line item for each part and returns
+    its sale_price. Uses shipment_date on the SO to determine recency.
+    """
+    from sql_util.aggregates import Subquery as SqlUtilSubquery
+
+    qs = (
+        order_models.SalesOrderLineItem.objects
+        .filter(
+            part=OuterRef(f'{reference}pk'),
+            order__status__in=SalesOrderStatusGroups.COMPLETE,
+            order__shipment_date__gte=start_date,
+            order__shipment_date__lte=end_date,
+            sale_price__isnull=False,
+        )
+        .order_by('-order__shipment_date')
+        .values('sale_price')[:1]
+    )
+
+    return Coalesce(
+        SqlUtilSubquery(qs, output_field=DecimalField()),
+        Value(None),
+        output_field=DecimalField(),
+    )
+
+
+def _annotate_markup_for_period(
+    purchase_price_field: str, sale_price_field: str
+) -> QuerySet:
+    """Annotate markup percentage from unit purchase and sale prices."""
+    return Case(
+        When(
+            Q(**{f'{purchase_price_field}__isnull': False})
+            & Q(**{f'{purchase_price_field}__gt': 0})
+            & Q(**{f'{sale_price_field}__isnull': False}),
+            then=ExpressionWrapper(
+                ((F(sale_price_field) / F(purchase_price_field)) - Value(Decimal(1)))
+                * Value(Decimal(100)),
+                output_field=DecimalField(),
+            ),
+        ),
+        default=Value(None),
         output_field=DecimalField(),
     )
 
