@@ -1,10 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 494
+INVENTREE_API_VERSION = 496
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v496 -> 2026-05-26 : https://github.com/inventree/InvenTree/pull/12011
+    - Add "creation_date" field to the StockItem API endpoint
+
+v495 -> 2026-05-25 : https://github.com/inventree/InvenTree/pull/12000
+    - Adds "auto-allocate" API endpoint for sales orders
+    - Allow bulk-delete of SalesOrderAllocation objects via the API
+    - Add new allocation options to the Build auto-allocate API endpoint
 
 v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
     - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task

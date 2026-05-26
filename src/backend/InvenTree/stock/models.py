@@ -38,6 +38,7 @@ import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -399,6 +400,27 @@ class StockItemReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartModels.PartTestTemplate]
 
 
+class StockSortOrder(StringEnum):
+    """Enum of ORM sort fields available for stock auto-allocation."""
+
+    DATE_OLDEST = 'updated'
+    DATE_NEWEST = '-updated'
+    QUANTITY_ASC = 'quantity'
+    QUANTITY_DESC = '-quantity'
+    EXPIRY_SOONEST = 'expiry_date'
+
+
+STOCK_SORT_CHOICES = [
+    (StockSortOrder.DATE_OLDEST, _('Oldest stock first (FIFO)')),
+    (StockSortOrder.DATE_NEWEST, _('Newest stock first (LIFO)')),
+    (StockSortOrder.QUANTITY_ASC, _('Smallest quantity first')),
+    (StockSortOrder.QUANTITY_DESC, _('Largest quantity first')),
+    (StockSortOrder.EXPIRY_SOONEST, _('Soonest expiry date first')),
+]
+
+STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
+
+
 class StockItem(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -421,7 +443,8 @@ class StockItem(
         batch: Batch number for this StockItem
         serial: Unique serial number for this StockItem
         link: Optional URL to link to external resource
-        updated: Date that this stock item was last updated (auto)
+        creation_date: Date that this stock item was created (auto)
+        updated: Date that the quantity of this stock item was last updated (auto)
         expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
@@ -1203,6 +1226,15 @@ class StockItem(
         blank=True,
         null=True,
         related_name='stocktake_stock',
+    )
+
+    creation_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_('Creation Date'),
+        help_text=_('Date that this stock item was created'),
     )
 
     review_needed = models.BooleanField(default=False)

@@ -27,6 +27,7 @@ import company.serializers
 import InvenTree.helpers
 import part.filters
 import part.serializers as part_serializers
+import stock.models as stock_models
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
@@ -1060,6 +1061,24 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         ],
         label=_('Item Type'),
         help_text=_('Select item type to auto-allocate'),
+    )
+
+    stock_sort_by = serializers.ChoiceField(
+        default=stock_models.STOCK_SORT_DEFAULT,
+        choices=stock_models.STOCK_SORT_CHOICES,
+        label=_('Stock Priority'),
+        help_text=_('Preferred order in which matching stock items are consumed'),
+    )
+
+    build_lines = serializers.PrimaryKeyRelatedField(
+        queryset=BuildLine.objects.all(),
+        many=True,
+        required=False,
+        default=list,
+        label=_('Build Lines'),
+        help_text=_(
+            'Limit allocation to these build lines (leave blank to allocate all lines)'
+        ),
     )
 
 
