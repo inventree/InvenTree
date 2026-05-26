@@ -182,6 +182,7 @@ export enum ApiEndpoints {
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_allocate = 'order/so/:id/allocate/',
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+  sales_order_auto_allocate = 'order/so/:id/auto-allocate/',
 
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
