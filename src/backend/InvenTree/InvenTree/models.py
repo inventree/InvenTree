@@ -152,7 +152,7 @@ class PluginValidationMixin(DiffMixin):
         from InvenTree.exceptions import log_error
         from plugin import PluginMixinEnum, registry
 
-        if self.delete_should_plugin_validate():
+        if self.should_plugin_validate():
             for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 try:
                     plugin.validate_model_deletion(self)
