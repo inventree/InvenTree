@@ -4,12 +4,13 @@ import '@mantine/tiptap/styles.css';
 import { useHotkeys } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import Image from '@tiptap/extension-image';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import DOMPurify from 'dompurify';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { ResizableImage } from 'tiptap-extension-resizable-image';
+import 'tiptap-extension-resizable-image/styles.css';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -143,51 +144,16 @@ export default function NotesEditor({
       StarterKit.configure({
         link: { openOnClick: false }
       }),
-      Image
+      ResizableImage.configure({
+        // Paste and drop are handled by the extension's built-in plugin
+        onUpload: async (file: File) => {
+          const src = await uploadFileRef.current(file);
+          return { src, 'data-keep-ratio': true };
+        }
+      })
     ],
     content: '',
-    onUpdate: () => setIsDirty(true),
-    editorProps: {
-      handleDrop: (view, event) => {
-        const files = event.dataTransfer?.files;
-        if (!files?.length) return false;
-        const imageFiles = Array.from(files).filter((f) =>
-          f.type.startsWith('image/')
-        );
-        if (!imageFiles.length) return false;
-
-        event.preventDefault();
-        const coords = view.posAtCoords({
-          left: event.clientX,
-          top: event.clientY
-        });
-        imageFiles.forEach((file) => {
-          uploadFileRef.current(file).then((url) => {
-            if (!url || !coords) return;
-            const node = view.state.schema.nodes.image?.create({ src: url });
-            if (node) view.dispatch(view.state.tr.insert(coords.pos, node));
-          });
-        });
-        return true;
-      },
-      handlePaste: (view, event) => {
-        const files = event.clipboardData?.files;
-        if (!files?.length) return false;
-        const imageFiles = Array.from(files).filter((f) =>
-          f.type.startsWith('image/')
-        );
-        if (!imageFiles.length) return false;
-
-        imageFiles.forEach((file) => {
-          uploadFileRef.current(file).then((url) => {
-            if (!url) return;
-            const node = view.state.schema.nodes.image?.create({ src: url });
-            if (node) view.dispatch(view.state.tr.replaceSelectionWith(node));
-          });
-        });
-        return true;
-      }
-    }
+    onUpdate: () => setIsDirty(true)
   });
 
   // Fetch the available notes for the given model type and ID
@@ -360,8 +326,12 @@ export default function NotesEditor({
     async (file: File | null) => {
       if (!file || !editor) return;
       try {
-        const url = await uploadFile(file);
-        editor.chain().focus().setImage({ src: url }).run();
+        const src = await uploadFile(file);
+        editor
+          .chain()
+          .focus()
+          .setResizableImage({ src, 'data-keep-ratio': true })
+          .run();
       } catch {
         notifications.show({
           title: t`Error`,
@@ -514,7 +484,7 @@ export default function NotesEditor({
               color='green'
               leftSection={<IconCirclePlus />}
               onClick={createNote.open}
-              disabled={!canEdit || isDirty}
+              // disabled={!canEdit || isDirty}
             >
               {t`Add Note`}
             </Button>

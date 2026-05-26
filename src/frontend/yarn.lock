@@ -5482,6 +5482,11 @@ tinyglobby@^0.2.13:
     fdir "^6.5.0"
     picomatch "^4.0.4"
 
+tiptap-extension-resizable-image@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/tiptap-extension-resizable-image/-/tiptap-extension-resizable-image-2.1.0.tgz#26573bcddfeeb06067be6f7c5ace2573b14661b4"
+  integrity sha512-uvdY/mTHMZ3EF3Z+b61y1htOUg8oF4TiepNFF1pYRg/KITYoYSteF5/L2/qtlZF9SMrzzwnrtRFQFzn/qBj7qQ==
+
 to-regex-range@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/to-regex-range/-/to-regex-range-5.0.1.tgz#1648c44aae7c8d988a326018ed72f5b4dd0392e4"

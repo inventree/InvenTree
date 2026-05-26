@@ -112,6 +112,7 @@
         "react-window": "1.8.11",
         "recharts": "^3.1.2",
         "styled-components": "^6.1.14",
+        "tiptap-extension-resizable-image": "^2.1.0",
         "undici": "^6.24.0",
         "zustand": "^5.0.8"
     },
