@@ -466,6 +466,61 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
+def note_instance(
+    instance: Model, title: Optional[str] = None
+) -> Optional[common.models.Note]:
+    """Return a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        A Note object, or None if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    if not instance:
+        raise ValueError('notes tag requires a valid Model instance')
+
+    if not hasattr(instance, 'notes'):
+        raise TypeError("notes tag requires a Model with a 'notes' attribute")
+
+    notes = instance.notes
+
+    if title:
+        # First try with exact match
+        if note := notes.filter(title=title).first():
+            return note
+
+        # Next, try with case-insensitive match
+        if note := notes.filter(title__iexact=title).first():
+            return note
+
+    # If no title is provided, or if no matching note is found, return the first note (if any)
+    return notes.order_by('-primary').first()
+
+
+@register.simple_tag()
+def note(instance: Model, title: Optional[str] = None) -> str:
+    """Return the HTML content of a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        The HTML content of the Note, or an empty string if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    if note := note_instance(instance, title):
+        return note.render_html()
+
+    return ''
+
+
+@register.simple_tag()
 def parameter(
     instance: Model, parameter_name: str
 ) -> Optional[common.models.Parameter]:

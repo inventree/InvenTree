@@ -3022,6 +3022,8 @@ class Note(
                 model_type=self.model_type, model_id=self.model_id
             ).exclude(pk=self.pk).update(primary=False)
 
+        self.cleanup_images()
+
     def delete(self):
         """Perform custom delete checks before deleting a Parameter instance."""
         self.check_delete()
@@ -3119,6 +3121,18 @@ class Note(
 
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_delete(self)
+
+    def cleanup_images(self):
+        """Remove any images which are no longer referenced in the note content."""
+        for image in self.images.all():
+            if image.image and image.image.url not in self.content:
+                image.delete()
+
+    def render_html(self) -> str:
+        """Return the content of the note rendered as HTML."""
+        from django.utils.safestring import mark_safe
+
+        return mark_safe(self.content)
 
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 

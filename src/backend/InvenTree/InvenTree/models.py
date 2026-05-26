@@ -646,7 +646,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         return True
 
 
-class InvenTreeNoteMixin(InvenTreePermissionCheckMixin):
+class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
     """Provides an abstracted class for managing notes.
 
     Links the implementing model to the common.models.Note table,
