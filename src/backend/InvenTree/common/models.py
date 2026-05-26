@@ -3032,17 +3032,6 @@ class Note(
         if self.content:
             attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
 
-            data_attrs = {
-                'data-name',
-                'data-level',
-                'data-value',
-                'data-style-type',
-                'data-editable',
-            }
-
-            for tag_attrs in attrs.values():
-                tag_attrs.update(data_attrs)
-
             for tag in (
                 'span',
                 'p',
@@ -3066,8 +3055,17 @@ class Note(
                 'tr',
                 'td',
                 'th',
+                'colgroup',
+                'col',
             ):
-                attrs.setdefault(tag, set()).update({'style'} | data_attrs)
+                attrs.setdefault(tag, set()).update({'style'})
+
+            # Allow class on structural tags used by the rich-text editor
+            for tag in ('div', 'span', 'img', 'table', 'td', 'th', 'col'):
+                attrs.setdefault(tag, set()).add('class')
+
+            # Allow image attributes used by tiptap-extension-resizable-image
+            attrs.setdefault('img', set()).update({'data-keep-ratio', 'colwidth'})
 
             self.content = nh3.clean(
                 self.content.strip(),
@@ -3087,6 +3085,12 @@ class Note(
                     'border-width',
                     'margin',
                     'padding',
+                    'column-width',
+                    'column-height',
+                    'min-width',
+                    'max-width',
+                    'min-height',
+                    'max-height',
                     'width',
                     'height',
                 },
