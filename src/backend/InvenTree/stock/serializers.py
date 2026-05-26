@@ -1883,6 +1883,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             'location': location,
                             'notes': notes,
                             'user': request.user,
+                            'copy_history': False,
                             **kwargs,
                         }
 
@@ -1897,9 +1898,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             )
                             target.merge_stock_items([piece], **merge_kwargs)
                         else:
-                            target.merge_stock_items(
-                                [stock_item], **merge_kwargs
-                            )
+                            target.merge_stock_items([stock_item], **merge_kwargs)
 
                         continue
 

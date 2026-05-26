@@ -2185,7 +2185,8 @@ class StockItem(
             return None
 
         candidates = list(
-            StockItem.objects.filter(part=self.part, location=location)
+            StockItem.objects
+            .filter(part=self.part, location=location)
             .exclude(pk=self.pk)
             .order_by('pk')
         )
@@ -2214,8 +2215,11 @@ class StockItem(
         *This* stock item subsumes the other, which is essentially deleted:
 
         - The quantity of this StockItem is increased
-        - Tracking history for the *other* item is copied to this item
+        - Tracking history for the *other* item is copied to this item (unless copy_history=False)
         - Any allocations (build order, sales order) are moved to this StockItem
+
+        kwargs:
+            copy_history: If True (default), copy tracking from merged items. Set False for merge-on-transfer.
         """
         if isinstance(other_items, StockItem):
             other_items = [other_items]
@@ -2229,6 +2233,7 @@ class StockItem(
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
         notes = kwargs.get('notes') or ''
+        copy_history = kwargs.pop('copy_history', True)
 
         parent_id = self.parent.pk if self.parent else None
 
@@ -2270,17 +2275,15 @@ class StockItem(
                 self.parent = None
                 self.save()
 
-            self.copyHistoryFrom(other)
+            if copy_history:
+                self.copyHistoryFrom(other)
 
             if other.location:
                 location_note = _('Transferred from %(location)s') % {
                     'location': other.location.pathstring
                 }
 
-                if notes:
-                    notes = f'{notes}\n{location_note}'
-                else:
-                    notes = location_note
+                notes = f'{notes}\n{location_note}' if notes else location_note
 
             other.delete()
 

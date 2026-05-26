@@ -2166,6 +2166,9 @@ class StockTransferMergeTest(StockAPITestCase):
         self.source_loc = StockLocation.objects.get(pk=5)
         self.url = reverse('api-stock-transfer')
 
+        # Remove fixture stock at the destination so merge targets are deterministic
+        StockItem.objects.filter(part=self.part, location=self.dest).delete()
+
     def test_transfer_without_merge_creates_separate_lot(self):
         """Transfer without merge leaves multiple stock rows at destination."""
         existing = StockItem.objects.create(
@@ -2219,8 +2222,8 @@ class StockTransferMergeTest(StockAPITestCase):
         self.assertEqual(existing.quantity, 150)
         self.assertFalse(StockItem.objects.filter(pk=incoming.pk).exists())
 
-    def test_transfer_merge_preserves_tracking(self):
-        """Transfer merge copies tracking history onto the surviving stock item."""
+    def test_transfer_merge_does_not_copy_source_tracking(self):
+        """Transfer merge keeps destination history and adds a single merge entry."""
         existing = StockItem.objects.create(
             part=self.part, location=self.dest, quantity=100
         )
@@ -2229,9 +2232,7 @@ class StockTransferMergeTest(StockAPITestCase):
         )
 
         incoming.add_tracking_entry(
-            StockHistoryCode.STOCK_UPDATE,
-            self.user,
-            notes='Source tracking entry',
+            StockHistoryCode.STOCK_UPDATE, self.user, notes='Source tracking entry'
         )
 
         tracking_count = existing.tracking_info.count()
@@ -2248,10 +2249,15 @@ class StockTransferMergeTest(StockAPITestCase):
 
         existing.refresh_from_db()
 
-        self.assertTrue(
+        self.assertFalse(
             existing.tracking_info.filter(notes='Source tracking entry').exists()
         )
-        self.assertGreater(existing.tracking_info.count(), tracking_count)
+        self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
+        self.assertTrue(
+            existing.tracking_info.filter(
+                tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+            ).exists()
+        )
 
 
 class StockItemDeletionTest(StockAPITestCase):
