@@ -421,7 +421,8 @@ class StockItem(
         batch: Batch number for this StockItem
         serial: Unique serial number for this StockItem
         link: Optional URL to link to external resource
-        updated: Date that this stock item was last updated (auto)
+        creation_date: Date that this stock item was created (auto)
+        updated: Date that the quantity of this stock item was last updated (auto)
         expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
@@ -1203,6 +1204,13 @@ class StockItem(
         blank=True,
         null=True,
         related_name='stocktake_stock',
+    )
+
+    creation_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Creation Date'),
+        help_text=_('Date that this stock item was created'),
     )
 
     review_needed = models.BooleanField(default=False)
