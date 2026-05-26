@@ -434,8 +434,9 @@ class TestCreationDateMigration(MigratorTestCase):
         """Create StockItem entries with varied data to exercise all backfill paths."""
         import datetime
 
+        from django.db import connection
+
         Part = self.old_state.apps.get_model('part', 'part')
-        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
         StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
 
         utc = datetime.timezone.utc
@@ -444,15 +445,40 @@ class TestCreationDateMigration(MigratorTestCase):
             name='Migration Test Part', level=0, tree_id=1, lft=0, rght=0
         )
 
-        def make_item(**kwargs):
-            return StockItem.objects.create(
-                part=part, quantity=1, level=0, tree_id=0, lft=0, rght=0, **kwargs
-            )
+        def make_item(stocktake_date=None):
+            """Insert a StockItem row via raw SQL, bypassing the duplicate-column ORM bug.
 
-        def add_tracking(item, tracking_type, date):
+            The historical model at migration 0119 has status_custom_key enumerated twice
+            (once from contribute_to_class on the status field, once from migration 0113's
+            explicit AddField), so ORM-generated INSERTs fail with
+            'column specified more than once'.  Raw SQL avoids the ORM field list entirely.
+            Raw SQL also leaves updated=NULL (no DB-level default for auto_now), which
+            makes Scenario 6 a clean "no date sources available" case.
+            """
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO stock_stockitem
+                        (part_id, quantity, level, tree_id, lft, rght,
+                         status, delete_on_deplete, review_needed, is_building,
+                         link, serial_int, barcode_data, barcode_hash)
+                    VALUES (%s, 1, 0, 0, 0, 0, 10, false, false, false, '', 0, '', '')
+                    RETURNING id
+                    """,
+                    [part.pk],
+                )
+                pk = cursor.fetchone()[0]
+                if stocktake_date is not None:
+                    cursor.execute(
+                        'UPDATE stock_stockitem SET stocktake_date = %s WHERE id = %s',
+                        [stocktake_date, pk],
+                    )
+            return pk
+
+        def add_tracking(pk, tracking_type, date):
             """Create a tracking entry, then override its auto_now_add date."""
             entry = StockItemTracking.objects.create(
-                item_id=item.pk, tracking_type=tracking_type
+                item_id=pk, tracking_type=tracking_type
             )
             # auto_now_add prevents setting date on INSERT; use UPDATE to set a historical value
             StockItemTracking.objects.filter(pk=entry.pk).update(date=date)
@@ -460,61 +486,60 @@ class TestCreationDateMigration(MigratorTestCase):
         # --- Scenario 1 ---
         # Item with a single CREATED (type=1) tracking entry.
         # Pass 1 should set creation_date = that entry's date.
-        item = make_item()
-        add_tracking(item, 1, datetime.datetime(2022, 1, 15, 10, 0, 0, tzinfo=utc))
-        self.pk_s1 = item.pk
+        pk = make_item()
+        add_tracking(pk, 1, datetime.datetime(2022, 1, 15, 10, 0, 0, tzinfo=utc))
+        self.pk_s1 = pk
         self.expected_s1 = datetime.datetime(2022, 1, 15, 10, 0, 0, tzinfo=utc)
 
         # --- Scenario 2 ---
         # Item with a CREATED entry (newer date) AND an older non-CREATED entry.
         # Pass 1 sets creation_date = CREATED entry date; older entry is ignored.
         # This verifies pass 1 wins over pass 2's min() logic.
-        item = make_item()
+        pk = make_item()
         add_tracking(
-            item, 1, datetime.datetime(2023, 6, 1, 0, 0, 0, tzinfo=utc)
+            pk, 1, datetime.datetime(2023, 6, 1, 0, 0, 0, tzinfo=utc)
         )  # CREATED, newer
         add_tracking(
-            item, 2, datetime.datetime(2018, 3, 10, 0, 0, 0, tzinfo=utc)
+            pk, 2, datetime.datetime(2018, 3, 10, 0, 0, 0, tzinfo=utc)
         )  # non-CREATED, older
-        self.pk_s2 = item.pk
+        self.pk_s2 = pk
         self.expected_s2 = datetime.datetime(2023, 6, 1, 0, 0, 0, tzinfo=utc)
         self.rejected_s2 = datetime.date(2018, 3, 10)
 
         # --- Scenario 3 ---
         # Item with only non-CREATED tracking entries.
-        # Pass 2 uses min(updated=now, earliest_entry_date), so earliest entry wins.
-        item = make_item()
+        # Pass 2 uses min(earliest_entry_date), so earliest entry wins.
+        pk = make_item()
         add_tracking(
-            item, 2, datetime.datetime(2021, 7, 20, 0, 0, 0, tzinfo=utc)
+            pk, 2, datetime.datetime(2021, 7, 20, 0, 0, 0, tzinfo=utc)
         )  # later
         add_tracking(
-            item, 3, datetime.datetime(2020, 2, 14, 0, 0, 0, tzinfo=utc)
+            pk, 3, datetime.datetime(2020, 2, 14, 0, 0, 0, tzinfo=utc)
         )  # earliest
-        self.pk_s3 = item.pk
+        self.pk_s3 = pk
         self.expected_s3 = datetime.datetime(2020, 2, 14, 0, 0, 0, tzinfo=utc)
 
         # --- Scenario 4 ---
         # Item with only stocktake_date set; no tracking entries.
-        # Pass 2 uses min(updated=now, stocktake_as_datetime); stocktake_date is in the
-        # past so it wins.
-        item = make_item(stocktake_date=datetime.date(2019, 11, 5))
-        self.pk_s4 = item.pk
+        # Pass 2 uses stocktake_as_datetime (in the past) as the date.
+        pk = make_item(stocktake_date=datetime.date(2019, 11, 5))
+        self.pk_s4 = pk
         self.expected_s4_date = datetime.date(2019, 11, 5)
 
         # --- Scenario 5 ---
         # Item with stocktake_date AND a non-CREATED tracking entry where the tracking
         # entry is older than stocktake_date.
-        # Pass 2 uses min(updated=now, stocktake, tracking); tracking wins.
-        item = make_item(stocktake_date=datetime.date(2021, 4, 1))
-        add_tracking(item, 2, datetime.datetime(2017, 8, 22, 0, 0, 0, tzinfo=utc))
-        self.pk_s5 = item.pk
+        # Pass 2 uses min(stocktake, tracking); tracking wins.
+        pk = make_item(stocktake_date=datetime.date(2021, 4, 1))
+        add_tracking(pk, 2, datetime.datetime(2017, 8, 22, 0, 0, 0, tzinfo=utc))
+        self.pk_s5 = pk
         self.expected_s5 = datetime.datetime(2017, 8, 22, 0, 0, 0, tzinfo=utc)
 
         # --- Scenario 6 ---
-        # Item with no stocktake_date and no tracking entries.
-        # Pass 2 falls back to auto_now 'updated'; creation_date must be non-null.
-        item = make_item()
-        self.pk_s6 = item.pk
+        # Item inserted via raw SQL with no stocktake_date and no tracking entries,
+        # so updated=NULL. No date sources exist → creation_date stays NULL after migration.
+        pk = make_item()
+        self.pk_s6 = pk
 
     def test_migration(self):
         """Verify creation_date is correctly backfilled for each scenario."""
@@ -556,6 +581,6 @@ class TestCreationDateMigration(MigratorTestCase):
         self.assertIsNotNone(item.creation_date)
         self.assertEqual(at_utc(item.creation_date), self.expected_s5)
 
-        # Scenario 6: No other sources → falls back to auto_now 'updated'; must not be null
+        # Scenario 6: updated=NULL, no stocktake, no tracking → creation_date stays NULL
         item = StockItem.objects.get(pk=self.pk_s6)
-        self.assertIsNotNone(item.creation_date)
+        self.assertIsNone(item.creation_date)

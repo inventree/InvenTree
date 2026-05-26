@@ -51,24 +51,33 @@ def set_creation_date(apps, schema_editor):
     # Next: Find any StockItem entries that have a null creation_date
     items = StockItem.objects.filter(creation_date__isnull=True)
 
-    progress = tqdm(total=items.count(), desc='stock.0121: Setting creation_date for remaining StockItem entries')
+    if items.count() > 0:
 
-    for item in items:
-        # Source the creation_date from the stock item
-        earliest_entry = StockItemTracking.objects.filter(item_id=item.pk).order_by('date').first()
+        progress = tqdm(total=items.count(), desc='stock.0121: Setting creation_date for remaining StockItem entries')
 
-        # Gather potential datetime sources for the creation_date field
-        date_options = [d for d in [
-            item.updated,
-            datetime.datetime(item.stocktake_date.year, item.stocktake_date.month, item.stocktake_date.day, tzinfo=datetime.timezone.utc) if item.stocktake_date else None,
-            earliest_entry.date if earliest_entry else None,
-        ] if d is not None]
+        for item in items:
+            # Source the creation_date from the stock item
+            earliest_entry = StockItemTracking.objects.filter(item_id=item.pk).order_by('date').first()
 
-        if date_options:
-            item.creation_date = min(date_options)
-            process_item(item)
+            # Gather potential datetime sources for the creation_date field
+            utc = datetime.timezone.utc
 
-        progress.update(1)
+            def make_aware(dt):
+                """Ensure a datetime is UTC-aware for safe cross-type comparison."""
+                return dt.replace(tzinfo=utc) if dt.tzinfo is None else dt.astimezone(utc)
+
+            raw_options = [
+                item.updated,
+                datetime.datetime(item.stocktake_date.year, item.stocktake_date.month, item.stocktake_date.day, tzinfo=utc) if item.stocktake_date else None,
+                earliest_entry.date if earliest_entry else None,
+            ]
+            date_options = [make_aware(d) for d in raw_options if d is not None]
+
+            if date_options:
+                item.creation_date = min(date_options)
+                process_item(item)
+
+            progress.update(1)
 
     # Update the remaining items
     StockItem.objects.bulk_update(items_to_update, ['creation_date'], batch_size=250)
