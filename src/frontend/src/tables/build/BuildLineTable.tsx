@@ -858,9 +858,7 @@ export default function BuildLineTable({
         color='blue'
         onClick={() => {
           setAutoAllocateInitialData({
-            build_lines: table.selectedRecords
-              .filter((r) => !r.trackable)
-              .map((r) => r.pk)
+            build_lines: table.selectedRecords.map((r) => r.pk)
           });
           autoAllocateStock.open();
         }}
