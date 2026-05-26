@@ -37,9 +37,9 @@ export function getActions(navigate: NavigateFunction) {
   const globalSettings = useGlobalSettingsState();
   const user = useUserState();
 
-  const staff = user?.isStaff() ?? false;
-
   const actions: SpotlightActionData[] = useMemo(() => {
+    const staff = user?.isStaff() ?? false;
+
     const _actions: SpotlightActionData[] = [
       {
         id: 'dashboard',
