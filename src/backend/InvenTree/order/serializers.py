@@ -2002,6 +2002,7 @@ class SalesOrderAutoAllocationSerializer(serializers.Serializer):
             'shipment',
             'interchangeable',
             'stock_sort_by',
+            'serialized_stock',
             'line_items',
         ]
 
