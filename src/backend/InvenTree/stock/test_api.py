@@ -545,6 +545,62 @@ class StockItemListTest(StockAPITestCase):
         for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
             self.run_ordering_test(self.list_url, ordering)
 
+    def test_creation_date_filter_and_ordering(self):
+        """Test created_before / created_after filters and ordering by creation_date."""
+        import datetime
+
+        part = Part.objects.first()
+        location = StockLocation.objects.first()
+
+        # Create items with known, spread-out creation_dates via UPDATE after insert
+        dates = [
+            datetime.date(2020, 1, 1),
+            datetime.date(2021, 6, 15),
+            datetime.date(2023, 3, 30),
+        ]
+        pks = []
+        for d in dates:
+            item = StockItem.objects.create(part=part, location=location, quantity=1)
+            StockItem.objects.filter(pk=item.pk).update(creation_date=d)
+            pks.append(item.pk)
+
+        # created_after=2020-12-31 should exclude the 2020 item
+        result_pks = [r['pk'] for r in self.get_stock(created_after='2020-12-31')]
+        self.assertNotIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertIn(pks[2], result_pks)
+
+        # created_before=2022-01-01 should exclude the 2023 item
+        result_pks = [r['pk'] for r in self.get_stock(created_before='2022-01-01')]
+        self.assertIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertNotIn(pks[2], result_pks)
+
+        # combined: only the 2021 item falls in the window
+        result_pks = [
+            r['pk']
+            for r in self.get_stock(
+                created_after='2020-12-31', created_before='2022-01-01'
+            )
+        ]
+        self.assertNotIn(pks[0], result_pks)
+        self.assertIn(pks[1], result_pks)
+        self.assertNotIn(pks[2], result_pks)
+
+        # ordering=creation_date: our three items must appear in ascending date order
+        results = self.get(
+            self.list_url, {'ordering': 'creation_date'}, expected_code=200
+        ).data
+        ordered_pks = [r['pk'] for r in results if r['pk'] in pks]
+        self.assertEqual(ordered_pks, pks)
+
+        # ordering=-creation_date: descending
+        results = self.get(
+            self.list_url, {'ordering': '-creation_date'}, expected_code=200
+        ).data
+        ordered_pks = [r['pk'] for r in results if r['pk'] in pks]
+        self.assertEqual(ordered_pks, list(reversed(pks)))
+
     def test_pagination(self):
         """Test that pagination boundaries are observed correctly.
 

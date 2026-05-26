@@ -82,12 +82,6 @@ def set_creation_date(apps, schema_editor):
     # Update the remaining items
     StockItem.objects.bulk_update(items_to_update, ['creation_date'], batch_size=250)
 
-    # Any left?
-    N = StockItem.objects.filter(creation_date__isnull=True).count()
-
-    if N > 0:
-        print(f"stock.0121: {N} items still have null creation_date")
-
 
 class Migration(migrations.Migration):
     """This migration extracts the 'creation_date' field for each StockItem entry.
