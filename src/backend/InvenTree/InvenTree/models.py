@@ -92,9 +92,26 @@ class PluginValidationMixin(DiffMixin):
     Any model class which inherits from this mixin will be exposed to the plugin validation system.
     """
 
+    def should_plugin_validate(self):
+        """Return True if this model instance should be validated by plugins.
+
+        The default implementation returns True, but this can be overridden in the implementing class if required.
+        """
+        from InvenTree.ready import (
+            isImportingData,
+            isRunningBackup,
+            isRunningMigrations,
+        )
+
+        # Prevent plugin validation when importing or exporting data
+        return not any([isRunningBackup(), isRunningMigrations(), isImportingData()])
+
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
         from plugin import PluginMixinEnum, registry
+
+        if not self.should_plugin_validate():
+            return
 
         deltas = self.get_field_deltas()
 
@@ -139,15 +156,16 @@ class PluginValidationMixin(DiffMixin):
         from InvenTree.exceptions import log_error
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                plugin.validate_model_deletion(self)
-            except ValidationError as e:
-                # Plugin might raise a ValidationError to prevent deletion
-                raise e
-            except Exception:
-                log_error('validate_model_deletion', plugin=plugin.slug)
-                continue
+        if self.delete_should_plugin_validate():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    plugin.validate_model_deletion(self)
+                except ValidationError as e:
+                    # Plugin might raise a ValidationError to prevent deletion
+                    raise e
+                except Exception:
+                    log_error('validate_model_deletion', plugin=plugin.slug)
+                    continue
 
         super().delete(*args, **kwargs)
 
