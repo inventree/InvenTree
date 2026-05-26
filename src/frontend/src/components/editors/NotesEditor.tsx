@@ -4,7 +4,8 @@ import '@mantine/tiptap/styles.css';
 import { useHotkeys } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useEditor } from '@tiptap/react';
+import { TableKit } from '@tiptap/extension-table';
+import { useEditor, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import DOMPurify from 'dompurify';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -35,12 +36,22 @@ import {
   Tooltip
 } from '@mantine/core';
 import {
+  IconArrowMerge,
   IconCirclePlus,
+  IconColumnInsertLeft,
+  IconColumnInsertRight,
+  IconColumnRemove,
   IconDeviceFloppy,
   IconInfoCircle,
   IconPhoto,
   IconReload,
-  IconStar
+  IconRowInsertBottom,
+  IconRowInsertTop,
+  IconRowRemove,
+  IconStar,
+  IconTableOff,
+  IconTablePlus,
+  IconTableRow
 } from '@tabler/icons-react';
 import { useShallow } from 'zustand/react/shallow';
 import { formatDate } from '../../defaults/formatters';
@@ -150,6 +161,9 @@ export default function NotesEditor({
           const src = await uploadFileRef.current(file);
           return { src, 'data-keep-ratio': true };
         }
+      }),
+      TableKit.configure({
+        table: { resizable: true, renderWrapper: true, cellMinWidth: 50 }
       })
     ],
     content: '',
@@ -232,6 +246,11 @@ export default function NotesEditor({
       !!notesQuery.data,
     [user, modelType, notesQuery]
   );
+
+  const isInTable = useEditorState({
+    editor,
+    selector: ({ editor: e }) => e?.isActive('table') ?? false
+  });
 
   // Sync editor editable state when permissions change
   useEffect(() => {
@@ -465,6 +484,118 @@ export default function NotesEditor({
                             </Tooltip>
                           )}
                         </FileButton>
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor
+                              ?.chain()
+                              .focus()
+                              .insertTable({
+                                rows: 3,
+                                cols: 3,
+                                withHeaderRow: true
+                              })
+                              .run()
+                          }
+                          aria-label={t`Insert table`}
+                          title={t`Insert table`}
+                        >
+                          <IconTablePlus size='0.9rem' />
+                        </RichTextEditor.Control>
+                      </RichTextEditor.ControlsGroup>
+                    </RichTextEditor.Toolbar>
+                  )}
+                  {canEdit && isInTable && (
+                    <RichTextEditor.Toolbar>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().addColumnBefore().run()
+                          }
+                          aria-label={t`Add column before`}
+                          title={t`Add column before`}
+                        >
+                          <IconColumnInsertLeft size='0.9rem' />
+                        </RichTextEditor.Control>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().addColumnAfter().run()
+                          }
+                          aria-label={t`Add column after`}
+                          title={t`Add column after`}
+                        >
+                          <IconColumnInsertRight size='0.9rem' />
+                        </RichTextEditor.Control>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().deleteColumn().run()
+                          }
+                          aria-label={t`Delete column`}
+                          title={t`Delete column`}
+                        >
+                          <IconColumnRemove size='0.9rem' />
+                        </RichTextEditor.Control>
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().addRowBefore().run()
+                          }
+                          aria-label={t`Add row before`}
+                          title={t`Add row before`}
+                        >
+                          <IconRowInsertTop size='0.9rem' />
+                        </RichTextEditor.Control>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().addRowAfter().run()
+                          }
+                          aria-label={t`Add row after`}
+                          title={t`Add row after`}
+                        >
+                          <IconRowInsertBottom size='0.9rem' />
+                        </RichTextEditor.Control>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().deleteRow().run()
+                          }
+                          aria-label={t`Delete row`}
+                          title={t`Delete row`}
+                        >
+                          <IconRowRemove size='0.9rem' />
+                        </RichTextEditor.Control>
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().mergeOrSplit().run()
+                          }
+                          aria-label={t`Merge or split cells`}
+                          title={t`Merge or split cells`}
+                        >
+                          <IconArrowMerge size='0.9rem' />
+                        </RichTextEditor.Control>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().toggleHeaderRow().run()
+                          }
+                          aria-label={t`Toggle header row`}
+                          title={t`Toggle header row`}
+                        >
+                          <IconTableRow size='0.9rem' />
+                        </RichTextEditor.Control>
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Control
+                          onClick={() =>
+                            editor?.chain().focus().deleteTable().run()
+                          }
+                          aria-label={t`Delete table`}
+                          title={t`Delete table`}
+                        >
+                          <IconTableOff size='0.9rem' />
+                        </RichTextEditor.Control>
                       </RichTextEditor.ControlsGroup>
                     </RichTextEditor.Toolbar>
                   )}
