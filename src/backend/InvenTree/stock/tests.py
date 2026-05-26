@@ -722,12 +722,24 @@ class StockTest(StockTestBase):
         s2 = StockItem.objects.create(part=part, quantity=20)
         s3 = StockItem.objects.create(part=part, quantity=30)
 
+        s2.add_tracking_entry(
+            StockHistoryCode.STOCK_UPDATE,
+            None,
+            notes='Merged away tracking',
+        )
+
+        tracking_before = s1.tracking_info.count()
+
         self.assertEqual(part.stock_items.count(), 3)
         s1.merge_stock_items([s2, s3])
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 60)
         self.assertIsNone(s1.purchase_price)
+        self.assertTrue(
+            s1.tracking_info.filter(notes='Merged away tracking').exists()
+        )
+        self.assertGreater(s1.tracking_info.count(), tracking_before)
 
         part.stock_items.all().delete()
 

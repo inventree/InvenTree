@@ -20,7 +20,14 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  type JSX,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -1319,9 +1326,21 @@ export function useRemoveStockItem(props: StockOperationProps) {
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
+  const globalSettings = useGlobalSettingsState();
+
+  const fieldGenerator = useCallback(
+    (items: any[]) => ({
+      ...stockTransferFields(items),
+      merge: {
+        default: globalSettings.isSet('STOCK_MERGE_ON_TRANSFER')
+      }
+    }),
+    [globalSettings]
+  );
+
   return useStockOperationModal({
     ...props,
-    fieldGenerator: stockTransferFields,
+    fieldGenerator: fieldGenerator,
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
     successMessage: t`Stock transferred`,

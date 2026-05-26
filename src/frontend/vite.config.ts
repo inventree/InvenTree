@@ -82,6 +82,7 @@ export default defineConfig(({ command, mode }) => {
           changeOrigin: true,
           secure: true
         }
+        
       },
       watch: {
         // Use polling only for WSL as the file system doesn't trigger notifications for Linux apps

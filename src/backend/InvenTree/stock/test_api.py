@@ -2154,6 +2154,106 @@ class StocktakeTest(StockAPITestCase):
         )
 
 
+class StockTransferMergeTest(StockAPITestCase):
+    """Tests for optional merge-on-transfer behavior."""
+
+    def setUp(self):
+        """Set up stock items for merge transfer tests."""
+        super().setUp()
+
+        self.part = Part.objects.get(pk=1)
+        self.dest = StockLocation.objects.get(pk=2)
+        self.source_loc = StockLocation.objects.get(pk=5)
+        self.url = reverse('api-stock-transfer')
+
+    def test_transfer_without_merge_creates_separate_lot(self):
+        """Transfer without merge leaves multiple stock rows at destination."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'location': self.dest.pk,
+                'merge': False,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
+
+    def test_transfer_with_merge_combines_lots(self):
+        """Transfer with merge combines into an existing compatible lot."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'location': self.dest.pk,
+                'merge': True,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 1
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 150)
+        self.assertFalse(StockItem.objects.filter(pk=incoming.pk).exists())
+
+    def test_transfer_merge_preserves_tracking(self):
+        """Transfer merge copies tracking history onto the surviving stock item."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        incoming.add_tracking_entry(
+            StockHistoryCode.STOCK_UPDATE,
+            self.user,
+            notes='Source tracking entry',
+        )
+
+        tracking_count = existing.tracking_info.count()
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'location': self.dest.pk,
+                'merge': True,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+
+        self.assertTrue(
+            existing.tracking_info.filter(notes='Source tracking entry').exists()
+        )
+        self.assertGreater(existing.tracking_info.count(), tracking_count)
+
+
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
 

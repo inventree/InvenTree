@@ -787,6 +787,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'STOCK_MERGE_ON_TRANSFER': {
+        'name': _('Merge stock with existing stock on transfer'),
+        'description': _(
+            'Default: when transferring stock, merge into an existing lot at the '
+            'destination if possible (uses the same rules as manual stock merge)'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'BUILDORDER_REFERENCE_PATTERN': {
         'name': _('Build Order Reference Pattern'),
         'description': _('Required pattern for generating Build Order reference field'),

@@ -1829,7 +1829,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'notes', 'location']
+        fields = ['items', 'notes', 'location', 'merge']
 
     items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
 
@@ -1842,6 +1842,15 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         help_text=_('Destination stock location'),
     )
 
+    merge = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Merge into existing stock'),
+        help_text=_(
+            'Merge transferred items into existing stock items at the destination if possible'
+        ),
+    )
+
     def save(self):
         """Transfer stock."""
         request = self.context['request']
@@ -1851,6 +1860,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         items = data['items']
         notes = data.get('notes', '')
         location = data['location']
+        merge = data.get('merge', False)
 
         with transaction.atomic():
             for item in items:
@@ -1864,6 +1874,34 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         kwargs[field_name] = field_value
+
+                if merge:
+                    target = stock_item.find_merge_target(location)
+
+                    if target:
+                        merge_kwargs = {
+                            'location': location,
+                            'notes': notes,
+                            'user': request.user,
+                            **kwargs,
+                        }
+
+                        if quantity < stock_item.quantity:
+                            piece = stock_item.splitStock(
+                                quantity,
+                                location,
+                                request.user,
+                                notes=notes,
+                                allow_production=True,
+                                **kwargs,
+                            )
+                            target.merge_stock_items([piece], **merge_kwargs)
+                        else:
+                            target.merge_stock_items(
+                                [stock_item], **merge_kwargs
+                            )
+
+                        continue
 
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs

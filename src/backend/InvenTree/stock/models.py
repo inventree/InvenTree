@@ -2179,6 +2179,34 @@ class StockItem(
 
         return True
 
+    def find_merge_target(self, location):
+        """Find an existing stock item at *location* that can absorb this item."""
+        if location is None:
+            return None
+
+        candidates = list(
+            StockItem.objects.filter(part=self.part, location=location)
+            .exclude(pk=self.pk)
+            .order_by('pk')
+        )
+
+        if not candidates:
+            return None
+
+        if self.batch:
+            batch_matches = [c for c in candidates if c.batch == self.batch]
+            search_order = batch_matches + [
+                c for c in candidates if c not in batch_matches
+            ]
+        else:
+            search_order = candidates
+
+        for target in search_order:
+            if target.can_merge(other=self, raise_error=False):
+                return target
+
+        return None
+
     @transaction.atomic
     def merge_stock_items(self, other_items, raise_error=False, **kwargs):
         """Merge another stock item into this one; the two become one!
@@ -2186,7 +2214,7 @@ class StockItem(
         *This* stock item subsumes the other, which is essentially deleted:
 
         - The quantity of this StockItem is increased
-        - Tracking history for the *other* item is deleted
+        - Tracking history for the *other* item is copied to this item
         - Any allocations (build order, sales order) are moved to this StockItem
         """
         if isinstance(other_items, StockItem):
@@ -2200,7 +2228,7 @@ class StockItem(
 
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
-        notes = kwargs.get('notes')
+        notes = kwargs.get('notes') or ''
 
         parent_id = self.parent.pk if self.parent else None
 
@@ -2241,6 +2269,18 @@ class StockItem(
             if parent_id and parent_id == other.pk:
                 self.parent = None
                 self.save()
+
+            self.copyHistoryFrom(other)
+
+            if other.location:
+                location_note = _('Transferred from %(location)s') % {
+                    'location': other.location.pathstring
+                }
+
+                if notes:
+                    notes = f'{notes}\n{location_note}'
+                else:
+                    notes = location_note
 
             other.delete()
 
