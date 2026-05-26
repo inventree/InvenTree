@@ -435,7 +435,11 @@ export default function NotesEditor({
             )}
             <Paper p='xs' shadow='sm' withBorder>
               {hasNotes ? (
-                <RichTextEditor editor={editor} style={{ minHeight: '400px' }}>
+                <RichTextEditor
+                  variant='subtle'
+                  editor={editor}
+                  style={{ minHeight: '400px' }}
+                >
                   {canEdit && (
                     <RichTextEditor.Toolbar sticky>
                       <RichTextEditor.ControlsGroup>
