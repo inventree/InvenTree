@@ -504,13 +504,8 @@ export default function NotesEditor({
                         >
                           <IconTablePlus size='0.9rem' />
                         </RichTextEditor.Control>
-                      </RichTextEditor.ControlsGroup>
-                    </RichTextEditor.Toolbar>
-                  )}
-                  {canEdit && isInTable && (
-                    <RichTextEditor.Toolbar>
-                      <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().addColumnBefore().run()
                           }
@@ -520,6 +515,7 @@ export default function NotesEditor({
                           <IconColumnInsertLeft size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().addColumnAfter().run()
                           }
@@ -529,6 +525,7 @@ export default function NotesEditor({
                           <IconColumnInsertRight size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().deleteColumn().run()
                           }
@@ -537,9 +534,8 @@ export default function NotesEditor({
                         >
                           <IconColumnRemove size='0.9rem' />
                         </RichTextEditor.Control>
-                      </RichTextEditor.ControlsGroup>
-                      <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().addRowBefore().run()
                           }
@@ -549,6 +545,7 @@ export default function NotesEditor({
                           <IconRowInsertTop size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().addRowAfter().run()
                           }
@@ -558,6 +555,7 @@ export default function NotesEditor({
                           <IconRowInsertBottom size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().deleteRow().run()
                           }
@@ -566,9 +564,8 @@ export default function NotesEditor({
                         >
                           <IconRowRemove size='0.9rem' />
                         </RichTextEditor.Control>
-                      </RichTextEditor.ControlsGroup>
-                      <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().mergeOrSplit().run()
                           }
@@ -578,6 +575,7 @@ export default function NotesEditor({
                           <IconArrowMerge size='0.9rem' />
                         </RichTextEditor.Control>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().toggleHeaderRow().run()
                           }
@@ -586,9 +584,8 @@ export default function NotesEditor({
                         >
                           <IconTableRow size='0.9rem' />
                         </RichTextEditor.Control>
-                      </RichTextEditor.ControlsGroup>
-                      <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Control
+                          disabled={!isInTable}
                           onClick={() =>
                             editor?.chain().focus().deleteTable().run()
                           }
