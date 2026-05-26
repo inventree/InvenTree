@@ -1,21 +1,20 @@
 import { t } from '@lingui/core/macro';
+import { RichTextEditor } from '@mantine/tiptap';
+import '@mantine/tiptap/styles.css';
 import { useHotkeys } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
+import Image from '@tiptap/extension-image';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import DOMPurify from 'dompurify';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { useApi } from '../../contexts/ApiContext';
-
-import '@blocknote/core/fonts/inter.css';
-import { BlockNoteView } from '@blocknote/mantine';
-import '@blocknote/mantine/style.css';
-import * as BlockNoteLocales from '@blocknote/core/locales';
-import { useCreateBlockNote } from '@blocknote/react';
 
 import { identifierString } from '@lib/functions/Conversion';
 import {
@@ -24,6 +23,7 @@ import {
   Badge,
   Box,
   Button,
+  FileButton,
   Flex,
   Group,
   HoverCard,
@@ -31,13 +31,13 @@ import {
   Stack,
   Tabs,
   Text,
-  Tooltip,
-  useMantineColorScheme
+  Tooltip
 } from '@mantine/core';
 import {
   IconCirclePlus,
   IconDeviceFloppy,
   IconInfoCircle,
+  IconPhoto,
   IconReload,
   IconStar
 } from '@tabler/icons-react';
@@ -97,8 +97,8 @@ function NoteInfoHover({ note }: { note: any }) {
 export default function NotesEditor({
   modelType,
   modelId,
-  editable,
-  setDirtyCallback
+  editable: _editable,
+  setDirtyCallback: _setDirtyCallback
 }: Readonly<{
   modelType: ModelType;
   modelId: number;
@@ -107,21 +107,18 @@ export default function NotesEditor({
 }>) {
   const api = useApi();
   const user = useUserState();
-  const [language] = useLocalState(useShallow((s) => [s.language]));
-  const { colorScheme } = useMantineColorScheme();
+  const [_language] = useLocalState(useShallow((s) => [s.language]));
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isDirty, setIsDirty] = useState(false);
 
-  // The ID of the selected note
   const [selectedNoteId, setSelectedNoteId] = useState<number | undefined>(
     undefined
   );
 
   // Callback to upload an image file against the currently selected note
-  // Returns the URL of the uploaded image on success, or throws an error on failure
   const uploadFile = useCallback(
-    (file: File) => {
+    async (file: File): Promise<string> => {
       const formData = new FormData();
       formData.append('note', selectedNoteId?.toString() ?? '');
       formData.append('image', file);
@@ -135,12 +132,61 @@ export default function NotesEditor({
     [selectedNoteId]
   );
 
-  const editor = useCreateBlockNote({
-    dictionary:
-      BlockNoteLocales[language as keyof typeof BlockNoteLocales] ||
-      BlockNoteLocales.en,
-    uploadFile: async (file: File) => {
-      return uploadFile(file);
+  // Ref so editorProps handlers always call the latest uploadFile without stale closure
+  const uploadFileRef = useRef(uploadFile);
+  useEffect(() => {
+    uploadFileRef.current = uploadFile;
+  }, [uploadFile]);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        link: { openOnClick: false }
+      }),
+      Image
+    ],
+    content: '',
+    onUpdate: () => setIsDirty(true),
+    editorProps: {
+      handleDrop: (view, event) => {
+        const files = event.dataTransfer?.files;
+        if (!files?.length) return false;
+        const imageFiles = Array.from(files).filter((f) =>
+          f.type.startsWith('image/')
+        );
+        if (!imageFiles.length) return false;
+
+        event.preventDefault();
+        const coords = view.posAtCoords({
+          left: event.clientX,
+          top: event.clientY
+        });
+        imageFiles.forEach((file) => {
+          uploadFileRef.current(file).then((url) => {
+            if (!url || !coords) return;
+            const node = view.state.schema.nodes.image?.create({ src: url });
+            if (node) view.dispatch(view.state.tr.insert(coords.pos, node));
+          });
+        });
+        return true;
+      },
+      handlePaste: (view, event) => {
+        const files = event.clipboardData?.files;
+        if (!files?.length) return false;
+        const imageFiles = Array.from(files).filter((f) =>
+          f.type.startsWith('image/')
+        );
+        if (!imageFiles.length) return false;
+
+        imageFiles.forEach((file) => {
+          uploadFileRef.current(file).then((url) => {
+            if (!url) return;
+            const node = view.state.schema.nodes.image?.create({ src: url });
+            if (node) view.dispatch(view.state.tr.replaceSelectionWith(node));
+          });
+        });
+        return true;
+      }
     }
   });
 
@@ -163,26 +209,19 @@ export default function NotesEditor({
     enabled: !!modelId && !!modelType
   });
 
-  useEffect(() => {
-    return editor.onChange(() => setIsDirty(true));
-  }, [editor]);
-
   const [selectedNote, setSelectedNote] = useState<any>(undefined);
 
   const loadNote = useCallback(
     (noteId: number) => {
       const note = notesQuery.data?.find((note: any) => note.pk === noteId);
-
       setSelectedNote(note);
 
-      if (note) {
-        const blocks = editor.tryParseHTMLToBlocks(note.content ?? '');
-
-        if (blocks) {
-          editor.replaceBlocks(editor.document, blocks);
-        } else {
-          editor.replaceBlocks(editor.document, []);
-        }
+      if (editor) {
+        // Pass emitUpdate:false to avoid triggering dirty state when loading content
+        editor.commands.setContent(
+          note ? DOMPurify.sanitize(note.content ?? '') : '',
+          { emitUpdate: false }
+        );
       }
 
       setIsDirty(false);
@@ -228,6 +267,11 @@ export default function NotesEditor({
     [user, modelType, notesQuery]
   );
 
+  // Sync editor editable state when permissions change
+  useEffect(() => {
+    editor?.setEditable(canEdit);
+  }, [editor, canEdit]);
+
   const hasNotes = useMemo(() => {
     return notesQuery.data && notesQuery.data.length > 0;
   }, [notesQuery.data]);
@@ -242,7 +286,6 @@ export default function NotesEditor({
     successMessage: null,
     onFormSuccess: (response: any) => {
       notesQuery.refetch().then(() => {
-        // Select the newly created note
         setSelectedNoteId(response.pk);
       });
     }
@@ -265,7 +308,6 @@ export default function NotesEditor({
     pk: selectedNoteId,
     onFormSuccess: (response: any) => {
       notesQuery.refetch().then(() => {
-        // Select the updated note
         setSelectedNoteId(response.pk);
       });
     }
@@ -280,45 +322,57 @@ export default function NotesEditor({
       return;
     }
 
-    const blocks = editor.document;
-    const html = editor.blocksToHTMLLossy(blocks);
-    const cleanHtml = DOMPurify.sanitize(html);
+    const cleanHtml = DOMPurify.sanitize(editor.getHTML());
 
-    // Sanitize the HTML content before sending to the server (or ensure it's sanitized on the back-end)
+    const url = apiUrl(ApiEndpoints.note_list, selectedNoteId);
 
-    if (selectedNoteId) {
-      const url = apiUrl(ApiEndpoints.note_list, selectedNoteId);
+    notifications.hide('note-update-status');
 
-      notifications.hide('note-update-status');
-
-      api
-        .patch(url, { content: cleanHtml })
-        .then(() => {
-          setIsDirty(false);
-          notifications.show({
-            title: t`Success`,
-            message: t`Note updated`,
-            color: 'green',
-            id: 'note-update-status',
-            autoClose: 2000
-          });
-        })
-        .catch((error) => {
-          notifications.show({
-            title: t`Error`,
-            message: t`Failed to update note: ${error.message}`,
-            color: 'red',
-            id: 'note-update-status',
-            autoClose: 2000
-          });
-        })
-        .finally(() => {
-          notesQuery.refetch();
+    api
+      .patch(url, { content: cleanHtml })
+      .then(() => {
+        setIsDirty(false);
+        notifications.show({
+          title: t`Success`,
+          message: t`Note updated`,
+          color: 'green',
+          id: 'note-update-status',
+          autoClose: 2000
         });
-    }
+      })
+      .catch((error) => {
+        notifications.show({
+          title: t`Error`,
+          message: t`Failed to update note: ${error.message}`,
+          color: 'red',
+          id: 'note-update-status',
+          autoClose: 2000
+        });
+      })
+      .finally(() => {
+        notesQuery.refetch();
+      });
   }, [selectedNoteId, editor, setIsDirty]);
 
   useHotkeys([['mod+s', saveNote]]);
+
+  const handleImageUpload = useCallback(
+    async (file: File | null) => {
+      if (!file || !editor) return;
+      try {
+        const url = await uploadFile(file);
+        editor.chain().focus().setImage({ src: url }).run();
+      } catch {
+        notifications.show({
+          title: t`Error`,
+          message: t`Failed to upload image`,
+          color: 'red',
+          autoClose: 2000
+        });
+      }
+    },
+    [editor, uploadFile]
+  );
 
   return (
     <>
@@ -392,14 +446,60 @@ export default function NotesEditor({
             )}
             <Paper p='xs' shadow='sm' withBorder>
               {hasNotes ? (
-                <Stack gap='xs'>
-                  <BlockNoteView
-                    editor={editor}
-                    editable={canEdit}
-                    theme={colorScheme === 'dark' ? 'dark' : 'light'}
-                    style={{ minHeight: '400px' }}
-                  />
-                </Stack>
+                <RichTextEditor editor={editor} style={{ minHeight: '400px' }}>
+                  {canEdit && (
+                    <RichTextEditor.Toolbar sticky>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Bold />
+                        <RichTextEditor.Italic />
+                        <RichTextEditor.Underline />
+                        <RichTextEditor.Strikethrough />
+                        <RichTextEditor.ClearFormatting />
+                        <RichTextEditor.Code />
+                        <RichTextEditor.CodeBlock />
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.H1 />
+                        <RichTextEditor.H2 />
+                        <RichTextEditor.H3 />
+                        <RichTextEditor.H4 />
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Blockquote />
+                        <RichTextEditor.Hr />
+                        <RichTextEditor.BulletList />
+                        <RichTextEditor.OrderedList />
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Link />
+                        <RichTextEditor.Unlink />
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Undo />
+                        <RichTextEditor.Redo />
+                      </RichTextEditor.ControlsGroup>
+                      <RichTextEditor.ControlsGroup>
+                        <FileButton
+                          onChange={handleImageUpload}
+                          accept='image/*'
+                        >
+                          {(props) => (
+                            <Tooltip label={t`Upload Image`}>
+                              <ActionIcon
+                                variant='default'
+                                size='sm'
+                                {...props}
+                              >
+                                <IconPhoto size='0.9rem' />
+                              </ActionIcon>
+                            </Tooltip>
+                          )}
+                        </FileButton>
+                      </RichTextEditor.ControlsGroup>
+                    </RichTextEditor.Toolbar>
+                  )}
+                  <RichTextEditor.Content />
+                </RichTextEditor>
               ) : (
                 <Alert title={t`Notes`} icon={<IconInfoCircle />}>
                   {t`There are no notes yet for this item.`}
