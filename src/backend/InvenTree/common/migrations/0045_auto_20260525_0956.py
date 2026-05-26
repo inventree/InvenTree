@@ -37,7 +37,7 @@ def migrate_notes(apps, schema_editor):
         if not with_notes.exists():
             continue
 
-        progress = tqdm(total=with_notes.count(), desc=f'Migrating notes for {app}.{model}')
+        progress = tqdm(total=with_notes.count(), desc=f'Migration common.0045: Migrating notes for {app}.{model}')
 
         initial_note_count = Note.objects.count()
         expected_note_count = initial_note_count + with_notes.count()
