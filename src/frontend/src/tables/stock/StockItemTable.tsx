@@ -298,6 +298,11 @@ function stockItemTableFilters({
       type: 'date'
     },
     {
+      name: 'has_stocktake',
+      label: t`Has Stocktake Date`,
+      description: t`Show items which have a stocktake date`
+    },
+    {
       name: 'external',
       label: t`External Location`,
       description: t`Show items in an external location`

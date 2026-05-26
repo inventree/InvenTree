@@ -415,3 +415,147 @@ class TestStockItemTrackingMigration(MigratorTestCase):
         )
         self.assertIn('salesorder', item.deltas)
         self.assertEqual(item.deltas['salesorder'], 1)
+
+
+class TestCreationDateMigration(MigratorTestCase):
+    """Test the backfill data migration for StockItem.creation_date (stock.0121).
+
+    The migration has two passes:
+    - Pass 1: items with a CREATED (tracking_type=1) entry get creation_date from that entry.
+    - Pass 2: remaining nulls get min(updated, stocktake_date, earliest_tracking_entry).
+
+    Six scenarios are exercised to cover every meaningful code path.
+    """
+
+    migrate_from = ('stock', '0119_alter_stockitemtestresult_date')
+    migrate_to = ('stock', '0122_alter_stockitem_creation_date')
+
+    def prepare(self):
+        """Create StockItem entries with varied data to exercise all backfill paths."""
+        import datetime
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+        StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
+
+        utc = datetime.timezone.utc
+
+        part = Part.objects.create(
+            name='Migration Test Part', level=0, tree_id=1, lft=0, rght=0
+        )
+
+        def make_item(**kwargs):
+            return StockItem.objects.create(
+                part=part, quantity=1, level=0, tree_id=0, lft=0, rght=0, **kwargs
+            )
+
+        def add_tracking(item, tracking_type, date):
+            """Create a tracking entry, then override its auto_now_add date."""
+            entry = StockItemTracking.objects.create(
+                item_id=item.pk, tracking_type=tracking_type
+            )
+            # auto_now_add prevents setting date on INSERT; use UPDATE to set a historical value
+            StockItemTracking.objects.filter(pk=entry.pk).update(date=date)
+
+        # --- Scenario 1 ---
+        # Item with a single CREATED (type=1) tracking entry.
+        # Pass 1 should set creation_date = that entry's date.
+        item = make_item()
+        add_tracking(item, 1, datetime.datetime(2022, 1, 15, 10, 0, 0, tzinfo=utc))
+        self.pk_s1 = item.pk
+        self.expected_s1 = datetime.datetime(2022, 1, 15, 10, 0, 0, tzinfo=utc)
+
+        # --- Scenario 2 ---
+        # Item with a CREATED entry (newer date) AND an older non-CREATED entry.
+        # Pass 1 sets creation_date = CREATED entry date; older entry is ignored.
+        # This verifies pass 1 wins over pass 2's min() logic.
+        item = make_item()
+        add_tracking(
+            item, 1, datetime.datetime(2023, 6, 1, 0, 0, 0, tzinfo=utc)
+        )  # CREATED, newer
+        add_tracking(
+            item, 2, datetime.datetime(2018, 3, 10, 0, 0, 0, tzinfo=utc)
+        )  # non-CREATED, older
+        self.pk_s2 = item.pk
+        self.expected_s2 = datetime.datetime(2023, 6, 1, 0, 0, 0, tzinfo=utc)
+        self.rejected_s2 = datetime.date(2018, 3, 10)
+
+        # --- Scenario 3 ---
+        # Item with only non-CREATED tracking entries.
+        # Pass 2 uses min(updated=now, earliest_entry_date), so earliest entry wins.
+        item = make_item()
+        add_tracking(
+            item, 2, datetime.datetime(2021, 7, 20, 0, 0, 0, tzinfo=utc)
+        )  # later
+        add_tracking(
+            item, 3, datetime.datetime(2020, 2, 14, 0, 0, 0, tzinfo=utc)
+        )  # earliest
+        self.pk_s3 = item.pk
+        self.expected_s3 = datetime.datetime(2020, 2, 14, 0, 0, 0, tzinfo=utc)
+
+        # --- Scenario 4 ---
+        # Item with only stocktake_date set; no tracking entries.
+        # Pass 2 uses min(updated=now, stocktake_as_datetime); stocktake_date is in the
+        # past so it wins.
+        item = make_item(stocktake_date=datetime.date(2019, 11, 5))
+        self.pk_s4 = item.pk
+        self.expected_s4_date = datetime.date(2019, 11, 5)
+
+        # --- Scenario 5 ---
+        # Item with stocktake_date AND a non-CREATED tracking entry where the tracking
+        # entry is older than stocktake_date.
+        # Pass 2 uses min(updated=now, stocktake, tracking); tracking wins.
+        item = make_item(stocktake_date=datetime.date(2021, 4, 1))
+        add_tracking(item, 2, datetime.datetime(2017, 8, 22, 0, 0, 0, tzinfo=utc))
+        self.pk_s5 = item.pk
+        self.expected_s5 = datetime.datetime(2017, 8, 22, 0, 0, 0, tzinfo=utc)
+
+        # --- Scenario 6 ---
+        # Item with no stocktake_date and no tracking entries.
+        # Pass 2 falls back to auto_now 'updated'; creation_date must be non-null.
+        item = make_item()
+        self.pk_s6 = item.pk
+
+    def test_migration(self):
+        """Verify creation_date is correctly backfilled for each scenario."""
+        import datetime
+
+        StockItem = self.new_state.apps.get_model('stock', 'stockitem')
+        utc = datetime.timezone.utc
+
+        def at_utc(dt):
+            """Normalise to UTC and strip sub-second precision for comparison."""
+            return dt.astimezone(utc).replace(microsecond=0)
+
+        # Scenario 1: CREATED tracking entry → creation_date = entry date
+        item = StockItem.objects.get(pk=self.pk_s1)
+        self.assertIsNotNone(item.creation_date)
+        self.assertEqual(at_utc(item.creation_date), self.expected_s1)
+
+        # Scenario 2: CREATED entry (newer) wins over older non-CREATED entry
+        item = StockItem.objects.get(pk=self.pk_s2)
+        self.assertIsNotNone(item.creation_date)
+        self.assertEqual(at_utc(item.creation_date), self.expected_s2)
+        # Explicitly confirm the older non-CREATED date was NOT chosen
+        self.assertNotEqual(item.creation_date.astimezone(utc).date(), self.rejected_s2)
+
+        # Scenario 3: Earliest non-CREATED tracking entry wins (pass 2 min())
+        item = StockItem.objects.get(pk=self.pk_s3)
+        self.assertIsNotNone(item.creation_date)
+        self.assertEqual(at_utc(item.creation_date), self.expected_s3)
+
+        # Scenario 4: stocktake_date (past) wins over auto_now 'updated' (now)
+        item = StockItem.objects.get(pk=self.pk_s4)
+        self.assertIsNotNone(item.creation_date)
+        self.assertEqual(
+            item.creation_date.astimezone(utc).date(), self.expected_s4_date
+        )
+
+        # Scenario 5: Oldest tracking entry wins over stocktake_date (pass 2 min())
+        item = StockItem.objects.get(pk=self.pk_s5)
+        self.assertIsNotNone(item.creation_date)
+        self.assertEqual(at_utc(item.creation_date), self.expected_s5)
+
+        # Scenario 6: No other sources → falls back to auto_now 'updated'; must not be null
+        item = StockItem.objects.get(pk=self.pk_s6)
+        self.assertIsNotNone(item.creation_date)

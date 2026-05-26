@@ -940,6 +940,16 @@ class StockFilter(FilterSet):
         label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gt'
     )
 
+    has_stocktake = rest_filters.BooleanFilter(
+        label=_('Has Stocktake Date'), method='filter_has_stocktake'
+    )
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter by whether or not the StockItem has a stocktake date."""
+        if str2bool(value):
+            return queryset.exclude(stocktake_date=None)
+        return queryset.filter(stocktake_date=None)
+
     # Stock "expiry" filters
     expiry_before = InvenTreeDateFilter(
         label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lt'
