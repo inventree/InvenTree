@@ -21,19 +21,22 @@ import {
   IconPackages,
   IconSearch,
   IconShoppingCart,
-  IconSitemap
+  IconSitemap,
+  IconTransform
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
-import type { StockOperationProps } from '@lib/types/Forms';
+import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -53,13 +56,11 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -87,6 +88,7 @@ import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
+import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -475,6 +477,13 @@ export default function StockDetail() {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
 
+  const showTransferAllocations: boolean = useMemo(() => {
+    return (
+      !stockitem?.part_detail?.virtual &&
+      globalSettings.isSet('TRANSFERORDER_ENABLED')
+    );
+  }, [stockitem]);
+
   // API query to determine if this stock item has trackable BOM items
   const trackedBomItemQuery = useQuery({
     queryKey: ['tracked-bom-item', stockitem.pk, stockitem.part],
@@ -543,11 +552,17 @@ export default function StockDetail() {
         icon: <IconBookmark />,
         hidden:
           !stockitem.in_stock ||
-          (!showSalesAllocations && !showBuildAllocations),
+          (!showSalesAllocations &&
+            !showBuildAllocations &&
+            !showTransferAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildAllocations', 'salesAllocations']}
+            defaultValue={[
+              'buildAllocations',
+              'salesAllocations',
+              'transferAllocations'
+            ]}
           >
             {showBuildAllocations && (
               <Accordion.Item value='buildAllocations' key='buildAllocations'>
@@ -574,6 +589,24 @@ export default function StockDetail() {
                     stockId={stockitem.pk}
                     modelField='order'
                     modelTarget={ModelType.salesorder}
+                    showOrderInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+            {showTransferAllocations && (
+              <Accordion.Item
+                value='transferAllocations'
+                key='transferAllocations'
+              >
+                <Accordion.Control>
+                  <StylishText size='lg'>{t`Transfer Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <TransferOrderAllocationTable
+                    stockId={stockitem.pk}
+                    modelField='order'
+                    modelTarget={ModelType.transferorder}
                     showOrderInfo
                   />
                 </Accordion.Panel>
@@ -662,6 +695,26 @@ export default function StockDetail() {
     title: t`Edit Stock Item`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const convertStockItemFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part: {
+        filters: {
+          active: true,
+          convert_from: stockitem.part
+        }
+      }
+    };
+  }, [stockitem]);
+
+  const convertStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_convert,
+    pk: stockitem.pk,
+    title: t`Convert Stock Item`,
+    modalId: 'convert-stock-item',
+    fields: convertStockItemFields,
     onFormSuccess: refreshInstance
   });
 
@@ -824,22 +877,16 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
-    // Can this stock item be transferred to a different location?
-    const canTransfer =
-      user.hasChangeRole(UserRoles.stock) &&
-      !stockitem.sales_order &&
-      !stockitem.belongs_to &&
-      !stockitem.customer &&
-      !stockitem.consumed_by;
-
-    const isBuilding = stockitem.is_building;
-
     const serial = stockitem.serial;
     const serialized =
       serial != null &&
       serial != undefined &&
       serial != '' &&
       stockitem.quantity == 1;
+
+    const canConvert =
+      !!stockitem.part_detail?.variant_of ||
+      !!stockitem.part_detail?.is_template;
 
     return [
       <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
@@ -906,6 +953,13 @@ export default function StockDetail() {
             hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => editStockItem.open()
           }),
+          {
+            name: t`Convert`,
+            tooltip: t`Convert this stock item to a different part`,
+            hidden: !user.hasChangeRole(UserRoles.stock) || !canConvert,
+            icon: <IconTransform color='blue' />,
+            onClick: () => convertStockItem.open()
+          },
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.stock),
             onClick: () => deleteStockItem.open()
@@ -1037,8 +1091,9 @@ export default function StockDetail() {
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}
-      {duplicateStockItem.modal}
       {deleteStockItem.modal}
+      {convertStockItem.modal}
+      {duplicateStockItem.modal}
       {serializeStockItem.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       {orderPartsWizard.wizard}

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import { ErrorBoundary, type FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback } from 'react';
@@ -11,9 +11,16 @@ export function DefaultFallback({
     <Alert
       color='red'
       icon={<IconExclamationCircle />}
-      title={`${t`Error rendering component`}: ${title}`}
+      title={`INVE-E17: ${t`Error rendering component`}: ${title}`}
     >
-      {t`An error occurred while rendering this component. Refer to the console for more information.`}
+      <Stack gap='xs'>
+        <Text size='sm'>
+          {t`An error occurred while rendering this component. Refer to the console for more information.`}
+        </Text>
+        <Text size='sm'>
+          {t`Try reloading the page, or contact your administrator if the problem persists.`}
+        </Text>
+      </Stack>
     </Alert>
   );
 }

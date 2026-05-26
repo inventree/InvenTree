@@ -49,7 +49,12 @@ function attachmentTableColumns(): TableColumn[] {
       noWrap: true,
       render: (record: any) => {
         if (record.attachment) {
-          return <AttachmentLink attachment={record.attachment} />;
+          return (
+            <AttachmentLink
+              thumbnail={record.thumbnail}
+              attachment={record.attachment}
+            />
+          );
         } else if (record.link) {
           return <AttachmentLink attachment={record.link} external />;
         } else {
@@ -232,17 +237,26 @@ export function AttachmentTable({
         hidden: true
       },
       attachment: {},
+      filename: {},
       link: {},
       comment: {}
     };
 
     if (attachmentType != 'link') {
       delete fields['link'];
+    } else {
+      delete fields['attachment'];
+      delete fields['filename'];
     }
 
     // Remove the 'attachment' field if we are editing an existing attachment, or uploading a link
     if (attachmentType != 'attachment' || !!selectedAttachment) {
       delete fields['attachment'];
+    }
+
+    if (!selectedAttachment) {
+      // Cannot edit the filename during creation
+      delete fields['filename'];
     }
 
     return fields;
@@ -291,6 +305,11 @@ export function AttachmentTable({
         name: 'is_file',
         label: t`Is File`,
         description: t`Show file attachments`
+      },
+      {
+        name: 'is_image',
+        label: t`Is Image`,
+        description: t`Show image attachments`
       }
     ];
   }, []);
@@ -329,6 +348,11 @@ export function AttachmentTable({
         RowEditAction({
           hidden: !user.hasChangePermission(model_type),
           onClick: () => {
+            if (record.attachment) {
+              setAttachmentType('attachment');
+            } else {
+              setAttachmentType('link');
+            }
             setSelectedAttachment(record.pk);
             editAttachment.open();
           }

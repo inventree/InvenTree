@@ -250,6 +250,24 @@ export function StartDateAfterFilter(): TableFilter {
   };
 }
 
+export function HasStartDateFilter(): TableFilter {
+  return {
+    name: 'has_start_date',
+    type: 'boolean',
+    label: t`Has Start Date`,
+    description: t`Show items with a start date`
+  };
+}
+
+export function HasTargetDateFilter(): TableFilter {
+  return {
+    name: 'has_target_date',
+    type: 'boolean',
+    label: t`Has Target Date`,
+    description: t`Show items with a target date`
+  };
+}
+
 export function TargetDateBeforeFilter(): TableFilter {
   return {
     name: 'target_date_before',
@@ -290,7 +308,7 @@ export function UpdatedAfterFilter(): TableFilter {
   return {
     name: 'updated_after',
     label: t`Updated After`,
-    description: t`Show orders updated after this date`,
+    description: t`Show items updated after this date`,
     type: 'date'
   };
 }
@@ -299,7 +317,7 @@ export function UpdatedBeforeFilter(): TableFilter {
   return {
     name: 'updated_before',
     label: t`Updated Before`,
-    description: t`Show orders updated before this date`,
+    description: t`Show items updated before this date`,
     type: 'date'
   };
 }

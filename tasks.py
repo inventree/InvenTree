@@ -740,11 +740,10 @@ def setup_dev(c, tests: bool = False, verbose: bool = False):
     # Install required Python packages with PIP
     install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
-    # Install pre-commit hook
-    info('Installing pre-commit for checks before git commits...')
-    run(c, 'pre-commit install')
-    run(c, 'pre-commit autoupdate')
-    success('pre-commit set up complete')
+    # Install prek hook
+    info('Installing prek for checks before git commits...')
+    run(c, 'prek install')
+    success('prek set up complete')
 
     # Set up test-data if flag is set
     if tests:
@@ -1553,10 +1552,14 @@ def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     manage(c, cmd, pty=True)
 
 
-@task(pre=[wait])
-def worker(c):
-    """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
+@task(pre=[wait], help={'verbose': 'Print verbose output from the command'})
+def worker(c, verbose: bool = False):
+    """Run the InvenTree background worker process.
+
+    Launches a django-q2 cluster to process background tasks.
+    Ref: https://django-q2.readthedocs.io
+    """
+    manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
 @task(post=[static, server])

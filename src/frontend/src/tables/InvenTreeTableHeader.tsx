@@ -26,6 +26,7 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { Boundary } from '@lib/components/Boundary';
 import { ButtonMenu } from '@lib/components/ButtonMenu';
 import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
 import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
@@ -33,7 +34,6 @@ import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
@@ -276,6 +276,7 @@ export default function InvenTreeTableHeader({
                         <Divider />
                         {tableState.filterSet.activeFilters?.map((filter) => (
                           <FilterPreview
+                            key={filter.name}
                             filter={filter}
                             filters={tableProps.tableFilters}
                           />

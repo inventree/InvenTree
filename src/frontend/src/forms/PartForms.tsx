@@ -57,6 +57,7 @@ export function usePartFields({
       },
       default_expiry: {},
       minimum_stock: {},
+      maximum_stock: {},
       responsible: {
         filters: {
           is_active: true
@@ -185,6 +186,11 @@ export function usePartFields({
     // Pop 'expiry' field if expiry not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields['default_expiry'];
+    }
+
+    // Remove "locked" field if locking not enabled
+    if (!globalSettings.isSet('PART_ENABLE_LOCKING')) {
+      delete fields['locked'];
     }
 
     if (create) {

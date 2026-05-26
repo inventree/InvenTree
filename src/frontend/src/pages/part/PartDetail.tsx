@@ -5,9 +5,7 @@ import {
   Center,
   Grid,
   Group,
-  HoverCard,
   Loader,
-  type MantineColor,
   Paper,
   Skeleton,
   Stack,
@@ -17,22 +15,22 @@ import {
   IconBookmarks,
   IconBuilding,
   IconChecklist,
-  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconListCheck,
   IconListDetails,
   IconListTree,
   IconLock,
+  IconLockOpen,
   IconPackages,
   IconSearch,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
+  IconTransfer,
   IconTruckDelivery,
   IconTruckReturn,
   IconVersions
@@ -47,8 +45,8 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { ActionButton } from '@lib/index';
 import type { StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
@@ -73,18 +71,14 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
-import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
-import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -108,10 +102,12 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
+import { BomActions } from './bom/BomActions';
 
 /**
  * Render a part revision selector component
@@ -155,134 +151,6 @@ function RevisionSelector({
 }
 
 /**
- * A hover-over component which displays information about the BOM validation for a given part
- */
-function BomValidationInformation({
-  partId
-}: {
-  partId: number;
-}) {
-  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
-    useInstance({
-      endpoint: ApiEndpoints.bom_validate,
-      pk: partId,
-      hasPrimaryKey: true,
-      refetchOnMount: true
-    });
-
-  const [taskId, setTaskId] = useState<string>('');
-
-  useBackgroundTask({
-    taskId: taskId,
-    message: t`Validating BOM`,
-    successMessage: t`BOM validated`,
-    onComplete: () => {
-      bomInformationQuery.refetch();
-    }
-  });
-
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: null,
-    onFormSuccess: (response: any) => {
-      // If the process has been offloaded to a background task
-      if (response.task_id) {
-        setTaskId(response.task_id);
-      } else {
-        bomInformationQuery.refetch();
-      }
-    }
-  });
-
-  if (bomInformationQuery.isFetching) {
-    return <Loader size='sm' />;
-  }
-
-  let icon: ReactNode;
-  let color: MantineColor;
-  let title = '';
-  let description = '';
-
-  if (bomInformation?.bom_validated) {
-    color = 'green';
-    icon = <IconListCheck />;
-    title = t`BOM Validated`;
-    description = t`The Bill of Materials for this part has been validated`;
-  } else if (bomInformation?.bom_checked_date) {
-    color = 'yellow';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
-  } else {
-    color = 'red';
-    icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has not yet been validated`;
-  }
-
-  return (
-    <>
-      {validateBom.modal}
-      <Group gap='xs' justify='flex-end'>
-        {!bomInformation.bom_validated && (
-          <ActionButton
-            icon={<IconCircleCheck />}
-            color='green'
-            tooltip={t`Validate BOM`}
-            onClick={validateBom.open}
-          />
-        )}
-        <HoverCard position='bottom-end'>
-          <HoverCard.Target>
-            <ActionIcon
-              color={color}
-              variant='transparent'
-              aria-label='bom-validation-info'
-            >
-              {icon}
-            </ActionIcon>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            <Alert color={color} icon={icon} title={title}>
-              <Stack gap='xs'>
-                <Text size='sm'>{description}</Text>
-                {bomInformation?.bom_checked_date && (
-                  <Text size='sm'>
-                    {t`Validated On`}: {bomInformation.bom_checked_date}
-                  </Text>
-                )}
-                {bomInformation?.bom_checked_by_detail && (
-                  <Group gap='xs'>
-                    <Text size='sm'>{t`Validated By`}: </Text>
-                    <RenderUser
-                      instance={bomInformation.bom_checked_by_detail}
-                    />
-                  </Group>
-                )}
-              </Stack>
-            </Alert>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      </Group>
-    </>
-  );
-}
-
-/**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
@@ -296,6 +164,14 @@ export default function PartDetail() {
 
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+
+  // BOM validation information (used for hover-over info on the BOM tab)
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
 
   const { instance: serials } = useInstance({
     endpoint: ApiEndpoints.part_serial_numbers,
@@ -325,6 +201,11 @@ export default function PartDetail() {
       hasPrimaryKey: true,
       refetchOnMount: true
     });
+
+  const lockingEnabled = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_LOCKING'),
+    [globalSettings]
+  );
 
   const revisionsEnabled = useMemo(
     () => globalSettings.isSet('PART_ENABLE_REVISION'),
@@ -581,6 +462,13 @@ export default function PartDetail() {
         unit: part.units,
         label: t`Minimum Stock`,
         hidden: part.minimum_stock <= 0
+      },
+      {
+        type: 'number',
+        name: 'maximum_stock',
+        unit: part.units,
+        label: t`Maximum Stock`,
+        hidden: part.maximum_stock <= 0
       }
     ];
 
@@ -714,6 +602,7 @@ export default function PartDetail() {
                 deleteFile: true
               }}
               src={part.image}
+              thumbnail={part.thumbnail}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               refresh={refreshInstance}
               pk={part.pk}
@@ -801,11 +690,28 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        controls: <BomValidationInformation partId={part.pk ?? -1} />,
+        controls: (
+          <BomActions bomInformation={bomInformation} partInstance={part} />
+        ),
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.bom),
         content: part?.pk ? (
-          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+          <Stack gap='xs'>
+            {bomInformation.isLoaded &&
+              bomInformation.instance?.bom_validated === false && (
+                <Alert
+                  color='yellow'
+                  icon={<IconExclamationCircle />}
+                  title={t`BOM Not Validated`}
+                >
+                  <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+                </Alert>
+              )}
+            <BomTable
+              partId={part.pk ?? -1}
+              partLocked={part?.locked == true}
+            />
+          </Stack>
         ) : (
           <Skeleton />
         )
@@ -873,6 +779,20 @@ export default function PartDetail() {
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
+        name: 'transfer_orders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        hidden:
+          part.virtual ||
+          !globalSettings.isSet('TRANSFERORDER_ENABLED') ||
+          !user.hasViewRole(UserRoles.transfer_order),
+        content: part.pk ? (
+          <TransferOrderTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
         name: 'stocktake',
         label: t`Stock History`,
         icon: <IconClipboardList />,
@@ -893,7 +813,12 @@ export default function PartDetail() {
         icon: <IconTestPipe />,
         hidden: !part.testable,
         content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+          <PartTestTemplateTable
+            partId={part?.pk}
+            partLocked={
+              globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked
+            }
+          />
         ) : (
           <Skeleton />
         )
@@ -921,7 +846,7 @@ export default function PartDetail() {
         icon: <IconListDetails />,
         content: (
           <>
-            {part.locked && (
+            {lockingEnabled && part.locked && (
               <Alert
                 title={t`Part is Locked`}
                 color='orange'
@@ -934,7 +859,7 @@ export default function PartDetail() {
             <ParameterTable
               modelType={ModelType.part}
               modelId={part?.pk}
-              allowEdit={part?.locked != true}
+              allowEdit={!lockingEnabled || part?.locked != true}
             />
           </>
         )
@@ -949,7 +874,15 @@ export default function PartDetail() {
         has_note: !!part?.notes
       })
     ];
-  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
+  }, [
+    id,
+    part,
+    user,
+    globalSettings,
+    userSettings,
+    detailsPanel,
+    bomInformation
+  ]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -976,14 +909,21 @@ export default function PartDetail() {
 
     const shortfall = Math.max(required - partRequirements.total_stock, 0);
 
+    let stockColor = 'green';
+
+    if (partRequirements.total_stock <= part.minimum_stock) {
+      stockColor = 'orange';
+    } else if (
+      part.maximum_stock > 0 &&
+      partRequirements.total_stock > part.maximum_stock
+    ) {
+      stockColor = 'teal';
+    }
+
     return [
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
-        color={
-          partRequirements.total_stock >= part.minimum_stock
-            ? 'green'
-            : 'orange'
-        }
+        color={stockColor}
         visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,
@@ -1219,12 +1159,26 @@ export default function PartDetail() {
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
-              part?.locked ? (
-                <IconLock aria-label='part-lock-icon' />
+              lockingEnabled ? (
+                <ActionIcon
+                  aria-label='part-lock-icon'
+                  variant='transparent'
+                  disabled={!user.hasChangeRole(UserRoles.part)}
+                  onClick={() => {
+                    api
+                      .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                        locked: !part.locked
+                      })
+                      .then(refreshInstance);
+                  }}
+                >
+                  {part?.locked ? <IconLock /> : <IconLockOpen />}
+                </ActionIcon>
               ) : undefined
             }
             subtitle={part.description}
             imageUrl={part.image}
+            thumbnailUrl={part.thumbnail}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

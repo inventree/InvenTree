@@ -30,7 +30,7 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
@@ -165,7 +165,7 @@ function QueryResultGroup({
       <Accordion.Panel>
         <Stack gap={'xs'} aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any, index: number) => (
-            <>
+            <Fragment key={`result-group-${query.model}-${result.pk}`}>
               <Anchor
                 underline='never'
                 href={getDetailUrl(query.model, result.pk, true)}
@@ -184,7 +184,7 @@ function QueryResultGroup({
                   key={`divider-${query.model}-${result.pk}`}
                 />
               )}
-            </>
+            </Fragment>
           ))}
         </Stack>
       </Accordion.Panel>

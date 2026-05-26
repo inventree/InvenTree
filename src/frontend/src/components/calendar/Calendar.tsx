@@ -1,4 +1,8 @@
-import type { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
+import type {
+  CalendarOptions,
+  DatesSetArg,
+  EventContentArg
+} from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -7,6 +11,7 @@ import FullCalendar from '@fullcalendar/react';
 import { ActionButton } from '@lib/components/ActionButton';
 import { Boundary } from '@lib/components/Boundary';
 import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
@@ -14,6 +19,7 @@ import {
   Box,
   Button,
   Group,
+  HoverCard,
   Indicator,
   LoadingOverlay,
   Popover,
@@ -28,7 +34,13 @@ import {
   IconDownload,
   IconFilter
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
   defaultLocale,
@@ -36,13 +48,14 @@ import {
 } from '../../contexts/LanguageContext';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
-import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  eventTooltipContent?: (event: EventContentArg) => ReactNode;
   filters?: TableFilter[];
   isLoading?: boolean;
   state: CalendarState;
@@ -52,11 +65,14 @@ export default function Calendar({
   enableDownload,
   enableFilters = false,
   enableSearch,
+  eventTooltipContent,
   isLoading,
   filters,
   state,
   ...calendarProps
 }: Readonly<InvenTreeCalendarProps>) {
+  const globalSettings = useGlobalSettingsState();
+
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
@@ -107,6 +123,36 @@ export default function Calendar({
       calendarProps.datesSet?.(dateInfo);
     },
     [calendarProps.datesSet, state.ref, state.setMonthName]
+  );
+
+  const wrappedEventContent = useCallback(
+    (arg: EventContentArg) => {
+      const inner =
+        typeof calendarProps.eventContent === 'function'
+          ? calendarProps.eventContent(arg, null)
+          : (calendarProps.eventContent ?? null);
+
+      if (!eventTooltipContent) return inner;
+
+      const tooltip = eventTooltipContent(arg);
+
+      if (!tooltip) return inner;
+
+      return (
+        <HoverCard
+          openDelay={300}
+          closeDelay={100}
+          shadow='md'
+          position='top-start'
+        >
+          <HoverCard.Target>
+            <div style={{ width: '100%', overflow: 'hidden' }}>{inner}</div>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>{tooltip}</HoverCard.Dropdown>
+        </HoverCard>
+      );
+    },
+    [calendarProps.eventContent, eventTooltipContent]
   );
 
   return (
@@ -206,10 +252,15 @@ export default function Calendar({
             initialView='dayGridMonth'
             locales={allLocales}
             locale={calendarLocale}
+            firstDay={Number.parseInt(
+              globalSettings.getSetting('WEEK_STARTS_ON') ?? '1',
+              10
+            )}
             headerToolbar={false}
             footerToolbar={false}
             {...calendarProps}
             datesSet={datesSet}
+            eventContent={wrappedEventContent}
           />
         </Box>
       </Stack>

@@ -81,10 +81,14 @@ export function ApiFormField({
       ...fieldDefinition,
       autoFill: undefined,
       placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
+      singleFetchFunction: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
+      allow_blank: undefined,
       allow_null: undefined,
       read_only: undefined,
       children: undefined,
@@ -242,11 +246,6 @@ export function ApiFormField({
           />
         );
       default:
-        // This should never happen - it represents a critical UI issue which should be caught in CI
-        console.error(
-          `Invalid field type for field '${fieldName}': '${fieldDefinition.field_type}'`
-        );
-
         return (
           <Alert color='red' title={t`Error`}>
             Invalid field type for field '{fieldName}': '

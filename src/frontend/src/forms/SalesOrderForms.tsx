@@ -48,6 +48,11 @@ export function useSalesOrderFields({
         filters: {
           is_customer: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_customer: { value: true, hidden: true }
         }
       },
       customer_reference: {},
@@ -578,4 +583,29 @@ export function useSalesOrderAllocationFields({
       }
     };
   }, [orderId, shipment]);
+}
+
+export function useSalesOrderAutoAllocateFields({
+  orderId
+}: {
+  orderId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      interchangeable: {},
+      stock_sort_by: {},
+      serialized_stock: {},
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      },
+      line_items: {
+        hidden: true
+      }
+    };
+  }, [orderId]);
 }

@@ -28,29 +28,8 @@ import {
   TargetDateColumn,
   UpdatedAtColumn
 } from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  CompletedAfterFilter,
-  CompletedBeforeFilter,
-  CreatedAfterFilter,
-  CreatedBeforeFilter,
-  CreatedByFilter,
-  HasProjectCodeFilter,
-  MaxDateFilter,
-  MinDateFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter,
-  StartDateAfterFilter,
-  StartDateBeforeFilter,
-  TargetDateAfterFilter,
-  TargetDateBeforeFilter,
-  UpdatedAfterFilter,
-  UpdatedBeforeFilter
-} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import PurchaseOrderFilters from './PurchaseOrderFilters';
 
 /**
  * Display a table of purchase orders
@@ -75,40 +54,7 @@ export function PurchaseOrderTable({
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      OrderStatusFilter({ model: ModelType.purchaseorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      MinDateFilter(),
-      MaxDateFilter(),
-      CreatedBeforeFilter(),
-      CreatedAfterFilter(),
-      TargetDateBeforeFilter(),
-      TargetDateAfterFilter(),
-      StartDateBeforeFilter(),
-      StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
-      CompletedBeforeFilter(),
-      CompletedAfterFilter(),
-      UpdatedBeforeFilter(),
-      UpdatedAfterFilter(),
-      ProjectCodeFilter(),
-      HasProjectCodeFilter(),
-      ResponsibleFilter(),
-      CreatedByFilter()
-    ];
+    return PurchaseOrderFilters({ includeDateFilters: true });
   }, []);
 
   const tableColumns = useMemo(() => {

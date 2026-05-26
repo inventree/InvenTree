@@ -96,7 +96,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         const pdf = new Blob([preview.data], {
-          type: preview.headers['content-type']
+          type: preview.headers['content-type'] as string
         });
 
         const srcUrl = URL.createObjectURL(pdf);

@@ -128,6 +128,42 @@ test('Sales Orders - Basic Tests', async ({ browser }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
+test('Sales Orders - Auto Allocate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Duplicate the order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'choice-field-stock_sort_by' })
+    .click();
+  await page.getByRole('option', { name: 'Newest stock' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Stock allocation complete').first().waitFor();
+  await page.getByText('10 / 10').first().waitFor();
+
+  // Cancel the order (to free up the allocated stock)
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
+
+  // Check that the allocated stock has been released
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('table-refresh')
+    .click();
+  await page.getByText('0 / 10').first().waitFor();
+});
+
 test('Sales Orders - Shipments', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 

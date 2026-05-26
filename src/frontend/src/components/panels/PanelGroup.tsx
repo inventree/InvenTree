@@ -5,6 +5,7 @@ import {
   Group,
   Indicator,
   Loader,
+  type MantineColor,
   Paper,
   Stack,
   Tabs,
@@ -33,20 +34,25 @@ import {
 } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
-import type { ModelType } from '@lib/enums/ModelType';
+import { StylishText } from '@lib/components/StylishText';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
+import type {
+  PanelGroupType,
+  PanelIndicatorType,
+  PanelType
+} from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
-import { useWindowEvent } from '@mantine/hooks';
+import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
-import { StylishText } from '../items/StylishText';
-import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
 /**
@@ -61,6 +67,8 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ * @param pluginPanelWithoutId - If true, the panel group will load plugin panels even with no id provided
+ * @param pluginPanelKey - The plugin panel key to use when loading plugin panels for this group from the backend
  */
 export type PanelProps = {
   pageKey: string;
@@ -68,12 +76,108 @@ export type PanelProps = {
   groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
-  model?: ModelType | string;
+  model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
+  defaultPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  pluginPanelWithoutId?: boolean;
+  pluginPanelKey?: PluginPanelKey;
 };
+
+/**
+ * Render a single panel tab within the side menu
+ */
+function PanelTabComponent({
+  expanded,
+  panel,
+  onClick
+}: {
+  expanded: boolean;
+  panel: PanelType;
+  onClick: (event: any) => void;
+}) {
+  const visibility = useDocumentVisibility();
+
+  // Check if we should display an indicator dot for this panel
+  const notificationDot = useQuery({
+    enabled: panel.notification_dot !== undefined && visibility === 'visible',
+    queryKey: ['panel-notification', panel.name],
+    queryFn: async () => {
+      if (panel.notification_dot === undefined) {
+        return null;
+      } else if (typeof panel.notification_dot === 'function') {
+        return await panel.notification_dot();
+      } else {
+        return panel.notification_dot as PanelIndicatorType;
+      }
+    },
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
+  });
+
+  const indicatorColor: MantineColor | undefined = useMemo(() => {
+    switch (notificationDot.data) {
+      case 'info':
+        return 'blue';
+      case 'warning':
+        return 'yellow';
+      case 'danger':
+        return 'red';
+      default:
+        return undefined;
+    }
+  }, [notificationDot.data]);
+
+  return (
+    <Tooltip
+      label={panel.label ?? panel.name}
+      key={panel.name}
+      disabled={expanded}
+      position='right'
+    >
+      <Tabs.Tab
+        p='xs'
+        key={`panel-label-${panel.name}`}
+        w={'100%'}
+        value={panel.name}
+        leftSection={
+          <Indicator
+            position='top-end'
+            disabled={!indicatorColor}
+            color={indicatorColor}
+            withBorder
+            size={14}
+          >
+            {panel.icon}
+          </Indicator>
+        }
+        hidden={panel.hidden}
+        disabled={panel.disabled}
+        style={{
+          cursor: panel.disabled ? 'unset' : 'pointer'
+        }}
+        onClick={(event: any) => onClick(event)}
+      >
+        <Group justify='left' gap='xs' wrap='nowrap'>
+          <UnstyledButton
+            component={'a'}
+            style={{
+              textAlign: 'left'
+            }}
+            href={generateUrl(
+              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+            )}
+          >
+            {expanded && panel.label}
+          </UnstyledButton>
+        </Group>
+      </Tabs.Tab>
+    </Tooltip>
+  );
+}
 
 function BasePanelGroup({
   pageKey,
@@ -85,7 +189,9 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true
+  collapsible = true,
+  pluginPanelWithoutId = false,
+  pluginPanelKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -96,9 +202,17 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
+  const _pluginId = useMemo(() => {
+    if (id === undefined && pluginPanelWithoutId) return null;
+    return id;
+  }, [id, pluginPanelWithoutId]);
+  const _pluginKey = useMemo(() => {
+    if (model === undefined && pluginPanelWithoutId) return pluginPanelKey;
+    return model;
+  }, [model, pluginPanelWithoutId, pluginPanelKey]);
   const pluginPanelSet = usePluginPanels({
-    id: id,
-    model: model,
+    id: _pluginId,
+    model: _pluginKey,
     instance: instance,
     reloadFunc: reloadInstance
   });
@@ -255,54 +369,14 @@ function BasePanelGroup({
                 {group.panels?.map(
                   (panel) =>
                     !panel.hidden && (
-                      <Tooltip
-                        label={panel.label ?? panel.name}
-                        key={panel.name}
-                        disabled={expanded}
-                        position='right'
-                      >
-                        <Tabs.Tab
-                          p='xs'
-                          key={`panel-label-${panel.name}`}
-                          w={'100%'}
-                          value={panel.name}
-                          leftSection={panel.icon}
-                          hidden={panel.hidden}
-                          disabled={panel.disabled}
-                          style={{
-                            cursor: panel.disabled ? 'unset' : 'pointer'
-                          }}
-                          onClick={(event: any) =>
-                            handlePanelChange(panel.name, event)
-                          }
-                        >
-                          <Indicator
-                            color={
-                              panel.notification_dot == 'info'
-                                ? 'blue'
-                                : panel.notification_dot == 'warning'
-                                  ? 'yellow'
-                                  : 'red'
-                            }
-                            position='middle-end'
-                            disabled={!panel.notification_dot}
-                          >
-                            <Group justify='left' gap='xs' wrap='nowrap'>
-                              <UnstyledButton
-                                component={'a'}
-                                style={{
-                                  textAlign: 'left'
-                                }}
-                                href={generateUrl(
-                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                                )}
-                              >
-                                {expanded && panel.label}
-                              </UnstyledButton>
-                            </Group>
-                          </Indicator>
-                        </Tabs.Tab>
-                      </Tooltip>
+                      <PanelTabComponent
+                        key={`panel-tab-${group.id}-${panel.name}`}
+                        expanded={expanded}
+                        panel={panel}
+                        onClick={(event: any) =>
+                          handlePanelChange(panel.name, event)
+                        }
+                      />
                     )
                 )}
               </Box>
@@ -411,12 +485,16 @@ function getPanelContent(
 function IndexPanelComponent({
   pageKey,
   selectedPanel,
+  defaultPanel,
   panels
 }: Readonly<PanelProps>) {
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
-        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+        selectedPanel ||
+        defaultPanel ||
+        state.lastUsedPanels[pageKey] ||
+        panels[0]?.name;
 
       const panel = panels.findIndex(
         (p) => p.name === panelName && !p.disabled && !p.hidden

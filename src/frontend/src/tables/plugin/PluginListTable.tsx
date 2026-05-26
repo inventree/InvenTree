@@ -15,11 +15,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import type { RowAction } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { useApi } from '../../contexts/ApiContext';

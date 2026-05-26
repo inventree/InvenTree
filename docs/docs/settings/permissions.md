@@ -28,7 +28,8 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 | Role | Description |
 | ---- | ----------- |
 | **Admin** | The *admin* role is related to assigning user permissions. |
-| **Build** | The *build* role is related to accessing Build Order and Bill of Materials data |
+| **BOM** | The *bom* role is related to accessing Bill of Materials data |
+| **Build** | The *build* role is related to accessing manufacturing / Build Order |
 | **Part** | The *part* role is related to accessing Part data |
 | **Part Category** | The *part category* role is related to accessing Part Category data |
 | **Purchase Order** | The *purchase* role is related to accessing Purchase Order data |

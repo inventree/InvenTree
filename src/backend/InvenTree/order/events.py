@@ -37,3 +37,12 @@ class ReturnOrderEvents(BaseEventEnum):
     COMPLETED = 'returnorder.completed'
     CANCELLED = 'returnorder.cancelled'
     HOLD = 'returnorder.hold'
+
+
+class TransferOrderEvents(BaseEventEnum):
+    """Event enumeration for the PurchaseOrder models."""
+
+    ISSUED = 'transferorder.placed'
+    COMPLETED = 'transferorder.completed'
+    CANCELLED = 'transferorder.cancelled'
+    HOLD = 'transferorder.hold'

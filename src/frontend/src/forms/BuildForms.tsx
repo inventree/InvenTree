@@ -8,7 +8,6 @@ import {
   IconList,
   IconSitemap,
   IconTruckDelivery,
-  IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -128,12 +127,6 @@ export function useBuildOrderFields({
       link: {
         icon: <IconLink />
       },
-      issued_by: {
-        icon: <IconUser />,
-        filters: {
-          is_active: true
-        }
-      },
       responsible: {
         icon: <IconUsersGroup />,
         filters: {
@@ -246,6 +239,10 @@ export function useBuildAutoAllocateFields({
       optional_items: {
         hidden: item_type === 'tracked',
         value: item_type === 'tracked' ? false : undefined
+      },
+      stock_sort_by: {},
+      build_lines: {
+        hidden: true
       }
     };
   }, [item_type]);
@@ -392,7 +389,7 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been completed`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -473,7 +470,7 @@ export function useScrapBuildOutputsForm({
     ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been scrapped`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -534,7 +531,7 @@ export function useCancelBuildOutputsForm({
     ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`,
+    successMessage: null,
     size: '80%'
   });
 }

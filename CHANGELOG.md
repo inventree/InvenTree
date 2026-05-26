@@ -9,14 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
+- [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+
 ### Added
 
+- [#12011](https://github.com/inventree/InvenTree/pull/12011) adds a "creation_date" field to the StockItem API endpoint, allowing users to track when each stock item was created. This field is read-only and is automatically set to the current date and time when a new stock item is created.
+- [#12000](https://github.com/inventree/InvenTree/pull/12000) adds support for auto-allocation of stock items against sales orders. This includes both backend and frontend changes, allowing users to trigger auto-allocation via the API or through the UI. The auto-allocation process will attempt to allocate available stock items to the sales order line items, based on the specified stock sorting and allocation rules.
+- [#11920](https://github.com/inventree/InvenTree/pull/11920) adds support for renaming attachments after they have been uploaded. This includes both backend and frontend changes, allowing users to rename attachments via the API or through the UI.
+- [#11914](https://github.com/inventree/InvenTree/pull/11914) adds a "maximum_stock" field to the Part model, allowing users to specify a maximum preferred stock level for each part. This is used in conjunction with the existing "minimum_stock" field to allow users to define a preferred stock range for each part. The "high_stock" filter has also been added to the Part API endpoint, allowing users to filter parts which are above their maximum stock level.
+- [#11631](https://github.com/inventree/InvenTree/pull/11631) adds "raw_amount" field to the BomItem model, allowing BOM quantities to account for the units of measure of the underlying part.
+- [#11872](https://github.com/inventree/InvenTree/pull/11872) adds a global setting to allow or disallow the deletion of serialized stock items.
+- [#11861](https://github.com/inventree/InvenTree/pull/11861) adds support for bulk-replacing a component in multiple BOMs simultaneously
+- [#11853](https://github.com/inventree/InvenTree/pull/11853) adds BOM comparison functionality, allowing users to compare the BOM of one assembly with another assembly.
+- [#11809](https://github.com/inventree/InvenTree/pull/11809) adds multi-level subassembly display mode to the BOM table, allowing users to view multiple levels of subassemblies in a single table view. This is an optional display mode which can be toggled on or off by the user.
 - [#11778](https://github.com/inventree/InvenTree/pull/11778) adds inline supplier part creation to po line item addition dialog.
 - [#11772](https://github.com/inventree/InvenTree/pull/11772) the UI now warns if you navigate away from a note panel with unsaved changes
+- [#11788](https://github.com/inventree/InvenTree/pull/11788) adds support for custom permissions checks on database models defined in plugins. If a model defines a `check_user_permission` classmethod, this will be called to determine if a user has permission to view the model. This is required for plugin models which do not have the required ruleset definitions for the standard permission system.
+- [#9570](https://github.com/inventree/InvenTree/pull/9570) adds support for defining primary actions via plugins
 
 ### Changed
 
+- [#11990](https://github.com/inventree/InvenTree/pull/11990) build output operations performed via the API now offload the work to a background task, and now return a task ID which can be used to monitor the progress of the task. This allows for better performance and responsiveness when performing build output operations, as the work is performed asynchronously in the background.
+- [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.
+- [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
+
 ### Removed
+
+- [#11962](https://github.com/inventree/InvenTree/pull/11962) removes the "remote_image" field from the Part API endpoint, which (previously) allowed the user to specify a remote URL for an image to be downloaded and associated with the part. This field was removed due to security concerns around downloading images from arbitrary URLs. If you were using this field in an external client application, you will need to update your application to use the new "download_image_from_url" API endpoint instead.
 
 ## 1.3.0 - 2026-04-11
 

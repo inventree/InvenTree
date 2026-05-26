@@ -15,6 +15,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -34,7 +35,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
@@ -79,9 +79,11 @@ export default function SupplierPartDetail() {
     const data = supplierPart ?? {};
 
     // Access nested data
-    data.manufacturer = data.manufacturer_detail?.pk;
-    data.MPN = data.manufacturer_part_detail?.MPN;
-    data.manufacturer_part = data.manufacturer_part_detail?.pk;
+    data.manufacturer =
+      supplierPart.manufacturer || data.manufacturer_detail?.pk;
+    data.MPN = supplierPart.MPN || data.manufacturer_part_detail?.MPN;
+    data.manufacturer_part =
+      supplierPart.manufacturer_part || data.manufacturer_part_detail?.pk;
 
     const tl: DetailsField[] = [
       {

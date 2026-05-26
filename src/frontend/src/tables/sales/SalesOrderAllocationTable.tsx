@@ -377,6 +377,10 @@ export default function SalesOrderAllocationTable({
           enableFilters: !isSubTable,
           enableDownload: !isSubTable,
           enableSelection: !isSubTable,
+          enableBulkDelete:
+            !isSubTable &&
+            allowEdit &&
+            user.hasDeleteRole(UserRoles.sales_order),
           minHeight: isSubTable ? 100 : undefined,
           rowActions: rowActions,
           tableActions: isSubTable ? undefined : tableActions,

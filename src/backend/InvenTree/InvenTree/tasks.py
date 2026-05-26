@@ -178,7 +178,7 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
 
     # Iterate through all available tasks, with the most recent first
     for task in OrmQ.objects.all().order_by('-id'):
-        if task.func() != taskname and task.task['func'] != taskname:
+        if task.func() != taskname and task.task.get('func') != taskname:
             # Task does not match
             continue
 
@@ -423,12 +423,12 @@ def scheduled_task(
         minutes (int, optional): The number of minutes between task runs. Defaults to None.
         tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
 
+    Returns:
+        _type_: _description_
+
     Raises:
         ValueError: If decorated object is not callable
         ValueError: If interval is not valid
-
-    Returns:
-        _type_: _description_
     """
 
     def _task_wrapper(admin_class):

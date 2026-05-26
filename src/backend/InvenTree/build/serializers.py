@@ -27,6 +27,7 @@ import company.serializers
 import InvenTree.helpers
 import part.filters
 import part.serializers as part_serializers
+import stock.models as stock_models
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
@@ -104,7 +105,8 @@ class BuildSerializer(
         read_only_fields = [
             'completed',
             'creation_date',
-            'completion_data',
+            'issued_by',
+            'completion_date',
             'status',
             'status_text',
             'level',
@@ -461,18 +463,6 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
-        """'save' the serializer to delete the build outputs."""
-        data = self.validated_data
-        outputs = data.get('outputs', [])
-
-        build = self.context['build']
-
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                build.delete_output(output)
-
 
 class BuildOutputScrapSerializer(serializers.Serializer):
     """Scrapping one or more build outputs."""
@@ -516,27 +506,6 @@ class BuildOutputScrapSerializer(serializers.Serializer):
             raise ValidationError(_('A list of build outputs must be provided'))
 
         return data
-
-    def save(self):
-        """Save the serializer to scrap the build outputs."""
-        build = self.context['build']
-        request = self.context.get('request')
-        data = self.validated_data
-        outputs = data.get('outputs', [])
-
-        # Scrap the build outputs
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                quantity = item.get('quantity', None)
-                build.scrap_build_output(
-                    output,
-                    quantity,
-                    data.get('location', None),
-                    user=request.user if request else None,
-                    notes=data.get('notes', ''),
-                    discard_allocations=data.get('discard_allocations', False),
-                )
 
 
 class BuildOutputCompleteSerializer(serializers.Serializer):
@@ -608,42 +577,6 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             raise ValidationError(_('A list of build outputs must be provided'))
 
         return data
-
-    def save(self):
-        """Save the serializer to complete the build outputs."""
-        build = self.context['build']
-        request = self.context.get('request')
-
-        data = self.validated_data
-
-        location = data.get('location', None)
-        status = data.get('status_custom_key', StockStatus.OK.value)
-        notes = data.get('notes', '')
-
-        outputs = data.get('outputs', [])
-
-        # Cache some calculated values which can be passed to each output
-        required_tests = outputs[0]['output'].part.getRequiredTests()
-        prevent_on_incomplete = (
-            common.settings.prevent_build_output_complete_on_incompleted_tests()
-        )
-
-        # Mark the specified build outputs as "complete"
-        with transaction.atomic():
-            for item in outputs:
-                output = item['output']
-                quantity = item.get('quantity', None)
-
-                build.complete_build_output(
-                    output,
-                    request.user if request else None,
-                    quantity=quantity,
-                    location=location,
-                    status=status,
-                    notes=notes,
-                    required_tests=required_tests,
-                    prevent_on_incomplete=prevent_on_incomplete,
-                )
 
 
 class BuildIssueSerializer(serializers.Serializer):
@@ -1131,6 +1064,24 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         ],
         label=_('Item Type'),
         help_text=_('Select item type to auto-allocate'),
+    )
+
+    stock_sort_by = serializers.ChoiceField(
+        default=stock_models.STOCK_SORT_DEFAULT,
+        choices=stock_models.STOCK_SORT_CHOICES,
+        label=_('Stock Priority'),
+        help_text=_('Preferred order in which matching stock items are consumed'),
+    )
+
+    build_lines = serializers.PrimaryKeyRelatedField(
+        queryset=BuildLine.objects.all(),
+        many=True,
+        required=False,
+        default=list,
+        label=_('Build Lines'),
+        help_text=_(
+            'Limit allocation to these build lines (leave blank to allocate all lines)'
+        ),
     )
 
 

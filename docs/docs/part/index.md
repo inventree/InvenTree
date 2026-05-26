@@ -6,6 +6,18 @@ title: Parts
 
 The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organize and filter parts by function.
 
+## Part Stock
+
+Each part can have multiple [stock items](../stock/index.md) associated with it, which represent the physical quantity of that part in various locations. The total stock level for a given part is the sum of all stock items associated with that part.
+
+### Minimum Stock
+
+A part may have a specified "minimum stock" level. This is a user-defined value which indicates the minimum quantity of that part which should be kept in stock at all times. If the total stock level for a given part falls below the minimum stock level, the part is flagged as "low stock" and can be easily identified in the interface.
+
+### Maximum Stock
+
+A part may also have a specified "maximum stock" level. This is a user-defined value which indicates the maximum quantity of that part which should be kept in stock at all times. If the total stock level for a given part exceeds the maximum stock level, the part is flagged as "overstocked" and can be easily identified in the interface.
+
 ## Part Category
 
 Part categories are very flexible and can be easily arranged to match a particular user requirement. Each part category displays a list of all parts *under* that given category. This means that any part belonging to a particular category, or belonging to a sub-category, will be displayed.
@@ -27,7 +39,7 @@ Clicking on the part name links to the [*Part Detail*](./views.md) view.
 
 ## Part Attributes
 
-Each *Part* defined in the database provides a number of different attributes which determine how that part can be used. Configuring these attributes for a given part will impact the available functions that can be perform on (or using) that part).
+Each *Part* defined in the database provides a number of different attributes which determine how that part can be used. Configuring these attributes for a given part will impact the available functions that can be perform on (or using) that part.
 
 ### Virtual
 
@@ -75,6 +87,7 @@ A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered f
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
+
 ## Locked Parts
 
 Parts can be locked to prevent them from being modified. This is useful for parts which are in production and should not be changed. The following restrictions apply to parts which are locked:
@@ -82,6 +95,8 @@ Parts can be locked to prevent them from being modified. This is useful for part
 - Locked parts cannot be deleted
 - BOM items cannot be created, edited, or deleted when they are part of a locked assembly
 - Parameters linked to a locked part cannot be created, edited or deleted
+
+The part locking functionality can be enabled or disabled globally via the [Part Locking](../settings/global.md#parts) system setting (`PART_ENABLE_LOCKING`). When disabled, the locked state of a part is ignored and all operations are permitted.
 
 ## Active Parts
 
@@ -145,4 +160,4 @@ The [InvenTree mobile app](../app/part.md#part-image-view) allows part images to
 
 ## Part Import
 
-*Parts* can be imported by staff-members on the part-list-view (this feature must be enabled in the part-settings), in the part-settings or on the [admin-page for parts](../settings/import.md) (only accessible if you are also an admin). The first two options provide a multi-stage wizard that enables mapping fields from various spreadsheet or table-data formats while the latter requires a well-formatted file but is much more performant.
+*Part* data can be imported using the [data import wizard](../concepts/data_import.md). This allows part data to be imported from an external file, which can be useful for bulk importing of part data.

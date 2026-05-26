@@ -24,6 +24,7 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -32,7 +33,6 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useBuildAutoAllocateFields,
@@ -122,6 +122,9 @@ function OutputAllocationDrawer({
       opened={opened}
       onClose={close}
       withCloseButton
+      closeButtonProps={{
+        'aria-label': 'close-allocation-drawer'
+      }}
       closeOnEscape
       closeOnClickOutside
       styles={{
@@ -343,31 +346,80 @@ export default function BuildOutputTable({
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
+  const [completeTaskId, setCompleteTaskId] = useState<string>('');
+  const [scrapTaskId, setScrapTaskId] = useState<string>('');
+  const [deleteTaskId, setDeleteTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: completeTaskId,
+    message: t`Completing build outputs`,
+    successMessage: t`Build outputs have been completed`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: scrapTaskId,
+    message: t`Scrapping build outputs`,
+    successMessage: t`Build outputs have been scrapped`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: deleteTaskId,
+    message: t`Cancelling build outputs`,
+    successMessage: t`Build outputs have been cancelled`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
     hasTrackedItems: hasTrackedItems,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setCompleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const scrapBuildOutputsForm = useScrapBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setScrapTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const cancelBuildOutputsForm = useCancelBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setDeleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 

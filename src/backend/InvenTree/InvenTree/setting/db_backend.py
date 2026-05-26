@@ -4,23 +4,44 @@ from pathlib import Path
 
 import structlog
 
-from InvenTree.config import get_boolean_setting, get_setting
+from InvenTree.config import get_boolean_setting, get_config_value, get_setting
 
 logger = structlog.get_logger('inventree')
 
 
 def get_db_backend():
     """Return the database backend configuration."""
+    # For the core database configuration values, we test for UPPERCASE configuration values as a backup,
+    # due to legacy reasons (original config files were uppercase,
+    # but we moved to lowercase for consistency with other settings.
+
     db_config = {
-        'ENGINE': get_setting('INVENTREE_DB_ENGINE', 'database.engine', None),
-        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', None),
-        'USER': get_setting('INVENTREE_DB_USER', 'database.user', None),
-        'PASSWORD': get_setting('INVENTREE_DB_PASSWORD', 'database.password', None),
-        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', None),
-        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', 5432, typecast=int),
+        'ENGINE': get_setting(
+            'INVENTREE_DB_ENGINE', 'database.engine', '', typecast=str
+        )
+        or get_config_value('database.ENGINE')
+        or '',
+        'NAME': get_setting('INVENTREE_DB_NAME', 'database.name', '', typecast=str)
+        or get_config_value('database.NAME')
+        or '',
+        'USER': get_setting('INVENTREE_DB_USER', 'database.user', '', typecast=str)
+        or get_config_value('database.USER')
+        or '',
+        'PASSWORD': get_setting(
+            'INVENTREE_DB_PASSWORD', 'database.password', '', typecast=str
+        )
+        or get_config_value('database.PASSWORD')
+        or '',
+        'HOST': get_setting('INVENTREE_DB_HOST', 'database.host', '', typecast=str)
+        or get_config_value('database.HOST')
+        or '',
+        'PORT': get_setting('INVENTREE_DB_PORT', 'database.port', '', typecast=str)
+        or get_config_value('database.PORT')
+        or '',
         'OPTIONS': get_setting(
             'INVENTREE_DB_OPTIONS', 'database.options', {}, typecast=dict
         )
+        or get_config_value('database.OPTIONS')
         or {},
     }
 

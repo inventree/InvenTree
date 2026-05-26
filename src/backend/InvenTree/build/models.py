@@ -37,7 +37,6 @@ from build.validators import (
     validate_build_order_reference,
 )
 from common.models import ProjectCode
-from common.notifications import InvenTreeNotificationBodies, trigger_notification
 from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
@@ -403,6 +402,14 @@ class Build(
         related_name='builds_issued',
     )
 
+    @property
+    def created_by(self):
+        """Alias for issued_by field.
+
+        This is used for compatibility with the order models
+        """
+        return self.issued_by
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,
@@ -643,7 +650,6 @@ class Build(
 
         return self.is_fully_allocated(tracked=False)
 
-    @transaction.atomic
     def complete_allocations(self, user) -> None:
         """Complete all stock allocations for this build order.
 
@@ -654,7 +660,7 @@ class Build(
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
-        self.allocated_stock.delete()
+        self.allocated_stock.all().delete()
 
     @transaction.atomic
     def complete_build(self, user: User, trim_allocated_stock: bool = False):
@@ -694,65 +700,19 @@ class Build(
                 _('Cannot complete build order with incomplete outputs')
             )
 
-        if trim_allocated_stock:
-            self.trim_allocated_stock()
+        # Offload background task to complete build allocations
+        InvenTree.tasks.offload_task(
+            build.tasks.complete_build,
+            self.pk,
+            user.pk if user else None,
+            trim_allocated_stock=trim_allocated_stock,
+            group='build',
+        )
 
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
         self.status = BuildStatus.COMPLETE.value
         self.save()
-
-        # Offload task to complete build allocations
-        if not InvenTree.tasks.offload_task(
-            build.tasks.complete_build_allocations,
-            self.pk,
-            user.pk if user else None,
-            group='build',
-        ):
-            raise ValidationError(
-                _('Failed to offload task to complete build allocations')
-            )
-
-        # Register an event
-        trigger_event(BuildEvents.COMPLETED, id=self.pk)
-
-        # Notify users that this build has been completed
-        targets = [self.issued_by, self.responsible]
-
-        # Also inform anyone subscribed to the assembly part
-        targets.extend(self.part.get_subscribers())
-
-        # Notify those users interested in the parent build
-        if self.parent:
-            targets.append(self.parent.issued_by)
-            targets.append(self.parent.responsible)
-
-        # Notify users if this build points to a sales order
-        if self.sales_order:
-            targets.append(self.sales_order.created_by)
-            targets.append(self.sales_order.responsible)
-
-        build = self
-        name = _(f'Build order {build} has been completed')
-
-        context = {
-            'build': build,
-            'name': name,
-            'slug': 'build.completed',
-            'message': _('A build order has been completed'),
-            'link': InvenTree.helpers_model.construct_absolute_url(
-                self.get_absolute_url()
-            ),
-            'template': {'html': 'email/build_order_completed.html', 'subject': name},
-        }
-
-        trigger_notification(
-            build,
-            'build.completed',
-            targets=targets,
-            context=context,
-            target_exclude=[user],
-        )
 
     @transaction.atomic
     def issue_build(self):
@@ -831,26 +791,15 @@ class Build(
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        if remove_allocated_stock:
-            # Offload task to remove allocated stock
-            if not InvenTree.tasks.offload_task(
-                build.tasks.complete_build_allocations,
-                self.pk,
-                user.pk if user else None,
-                group='build',
-            ):
-                raise ValidationError(
-                    _('Failed to offload task to complete build allocations')
-                )
-
-        else:
-            self.allocated_stock.all().delete()
-
-        # Remove incomplete outputs (if required)
-        if remove_incomplete_outputs:
-            outputs = self.build_outputs.filter(is_building=True)
-
-            outputs.delete()
+        # Offload background task to take care of the expensive operations
+        InvenTree.tasks.offload_task(
+            build.tasks.cancel_build,
+            self.pk,
+            user.pk if user else None,
+            remove_allocated_stock=remove_allocated_stock,
+            remove_incomplete_outputs=remove_incomplete_outputs,
+            group='build',
+        )
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = InvenTree.helpers.current_date()
@@ -858,17 +807,6 @@ class Build(
 
         self.status = BuildStatus.CANCELLED.value
         self.save()
-
-        # Notify users that the order has been canceled
-        InvenTree.helpers_model.notify_responsible(
-            self,
-            Build,
-            exclude=self.issued_by,
-            content=InvenTreeNotificationBodies.OrderCanceled,
-            extra_users=self.part.get_subscribers(),
-        )
-
-        trigger_event(BuildEvents.CANCELLED, id=self.pk)
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):
@@ -967,10 +905,10 @@ class Build(
                         allocations.extend(new_allocations)
 
             # Bulk create tracking entries
-            stock.models.StockItemTracking.objects.bulk_create(tracking)
+            stock.models.StockItemTracking.objects.bulk_create(tracking, batch_size=250)
 
             # Generate stock allocations
-            BuildItem.objects.bulk_create(allocations)
+            BuildItem.objects.bulk_create(allocations, batch_size=250)
 
         else:
             """Create a single build output of the given quantity."""
@@ -1025,7 +963,9 @@ class Build(
         self.deallocate_stock(output=output)
 
         # Remove the build output from the database
-        output.delete()
+        # This is a special case where serialized stock can be deleted,
+        # independedent of the global setting which normally prevents deletion of serialized stock items
+        output.delete(ignore_serial_check=True)
 
     @transaction.atomic
     def trim_allocated_stock(self):
@@ -1073,7 +1013,6 @@ class Build(
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
-    @transaction.atomic
     def subtract_allocated_stock(self, user) -> None:
         """Removes the allocated untracked items from stock."""
         # Find all BuildItem objects which point to this build
@@ -1381,7 +1320,7 @@ class Build(
             new_items.extend(self.auto_allocate_tracked_output(output, **kwargs))
 
         # Bulk-create the new BuildItem objects
-        BuildItem.objects.bulk_create(new_items)
+        BuildItem.objects.bulk_create(new_items, batch_size=250)
 
     def auto_allocate_untracked_stock(self, **kwargs):
         """Automatically allocate untracked stock items against this build order.
@@ -1403,6 +1342,8 @@ class Build(
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
         optional_items = kwargs.get('optional_items', False)
+        stock_sort_by = kwargs.get('stock_sort_by', stock.models.STOCK_SORT_DEFAULT)
+        line_ids = kwargs.get('line_ids')
 
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
@@ -1414,7 +1355,11 @@ class Build(
         new_items = []
 
         # Select only "untracked" line items
-        for line_item in self.untracked_line_items.all():
+        untracked_lines = self.untracked_line_items.all()
+        if line_ids:
+            untracked_lines = untracked_lines.filter(pk__in=line_ids)
+
+        for line_item in untracked_lines:
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
@@ -1471,13 +1416,22 @@ class Build(
                     location__in=list(sublocations)
                 )
 
+            # Apply secondary ORM ordering before the Python match-quality stable-sort.
+            if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
+                available_stock = available_stock.order_by(
+                    F('expiry_date').asc(nulls_last=True)
+                )
+            else:
+                available_stock = available_stock.order_by(stock_sort_by)
+
             """
             Next, we sort the available stock items with the following priority:
             1. Direct part matches (+1)
             2. Variant part matches (+2)
             3. Substitute part matches (+3)
 
-            This ensures that allocation priority is first given to "direct" parts
+            This ensures that allocation priority is first given to "direct" parts.
+            Python's stable sort preserves the secondary ORM ordering within each group.
             """
             available_stock = sorted(
                 available_stock,
@@ -1522,7 +1476,7 @@ class Build(
                         break
 
         # Bulk-create the new BuildItem objects
-        BuildItem.objects.bulk_create(new_items)
+        BuildItem.objects.bulk_create(new_items, batch_size=250)
 
     def unallocated_lines(self, tracked: Optional[bool] = None) -> QuerySet:
         """Returns a list of BuildLine objects which have not been fully allocated."""
@@ -1647,7 +1601,7 @@ class Build(
 
             lines.append(BuildLine(build=self, bom_item=bom_item, quantity=quantity))
 
-        BuildLine.objects.bulk_create(lines)
+        BuildLine.objects.bulk_create(lines, batch_size=250)
 
         if len(lines) > 0:
             logger.info('Created %s BuildLine objects for BuildOrder', len(lines))

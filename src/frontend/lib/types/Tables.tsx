@@ -100,7 +100,7 @@ export type TableState = {
  */
 export type TableColumnProps<T = any> = {
   accessor?: string;
-  title?: string;
+  title?: string | ReactNode;
   ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
@@ -173,12 +173,14 @@ export type RowViewProps = RowAction & RowModelProps;
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
+ * @param isRecordSelectable : (record: any, index: number) => boolean - Callback function to determine if a row is selectable
  * @param detailAction: boolean - Enable detail action for each row (default = true)
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param height: string | number - Height of the table (default = 'auto')
  * @param minHeight: number - Minimum height of the table (default 300px)
  * @param noHeader: boolean - Hide the table header
  */
@@ -202,6 +204,7 @@ export type InvenTreeTableProps<T = any> = {
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
+  isRecordSelectable?: (record: T, index: number) => boolean;
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
@@ -212,6 +215,7 @@ export type InvenTreeTableProps<T = any> = {
   rowStyle?: (record: T, index: number) => MantineStyleProp | undefined;
   modelField?: string;
   onCellContextMenu?: (record: T, event: any) => void;
+  height?: string | number;
   minHeight?: number;
   noHeader?: boolean;
 };

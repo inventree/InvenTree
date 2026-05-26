@@ -22,10 +22,17 @@ export type {
 } from './types/Plugins';
 
 export type {
+  PanelIndicatorType,
+  PanelType,
+  PanelGroupType
+} from './types/Panel';
+
+export type {
   RowAction,
   RowViewProps,
   TableColumn,
   TableColumnProps,
+  TableState,
   InvenTreeTableProps,
   InvenTreeTableRenderProps
 } from './types/Tables';
@@ -131,8 +138,17 @@ export {
   type TableStateExtraProps
 } from './hooks/UseTable';
 
+export {
+  type DrawerProps,
+  DetailDrawer,
+  DetailDrawerLink,
+  DetailDrawerComponent
+} from './components/nav/DetailDrawer';
+export { StylishText } from './components/StylishText';
+
 // State management
 export {
   type StoredTableStateProps,
   useStoredTableState
 } from './states/StoredTableState';
+export { useLocalLibState } from './states/LocalLibState';

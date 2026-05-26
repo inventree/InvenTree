@@ -32,11 +32,15 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
 {{ globalsetting("DISPLAY_PROFILE_INFO") }}
-{{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
-{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
-{{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
-{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
+{{ globalsetting("WEEK_STARTS_ON") }}
+{{ globalsetting("INVENTREE_UPLOAD_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
+
+Configuration of various scheduled tasks:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
 {{ globalsetting("INVENTREE_BACKUP_ENABLE") }}
 {{ globalsetting("INVENTREE_BACKUP_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
@@ -158,6 +162,7 @@ Configuration of label printing:
 {{ globalsetting("PART_ALLOW_DUPLICATE_IPN") }}
 {{ globalsetting("PART_ALLOW_EDIT_IPN") }}
 {{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
+{{ globalsetting("PART_ENABLE_LOCKING") }}
 {{ globalsetting("PART_ENABLE_REVISION") }}
 {{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 {{ globalsetting("PART_NAME_FORMAT") }}
@@ -206,6 +211,8 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
+{{ globalsetting("STOCK_ALLOW_EDIT_SERIAL") }}
+{{ globalsetting("STOCK_ALLOW_DELETE_SERIALIZED") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
 {{ globalsetting("STOCK_ENABLE_EXPIRY") }}
@@ -234,6 +241,10 @@ Refer to the [sales order settings](../sales/sales_order.md#sales-order-settings
 ### Return Orders
 
 Refer to the [return order settings](../sales/return_order.md#return-order-settings).
+
+### Transfer Orders
+
+Refer to the [transfer order settings](../stock/transfer_order.md#transfer-order-settings).
 
 ### Plugin Settings
 
