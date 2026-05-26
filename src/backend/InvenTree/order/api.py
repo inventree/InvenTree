@@ -31,6 +31,7 @@ import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
+    BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -1170,6 +1171,50 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
 
 
+class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to automatically allocate stock against a SalesOrder.
+
+    - Offloads work to a background task and returns task detail
+    """
+
+    serializer_class = serializers.SalesOrderAutoAllocationSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Validate parameters and offload auto-allocation to a background task."""
+        from InvenTree.tasks import offload_task
+        from order.tasks import auto_allocate_sales_order
+
+        order_obj = self.get_object()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Extract related models from the validated data
+        location = data.get('location')
+        exclude_location = data.get('exclude_location')
+        shipment = data.get('shipment')
+        line_items = data.get('line_items', [])
+
+        # Offload to the background worker
+        # Note: We provide the model ID values, not the model instances
+        task_id = offload_task(
+            auto_allocate_sales_order,
+            order_obj.pk,
+            location_id=location.pk if location else None,
+            exclude_location_id=exclude_location.pk if exclude_location else None,
+            shipment_id=shipment.pk if shipment else None,
+            line_ids=[item.pk for item in line_items] if line_items else None,
+            interchangeable=data['interchangeable'],
+            stock_sort_by=data['stock_sort_by'],
+            serialized_stock=data['serialized_stock'],
+            group='sales_order',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
+
+
 class SalesOrderAllocationFilter(FilterSet):
     """Custom filterset for the SalesOrderAllocationList endpoint."""
 
@@ -1300,13 +1345,21 @@ class SalesOrderAllocationOutputOptions(OutputConfiguration):
 
 
 class SalesOrderAllocationList(
-    SalesOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+    SalesOrderAllocationMixin,
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    OutputOptionsMixin,
+    ListAPI,
 ):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
+
+    def filter_delete_queryset(self, queryset, request):
+        """Prevent deletion of allocations that have already been shipped."""
+        return queryset.filter(shipment__shipment_date__isnull=True)
 
     ordering_fields = [
         'quantity',
@@ -2581,6 +2634,11 @@ order_api_urls = [
                         'allocate-serials/',
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        SalesOrderAutoAllocate.as_view(),
+                        name='api-so-auto-allocate',
                     ),
                     path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),

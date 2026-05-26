@@ -1342,6 +1342,8 @@ class Build(
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
         optional_items = kwargs.get('optional_items', False)
+        stock_sort_by = kwargs.get('stock_sort_by', stock.models.STOCK_SORT_DEFAULT)
+        line_ids = kwargs.get('line_ids')
 
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
@@ -1353,7 +1355,11 @@ class Build(
         new_items = []
 
         # Select only "untracked" line items
-        for line_item in self.untracked_line_items.all():
+        untracked_lines = self.untracked_line_items.all()
+        if line_ids:
+            untracked_lines = untracked_lines.filter(pk__in=line_ids)
+
+        for line_item in untracked_lines:
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
@@ -1410,13 +1416,22 @@ class Build(
                     location__in=list(sublocations)
                 )
 
+            # Apply secondary ORM ordering before the Python match-quality stable-sort.
+            if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
+                available_stock = available_stock.order_by(
+                    F('expiry_date').asc(nulls_last=True)
+                )
+            else:
+                available_stock = available_stock.order_by(stock_sort_by)
+
             """
             Next, we sort the available stock items with the following priority:
             1. Direct part matches (+1)
             2. Variant part matches (+2)
             3. Substitute part matches (+3)
 
-            This ensures that allocation priority is first given to "direct" parts
+            This ensures that allocation priority is first given to "direct" parts.
+            Python's stable sort preserves the secondary ORM ordering within each group.
             """
             available_stock = sorted(
                 available_stock,

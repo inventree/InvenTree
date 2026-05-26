@@ -239,6 +239,10 @@ export function useBuildAutoAllocateFields({
       optional_items: {
         hidden: item_type === 'tracked',
         value: item_type === 'tracked' ? false : undefined
+      },
+      stock_sort_by: {},
+      build_lines: {
+        hidden: true
       }
     };
   }, [item_type]);
