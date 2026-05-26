@@ -1209,6 +1209,8 @@ class StockItem(
     creation_date = models.DateTimeField(
         null=True,
         blank=True,
+        auto_now_add=True,
+        editable=False,
         verbose_name=_('Creation Date'),
         help_text=_('Date that this stock item was created'),
     )
