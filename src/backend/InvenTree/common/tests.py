@@ -42,6 +42,7 @@ from .models import (
     InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
+    Note,
     NotesImage,
     NotificationEntry,
     NotificationMessage,
@@ -1692,6 +1693,66 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Check that a new file has been created
         self.assertEqual(NotesImage.objects.count(), n + 1)
+
+    def test_image_cleanup(self):
+        """Images no longer referenced in note content are deleted when the note is saved.
+
+        Specifically:
+        - An image removed from the content is deleted (DB record and file on disk)
+        - An image still referenced in the content is preserved (DB record and file on disk)
+        """
+        part = Part.objects.create(
+            name='Note Cleanup Test Part', description='Part for image-cleanup test'
+        )
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(
+            model_type=part_ct,
+            model_id=part.pk,
+            title='Image Cleanup Test Note',
+            content='initial',
+        )
+        note.save()
+
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='blue')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        # Attach two images to the note
+        ni1 = NotesImage(note=note)
+        ni1.image.save('cleanup_keep.png', ContentFile(png_bytes))
+
+        ni2 = NotesImage(note=note)
+        ni2.image.save('cleanup_remove.png', ContentFile(png_bytes))
+
+        url1, url2 = ni1.image.url, ni2.image.url
+        name1, name2 = ni1.image.name, ni2.image.name
+
+        # Both records and files exist before any content-driven cleanup
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Save with content that references both images — nothing should be removed
+        note.content = f'<img src="{url1}"><img src="{url2}">'
+        note.save()
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Remove the second image from the content and save
+        note.content = f'<img src="{url1}">'
+        note.save()
+
+        # The removed image must be gone from both the DB and the file system
+        self.assertFalse(NotesImage.objects.filter(pk=ni2.pk).exists())
+        self.assertFalse(default_storage.exists(name2))
+
+        # The retained image must still exist in both the DB and the file system
+        self.assertTrue(NotesImage.objects.filter(pk=ni1.pk).exists())
+        self.assertTrue(default_storage.exists(name1))
 
 
 class ProjectCodesTest(InvenTreeAPITestCase):
