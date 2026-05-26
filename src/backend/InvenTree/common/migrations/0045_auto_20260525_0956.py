@@ -24,6 +24,7 @@ def migrate_notes(apps, schema_editor):
         ('order', 'purchaseorder'),
         ('order', 'returnorder'),
         ('order', 'salesorder'),
+        ('order', 'salesordershipment'),
         ('order', 'transferorder'),
         ('part', 'part'),
         ('stock', 'stockitem'),
