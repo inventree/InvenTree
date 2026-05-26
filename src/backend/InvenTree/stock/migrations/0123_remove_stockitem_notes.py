@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("stock", "0119_alter_stockitemtestresult_date"),
+        ("stock", "0122_alter_stockitem_creation_date"),
         ("common", "0046_remove_notesimage_model_id_and_more")
     ]
 
