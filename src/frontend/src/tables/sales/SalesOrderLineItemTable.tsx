@@ -449,7 +449,13 @@ export default function SalesOrderLineItemTable({
         }}
       />
     ];
-  }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
+  }, [
+    editable,
+    user,
+    orderId,
+    table.hasSelectedRecords,
+    table.selectedRecords
+  ]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
