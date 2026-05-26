@@ -97,14 +97,10 @@ class PluginValidationMixin(DiffMixin):
 
         The default implementation returns True, but this can be overridden in the implementing class if required.
         """
-        from InvenTree.ready import (
-            isImportingData,
-            isRunningBackup,
-            isRunningMigrations,
-        )
+        from InvenTree.ready import isReadOnlyCommand
 
         # Prevent plugin validation when importing or exporting data
-        return not any([isRunningBackup(), isRunningMigrations(), isImportingData()])
+        return not isReadOnlyCommand()
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
