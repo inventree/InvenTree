@@ -10,6 +10,7 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings as django_settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
@@ -18,6 +19,7 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import lxml.html
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -514,10 +516,43 @@ def note(instance: Model, title: Optional[str] = None) -> str:
 
     Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
     """
-    if note := note_instance(instance, title):
-        return note.render_html()
+    note = note_instance(instance, title)
 
-    return ''
+    if not note or not note.content:
+        return ''
+
+    content = note.content
+    media_prefix = django_settings.MEDIA_URL
+
+    # Replace any embedded image references with the actual image data
+    root = lxml.html.fragment_fromstring(content, create_parent='div')
+
+    for img in root.iter('img'):
+        src = img.get('src')
+        if not src:
+            continue
+
+        if not src.startswith(media_prefix):
+            continue
+
+        img_src = src[len(media_prefix) :]
+
+        # Extract img size attributes
+        img_data = uploaded_image(
+            img_src,
+            replace_missing=True,
+            width=img.get('width', None),
+            height=img.get('height', None),
+        )
+
+        # Replace the <img> src attribute
+        img.set('src', img_data)
+
+    content = lxml.html.tostring(root, encoding='unicode')
+    # fragment_fromstring wraps in a <div> — strip it back off
+    content = content.removeprefix('<div>').removesuffix('</div>')
+
+    return mark_safe(content)
 
 
 @register.simple_tag()

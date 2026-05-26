@@ -3128,12 +3128,6 @@ class Note(
             if image.image and image.image.url not in self.content:
                 image.delete()
 
-    def render_html(self) -> str:
-        """Return the content of the note rendered as HTML."""
-        from django.utils.safestring import mark_safe
-
-        return mark_safe(self.content)
-
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField()
