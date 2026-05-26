@@ -4,7 +4,6 @@ import { IconNotes } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import type { PanelType } from '@lib/types/Panel';
-import { useUserState } from '../../states/UserState';
 import NotesEditor from '../editors/NotesEditor';
 
 // const NotesEditor = lazy(() => import('../editors/NotesEditor'));
@@ -20,8 +19,6 @@ export default function NotesPanel({
   editable?: boolean;
   has_note?: boolean;
 }): PanelType {
-  const user = useUserState.getState();
-
   return {
     name: 'notes',
     label: t`Notes`,
@@ -29,11 +26,7 @@ export default function NotesPanel({
     notification_dot: has_note ? 'info' : null,
     content:
       model_type && model_id ? (
-        <NotesEditor
-          modelType={model_type}
-          modelId={model_id}
-          editable={editable ?? user.hasChangePermission(model_type)}
-        />
+        <NotesEditor modelType={model_type} modelId={model_id} />
       ) : (
         <Skeleton />
       ),

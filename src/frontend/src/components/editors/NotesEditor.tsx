@@ -37,12 +37,14 @@ import {
   Tooltip
 } from '@mantine/core';
 import {
+  IconCheck,
   IconCirclePlus,
   IconColumnInsertLeft,
   IconColumnInsertRight,
   IconColumnRemove,
   IconDeviceFloppy,
   IconInfoCircle,
+  IconPencil,
   IconPhoto,
   IconReload,
   IconRowInsertBottom,
@@ -108,19 +110,17 @@ function NoteInfoHover({ note }: { note: any }) {
 
 export default function NotesEditor({
   modelType,
-  modelId,
-  editable: _editable,
-  setDirtyCallback: _setDirtyCallback
+  modelId
 }: Readonly<{
   modelType: ModelType;
   modelId: number;
-  editable?: boolean;
-  setDirtyCallback?: (dirty: boolean) => void;
 }>) {
   const api = useApi();
   const user = useUserState();
   const [_language] = useLocalState(useShallow((s) => [s.language]));
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const [isDirty, setIsDirty] = useState(false);
 
@@ -151,6 +151,7 @@ export default function NotesEditor({
   }, [uploadFile]);
 
   const editor = useEditor({
+    editable: false,
     extensions: [
       StarterKit.configure({
         link: { openOnClick: false }
@@ -210,6 +211,7 @@ export default function NotesEditor({
   );
 
   useEffect(() => {
+    // setIsEditing(false);
     loadNote(selectedNoteId ?? -1);
   }, [editor, selectedNoteId, notesQuery.data]);
 
@@ -238,7 +240,7 @@ export default function NotesEditor({
     setSelectedNoteId((primary ?? notesQuery.data[0])?.pk ?? undefined);
   }, [notesQuery.data]);
 
-  const canEdit = useMemo(
+  const canEdit: boolean = useMemo(
     () =>
       user.hasChangePermission(modelType) &&
       notesQuery.isFetched &&
@@ -254,8 +256,8 @@ export default function NotesEditor({
 
   // Sync editor editable state when permissions change
   useEffect(() => {
-    editor?.setEditable(canEdit);
-  }, [editor, canEdit]);
+    editor?.setEditable(canEdit && isEditing);
+  }, [editor, canEdit, isEditing]);
 
   const hasNotes = useMemo(() => {
     return notesQuery.data && notesQuery.data.length > 0;
@@ -381,11 +383,21 @@ export default function NotesEditor({
                   </Group>
                   {canEdit && (
                     <Group justify='right' gap='xs'>
-                      {isDirty && (
+                      {!isEditing && (
+                        <Tooltip label={t`Edit note`}>
+                          <ActionIcon
+                            variant='transparent'
+                            onClick={() => setIsEditing(true)}
+                          >
+                            <IconPencil />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                      {isEditing && isDirty && (
                         <Badge color='yellow'>{t`Unsaved Changes`}</Badge>
                       )}
-                      {isDirty && (
-                        <Tooltip label={t`Save Notes (Ctrl+S)`}>
+                      {isEditing && isDirty && (
+                        <Tooltip label={t`Save note`}>
                           <ActionIcon
                             variant='transparent'
                             color={'green'}
@@ -396,14 +408,25 @@ export default function NotesEditor({
                           </ActionIcon>
                         </Tooltip>
                       )}
-                      {isDirty && (
-                        <Tooltip label={t`Reset Notes`}>
+                      {isEditing && isDirty && (
+                        <Tooltip label={t`Reset note content`}>
                           <ActionIcon
                             variant='transparent'
                             onClick={reloadNote}
                             disabled={!canEdit || !isDirty}
                           >
                             <IconReload />
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                      {isEditing && !isDirty && (
+                        <Tooltip label={t`Finish editing`}>
+                          <ActionIcon
+                            variant='transparent'
+                            onClick={() => setIsEditing(false)}
+                            color='green'
+                          >
+                            <IconCheck />
                           </ActionIcon>
                         </Tooltip>
                       )}
@@ -440,7 +463,7 @@ export default function NotesEditor({
                   editor={editor}
                   style={{ minHeight: '400px' }}
                 >
-                  {canEdit && (
+                  {canEdit && isEditing && (
                     <RichTextEditor.Toolbar sticky>
                       <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Bold />
@@ -602,15 +625,16 @@ export default function NotesEditor({
         </Box>
         <Paper p='xs' shadow='sm' withBorder style={{ width: '200px' }}>
           <Stack gap='xs'>
-            <Button
-              color='green'
-              leftSection={<IconCirclePlus />}
-              onClick={createNote.open}
-              // disabled={!canEdit || isDirty}
-            >
-              {t`Add Note`}
-            </Button>
-
+            {canEdit && (
+              <Button
+                color='green'
+                leftSection={<IconCirclePlus />}
+                onClick={createNote.open}
+                disabled={isEditing}
+              >
+                {t`Add Note`}
+              </Button>
+            )}
             <Tabs
               orientation='vertical'
               placement='right'
@@ -620,7 +644,7 @@ export default function NotesEditor({
                 {notesQuery.data?.map((note: any) => (
                   <Tabs.Tab
                     key={note.pk}
-                    disabled={isDirty}
+                    disabled={isEditing}
                     value={note.pk?.toString()}
                     onClick={() => {
                       setSelectedNoteId(note.pk);
