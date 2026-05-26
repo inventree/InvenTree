@@ -1454,6 +1454,49 @@ class StockItemTest(StockAPITestCase):
             data={'part': 1, 'location': 1, 'quantity': 10},
             expected_code=201,
         )
+        # creation_date must be populated on the newly created item
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertIsNotNone(item.creation_date)
+
+    def test_creation_date_is_readonly(self):
+        """creation_date must not be modifiable via the API."""
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=StockLocation.objects.get(pk=1),
+            quantity=1,
+        )
+        original_date = item.creation_date
+        self.assertIsNotNone(original_date)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+        self.patch(
+            url, data={'creation_date': '2000-01-01T00:00:00Z'}, expected_code=200
+        )
+        # Field is read-only; the DB value must be unchanged
+        item.refresh_from_db()
+        self.assertEqual(item.creation_date, original_date)
+
+    def test_creation_date_set_on_serialize(self):
+        """creation_date must be set on items produced by the serialize endpoint."""
+        # Stock item 100: part 25 (trackable), quantity 10, location 7
+        item = StockItem.objects.get(pk=100)
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        self.post(
+            url,
+            data={
+                'quantity': 3,
+                'serial_numbers': '901,902,903',
+                'destination': item.location.pk,
+            },
+            expected_code=201,
+        )
+        new_items = StockItem.objects.filter(
+            part=item.part, serial__in=['901', '902', '903']
+        )
+        self.assertEqual(new_items.count(), 3)
+        for new_item in new_items:
+            self.assertIsNotNone(new_item.creation_date)
 
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
@@ -1597,6 +1640,7 @@ class StockItemTest(StockAPITestCase):
             # Item location should have been set automatically
             self.assertIsNotNone(item.location)
             self.assertIn(item.serial, serials)
+            self.assertIsNotNone(item.creation_date)
 
         # There now should be 10 unique stock entries for this part
         self.assertEqual(trackable_part.stock_entries().count(), 10)

@@ -1141,6 +1141,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_1.last().expiry_date, one_week_from_today)
         self.assertEqual(stock_2.last().expiry_date, one_week_from_today)
 
+        # creation_date must be populated on both received items
+        self.assertIsNotNone(stock_1.last().creation_date)
+        self.assertIsNotNone(stock_2.last().creation_date)
+
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
             StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists()
@@ -1217,6 +1221,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
             self.assertEqual(item.batch, 'B-abc-123')
+            self.assertIsNotNone(item.creation_date)
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
