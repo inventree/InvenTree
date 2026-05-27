@@ -779,24 +779,24 @@ class StockItem(
 
         # First, let any plugins convert this serial number to an integer value
         # If a non-null value is returned (by any plugin) we will use that
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    serial_int = plugin.convert_serial_to_int(serial)
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'convert_serial_to_int', plugin=plugin.slug
+                    )
+                    serial_int = None
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                serial_int = plugin.convert_serial_to_int(serial)
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'convert_serial_to_int', plugin=plugin.slug
-                )
-                serial_int = None
-
-            # Save the first returned result
-            if serial_int is not None:
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-                serial_int = abs(serial_int)
-                serial_int = min(serial_int, clip)
-                # Return the first non-null value
-                return serial_int
+                # Save the first returned result
+                if serial_int is not None:
+                    # Ensure that it is clipped within a range allowed in the database schema
+                    clip = 0x7FFFFFFF
+                    serial_int = abs(serial_int)
+                    serial_int = min(serial_int, clip)
+                    # Return the first non-null value
+                    return serial_int
 
         # None of the plugins provided a valid integer value
         if serial not in [None, '']:
@@ -922,15 +922,16 @@ class StockItem(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                plugin.validate_batch_code(self.batch, self)
-            except ValidationError as exc:
-                raise ValidationError({'batch': exc.message})
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'validate_batch_code', plugin=plugin.slug
-                )
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    plugin.validate_batch_code(self.batch, self)
+                except ValidationError as exc:
+                    raise ValidationError({'batch': exc.message})
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'validate_batch_code', plugin=plugin.slug
+                    )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
@@ -2623,6 +2624,7 @@ class StockItem(
         Keyword Arguments:
             notes: Optional notes for the stocktake
             status: Optionally adjust the stock status
+            location: Optionally set the stock location
         """
         try:
             count = Decimal(count)
@@ -2633,6 +2635,14 @@ class StockItem(
             return False
 
         tracking_info = {}
+
+        location = kwargs.pop('location', None)
+
+        if location and location != self.location:
+            old_location = self.location
+            self.location = location
+            tracking_info['location'] = location.pk
+            tracking_info['old_location'] = old_location.pk if old_location else None
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 

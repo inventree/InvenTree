@@ -724,19 +724,21 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            # Run the name through each custom validator
-            # If the plugin returns 'True' we will skip any subsequent validation
+        # Skip plugin validation checks during read-only management commands
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                # Run the name through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
 
-            try:
-                result = plugin.validate_part_name(self.name, self)
-                if result:
-                    return
-            except ValidationError as exc:
-                if raise_error:
-                    raise ValidationError({'name': exc.message})
-            except Exception:
-                log_error('validate_part_name', plugin=plugin.slug)
+                try:
+                    result = plugin.validate_part_name(self.name, self)
+                    if result:
+                        return
+                except ValidationError as exc:
+                    if raise_error:
+                        raise ValidationError({'name': exc.message})
+                except Exception:
+                    log_error('validate_part_name', plugin=plugin.slug)
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -746,18 +748,20 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                result = plugin.validate_part_ipn(self.IPN, self)
+        # Skip plugin validation checks during read-only management commands
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    result = plugin.validate_part_ipn(self.IPN, self)
 
-                if result:
-                    # A "true" result force skips any subsequent checks
-                    break
-            except ValidationError as exc:
-                if raise_error:
-                    raise ValidationError({'IPN': exc.message})
-            except Exception:
-                log_error('validate_part_ipn', plugin=plugin.slug)
+                    if result:
+                        # A "true" result force skips any subsequent checks
+                        break
+                except ValidationError as exc:
+                    if raise_error:
+                        raise ValidationError({'IPN': exc.message})
+                except Exception:
+                    log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -835,40 +839,41 @@ class Part(
         Raises:
             ValidationError if serial number is invalid and raise_error = True
         """
-        serial = str(serial).strip()
-
-        # First, throw the serial number against each of the loaded validation plugins
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            # Run the serial number through each custom validator
-            # If the plugin returns 'True' we will skip any subsequent validation
+        serial = str(serial).strip()
 
-            try:
-                result = False
+        if not InvenTree.ready.isReadOnlyCommand():
+            # First, throw the serial number against each of the loaded validation plugins
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                # Run the serial number through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
 
-                if hasattr(plugin, 'validate_serial_number'):
-                    signature = inspect.signature(plugin.validate_serial_number)
+                try:
+                    result = False
 
-                    if 'stock_item' in signature.parameters:
-                        # 2024-08-21: New method signature accepts a 'stock_item' parameter
-                        result = plugin.validate_serial_number(
-                            serial, self, stock_item=stock_item
-                        )
+                    if hasattr(plugin, 'validate_serial_number'):
+                        signature = inspect.signature(plugin.validate_serial_number)
+
+                        if 'stock_item' in signature.parameters:
+                            # 2024-08-21: New method signature accepts a 'stock_item' parameter
+                            result = plugin.validate_serial_number(
+                                serial, self, stock_item=stock_item
+                            )
+                        else:
+                            # Old method signature - does not accept a 'stock_item' parameter
+                            result = plugin.validate_serial_number(serial, self)
+
+                    if result is True:
+                        return True
+                except ValidationError as exc:
+                    if raise_error:
+                        # Re-throw the error
+                        raise exc
                     else:
-                        # Old method signature - does not accept a 'stock_item' parameter
-                        result = plugin.validate_serial_number(serial, self)
-
-                if result is True:
-                    return True
-            except ValidationError as exc:
-                if raise_error:
-                    # Re-throw the error
-                    raise exc
-                else:
-                    return False
-            except Exception:
-                log_error('validate_serial_number', plugin=plugin.slug)
+                        return False
+                except Exception:
+                    log_error('validate_serial_number', plugin=plugin.slug)
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -960,7 +965,7 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        if allow_plugins:
+        if allow_plugins and not InvenTree.ready.isReadOnlyCommand():
             # Check with plugin system
             # If any plugin returns a non-null result, that takes priority
             for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
