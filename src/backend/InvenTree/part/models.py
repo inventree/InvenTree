@@ -1032,6 +1032,15 @@ class Part(
             parts = Part.objects.filter(IPN__iexact=self.IPN)
             parts = parts.exclude(pk=self.pk)
 
+            # Parts in the same revision family share the same IPN by design,
+            # so exclude them from the duplicate check
+            if self.revision_of:
+                # Exclude the parent revision and all sibling revisions
+                parts = parts.exclude(pk=self.revision_of.pk)
+                parts = parts.exclude(revision_of=self.revision_of)
+            # Exclude any revisions of this part
+            parts = parts.exclude(revision_of=self)
+
             if parts.exists():
                 raise ValidationError({
                     'IPN': _('Duplicate IPN not allowed in part settings')

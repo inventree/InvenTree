@@ -827,6 +827,44 @@ class PartSettingsTest(InvenTreeTestCase):
         Part.objects.create(name='abc', revision='5', description='A part', IPN='  ')
         Part.objects.create(name='abc', revision='6', description='A part', IPN=' ')
 
+    def test_duplicate_ipn_with_revisions(self):
+        """Revisions of the same part share the same IPN and must not trigger a duplicate IPN error.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/12017
+        """
+        set_global_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
+
+        # Create the base part (revision 4)
+        base = Part.objects.create(
+            name='Widget',
+            description='A widget',
+            IPN='AS0001234',
+            revision='4',
+            assembly=True,
+        )
+
+        # Create a revision of the base part with the same IPN — must not raise
+        revision = Part(
+            name='Widget',
+            description='A widget',
+            IPN='AS0001234',
+            revision='5',
+            revision_of=base,
+            assembly=True,
+        )
+        revision.validate_unique()  # should not raise
+        revision.save()
+
+        # Saving the revision again (e.g. after unlocking) must also not raise
+        revision.validate_unique()
+
+        # An unrelated part with the same IPN must still be rejected
+        with self.assertRaises(ValidationError):
+            unrelated = Part(
+                name='Other', description='Other part', IPN='AS0001234', revision='1'
+            )
+            unrelated.validate_unique()
+
 
 class PartSubscriptionTests(InvenTreeTestCase):
     """Unit tests for part 'subscription'."""
