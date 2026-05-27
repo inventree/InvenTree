@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11111](https://github.com/inventree/InvenTree/pull/11111) - removes legacy metadata APIs
 - [#9814](https://github.com/inventree/InvenTree/pull/9814) - removes legacy config path support
 - [#11667](https://github.com/inventree/InvenTree/pull/11667) - removes legacy url patterns
+- [#11985](https://github.com/inventree/InvenTree/pull/11985) - removes legacy user endpoint fallback
 
 
 ## Unreleased - YYYY-MM-DD
