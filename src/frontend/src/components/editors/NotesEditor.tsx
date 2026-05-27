@@ -254,9 +254,10 @@ export default function NotesEditor({
     selector: ({ editor: e }) => e?.isActive('table') ?? false
   });
 
-  // Sync editor editable state when permissions change
+  // Sync editor editable state when permissions change.
+  // Pass false for emitUpdate to avoid triggering onUpdate (which sets isDirty).
   useEffect(() => {
-    editor?.setEditable(canEdit && isEditing);
+    editor?.setEditable(canEdit && isEditing, false);
   }, [editor, canEdit, isEditing]);
 
   const hasNotes = useMemo(() => {
