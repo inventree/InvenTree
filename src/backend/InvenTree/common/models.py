@@ -2841,6 +2841,10 @@ class Parameter(
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
 
+        if InvenTree.ready.isReadOnlyCommand():
+            # Skip plugin validation checks during read-only management commands
+            return
+
         # Finally, run custom validation checks (via plugins)
         from plugin import PluginMixinEnum, registry
 
