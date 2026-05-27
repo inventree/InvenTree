@@ -814,7 +814,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
 
   // When sticky headers are enabled, we adjust the maximum viewport height,
-  // based on the number of records being displayed (up to a maximum of 60vh)
+  // based on the number of records being displayed (up to a maximum of 80vh)
   const autoHeight = useMemo(() => {
     const rows = Math.min(80, 6 * Math.max(tableState.records.length, 3));
 
