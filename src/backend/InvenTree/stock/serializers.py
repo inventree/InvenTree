@@ -371,8 +371,9 @@ class StockItemSerializer(
             'SKU',
             'MPN',
             'barcode_hash',
-            'updated',
+            'creation_date',
             'stocktake_date',
+            'updated',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
@@ -395,6 +396,7 @@ class StockItemSerializer(
         read_only_fields = [
             'allocated',
             'barcode_hash',
+            'creation_date',
             'stocktake_date',
             'stocktake_user',
             'updated',
@@ -1751,6 +1753,20 @@ class StockAdjustmentSerializer(serializers.Serializer):
 class StockCountSerializer(StockAdjustmentSerializer):
     """Serializer for counting stock items."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'notes', 'location']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(structural=False),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Set stock location for counted items (optional)'),
+    )
+
     def save(self):
         """Count stock."""
         request = self.context['request']
@@ -1758,6 +1774,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         items = data['items']
         notes = data.get('notes', '')
+        location = data.get('location', None)
 
         with transaction.atomic():
             for item in items:
@@ -1770,6 +1787,9 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
+
+                if location is not None:
+                    extra['location'] = location
 
                 stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 

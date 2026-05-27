@@ -87,7 +87,7 @@ nav:
     - Project Details:
       - Governance: project/governance.md
       - Project Security: security.md
-      - Resources: project/resources.md
+      - Sponsored Resources: project/sponsored_resources.md
       - Privacy: privacy.md
   - Concepts:
     - Terminology: concepts/terminology.md

@@ -886,6 +886,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
+        build_lines = data.get('build_lines', [])
+
         # Offload the task to the background worker
         task_id = offload_task(
             auto_allocate_build,
@@ -896,6 +898,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
             substitutes=data['substitutes'],
             optional_items=data['optional_items'],
             item_type=data.get('item_type', 'untracked'),
+            stock_sort_by=data['stock_sort_by'],
+            line_ids=[line.pk for line in build_lines] if build_lines else None,
             group='build',
         )
 

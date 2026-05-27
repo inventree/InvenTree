@@ -38,6 +38,7 @@ import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -399,6 +400,27 @@ class StockItemReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartModels.PartTestTemplate]
 
 
+class StockSortOrder(StringEnum):
+    """Enum of ORM sort fields available for stock auto-allocation."""
+
+    DATE_OLDEST = 'updated'
+    DATE_NEWEST = '-updated'
+    QUANTITY_ASC = 'quantity'
+    QUANTITY_DESC = '-quantity'
+    EXPIRY_SOONEST = 'expiry_date'
+
+
+STOCK_SORT_CHOICES = [
+    (StockSortOrder.DATE_OLDEST, _('Oldest stock first (FIFO)')),
+    (StockSortOrder.DATE_NEWEST, _('Newest stock first (LIFO)')),
+    (StockSortOrder.QUANTITY_ASC, _('Smallest quantity first')),
+    (StockSortOrder.QUANTITY_DESC, _('Largest quantity first')),
+    (StockSortOrder.EXPIRY_SOONEST, _('Soonest expiry date first')),
+]
+
+STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
+
+
 class StockItem(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -421,7 +443,8 @@ class StockItem(
         batch: Batch number for this StockItem
         serial: Unique serial number for this StockItem
         link: Optional URL to link to external resource
-        updated: Date that this stock item was last updated (auto)
+        creation_date: Date that this stock item was created (auto)
+        updated: Date that the quantity of this stock item was last updated (auto)
         expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
@@ -756,24 +779,24 @@ class StockItem(
 
         # First, let any plugins convert this serial number to an integer value
         # If a non-null value is returned (by any plugin) we will use that
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    serial_int = plugin.convert_serial_to_int(serial)
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'convert_serial_to_int', plugin=plugin.slug
+                    )
+                    serial_int = None
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                serial_int = plugin.convert_serial_to_int(serial)
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'convert_serial_to_int', plugin=plugin.slug
-                )
-                serial_int = None
-
-            # Save the first returned result
-            if serial_int is not None:
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-                serial_int = abs(serial_int)
-                serial_int = min(serial_int, clip)
-                # Return the first non-null value
-                return serial_int
+                # Save the first returned result
+                if serial_int is not None:
+                    # Ensure that it is clipped within a range allowed in the database schema
+                    clip = 0x7FFFFFFF
+                    serial_int = abs(serial_int)
+                    serial_int = min(serial_int, clip)
+                    # Return the first non-null value
+                    return serial_int
 
         # None of the plugins provided a valid integer value
         if serial not in [None, '']:
@@ -899,15 +922,16 @@ class StockItem(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                plugin.validate_batch_code(self.batch, self)
-            except ValidationError as exc:
-                raise ValidationError({'batch': exc.message})
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'validate_batch_code', plugin=plugin.slug
-                )
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    plugin.validate_batch_code(self.batch, self)
+                except ValidationError as exc:
+                    raise ValidationError({'batch': exc.message})
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'validate_batch_code', plugin=plugin.slug
+                    )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
@@ -1203,6 +1227,15 @@ class StockItem(
         blank=True,
         null=True,
         related_name='stocktake_stock',
+    )
+
+    creation_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_('Creation Date'),
+        help_text=_('Date that this stock item was created'),
     )
 
     review_needed = models.BooleanField(default=False)
@@ -2631,6 +2664,7 @@ class StockItem(
         Keyword Arguments:
             notes: Optional notes for the stocktake
             status: Optionally adjust the stock status
+            location: Optionally set the stock location
         """
         try:
             count = Decimal(count)
@@ -2641,6 +2675,14 @@ class StockItem(
             return False
 
         tracking_info = {}
+
+        location = kwargs.pop('location', None)
+
+        if location and location != self.location:
+            old_location = self.location
+            self.location = location
+            tracking_info['location'] = location.pk
+            tracking_info['old_location'] = old_location.pk if old_location else None
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 

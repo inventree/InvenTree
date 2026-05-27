@@ -21,6 +21,7 @@ from common.settings import set_global_setting
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
+from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -31,7 +32,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem, StockLocation
+from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -1141,6 +1142,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_1.last().expiry_date, one_week_from_today)
         self.assertEqual(stock_2.last().expiry_date, one_week_from_today)
 
+        # creation_date must be populated on both received items
+        self.assertIsNotNone(stock_1.last().creation_date)
+        self.assertIsNotNone(stock_2.last().creation_date)
+
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
             StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists()
@@ -1217,6 +1222,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
             self.assertEqual(item.batch, 'B-abc-123')
+            self.assertIsNotNone(item.creation_date)
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
@@ -3739,4 +3745,378 @@ class TransferOrderAllocateTest(OrderTest):
             reverse('api-transfer-order-allocation-list'),
             ['part_detail', 'item_detail', 'order_detail', 'location_detail'],
             assert_subset=True,
+        )
+
+
+class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
+    """API integration tests for the SalesOrder auto-allocate endpoint."""
+
+    fixtures = ['company', 'users']
+
+    roles = ['sales_order.add', 'sales_order.change', 'sales_order.delete']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create shared order, parts, locations and stock for all tests."""
+        super().setUpTestData()
+
+        cls.customer = Company.objects.create(
+            name='Test Customer', is_customer=True, description=''
+        )
+        cls.part = Part.objects.create(
+            name='AutoAlloc Part', salable=True, description=''
+        )
+
+        cls.loc_a = StockLocation.objects.create(name='Shelf A')
+        cls.loc_b = StockLocation.objects.create(name='Shelf B')
+
+    def _make_order(self, qty=50):
+        """Create a fresh SalesOrder with one line item and one shipment."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer,
+            reference=f'SO-TEST-{models.SalesOrder.objects.count()}',
+        )
+        line = SalesOrderLineItem.objects.create(
+            order=order, part=self.part, quantity=qty
+        )
+        shipment = SalesOrderShipment.objects.create(order=order)
+        return order, line, shipment
+
+    def _url(self, pk):
+        return reverse('api-so-auto-allocate', kwargs={'pk': pk})
+
+    # ------------------------------------------------------------------
+    # Permission and basic response tests
+    # ------------------------------------------------------------------
+
+    def test_requires_authentication(self):
+        """POST without authentication returns 401."""
+        self.client.logout()
+        order, _, _ = self._make_order()
+        self.post(self._url(order.pk), {}, expected_code=401)
+
+    def test_basic_post_returns_200(self):
+        """POST with defaults runs synchronously in tests and returns 200."""
+        order, line, _ = self._make_order()
+        StockItem.objects.create(part=self.part, quantity=100)
+
+        response = self.post(self._url(order.pk), {}, expected_code=200)
+
+        self.assertIn('task_id', response.data)
+        self.assertTrue(response.data['complete'])
+        self.assertTrue(response.data['success'])
+
+        # Task ran synchronously — allocations are already committed
+        self.assertTrue(line.is_fully_allocated())
+
+    def test_invalid_order_pk_returns_404(self):
+        """POST to a non-existent order pk returns 404."""
+        self.post(self._url(999999), {}, expected_code=404)
+
+    # ------------------------------------------------------------------
+    # Field validation
+    # ------------------------------------------------------------------
+
+    def test_invalid_stock_sort_by_rejected(self):
+        """An unrecognised stock_sort_by value is rejected with 400."""
+        order, _, _ = self._make_order()
+        self.post(
+            self._url(order.pk),
+            {'stock_sort_by': 'not_a_valid_sort'},
+            expected_code=400,
+        )
+
+    def test_invalid_serialized_stock_rejected(self):
+        """An unrecognised serialized_stock value is rejected with 400."""
+        order, _, _ = self._make_order()
+        self.post(self._url(order.pk), {'serialized_stock': 'maybe'}, expected_code=400)
+
+    def test_shipment_from_another_order_rejected(self):
+        """A shipment that belongs to a different order is rejected with 400."""
+        order, _, _ = self._make_order()
+        _other_order, _, other_shipment = self._make_order()
+
+        self.post(
+            self._url(order.pk), {'shipment': other_shipment.pk}, expected_code=400
+        )
+
+    def test_shipped_shipment_rejected(self):
+        """A shipment that has already been marked as shipped is rejected with 400."""
+        from datetime import date
+
+        order, _, shipment = self._make_order()
+        shipment.shipment_date = date.today()
+        shipment.save()
+
+        self.post(self._url(order.pk), {'shipment': shipment.pk}, expected_code=400)
+
+    def test_line_items_from_another_order_rejected(self):
+        """line_items belonging to a different order are rejected with 400."""
+        order, _, _ = self._make_order()
+        _, other_line, _ = self._make_order()
+
+        self.post(
+            self._url(order.pk), {'line_items': [other_line.pk]}, expected_code=400
+        )
+
+    # ------------------------------------------------------------------
+    # Allocation behaviour
+    # ------------------------------------------------------------------
+
+    def test_allocates_available_stock(self):
+        """Stock is allocated to the line item after a successful POST."""
+        order, line, _ = self._make_order(qty=30)
+        item = StockItem.objects.create(part=self.part, quantity=100)
+
+        self.post(self._url(order.pk), {}, expected_code=200)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item, item)
+        self.assertEqual(allocs.first().quantity, 30)
+
+    def test_line_items_subset_only_allocates_selected_lines(self):
+        """When line_items is specified only those lines are allocated."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer,
+            reference=f'SO-SUBSET-{models.SalesOrder.objects.count()}',
+        )
+        line_a = SalesOrderLineItem.objects.create(
+            order=order, part=self.part, quantity=10
+        )
+        part_b = Part.objects.create(name='Part B', salable=True, description='')
+        line_b = SalesOrderLineItem.objects.create(
+            order=order, part=part_b, quantity=10
+        )
+
+        StockItem.objects.create(part=self.part, quantity=50)
+        StockItem.objects.create(part=part_b, quantity=50)
+
+        self.post(self._url(order.pk), {'line_items': [line_a.pk]}, expected_code=200)
+
+        self.assertTrue(line_a.is_fully_allocated())
+        self.assertFalse(line_b.is_fully_allocated())
+
+    def test_serialized_stock_only(self):
+        """serialized_stock='serialized' allocates only serialized items."""
+        order, line, _ = self._make_order(qty=1)
+        # Unserialized item
+        StockItem.objects.create(part=self.part, quantity=50)
+        # Serialized item
+        serial_item = StockItem.objects.create(
+            part=self.part, quantity=1, serial='SN-001'
+        )
+
+        self.post(
+            self._url(order.pk), {'serialized_stock': 'serialized'}, expected_code=200
+        )
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item, serial_item)
+
+    def test_unserialized_stock_only(self):
+        """serialized_stock='unserialized' skips serialized items."""
+        order, line, _ = self._make_order(qty=10)
+        # Serialized items only
+        for sn in range(10):
+            StockItem.objects.create(part=self.part, quantity=1, serial=f'SN-{sn}')
+
+        self.post(
+            self._url(order.pk), {'serialized_stock': 'unserialized'}, expected_code=200
+        )
+
+        self.assertFalse(line.is_fully_allocated())
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 0)
+
+    def test_stock_sort_by_quantity_asc(self):
+        """stock_sort_by=QUANTITY_ASC consumes the smallest lot first."""
+        order, line, _ = self._make_order(qty=15)
+        small = StockItem.objects.create(part=self.part, quantity=5)
+        StockItem.objects.create(part=self.part, quantity=100)
+
+        self.post(
+            self._url(order.pk),
+            {
+                'stock_sort_by': str(StockSortOrder.QUANTITY_ASC),
+                'interchangeable': True,
+            },
+            expected_code=200,
+        )
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(any(a.item == small and a.quantity == 5 for a in allocs))
+
+    def test_stock_sort_by_quantity_desc(self):
+        """stock_sort_by=QUANTITY_DESC consumes the largest lot first, covering the requirement in one allocation."""
+        order, line, _ = self._make_order(qty=15)
+        StockItem.objects.create(part=self.part, quantity=5)
+        StockItem.objects.create(part=self.part, quantity=100)
+
+        self.post(
+            self._url(order.pk),
+            {
+                'stock_sort_by': str(StockSortOrder.QUANTITY_DESC),
+                'interchangeable': True,
+            },
+            expected_code=200,
+        )
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().quantity, 15)
+
+    def test_location_filter(self):
+        """Only stock within the specified location is used."""
+        order, line, _ = self._make_order(qty=10)
+        StockItem.objects.create(part=self.part, quantity=50, location=self.loc_a)
+        StockItem.objects.create(part=self.part, quantity=50, location=self.loc_b)
+
+        self.post(self._url(order.pk), {'location': self.loc_a.pk}, expected_code=200)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item.location, self.loc_a)
+
+    def test_exclude_location_filter(self):
+        """Stock in the excluded location is not used."""
+        order, line, _ = self._make_order(qty=10)
+        StockItem.objects.create(part=self.part, quantity=50, location=self.loc_a)
+        StockItem.objects.create(part=self.part, quantity=50, location=self.loc_b)
+
+        self.post(
+            self._url(order.pk), {'exclude_location': self.loc_a.pk}, expected_code=200
+        )
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item.location, self.loc_b)
+
+    def test_shipment_assigned_to_allocations(self):
+        """When a shipment is specified, all allocations are assigned to it."""
+        order, line, shipment = self._make_order(qty=20)
+        StockItem.objects.create(part=self.part, quantity=100)
+
+        self.post(self._url(order.pk), {'shipment': shipment.pk}, expected_code=200)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        for alloc in allocs:
+            self.assertEqual(alloc.shipment, shipment)
+
+    def test_interchangeable_false_skips_split_stock(self):
+        """With interchangeable=False, allocation is skipped when no single item covers the full quantity."""
+        order, line, _ = self._make_order(qty=50)
+        StockItem.objects.create(part=self.part, quantity=20)
+        StockItem.objects.create(part=self.part, quantity=20)
+
+        self.post(self._url(order.pk), {'interchangeable': False}, expected_code=200)
+
+        self.assertFalse(line.is_fully_allocated())
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 0)
+
+
+class SalesOrderAllocationBulkDeleteAPITest(InvenTreeAPITestCase):
+    """API integration tests for bulk-delete of SalesOrderAllocation, verifying shipped allocations are protected."""
+
+    fixtures = ['company', 'users']
+
+    roles = ['sales_order.add', 'sales_order.change', 'sales_order.delete']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create shared order, part and stock for all tests."""
+        super().setUpTestData()
+
+        cls.customer = models.Company.objects.create(
+            name='BulkDelete Customer', is_customer=True, description=''
+        )
+        cls.part = Part.objects.create(
+            name='BulkDelete Part', salable=True, description=''
+        )
+
+    def _make_order_with_allocations(self, n_unshipped=2, n_shipped=1):
+        """Return (order, unshipped_allocations, shipped_allocations)."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer,
+            reference=f'SO-BD-{models.SalesOrder.objects.count()}',
+        )
+        line = SalesOrderLineItem.objects.create(
+            order=order, part=self.part, quantity=100
+        )
+        unshipped_shipment = models.SalesOrderShipment.objects.create(
+            order=order, reference='1'
+        )
+
+        shipped_shipment = models.SalesOrderShipment.objects.create(
+            order=order, reference='2'
+        )
+        shipped_shipment.shipment_date = date.today()
+        shipped_shipment.save()
+
+        unshipped = []
+        for _ in range(n_unshipped):
+            item = StockItem.objects.create(part=self.part, quantity=10)
+            alloc = SalesOrderAllocation.objects.create(
+                line=line, item=item, quantity=10, shipment=unshipped_shipment
+            )
+            unshipped.append(alloc)
+
+        shipped = []
+        for _ in range(n_shipped):
+            item = StockItem.objects.create(part=self.part, quantity=10)
+            alloc = SalesOrderAllocation.objects.create(
+                line=line, item=item, quantity=10, shipment=shipped_shipment
+            )
+            shipped.append(alloc)
+
+        return order, unshipped, shipped
+
+    def _url(self):
+        return reverse('api-so-allocation-list')
+
+    # ------------------------------------------------------------------
+    # Basic bulk-delete
+    # ------------------------------------------------------------------
+
+    def test_bulk_delete_unshipped_allocations(self):
+        """Unshipped allocations can be bulk-deleted."""
+        _, unshipped, _ = self._make_order_with_allocations(n_unshipped=2, n_shipped=0)
+        ids = [a.pk for a in unshipped]
+
+        self.delete(self._url(), {'items': ids}, expected_code=200)
+
+        self.assertFalse(SalesOrderAllocation.objects.filter(pk__in=ids).exists())
+
+    # ------------------------------------------------------------------
+    # Shipped allocation protection
+    # ------------------------------------------------------------------
+
+    def test_shipped_allocations_are_not_deleted(self):
+        """Shipped allocations are silently skipped when included in a bulk-delete request."""
+        _, _, shipped = self._make_order_with_allocations(n_unshipped=0, n_shipped=2)
+        ids = [a.pk for a in shipped]
+
+        self.delete(self._url(), {'items': ids}, expected_code=200)
+
+        # All shipped allocations should still exist
+        self.assertEqual(SalesOrderAllocation.objects.filter(pk__in=ids).count(), 2)
+
+    def test_mixed_delete_removes_only_unshipped(self):
+        """A bulk-delete of mixed shipped/unshipped allocations removes only the unshipped ones."""
+        _, unshipped, shipped = self._make_order_with_allocations(
+            n_unshipped=2, n_shipped=2
+        )
+        all_ids = [a.pk for a in unshipped] + [a.pk for a in shipped]
+
+        self.delete(self._url(), {'items': all_ids}, expected_code=200)
+
+        # Unshipped should be gone
+        for alloc in unshipped:
+            self.assertFalse(SalesOrderAllocation.objects.filter(pk=alloc.pk).exists())
+
+        # Shipped should remain
+        shipped_ids = [a.pk for a in shipped]
+        self.assertEqual(
+            SalesOrderAllocation.objects.filter(pk__in=shipped_ids).count(), 2
         )

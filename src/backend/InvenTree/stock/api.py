@@ -916,7 +916,14 @@ class StockFilter(FilterSet):
             | Q(supplier_part__manufacturer_part__manufacturer=company)
         ).distinct()
 
-    # Update date filters
+    created_before = InvenTreeDateFilter(
+        label=_('Created before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created after'), field_name='creation_date', lookup_expr='gt'
+    )
+
     updated_before = InvenTreeDateFilter(
         label=_('Updated before'), field_name='updated', lookup_expr='lt'
     )
@@ -932,6 +939,16 @@ class StockFilter(FilterSet):
     stocktake_after = InvenTreeDateFilter(
         label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gt'
     )
+
+    has_stocktake = rest_filters.BooleanFilter(
+        label=_('Has Stocktake Date'), method='filter_has_stocktake'
+    )
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter by whether or not the StockItem has a stocktake date."""
+        if str2bool(value):
+            return queryset.exclude(stocktake_date=None)
+        return queryset.filter(stocktake_date=None)
 
     # Stock "expiry" filters
     expiry_before = InvenTreeDateFilter(
@@ -1296,6 +1313,7 @@ class StockList(
         'part__IPN',
         'updated',
         'purchase_price',
+        'creation_date',
         'stocktake_date',
         'expiry_date',
         'packaging',
