@@ -1765,6 +1765,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         items = data['items']
         notes = data.get('notes', '')
+        location = data.get('location', None)
 
         with transaction.atomic():
             for item in items:
@@ -1777,6 +1778,9 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
+
+                if location is not None:
+                    stock_item.location = location
 
                 stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 

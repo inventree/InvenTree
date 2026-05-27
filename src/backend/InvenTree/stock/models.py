@@ -2623,6 +2623,7 @@ class StockItem(
         Keyword Arguments:
             notes: Optional notes for the stocktake
             status: Optionally adjust the stock status
+            location: Optionally set the stock location
         """
         try:
             count = Decimal(count)
@@ -2633,6 +2634,14 @@ class StockItem(
             return False
 
         tracking_info = {}
+
+        location = kwargs.pop('location', None)
+
+        if location and location != self.location:
+            old_location = self.location
+            self.location = location
+            tracking_info['location'] = location.pk
+            tracking_info['old_location'] = old_location.pk if old_location else None
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
