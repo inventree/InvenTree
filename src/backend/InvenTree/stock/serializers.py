@@ -1893,7 +1893,6 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             'location': location,
                             'notes': notes,
                             'user': request.user,
-                            'copy_history': False,
                             **kwargs,
                         }
 

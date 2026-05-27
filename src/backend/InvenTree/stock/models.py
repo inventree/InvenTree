@@ -2180,7 +2180,7 @@ class StockItem(
         return True
 
     def find_merge_target(self, location):
-        """Find an existing stock item at *location* that can absorb this item."""
+        """Find an existing stock item at location that can absorb this item."""
         if location is None:
             return None
 
@@ -2215,11 +2215,8 @@ class StockItem(
         *This* stock item subsumes the other, which is essentially deleted:
 
         - The quantity of this StockItem is increased
-        - Tracking history for the *other* item is copied to this item (unless copy_history=False)
+        - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
-
-        kwargs:
-            copy_history: If True (default), copy tracking from merged items. Set False for merge-on-transfer.
         """
         if isinstance(other_items, StockItem):
             other_items = [other_items]
@@ -2233,7 +2230,6 @@ class StockItem(
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
         notes = kwargs.get('notes') or ''
-        copy_history = kwargs.pop('copy_history', True)
 
         parent_id = self.parent.pk if self.parent else None
 
@@ -2277,9 +2273,6 @@ class StockItem(
             if parent_id and parent_id == other.pk:
                 self.parent = None
                 self.save()
-
-            if copy_history:
-                self.copyHistoryFrom(other)
 
             if other.location:
                 location_note = _('Transferred from %(location)s') % {
