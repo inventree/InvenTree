@@ -6,6 +6,7 @@ import sys
 from typing import Optional
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -223,7 +224,7 @@ def update_plugins_file(package_reference: str, remove: bool = False):
 
 
 def install_plugin(
-    user,
+    user: Optional[User] = None,
     url: Optional[str] = None,
     packagename: Optional[str] = None,
     version: Optional[str] = None,
