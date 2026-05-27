@@ -1744,6 +1744,20 @@ class StockAdjustmentSerializer(serializers.Serializer):
 class StockCountSerializer(StockAdjustmentSerializer):
     """Serializer for counting stock items."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'notes', 'location']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(structural=False),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Set stock location for counted items (optional)'),
+    )
+
     def save(self):
         """Count stock."""
         request = self.context['request']
