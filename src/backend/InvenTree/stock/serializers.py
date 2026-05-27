@@ -1780,7 +1780,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
                         extra[field_name] = field_value
 
                 if location is not None:
-                    stock_item.location = location
+                    extra['location'] = location
 
                 stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 
