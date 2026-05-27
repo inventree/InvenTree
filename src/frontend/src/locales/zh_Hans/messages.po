@@ -60,7 +60,7 @@ msgid "Delete"
 msgstr "删除"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:404
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:464
 #: src/components/barcodes/ReceiveStockBarcodeModal.tsx:593
 #: src/components/details/DetailsImage.tsx:84
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
@@ -125,7 +125,7 @@ msgid "No"
 msgstr "否"
 
 #: lib/enums/ModelInformation.tsx:29
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:312
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:354
 #: src/components/wizards/OrderPartsWizard.tsx:281
 #: src/forms/BuildForms.tsx:357
 #: src/forms/BuildForms.tsx:434
@@ -793,11 +793,15 @@ msgstr "扫描条形码失败"
 #~ msgid "No stock items selected to move"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:154
-#~ msgid "{0} stock item(s) ({totalQty} units) moved successfully"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:187
+#~ msgid "{0} item(s) ({totalQty} units) moved successfully"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:168
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:196
+#~ msgid "No valid stock items selected"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:197
 #: src/forms/BuildForms.tsx:699
 #: src/forms/SalesOrderForms.tsx:424
 #: src/pages/build/BuildDetail.tsx:127
@@ -805,33 +809,21 @@ msgstr "扫描条形码失败"
 msgid "Source Location"
 msgstr "来源地点"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:169
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:198
 msgid "Show only stock in this location"
 msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:182
-#: src/pages/build/BuildDetail.tsx:392
-msgid "Destination Location"
-msgstr "目标地点"
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:183
-msgid "Stock items will be moved to this location"
-msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:196
-#~ msgid "No valid stock items selected"
-#~ msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:209
 #~ msgid "None of the selected items are in the source location."
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:212
-msgid "No Items"
-msgstr ""
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:211
+#: src/pages/build/BuildDetail.tsx:392
+msgid "Destination Location"
+msgstr "目标地点"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:213
-msgid "Enter a quantity to move"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:212
+msgid "Stock items will be moved to this location"
 msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:213
@@ -842,47 +834,49 @@ msgstr ""
 #~ msgid "Current Location"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:230
-msgid "Stock Moved"
-msgstr ""
-
-#. placeholder {0}: itemsToMove.length
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:231
-msgid "{0} group(s) ({totalQty} units) moved successfully"
-msgstr ""
-
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:231
 #~ msgid "Will move"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:240
-msgid "Move Failed"
-msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:241
-msgid "Failed to move stock items"
-msgstr ""
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:255
+#~ msgid "{0} group(s) ({totalQty} units) moved successfully"
+#~ msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:261
 #~ msgid "Move {0} item(s)"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:277
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:413
-#: src/pages/Index/Scan.tsx:211
-msgid "Move Stock"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:263
+msgid "No Items"
 msgstr ""
 
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:264
+msgid "Enter a quantity to move"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:265
+#~ msgid "Qty In Stock"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:268
+#~ msgid "Qty to Move"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:280
+msgid "Stock Moved"
+msgstr ""
+
+#. placeholder {0}: transferItems.length
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:281
-msgid "Select a scanned part or stock item to move"
+msgid "{0} stock item(s) ({totalQty} units) moved successfully"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:287
-msgid "Loading stock for selected parts..."
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:290
+msgid "Move Failed"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:292
-msgid "No stock found for the selected parts"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:291
+msgid "Failed to move stock items"
 msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:295
@@ -890,14 +884,40 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/barcodes/MoveStockBarcodeModal.tsx:304
-msgid "No stock found in the selected source location."
-msgstr ""
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:304
 #~ msgid "Skipped"
 #~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:315
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:322
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:473
+#: src/pages/Index/Scan.tsx:211
+msgid "Move Stock"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:326
+msgid "Select a scanned part or stock item to move"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:326
+#~ msgid "Max {maxQty}"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:331
+msgid "Loading stock for selected parts..."
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:333
+#~ msgid "Move {movableItemCount} item(s) ({movableTotalQty} units)"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:335
+msgid "No stock found for the selected parts"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:347
+msgid "No stock found in the selected source location."
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:355
 #: src/components/barcodes/ReceiveStockBarcodeModal.tsx:221
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
@@ -925,39 +945,44 @@ msgstr ""
 msgid "Location"
 msgstr "位置"
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:318
-#: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:904
-#: src/pages/stock/StockDetail.tsx:266
-#: src/pages/stock/StockDetail.tsx:966
-#: src/tables/ColumnRenderers.tsx:243
-#: src/tables/build/BuildAllocatedStockTable.tsx:125
-#: src/tables/build/BuildLineTable.tsx:198
-#: src/tables/part/PartTable.tsx:187
-#: src/tables/stock/StockItemTable.tsx:203
-msgid "Available"
-msgstr "可用的"
-
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:321
-msgid "Qty to Move"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:356
+msgid "Cases"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:333
-#~ msgid "Move {movableItemCount} item(s) ({movableTotalQty} units)"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:357
+msgid "Loose Units"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:358
+msgid "Cases to Move"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:359
+msgid "Units to Move"
+msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:362
+#~ msgid "Move {movableTotalQty} unit(s) from {movableCount} item(s)"
 #~ msgstr ""
 
-#. placeholder {0}: group.totalQty
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:377
-msgid "Max {0}"
-msgstr ""
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:401
+#~ msgid "case of {0}"
+#~ msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:386
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:420
+#~ msgid "Max {0}"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:423
 msgid "Other location"
 msgstr ""
 
-#: src/components/barcodes/MoveStockBarcodeModal.tsx:415
-msgid "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:458
+#~ msgid "Move {movableTotalQty} unit(s) from {movableGroupCount} location(s)"
+#~ msgstr ""
+
+#: src/components/barcodes/MoveStockBarcodeModal.tsx:475
+msgid "Move {movableTotalQty} unit(s) from {movableCount} location(s)"
 msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:94
@@ -2774,6 +2799,19 @@ msgstr "保存组角色"
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
 msgstr "没有项目"
+
+#: src/components/items/TransferList.tsx:161
+#: src/components/render/Stock.tsx:102
+#: src/pages/part/PartDetail.tsx:904
+#: src/pages/stock/StockDetail.tsx:266
+#: src/pages/stock/StockDetail.tsx:966
+#: src/tables/ColumnRenderers.tsx:243
+#: src/tables/build/BuildAllocatedStockTable.tsx:125
+#: src/tables/build/BuildLineTable.tsx:198
+#: src/tables/part/PartTable.tsx:187
+#: src/tables/stock/StockItemTable.tsx:203
+msgid "Available"
+msgstr "可用的"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"

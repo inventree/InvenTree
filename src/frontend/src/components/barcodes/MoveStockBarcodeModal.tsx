@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Alert,
+  Badge,
   Button,
   Group,
   Loader,
@@ -24,7 +25,6 @@ import { api } from '../../App';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { StandaloneField } from '../forms/StandaloneField';
 import { RenderInstance } from '../render/Instance';
-import { RenderStockItem } from '../render/Stock';
 import type { BarcodeScanItem } from './BarcodeScanItem';
 
 interface MoveStockBarcodeModalProps {
@@ -36,15 +36,16 @@ interface MoveStockBarcodeModalProps {
   destinationLocationPk?: number;
 }
 
-interface StockGroup {
+interface LocationStockGroup {
   partPk: number;
-  partName: string;
   partDetail: any;
   locationPk: number | null;
-  locationName: string;
   locationDetail: any;
-  totalQty: number;
-  representativeItem: any;
+  caseQty: number; // the "standard" case size for this part
+  caseCount: number; // how many full cases available
+  looseQty: number; // total loose (non-case) units available
+  caseItems: any[]; // stock items that match the case size
+  looseItems: any[]; // stock items that don't match case size
 }
 
 export function MoveStockBarcodeModal({
@@ -63,7 +64,6 @@ export function MoveStockBarcodeModal({
     destinationLocationPk ?? null
   );
 
-  // Collect unique part PKs from scanned items (both parts and stock items)
   const partIds = useMemo(() => {
     const ids = new Set<number>();
     items.forEach((item) => {
@@ -79,12 +79,10 @@ export function MoveStockBarcodeModal({
     return [...ids];
   }, [items]);
 
-  // Fetch ALL stock items for the relevant parts
   const { data: allStockItems, isFetching } = useQuery({
     queryKey: ['stock-for-move', partIds, opened],
     queryFn: async () => {
       if (partIds.length === 0 || !opened) return [];
-
       const results = await Promise.all(
         partIds.map((partId) =>
           api
@@ -102,60 +100,93 @@ export function MoveStockBarcodeModal({
             })
         )
       );
-
       return results.flat();
     },
     enabled: opened && partIds.length > 0
   });
 
-  // Group stock items by part + location
-  const stockGroups: StockGroup[] = useMemo(() => {
+  // Determine standard case size per part (most common stock item quantity > 1)
+  const partCaseSizes = useMemo(() => {
+    const map = new Map<number, number>(); // partPk -> caseQty
+    if (!allStockItems) return map;
+
+    // Count frequency of each quantity per part
+    const freq = new Map<number, Map<number, number>>();
+    allStockItems.forEach((item: any) => {
+      const qty = item.quantity ?? 0;
+      if (qty <= 1) return; // skip singles
+      if (!freq.has(item.part)) freq.set(item.part, new Map());
+      const partFreq = freq.get(item.part)!;
+      partFreq.set(qty, (partFreq.get(qty) ?? 0) + 1);
+    });
+
+    // Pick most common quantity for each part
+    freq.forEach((qtyMap, partPk) => {
+      let bestQty = 0;
+      let bestCount = 0;
+      qtyMap.forEach((count, qty) => {
+        if (count > bestCount || (count === bestCount && qty > bestQty)) {
+          bestCount = count;
+          bestQty = qty;
+        }
+      });
+      if (bestQty > 0) map.set(partPk, bestQty);
+    });
+
+    return map;
+  }, [allStockItems]);
+
+  // Group stock items by part + location, splitting into cases vs loose
+  const stockGroups: LocationStockGroup[] = useMemo(() => {
     if (!allStockItems || allStockItems.length === 0) return [];
 
-    const map = new Map<string, StockGroup>();
+    const map = new Map<string, LocationStockGroup>();
 
     allStockItems.forEach((item: any) => {
       const locPk = item.location ?? null;
       const key = `${item.part}_${locPk}`;
+      const caseQty = partCaseSizes.get(item.part) ?? 0;
+      const isCase = caseQty > 0 && item.quantity === caseQty;
 
-      const existing = map.get(key);
-      if (existing) {
-        existing.totalQty += item.quantity;
-      } else {
+      if (!map.has(key)) {
         map.set(key, {
           partPk: item.part,
-          partName:
-            item.part_detail?.name ??
-            item.part_detail?.full_name ??
-            `Part ${item.part}`,
           partDetail: item.part_detail,
           locationPk: locPk,
-          locationName:
-            item.location_detail?.pathstring ??
-            item.location_detail?.name ??
-            '-',
           locationDetail: item.location_detail,
-          totalQty: item.quantity,
-          representativeItem: item
+          caseQty,
+          caseCount: 0,
+          looseQty: 0,
+          caseItems: [],
+          looseItems: []
         });
+      }
+
+      const group = map.get(key)!;
+      if (isCase) {
+        group.caseCount += 1;
+        group.caseItems.push(item);
+      } else {
+        group.looseQty += item.quantity ?? 0;
+        group.looseItems.push(item);
       }
     });
 
     return [...map.values()];
-  }, [allStockItems]);
+  }, [allStockItems, partCaseSizes]);
 
-  // Per-group move quantities, keyed by group key
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  // Move state: { groupKey: { cases: n, units: n } }
+  const [moveState, setMoveState] = useState<
+    Record<string, { cases: number; units: number }>
+  >({});
 
-  // Initialize quantities when groups change
   useEffect(() => {
     if (stockGroups.length > 0) {
-      const initial: Record<string, number> = {};
-      stockGroups.forEach((group) => {
-        const key = `${group.partPk}_${group.locationPk}`;
-        initial[key] = 0;
+      const initial: Record<string, { cases: number; units: number }> = {};
+      stockGroups.forEach((g) => {
+        initial[`${g.partPk}_${g.locationPk}`] = { cases: 0, units: 0 };
       });
-      setQuantities(initial);
+      setMoveState(initial);
     }
   }, [stockGroups]);
 
@@ -187,27 +218,50 @@ export function MoveStockBarcodeModal({
     []
   );
 
-  const setQuantity = useCallback((groupKey: string, value: number) => {
-    setQuantities((prev) => ({ ...prev, [groupKey]: value }));
-  }, []);
-
   const handleMove = useCallback(async () => {
     if (!destLocation) return;
 
-    // Build payload from groups with non-zero quantities
-    const itemsToMove = stockGroups
-      .filter((group) => {
-        if (sourceLocation && group.locationPk !== sourceLocation) return false;
-        const key = `${group.partPk}_${group.locationPk}`;
-        const qty = quantities[key];
-        return qty != null && qty > 0;
-      })
-      .map((group) => ({
-        pk: group.representativeItem.pk,
-        quantity: quantities[`${group.partPk}_${group.locationPk}`]
-      }));
+    // Build payload: map group moves to individual stock item quantities
+    const transferItems: { pk: number; quantity: number }[] = [];
 
-    if (itemsToMove.length === 0) {
+    stockGroups.forEach((group) => {
+      if (sourceLocation && group.locationPk !== sourceLocation) return;
+      const key = `${group.partPk}_${group.locationPk}`;
+      const move = moveState[key];
+      if (!move || (move.cases === 0 && move.units === 0)) return;
+
+      // Allocate cases: move full quantity from case items
+      let casesRemaining = move.cases;
+      for (const caseItem of group.caseItems) {
+        if (casesRemaining <= 0) break;
+        transferItems.push({ pk: caseItem.pk, quantity: caseItem.quantity });
+        casesRemaining--;
+      }
+
+      // Allocate loose units: use loose items first, then split from cases
+      let unitsRemaining = move.units;
+      for (const looseItem of group.looseItems) {
+        if (unitsRemaining <= 0) break;
+        const take = Math.min(unitsRemaining, looseItem.quantity ?? 0);
+        transferItems.push({ pk: looseItem.pk, quantity: take });
+        unitsRemaining -= take;
+      }
+
+      // If still need units, split from remaining case items
+      for (const caseItem of group.caseItems) {
+        if (unitsRemaining <= 0) break;
+        // Skip case items already fully moved
+        if (move.cases > 0 && group.caseItems.indexOf(caseItem) < move.cases)
+          continue;
+        const take = Math.min(unitsRemaining, caseItem.quantity ?? 0);
+        if (take > 0) {
+          transferItems.push({ pk: caseItem.pk, quantity: take });
+          unitsRemaining -= take;
+        }
+      }
+    });
+
+    if (transferItems.length === 0) {
       showNotification({
         title: t`No Items`,
         message: t`Enter a quantity to move`,
@@ -221,14 +275,13 @@ export function MoveStockBarcodeModal({
     try {
       await api.post(apiUrl(ApiEndpoints.stock_transfer), {
         location: destLocation,
-        items: itemsToMove
+        items: transferItems
       });
 
-      const totalQty = itemsToMove.reduce((sum, i) => sum + i.quantity, 0);
-
+      const totalQty = transferItems.reduce((sum, i) => sum + i.quantity, 0);
       showNotification({
         title: t`Stock Moved`,
-        message: t`${itemsToMove.length} group(s) (${totalQty} units) moved successfully`,
+        message: t`${transferItems.length} stock item(s) (${totalQty} units) moved successfully`,
         color: 'green'
       });
 
@@ -247,26 +300,28 @@ export function MoveStockBarcodeModal({
     sourceLocation,
     destLocation,
     stockGroups,
-    quantities,
+    moveState,
     onSuccess,
     onClose
   ]);
 
-  // Compute totals for the button label
-  const { movableGroupCount, movableTotalQty } = useMemo(() => {
+  const { movableCount, movableTotalQty } = useMemo(() => {
     let count = 0;
     let totalQty = 0;
     stockGroups.forEach((group) => {
       if (sourceLocation && group.locationPk !== sourceLocation) return;
       const key = `${group.partPk}_${group.locationPk}`;
-      const qty = quantities[key];
-      if (qty != null && qty > 0) {
+      const move = moveState[key];
+      if (!move) return;
+      const caseUnits = move.cases * group.caseQty;
+      const total = caseUnits + move.units;
+      if (total > 0) {
         count++;
-        totalQty += qty;
+        totalQty += total;
       }
     });
-    return { movableGroupCount: count, movableTotalQty: totalQty };
-  }, [stockGroups, quantities, sourceLocation]);
+    return { movableCount: count, movableTotalQty: totalQty };
+  }, [stockGroups, moveState, sourceLocation]);
 
   const filteredGroups = useMemo(() => {
     if (!sourceLocation) return stockGroups;
@@ -274,7 +329,7 @@ export function MoveStockBarcodeModal({
   }, [stockGroups, sourceLocation]);
 
   return (
-    <Modal opened={opened} onClose={onClose} title={t`Move Stock`} size='xl'>
+    <Modal opened={opened} onClose={onClose} title={t`Move Stock`} size='95%'>
       <Stack gap='md'>
         {partIds.length === 0 ? (
           <Alert color='red' icon={<IconExclamationCircle />}>
@@ -305,20 +360,26 @@ export function MoveStockBarcodeModal({
               </Alert>
             )}
 
-            <Table striped highlightOnHover>
+            <Table striped highlightOnHover style={{ tableLayout: 'auto' }}>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
                     <Trans>Part</Trans>
                   </Table.Th>
-                  <Table.Th>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
                     <Trans>Location</Trans>
                   </Table.Th>
-                  <Table.Th>
-                    <Trans>Available</Trans>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
+                    <Trans>Cases</Trans>
                   </Table.Th>
-                  <Table.Th style={{ width: '160px' }}>
-                    <Trans>Qty to Move</Trans>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
+                    <Trans>Loose Units</Trans>
+                  </Table.Th>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
+                    <Trans>Cases to Move</Trans>
+                  </Table.Th>
+                  <Table.Th style={{ whiteSpace: 'nowrap' }}>
+                    <Trans>Units to Move</Trans>
                   </Table.Th>
                 </Table.Tr>
               </Table.Thead>
@@ -327,8 +388,11 @@ export function MoveStockBarcodeModal({
                   const groupKey = `${group.partPk}_${group.locationPk}`;
                   const willMove =
                     !sourceLocation || group.locationPk === sourceLocation;
-                  const moveQty = quantities[groupKey] ?? 0;
-                  const isValidQty = moveQty > 0 && moveQty <= group.totalQty;
+                  const move = moveState[groupKey] ?? { cases: 0, units: 0 };
+                  const maxCases = group.caseCount;
+                  const maxUnits =
+                    group.looseQty +
+                    (group.caseCount - move.cases) * group.caseQty;
 
                   return (
                     <Table.Tr
@@ -336,7 +400,10 @@ export function MoveStockBarcodeModal({
                       style={{ opacity: willMove ? 1 : 0.4 }}
                     >
                       <Table.Td>
-                        <RenderStockItem instance={group.representativeItem} />
+                        <RenderInstance
+                          instance={group.partDetail}
+                          model={ModelType.part}
+                        />
                       </Table.Td>
                       <Table.Td>
                         {group.locationDetail ? (
@@ -349,41 +416,67 @@ export function MoveStockBarcodeModal({
                         )}
                       </Table.Td>
                       <Table.Td>
-                        <Text
-                          c={
-                            willMove && moveQty < group.totalQty
-                              ? 'orange'
-                              : undefined
-                          }
-                        >
-                          {group.totalQty}
-                        </Text>
+                        {group.caseCount > 0 ? (
+                          <Group gap='xs'>
+                            <Text fw={700}>{group.caseCount}</Text>
+                            <Badge variant='light' color='blue' size='sm'>
+                              {group.caseCount} &times; {group.caseQty}
+                            </Badge>
+                          </Group>
+                        ) : (
+                          <Text c='dimmed'>-</Text>
+                        )}
                       </Table.Td>
                       <Table.Td>
-                        {willMove ? (
+                        {group.looseQty > 0 ? (
+                          <Text fw={700}>{group.looseQty}</Text>
+                        ) : (
+                          <Text c='dimmed'>-</Text>
+                        )}
+                      </Table.Td>
+                      <Table.Td>
+                        {willMove && maxCases > 0 ? (
                           <NumberInput
-                            value={moveQty}
+                            value={move.cases}
                             onChange={(v) =>
-                              setQuantity(
-                                groupKey,
-                                typeof v === 'number' ? v : 0
-                              )
+                              setMoveState((prev) => ({
+                                ...prev,
+                                [groupKey]: {
+                                  ...(prev[groupKey] ?? { cases: 0, units: 0 }),
+                                  cases: typeof v === 'number' ? v : 0
+                                }
+                              }))
                             }
                             min={0}
-                            max={group.totalQty}
+                            max={maxCases}
                             step={1}
-                            error={
-                              !isValidQty && moveQty !== 0
-                                ? t`Max ${group.totalQty}`
-                                : undefined
-                            }
-                            styles={{
-                              input: { width: '140px' }
-                            }}
                           />
                         ) : (
                           <Text c='dimmed' size='sm'>
-                            <Trans>Other location</Trans>
+                            {willMove ? '-' : <Trans>Other location</Trans>}
+                          </Text>
+                        )}
+                      </Table.Td>
+                      <Table.Td>
+                        {willMove && maxUnits > 0 ? (
+                          <NumberInput
+                            value={move.units}
+                            onChange={(v) =>
+                              setMoveState((prev) => ({
+                                ...prev,
+                                [groupKey]: {
+                                  ...(prev[groupKey] ?? { cases: 0, units: 0 }),
+                                  units: typeof v === 'number' ? v : 0
+                                }
+                              }))
+                            }
+                            min={0}
+                            max={maxUnits}
+                            step={1}
+                          />
+                        ) : (
+                          <Text c='dimmed' size='sm'>
+                            {willMove ? '-' : ''}
                           </Text>
                         )}
                       </Table.Td>
@@ -406,14 +499,14 @@ export function MoveStockBarcodeModal({
               <Button
                 onClick={handleMove}
                 loading={submitting}
-                disabled={!destLocation || movableGroupCount === 0}
+                disabled={!destLocation || movableCount === 0}
                 leftSection={<IconArrowRight size={16} />}
               >
-                {movableGroupCount === 0 ? (
+                {movableCount === 0 ? (
                   <Trans>Move Stock</Trans>
                 ) : (
                   <Trans>
-                    Move {movableTotalQty} unit(s) from {movableGroupCount}{' '}
+                    Move {movableTotalQty} unit(s) from {movableCount}{' '}
                     location(s)
                   </Trans>
                 )}
