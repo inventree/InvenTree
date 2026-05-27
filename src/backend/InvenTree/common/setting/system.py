@@ -788,10 +788,9 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'STOCK_MERGE_ON_TRANSFER': {
-        'name': _('Merge stock with existing stock on transfer'),
+        'name': _('Merge stock with existing stock on transfer by default'),
         'description': _(
-            'Default: when transferring stock, merge into an existing lot at the '
-            'destination if possible (uses the same rules as manual stock merge)'
+            'Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)'
         ),
         'default': False,
         'validator': bool,

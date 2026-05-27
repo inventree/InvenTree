@@ -2181,9 +2181,8 @@ class StockTransferMergeTest(StockAPITestCase):
         self.post(
             self.url,
             {
-                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': False}],
                 'location': self.dest.pk,
-                'merge': False,
             },
             expected_code=201,
         )
@@ -2207,9 +2206,8 @@ class StockTransferMergeTest(StockAPITestCase):
         self.post(
             self.url,
             {
-                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
                 'location': self.dest.pk,
-                'merge': True,
             },
             expected_code=201,
         )
@@ -2221,6 +2219,39 @@ class StockTransferMergeTest(StockAPITestCase):
         existing.refresh_from_db()
         self.assertEqual(existing.quantity, 150)
         self.assertFalse(StockItem.objects.filter(pk=incoming.pk).exists())
+
+    def test_transfer_mixed_merge_per_item(self):
+        """Each transfer line can merge or move independently."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        merge_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=30
+        )
+        separate_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=20
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': merge_incoming.pk, 'quantity': 30, 'merge': True},
+                    {'pk': separate_incoming.pk, 'quantity': 20, 'merge': False},
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 130)
+        self.assertFalse(StockItem.objects.filter(pk=merge_incoming.pk).exists())
+        self.assertTrue(StockItem.objects.filter(pk=separate_incoming.pk).exists())
 
     def test_transfer_merge_does_not_copy_source_tracking(self):
         """Transfer merge keeps destination history and adds a single merge entry."""
@@ -2240,9 +2271,8 @@ class StockTransferMergeTest(StockAPITestCase):
         self.post(
             self.url,
             {
-                'items': [{'pk': incoming.pk, 'quantity': 50}],
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
                 'location': self.dest.pk,
-                'merge': True,
             },
             expected_code=201,
         )
@@ -2253,11 +2283,12 @@ class StockTransferMergeTest(StockAPITestCase):
             existing.tracking_info.filter(notes='Source tracking entry').exists()
         )
         self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
-        self.assertTrue(
-            existing.tracking_info.filter(
-                tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
-            ).exists()
-        )
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 150.0)
 
 
 class StockItemDeletionTest(StockAPITestCase):

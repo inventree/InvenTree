@@ -555,6 +555,7 @@ function StockOperationsRow({
   add = false,
   setMax = false,
   merge = false,
+  transferMerge = false,
   record
 }: {
   props: TableFieldRowProps;
@@ -563,6 +564,7 @@ function StockOperationsRow({
   add?: boolean;
   setMax?: boolean;
   merge?: boolean;
+  transferMerge?: boolean;
   record?: any;
 }) {
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
@@ -712,6 +714,17 @@ function StockOperationsRow({
                 variant={packagingOpen ? 'filled' : 'transparent'}
               />
             )}
+            {transferMerge && (
+              <ActionButton
+                size='sm'
+                icon={<InvenTreeIcon icon='merge' />}
+                tooltip={t`Merge into existing stock`}
+                onClick={() =>
+                  callChangeFn(props.idx, 'merge', !props.item?.merge)
+                }
+                variant={props.item?.merge ? 'filled' : 'transparent'}
+              />
+            )}
             <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
           </Flex>
         </Table.Td>
@@ -759,9 +772,10 @@ type StockAdjustmentItem = {
   batch?: string;
   status?: number | '' | null;
   packaging?: string;
+  merge?: boolean;
 };
 
-function mapAdjustmentItems(items: any[]) {
+function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
   const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
     return {
       pk: elem.pk,
@@ -769,6 +783,7 @@ function mapAdjustmentItems(items: any[]) {
       batch: elem.batch || undefined,
       status: elem.status || undefined,
       packaging: elem.packaging || undefined,
+      merge: elem.merge ?? mergeDefault ?? false,
       obj: elem
     };
   });
@@ -776,7 +791,10 @@ function mapAdjustmentItems(items: any[]) {
   return mappedItems;
 }
 
-function stockTransferFields(items: any[]): ApiFormFieldSet {
+function stockTransferFields(
+  items: any[],
+  mergeDefault = false
+): ApiFormFieldSet {
   if (!items) {
     return {};
   }
@@ -789,7 +807,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: mapAdjustmentItems(items, mergeDefault),
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -799,6 +817,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
             transfer
             changeStatus
             setMax
+            transferMerge
             key={record.pk}
             record={record}
           />
@@ -1329,12 +1348,11 @@ export function useTransferStockItem(props: StockOperationProps) {
   const globalSettings = useGlobalSettingsState();
 
   const fieldGenerator = useCallback(
-    (items: any[]) => ({
-      ...stockTransferFields(items),
-      merge: {
-        default: globalSettings.isSet('STOCK_MERGE_ON_TRANSFER')
-      }
-    }),
+    (items: any[]) =>
+      stockTransferFields(
+        items,
+        globalSettings.isSet('STOCK_MERGE_ON_TRANSFER')
+      ),
     [globalSettings]
   );
 

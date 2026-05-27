@@ -2251,9 +2251,12 @@ class StockItem(
                 )
                 return
 
+        merged_quantity = Decimal(0)
+
         for other in other_items:
             tree_ids.add(other.tree_id)
 
+            merged_quantity += other.quantity
             self.quantity += other.quantity
 
             if other.purchase_price:
@@ -2294,7 +2297,8 @@ class StockItem(
             notes=notes,
             deltas={
                 'location': location.pk if location else None,
-                'quantity': self.quantity,
+                'quantity': float(self.quantity),
+                'added': float(merged_quantity),
             },
         )
 
