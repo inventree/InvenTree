@@ -110,10 +110,12 @@ function NoteInfoHover({ note }: { note: any }) {
 
 export default function NotesEditor({
   modelType,
-  modelId
+  modelId,
+  setDirtyCallback
 }: Readonly<{
   modelType: ModelType;
   modelId: number;
+  setDirtyCallback?: (dirty: boolean) => void;
 }>) {
   const api = useApi();
   const user = useUserState();
@@ -253,6 +255,11 @@ export default function NotesEditor({
     editor,
     selector: ({ editor: e }) => e?.isActive('table') ?? false
   });
+
+  // Propagate dirty state up to the panel system for navigation guards
+  useEffect(() => {
+    setDirtyCallback?.(isDirty);
+  }, [isDirty, setDirtyCallback]);
 
   // Sync editor editable state when permissions change.
   // Pass false for emitUpdate to avoid triggering onUpdate (which sets isDirty).

@@ -10,6 +10,7 @@ import {
   Stack,
   Tabs,
   Text,
+  Title,
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
@@ -47,6 +48,7 @@ import type {
 } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
@@ -284,21 +286,15 @@ function BasePanelGroup({
     [allPanels]
   );
 
-  // Callback when the active panel changes
-  const handlePanelChange = useCallback(
+  const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
+
+  const performPanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      cancelEvent(event);
-
-      // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
-      if (isDirty) {
-        const confirm = globalThis.confirm(
-          t`You have unsaved changes, are you sure you want to navigate away from this panel?`
-        );
-        if (!confirm) {
-          return;
-        }
-      }
-
       if (event && eventModified(event)) {
         const url = `${location.pathname}/../${targetPanel}`;
         navigateToLink(url, navigate, event);
@@ -308,15 +304,39 @@ function BasePanelGroup({
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
 
-      // Optionally call external callback hook
       if (targetPanel && onPanelChange) {
         onPanelChange(targetPanel);
       }
 
-      // change dirty state
       setIsDirty(false);
     },
-    [activePanels, navigate, location, onPanelChange]
+    [navigate, location, pageKey, onPanelChange]
+  );
+
+  // Callback when the active panel changes
+  const handlePanelChange = useCallback(
+    (targetPanel: string, event?: any) => {
+      cancelEvent(event);
+
+      if (isDirty) {
+        modals.openConfirmModal({
+          title: <Title order={4}>{t`Unsaved Changes`}</Title>,
+          children: (
+            <>
+              <Divider />
+              <Text>{t`You have unsaved changes. Are you sure you want to leave this panel?`}</Text>
+            </>
+          ),
+          labels: { confirm: t`Leave`, cancel: t`Stay` },
+          confirmProps: { color: 'red' },
+          onConfirm: () => performPanelChange(targetPanel, event)
+        });
+        return;
+      }
+
+      performPanelChange(targetPanel, event);
+    },
+    [isDirty, performPanelChange]
   );
 
   // if the selected panel state changes update the current panel
@@ -334,13 +354,6 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
-
-  const [isDirty, setIsDirty] = useState(false);
-  useWindowEvent('beforeunload', (event) => {
-    if (isDirty) {
-      event.preventDefault();
-    }
-  });
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
