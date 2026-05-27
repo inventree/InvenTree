@@ -66,3 +66,17 @@
 .ProseMirror.resize-cursor {
   cursor: col-resize;
 }
+
+/* Disable image interaction when not in editing mode */
+.mantine-RichTextEditor-root:not([data-editing]) .ProseMirror img {
+  pointer-events: none;
+  user-select: none;
+}
+
+.mantine-RichTextEditor-root:not([data-editing]) .node-image.ProseMirror-selectednode .image-component {
+  outline: none;
+}
+
+.mantine-RichTextEditor-root:not([data-editing]) .node-image.ProseMirror-selectednode .image-resizer {
+  display: none;
+}

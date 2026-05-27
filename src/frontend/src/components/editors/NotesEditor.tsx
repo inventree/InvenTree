@@ -470,6 +470,7 @@ export default function NotesEditor({
                   variant='subtle'
                   editor={editor}
                   style={{ minHeight: '400px' }}
+                  data-editing={isEditing || undefined}
                 >
                   {canEdit && isEditing && (
                     <RichTextEditor.Toolbar sticky>
@@ -631,7 +632,7 @@ export default function NotesEditor({
             </Paper>
           </Stack>
         </Box>
-        <Paper p='xs' shadow='sm' withBorder style={{ width: '200px' }}>
+        <Paper p='xs' shadow='sm' withBorder style={{ minWidth: '200px' }}>
           <Stack gap='xs'>
             {canEdit && (
               <Button
