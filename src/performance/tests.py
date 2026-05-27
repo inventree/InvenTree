@@ -21,7 +21,7 @@ api_client = InvenTreeAPI(
 
 
 @pytest.mark.benchmark
-def test_api_auth_performance():
+def test_api_auth_performance() -> None:
     """Benchmark the API authentication performance."""
     client = InvenTreeAPI(
         server,
@@ -31,7 +31,7 @@ def test_api_auth_performance():
         token_name='python-test',
         use_token_auth=True,
     )
-    assert client
+    assert isinstance(client, InvenTreeAPI)
 
 
 @pytest.mark.benchmark
@@ -55,7 +55,7 @@ def test_api_auth_performance():
         '/api/parameter/template/',
     ],
 )
-def test_api_list_performance(url):
+def test_api_list_performance(url: str) -> None:
     """Benchmark the API list request performance."""
     result = api_client.get(url)
     assert result
@@ -82,7 +82,7 @@ def test_api_list_performance(url):
         '/api/parameter/template/',
     ],
 )
-def test_api_options_performance(url):
+def test_api_options_performance(url: str) -> None:
     """Benchmark the API OPTIONS request performance."""
     response = api_client.request(url, method='OPTIONS')
     result = json.loads(response.text)
@@ -112,7 +112,7 @@ def test_api_options_performance(url):
         'returnorder',
     ],
 )
-def test_search_performance(key: str):
+def test_search_performance(key: str) -> None:
     """Benchmark the API search performance."""
     SEARCH_URL = '/api/search/'
 
