@@ -2253,6 +2253,88 @@ class StocktakeTest(StockAPITestCase):
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
+    def test_count_with_location(self):
+        """Test that the stock count endpoint correctly handles the optional location field."""
+        url = reverse('api-stock-count')
+
+        # Stock item pk=1234 starts at location 5; pk=1 starts at location 3
+        item_a = StockItem.objects.get(pk=1234)
+        item_b = StockItem.objects.get(pk=1)
+
+        self.assertEqual(item_a.location.pk, 5)
+        self.assertEqual(item_b.location.pk, 3)
+
+        # --- location is updated when provided (single item) ---
+        response = self.post(
+            url,
+            {'items': [{'pk': item_a.pk, 'quantity': 10}], 'location': 1},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['items'][0]['pk'], item_a.pk)
+
+        item_a.refresh_from_db()
+        self.assertEqual(item_a.location.pk, 1)
+
+        # Tracking entry records the location change
+        entry = StockItemTracking.objects.filter(
+            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertEqual(entry.deltas.get('location'), 1)
+        self.assertEqual(entry.deltas.get('old_location'), 5)
+
+        # --- location is updated for multiple items simultaneously ---
+        response = self.post(
+            url,
+            {
+                'items': [
+                    {'pk': item_a.pk, 'quantity': 5},
+                    {'pk': item_b.pk, 'quantity': 20},
+                ],
+                'location': 2,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(len(response.data['items']), 2)
+
+        item_a.refresh_from_db()
+        item_b.refresh_from_db()
+        self.assertEqual(item_a.location.pk, 2)
+        self.assertEqual(item_b.location.pk, 2)
+
+        # Both items have a tracking entry with the new location
+        for item, old_loc in [(item_a, 1), (item_b, 3)]:
+            entry = StockItemTracking.objects.filter(
+                item=item, tracking_type=StockHistoryCode.STOCK_COUNT
+            ).latest('date')
+            self.assertEqual(entry.deltas.get('location'), 2)
+            self.assertEqual(entry.deltas.get('old_location'), old_loc)
+
+        # --- location is unchanged when not provided ---
+        response = self.post(
+            url, {'items': [{'pk': item_a.pk, 'quantity': 7}]}, expected_code=201
+        )
+
+        item_a.refresh_from_db()
+        # Location should still be 2 (unchanged from the previous count)
+        self.assertEqual(item_a.location.pk, 2)
+
+        # Tracking entry has no location delta when location was not provided
+        entry = StockItemTracking.objects.filter(
+            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertNotIn('location', entry.deltas)
+        self.assertNotIn('old_location', entry.deltas)
+
+        # --- structural location is rejected ---
+        structural = StockLocation.objects.create(name='Structural', structural=True)
+
+        response = self.post(
+            url,
+            {'items': [{'pk': item_a.pk, 'quantity': 1}], 'location': structural.pk},
+            expected_code=400,
+        )
+        self.assertIn('does not exist', str(response.data['location']))
+
 
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
