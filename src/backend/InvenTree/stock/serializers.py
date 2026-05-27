@@ -1838,7 +1838,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'notes', 'location', 'merge']
+        fields = ['items', 'notes', 'location']
 
     items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
 
@@ -1851,15 +1851,6 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         help_text=_('Destination stock location'),
     )
 
-    merge = serializers.BooleanField(
-        default=False,
-        required=False,
-        label=_('Merge into existing stock'),
-        help_text=_(
-            'Merge transferred items into existing stock items at the destination if possible'
-        ),
-    )
-
     def save(self):
         """Transfer stock."""
         request = self.context['request']
@@ -1869,14 +1860,13 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         items = data['items']
         notes = data.get('notes', '')
         location = data['location']
-        default_merge = data.get('merge', False)
 
         with transaction.atomic():
             for item in items:
                 # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
-                merge = item.get('merge', default_merge)
+                merge = item.get('merge', False)
 
                 # Optional fields
                 kwargs = {}
