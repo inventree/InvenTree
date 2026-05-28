@@ -9,8 +9,9 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-# Base image last bumped 2026-03-20
-FROM python:3.14.5-slim-trixie@sha256:c845af9399020c7e562969a13689e929074a10fd057acd1b1fad06a2fb068e97 AS inventree_base
+# Base image last bumped 2026-05-29
+FROM gcr.io/distroless/python3-debian13@sha256:4a88db5fda8974bfe712e8bde01fef5ac478bd03271521578b040c6aa90eed33 AS prod_base
+FROM python:3.14.5-slim-trixie@sha256:c845af9399020c7e562969a13689e929074a10fd057acd1b1fad06a2fb068e97 AS build_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -97,7 +98,7 @@ RUN chmod +x init.sh
 ENTRYPOINT ["/bin/bash", "./init.sh"]
 
 # Multi-stage build to compile project requirements
-FROM inventree_base AS builder_stage
+FROM build_base AS builder_stage
 
 # Copy source files
 COPY src ${INVENTREE_HOME}/src
@@ -131,7 +132,7 @@ RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM inventree_base AS production
+FROM prod_base AS production
 
 ENV INVENTREE_DEBUG=False
 
