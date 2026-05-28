@@ -227,13 +227,21 @@ jobs:
             INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
-      - name: Publish to go.packager.io
+      - name: Publish to go.packager.io - current release channel
         uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
           repository: inventree/InvenTree
           channel: ${{ env.pkg_channel }}
+          file: ${{ steps.package.outputs.package_path }}
+      - name: Publish to go.packager.io - stable release channel
+        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        with:
+          target: ${{ matrix.target }}
+          token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
+          repository: inventree/InvenTree
+          channel: stable
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
         run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
