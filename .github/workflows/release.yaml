@@ -248,5 +248,5 @@ jobs:
         env:
           REF: ${{ github.ref_name }}
           PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
-          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          PACKAGE_NAME: ${{ matrix.target }}-${{ steps.setup.outputs.version }}.tar.gz
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
