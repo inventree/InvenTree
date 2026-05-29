@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.http.request import HttpRequest
 from django.utils import timezone
 
+from allauth.usersessions.admin import UserSessionAdmin
+from allauth.usersessions.models import UserSession
 from django_q.admin import ScheduleAdmin
 from django_q.models import Schedule
 from djmoney.contrib.exchange.admin import RateAdmin
@@ -52,3 +54,19 @@ class ReadOnlyScheduleAdmin(ScheduleAdmin):
 
 admin.site.unregister(Schedule)
 admin.site.register(Schedule, ReadOnlyScheduleAdmin)
+
+
+class InvenTreeUserSessionAdmin(UserSessionAdmin):
+    """Admin interface for UserSession - view and delete only, no add or edit."""
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        """Prevent creating sessions via admin."""
+        return False
+
+    def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
+        """Prevent editing sessions via admin."""
+        return False
+
+
+admin.site.unregister(UserSession)
+admin.site.register(UserSession, InvenTreeUserSessionAdmin)
