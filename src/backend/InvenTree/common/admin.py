@@ -79,20 +79,36 @@ class AttachmentAdmin(admin.ModelAdmin):
 
 @admin.register(common.models.DataOutput)
 class DataOutputAdmin(admin.ModelAdmin):
-    """Admin interface for DataOutput objects."""
+    """Admin interface for DataOutput objects - view and delete only."""
 
     list_display = ('user', 'created', 'output_type', 'output')
 
     list_filter = ('user', 'output_type')
 
+    def has_add_permission(self, request):
+        """Prevent addition of new DataOutput objects via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of DataOutput objects via the admin interface."""
+        return False
+
 
 @admin.register(common.models.BarcodeScanResult)
 class BarcodeScanResultAdmin(admin.ModelAdmin):
-    """Admin interface for BarcodeScanResult objects."""
+    """Admin interface for BarcodeScanResult objects - read-only audit log."""
 
     list_display = ('data', 'timestamp', 'user', 'endpoint', 'result')
 
     list_filter = ('user', 'endpoint', 'result')
+
+    def has_add_permission(self, request):
+        """Prevent addition of new BarcodeScanResult objects via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of BarcodeScanResult objects via the admin interface."""
+        return False
 
 
 @admin.register(common.models.ProjectCode)
@@ -139,14 +155,22 @@ class WebhookAdmin(admin.ModelAdmin):
 
 @admin.register(common.models.NotificationEntry)
 class NotificationEntryAdmin(admin.ModelAdmin):
-    """Admin settings for NotificationEntry."""
+    """Admin settings for NotificationEntry - view and delete only."""
 
     list_display = ('key', 'uid', 'updated')
+
+    def has_add_permission(self, request):
+        """Prevent addition of new NotificationEntry objects via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of NotificationEntry objects via the admin interface."""
+        return False
 
 
 @admin.register(common.models.NotificationMessage)
 class NotificationMessageAdmin(admin.ModelAdmin):
-    """Admin settings for NotificationMessage."""
+    """Admin settings for NotificationMessage - view and delete only."""
 
     list_display = (
         'age_human',
@@ -162,14 +186,46 @@ class NotificationMessageAdmin(admin.ModelAdmin):
 
     search_fields = ('name', 'category', 'message')
 
+    def has_add_permission(self, request):
+        """Prevent addition of new NotificationMessage objects via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of NotificationMessage objects via the admin interface."""
+        return False
+
 
 @admin.register(common.models.NewsFeedEntry)
 class NewsFeedEntryAdmin(admin.ModelAdmin):
-    """Admin settings for NewsFeedEntry."""
+    """Admin settings for NewsFeedEntry - view and delete only."""
 
     list_display = ('title', 'author', 'published', 'summary')
 
+    def has_add_permission(self, request):
+        """Prevent addition of new NewsFeedEntry objects via the admin interface."""
+        return False
 
-admin.site.register(common.models.WebhookMessage, admin.ModelAdmin)
-admin.site.register(common.models.EmailMessage, admin.ModelAdmin)
-admin.site.register(common.models.EmailThread, admin.ModelAdmin)
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of NewsFeedEntry objects via the admin interface."""
+        return False
+
+
+class ReadOnlyAdmin(admin.ModelAdmin):
+    """Base admin class that prevents all modifications."""
+
+    def has_add_permission(self, request):
+        """Prevent addition of new objects via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of objects via the admin interface."""
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of objects via the admin interface."""
+        return False
+
+
+admin.site.register(common.models.WebhookMessage, ReadOnlyAdmin)
+admin.site.register(common.models.EmailMessage, ReadOnlyAdmin)
+admin.site.register(common.models.EmailThread, ReadOnlyAdmin)
