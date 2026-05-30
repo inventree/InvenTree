@@ -11,6 +11,7 @@ import {
   Stack,
   Text
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   IconBookmarks,
   IconBuilding,
@@ -1165,11 +1166,25 @@ export default function PartDetail() {
                   variant='transparent'
                   disabled={!user.hasChangeRole(UserRoles.part)}
                   onClick={() => {
+                    const locking = !part.locked;
                     api
                       .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
-                        locked: !part.locked
+                        locked: locking
                       })
-                      .then(refreshInstance);
+                      .then(() => {
+                        notifications.hide('part-lock');
+                        notifications.show({
+                          id: 'part-lock',
+                          message: locking ? t`Part locked` : t`Part unlocked`,
+                          color: 'green',
+                          icon: locking ? (
+                            <IconLock size='1rem' />
+                          ) : (
+                            <IconLockOpen size='1rem' />
+                          )
+                        });
+                        refreshInstance();
+                      });
                   }}
                 >
                   {part?.locked ? <IconLock /> : <IconLockOpen />}

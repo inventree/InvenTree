@@ -10,6 +10,7 @@ export interface ModelInformationInterface {
   url_detail?: string;
   api_endpoint: ApiEndpoints;
   admin_url?: string;
+  pk_field?: string;
   supports_barcode?: boolean;
   icon: keyof InvenTreeIconType;
 }
