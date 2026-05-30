@@ -271,6 +271,7 @@ If running with a PostgreSQL database backend, the following additional options 
 | `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 5 | Idle TCP keepalive |
 | `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 5 | TCP keepalive interval |
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
+| `INVENTREE_DB_TCP_USER_TIMEOUT` | database.tcp_user_timeout | 2000 | TCP user timeout (ms) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### MySQL Settings

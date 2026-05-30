@@ -157,10 +157,13 @@ def set_postgres_options(db_options: dict):
             )
         )
 
-    # # Milliseconds for how long pending data should remain unacked
-    # by the remote server
-    # TODO: Supported starting in PSQL 11
-    # "tcp_user_timeout": int(os.getenv("PGTCP_USER_TIMEOUT", "1000"),
+    # # Milliseconds for how long pending data should remain unacked by the remote server
+    if 'tcp_user_timeout' not in db_options:
+        db_options['tcp_user_timeout'] = int(
+            get_setting(
+                'INVENTREE_DB_TCP_USER_TIMEOUT', 'database.tcp_user_timeout', '2000'
+            )
+        )
 
     # Postgres's default isolation level is Read Committed which is
     # normally fine, but most developers think the database server is
