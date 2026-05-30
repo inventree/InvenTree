@@ -592,6 +592,7 @@ export default function BuildDetail() {
     build,
     id,
     user,
+    partRequirements,
     buildStatus,
     globalSettings,
     showChildBuilds,
