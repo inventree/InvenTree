@@ -326,7 +326,7 @@ def offload_task(
         except Exception as exc:
             log_error('offload_task', scope='worker')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
-            return False
+            raise exc
 
     # Finally, task either completed successfully or was offloaded
     return True
