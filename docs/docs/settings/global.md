@@ -130,6 +130,12 @@ Configuration of part pricing:
 {{ globalsetting("PRICING_USE_VARIANT_PRICING") }}
 {{ globalsetting("PRICING_ACTIVE_VARIANTS") }}
 
+#### Fiscal Year
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("FISCAL_YEAR_START") }}
+
 ### Reporting
 
 Configuration of report generation:
