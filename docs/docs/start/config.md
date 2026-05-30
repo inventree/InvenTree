@@ -266,10 +266,10 @@ The following database options can be configured:
 If running with a PostgreSQL database backend, the following additional options are available:
 
 {{ configtable() }}
-{{ configsetting("INVENTREE_DB_TIMEOUT", default="2") }} Database connection timeout (s) |
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | `INVENTREE_DB_TCP_KEEPALIVES` | database.tcp_keepalives | 1 | TCP keepalive |
-| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
-| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 1| TCP keepalive interval |
+| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 5 | Idle TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 5 | TCP keepalive interval |
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 

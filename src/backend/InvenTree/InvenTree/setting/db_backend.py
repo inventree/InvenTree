@@ -113,9 +113,9 @@ def set_postgres_options(db_options: dict):
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
-        # # seconds, 2 is minimum allowed by libpq
-        db_options['connect_timeout'] = int(
-            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
+        # Note: 2 seconds is minimum allowed by libpq
+        db_options['connect_timeout'] = max(
+            2, int(get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 10))
         )
 
     # Setup TCP keepalive
@@ -133,7 +133,7 @@ def set_postgres_options(db_options: dict):
     if 'keepalives_idle' not in db_options:
         db_options['keepalives_idle'] = int(
             get_setting(
-                'INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1
+                'INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 5
             )
         )
 
@@ -143,7 +143,7 @@ def set_postgres_options(db_options: dict):
             get_setting(
                 'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
                 'database.tcp_keepalives_interval',
-                '1',
+                '5',
             )
         )
 
