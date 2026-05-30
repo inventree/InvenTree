@@ -61,6 +61,7 @@ export default function UserSettings() {
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
+              'SHOW_EXTRA_MODEL_INFO',
               'SHOW_FULL_LOCATION_IN_TABLES',
               'SHOW_FULL_CATEGORY_IN_TABLES',
               'SHOW_BOM_SUBASSEMBLY_LEVELS'
