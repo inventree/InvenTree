@@ -123,19 +123,6 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         link: '/scan',
         icon: 'barcode',
         hidden: !globalSettings.isSet('BARCODE_ENABLE')
-      },
-      {
-        id: 'clock',
-        title: t`Clock In / Out`,
-        link: '/attendance',
-        icon: 'clock'
-      },
-      {
-        id: 'timesheet',
-        title: t`Timesheet Report`,
-        link: '/timesheet',
-        icon: 'report',
-        hidden: !user.isStaff()
       }
     ];
   }, [user, globalSettings]);

@@ -31,7 +31,13 @@
       "Bash(/home/thegreatcensor/InvenTree/venv/bin/pip list *)",
       "Bash(/home/thegreatcensor/InvenTree/dev/venv/bin/pip list *)",
       "Bash(./node_modules/.bin/tsc --noEmit --pretty)",
-      "Bash(node_modules/.bin/tsc --noEmit --pretty)"
+      "Bash(node_modules/.bin/tsc --noEmit --pretty)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(python -c \"import django; django.setup\\(\\); print\\('django loads clean'\\)\")",
+      "Bash(./venv/bin/python -c \"import django; django.setup\\(\\); print\\('django ok'\\)\")",
+      "Bash(yarn extract *)",
+      "Bash(npm --version)",
+      "Bash(npm run *)"
     ]
   }
 }

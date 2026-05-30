@@ -247,14 +247,6 @@ export enum ApiEndpoints {
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
 
-  // Attendance API endpoints
-  attendance_status = 'attendance/status/',
-  attendance_clock = 'attendance/clock/',
-  attendance_entries = 'attendance/entries/',
-  attendance_summary = 'attendance/summary/',
-  attendance_shifts = 'attendance/shifts/',
-  attendance_shift_detail = 'attendance/shifts/:id/',
-
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'
 }

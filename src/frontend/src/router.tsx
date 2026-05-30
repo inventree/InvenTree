@@ -56,14 +56,6 @@ export const StockDetail = Loadable(
   lazy(() => import('./pages/stock/StockDetail'))
 );
 
-export const Attendance = Loadable(
-  lazy(() => import('./pages/attendance/ClockPage'))
-);
-
-export const TimesheetReport = Loadable(
-  lazy(() => import('./pages/attendance/TimesheetReport'))
-);
-
 export const BuildIndex = Loadable(
   lazy(() => import('./pages/build/BuildIndex'))
 );
@@ -162,8 +154,6 @@ export const routes = (
       <Route path='home/' element={<Home />} />,
       <Route path='notifications/*' element={<Notifications />} />,
       <Route path='scan/' element={<Scan />} />,
-      <Route path='attendance/' element={<Attendance />} />,
-      <Route path='timesheet/' element={<TimesheetReport />} />,
       <Route path='settings/'>
         <Route index element={<Navigate to='admin/' />} />
         <Route path='admin/*' element={<AdminCenter />} />

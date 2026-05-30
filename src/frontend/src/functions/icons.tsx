@@ -27,7 +27,6 @@ import {
   IconClipboardCheck,
   IconClipboardList,
   IconClipboardText,
-  IconClock,
   IconCopy,
   IconCornerDownLeft,
   IconCornerDownRight,
@@ -117,7 +116,6 @@ import type React from 'react';
 const icons: InvenTreeIconType = {
   name: IconPoint,
   description: IconInfoCircle,
-  clock: IconClock,
   variant_of: IconHierarchy,
   revision_of: IconStatusChange,
   unallocated_stock: IconPackage,

@@ -15,6 +15,7 @@ import {
 import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
 import {
   IconAlertCircle,
+  IconArrowMerge,
   IconArrowRight,
   IconNumber,
   IconQuestionMark,
@@ -33,6 +34,7 @@ import dayjs from 'dayjs';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
+import { ConsolidateStockBarcodeModal } from '../../components/barcodes/ConsolidateStockBarcodeModal';
 import { MoveStockBarcodeModal } from '../../components/barcodes/MoveStockBarcodeModal';
 import { ReceiveStockBarcodeModal } from '../../components/barcodes/ReceiveStockBarcodeModal';
 import PageTitle from '../../components/nav/PageTitle';
@@ -52,6 +54,9 @@ export default function Scan() {
   const [selection, setSelection] = useState<string[]>([]);
   const [moveModalOpen, setMoveModalOpen] = useState<boolean>(false);
   const [receiveModalOpen, setReceiveModalOpen] = useState<boolean>(false);
+  const [consolidateModalOpen, setConsolidateModalOpen] =
+    useState<boolean>(false);
+  const [clearSelectionToken, setClearSelectionToken] = useState<number>(0);
 
   // Fetch model instance based on scan item
   const fetchInstance = useCallback(
@@ -221,6 +226,15 @@ export default function Scan() {
             </Button>
           )}
           {modelType === ModelType.stockitem && (
+            <Button
+              onClick={() => setConsolidateModalOpen(true)}
+              leftSection={<IconArrowMerge size={16} />}
+              color='orange'
+            >
+              <Trans>Consolidate Stock</Trans>
+            </Button>
+          )}
+          {modelType === ModelType.stockitem && (
             <ActionIcon
               onClick={notYetImplemented}
               title={t`Count`}
@@ -306,16 +320,27 @@ export default function Scan() {
                   historyHandlers.setState(newHistory);
                   setHistoryStorage(newHistory);
                 }}
+                clearSelectionToken={clearSelectionToken}
               />
             </Stack>
           </Paper>
         </Grid.Col>
       </Grid>
+      <ConsolidateStockBarcodeModal
+        opened={consolidateModalOpen}
+        onClose={() => setConsolidateModalOpen(false)}
+        onSuccess={() => {
+          setSelection([]);
+          setClearSelectionToken((t) => t + 1);
+        }}
+        items={selectedItems}
+      />
       <MoveStockBarcodeModal
         opened={moveModalOpen}
         onClose={() => setMoveModalOpen(false)}
         onSuccess={() => {
           setSelection([]);
+          setClearSelectionToken((t) => t + 1);
         }}
         items={selectedItems}
         sourceLocationPk={sourceLocationPk}
@@ -326,6 +351,7 @@ export default function Scan() {
         onClose={() => setReceiveModalOpen(false)}
         onSuccess={() => {
           setSelection([]);
+          setClearSelectionToken((t) => t + 1);
         }}
         items={selectedItems}
       />

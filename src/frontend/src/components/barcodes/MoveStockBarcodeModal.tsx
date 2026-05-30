@@ -41,11 +41,11 @@ interface LocationStockGroup {
   partDetail: any;
   locationPk: number | null;
   locationDetail: any;
-  caseQty: number; // the "standard" case size for this part
-  caseCount: number; // how many full cases available
-  looseQty: number; // total loose (non-case) units available
-  caseItems: any[]; // stock items that match the case size
-  looseItems: any[]; // stock items that don't match case size
+  packageQty: number; // the "standard" package size for this part
+  packageCount: number; // how many full packages available
+  looseQty: number; // total loose (non-package) units available
+  packageItems: any[]; // stock items that match the package size
+  looseItems: any[]; // stock items that don't match package size
 }
 
 export function MoveStockBarcodeModal({
@@ -105,9 +105,9 @@ export function MoveStockBarcodeModal({
     enabled: opened && partIds.length > 0
   });
 
-  // Determine standard case size per part (most common stock item quantity > 1)
-  const partCaseSizes = useMemo(() => {
-    const map = new Map<number, number>(); // partPk -> caseQty
+  // Determine standard package size per part (most common stock item quantity > 1)
+  const partPackageSizes = useMemo(() => {
+    const map = new Map<number, number>(); // partPk -> packageQty
     if (!allStockItems) return map;
 
     // Count frequency of each quantity per part
@@ -136,7 +136,7 @@ export function MoveStockBarcodeModal({
     return map;
   }, [allStockItems]);
 
-  // Group stock items by part + location, splitting into cases vs loose
+  // Group stock items by part + location, splitting into packages vs loose
   const stockGroups: LocationStockGroup[] = useMemo(() => {
     if (!allStockItems || allStockItems.length === 0) return [];
 
@@ -145,8 +145,8 @@ export function MoveStockBarcodeModal({
     allStockItems.forEach((item: any) => {
       const locPk = item.location ?? null;
       const key = `${item.part}_${locPk}`;
-      const caseQty = partCaseSizes.get(item.part) ?? 0;
-      const isCase = caseQty > 0 && item.quantity === caseQty;
+      const packageQty = partPackageSizes.get(item.part) ?? 0;
+      const isPackage = packageQty > 0 && item.quantity === packageQty;
 
       if (!map.has(key)) {
         map.set(key, {
@@ -154,18 +154,18 @@ export function MoveStockBarcodeModal({
           partDetail: item.part_detail,
           locationPk: locPk,
           locationDetail: item.location_detail,
-          caseQty,
-          caseCount: 0,
+          packageQty,
+          packageCount: 0,
           looseQty: 0,
-          caseItems: [],
+          packageItems: [],
           looseItems: []
         });
       }
 
       const group = map.get(key)!;
-      if (isCase) {
-        group.caseCount += 1;
-        group.caseItems.push(item);
+      if (isPackage) {
+        group.packageCount += 1;
+        group.packageItems.push(item);
       } else {
         group.looseQty += item.quantity ?? 0;
         group.looseItems.push(item);
@@ -173,18 +173,18 @@ export function MoveStockBarcodeModal({
     });
 
     return [...map.values()];
-  }, [allStockItems, partCaseSizes]);
+  }, [allStockItems, partPackageSizes]);
 
-  // Move state: { groupKey: { cases: n, units: n } }
+  // Move state: { groupKey: { packages: n, units: n } }
   const [moveState, setMoveState] = useState<
-    Record<string, { cases: number; units: number }>
+    Record<string, { packages: number; units: number }>
   >({});
 
   useEffect(() => {
     if (stockGroups.length > 0) {
-      const initial: Record<string, { cases: number; units: number }> = {};
+      const initial: Record<string, { packages: number; units: number }> = {};
       stockGroups.forEach((g) => {
-        initial[`${g.partPk}_${g.locationPk}`] = { cases: 0, units: 0 };
+        initial[`${g.partPk}_${g.locationPk}`] = { packages: 0, units: 0 };
       });
       setMoveState(initial);
     }
@@ -228,17 +228,20 @@ export function MoveStockBarcodeModal({
       if (sourceLocation && group.locationPk !== sourceLocation) return;
       const key = `${group.partPk}_${group.locationPk}`;
       const move = moveState[key];
-      if (!move || (move.cases === 0 && move.units === 0)) return;
+      if (!move || (move.packages === 0 && move.units === 0)) return;
 
-      // Allocate cases: move full quantity from case items
-      let casesRemaining = move.cases;
-      for (const caseItem of group.caseItems) {
-        if (casesRemaining <= 0) break;
-        transferItems.push({ pk: caseItem.pk, quantity: caseItem.quantity });
-        casesRemaining--;
+      // Allocate packages: move full quantity from package items
+      let packagesRemaining = move.packages;
+      for (const packageItem of group.packageItems) {
+        if (packagesRemaining <= 0) break;
+        transferItems.push({
+          pk: packageItem.pk,
+          quantity: packageItem.quantity
+        });
+        packagesRemaining--;
       }
 
-      // Allocate loose units: use loose items first, then split from cases
+      // Allocate loose units: use loose items first, then split from packages
       let unitsRemaining = move.units;
       for (const looseItem of group.looseItems) {
         if (unitsRemaining <= 0) break;
@@ -247,15 +250,18 @@ export function MoveStockBarcodeModal({
         unitsRemaining -= take;
       }
 
-      // If still need units, split from remaining case items
-      for (const caseItem of group.caseItems) {
+      // If still need units, split from remaining package items
+      for (const packageItem of group.packageItems) {
         if (unitsRemaining <= 0) break;
-        // Skip case items already fully moved
-        if (move.cases > 0 && group.caseItems.indexOf(caseItem) < move.cases)
+        // Skip package items already fully moved
+        if (
+          move.packages > 0 &&
+          group.packageItems.indexOf(packageItem) < move.packages
+        )
           continue;
-        const take = Math.min(unitsRemaining, caseItem.quantity ?? 0);
+        const take = Math.min(unitsRemaining, packageItem.quantity ?? 0);
         if (take > 0) {
-          transferItems.push({ pk: caseItem.pk, quantity: take });
+          transferItems.push({ pk: packageItem.pk, quantity: take });
           unitsRemaining -= take;
         }
       }
@@ -313,8 +319,8 @@ export function MoveStockBarcodeModal({
       const key = `${group.partPk}_${group.locationPk}`;
       const move = moveState[key];
       if (!move) return;
-      const caseUnits = move.cases * group.caseQty;
-      const total = caseUnits + move.units;
+      const packageUnits = move.packages * group.packageQty;
+      const total = packageUnits + move.units;
       if (total > 0) {
         count++;
         totalQty += total;
@@ -370,13 +376,13 @@ export function MoveStockBarcodeModal({
                     <Trans>Location</Trans>
                   </Table.Th>
                   <Table.Th style={{ whiteSpace: 'nowrap' }}>
-                    <Trans>Cases</Trans>
+                    <Trans>Packages</Trans>
                   </Table.Th>
                   <Table.Th style={{ whiteSpace: 'nowrap' }}>
                     <Trans>Loose Units</Trans>
                   </Table.Th>
                   <Table.Th style={{ whiteSpace: 'nowrap' }}>
-                    <Trans>Cases to Move</Trans>
+                    <Trans>Packages to Move</Trans>
                   </Table.Th>
                   <Table.Th style={{ whiteSpace: 'nowrap' }}>
                     <Trans>Units to Move</Trans>
@@ -388,11 +394,11 @@ export function MoveStockBarcodeModal({
                   const groupKey = `${group.partPk}_${group.locationPk}`;
                   const willMove =
                     !sourceLocation || group.locationPk === sourceLocation;
-                  const move = moveState[groupKey] ?? { cases: 0, units: 0 };
-                  const maxCases = group.caseCount;
+                  const move = moveState[groupKey] ?? { packages: 0, units: 0 };
+                  const maxPackages = group.packageCount;
                   const maxUnits =
                     group.looseQty +
-                    (group.caseCount - move.cases) * group.caseQty;
+                    (group.packageCount - move.packages) * group.packageQty;
 
                   return (
                     <Table.Tr
@@ -416,11 +422,11 @@ export function MoveStockBarcodeModal({
                         )}
                       </Table.Td>
                       <Table.Td>
-                        {group.caseCount > 0 ? (
+                        {group.packageCount > 0 ? (
                           <Group gap='xs'>
-                            <Text fw={700}>{group.caseCount}</Text>
+                            <Text fw={700}>{group.packageCount}</Text>
                             <Badge variant='light' color='blue' size='sm'>
-                              {group.caseCount} &times; {group.caseQty}
+                              {group.packageCount} &times; {group.packageQty}
                             </Badge>
                           </Group>
                         ) : (
@@ -435,20 +441,23 @@ export function MoveStockBarcodeModal({
                         )}
                       </Table.Td>
                       <Table.Td>
-                        {willMove && maxCases > 0 ? (
+                        {willMove && maxPackages > 0 ? (
                           <NumberInput
-                            value={move.cases}
+                            value={move.packages}
                             onChange={(v) =>
                               setMoveState((prev) => ({
                                 ...prev,
                                 [groupKey]: {
-                                  ...(prev[groupKey] ?? { cases: 0, units: 0 }),
-                                  cases: typeof v === 'number' ? v : 0
+                                  ...(prev[groupKey] ?? {
+                                    packages: 0,
+                                    units: 0
+                                  }),
+                                  packages: typeof v === 'number' ? v : 0
                                 }
                               }))
                             }
                             min={0}
-                            max={maxCases}
+                            max={maxPackages}
                             step={1}
                           />
                         ) : (
@@ -465,7 +474,10 @@ export function MoveStockBarcodeModal({
                               setMoveState((prev) => ({
                                 ...prev,
                                 [groupKey]: {
-                                  ...(prev[groupKey] ?? { cases: 0, units: 0 }),
+                                  ...(prev[groupKey] ?? {
+                                    packages: 0,
+                                    units: 0
+                                  }),
                                   units: typeof v === 'number' ? v : 0
                                 }
                               }))
