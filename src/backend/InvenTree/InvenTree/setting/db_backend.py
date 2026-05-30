@@ -10,6 +10,18 @@ from InvenTree.ready import isInWorkerThread
 logger = structlog.get_logger('inventree')
 
 
+def _get_conn_max_age() -> int | None:
+    """Return the configured CONN_MAX_AGE value.
+
+    Accepts an integer number of seconds, or 'None' for unlimited persistence.
+    Defaults to 0 (close the connection after each request).
+    """
+    value = get_setting('INVENTREE_DB_CONN_MAX_AGE', 'database.conn_max_age', 0)
+    if value is None or str(value).strip().lower() == 'none':
+        return None
+    return int(value)
+
+
 def get_db_backend():
     """Return the database backend configuration."""
     # For the core database configuration values, we test for UPPERCASE configuration values as a backup,
@@ -44,6 +56,13 @@ def get_db_backend():
         )
         or get_config_value('database.OPTIONS')
         or {},
+        # Seconds to keep idle connections open across requests (0 = close after each request).
+        # Set to None for unlimited. Enable CONN_HEALTH_CHECKS alongside any non-zero value
+        # so stale connections are detected before use rather than causing request failures.
+        'CONN_MAX_AGE': _get_conn_max_age(),
+        'CONN_HEALTH_CHECKS': get_boolean_setting(
+            'INVENTREE_DB_CONN_HEALTH_CHECKS', 'database.conn_health_checks', False
+        ),
     }
 
     # Check for required keys
