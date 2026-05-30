@@ -21,7 +21,7 @@ type NavTab = {
   name: string;
   title: string;
   icon: ReactNode;
-  role?: UserRoles;
+  visible?: boolean;
 };
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
@@ -35,37 +35,43 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       name: 'part',
       title: t`Parts`,
       icon: <IconBox />,
-      role: UserRoles.part
+      visible:
+        user.hasViewRole(UserRoles.part) ||
+        user.hasViewRole(UserRoles.part_category)
     },
     {
       name: 'stock',
       title: t`Stock`,
       icon: <IconPackages />,
-      role: UserRoles.stock
+      visible:
+        user.hasViewRole(UserRoles.stock) ||
+        user.hasViewRole(UserRoles.stock_location) ||
+        user.hasViewRole(UserRoles.transfer_order)
     },
     {
       name: 'manufacturing',
       title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
-      role: UserRoles.build
+      visible: user.hasViewRole(UserRoles.build)
     },
     {
       name: 'purchasing',
       title: t`Purchasing`,
       icon: <IconShoppingCart />,
-      role: UserRoles.purchase_order
+      visible: user.hasViewRole(UserRoles.purchase_order)
     },
     {
       name: 'sales',
       title: t`Sales`,
       icon: <IconTruckDelivery />,
-      role: UserRoles.sales_order
+      visible:
+        user.hasViewRole(UserRoles.sales_order) ||
+        user.hasViewRole(UserRoles.return_order)
     }
   ];
 
   return navTabs.filter((tab) => {
-    if (!tab.role) return true;
-    return user.hasViewRole(tab.role);
+    return tab.visible !== false;
   });
 }
 
