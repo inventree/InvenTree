@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 type NavTab = {
   name: string;
@@ -25,6 +26,8 @@ type NavTab = {
 };
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
+  const globalSettings = useGlobalSettingsState.getState();
+
   const navTabs: NavTab[] = [
     {
       name: 'home',
@@ -46,7 +49,8 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       visible:
         user.hasViewRole(UserRoles.stock) ||
         user.hasViewRole(UserRoles.stock_location) ||
-        user.hasViewRole(UserRoles.transfer_order)
+        (globalSettings.isSet('TRANSFERORDER_ENABLED') &&
+          user.hasViewRole(UserRoles.transfer_order))
     },
     {
       name: 'manufacturing',
@@ -66,7 +70,8 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       icon: <IconTruckDelivery />,
       visible:
         user.hasViewRole(UserRoles.sales_order) ||
-        user.hasViewRole(UserRoles.return_order)
+        (globalSettings.isSet('RETURNORDER_ENABLED') &&
+          user.hasViewRole(UserRoles.return_order))
     }
   ];
 
