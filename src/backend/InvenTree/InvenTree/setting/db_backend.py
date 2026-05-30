@@ -5,6 +5,7 @@ from pathlib import Path
 import structlog
 
 from InvenTree.config import get_boolean_setting, get_config_value, get_setting
+from InvenTree.ready import isInWorkerThread
 
 logger = structlog.get_logger('inventree')
 
@@ -179,6 +180,13 @@ def set_postgres_options(db_options: dict):
             IsolationLevel.SERIALIZABLE
             if serializable
             else IsolationLevel.READ_COMMITTED
+        )
+
+    # Specify the application name for the database connection
+    # This can be useful for debugging and monitoring purposes
+    if 'application_name' not in db_options:
+        db_options['application_name'] = (
+            'inventree-worker' if isInWorkerThread() else 'inventree-server'
         )
 
 
