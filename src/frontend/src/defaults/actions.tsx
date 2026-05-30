@@ -172,6 +172,17 @@ export function getActions(navigate: NavigateFunction) {
       });
 
     staff &&
+      user?.hasViewPermission(ModelType.error) &&
+      _actions.push({
+        id: 'error-logs',
+        label: t`Error Logs`,
+        description: t`View error logs for this instance`,
+        onClick: () => navigate('/settings/admin/errors'),
+        leftSection: <IconReport size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
       _actions.push({
         id: 'plugin-settings',
         label: t`Plugins`,
