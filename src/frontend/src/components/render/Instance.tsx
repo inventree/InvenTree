@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
   Alert,
   Anchor,
   Box,
@@ -28,6 +29,7 @@ import type {
 
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
+import { IconLink } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { usePluginState } from '../../states/PluginState';
@@ -205,7 +207,12 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
               target='_blank'
               onClick={(event) => navigateToLink(detailUrl, navigate, event)}
             >
-              <Text size='sm'>{t`View details`}</Text>
+              <Group gap='xs' wrap='nowrap'>
+                <ActionIcon variant='transparent' size='xs'>
+                  <IconLink />
+                </ActionIcon>
+                <Text size='sm'>{t`View details`}</Text>
+              </Group>
             </Anchor>
           )}
         </Stack>
