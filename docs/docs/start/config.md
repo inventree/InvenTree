@@ -282,6 +282,7 @@ If running with a PostgreSQL database backend, the following additional options 
 If running with a MySQL database backend, the following additional options are available:
 
 {{ configtable() }}
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings

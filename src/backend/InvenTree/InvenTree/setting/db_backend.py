@@ -211,7 +211,11 @@ def set_postgres_options(db_options: dict):
 
 def set_mysql_options(db_options: dict):
     """Set database options specific to mysql backend."""
-    # TODO TCP time outs and keepalives
+    # Timeout values
+    if 'connect_timeout' not in db_options:
+        db_options['connect_timeout'] = int(
+            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 10)
+        )
 
     # MariaDB's default isolation level is Repeatable Read which is
     # normally fine, but most developers think the database server is
