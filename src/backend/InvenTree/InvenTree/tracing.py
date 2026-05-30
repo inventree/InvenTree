@@ -50,11 +50,16 @@ def setup_tracing(
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
+
     if endpoint is None or headers is None:
         print(
             'Tracing endpoint or headers not specified - skipping tracing setup'
         )  # pragma: no cover
         return  # pragma: no cover
+
+    # check if trace is already set up - if so, skip
+    if trace.get_tracer_provider() is not None:
+        return
 
     # Logger configuration
     logger = logging.getLogger('inventree')
