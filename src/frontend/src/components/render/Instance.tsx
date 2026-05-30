@@ -151,8 +151,9 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
       return false;
     }
 
-    if (props.showHover === false) {
-      return false;
+    // Override with the props.showHover attribute
+    if (props.showHover !== undefined) {
+      return props.showHover;
     }
 
     return userSettings.isSet('SHOW_EXTRA_MODEL_INFO') && !!modelInfo;
