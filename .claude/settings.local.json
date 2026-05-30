@@ -37,7 +37,14 @@
       "Bash(./venv/bin/python -c \"import django; django.setup\\(\\); print\\('django ok'\\)\")",
       "Bash(yarn extract *)",
       "Bash(npm --version)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git status *)",
+      "Bash(git restore *)",
+      "Bash(git check-ignore *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git reset *)",
+      "Bash(git commit *)",
+      "Bash(python3 *)"
     ]
   }
 }
