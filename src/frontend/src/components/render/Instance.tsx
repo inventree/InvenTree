@@ -156,7 +156,8 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
       return props.showHover;
     }
 
-    return userSettings.isSet('SHOW_EXTRA_MODEL_INFO') && !!modelInfo;
+    // If not specified, fall back to the user configured setting
+    return userSettings.isSet('SHOW_EXTRA_MODEL_INFO');
   }, [props.showHover, modelInfo, userSettings]);
 
   // Extract model ID from the provided instance data, using the defined primary key field (or 'pk' as a fallback)
