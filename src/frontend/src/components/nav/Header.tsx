@@ -271,7 +271,7 @@ function NavTabs() {
 
     // static content
     mainNavTabs.forEach((tab) => {
-      if (tab.role && !user.hasViewRole(tab.role)) {
+      if (tab.visible === false) {
         return;
       }
 
