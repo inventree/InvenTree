@@ -151,8 +151,12 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
       return false;
     }
 
+    if (props.showHover === false) {
+      return false;
+    }
+
     return userSettings.isSet('SHOW_EXTRA_MODEL_INFO') && !!modelInfo;
-  }, [modelInfo, userSettings]);
+  }, [props.showHover, modelInfo, userSettings]);
 
   // Extract model ID from the provided instance data, using the defined primary key field (or 'pk' as a fallback)
   const modelId = useMemo(() => {
