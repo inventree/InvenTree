@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
-- [#9303](https://github.com/inventree/InvenTree/pull/9303) - Purchase Orders, Return Orders, and Transfer Orders now require an *internal* address (one not linked to any company) for their `address` field. Previously these orders accepted any company-linked address. Any existing orders with a company-linked address set will fail validation on next save and must have their address field cleared or updated to an internal address.
+- [#12056](https://github.com/inventree/InvenTree/pull/12056) - Purchase Orders, Return Orders, and Transfer Orders now require an *internal* address (one not linked to any company) for their `address` field. Previously these orders accepted any company-linked address. Any existing orders with a company-linked address set will fail validation on next save and must have their address field cleared or updated to an internal address.
 
 ### Added
 
-- [#9303](https://github.com/inventree/InvenTree/pull/9303) - adds support for *internal addresses* — addresses that belong to your own organisation rather than to an external company. Internal addresses are managed from the Admin Center and are used as delivery addresses on Purchase Orders, Return Orders, and Transfer Orders. A new `?internal=true/false` filter has been added to the address list API endpoint to distinguish internal from company-linked addresses. If no explicit address is set on an order, the primary internal address is used as a fallback.
+- [#12056](https://github.com/inventree/InvenTree/pull/12056) - adds support for *internal addresses* — addresses that belong to your own organisation rather than to an external company. Internal addresses are managed from the Admin Center and are used as delivery addresses on Purchase Orders, Return Orders, and Transfer Orders. A new `?internal=true/false` filter has been added to the address list API endpoint to distinguish internal from company-linked addresses. If no explicit address is set on an order, the primary internal address is used as a fallback.
 
 ### Changed
 
