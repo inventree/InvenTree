@@ -32,6 +32,7 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -53,6 +54,7 @@ from .status_codes import BuildStatus
 
 
 class BuildSerializer(
+    CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     NotesFieldMixin,
     DataImportExportSerializerMixin,
@@ -115,8 +117,6 @@ class BuildSerializer(
     reference = serializers.CharField(required=True)
 
     level = serializers.IntegerField(label=_('Build Level'), read_only=True)
-
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     part_detail = OptionalField(
         serializer_class=part_serializers.PartBriefSerializer,

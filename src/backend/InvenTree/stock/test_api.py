@@ -1411,6 +1411,82 @@ class CustomStockItemStatusTest(StockAPITestCase):
         self.assertEqual(status['value'], self.status.key)
         self.assertEqual(status['display_name'], self.status.label)
 
+    def test_custom_status_query_count(self):
+        """Test that listing StockItems with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving 'status_text' for custom status values is O(1)
+        in database queries, not O(N) relative to the number of results.
+        """
+        stock_content_type = ContentType.objects.get(model='stockitem')
+
+        # 10 custom status values - different keys, labels, and logical_keys
+        logical_keys = [
+            StockStatus.OK.value,
+            StockStatus.ATTENTION.value,
+            StockStatus.DAMAGED.value,
+            StockStatus.DESTROYED.value,
+            StockStatus.REJECTED.value,
+            StockStatus.LOST.value,
+            StockStatus.QUARANTINED.value,
+            StockStatus.RETURNED.value,
+            StockStatus.OK.value,
+            StockStatus.ATTENTION.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=2000 + i,
+                name=f'StockCustomStatus{i}',
+                label=f'Stock Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=stock_content_type,
+                reference_status='StockStatus',
+            )
+            for i in range(10)
+        ]
+
+        part = Part.objects.filter(active=True, virtual=False).first()
+
+        # Create 500 stock items, cycling through the 10 custom statuses
+        StockItem.objects.bulk_create([
+            StockItem(
+                part=part,
+                quantity=1,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(500)
+        ])
+
+        # Lookup: custom_key -> custom_status_object, for quick per-row assertions
+        custom_lookup = {cs.key: cs for cs in custom_statuses}
+
+        # Query count must stay below the fixed threshold regardless of limit.
+        # An N+1 bug would push limit=100 or limit=500 well over the threshold.
+        for limit in [50, 100, 500]:
+            response = self.get(
+                self.list_url,
+                data={'limit': limit},
+                expected_code=200,
+                max_query_count=50,
+            )
+
+            for result in response.data['results']:
+                cs = custom_lookup.get(result['status_custom_key'])
+
+                if cs is None:
+                    # Item from fixtures - no custom status assigned
+                    continue
+
+                self.assertEqual(result['status'], cs.logical_key)
+                self.assertEqual(result['status_custom_key'], cs.key)
+                self.assertEqual(result['status_text'], cs.label)
+
 
 class StockItemTest(StockAPITestCase):
     """Series of API tests for the StockItem API."""
