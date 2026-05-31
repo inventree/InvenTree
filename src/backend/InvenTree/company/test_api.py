@@ -397,6 +397,28 @@ class AddressTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), self.num_addr)
 
+    def test_filter_internal(self):
+        """Test the ?internal= filter returns only internal / only company addresses."""
+        n_internal = 2
+        Address.objects.bulk_create([
+            Address(company=None, title=f'Internal {idx}') for idx in range(n_internal)
+        ])
+
+        total = Address.objects.count()
+        n_company = total - n_internal
+
+        # internal=true → only addresses with company=None
+        response = self.get(self.url, {'internal': True}, expected_code=200)
+        self.assertEqual(len(response.data), n_internal)
+        for item in response.data:
+            self.assertIsNone(item['company'])
+
+        # internal=false → only addresses with a company set
+        response = self.get(self.url, {'internal': False}, expected_code=200)
+        self.assertEqual(len(response.data), n_company)
+        for item in response.data:
+            self.assertIsNotNone(item['company'])
+
     def test_create(self):
         """Test creating a new address."""
         company = Company.objects.first()
