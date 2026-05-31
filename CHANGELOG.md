@@ -11,8 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+- [#9303](https://github.com/inventree/InvenTree/pull/9303) - Purchase Orders, Return Orders, and Transfer Orders now require an *internal* address (one not linked to any company) for their `address` field. Previously these orders accepted any company-linked address. Any existing orders with a company-linked address set will fail validation on next save and must have their address field cleared or updated to an internal address.
 
 ### Added
+
+- [#9303](https://github.com/inventree/InvenTree/pull/9303) - adds support for *internal addresses* — addresses that belong to your own organisation rather than to an external company. Internal addresses are managed from the Admin Center and are used as delivery addresses on Purchase Orders, Return Orders, and Transfer Orders. A new `?internal=true/false` filter has been added to the address list API endpoint to distinguish internal from company-linked addresses. If no explicit address is set on an order, the primary internal address is used as a fallback.
+
+### Changed
 
 - [#12019](https://github.com/inventree/InvenTree/pull/12019) adds a "location" field to the StockCount API endpoint, allowing users to specify a location when performing a stock count. This field is optional, and if not provided, the stock count will be performed without changing the location of the stock item. If a location is provided, the stock item(s) will be moved to the specified location as part of the stock count operation.
 - [#12011](https://github.com/inventree/InvenTree/pull/12011) adds a "creation_date" field to the StockItem API endpoint, allowing users to track when each stock item was created. This field is read-only and is automatically set to the current date and time when a new stock item is created.
