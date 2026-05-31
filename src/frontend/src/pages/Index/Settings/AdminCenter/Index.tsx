@@ -263,13 +263,12 @@ export default function AdminCenter() {
       {
         id: 'company',
         label: t`Company Data`,
-        panelIDs: ['addresses']
+        panelIDs: ['user', 'addresses']
       },
       {
         id: 'ops',
         label: t`Operations`,
         panelIDs: [
-          'user',
           'barcode-history',
           'background',
           'errors',
