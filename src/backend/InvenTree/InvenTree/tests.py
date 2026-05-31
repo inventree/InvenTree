@@ -1488,7 +1488,7 @@ class TestOffloadTask(InvenTreeTestCase):
                 offload_task('dummy_task.numbers', 1, 1, 1, force_sync=True)
             )
 
-            self.assertIn('Malformed function path', str(log.output))
+            self.assertIn("No module named \\'dummy_task\\'", str(log.output))
 
         # Offload dummy task with a Part instance
         # This should succeed, ensuring that the Part instance is correctly pickled
