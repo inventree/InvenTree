@@ -45,8 +45,12 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
 
+  await loadTab(page, 'Build Details');
+
   // This build order should be "on hold"
   await page.getByText('On Hold').first().waitFor();
+  await page.getByText('Can Build').first().waitFor();
+  await page.getByText('Completed Outputs').first().waitFor();
 
   // Edit the build order (via keyboard shortcut)
   await page.keyboard.press('Control+E');
