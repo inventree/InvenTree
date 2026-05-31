@@ -376,7 +376,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # No supplier part information available
             debug_response['supplier_part'] = None
         else:
-            debug_response['supplier_part'] = supplier_part.part
+            debug_response['supplier_part'] = str(supplier_part.part)
 
         # Attempt to find matching line item
         if not line_item and purchase_order != None:
