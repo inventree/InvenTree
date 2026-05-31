@@ -764,6 +764,47 @@ class InvenTreeDecimalField(serializers.FloatField):
             raise serializers.ValidationError(_('Invalid value'))
 
 
+class CustomStatusSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models that support custom status values.
+
+    Provides a `status_text` SerializerMethodField that resolves custom
+    status labels with a single database query per model per serializer
+    context (i.e. one query for a whole list page) rather than one query per
+    object (N+1).
+    """
+
+    status_text = serializers.SerializerMethodField()
+
+    def get_status_text(self, instance):
+        """Return the human-readable status text for the instance.
+
+        Uses a per-context cache keyed by model name so that all objects in a
+        single serialization pass share one DB hit for custom label lookup.
+        """
+        custom_key = instance.get_custom_status()
+
+        if custom_key is None:
+            return instance.status_class.label(instance.get_status())
+
+        model_name = instance._meta.model_name
+        cache_key = f'_custom_status_labels_{model_name}'
+
+        # Cache a dict of custom status labels for this model, if not already cached
+        if cache_key not in self.context:
+            from common.models import InvenTreeCustomUserStateModel
+
+            self.context[cache_key] = {
+                obj.key: obj.label
+                for obj in InvenTreeCustomUserStateModel.objects.filter(
+                    model__model=model_name
+                )
+            }
+
+        return self.context[cache_key].get(
+            custom_key, instance.status_class.label(instance.get_status())
+        )
+
+
 class NotesFieldMixin:
     """Serializer mixin for handling 'notes' fields.
 
