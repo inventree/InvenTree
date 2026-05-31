@@ -606,13 +606,17 @@ class Order(
         - If this is an 'internal' order (i.e. INTERNAL_ADDRESS = True), fall back to the primary internal address.
         - Otherwise, we can fall back to the primary address of the associated company if no address is specified on the order itself.
         """
+        # Return address if directly specified
+        if address := self.address:
+            return address
+
         if self.INTERNAL_ADDRESS:
-            return (
-                self.address
-                or Address.objects.filter(company=None, primary=True).first()
-            )
+            # Return the primary internal address (i.e. where company is null)
+            return Address.objects.filter(company=None).order_by('-primary').first()
+        elif self.company:
+            return self.company.primary_address
         else:
-            return self.address or self.company.primary_address
+            return None
 
     @classmethod
     def get_status_class(cls):
