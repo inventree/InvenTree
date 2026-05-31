@@ -780,7 +780,15 @@ class CustomStatusSerializerMixin(serializers.Serializer):
 
         Uses a per-context cache keyed by model name so that all objects in a
         single serialization pass share one DB hit for custom label lookup.
+
+        During write operations DRF may call to_representation on the raw
+        validated_data dict rather than a model instance (e.g. when building
+        response headers).  Return None in that case — the response body is
+        always produced from a real instance via a separate serializer call.
         """
+        if not hasattr(instance, 'get_custom_status'):
+            return None
+
         custom_key = instance.get_custom_status()
 
         if custom_key is None:
