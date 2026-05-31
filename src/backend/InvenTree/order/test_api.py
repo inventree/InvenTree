@@ -16,7 +16,7 @@ from icalendar import Calendar
 from rest_framework import status
 
 from common.currency import currency_codes
-from common.models import InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -743,6 +743,8 @@ class PurchaseOrderTest(OrderTest):
         Ensures that resolving the 'status_text' field for custom status values
         is O(1) in database queries, not O(N) relative to the number of results.
         """
+        from django.contrib.contenttypes.models import ContentType
+
         po_content_type = ContentType.objects.get_for_model(models.PurchaseOrder)
 
         # 10 custom status values - different keys, labels, and logical_keys
