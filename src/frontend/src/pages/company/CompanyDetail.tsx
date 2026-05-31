@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconAddressBook,
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconMap2,
   IconPackageExport,
   IconPackages,
   IconShoppingCart,
@@ -264,7 +264,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         name: 'addresses',
         label: t`Addresses`,
-        icon: <IconMap2 />,
+        icon: <IconAddressBook />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
       ParametersPanel({

@@ -102,7 +102,9 @@ export function AddressTable({
 
   const addressFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
-      company: {},
+      company: {
+        required: true
+      },
       title: {},
       primary: {},
       line1: {},
@@ -117,6 +119,7 @@ export function AddressTable({
     };
 
     if (internal) {
+      fields.company.required = false;
       fields.company.value = null;
       fields.company.hidden = true;
     }
@@ -142,7 +145,7 @@ export function AddressTable({
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    table: table
+    onFormSuccess: table.refreshTable
   });
 
   const deleteAddress = useDeleteApiFormModal({

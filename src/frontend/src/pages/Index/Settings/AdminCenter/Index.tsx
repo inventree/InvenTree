@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { Stack } from '@mantine/core';
+import { Alert, Stack } from '@mantine/core';
 import {
+  IconAddressBook,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -8,6 +9,7 @@ import {
   IconFileDownload,
   IconFileUpload,
   IconHome,
+  IconInfoCircle,
   IconList,
   IconListDetails,
   IconMail,
@@ -32,6 +34,7 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import { AddressTable } from '../../../../tables/company/AddressTable';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -142,6 +145,23 @@ export default function AdminCenter() {
         content: <ExportSessionTable />
       },
       {
+        name: 'addresses',
+        label: t`Addresses`,
+        icon: <IconAddressBook />,
+        content: (
+          <Stack gap='xs'>
+            <Alert
+              icon={<IconInfoCircle />}
+              title={t`Internal Addresses`}
+              color='blue'
+            >
+              {t`Internal addresses are used for your locations, and are not linked to any external company.`}
+            </Alert>
+            <AddressTable internal />
+          </Stack>
+        )
+      },
+      {
         name: 'barcode-history',
         label: t`Barcode Scans`,
         icon: <IconQrcode />,
@@ -240,6 +260,11 @@ export default function AdminCenter() {
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
       { id: 'home', label: '', panelIDs: ['home'] },
+      {
+        id: 'company',
+        label: t`Company Data`,
+        panelIDs: ['addresses']
+      },
       {
         id: 'ops',
         label: t`Operations`,
