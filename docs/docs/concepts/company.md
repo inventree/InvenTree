@@ -97,6 +97,9 @@ Each company can have exactly one (1) primary address.
 This address is the default shown on the company profile, and the one that is automatically suggested when creating an order.
 Marking a new address as primary will remove the mark from the old primary address.
 
+!!! info "Effective order address"
+    When an order ([Sales Order](../sales/sales_order.md)) has no explicit address assigned, InvenTree uses the customer's primary address as the effective delivery address. This fallback ensures that reports and shipping labels always have an address to render, even if none was explicitly chosen on the order.
+
 #### Managing Addresses
 
 Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon("map-2") }} Addresses</span> navigation tab, from the company detail page.
@@ -129,3 +132,6 @@ Each internal address uses the same fields as a company address (Title, Line 1, 
 #### Primary Internal Address
 
 One internal address can be marked as the **primary** address. This address is the default suggestion when assigning a delivery address to a new order. Marking a different address as primary will automatically remove the mark from the previous primary address.
+
+!!! info "Effective order address"
+    When a Purchase Order, Return Order, or Transfer Order has no explicit address assigned, InvenTree falls back to the primary internal address as the effective delivery address. This ensures that reports and shipping documents always have an address to render. If no internal address exists at all, the effective address is blank.

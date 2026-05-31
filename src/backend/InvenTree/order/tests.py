@@ -13,7 +13,7 @@ from djmoney.money import Money
 import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
-from company.models import Company, Contact, SupplierPart
+from company.models import Address, Company, Contact, SupplierPart
 from InvenTree.helpers import current_date
 from InvenTree.unit_test import (
     ExchangeRateMixin,
@@ -108,6 +108,35 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         order.contact = contact
         order.clean()  # Should not raise
         order.save()
+
+    def test_order_address(self):
+        """Test the order_address property for INTERNAL_ADDRESS orders (PO/RO/TO)."""
+        po = PurchaseOrder.objects.first()
+
+        # With no address set and no primary internal address, returns None
+        po.address = None
+        self.assertIsNone(po.order_address)
+
+        # Creating a primary internal address makes it the fallback
+        primary = Address.objects.create(
+            company=None, primary=True, title='HQ', line1='1 Main St', country='AU'
+        )
+        self.assertEqual(po.order_address, primary)
+
+        # An explicit address on the order takes precedence over the primary fallback
+        explicit = Address.objects.create(
+            company=None,
+            primary=False,
+            title='Warehouse',
+            line1='2 Depot Rd',
+            country='AU',
+        )
+        po.address = explicit
+        self.assertEqual(po.order_address, explicit)
+
+        # Clearing the explicit address falls back to primary again
+        po.address = None
+        self.assertEqual(po.order_address, primary)
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""

@@ -603,11 +603,14 @@ class Order(
     def order_address(self):
         """Return the Address associated with this order.
 
-        - If this is an 'internal' order (i.e. INTERNAL_ADDRESS = True), then the 'address' field is returned directly.
+        - If this is an 'internal' order (i.e. INTERNAL_ADDRESS = True), fall back to the primary internal address.
         - Otherwise, we can fall back to the primary address of the associated company if no address is specified on the order itself.
         """
         if self.INTERNAL_ADDRESS:
-            return self.address
+            return (
+                self.address
+                or Address.objects.filter(company=None, primary=True).first()
+            )
         else:
             return self.address or self.company.primary_address
 
