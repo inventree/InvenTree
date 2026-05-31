@@ -332,7 +332,7 @@ class Address(InvenTree.models.InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
-        company: Company link for this address
+        company: Company link for this address (null if this is an *internal* address, not associated with a company)
         title: Human-readable name for the address
         primary: True if this is the company's primary address
         line1: First line of address
@@ -403,6 +403,8 @@ class Address(InvenTree.models.InvenTreeModel):
         on_delete=models.CASCADE,
         verbose_name=_('Company'),
         help_text=_('Select company'),
+        null=True,
+        blank=True,
     )
 
     title = models.CharField(
