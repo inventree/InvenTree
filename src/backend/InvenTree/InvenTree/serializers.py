@@ -775,7 +775,8 @@ class CustomStatusSerializerMixin(serializers.Serializer):
 
     status_text = serializers.SerializerMethodField()
 
-    def get_status_text(self, instance):
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_status_text(self, instance) -> Optional[str]:
         """Return the human-readable status text for the instance.
 
         Uses a per-context cache keyed by model name so that all objects in a
