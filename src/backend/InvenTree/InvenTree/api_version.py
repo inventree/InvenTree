@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 498
+INVENTREE_API_VERSION = 499
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v499 -> 2026-05-31 : https://github.com/inventree/InvenTree/pull/12056
+    - Allow null values for the 'company' field on the Address model
 
 v498 -> 2026-05-31 : https://github.com/inventree/InvenTree/pull/12055
     - Updates the "status_text" field for models which support custom status values
