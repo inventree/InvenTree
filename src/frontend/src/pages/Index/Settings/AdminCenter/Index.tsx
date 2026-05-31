@@ -155,14 +155,10 @@ export default function AdminCenter() {
               title={t`Internal Addresses`}
               color='blue'
             >
-              <Stack gap='xs'>
-                <Text>
-                  {t`Internal addresses are used for locations associated with your organization.`}
-                </Text>
-                <Text>
-                  {t`Internal addresses are not linked to any external company.`}
-                </Text>
-              </Stack>
+              <Text>
+                {t`Internal addresses are used for locations associated with your organization.`}{' '}
+                {t`Internal addresses are not linked to any external company.`}
+              </Text>
             </Alert>
             <AddressTable internal />
           </Stack>
