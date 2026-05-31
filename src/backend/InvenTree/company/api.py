@@ -105,15 +105,28 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ContactSerializer
 
 
+class AddressFilter(FilterSet):
+    """Custom API filters for the Address list endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Address
+        fields = ['company']
+
+    internal = rest_filters.BooleanFilter(
+        label=_('Internal Address'), field_name='company', lookup_expr='isnull'
+    )
+
+
 class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Address model."""
 
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+    filterset_class = AddressFilter
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['company']
 
     ordering_fields = ['title']
 
