@@ -235,6 +235,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_EXTRA_MODEL_INFO': {
+        'name': _('Show Extra Model Information'),
+        'description': _('Display extra information in model selection dropdowns'),
+        'default': False,
+        'validator': bool,
+    },
     'SHOW_FULL_LOCATION_IN_TABLES': {
         'name': _('Show full stock location in tables'),
         'description': _(
@@ -267,5 +273,13 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Last used printing machines'),
         'description': _('Save the last used printing machines for a user'),
         'default': '',
+    },
+    'DISPLAY_ITEMS_FINAL_LEVEL': {
+        'name': _('Display Items at Final Level'),
+        'description': _(
+            'Automatically default to showing items/parts instead of sub-levels for locations or categories with no children'
+        ),
+        'default': False,
+        'validator': bool,
     },
 }

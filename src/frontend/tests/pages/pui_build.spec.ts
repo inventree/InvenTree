@@ -38,14 +38,19 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
+  await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
 
+  await loadTab(page, 'Build Details');
+
   // This build order should be "on hold"
   await page.getByText('On Hold').first().waitFor();
+  await page.getByText('Can Build').first().waitFor();
+  await page.getByText('Completed Outputs').first().waitFor();
 
   // Edit the build order (via keyboard shortcut)
   await page.keyboard.press('Control+E');
@@ -60,6 +65,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await page.getByLabel('breadcrumb-0-manufacturing').click();
 
   // Load a different build order
+  await page.getByPlaceholder('Search').fill('11');
   await page.getByRole('cell', { name: 'BO0011' }).click();
 
   // This build order should be "in production"
@@ -225,6 +231,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
+  await page.getByRole('cell', { name: 'BX-123' }).waitFor();
 
   // Check the "printing" actions for the selected outputs
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
@@ -523,6 +530,8 @@ test('Build Order - Consume Stock', async ({ browser }) => {
 
   // Consume the rest of the stock via line items
   await loadTab(page, 'Required Parts');
+  await page.getByText('10K resistor in 0805 SMD').first().waitFor();
+
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-consume-stock' })
@@ -603,7 +612,7 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   await allocationRow.getByText('1 / 1').waitFor();
 
   // Close the allocation wizard
-  await page.getByRole('banner').getByRole('button').click();
+  await page.getByRole('button', { name: 'close-allocation-drawer' }).click();
 
   // Check that the output is now allocated as expected
   await row.getByText('1 / 6').waitFor();
@@ -651,6 +660,7 @@ test('Build Order - Filters', async ({ browser }) => {
   // Check for expected pagination text i.e. (1 - 24 / 24)
   // Note: Due to other concurrent tests, the number of build orders may vary
   await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+  await page.getByPlaceholder('Search').fill('23');
   await page.getByRole('cell', { name: 'BO0023' }).waitFor();
 
   // Toggle 'Outstanding' filter
@@ -662,7 +672,7 @@ test('Build Order - Filters', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'table-search-input' }).fill('');
   await setTableChoiceFilter(page, 'Outstanding', 'No');
 
-  await page.getByText('1 - 6 / 6').waitFor();
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
 
   await clearTableFilters(page);
 
@@ -696,6 +706,40 @@ test('Build Order - Duplicate', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Build Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+
+  // Create a build output
+  await loadTab(page, 'Incomplete Outputs');
+  await page
+    .getByRole('button', { name: 'action-button-add-build-output' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-batch_code' })
+    .fill('BATCH-001');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Cancel (delete) the build output
+  const cell = await page.getByRole('cell', { name: 'BATCH-001' }).first();
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // no more build outputs
+  await page.getByText('No records found').waitFor();
+
+  // Cancel the build
+  await page.getByRole('button', { name: 'action-menu-build-order-' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-build-order-actions-cancel' })
+    .click();
+
+  await page
+    .getByRole('switch', { name: 'boolean-field-remove_allocated_stock' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-remove_incomplete_outputs' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
 });
 
 // Tests for external build orders

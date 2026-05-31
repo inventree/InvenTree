@@ -32,6 +32,8 @@ import {
 } from '../ColumnRenderers';
 import {
   BatchFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasBatchCodeFilter,
   InStockFilter,
   IncludeVariantsFilter,
@@ -41,7 +43,9 @@ import {
   SerialGTEFilter,
   SerialLTEFilter,
   StatusFilterOptions,
-  SupplierFilter
+  SupplierFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -143,16 +147,20 @@ function stockItemTableColumns({
       sortable: true,
       defaultVisible: false
     },
-
+    DateColumn({
+      title: t`Created`,
+      accessor: 'creation_date',
+      sortable: true
+    }),
+    DateColumn({
+      title: t`Last Updated`,
+      accessor: 'updated'
+    }),
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
       defaultVisible: false
-    }),
-    DateColumn({
-      title: t`Last Updated`,
-      accessor: 'updated'
     }),
     DateColumn({
       accessor: 'stocktake_date',
@@ -273,18 +281,10 @@ function stockItemTableFilters({
       type: 'date',
       active: enableExpiry
     },
-    {
-      name: 'updated_before',
-      label: t`Updated Before`,
-      description: t`Show items updated before this date`,
-      type: 'date'
-    },
-    {
-      name: 'updated_after',
-      label: t`Updated After`,
-      description: t`Show items updated after this date`,
-      type: 'date'
-    },
+    UpdatedBeforeFilter(),
+    UpdatedAfterFilter(),
+    CreatedBeforeFilter(),
+    CreatedAfterFilter(),
     {
       name: 'stocktake_before',
       label: t`Stocktake Before`,
@@ -296,6 +296,11 @@ function stockItemTableFilters({
       label: t`Stocktake After`,
       description: t`Show items counted after this date`,
       type: 'date'
+    },
+    {
+      name: 'has_stocktake',
+      label: t`Has Stocktake Date`,
+      description: t`Show items which have a stocktake date`
     },
     {
       name: 'external',

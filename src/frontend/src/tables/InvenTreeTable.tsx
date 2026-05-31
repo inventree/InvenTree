@@ -7,7 +7,6 @@ import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
-import { hashString } from '@lib/functions/String';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -18,8 +17,8 @@ import type {
 } from '@lib/types/Tables';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Box, Stack } from '@mantine/core';
-import { IconArrowRight } from '@tabler/icons-react';
+import { ActionIcon, Box, Stack } from '@mantine/core';
+import { IconArrowRight, IconClick } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ContextMenuItemOptions,
@@ -254,12 +253,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [tableState.setSelectedRecords]
   );
 
-  // A hash of the current column configuration
-  // This is a workaround to fix an issue with mantine-datatable where
-  // the columns do not update correctly when they are changed dynamically
-  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
-  const [columnHash, setColumnHash] = useState<string>('');
-
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
@@ -326,7 +319,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     if (tableProps.rowActions) {
       cols.push({
         accessor: ACTIONS_COLUMN_ACCESSOR,
-        title: '   ',
+        title: (
+          <ActionIcon variant='transparent' size='sm'>
+            <IconClick />
+          </ActionIcon>
+        ),
         hidden: false,
         resizable: false,
         switchable: false,
@@ -350,13 +347,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     tableState.selectedRecords
   ]);
 
-  useEffect(() => {
-    const columnNames: string = dataColumns
-      .map((col: any) => col.accessor)
-      .join(',');
-    setColumnHash(hashString(columnNames));
-  }, [dataColumns]);
-
   // Callback when column visibility is toggled
   const toggleColumn = useCallback(
     (columnName: string) => {
@@ -378,19 +368,25 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [cacheKey, dataColumns]
   );
 
+  // Generate an ordered list of column names,
+  // which we use to ensure the table is reloaded correctly when columns are added/removed/renamed
+  const tableColumnNames = useMemo(
+    () => dataColumns.map((col: any) => col.accessor).join(','),
+    [dataColumns]
+  );
+
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
-    key: `${cacheKey}-${columnHash}`,
+    key: cacheKey,
     columns: dataColumns,
     getInitialValueInEffect: false
   });
 
   // Reset column ordering and custom widths when the component is mounted
-  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759#issuecomment-4148942070
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
   useEffect(() => {
-    tableColumns.resetColumnsOrder();
-    tableColumns.resetColumnsWidth();
-  }, []);
+    tableColumns.setColumnsOrder(dataColumns.map((col: any) => col.accessor));
+  }, [tableColumnNames]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -817,6 +813,14 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     );
   }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
 
+  // When sticky headers are enabled, we adjust the maximum viewport height,
+  // based on the number of records being displayed (up to a maximum of 80vh)
+  const autoHeight = useMemo(() => {
+    const rows = Math.min(80, 6 * Math.max(tableState.records.length, 3));
+
+    return `${rows}vh`;
+  }, [tableState.records]);
+
   return (
     <>
       <Stack gap='xs'>
@@ -842,7 +846,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
                 stickyHeader: stickyTableHeader ? 'top' : undefined
               }}
               height={
-                tableProps.height ?? (stickyTableHeader ? '80vh' : undefined)
+                tableProps.height ??
+                (stickyTableHeader ? autoHeight : undefined)
               }
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
@@ -860,6 +865,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
+              isRecordSelectable={tableProps.isRecordSelectable}
               rowExpansion={rowExpansion}
               fetching={isFetching}
               noRecordsText={missingRecordsText}

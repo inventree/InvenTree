@@ -77,11 +77,23 @@ class StockItemAdmin(admin.ModelAdmin):
 
 @admin.register(StockItemTracking)
 class StockTrackingAdmin(admin.ModelAdmin):
-    """Admin class for StockTracking."""
+    """Admin class for StockTracking - read-only to preserve audit trail integrity."""
 
     list_display = ('item', 'date', 'label')
 
     autocomplete_fields = ['item']
+
+    def has_add_permission(self, request):
+        """Prevent addition of new tracking entries via the admin interface."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Prevent modification of tracking entries via the admin interface."""
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of tracking entries via the admin interface."""
+        return False
 
 
 @admin.register(StockItemTestResult)

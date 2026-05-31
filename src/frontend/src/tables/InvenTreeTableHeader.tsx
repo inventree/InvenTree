@@ -276,6 +276,7 @@ export default function InvenTreeTableHeader({
                         <Divider />
                         {tableState.filterSet.activeFilters?.map((filter) => (
                           <FilterPreview
+                            key={filter.name}
                             filter={filter}
                             filters={tableProps.tableFilters}
                           />

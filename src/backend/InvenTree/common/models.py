@@ -15,6 +15,7 @@ from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 from secrets import compare_digest
 from typing import Any, Optional
 
@@ -25,9 +26,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.utils import validate_file_name
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -46,6 +48,7 @@ from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
+from PIL import Image
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
@@ -1930,6 +1933,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
+        thumbnail: A generated thumbnail for the uploaded file (if applicable)
+        is_image: True if this attachment is a valid image file
         comment: A comment or description for the attachment
         user: The user who uploaded the attachment
         upload_date: The date the attachment was uploaded
@@ -1937,6 +1942,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
         tags: Tags for the attachment
     """
+
+    THUMBNAIL_SIZE = 256
 
     class Meta:
         """Metaclass options."""
@@ -1948,6 +1955,31 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         choice_fnc = common.validators.attachment_model_options
 
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the Attachment model.
+
+        - Ensure that the attached file is deleted from storage when the database entry is removed
+        """
+        attachment = self.attachment
+        thumbnail = self.thumbnail
+
+        super().delete(*args, **kwargs)
+
+        # Delete the associated files from storage (if they exist)W
+        if attachment and default_storage.exists(attachment.name):
+            try:
+                # Remove the attached file from storage
+                default_storage.delete(attachment.name)
+            except Exception:  # pragma: no cover
+                pass
+
+        if thumbnail and default_storage.exists(thumbnail.name):
+            try:
+                # Remove the thumbnail file from storage
+                default_storage.delete(thumbnail.name)
+            except Exception:  # pragma: no cover
+                pass
+
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
 
@@ -1955,6 +1987,10 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         - Ensure that the 'content_type' and 'object_id' fields are set
         - Run extra validations
         """
+        import common.tasks
+
+        rebuild = kwargs.pop('rebuild', True)
+
         # Either 'attachment' or 'link' must be specified!
         if not self.attachment and not self.link:
             raise ValidationError({
@@ -1982,6 +2018,12 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             if self.file_size != 0:
                 super().save()
 
+        # Offload a background task to update the thumbnail for this attachment
+        if rebuild:
+            InvenTree.tasks.offload_task(
+                common.tasks.rebuild_attachment, self.pk, group='attachments'
+            )
+
     def clean_svg(self, field):
         """Sanitize SVG file before saving."""
         cleaned = sanitize_svg(field.file.read())
@@ -1992,6 +2034,60 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
         return str(self.link)
+
+    def validate_rename(self, filename: str):
+        """Validate that the provided filename is valid, for renaming an attachment."""
+        filename = filename.strip()
+
+        if not self.attachment:
+            raise ValidationError(_('No file attached to rename'))
+
+        if not filename:
+            raise ValidationError(_('Filename cannot be empty'))
+
+        try:
+            validate_file_name(filename, allow_relative_path=False)
+        except SuspiciousFileOperation:
+            raise ValidationError(_('Invalid filename'))
+
+        current_ext = os.path.splitext(self.attachment.name)[1]
+        new_ext = os.path.splitext(filename)[1]
+
+        if current_ext.lower() != new_ext.lower():
+            raise ValidationError(_('Cannot change file extension'))
+
+    def rename(self, filename: str):
+        """Rename the attached file."""
+        self.validate_rename(filename)
+
+        old_path = Path(self.attachment.name)
+        new_path = old_path.parent / filename
+
+        if old_path == new_path:  # pragma: no cover
+            # No change in filename
+            return
+
+        if not new_path.is_relative_to(old_path.parent):  # pragma: no cover
+            raise ValidationError(_('Invalid filename'))
+
+        new_path = new_path.as_posix()
+
+        if default_storage.exists(new_path):
+            raise ValidationError(_('A file with this name already exists'))
+
+        # Create a new file with the new name, and delete the old file
+        new_path = default_storage.save(new_path, self.attachment.file)
+
+        # Ensure that the new file exists
+        if not default_storage.exists(new_path):  # pragma: no cover
+            raise ValidationError(_('Failed to save renamed file'))
+
+        # Update the database file path
+        self.attachment.name = new_path
+        self.save()
+
+        # Remove the old path
+        default_storage.delete(old_path)
 
     model_type = models.CharField(
         max_length=100,
@@ -2005,7 +2101,15 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     attachment = models.FileField(
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
+        validators=[common.validators.validate_attachment_file],
         help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    thumbnail = models.ImageField(
+        verbose_name=_('Thumbnail'),
+        help_text=_('Thumbnail image for this attachment'),
         blank=True,
         null=True,
     )
@@ -2040,6 +2144,12 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         blank=True,
         verbose_name=_('Upload date'),
         help_text=_('Date the file was uploaded'),
+    )
+
+    is_image = models.BooleanField(
+        default=False,
+        verbose_name=_('Is image'),
+        help_text=_('True if this attachment is a valid image file'),
     )
 
     file_size = models.PositiveIntegerField(
@@ -2084,6 +2194,69 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_related_permission(permission, user)
+
+    def check_is_image(self) -> bool:
+        """Check if the attached file is an image.
+
+        We consider it a valid image if:
+
+        - The file exists in storage
+        - The file can be opened and verified by the PIL library
+
+        """
+        if not self.attachment:
+            return False
+
+        if not self.attachment.name:
+            return False
+
+        try:
+            if not default_storage.exists(self.attachment.name):
+                return False
+        except Exception:
+            return False
+
+        img_data = default_storage.open(self.attachment.name).read()
+
+        try:
+            Image.open(BytesIO(img_data)).verify()
+            return True
+        except Exception:
+            return False
+
+    def generate_thumbnail(self):
+        """Generate a thumbnail for the attached image."""
+        # Remove any existing thumbnail
+        if self.thumbnail:
+            self.thumbnail.delete(save=False)
+
+        if not self.attachment:
+            return
+
+        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+            return
+
+        # TODO: Offload to plugins, for creating custom thumbnails for different file types
+        # TODO: If a plugin provides a thumbnail, return early
+
+        # Default action is to generate a thumbnail for image files
+        try:
+            img_data = default_storage.open(self.attachment.name).read()
+        except Exception:
+            # No file found, or file cannot be read - cannot generate thumbnail
+            return
+
+        try:
+            img = Image.open(BytesIO(img_data))
+            img.thumbnail((self.THUMBNAIL_SIZE, self.THUMBNAIL_SIZE))
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='PNG')
+            thumb_io.seek(0)
+
+            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
+        except Exception:
+            pass
 
 
 class InvenTreeCustomUserStateModel(models.Model):
@@ -2612,7 +2785,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
                 common.tasks.rebuild_parameters,
                 instance.pk,
                 force_async=True,
-                group='part',
+                group='parameters',
             )
 
 
@@ -2701,6 +2874,10 @@ class Parameter(
                 )
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
+
+        if InvenTree.ready.isReadOnlyCommand():
+            # Skip plugin validation checks during read-only management commands
+            return
 
         # Finally, run custom validation checks (via plugins)
         from plugin import PluginMixinEnum, registry

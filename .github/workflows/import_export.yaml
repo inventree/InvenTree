@@ -93,7 +93,7 @@ jobs:
           invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
-          pip install -U inventree-dummy-app-plugin
+          pip install -U inventree-dummy-app-plugin==0.1.0
           invoke migrate
           cd src/backend/InvenTree && python manage.py create_dummy_data
       - name: Export Postgres Dataset

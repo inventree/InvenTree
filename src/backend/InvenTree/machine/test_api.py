@@ -147,7 +147,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def test_machine_detail(self):
         """Test machine detail API endpoint."""
-        self.assertFalse(len(MachineConfig.objects.all()), 0)
+        self.assertFalse(MachineConfig.objects.count(), 0)
         self.get(
             reverse('api-machine-detail', kwargs={'pk': self.placeholder_uuid}),
             expected_code=404,
@@ -185,7 +185,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         response = self.delete(
             reverse('api-machine-detail', kwargs={'pk': pk}), expected_code=204
         )
-        self.assertFalse(len(MachineConfig.objects.all()), 0)
+        self.assertFalse(MachineConfig.objects.count(), 0)
 
         # Create machine where the driver does not exist
         machine_data['driver'] = 'non-existent-driver'

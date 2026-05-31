@@ -232,6 +232,7 @@ export function useStockFields({
       serial: {
         placeholderAutofill: true,
         placeholder: serialGenerator.result,
+        disabled: !create && !globalSettings.isSet('STOCK_ALLOW_EDIT_SERIAL'),
         hidden:
           create ||
           partInstance.trackable == false ||
@@ -966,6 +967,9 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
 
   const initialValue = mapAdjustmentItems(items);
 
+  // Extract all location values from the items
+  const locations = [...new Set(items.map((item) => item.location))];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -988,6 +992,12 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
         { title: t`Count`, style: { width: '200px' } },
         { title: t`Actions` }
       ]
+    },
+    location: {
+      value: locations.length === 1 ? locations[0] : undefined,
+      filters: {
+        structural: false
+      }
     },
     notes: {}
   };
