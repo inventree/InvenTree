@@ -34,7 +34,14 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
-import { AddressTable } from '../../../../tables/company/AddressTable';
+
+const AddressTable = Loadable(
+  lazy(() =>
+    import('../../../../tables/company/AddressTable').then((m) => ({
+      default: m.AddressTable
+    }))
+  )
+);
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
