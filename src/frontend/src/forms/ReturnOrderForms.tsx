@@ -63,11 +63,8 @@ export function useReturnOrderFields({
       },
       address: {
         icon: <IconAddressBook />,
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          return {
-            ...value.filters,
-            company: value.data.customer
-          };
+        filters: {
+          internal: true
         }
       },
       responsible: {

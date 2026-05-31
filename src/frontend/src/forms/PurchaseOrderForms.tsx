@@ -299,11 +299,8 @@ export function usePurchaseOrderFields({
       },
       address: {
         icon: <IconAddressBook />,
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          return {
-            ...value.filters,
-            company: value.data.supplier
-          };
+        filters: {
+          internal: true
         }
       },
       responsible: {
