@@ -78,10 +78,10 @@ class SalesOrderTest(InvenTreeTestCase):
         )
 
     def test_validate_address(self):
-        """Test validation of the linked Address."""
+        """Test validation of the linked Address for a SalesOrder (INTERNAL_ADDRESS=False)."""
         order = SalesOrder.objects.first()
 
-        # Create an address for a different company
+        # An address belonging to a different company must be rejected
         company = Company.objects.exclude(pk=order.customer.pk).first()
         self.assertIsNotNone(company)
         address = Address.objects.create(
@@ -100,11 +100,22 @@ class SalesOrderTest(InvenTreeTestCase):
 
         self.assertIn('Address does not match selected company', str(err.exception))
 
-        # Update the address to match the correct company
+        # An internal address (company=None) must also be rejected for a SalesOrder
+        internal_address = Address.objects.create(
+            company=None, primary=False, line1='1 Internal St', country='AU'
+        )
+
+        order.address = internal_address
+
+        with self.assertRaises(ValidationError) as err:
+            order.clean()
+
+        self.assertIn('Address does not match selected company', str(err.exception))
+
+        # An address matching the customer company must be accepted
         address.company = order.customer
         address.save()
 
-        # Now validation should pass
         order.address = address
         order.clean()
         order.save()
