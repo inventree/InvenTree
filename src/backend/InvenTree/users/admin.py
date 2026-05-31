@@ -118,10 +118,8 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 class InvenTreeUserAdmin(UserAdmin):
     """Custom admin page for the User model.
 
-    Hides the "permissions" view as this is now handled
-    entirely by groups and RuleSets.
-
-    (And it's confusing!)
+    - Restrict user creation and editing to superuser accounts
+    - Hides the "permissions" view as this is handled by RuleSets
     """
 
     list_display = (
@@ -132,6 +130,7 @@ class InvenTreeUserAdmin(UserAdmin):
         'is_staff',
         'last_login',
     )  # display last connection for each user in user admin panel.
+
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
@@ -141,6 +140,15 @@ class InvenTreeUserAdmin(UserAdmin):
         ),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        """Make all fields read-only for non-superusers."""
+        fields = super().get_readonly_fields(request, obj)
+
+        if not request.user.is_superuser:
+            fields += ('is_staff', 'is_superuser')
+
+        return fields
 
 
 @admin.register(Owner)
