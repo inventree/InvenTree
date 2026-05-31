@@ -125,7 +125,7 @@ Internal addresses are used when the delivery destination is one of your own sit
 
 #### Managing Internal Addresses
 
-Internal addresses are managed from the **Admin Center**, under the *Internal Addresses* panel. Only staff users can create, edit, or delete internal addresses.
+Internal addresses are managed from the **Admin Center**, under the *Addresses* panel. Only staff users can create, edit, or delete internal addresses.
 
 Each internal address uses the same fields as a company address (Title, Line 1, Line 2, Postal Code, City, Province, Country).
 
