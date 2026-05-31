@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Stack } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import {
   IconAddressBook,
   IconCoins,
@@ -155,7 +155,14 @@ export default function AdminCenter() {
               title={t`Internal Addresses`}
               color='blue'
             >
-              {t`Internal addresses are used for your locations, and are not linked to any external company.`}
+              <Stack gap='xs'>
+                <Text>
+                  {t`Internal addresses are used for locations associated with your organization.`}
+                </Text>
+                <Text>
+                  {t`Internal addresses are not linked to any external company.`}
+                </Text>
+              </Stack>
             </Alert>
             <AddressTable internal />
           </Stack>

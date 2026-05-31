@@ -56,7 +56,7 @@ A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/
 ### Addresses
 
 A company can have multiple registered addresses for use with all types of orders.
-An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
+An address is broken down to internationally recognized elements that are designed to allow for formatting an address according to user needs.
 Addresses are composed differently across the world, and InvenTree reflects this by splitting addresses into components:
 
 | Field | Description |
@@ -104,3 +104,28 @@ Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon(
 Here, the addresses associated with the company are listed, and can be added, edited, or deleted.
 
 {{ image("concepts/edit_address.png", "Edit Address") }}
+
+### Internal Addresses
+
+In addition to addresses linked to external companies, InvenTree supports **internal addresses** — addresses that belong to your own organization rather than to any external company.
+
+Internal addresses are used when the delivery destination is one of your own sites rather than a customer or supplier location. Orders that use internal addresses include:
+
+| Order Type | Address Meaning |
+| --- | --- |
+| [Purchase Order](../purchasing/purchase_order.md) | Optional delivery destination for incoming goods |
+| [Return Order](../sales/return_order.md) | Optional location to which returned items are sent |
+| [Transfer Order](../stock/transfer_order.md) | Optional destination for an internal stock transfer |
+
+!!! info "Sales Orders use external addresses"
+    [Sales Orders](../sales/sales_order.md) are addressed to the *customer*, so they use addresses linked to the customer company, not internal addresses.
+
+#### Managing Internal Addresses
+
+Internal addresses are managed from the **Admin Center**, under the *Internal Addresses* panel. Only staff users can create, edit, or delete internal addresses.
+
+Each internal address uses the same fields as a company address (Title, Line 1, Line 2, Postal Code, City, Province, Country).
+
+#### Primary Internal Address
+
+One internal address can be marked as the **primary** address. This address is the default suggestion when assigning a delivery address to a new order. Marking a different address as primary will automatically remove the mark from the previous primary address.
