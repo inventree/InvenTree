@@ -324,6 +324,16 @@ test('Stock - Stock Actions', async ({ browser }) => {
     await page.getByRole('option', { name: status }).click();
   };
 
+  // Duplicate the stock item first - prevent impacting other tests
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
   // Check for required values
   await page.getByText('Status', { exact: true }).waitFor();
   await page.getByText('Custom Status', { exact: true }).waitFor();
