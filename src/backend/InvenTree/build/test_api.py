@@ -1817,6 +1817,97 @@ class BuildConsumeTest(BuildAPITest):
             self.assertEqual(line.consumed, 100)
 
 
+class BuildCustomStatusTest(BuildAPITest):
+    """Tests for custom status values on Build orders."""
+
+    url = reverse('api-build-list')
+
+    def test_custom_status_query_count(self):
+        """Test that listing Build orders with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving 'status_text' for custom status values is O(1)
+        in database queries, not O(N) relative to the number of results.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import InvenTreeCustomUserStateModel
+
+        build_content_type = ContentType.objects.get_for_model(Build)
+
+        # 10 custom status values - different keys, labels, and logical_keys
+        logical_keys = [
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
+            BuildStatus.ON_HOLD.value,
+            BuildStatus.CANCELLED.value,
+            BuildStatus.COMPLETE.value,
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
+            BuildStatus.ON_HOLD.value,
+            BuildStatus.CANCELLED.value,
+            BuildStatus.COMPLETE.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=3000 + i,
+                name=f'BuildCustomStatus{i}',
+                label=f'Build Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=build_content_type,
+                reference_status='BuildStatus',
+            )
+            for i in range(10)
+        ]
+
+        part = Part.objects.filter(assembly=True).first()
+
+        # Build is an MPTT tree model; bulk_create requires tree fields to be
+        # populated manually. All new orders are root nodes (no parent) so each
+        # gets its own unique tree_id.
+        from django.db.models import Max
+
+        next_tree_id = (Build.objects.aggregate(m=Max('tree_id'))['m'] or 0) + 1
+
+        # Create 100 build orders, cycling through the 10 custom statuses
+        Build.objects.bulk_create([
+            Build(
+                part=part,
+                reference=f'BO-QTEST-{i}',
+                quantity=1,
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+                lft=1,
+                rght=2,
+                level=0,
+                tree_id=next_tree_id + i,
+            )
+            for i in range(100)
+        ])
+
+        # Lookup: custom_key -> custom_status_object, for quick per-row assertions
+        custom_lookup = {cs.key: cs for cs in custom_statuses}
+
+        # Query count must stay below the fixed threshold regardless of limit.
+        # An N+1 bug would push limit=50 or limit=100 well over the threshold.
+        for limit in [1, 10, 50, 100]:
+            response = self.get(
+                self.url, data={'limit': limit}, expected_code=200, max_query_count=50
+            )
+
+            for result in response.data['results']:
+                cs = custom_lookup.get(result['status_custom_key'])
+
+                if cs is None:
+                    # Build from fixtures - no custom status assigned
+                    continue
+
+                self.assertEqual(result['status'], cs.logical_key)
+                self.assertEqual(result['status_custom_key'], cs.key)
+                self.assertEqual(result['status_text'], cs.label)
+
+
 class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
     """API integration tests for BuildAutoAllocate endpoint back-ports (stock_sort_by, build_lines)."""
 

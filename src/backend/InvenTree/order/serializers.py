@@ -31,6 +31,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -99,7 +100,10 @@ class DuplicateOrderSerializer(serializers.Serializer):
 
 
 class AbstractOrderSerializer(
-    DataImportExportSerializerMixin, FilterableSerializerMixin, serializers.Serializer
+    CustomStatusSerializerMixin,
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    serializers.Serializer,
 ):
     """Abstract serializer class which provides fields common to all order types."""
 
@@ -116,9 +120,6 @@ class AbstractOrderSerializer(
     completed_lines = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Completed Lines')
     )
-
-    # Human-readable status text (read-only)
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     # status field cannot be set directly
     status = serializers.IntegerField(read_only=True, label=_('Order Status'))

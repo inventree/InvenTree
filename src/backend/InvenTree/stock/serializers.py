@@ -33,6 +33,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    CustomStatusSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     OptionalField,
@@ -308,6 +309,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
+    CustomStatusSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -563,10 +565,6 @@ class StockItemSerializer(
         queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
         return queryset
-
-    status_text = serializers.CharField(
-        source='get_status_display', read_only=True, label=_('Status')
-    )
 
     SKU = serializers.CharField(
         source='supplier_part.SKU',
@@ -1743,6 +1741,20 @@ class StockAdjustmentSerializer(serializers.Serializer):
 class StockCountSerializer(StockAdjustmentSerializer):
     """Serializer for counting stock items."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'notes', 'location']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(structural=False),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Set stock location for counted items (optional)'),
+    )
+
     def save(self):
         """Count stock."""
         request = self.context['request']
@@ -1750,6 +1762,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         items = data['items']
         notes = data.get('notes', '')
+        location = data.get('location', None)
 
         with transaction.atomic():
             for item in items:
@@ -1762,6 +1775,9 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
+
+                if location is not None:
+                    extra['location'] = location
 
                 stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 

@@ -1411,6 +1411,82 @@ class CustomStockItemStatusTest(StockAPITestCase):
         self.assertEqual(status['value'], self.status.key)
         self.assertEqual(status['display_name'], self.status.label)
 
+    def test_custom_status_query_count(self):
+        """Test that listing StockItems with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving 'status_text' for custom status values is O(1)
+        in database queries, not O(N) relative to the number of results.
+        """
+        stock_content_type = ContentType.objects.get(model='stockitem')
+
+        # 10 custom status values - different keys, labels, and logical_keys
+        logical_keys = [
+            StockStatus.OK.value,
+            StockStatus.ATTENTION.value,
+            StockStatus.DAMAGED.value,
+            StockStatus.DESTROYED.value,
+            StockStatus.REJECTED.value,
+            StockStatus.LOST.value,
+            StockStatus.QUARANTINED.value,
+            StockStatus.RETURNED.value,
+            StockStatus.OK.value,
+            StockStatus.ATTENTION.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=2000 + i,
+                name=f'StockCustomStatus{i}',
+                label=f'Stock Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=stock_content_type,
+                reference_status='StockStatus',
+            )
+            for i in range(10)
+        ]
+
+        part = Part.objects.filter(active=True, virtual=False).first()
+
+        # Create 500 stock items, cycling through the 10 custom statuses
+        StockItem.objects.bulk_create([
+            StockItem(
+                part=part,
+                quantity=1,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(500)
+        ])
+
+        # Lookup: custom_key -> custom_status_object, for quick per-row assertions
+        custom_lookup = {cs.key: cs for cs in custom_statuses}
+
+        # Query count must stay below the fixed threshold regardless of limit.
+        # An N+1 bug would push limit=100 or limit=500 well over the threshold.
+        for limit in [50, 100, 500]:
+            response = self.get(
+                self.list_url,
+                data={'limit': limit},
+                expected_code=200,
+                max_query_count=50,
+            )
+
+            for result in response.data['results']:
+                cs = custom_lookup.get(result['status_custom_key'])
+
+                if cs is None:
+                    # Item from fixtures - no custom status assigned
+                    continue
+
+                self.assertEqual(result['status'], cs.logical_key)
+                self.assertEqual(result['status_custom_key'], cs.key)
+                self.assertEqual(result['status_text'], cs.label)
+
 
 class StockItemTest(StockAPITestCase):
     """Series of API tests for the StockItem API."""
@@ -2252,6 +2328,88 @@ class StocktakeTest(StockAPITestCase):
             'Incorrect type. Expected pk value',
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+
+    def test_count_with_location(self):
+        """Test that the stock count endpoint correctly handles the optional location field."""
+        url = reverse('api-stock-count')
+
+        # Stock item pk=1234 starts at location 5; pk=1 starts at location 3
+        item_a = StockItem.objects.get(pk=1234)
+        item_b = StockItem.objects.get(pk=1)
+
+        self.assertEqual(item_a.location.pk, 5)
+        self.assertEqual(item_b.location.pk, 3)
+
+        # --- location is updated when provided (single item) ---
+        response = self.post(
+            url,
+            {'items': [{'pk': item_a.pk, 'quantity': 10}], 'location': 1},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['items'][0]['pk'], item_a.pk)
+
+        item_a.refresh_from_db()
+        self.assertEqual(item_a.location.pk, 1)
+
+        # Tracking entry records the location change
+        entry = StockItemTracking.objects.filter(
+            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertEqual(entry.deltas.get('location'), 1)
+        self.assertEqual(entry.deltas.get('old_location'), 5)
+
+        # --- location is updated for multiple items simultaneously ---
+        response = self.post(
+            url,
+            {
+                'items': [
+                    {'pk': item_a.pk, 'quantity': 5},
+                    {'pk': item_b.pk, 'quantity': 20},
+                ],
+                'location': 2,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(len(response.data['items']), 2)
+
+        item_a.refresh_from_db()
+        item_b.refresh_from_db()
+        self.assertEqual(item_a.location.pk, 2)
+        self.assertEqual(item_b.location.pk, 2)
+
+        # Both items have a tracking entry with the new location
+        for item, old_loc in [(item_a, 1), (item_b, 3)]:
+            entry = StockItemTracking.objects.filter(
+                item=item, tracking_type=StockHistoryCode.STOCK_COUNT
+            ).latest('date')
+            self.assertEqual(entry.deltas.get('location'), 2)
+            self.assertEqual(entry.deltas.get('old_location'), old_loc)
+
+        # --- location is unchanged when not provided ---
+        response = self.post(
+            url, {'items': [{'pk': item_a.pk, 'quantity': 7}]}, expected_code=201
+        )
+
+        item_a.refresh_from_db()
+        # Location should still be 2 (unchanged from the previous count)
+        self.assertEqual(item_a.location.pk, 2)
+
+        # Tracking entry has no location delta when location was not provided
+        entry = StockItemTracking.objects.filter(
+            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertNotIn('location', entry.deltas)
+        self.assertNotIn('old_location', entry.deltas)
+
+        # --- structural location is rejected ---
+        structural = StockLocation.objects.create(name='Structural', structural=True)
+
+        response = self.post(
+            url,
+            {'items': [{'pk': item_a.pk, 'quantity': 1}], 'location': structural.pk},
+            expected_code=400,
+        )
+        self.assertIn('does not exist', str(response.data['location']))
 
 
 class StockItemDeletionTest(StockAPITestCase):

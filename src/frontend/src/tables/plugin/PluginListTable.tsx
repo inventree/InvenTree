@@ -261,7 +261,7 @@ export default function PluginListTable() {
   const [pluginPackage, setPluginPackage] = useState<string>('');
 
   const activatePluginModal = useEditApiFormModal({
-    title: t`Activate Plugin`,
+    title: activate ? t`Activate Plugin` : t`Deactivate Plugin`,
     url: ApiEndpoints.plugin_activate,
     pathParams: { key: selectedPluginKey },
     preFormContent: activateModalContent,

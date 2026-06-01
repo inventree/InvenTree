@@ -19,7 +19,7 @@ threads = 4
 
 
 # Worker timeout (default = 90 seconds)
-timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', '90')
+timeout = int(os.environ.get('INVENTREE_GUNICORN_TIMEOUT', '90'))
 
 # Number of worker processes
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)
@@ -43,7 +43,13 @@ preload_app = True
 
 
 def post_fork(server, worker):
-    """Post-fork hook to set up logging for each worker."""
+    """Post-fork hook called after each worker process is forked."""
+    from django.db import connections
+
+    # Close any DB connections inherited from the master process — PostgreSQL
+    # connections are not fork-safe, so each worker must open its own.
+    connections.close_all()
+
     from django.conf import settings
 
     if not settings.TRACING_ENABLED:
