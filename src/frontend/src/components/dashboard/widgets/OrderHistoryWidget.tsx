@@ -119,6 +119,7 @@ export default function OrderHistoryWidget({
     minHeight: 2,
     minWidth: 3,
     modelType: modelType,
+    icon: 'chart_bar',
     visible: () => user.hasViewPermission(modelType),
     render: () => (
       <OrderHistoryComponent
