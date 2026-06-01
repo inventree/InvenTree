@@ -235,6 +235,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_EXTRA_MODEL_INFO': {
+        'name': _('Show Extra Model Information'),
+        'description': _('Display extra information in model selection dropdowns'),
+        'default': False,
+        'validator': bool,
+    },
     'SHOW_FULL_LOCATION_IN_TABLES': {
         'name': _('Show full stock location in tables'),
         'description': _(

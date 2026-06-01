@@ -12,10 +12,11 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconBackspace, IconLayoutGridAdd } from '@tabler/icons-react';
+import { IconBackspace } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { StylishText } from '@lib/components/StylishText';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 
 /**
@@ -105,7 +106,7 @@ export default function DashboardWidgetDrawer({
                         onAddWidget(widget.label);
                       }}
                     >
-                      <IconLayoutGridAdd />
+                      <InvenTreeIcon icon={widget.icon ?? 'dashboard'} />
                     </ActionIcon>
                   </Tooltip>
                 </Table.Td>

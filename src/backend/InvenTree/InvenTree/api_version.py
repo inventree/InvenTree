@@ -1,10 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 497
+INVENTREE_API_VERSION = 499
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
+    - Fixes search field issues on the BarcodeScanHistory API endpoint
+
+v498 -> 2026-05-31 : https://github.com/inventree/InvenTree/pull/12055
+    - Updates the "status_text" field for models which support custom status values
 
 v497 -> 2026-05-27 : https://github.com/inventree/InvenTree/pull/12019
     - Adds "location" field to StockCount API endpoint
