@@ -1,8 +1,11 @@
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalState } from '../states/LocalState';
 
-type LegacyRemoteRenderFnType = (container: HTMLDivElement, ctx: InvenTreePluginContext) => void;
+type LegacyRemoteRenderFnType = (
+  container: HTMLDivElement,
+  ctx: InvenTreePluginContext
+) => void;
 type RemoteComponentType = (ctx: InvenTreePluginContext) => React.ReactElement;
 
 interface UseRemotePluginProps {
@@ -17,27 +20,35 @@ interface UsePluginSourceProps {
   defaultFunctionName?: string;
 }
 
-function usePluginSource({source, defaultFunctionName}: UsePluginSourceProps) {
+function usePluginSource({
+  source,
+  defaultFunctionName
+}: UsePluginSourceProps) {
   const { getHost } = useLocalState.getState();
 
   const { moduleUrl, exportName } = useMemo(() => {
     const url = new URL(source, getHost());
-    const parts = url.pathname.split(":");
+    const parts = url.pathname.split(':');
 
     return {
       exportName: parts[1] || defaultFunctionName || 'default',
-      moduleUrl: url.origin + parts[0],
+      moduleUrl: url.origin + parts[0]
     };
-
   }, [source, defaultFunctionName, getHost]);
 
   return { moduleUrl, exportName };
 }
 
-export function useRemotePlugin(
-    {context, source, defaultFunctionName, containerRef}: UseRemotePluginProps
-): RemoteComponentType | null {
-  const { moduleUrl, exportName } = usePluginSource({source, defaultFunctionName});
+export function useRemotePlugin({
+  context,
+  source,
+  defaultFunctionName,
+  containerRef
+}: UseRemotePluginProps): RemoteComponentType | null {
+  const { moduleUrl, exportName } = usePluginSource({
+    source,
+    defaultFunctionName
+  });
   const [mod, setModule] = useState<Record<string, unknown> | null>(null);
 
   const hmrSetModule = useCallback((mod: Record<string, unknown>) => {
@@ -48,7 +59,7 @@ export function useRemotePlugin(
     let cancelled = false;
 
     async function load() {
-      const _mod = await import(/* @vite-ignore */moduleUrl);
+      const _mod = await import(/* @vite-ignore */ moduleUrl);
 
       if (!cancelled) {
         setModule(_mod);
@@ -68,7 +79,7 @@ export function useRemotePlugin(
     const func = mod[exportName];
 
     if (typeof func === 'function' && func.length === 2) {
-      return (func as LegacyRemoteRenderFnType);
+      return func as LegacyRemoteRenderFnType;
     }
 
     return null;
@@ -80,7 +91,7 @@ export function useRemotePlugin(
     const func = mod[exportName];
 
     if (typeof func === 'function' && func.length === 1) {
-      return (func as RemoteComponentType);
+      return func as RemoteComponentType;
     }
 
     return null;
@@ -94,7 +105,7 @@ export function useRemotePlugin(
 
     return () => {
       delete (window as any).__plugin_hmr_reload;
-    }
+    };
   }, [legacyRenderFn, context, hmrSetModule]);
 
   return componentFn;

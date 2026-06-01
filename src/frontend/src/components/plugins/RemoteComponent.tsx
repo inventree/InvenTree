@@ -27,7 +27,12 @@ export default function RemoteComponent({
 }>) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const componentFn = useRemotePlugin({context, source, defaultFunctionName, containerRef});
+  const componentFn = useRemotePlugin({
+    context,
+    source,
+    defaultFunctionName,
+    containerRef
+  });
 
   return componentFn ? (
     <ApiProvider client={queryClient} api={api}>
@@ -35,9 +40,7 @@ export default function RemoteComponent({
         theme={context.theme}
         defaultColorScheme={context.colorScheme}
       >
-        <LanguageContext>
-          {componentFn(context)}
-        </LanguageContext>
+        <LanguageContext>{componentFn(context)}</LanguageContext>
       </MantineProvider>
     </ApiProvider>
   ) : (
