@@ -8,6 +8,7 @@ import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
+import OrderHistoryWidget from './widgets/OrderHistoryWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 import QueryDashboardWidget from './widgets/QueryDashboardWidget';
 import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
@@ -207,6 +208,26 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   });
 }
 
+function BuiltinHistoryWidgets(): DashboardWidgetProps[] {
+  return [
+    OrderHistoryWidget({
+      modelType: ModelType.build
+    }),
+    OrderHistoryWidget({
+      modelType: ModelType.salesorder
+    }),
+    OrderHistoryWidget({
+      modelType: ModelType.purchaseorder
+    }),
+    OrderHistoryWidget({
+      modelType: ModelType.returnorder
+    }),
+    OrderHistoryWidget({
+      modelType: ModelType.transferorder
+    })
+  ];
+}
+
 function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   return [
     {
@@ -243,6 +264,7 @@ function BuiltinActionWidgets(): DashboardWidgetProps[] {
 export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
+    ...BuiltinHistoryWidgets(),
     ...BuiltinGettingStartedWidgets(),
     ...BuiltinSettingsWidgets(),
     ...BuiltinActionWidgets()
