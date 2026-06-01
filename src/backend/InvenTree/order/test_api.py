@@ -16,7 +16,7 @@ from icalendar import Calendar
 from rest_framework import status
 
 from common.currency import currency_codes
-from common.models import InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -737,6 +737,69 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_po_custom_status_query_count(self):
+        """Test that listing PurchaseOrders with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving the 'status_text' field for custom status values
+        is O(1) in database queries, not O(N) relative to the number of results.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        po_content_type = ContentType.objects.get_for_model(models.PurchaseOrder)
+
+        # 10 custom status values - different keys, labels, and logical_keys
+        logical_keys = [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.PLACED.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+            PurchaseOrderStatus.COMPLETE.value,
+            PurchaseOrderStatus.CANCELLED.value,
+            PurchaseOrderStatus.LOST.value,
+            PurchaseOrderStatus.RETURNED.value,
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.PLACED.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=1000 + i,
+                name=f'PoCustomStatus{i}',
+                label=f'PO Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=po_content_type,
+                reference_status='PurchaseOrderStatus',
+            )
+            for i in range(10)
+        ]
+
+        # Create 100 purchase orders, cycling through the custom statuses
+        supplier = Company.objects.filter(is_supplier=True).first()
+        models.PurchaseOrder.objects.bulk_create([
+            models.PurchaseOrder(
+                supplier=supplier,
+                reference=f'PO-QTEST-{i}',
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(100)
+        ])
+
+        # Query count must stay below the fixed threshold for all limit values.
+        # An N+1 bug would push limit=50 or limit=100 well over the threshold.
+        for limit in [1, 5, 10, 25, 50, 100]:
+            response = self.get(
+                self.LIST_URL,
+                data={'limit': limit},
+                expected_code=200,
+                max_query_count=50,
+            )
+
+            for result in response.data['results']:
+                self.assertIn('status_text', result)
+                self.assertIsNotNone(result['status_text'])
+
 
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
@@ -771,7 +834,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         # Try to delete a set of line items via their IDs
         self.delete(url, {'items': [1, 2]}, expected_code=200)
 
-        # We should have 2 less PurchaseOrderLineItems after deletign them
+        # We should have 2 less PurchaseOrderLineItems after deleting them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
 
     def test_po_line_merge_pricing(self):

@@ -331,7 +331,7 @@ export default function BuildDetail() {
         name: 'can_build',
         unit: build.part_detail?.units,
         label: t`Can Build`,
-        hidden: partRequirementsQuery.isFetching
+        hidden: partRequirements?.can_build === undefined
       },
       {
         type: 'progressbar',
@@ -454,12 +454,7 @@ export default function BuildDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [
-    build,
-    instanceQuery,
-    partRequirements,
-    partRequirementsQuery.isFetching
-  ]);
+  }, [build, instanceQuery, partRequirements, partRequirementsQuery]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -597,6 +592,7 @@ export default function BuildDetail() {
     build,
     id,
     user,
+    partRequirements,
     buildStatus,
     globalSettings,
     showChildBuilds,

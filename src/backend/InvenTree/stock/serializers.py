@@ -33,6 +33,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    CustomStatusSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     OptionalField,
@@ -308,6 +309,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
+    CustomStatusSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -564,10 +566,6 @@ class StockItemSerializer(
         queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
         return queryset
-
-    status_text = serializers.CharField(
-        source='get_status_display', read_only=True, label=_('Status')
-    )
 
     SKU = serializers.CharField(
         source='supplier_part.SKU',

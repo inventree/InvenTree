@@ -1,3 +1,16 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldChoice,
+  ApiFormFieldSet,
+  ApiFormModalProps,
+  StockOperationProps
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -20,34 +33,14 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import {
-  type JSX,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
 
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
+import { type JSX, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { StylishText } from '@lib/components/StylishText';
-import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldChoice,
-  ApiFormFieldSet,
-  ApiFormModalProps,
-  StockOperationProps
-} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -497,12 +490,31 @@ function StockItemDefaultMove({
 function moveToDefault(
   stockItem: any,
   value: StockItemQuantity,
-  refresh: () => void
+  refresh: () => void,
+  options?: {
+    title?: string;
+    onConfirm?: (location: number) => void;
+  }
 ) {
+  const location =
+    stockItem.part_detail?.default_location ??
+    stockItem.part_detail?.category_default_location;
+
   modals.openConfirmModal({
-    title: <StylishText>{t`Confirm Stock Transfer`}</StylishText>,
+    title: (
+      <StylishText>{options?.title ?? t`Confirm Stock Transfer`}</StylishText>
+    ),
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
+      if (!location) {
+        return;
+      }
+
+      if (options?.onConfirm) {
+        options.onConfirm(location);
+        return;
+      }
+
       if (
         stockItem.location === stockItem.part_detail?.default_location ||
         stockItem.location === stockItem.part_detail?.category_default_location
@@ -519,9 +531,7 @@ function moveToDefault(
               status: stockItem.status
             }
           ],
-          location:
-            stockItem.part_detail?.default_location ??
-            stockItem.part_detail?.category_default_location
+          location: location
         })
         .then((response) => {
           refresh();
@@ -556,6 +566,7 @@ function StockOperationsRow({
   setMax = false,
   merge = false,
   transferMerge = false,
+  returnStock = false,
   record
 }: {
   props: TableFieldRowProps;
@@ -565,8 +576,11 @@ function StockOperationsRow({
   setMax?: boolean;
   merge?: boolean;
   transferMerge?: boolean;
+  returnStock?: boolean;
   record?: any;
 }) {
+  const form = useFormContext();
+
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
       StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
@@ -685,7 +699,22 @@ function StockOperationsRow({
             {transfer && (
               <ActionButton
                 onClick={() =>
-                  moveToDefault(record, props.item.quantity, removeAndRefresh)
+                  moveToDefault(
+                    record,
+                    props.item.quantity,
+                    removeAndRefresh,
+                    returnStock
+                      ? {
+                          title: t`Confirm Stock Return`,
+                          onConfirm: (location: number) => {
+                            form.setValue('location', location, {
+                              shouldDirty: true,
+                              shouldValidate: true
+                            });
+                          }
+                        }
+                      : undefined
+                  )
                 }
                 icon={<InvenTreeIcon icon='default_location' />}
                 tooltip={t`Move to default location`}
@@ -866,6 +895,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
             key={record.pk}
             record={record}
             transfer
+            returnStock
             changeStatus
           />
         );
@@ -880,12 +910,25 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.stock_location_list),
+      model: ModelType.stocklocation,
+      required: true,
       filters: {
         structural: false
       }
     },
-    merge: {},
-    notes: {}
+    merge: {
+      field_type: 'boolean',
+      label: t`Merge into existing stock`,
+      description: t`Merge returned items into existing stock items if possible`,
+      value: false
+    },
+    notes: {
+      field_type: 'string',
+      label: t`Notes`,
+      description: t`Stock transaction notes`
+    }
   };
 
   return fields;
@@ -1630,11 +1673,7 @@ export function useTestResultFields({
 /**
  * Modal form for finding a particular stock item by serial number
  */
-export function useFindSerialNumberForm({
-  partId
-}: {
-  partId: number;
-}) {
+export function useFindSerialNumberForm({ partId }: { partId: number }) {
   const navigate = useNavigate();
 
   return useApiFormModal({
