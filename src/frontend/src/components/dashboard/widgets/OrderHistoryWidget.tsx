@@ -83,7 +83,7 @@ function OrderHistoryComponent({
 
   return (
     <Stack gap='xs'>
-      <StylishText size='lg'>{title}</StylishText>
+      <StylishText size='md'>{title}</StylishText>
       <BarChart
         h={200}
         data={chartData}
