@@ -15,10 +15,13 @@ import {
   IconCalendar,
   IconCalendarCheck,
   IconCalendarDot,
+  IconCalendarExclamation,
   IconCalendarStats,
   IconCalendarTime,
   IconCalendarX,
   IconCancel,
+  IconChartBar,
+  IconChartLine,
   IconCheck,
   IconCircleCheck,
   IconCircleDashedCheck,
@@ -63,6 +66,7 @@ import {
   IconMapPin,
   IconMapPinHeart,
   IconMinusVertical,
+  IconNews,
   IconNotes,
   IconNumber123,
   IconNumbers,
@@ -158,6 +162,7 @@ const icons: InvenTreeIconType = {
   transfer_orders: IconTransfer,
   sales_orders: IconTruckDelivery,
   scheduling: IconCalendarStats,
+  overdue: IconCalendarExclamation,
   scrap: IconCircleX,
   shipment: IconCubeSend,
   test_templates: IconTestPipe,
@@ -267,7 +272,11 @@ const icons: InvenTreeIconType = {
   plugin: IconPlug,
   history: IconHistory,
   dashboard: IconLayoutDashboard,
-  search: IconSearch
+  search: IconSearch,
+
+  chart_bar: IconChartBar,
+  chart_line: IconChartLine,
+  news: IconNews
 };
 
 /**

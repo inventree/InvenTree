@@ -28,9 +28,13 @@ import type {
 } from '@lib/types/Rendering';
 
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
-import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
+import {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink,
+  shortenString
+} from '@lib/index';
 import { IconLink } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { usePluginState } from '../../states/PluginState';
 import { useUserSettingsState } from '../../states/SettingsStates';
@@ -132,7 +136,6 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
     props.custom_model ?? props.model ?? ''
   );
 
-  const navigate = useNavigate();
   const userSettings = useUserSettingsState();
 
   // Extract model information from the defined model type
@@ -170,12 +173,12 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   }, [modelInfo, props.instance]);
 
   const detailUrl = useMemo(() => {
-    if (!modelInfo || !modelId || !modelInfo.url_detail) {
+    if (!props.model) {
       return undefined;
     }
 
-    return modelInfo.url_detail.replace(':pk', modelId.toString());
-  }, [modelInfo, modelId]);
+    return getDetailUrl(props.model, modelId, true);
+  }, [props.model]);
 
   return (
     <HoverCard
@@ -207,7 +210,11 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
             <Anchor
               href={detailUrl}
               target='_blank'
-              onClick={(event) => navigateToLink(detailUrl, navigate, event)}
+              onClick={(event) => {
+                if (props.navigate) {
+                  navigateToLink(detailUrl, props.navigate, event);
+                }
+              }}
             >
               <Group gap='xs' wrap='nowrap'>
                 <ActionIcon variant='transparent' size='xs'>

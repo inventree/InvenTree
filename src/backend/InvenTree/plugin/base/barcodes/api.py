@@ -853,11 +853,11 @@ class BarcodeScanResultList(BarcodeScanResultMixin, BulkDeleteMixin, ListAPI):
     filterset_class = BarcodeScanResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['user', 'plugin', 'timestamp', 'endpoint', 'result']
+    ordering_fields = ['user', 'timestamp', 'endpoint', 'result']
 
     ordering = '-timestamp'
 
-    search_fields = ['plugin']
+    search_fields = ['data']
 
 
 class BarcodeScanResultDetail(BarcodeScanResultMixin, RetrieveDestroyAPI):
