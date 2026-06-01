@@ -2448,6 +2448,7 @@ class StockTransferMergeTest(StockAPITestCase):
             StockHistoryCode.STOCK_UPDATE, self.user, notes='Source tracking entry'
         )
 
+        incoming_pk = incoming.pk
         tracking_count = existing.tracking_info.count()
 
         self.post(
@@ -2471,6 +2472,40 @@ class StockTransferMergeTest(StockAPITestCase):
         self.assertIsNotNone(merge_entry)
         self.assertEqual(merge_entry.deltas['added'], 50.0)
         self.assertEqual(merge_entry.deltas['quantity'], 150.0)
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+    def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
+        """Partial merge reuses split transfer deltas on the merge tracking entry."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=100
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 30, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 70)
+
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming.pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+        self.assertFalse(
+            incoming.tracking_info.filter(
+                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
+            ).exists()
+        )
 
 
 class StockItemDeletionTest(StockAPITestCase):

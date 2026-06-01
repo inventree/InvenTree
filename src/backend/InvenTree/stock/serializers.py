@@ -1907,16 +1907,31 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                         }
 
                         if quantity < stock_item.quantity:
+                            transfer_deltas = {}
+
                             piece = stock_item.splitStock(
                                 quantity,
                                 location,
                                 request.user,
                                 notes=notes,
                                 allow_production=True,
+                                record_tracking=False,
+                                split_transfer_deltas=transfer_deltas,
                                 **kwargs,
                             )
+                            merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([piece], **merge_kwargs)
                         else:
+                            transfer_deltas = {'stockitem': stock_item.pk}
+
+                            if location:
+                                transfer_deltas['location'] = location.pk
+
+                            for field_name in StockItem.optional_transfer_fields():
+                                if field_name in kwargs:
+                                    transfer_deltas[field_name] = kwargs[field_name]
+
+                            merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([stock_item], **merge_kwargs)
 
                         continue
