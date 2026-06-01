@@ -726,6 +726,11 @@ jobs:
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: cd src/frontend && npx playwright install-deps
+      - name: Install Sample Plugin
+        run: |
+          pip install -U inventree-plugin-creator
+          create-inventree-plugin --default
+          cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Run Playwright tests
         id: tests
         run: |
