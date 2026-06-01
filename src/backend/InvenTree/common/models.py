@@ -3539,6 +3539,11 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         unique_together = [['key', 'global_id']]
         ordering = ['-updated']
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the EmailThread model."""
+        return reverse('api-email-list')
+
     key = models.CharField(
         max_length=250,
         verbose_name=_('Key'),
