@@ -2,11 +2,12 @@ import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalState } from '../states/LocalState';
 
-type LegacyRemoteRenderFnType = (
+type LegacyRemoteRenderFn = (
   container: HTMLDivElement,
   ctx: InvenTreePluginContext
 ) => void;
-type RemoteComponentType = (ctx: InvenTreePluginContext) => React.ReactElement;
+
+type RemoteComponent = (ctx: InvenTreePluginContext) => React.ReactElement;
 
 interface UseRemotePluginProps {
   context: InvenTreePluginContext;
@@ -19,6 +20,11 @@ interface UsePluginSourceProps {
   source: string;
   defaultFunctionName?: string;
 }
+
+type RemoteModule = {
+  url: string;
+  mod: Record<string, unknown>;
+};
 
 function usePluginSource({
   source,
@@ -44,15 +50,22 @@ export function useRemotePlugin({
   source,
   defaultFunctionName,
   containerRef
-}: UseRemotePluginProps): RemoteComponentType | null {
+}: UseRemotePluginProps): RemoteComponent | null {
   const { moduleUrl, exportName } = usePluginSource({
     source,
     defaultFunctionName
   });
-  const [mod, setModule] = useState<Record<string, unknown> | null>(null);
+  const [remoteModule, setRemoteModule] = useState<RemoteModule | null>(null);
 
-  const hmrSetModule = useCallback((mod: Record<string, unknown>) => {
-    setModule(mod);
+  const hmrSetModule = useCallback((newRemoteModule: RemoteModule) => {
+    setRemoteModule((prevRemoteModule) => {
+      const prevUrl = new URL(prevRemoteModule?.url ?? '');
+      const newUrl = new URL(newRemoteModule.url);
+      if (prevUrl.pathname === newUrl.pathname) {
+        return newRemoteModule;
+      }
+      return prevRemoteModule;
+    });
   }, []);
 
   useEffect(() => {
@@ -62,7 +75,7 @@ export function useRemotePlugin({
       const _mod = await import(/* @vite-ignore */ moduleUrl);
 
       if (!cancelled) {
-        setModule(_mod);
+        setRemoteModule({ mod: _mod, url: moduleUrl });
       }
     }
 
@@ -74,28 +87,32 @@ export function useRemotePlugin({
   }, [moduleUrl]);
 
   const legacyRenderFn = useMemo(() => {
-    if (!mod) return null;
+    if (!remoteModule) return null;
+
+    const mod = remoteModule.mod;
 
     const func = mod[exportName];
 
     if (typeof func === 'function' && func.length === 2) {
-      return func as LegacyRemoteRenderFnType;
+      return func as LegacyRemoteRenderFn;
     }
 
     return null;
-  }, [mod, exportName]);
+  }, [remoteModule, exportName]);
 
   const componentFn = useMemo(() => {
-    if (!mod) return null;
+    if (!remoteModule) return null;
+
+    const mod = remoteModule.mod;
 
     const func = mod[exportName];
 
     if (typeof func === 'function' && func.length === 1) {
-      return func as RemoteComponentType;
+      return func as RemoteComponent;
     }
 
     return null;
-  }, [mod, exportName]);
+  }, [remoteModule, exportName]);
 
   useEffect(() => {
     if (legacyRenderFn && containerRef.current) {
