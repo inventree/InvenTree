@@ -5,6 +5,7 @@ import { IconX } from '@tabler/icons-react';
 import { Boundary } from '@lib/components/Boundary';
 
 import type { ModelType } from '@lib/index';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import type { JSX } from 'react';
 
 /**
@@ -22,6 +23,7 @@ export interface DashboardWidgetProps {
   minWidth?: number;
   minHeight?: number;
   modelType?: ModelType;
+  icon?: keyof InvenTreeIconType;
   render: () => JSX.Element;
   visible?: () => boolean;
 }
