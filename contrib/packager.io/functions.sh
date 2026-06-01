@@ -328,6 +328,15 @@ function update_or_install() {
   # Run update as app user
   echo "# POI12| Updating InvenTree"
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel python-dotenv"
+  
+  if [[ "${INVENTREE_DB_ENGINE}" == *"postgres"* ]]; then
+    echo "# POI12| Installing postgresql driver"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install psycopg2-binary"
+  elif [[ "${INVENTREE_DB_ENGINE}" == *"mysql"* ]] || [[ "${INVENTREE_DB_ENGINE}" == *"mariadb"* ]]; then
+    echo "# POI12| Installing mysql driver"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install mysqlclient"
+  fi
+
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && set -e && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
