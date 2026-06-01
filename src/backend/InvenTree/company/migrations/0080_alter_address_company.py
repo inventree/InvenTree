@@ -4,7 +4,21 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def remove_orphaned_addresses(apps, schema_editor):
+    """Remove any Address objects which are not linked to a Company."""
+
+    Address = apps.get_model("company", "Address")
+
+    orphaned_addresses = Address.objects.filter(company=None)
+
+    if len(orphaned_addresses) > 0:
+        print(f"Removing {len(orphaned_addresses)} orphaned Address objects")
+        orphaned_addresses.delete()
+
+
 class Migration(migrations.Migration):
+
+    atomic = False
 
     dependencies = [
         ("company", "0079_auto_20260212_1054"),
@@ -24,4 +38,8 @@ class Migration(migrations.Migration):
                 verbose_name="Company",
             ),
         ),
+        migrations.RunPython(
+            code=migrations.RunPython.noop,
+            reverse_code=remove_orphaned_addresses,
+        )
     ]
