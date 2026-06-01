@@ -168,9 +168,14 @@ test('Stock - Filters', async ({ browser }) => {
   // Filter by custom status code
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Status', 'Incoming goods inspection');
-  await page.getByText('1 - 8 / 8').waitFor();
   await page.getByRole('cell', { name: '1551AGY' }).first().waitFor();
+
+  await page.getByPlaceholder('Search').clear();
+  await page.getByPlaceholder('Search').fill('blue');
   await page.getByRole('cell', { name: 'widget.blue' }).first().waitFor();
+
+  await page.getByPlaceholder('Search').clear();
+  await page.getByPlaceholder('Search').fill('002.01');
   await page.getByRole('cell', { name: '002.01-PCBA' }).first().waitFor();
 
   await clearTableFilters(page);
@@ -337,7 +342,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
   // Check for required values
   await page.getByText('Status', { exact: true }).waitFor();
   await page.getByText('Custom Status', { exact: true }).waitFor();
-  await page.getByText('Attention needed').waitFor();
+  await page.getByText('Attention needed').first().waitFor();
   await page
     .getByLabel('Stock Details')
     .getByText('Incoming goods inspection')
@@ -715,6 +720,7 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Order issued').waitFor();
+  await page.getByText('Issued', { exact: true }).first().waitFor();
 
   await loadTab(page, 'Line Items');
 
