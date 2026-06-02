@@ -754,6 +754,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: web
+          files: src/frontend/coverage/lcov.info
       - name: Upload bundler info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
