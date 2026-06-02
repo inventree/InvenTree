@@ -665,7 +665,7 @@ jobs:
           invoke migrate
 
   web_ui:
-    name: Tests - Web UI [${{ matrix.shard }}/4]
+    name: Tests - Web UI [${{ matrix.browser }} - ${{ matrix.shard }}/3]
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     needs: ["code-style", "paths-filter"]
@@ -673,7 +673,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3]
+        browser: [chromium, firefox]
     services:
       postgres:
         image: postgres:17
@@ -742,7 +743,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          npx nyc playwright test --project=chromium --project=firefox --shard=${{ matrix.shard }}/4
+          npx nyc playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}/3
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
