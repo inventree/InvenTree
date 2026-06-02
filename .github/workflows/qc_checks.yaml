@@ -772,6 +772,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           cd src/frontend
+          yarn install
           yarn run build
 
   web_ui_build:
