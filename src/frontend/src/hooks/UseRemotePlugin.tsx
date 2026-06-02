@@ -1,35 +1,40 @@
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
+import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactElement } from 'react';
 import { useLocalState } from '../states/LocalState';
 
-type LegacyRemoteRenderFn = (
+type LegacyPluginEntryFn = (
   container: HTMLDivElement,
   ctx: InvenTreePluginContext
 ) => void;
 
-type RemoteComponent = (ctx: InvenTreePluginContext) => React.ReactElement;
+type PluginEntryFn = (ctx: InvenTreePluginContext) => ReactElement;
 
-interface UseRemotePluginProps {
+type UseRemotePluginOptions = {
   context: InvenTreePluginContext;
   source: string;
   defaultFunctionName: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
-}
+};
 
-interface UsePluginSourceProps {
+type UsePluginSourceOptions = {
   source: string;
   defaultFunctionName?: string;
-}
+};
 
-type RemoteModule = {
-  url: string;
-  mod: Record<string, unknown>;
+type UseRemotePluginReturn = {
+  componentFn: PluginEntryFn | null;
+  errorMsg: string | null;
+  exportName: string;
+  pluginContext: InvenTreePluginContext;
+  remountKey: number;
 };
 
 function usePluginSource({
   source,
   defaultFunctionName
-}: UsePluginSourceProps) {
+}: UsePluginSourceOptions) {
   const { getHost } = useLocalState.getState();
 
   const { moduleUrl, exportName } = useMemo(() => {
@@ -45,85 +50,108 @@ function usePluginSource({
   return { moduleUrl, exportName };
 }
 
+function getHmrCallbacks(url: string) {
+  const w = window as any;
+  w.__plugin_hmr_callbacks ??= {};
+  w.__plugin_hmr_callbacks[url] ??= new Set<Function>();
+  return w.__plugin_hmr_callbacks[url];
+}
+
+const hasHmr = import.meta?.hot !== undefined;
+
 export function useRemotePlugin({
   context,
   source,
   defaultFunctionName,
   containerRef
-}: UseRemotePluginProps): RemoteComponent | null {
+}: UseRemotePluginOptions): UseRemotePluginReturn {
   const { moduleUrl, exportName } = usePluginSource({
     source,
     defaultFunctionName
   });
-  const [remoteModule, setRemoteModule] = useState<RemoteModule | null>(null);
 
-  const hmrSetModule = useCallback((newRemoteModule: RemoteModule) => {
-    setRemoteModule((prevRemoteModule) => {
-      const prevUrl = new URL(prevRemoteModule?.url ?? '');
-      const newUrl = new URL(newRemoteModule.url);
-      if (prevUrl.pathname === newUrl.pathname) {
-        return newRemoteModule;
-      }
-      return prevRemoteModule;
-    });
-  }, []);
+  const [remoteModule, setRemoteModule] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [reloadVersion, setReloadVersion] = useState(0);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const reloadContent = useCallback(() => setReloadVersion((v) => v + 1), []);
+
+  const hmrSetModule = useCallback(
+    (newRemoteModule: Record<string, unknown> | null) => {
+      if (!hasHmr) return;
+      setRemoteModule(newRemoteModule);
+    },
+    []
+  );
 
   useEffect(() => {
     let cancelled = false;
 
-    async function load() {
-      const _mod = await import(/* @vite-ignore */ moduleUrl);
+    setErrorMsg(null);
 
-      if (!cancelled) {
-        setRemoteModule({ mod: _mod, url: moduleUrl });
+    const loadModule = async () => {
+      try {
+        const mod = await import(/* @vite-ignore */ moduleUrl);
+        if (!cancelled) setRemoteModule(mod);
+      } catch (err) {
+        if (!cancelled) {
+          console.error(`ERR: Failed to load module: ${moduleUrl}:\n${err}`);
+          setErrorMsg(t`Failed to load module: ${moduleUrl}`);
+        }
       }
-    }
+    };
 
-    load();
+    loadModule();
 
     return () => {
       cancelled = true;
     };
   }, [moduleUrl]);
 
-  const legacyRenderFn = useMemo(() => {
-    if (!remoteModule) return null;
+  const [legacyRenderFn, componentFn, error] = useMemo(() => {
+    if (!remoteModule) return [null, null, null];
 
-    const mod = remoteModule.mod;
+    let err: string | null = null;
+    const func = remoteModule[exportName];
 
-    const func = mod[exportName];
-
-    if (typeof func === 'function' && func.length === 2) {
-      return func as LegacyRemoteRenderFn;
+    if (typeof func === 'function') {
+      if (func.length === 2) {
+        return [func as LegacyPluginEntryFn, null, null];
+      } else if (func.length === 1) {
+        return [null, func as PluginEntryFn, null];
+      } else {
+        err = `Entrypoint ${exportName} in ${moduleUrl} must accept 1-2 arguments`;
+      }
+    } else if (func !== undefined) {
+      err = t`Export ${exportName} in ${moduleUrl} is not a function (found type ${typeof func}).`;
+    } else {
+      err = t`Plugin entrypoint ${exportName} does not exist in ${moduleUrl}.`;
     }
 
-    return null;
-  }, [remoteModule, exportName]);
-
-  const componentFn = useMemo(() => {
-    if (!remoteModule) return null;
-
-    const mod = remoteModule.mod;
-
-    const func = mod[exportName];
-
-    if (typeof func === 'function' && func.length === 1) {
-      return func as RemoteComponent;
-    }
-
-    return null;
+    return [null, null, err];
   }, [remoteModule, exportName]);
 
   useEffect(() => {
     if (legacyRenderFn && containerRef.current) {
+      containerRef.current.innerHTML = '';
       legacyRenderFn(containerRef.current, context);
-      (window as any).__plugin_hmr_reload = hmrSetModule;
+
+      if (hasHmr) getHmrCallbacks(moduleUrl)?.add(hmrSetModule);
     }
 
     return () => {
-      delete (window as any).__plugin_hmr_reload;
+      if (hasHmr) getHmrCallbacks(moduleUrl)?.delete(hmrSetModule);
     };
-  }, [legacyRenderFn, context, hmrSetModule]);
+  }, [moduleUrl, legacyRenderFn, context, hmrSetModule]);
 
-  return componentFn;
+  return {
+    componentFn: componentFn,
+    errorMsg: error ?? errorMsg,
+    exportName: exportName,
+    pluginContext: { ...context, reloadContent: reloadContent },
+    remountKey: reloadVersion
+  };
 }
