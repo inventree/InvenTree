@@ -747,14 +747,14 @@ jobs:
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report-${{ matrix.browser }}-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Upload nyc output
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
-          name: nyc-output-${{ matrix.shard }}
+          name: nyc-output-${{ matrix.browser }}-${{ matrix.shard }}
           path: src/frontend/.nyc_output/
           retention-days: 1
 
