@@ -264,9 +264,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = str2bool(request.data.get('delete_parts', False))
+        serializer = part_serializers.CategoryDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        delete_parts = str2bool(serializer.validated_data.get('delete_parts', False))
         delete_child_categories = str2bool(
-            request.data.get('delete_child_categories', False)
+            serializer.validated_data.get('delete_child_categories', False)
         )
 
         return super().destroy(

@@ -33,6 +33,7 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
+from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
@@ -501,8 +502,38 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
 
 user_urls = [
-    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
+    # Legacy endpoints (to avoid breaking existing API clients)
+    # TODO @matmair - remove these legacy endpoints in the next breaking release
+    path(
+        'roles/',
+        exclude_from_schema(RoleDetails, '/api/user/me/roles/').as_view(),
+        name='api-user-roles_legacy',
+    ),
+    path(
+        'token/',
+        ensure_csrf_cookie(
+            exclude_from_schema(GetAuthToken, '/api/user/me/token/').as_view()
+        ),
+        name='api-token_legacy',
+    ),
+    path(
+        'profile/',
+        exclude_from_schema(UserProfileDetail, '/api/user/me/profile/').as_view(),
+        name='api-user-profile_legacy',
+    ),
+    # Individual user endpoints
+    path(
+        'me/',
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
+    ),
+    # User related endpoints
     path(
         'tokens/',
         include([
@@ -510,8 +541,6 @@ user_urls = [
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
-    path('me/', MeUserDetail.as_view(), name='api-user-me'),
-    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([

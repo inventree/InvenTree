@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
@@ -20,7 +21,7 @@ from order.models import (
     SalesOrderShipment,
 )
 from part.models import Part
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from users.models import Owner
 
 
@@ -619,3 +620,231 @@ class SalesOrderTest(InvenTreeTestCase):
         # Ensure that virtual line item quantity values have been updated
         for line in so.lines.all():
             self.assertEqual(line.shipped, line.quantity)
+
+
+class SalesOrderAutoAllocateTest(InvenTreeTestCase):
+    """Tests for SalesOrder.auto_allocate_stock()."""
+
+    fixtures = ['company', 'users']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create a basic order, line items, and stock items for each test."""
+        cls.customer = Company.objects.create(
+            name='Auto Alloc Co', description='', is_customer=True
+        )
+        cls.part = Part.objects.create(
+            name='Widget', salable=True, description='A salable widget'
+        )
+        cls.virtual_part = Part.objects.create(
+            name='Virtual Widget',
+            salable=True,
+            virtual=True,
+            description='A virtual part',
+        )
+
+        cls.loc_a = StockLocation.objects.create(name='Shelf A')
+        cls.loc_b = StockLocation.objects.create(name='Shelf B', parent=cls.loc_a)
+
+    def _make_order(self, qty=50):
+        order = SalesOrder.objects.create(customer=self.customer)
+        line = SalesOrderLineItem.objects.create(
+            order=order, part=self.part, quantity=qty
+        )
+        shipment = SalesOrderShipment.objects.create(order=order)
+        return order, line, shipment
+
+    def test_allocates_single_item(self):
+        """A single stock item that covers the full quantity is fully allocated."""
+        order, line, _ = self._make_order(qty=30)
+        stock = StockItem.objects.create(part=self.part, quantity=100)
+
+        order.auto_allocate_stock()
+
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 1)
+        alloc = SalesOrderAllocation.objects.get(line=line)
+        self.assertEqual(alloc.item, stock)
+        self.assertEqual(alloc.quantity, 30)
+        self.assertTrue(line.is_fully_allocated())
+
+    def test_interchangeable_consumes_multiple_items(self):
+        """With interchangeable=True (default), multiple stock items are consumed."""
+        order, line, _ = self._make_order(qty=50)
+        StockItem.objects.create(part=self.part, quantity=20)
+        StockItem.objects.create(part=self.part, quantity=40)
+
+        order.auto_allocate_stock(interchangeable=True)
+
+        total = SalesOrderAllocation.objects.filter(line=line).aggregate(
+            t=Sum('quantity')
+        )['t']
+        self.assertEqual(total, 50)
+        self.assertTrue(line.is_fully_allocated())
+
+    def test_not_interchangeable_skips_split_stock(self):
+        """With interchangeable=False, allocation is skipped when stock is split."""
+        order, line, _ = self._make_order(qty=50)
+        StockItem.objects.create(part=self.part, quantity=20)
+        StockItem.objects.create(part=self.part, quantity=20)
+
+        order.auto_allocate_stock(interchangeable=False)
+
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 0)
+        self.assertFalse(line.is_fully_allocated())
+
+    def test_not_interchangeable_uses_single_sufficient_item(self):
+        """With interchangeable=False, a single item that covers the full qty is used."""
+        order, line, _ = self._make_order(qty=30)
+        StockItem.objects.create(part=self.part, quantity=10)
+        StockItem.objects.create(part=self.part, quantity=50)
+
+        order.auto_allocate_stock(interchangeable=False)
+
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 1)
+        alloc = SalesOrderAllocation.objects.get(line=line)
+        self.assertEqual(alloc.quantity, 30)
+
+    def test_location_filter(self):
+        """Only stock within the specified location tree is considered."""
+        order, line, _ = self._make_order(qty=10)
+        StockItem.objects.create(part=self.part, quantity=100, location=self.loc_a)
+        StockItem.objects.create(part=self.part, quantity=100)  # no location
+
+        order.auto_allocate_stock(location=self.loc_a)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        for alloc in allocs:
+            self.assertEqual(alloc.item.location, self.loc_a)
+
+    def test_exclude_location_filter(self):
+        """Stock within the excluded location tree is not used."""
+        order, line, _ = self._make_order(qty=10)
+        excluded = StockItem.objects.create(
+            part=self.part, quantity=100, location=self.loc_a
+        )
+        included = StockItem.objects.create(part=self.part, quantity=100)
+
+        order.auto_allocate_stock(exclude_location=self.loc_a)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        allocated_items = [a.item for a in allocs]
+        self.assertNotIn(excluded, allocated_items)
+        self.assertIn(included, allocated_items)
+
+    def test_skips_fully_allocated_lines(self):
+        """Lines that are already fully allocated are not touched."""
+        order, line, shipment = self._make_order(qty=10)
+        existing = StockItem.objects.create(part=self.part, quantity=100)
+        SalesOrderAllocation.objects.create(
+            line=line, item=existing, quantity=10, shipment=shipment
+        )
+        self.assertTrue(line.is_fully_allocated())
+
+        order.auto_allocate_stock()
+
+        self.assertEqual(SalesOrderAllocation.objects.filter(line=line).count(), 1)
+
+    def test_skips_virtual_parts(self):
+        """Line items for virtual parts are skipped (virtual parts cannot hold stock)."""
+        order = SalesOrder.objects.create(customer=self.customer)
+        virtual_line = SalesOrderLineItem.objects.create(
+            order=order, part=self.virtual_part, quantity=5
+        )
+
+        order.auto_allocate_stock()
+
+        self.assertEqual(
+            SalesOrderAllocation.objects.filter(line=virtual_line).count(), 0
+        )
+        # Virtual parts are considered fully allocated without any stock
+        self.assertTrue(virtual_line.is_fully_allocated())
+
+    def test_allocates_serialized_stock(self):
+        """Serialized stock items are included in auto-allocation."""
+        order, line, _ = self._make_order(qty=1)
+        serialized = StockItem.objects.create(
+            part=self.part, quantity=1, serial='SN001'
+        )
+
+        order.auto_allocate_stock()
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item, serialized)
+        self.assertTrue(line.is_fully_allocated())
+
+    def test_shipment_assigned(self):
+        """Allocations are assigned to the provided shipment."""
+        order, line, shipment = self._make_order(qty=10)
+        StockItem.objects.create(part=self.part, quantity=50)
+
+        order.auto_allocate_stock(shipment=shipment)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        for alloc in allocs:
+            self.assertEqual(alloc.shipment, shipment)
+
+    def test_sort_quantity_asc(self):
+        """quantity_asc sort consumes smallest lots first."""
+        order, line, _ = self._make_order(qty=15)
+        small = StockItem.objects.create(part=self.part, quantity=5)
+        StockItem.objects.create(part=self.part, quantity=100)
+
+        order.auto_allocate_stock(stock_sort_by='quantity', interchangeable=True)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line).order_by('quantity')
+        self.assertTrue(allocs.exists())
+        # Small lot should be fully consumed
+        self.assertTrue(any(a.item == small and a.quantity == 5 for a in allocs))
+
+    def test_sort_quantity_desc(self):
+        """quantity_desc sort consumes largest lots first."""
+        order, line, _ = self._make_order(qty=15)
+        StockItem.objects.create(part=self.part, quantity=5)
+        large = StockItem.objects.create(part=self.part, quantity=100)
+
+        order.auto_allocate_stock(stock_sort_by='-quantity', interchangeable=True)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        # Large lot should be the first consumed (fully covers 15)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().item, large)
+
+    def test_task_resolves_pk_params(self):
+        """auto_allocate_sales_order task resolves location/shipment pks to instances."""
+        from order.tasks import auto_allocate_sales_order
+
+        order, line, shipment = self._make_order(qty=10)
+        StockItem.objects.create(part=self.part, quantity=50, location=self.loc_a)
+
+        auto_allocate_sales_order(
+            order.pk, location_id=self.loc_a.pk, shipment_id=shipment.pk
+        )
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        for alloc in allocs:
+            self.assertEqual(alloc.shipment, shipment)
+            self.assertEqual(alloc.item.location, self.loc_a)
+
+    def test_task_exclude_location_pk(self):
+        """auto_allocate_sales_order respects exclude_location_id parameter."""
+        from order.tasks import auto_allocate_sales_order
+
+        order, line, _ = self._make_order(qty=10)
+        excluded = StockItem.objects.create(
+            part=self.part, quantity=50, location=self.loc_a
+        )
+        included = StockItem.objects.create(part=self.part, quantity=50)
+
+        auto_allocate_sales_order(order.pk, exclude_location_id=self.loc_a.pk)
+
+        allocs = SalesOrderAllocation.objects.filter(line=line)
+        self.assertTrue(allocs.exists())
+        allocated_items = [a.item for a in allocs]
+        self.assertNotIn(excluded, allocated_items)
+        self.assertIn(included, allocated_items)

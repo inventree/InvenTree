@@ -226,6 +226,17 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             }
         ]
 
+    def get_ui_primary_actions(self, request, context, **kwargs):
+        """Return a list of custom primary action buttons."""
+        return [
+            {
+                'key': 'sample-primary-action',
+                'title': 'Sample Primary Action',
+                'icon': 'ti:plus:outline',
+                'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
+            }
+        ]
+
     def get_admin_context(self) -> dict:
         """Return custom context data which can be rendered in the admin panel."""
         return {'apple': 'banana', 'foo': 'bar', 'hello': 'world'}

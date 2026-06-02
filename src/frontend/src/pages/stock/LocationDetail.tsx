@@ -4,14 +4,17 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack } from '@mantine/core';
 import {
+  IconCalendar,
   IconInfoCircle,
   IconListDetails,
   IconPackages,
   IconSitemap,
-  IconTable
+  IconTable,
+  IconTransfer
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -19,6 +22,7 @@ import { api } from '../../App';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
+import OrderCalendar from '../../components/calendar/OrderCalendar';
 import {
   type DetailsField,
   DetailsTable
@@ -34,7 +38,6 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
@@ -47,11 +50,15 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useUserSettingsState } from '../../states/SettingsStates';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockLocationParametricTable from '../../tables/stock/StockLocationParametricTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
+import TransferOrderParametricTable from '../../tables/stock/TransferOrderParametricTable';
+import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 
 export default function Stock() {
   const { id: _id } = useParams();
@@ -63,6 +70,8 @@ export default function Stock() {
 
   const navigate = useNavigate();
   const user = useUserState();
+  const settings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -167,6 +176,7 @@ export default function Stock() {
   }, [location, instanceQuery]);
 
   const [sublocationView, setSublocationView] = useState<string>('table');
+  const [transferOrderView, setTransferOrderView] = useState<string>('table');
 
   const locationPanels: PanelType[] = useMemo(() => {
     return [
@@ -217,6 +227,42 @@ export default function Stock() {
           />
         )
       },
+      SegmentedControlPanel({
+        name: 'transfer-orders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        hidden:
+          !user.hasViewRole(UserRoles.transfer_order) ||
+          !globalSettings.isSet('TRANSFERORDER_ENABLED'),
+        selection: transferOrderView,
+        onChange: setTransferOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <TransferOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: (
+              <OrderCalendar
+                model={ModelType.transferorder}
+                role={UserRoles.transfer_order}
+                params={{ outstanding: true }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <TransferOrderParametricTable />
+          }
+        ]
+      }),
       {
         name: 'default_parts',
         label: t`Default Parts`,
@@ -238,7 +284,7 @@ export default function Stock() {
         hidden: !location.pk
       })
     ];
-  }, [sublocationView, location, id]);
+  }, [sublocationView, transferOrderView, location, id]);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
@@ -431,6 +477,17 @@ export default function Stock() {
     [location]
   );
 
+  const defaultPanel = useMemo(() => {
+    if (
+      settings.isSet('DISPLAY_ITEMS_FINAL_LEVEL', true) &&
+      location.pk &&
+      location.sublocations === 0
+    ) {
+      return 'stock-items';
+    }
+    return undefined;
+  }, [settings, location]);
+
   return (
     <>
       {editLocation.modal}
@@ -479,6 +536,7 @@ export default function Stock() {
             id={location?.pk}
             instance={location}
             pluginPanelWithoutId
+            defaultPanel={defaultPanel}
           />
         </Stack>
         {stockAdjustActions.modals.map((modal) => modal.modal)}

@@ -117,17 +117,28 @@ class ReturnOrderLineStatus(StatusCode):
     REJECT = 60, _('Reject'), ColorEnum.danger
 
 
-class RepairOrderStatus(StatusCode):
-    """Defines a set of status codes for a RepairOrder."""
+class TransferOrderStatus(StatusCode):
+    """Defines a set of status codes for a TransferOrder."""
 
-    PENDING = 10, _('Pending'), ColorEnum.secondary
-    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary
-    COMPLETED = 30, _('Completed'), ColorEnum.success
+    # Order status codes
+    PENDING = 10, _('Pending'), ColorEnum.secondary  # Order is pending (not yet issued)
+    ISSUED = 20, _('Issued'), ColorEnum.primary  # Order has been issued
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Order is on hold
+    COMPLETE = 30, _('Complete'), ColorEnum.success  # Order has been completed
+    CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Order was cancelled
 
 
-class RepairOrderStatusGroups:
-    """Groups for RepairOrderStatus codes."""
+class TransferOrderStatusGroups:
+    """Groups for TransferOrderStatus codes."""
 
-    OPEN = [RepairOrderStatus.PENDING.value, RepairOrderStatus.IN_PROGRESS.value]
+    # Open orders
+    OPEN = [
+        TransferOrderStatus.PENDING.value,
+        TransferOrderStatus.ON_HOLD.value,
+        TransferOrderStatus.ISSUED.value,
+    ]
 
-    COMPLETE = [RepairOrderStatus.COMPLETED.value]
+    # Failed orders
+    FAILED = [TransferOrderStatus.CANCELLED.value]
+
+    COMPLETE = [TransferOrderStatus.COMPLETE.value]

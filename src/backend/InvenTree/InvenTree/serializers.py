@@ -26,7 +26,6 @@ from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
-import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
@@ -765,6 +764,56 @@ class InvenTreeDecimalField(serializers.FloatField):
             raise serializers.ValidationError(_('Invalid value'))
 
 
+class CustomStatusSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models that support custom status values.
+
+    Provides a `status_text` SerializerMethodField that resolves custom
+    status labels with a single database query per model per serializer
+    context (i.e. one query for a whole list page) rather than one query per
+    object (N+1).
+    """
+
+    status_text = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_status_text(self, instance) -> Optional[str]:
+        """Return the human-readable status text for the instance.
+
+        Uses a per-context cache keyed by model name so that all objects in a
+        single serialization pass share one DB hit for custom label lookup.
+
+        During write operations DRF may call to_representation on the raw
+        validated_data dict rather than a model instance (e.g. when building
+        response headers).  Return None in that case — the response body is
+        always produced from a real instance via a separate serializer call.
+        """
+        if not hasattr(instance, 'get_custom_status'):
+            return None
+
+        custom_key = instance.get_custom_status()
+
+        if custom_key is None:
+            return instance.status_class.label(instance.get_status())
+
+        model_name = instance._meta.model_name
+        cache_key = f'_custom_status_labels_{model_name}'
+
+        # Cache a dict of custom status labels for this model, if not already cached
+        if cache_key not in self.context:
+            from common.models import InvenTreeCustomUserStateModel
+
+            self.context[cache_key] = {
+                obj.key: obj.label
+                for obj in InvenTreeCustomUserStateModel.objects.filter(
+                    model__model=model_name
+                )
+            }
+
+        return self.context[cache_key].get(
+            custom_key, instance.status_class.label(instance.get_status())
+        )
+
+
 class NotesFieldMixin:
     """Serializer mixin for handling 'notes' fields.
 
@@ -783,51 +832,6 @@ class NotesFieldMixin:
                     and not InvenTree.ready.isGeneratingSchema()
                 ):
                     self.fields.pop('notes', None)
-
-
-class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
-    """Mixin class which allows downloading an 'image' from a remote URL.
-
-    Adds the optional, write-only `remote_image` field to the serializer
-    """
-
-    def skip_create_fields(self):
-        """Ensure the 'remote_image' field is skipped when creating a new instance."""
-        return ['remote_image']
-
-    remote_image = serializers.URLField(
-        required=False,
-        allow_blank=True,
-        write_only=True,
-        label=_('Remote Image'),
-        help_text=_('URL of remote image file'),
-    )
-
-    def validate_remote_image(self, url):
-        """Perform custom validation for the remote image URL.
-
-        - Attempt to download the image and store it against this object instance
-        - Catches and re-throws any errors
-        """
-        from InvenTree.helpers_model import download_image_from_url
-
-        if not url:
-            return
-
-        if not common_models.InvenTreeSetting.get_setting(
-            'INVENTREE_DOWNLOAD_FROM_URL'
-        ):
-            raise ValidationError(
-                _('Downloading images from remote URL is not enabled')
-            )
-
-        try:
-            self.remote_image_file = download_image_from_url(url)
-        except Exception:
-            self.remote_image_file = None
-            raise ValidationError(_('Failed to download image from remote URL'))
-
-        return url
 
 
 class ContentTypeField(serializers.ChoiceField):

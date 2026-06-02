@@ -120,7 +120,12 @@ def validate_url_no_ssrf(url):
             raise ValueError(_('URL points to a private or reserved IP address'))
 
 
-def download_image_from_url(remote_url, timeout=2.5):
+def download_image_from_url(
+    remote_url: str,
+    timeout: float = 2.5,
+    user_agent: str = '',
+    max_size: Optional[int] = None,
+):
     """Download an image file from a remote URL.
 
     This is a potentially dangerous operation, so we must perform some checks:
@@ -130,8 +135,9 @@ def download_image_from_url(remote_url, timeout=2.5):
 
     Arguments:
         remote_url: The remote URL to retrieve image
-        max_size: Maximum allowed image size (default = 1MB)
         timeout: Connection timeout in seconds (default = 5)
+        user_agent: User-Agent string to use for the request (optional)
+        max_size: Maximum allowed image size (in bytes) (default = 1MB)
 
     Returns:
         An in-memory PIL image file, if the download was successful
@@ -151,13 +157,9 @@ def download_image_from_url(remote_url, timeout=2.5):
     validate_url_no_ssrf(remote_url)
 
     # Calculate maximum allowable image size (in bytes)
-    max_size = (
-        int(get_global_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
-    )
+    max_size = max_size or 1 * 1024 * 1024  # Default to 1MB if not provided
 
     # Add user specified user-agent to request (if specified)
-    user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
-
     headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
