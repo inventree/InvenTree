@@ -78,7 +78,9 @@ export default defineConfig({
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
         INVENTREE_LOGIN_ATTEMPTS: '100',
-        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
+        INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png',
+        INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,
@@ -92,9 +94,7 @@ export default defineConfig({
         INVENTREE_DEBUG: 'True',
         INVENTREE_LOG_LEVEL: 'INFO',
         INVENTREE_PLUGINS_ENABLED: 'True',
-        INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
-        INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png',
-        INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png'
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
       }
     }
   ],
