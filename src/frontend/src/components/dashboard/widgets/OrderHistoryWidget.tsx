@@ -4,7 +4,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { StylishText } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
-import { Stack } from '@mantine/core';
+import { Box, LoadingOverlay, Stack } from '@mantine/core';
 import { useDocumentVisibility } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -84,13 +84,17 @@ function OrderHistoryComponent({
   return (
     <Stack gap='xs'>
       <StylishText size='md'>{title}</StylishText>
-      <BarChart
-        h={200}
-        data={chartData}
-        dataKey='month'
-        series={[{ name: 'count', label: t`Completed`, color: 'blue.6' }]}
-        withYAxis={false}
-      />
+      <Box>
+        <LoadingOverlay visible={query.isLoading || query.isFetching} />
+        <BarChart
+          h={200}
+          data={chartData}
+          dataKey='month'
+          series={[{ name: 'count', label: t`Completed`, color: 'blue.6' }]}
+          withYAxis={false}
+          yAxisProps={{ domain: [0, 'auto'] }}
+        />
+      </Box>
     </Stack>
   );
 }
