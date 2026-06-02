@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("stock", "0122_alter_stockitem_creation_date"),
+        ("stock", "0123_remove_stockitem_notes"),
     ]
 
     operations = [
