@@ -755,7 +755,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         with:
           name: nyc-output-${{ matrix.browser }}-${{ matrix.shard }}
-          path: src/frontend/.nyc_output/
+          path: src/frontend/coverage
           retention-days: 1
 
   web_ui_coverage:
@@ -780,11 +780,12 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
         with:
           pattern: nyc-output-*
-          path: src/frontend/.nyc_output
+          path: src/frontend/coverage
           merge-multiple: true
       - name: Report coverage
         run: |
           cd src/frontend
+          mkdir -p .nyc_output
           npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --reporter=text-summary --exclude-after-remap false >> "$GITHUB_STEP_SUMMARY"
       - name: Upload coverage reports to Codecov
         if: github.ref == 'refs/heads/master'
