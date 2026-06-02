@@ -6,6 +6,7 @@ import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
+import type { NavigateFunction } from 'react-router-dom';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
@@ -26,6 +27,7 @@ export function ApiFormField({
   definition,
   control,
   hideLabels,
+  navigate,
   url,
   setFields,
   onKeyDown
@@ -34,6 +36,7 @@ export function ApiFormField({
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
+  navigate?: NavigateFunction | null;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
   onKeyDown?: (value: any) => void;
@@ -81,10 +84,14 @@ export function ApiFormField({
       ...fieldDefinition,
       autoFill: undefined,
       placeholderAutofill: undefined,
+      placeholderWarning: undefined,
+      placeholderWarningCompare: undefined,
+      singleFetchFunction: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
+      allow_blank: undefined,
       allow_null: undefined,
       read_only: undefined,
       children: undefined,
@@ -115,9 +122,10 @@ export function ApiFormField({
       case 'related field':
         return (
           <RelatedModelField
-            controller={controller}
             definition={fieldDefinition}
+            controller={controller}
             fieldName={fieldName}
+            navigate={navigate}
           />
         );
       case 'email':

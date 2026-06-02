@@ -1,6 +1,7 @@
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Paper, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -15,7 +16,6 @@ import {} from '../../components/items/ActionDropdown';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';

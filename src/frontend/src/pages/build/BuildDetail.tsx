@@ -22,6 +22,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -44,7 +45,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -331,7 +331,7 @@ export default function BuildDetail() {
         name: 'can_build',
         unit: build.part_detail?.units,
         label: t`Can Build`,
-        hidden: partRequirementsQuery.isFetching
+        hidden: partRequirements?.can_build === undefined
       },
       {
         type: 'progressbar',
@@ -454,12 +454,7 @@ export default function BuildDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [
-    build,
-    instanceQuery,
-    partRequirements,
-    partRequirementsQuery.isFetching
-  ]);
+  }, [build, instanceQuery, partRequirements, partRequirementsQuery]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -597,6 +592,7 @@ export default function BuildDetail() {
     build,
     id,
     user,
+    partRequirements,
     buildStatus,
     globalSettings,
     showChildBuilds,

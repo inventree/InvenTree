@@ -139,8 +139,8 @@ export function RowActions({
               aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
-              variant='subtle'
-              color='gray'
+              variant='transparent'
+              size='sm'
             >
               <IconDots />
             </ActionIcon>

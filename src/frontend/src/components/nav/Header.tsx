@@ -114,7 +114,9 @@ export function Header() {
     },
     // Refetch every minute, *if* the tab is visible
     refetchInterval: 60 * 1000,
-    refetchOnMount: true
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 30 * 1000
   });
 
   // Sync Navigation Drawer state with zustand
@@ -269,7 +271,7 @@ function NavTabs() {
 
     // static content
     mainNavTabs.forEach((tab) => {
-      if (tab.role && !user.hasViewRole(tab.role)) {
+      if (tab.visible === false) {
         return;
       }
 

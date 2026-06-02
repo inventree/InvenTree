@@ -52,6 +52,8 @@ export function RenderPartColumn({
   part: any;
   full_name?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState.getState();
+
   if (!part) {
     return <Skeleton />;
   }
@@ -69,7 +71,7 @@ export function RenderPartColumn({
             <IconExclamationCircle color='red' size={16} />
           </Tooltip>
         )}
-        {part?.locked && (
+        {globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked && (
           <Tooltip label={t`Part is Locked`}>
             <IconLock size={16} />
           </Tooltip>
@@ -330,7 +332,7 @@ export function PathColumn(props: TableColumnProps): TableColumn {
         <TableHoverCard
           value={<Text size='sm'>{instance.name}</Text>}
           icon='sitemap'
-          title={props.title}
+          title={props.title?.toLocaleString() ?? t`Path`}
           extra={[<Text size='sm'>{instance.pathstring}</Text>]}
         />
       );

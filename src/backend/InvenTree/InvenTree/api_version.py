@@ -1,13 +1,57 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 487
+INVENTREE_API_VERSION = 500
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v487 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/9928
+v500 -> 2026-06-02 : https://github.com/inventree/InvenTree/pull/9928
     - Add "PartTest" API endpoint
+
+v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
+    - Fixes search field issues on the BarcodeScanHistory API endpoint
+
+v498 -> 2026-05-31 : https://github.com/inventree/InvenTree/pull/12055
+    - Updates the "status_text" field for models which support custom status values
+
+v497 -> 2026-05-27 : https://github.com/inventree/InvenTree/pull/12019
+    - Adds "location" field to StockCount API endpoint
+
+v496 -> 2026-05-26 : https://github.com/inventree/InvenTree/pull/12011
+    - Add "creation_date" field to the StockItem API endpoint
+
+v495 -> 2026-05-25 : https://github.com/inventree/InvenTree/pull/12000
+    - Adds "auto-allocate" API endpoint for sales orders
+    - Allow bulk-delete of SalesOrderAllocation objects via the API
+    - Add new allocation options to the Build auto-allocate API endpoint
+
+v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
+    - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task
+
+v493 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11961
+    - Adds "thumbnail" field to the Attachment API endpoint, which provides a URL to a thumbnail image for image attachments (if available)
+
+v492 -> 2026-05-22 : https://github.com/inventree/InvenTree/pull/11281
+    - Add Transfer Order model and associated API endpoint
+
+v491 -> 2026-05-21 : https://github.com/inventree/InvenTree/pull/11979
+    - Add API serializer for deleting a part category
+    - Add API serializer for deleting a stock location
+
+v490 -> 2026-05-19 : https://github.com/inventree/InvenTree/pull/11963
+    - Moves user-self-filtered endpoints to /user/me/ to make their security boundaries clearer
+
+v489 -> 2026-05-18 : https://github.com/inventree/InvenTree/pull/11962
+    - Removes the "remote_image" field from the Part API endpoint
+    - Removes the "remote_image" field from the Company API endpoint
+
+v488 -> 2026-05-17 : https://github.com/inventree/InvenTree/pull/11920
+    - Allow renaming of attachments after upload via the API
+
+v487 -> 2026-05-15 : https://github.com/inventree/InvenTree/pull/11948
+    - Make SelectionList default nullable
+    - Add icon to TreePath schema
 
 v486 -> 2026-05-10 : https://github.com/inventree/InvenTree/pull/11914
     - Adds "maximum_stock" field to the Part model and associated API endpoints

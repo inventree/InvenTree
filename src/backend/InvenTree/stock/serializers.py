@@ -33,6 +33,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    CustomStatusSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     OptionalField,
@@ -308,6 +309,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
+    CustomStatusSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -371,8 +373,9 @@ class StockItemSerializer(
             'SKU',
             'MPN',
             'barcode_hash',
-            'updated',
+            'creation_date',
             'stocktake_date',
+            'updated',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
@@ -395,6 +398,7 @@ class StockItemSerializer(
         read_only_fields = [
             'allocated',
             'barcode_hash',
+            'creation_date',
             'stocktake_date',
             'stocktake_user',
             'updated',
@@ -520,6 +524,8 @@ class StockItemSerializer(
             allocated=Coalesce(
                 SubquerySum('sales_order_allocations__quantity'), Decimal(0)
             )
+            # For now, stock allocated to a transfer order will not impact its availability
+            # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
         )
 
@@ -560,10 +566,6 @@ class StockItemSerializer(
         queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
         return queryset
-
-    status_text = serializers.CharField(
-        source='get_status_display', read_only=True, label=_('Status')
-    )
 
     SKU = serializers.CharField(
         source='supplier_part.SKU',
@@ -1167,6 +1169,27 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
+class LocationDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a stock location."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_stock_items', 'delete_sub_locations']
+
+    delete_stock_items = serializers.BooleanField(
+        required=True,
+        label=_('Delete Stock Items'),
+        help_text=_('Delete all stock items contained within this location'),
+    )
+
+    delete_sub_locations = serializers.BooleanField(
+        required=True,
+        label=_('Delete Sublocations'),
+        help_text=_('Delete all sub-locations contained within this location'),
+    )
+
+
 @register_importer()
 class LocationSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
@@ -1368,6 +1391,10 @@ class StockAssignmentItemSerializer(serializers.Serializer):
         # The item must not be allocated to a sales order
         if item.sales_order_allocations.count() > 0:
             raise ValidationError(_('Item is allocated to a sales order'))
+
+        # The item must not be allocated to a transfer order
+        if item.transfer_order_allocations.count() > 0:
+            raise ValidationError(_('Item is allocated to a transfer order'))
 
         # The item must not be allocated to a build order
         if item.allocations.count() > 0:
@@ -1715,6 +1742,20 @@ class StockAdjustmentSerializer(serializers.Serializer):
 class StockCountSerializer(StockAdjustmentSerializer):
     """Serializer for counting stock items."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'notes', 'location']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(structural=False),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Set stock location for counted items (optional)'),
+    )
+
     def save(self):
         """Count stock."""
         request = self.context['request']
@@ -1722,6 +1763,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         items = data['items']
         notes = data.get('notes', '')
+        location = data.get('location', None)
 
         with transaction.atomic():
             for item in items:
@@ -1734,6 +1776,9 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
+
+                if location is not None:
+                    extra['location'] = location
 
                 stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 

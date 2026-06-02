@@ -290,8 +290,6 @@ test('Parts - BOM Validation', async ({ browser }) => {
   // Edit line item, to ensure BOM is not valid
   const cell = await page.getByRole('cell', { name: 'paint', exact: true });
 
-  // await cell.click({ button: 'right' });
-  // await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
@@ -344,7 +342,9 @@ test('Parts - BOM Comparison', async ({ browser }) => {
   await page.getByText('Removed from BOM').first().waitFor();
 
   // Change display mode
-  await page.getByRole('textbox', { name: 'bom-compare-display-mode' }).click();
+  await page
+    .getByRole('combobox', { name: 'bom-compare-display-mode' })
+    .click();
   await page.getByRole('option', { name: 'Show different Parts' }).click();
 
   // Use URL params to compare directly

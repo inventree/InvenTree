@@ -293,6 +293,16 @@ class ConversionTest(TestCase):
             )
             self.assertAlmostEqual(output, expected, 12)
 
+        # Test that 'R' is interpreted as ohms
+        # Ref: https://github.com/inventree/InvenTree/issues/12063
+        r_tests = [('8R6', 8.6), ('10R', 10), ('4R7', 4.7), ('100R', 100)]
+
+        for val, expected in r_tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 6)
+
     def test_scientific_notation(self):
         """Test that scientific notation is handled correctly."""
         tests = [
@@ -738,21 +748,10 @@ class TestHelpers(TestCase):
 
         large_img = 'https://github.com/inventree/InvenTree/raw/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
 
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None
-        )
-
-        # Attempt to download an image which is too large
-        with self.assertRaises(ValueError):
-            InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
-
-        # Increase allowable download size
-        InvenTreeSetting.set_setting(
-            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None
-        )
-
         # Download a valid image (should not throw an error)
-        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
+        InvenTree.helpers_model.download_image_from_url(
+            large_img, timeout=10, max_size=10 * 1024 * 1024
+        )
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
@@ -1499,7 +1498,7 @@ class TestOffloadTask(InvenTreeTestCase):
                 offload_task('dummy_task.numbers', 1, 1, 1, force_sync=True)
             )
 
-            self.assertIn('Malformed function path', str(log.output))
+            self.assertIn("No module named \\'dummy_task\\'", str(log.output))
 
         # Offload dummy task with a Part instance
         # This should succeed, ensuring that the Part instance is correctly pickled

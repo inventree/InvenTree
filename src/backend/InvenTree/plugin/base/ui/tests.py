@@ -233,3 +233,13 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
         self.assertEqual(response.data[0]['key'], 'sample-nav-item')
         self.assertEqual(response.data[0]['title'], 'Sample Nav Item')
+
+    def test_ui_primary_actions(self):
+        """Test that the sample UI plugin provides custom primary actions."""
+        response = self.get(
+            reverse('api-plugin-ui-feature-list', kwargs={'feature': 'primary_action'})
+        )
+        self.assertEqual(1, len(response.data))
+        self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
+        self.assertEqual(response.data[0]['key'], 'sample-primary-action')
+        self.assertEqual(response.data[0]['title'], 'Sample Primary Action')

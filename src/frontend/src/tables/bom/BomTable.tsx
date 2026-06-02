@@ -40,7 +40,10 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useImporterState } from '../../states/ImporterState';
-import { useUserSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
@@ -90,6 +93,13 @@ export function BomTable({
   const openImporter = useImporterState((state) => state.openImporter);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const globalSettings = useGlobalSettingsState();
+
+  const isLocked = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_LOCKING') && (partLocked ?? false),
+    [globalSettings, partLocked]
+  );
 
   const userSettings = useUserSettingsState();
 
@@ -605,16 +615,14 @@ export function BomTable({
           title: t`Validate BOM Line`,
           color: 'green',
           hidden:
-            partLocked ||
-            record.validated ||
-            !user.hasChangeRole(UserRoles.bom),
+            isLocked || record.validated || !user.hasChangeRole(UserRoles.bom),
           icon: <IconCircleCheck />,
           onClick: () => {
             validateBomItem(record);
           }
         },
         RowEditAction({
-          hidden: partLocked || !user.hasChangeRole(UserRoles.bom),
+          hidden: isLocked || !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -623,7 +631,7 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasAddRole(UserRoles.bom),
+          hidden: isLocked || !user.hasAddRole(UserRoles.bom),
           icon: <IconSwitch3 />,
           onClick: () => {
             setSelectedBomItem(record);
@@ -631,7 +639,7 @@ export function BomTable({
           }
         },
         RowDeleteAction({
-          hidden: partLocked || !user.hasDeleteRole(UserRoles.bom),
+          hidden: isLocked || !user.hasDeleteRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             deleteBomItem.open();
@@ -639,7 +647,7 @@ export function BomTable({
         })
       ];
     },
-    [isEditing, partId, partLocked, user]
+    [isEditing, partId, isLocked, user]
   );
 
   const tableActions = useMemo(() => {
@@ -649,7 +657,7 @@ export function BomTable({
         tooltip={t`Add BOM Items`}
         position='bottom-start'
         icon={<IconPlus />}
-        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.bom)}
+        hidden={!isEditing || isLocked || !user.hasAddRole(UserRoles.bom)}
         actions={[
           {
             name: t`Add BOM Item`,
@@ -667,7 +675,7 @@ export function BomTable({
       />,
       <ActionButton
         key='edit-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.bom) || isEditing}
+        hidden={isLocked || !user.hasChangeRole(UserRoles.bom) || isEditing}
         tooltip={t`Edit BOM`}
         icon={<IconEdit />}
         onClick={() => {
@@ -686,7 +694,7 @@ export function BomTable({
         }}
       />
     ];
-  }, [isEditing, partLocked, user]);
+  }, [isEditing, isLocked, user]);
 
   // Row expansion (for displaying subassemblies)
   const rowExpansion = subassemblyRowExpansion({ table: table });
@@ -699,7 +707,7 @@ export function BomTable({
       {deleteBomItem.modal}
       {editSubstitutes.modal}
       <Stack gap='xs'>
-        {partLocked && (
+        {isLocked && (
           <Alert
             title={t`Part is Locked`}
             color='orange'
@@ -730,9 +738,9 @@ export function BomTable({
             modelField: 'sub_part',
             onCellClick: () => {},
             rowActions: isEditing ? rowActions : undefined,
-            enableSelection: isEditing && !partLocked,
+            enableSelection: isEditing && !isLocked,
             enableBulkDelete:
-              isEditing && !partLocked && user.hasDeleteRole(UserRoles.bom),
+              isEditing && !isLocked && user.hasDeleteRole(UserRoles.bom),
             enableDownload: true,
             rowExpansion: isEditing ? undefined : rowExpansion
           }}

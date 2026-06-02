@@ -1,11 +1,9 @@
 """DRF data serializers for Part app."""
 
-import io
 import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
@@ -55,6 +53,27 @@ from .models import (
 )
 
 logger = structlog.get_logger('inventree')
+
+
+class CategoryDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a PartCategory instance."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_child_categories', 'delete_parts']
+
+    delete_child_categories = serializers.BooleanField(
+        label=_('Delete Subcategories'),
+        help_text=_('Delete all sub-categories contained within this category'),
+        required=True,
+    )
+
+    delete_parts = serializers.BooleanField(
+        label=_('Delete Parts'),
+        help_text=_('Delete all parts contained within this category'),
+        required=True,
+    )
 
 
 @register_importer()
@@ -558,7 +577,6 @@ class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -591,7 +609,6 @@ class PartSerializer(
             'description',
             'full_name',
             'image',
-            'remote_image',
             'existing_image',
             'IPN',
             'is_template',
@@ -661,7 +678,7 @@ class PartSerializer(
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
                 # Fields required for certain operations, but are not part of the model
-                if f in ['remote_image', 'existing_image']:
+                if f in ['existing_image']:
                     continue
                 self.fields.pop(f, None)
 
@@ -717,6 +734,8 @@ class PartSerializer(
             ordering=part_filters.annotate_on_order_quantity(),
             in_stock=part_filters.annotate_total_stock(),
             allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(),
+            # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+            # allocated_to_transfer_orders=part_filters.annotate_transfer_order_allocations(),
             allocated_to_build_orders=part_filters.annotate_build_order_allocations(),
         )
 
@@ -741,6 +760,8 @@ class PartSerializer(
                 ExpressionWrapper(
                     F('total_in_stock')
                     - F('allocated_to_sales_orders')
+                    # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+                    # - F('allocated_to_transfer_orders'),
                     - F('allocated_to_build_orders'),
                     output_field=models.DecimalField(),
                 ),
@@ -750,6 +771,8 @@ class PartSerializer(
         )
 
         # Annotate with the total 'required for builds' quantity
+        # NOTE: for now, we don't consider transfer orders for required quantities
+        #       and they are assumed to operate on stock that already exists.
         queryset = queryset.annotate(
             required_for_build_orders=part_filters.annotate_build_order_requirements(),
             required_for_sales_orders=part_filters.annotate_sales_order_requirements(),
@@ -1107,6 +1130,7 @@ class PartSerializer(
         part = self.instance
         data = self.validated_data
 
+        # TODO: Remove the existing_image field entirely!
         existing_image = data.pop('existing_image', None)
 
         if existing_image:
@@ -1114,19 +1138,6 @@ class PartSerializer(
 
             part.image = img_path
             part.save()
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and part:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'part_{part.pk}_image.{fmt.lower()}'
-
-            part.image.save(filename, ContentFile(buffer.getvalue()))
 
         return self.instance
 
@@ -1935,6 +1946,7 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
+            'sub_part__stock_items__transfer_order_allocations',
         )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
