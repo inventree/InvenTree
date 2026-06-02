@@ -122,6 +122,13 @@ export default function StockDetail() {
     }
   });
 
+  const { instance: part, instanceQuery: partQuery } = useInstance({
+    endpoint: ApiEndpoints.part_list,
+    pk: stockitem?.part,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
   const { instance: serialNumbers, instanceQuery: serialNumbersQuery } =
     useInstance({
       endpoint: ApiEndpoints.stock_serial_info,
@@ -884,9 +891,8 @@ export default function StockDetail() {
       serial != '' &&
       stockitem.quantity == 1;
 
-    const canConvert =
-      !!stockitem.part_detail?.variant_of ||
-      !!stockitem.part_detail?.is_template;
+    // Allow variant conversion if the part is a variant, or if the part is a template
+    const canConvert = part?.variant_of || part?.is_template;
 
     return [
       <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
@@ -967,7 +973,7 @@ export default function StockDetail() {
         ]}
       />
     ];
-  }, [id, stockitem, user, stockAdjustActions.menuActions]);
+  }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
