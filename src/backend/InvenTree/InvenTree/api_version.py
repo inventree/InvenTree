@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 499
+INVENTREE_API_VERSION = 500
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v500 -> 2026-06-02 : https://github.com/inventree/InvenTree/pull/11971
+    - Removes direct "notes" field from any models which previously supported markdown notes
+    - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
+    - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
 
 v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
     - Fixes search field issues on the BarcodeScanHistory API endpoint
