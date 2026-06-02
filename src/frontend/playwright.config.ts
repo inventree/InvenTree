@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 const IS_CI = !!process.env.CI;
 
 const MAX_WORKERS: number = 3;
-const MAX_RETRIES: number = 3;
+const MAX_RETRIES: number = 2;
 
 /* We optionally spin-up services based on the testing mode:
  *
