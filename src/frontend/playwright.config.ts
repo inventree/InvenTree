@@ -46,22 +46,13 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      },
-      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
+      }
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      },
-      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
-    },
-    {
-      name: 'customization',
-      use: {
-        ...devices['Desktop Firefox']
-      },
-      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
+      }
     }
   ],
 
@@ -101,7 +92,9 @@ export default defineConfig({
         INVENTREE_DEBUG: 'True',
         INVENTREE_LOG_LEVEL: 'INFO',
         INVENTREE_PLUGINS_ENABLED: 'True',
-        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
+        INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png',
+        INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png'
       }
     }
   ],
