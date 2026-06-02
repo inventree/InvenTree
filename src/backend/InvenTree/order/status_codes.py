@@ -115,3 +115,19 @@ class ReturnOrderLineStatus(StatusCode):
 
     # Item is rejected
     REJECT = 60, _('Reject'), ColorEnum.danger
+
+
+class RepairOrderStatus(StatusCode):
+    """Defines a set of status codes for a RepairOrder."""
+
+    PENDING = 10, _('Pending'), ColorEnum.secondary
+    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary
+    COMPLETED = 30, _('Completed'), ColorEnum.success
+
+
+class RepairOrderStatusGroups:
+    """Groups for RepairOrderStatus codes."""
+
+    OPEN = [RepairOrderStatus.PENDING.value, RepairOrderStatus.IN_PROGRESS.value]
+
+    COMPLETE = [RepairOrderStatus.COMPLETED.value]
