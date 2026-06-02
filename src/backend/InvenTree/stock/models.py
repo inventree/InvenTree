@@ -448,7 +448,6 @@ class StockItem(
         expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
-        review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
         status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
@@ -1237,8 +1236,6 @@ class StockItem(
         verbose_name=_('Creation Date'),
         help_text=_('Date that this stock item was created'),
     )
-
-    review_needed = models.BooleanField(default=False)
 
     delete_on_deplete = models.BooleanField(
         default=default_delete_on_deplete,

@@ -293,6 +293,16 @@ class ConversionTest(TestCase):
             )
             self.assertAlmostEqual(output, expected, 12)
 
+        # Test that 'R' is interpreted as ohms
+        # Ref: https://github.com/inventree/InvenTree/issues/12063
+        r_tests = [('8R6', 8.6), ('10R', 10), ('4R7', 4.7), ('100R', 100)]
+
+        for val, expected in r_tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 6)
+
     def test_scientific_notation(self):
         """Test that scientific notation is handled correctly."""
         tests = [
