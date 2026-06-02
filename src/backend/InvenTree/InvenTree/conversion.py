@@ -114,7 +114,7 @@ def reload_unit_registry():
     reg.define('@alias degF = Fahrenheit')
     reg.define('@alias degK = Kelvin')
 
-    # Override R as ohm (pint defines R as molar_gas_constant by default)
+    # Override R as ohm (pint defines R as an SI prefix by default)
     reg.define('R = ohm')
 
     # Define some "standard" additional units

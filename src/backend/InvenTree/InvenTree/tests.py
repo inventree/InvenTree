@@ -293,7 +293,7 @@ class ConversionTest(TestCase):
             )
             self.assertAlmostEqual(output, expected, 12)
 
-        # Test that 'R' is interpreted as ohms (not molar_gas_constant)
+        # Test that 'R' is interpreted as ohms
         # Ref: https://github.com/inventree/InvenTree/issues/12063
         r_tests = [('8R6', 8.6), ('10R', 10), ('4R7', 4.7), ('100R', 100)]
 
