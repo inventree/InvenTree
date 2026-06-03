@@ -9,6 +9,7 @@ INVENTREE_API_TEXT = """
 v500 -> 2026-06-03 : https://github.com/inventree/InvenTree/pull/12077
     - Adds "tags" fields to multiple new model types
     - Adds /api/tag/ endpoint for fetching tags
+    - Enable filtering various model types by tags
 
 v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
     - Fixes search field issues on the BarcodeScanHistory API endpoint
