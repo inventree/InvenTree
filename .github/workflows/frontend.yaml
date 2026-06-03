@@ -105,11 +105,40 @@ jobs:
             echo "submit-performance=false" >> "$GITHUB_OUTPUT"
           fi
 
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
+      - name: Write version file - SHA
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
+      - name: Zip frontend
+        run: |
+          cd src/backend/InvenTree/web/static
+          zip -r frontend-build.zip web/ web/.vite
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        with:
+          name: frontend-build
+          path: src/backend/InvenTree/web/static/web
+          include-hidden-files: true
+
   firefox:
     name: Tests - Firefox
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: ["code-style", "paths-filter"]
+    needs: ["build", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     services:
       postgres:
@@ -191,7 +220,7 @@ jobs:
     name: Tests - Chromium
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: ["code-style", "paths-filter"]
+    needs: ["build", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     services:
       postgres:
@@ -289,32 +318,3 @@ jobs:
           cd src/frontend
           yarn install
           yarn run build
-
-  build:
-    name: Build Frontend
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
-        with:
-          persist-credentials: false
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-      - name: Install dependencies
-        run: cd src/frontend && yarn install
-      - name: Build frontend
-        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
-      - name: Write version file - SHA
-        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
-      - name: Zip frontend
-        run: |
-          cd src/backend/InvenTree/web/static
-          zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        with:
-          name: frontend-build
-          path: src/backend/InvenTree/web/static/web
-          include-hidden-files: true
