@@ -5,6 +5,7 @@ import json
 import os
 import pathlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -17,7 +18,7 @@ from typing import Optional
 
 import invoke
 from invoke import Collection, task
-from invoke.exceptions import UnexpectedExit
+from invoke.exceptions import Exit, UnexpectedExit
 
 
 def safe_value(fnc):
@@ -497,6 +498,43 @@ def manage(c, cmd, pty: bool = False, env=None, verbose: bool = False, **kwargs)
     )
 
 
+def manage_interactive(cmd: str, env=None, verbose: bool = False):
+    """Run a Django management command with inherited stdio.
+
+    This bypasses Invoke PTY mediation and mirrors direct shell usage, which is
+    required for some interactive commands in Docker environments.
+
+    Args:
+        cmd: Django management command and arguments.
+        env: Optional environment variables to add for command execution.
+        verbose: If True, print the resolved command before execution.
+
+    Raises:
+        Exit: If the subprocess returns a non-zero exit code.
+    """
+    args = ['python3', 'manage.py', *shlex.split(cmd)]
+
+    # Keep behavior aligned with `manage`: default to quiet output.
+    if '-v' not in cmd and '--verbosity' not in cmd:
+        args.extend(['-v', '1' if verbose else '0'])
+
+    if verbose:
+        info(f'Running interactive command: {" ".join(args)}')
+
+    cmd_env = dict(os.environ)
+    if env:
+        cmd_env.update(env)
+
+    # Avoid Invoke's PTY stdin mediation for interactive commands; run with
+    # inherited stdio to match direct `manage.py` behavior in Docker TTYs.
+    result = subprocess.run(args, cwd=manage_py_dir(), env=cmd_env, check=False)
+
+    if result.returncode != 0:
+        error(f"ERROR: InvenTree command failed: '{' '.join(args)}'")
+        warning('- Refer to the error messages in the log above for more information')
+        raise Exit(code=result.returncode)
+
+
 def installed_apps(c) -> list[str]:
     """Returns a list of all installed apps, including plugins."""
     result = manage(c, 'list_apps', pty=False, hide=True)
@@ -762,7 +800,7 @@ def shell(c):
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
-    manage(c, 'createsuperuser', pty=True)
+    manage_interactive('createsuperuser')
 
 
 @task
@@ -1456,7 +1494,10 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     if migrate:
         manage(c, 'migrate --run-syncdb', verbose=verbose)
 
-    manage(c, f'flush{" --noinput" if force else ""}', verbose=verbose)
+    if force:
+        manage(c, 'flush --noinput', verbose=verbose)
+    else:
+        manage_interactive('flush', verbose=verbose)
 
     success('Existing data deleted')
 
