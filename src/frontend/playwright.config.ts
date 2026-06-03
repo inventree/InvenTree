@@ -26,7 +26,8 @@ const MAX_RETRIES: number = 2;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-const BASE_URL: string = 'http://localhost:5173';
+const BASE_URL: string =
+  process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
 console.log('- Base URL:', BASE_URL);
