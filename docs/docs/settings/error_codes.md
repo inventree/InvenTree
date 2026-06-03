@@ -239,7 +239,7 @@ See [Override global settings](../settings/global.md#override-global-settings) f
 #### INVE-I2
 **Issue with filtering serializer or decorator - Backend**
 
-An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
+An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of OptionalField, FilterableSerializerField or FilterableSerializerMixin.
 
 This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
 

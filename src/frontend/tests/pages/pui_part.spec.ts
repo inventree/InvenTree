@@ -949,12 +949,25 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 });
 
 test('Parts - Test Results', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
+  const page = await doCachedLogin(browser, { url: '/part/74/details' });
 
+  // Look at the "tests" associated with this part
+  await loadTab(page, 'Tests');
+
+  await page.getByRole('cell', { name: 'Test A' }).waitFor();
+  await page.getByRole('cell', { name: 'Test B' }).waitFor();
+  await page.getByRole('cell', { name: 'Test C' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Paint Applied' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Widget' }).first().waitFor();
+  await page.getByRole('cell', { name: 'Widget Template' }).first().waitFor();
+
+  // Look at the "test results" tab for the part
+  await loadTab(page, 'Test Results');
   await page.waitForTimeout(200);
 
   await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
   await page.getByText('Blue Paint Applied').waitFor();
+  await page.getByText('Bolt Check').waitFor();
 });
 
 test('Parts - Notes', async ({ browser }) => {

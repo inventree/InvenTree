@@ -120,6 +120,7 @@ def get_ruleset_models() -> dict:
             'part_partpricing',
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
+            'part_parttest',
             'part_parttesttemplate',
             'part_partrelated',
             'part_partstar',

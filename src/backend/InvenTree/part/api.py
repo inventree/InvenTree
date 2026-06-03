@@ -58,6 +58,7 @@ from .models import (
     PartRelated,
     PartSellPriceBreak,
     PartStocktake,
+    PartTest,
     PartTestTemplate,
 )
 
@@ -399,29 +400,7 @@ class PartTestTemplateFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTestTemplate
-        fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.filter(testable=True),
-        label='Part',
-        field_name='part',
-        method='filter_part',
-    )
-
-    def filter_part(self, queryset, name, part):
-        """Filter by the 'part' field.
-
-        Note: If the 'include_inherited' query parameter is set,
-        we also include any parts "above" the specified part.
-        """
-        include_inherited = str2bool(
-            self.request.query_params.get('include_inherited', True)
-        )
-
-        if include_inherited:
-            return queryset.filter(part__in=part.get_ancestors(include_self=True))
-        else:
-            return queryset.filter(part=part)
+        fields = ['key', 'requires_attachment', 'requires_value']
 
     has_results = rest_filters.BooleanFilter(
         label=_('Has Results'), method='filter_has_results'
@@ -472,6 +451,60 @@ class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreat
     ]
 
     ordering = 'test_name'
+
+
+class PartTestFilter(FilterSet):
+    """Custom filterset class for the PartTestList endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartTest
+        fields = ['template', 'part', 'enabled', 'required']
+
+    for_part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), label=_('For Part'), method='filter_for_part'
+    )
+
+    def filter_for_part(self, queryset, name, part):
+        """Filter 'PartTest' instances which associate with the provided 'Part'.
+
+        This is functionally different from the 'part' filter,
+        as it returns any PartTest instances which are associated with the provided part,
+        either directly or indirectly via the part's ancestors or categories.
+
+        Additionally, the results return at most one PartTest instance per PartTestTemplate,
+        with the most specific match being returned.
+        """
+        return part.getPartTests(queryset=queryset)
+
+
+class PartTestMixin:
+    """Mixin class for the PartTest API endpoints."""
+
+    queryset = PartTest.objects.all()
+    serializer_class = part_serializers.PartTestSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartTestDetail endpoints."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.prefetch_related('template', 'part', 'part__pricing_data')
+        return queryset
+
+
+class PartTestList(PartTestMixin, ListCreateAPI):
+    """List endpoint for the PartTest model."""
+
+    filterset_class = PartTestFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['template__test_name', 'template__description']
+
+    ordering_fields = ['template', 'part', 'enabled', 'required']
+
+
+class PartTestDetail(PartTestMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for the PartTest model."""
 
 
 class PartThumbs(ListAPI):
@@ -1611,6 +1644,18 @@ part_api_urls = [
             path(
                 '', PartTestTemplateList.as_view(), name='api-part-test-template-list'
             ),
+        ]),
+    ),
+    path(
+        'test/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path('', PartTestDetail.as_view(), name='api-part-test-detail')
+                ]),
+            ),
+            path('', PartTestList.as_view(), name='api-part-test-list'),
         ]),
     ),
     # Base URL for part sale pricing
