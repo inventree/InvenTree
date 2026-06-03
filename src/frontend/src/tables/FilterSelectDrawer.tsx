@@ -117,10 +117,10 @@ function FilterItem({
 function MultiApiFilterElement({
   filterProps,
   onValueChange
-}: {
+}: Readonly<{
   filterProps: TableFilter;
   onValueChange: (value: string | null, displayValue?: any) => void;
-}) {
+}>) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const query = useQuery({
