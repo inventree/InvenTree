@@ -1372,6 +1372,7 @@ class SalesOrderLineItemSerializer(
 class SalesOrderShipmentSerializer(
     DataImportExportSerializerMixin,
     FilterableSerializerMixin,
+    InvenTreeTaggitSerializer,
     NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
@@ -1401,6 +1402,7 @@ class SalesOrderShipmentSerializer(
             'customer_detail',
             'order_detail',
             'shipment_address_detail',
+            'tags',
         ]
 
     @staticmethod
@@ -1469,6 +1471,8 @@ class SalesOrderShipmentSerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
 
 class SalesOrderAllocationSerializer(

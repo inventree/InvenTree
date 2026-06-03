@@ -539,6 +539,7 @@ export function useSalesOrderShipmentFields({
       },
       tracking_number: {},
       invoice_number: {},
+      tags: TagsField({}),
       link: {}
     };
   }, [customerId, pending]);
