@@ -741,11 +741,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          if [ "${{ matrix.browser }}" == "chromium" ]; then
-            npx nyc playwright test --project=chromium
-          else
-            npx playwright test --project=firefox
-          fi
+          npx nyc playwright test --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
@@ -757,7 +753,7 @@ jobs:
         run: |
           cd src/frontend
           mkdir -p .nyc_output
-          npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --reporter=text-summary --exclude-after-remap false >> "$GITHUB_STEP_SUMMARY"
+          npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --reporter=text-summary --exclude-after-remap false | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Upload coverage reports to Codecov
         if: ${{ !cancelled() && matrix.browser == 'chromium' && github.ref == 'refs/heads/master' }}
         uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
