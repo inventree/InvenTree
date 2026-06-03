@@ -42,7 +42,7 @@ export default defineConfig({
   forbidOnly: !!IS_CI,
   retries: MAX_RETRIES,
   workers: MAX_WORKERS,
-  reporter: IS_CI ? [['html', { open: 'never' }], ['github']] : 'list',
+  reporter: IS_CI ? [['blob'], ['github']] : [['html']],
 
   /* Configure projects for major browsers */
   projects: [
