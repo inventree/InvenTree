@@ -22,6 +22,7 @@ import {
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
+  TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -49,7 +50,8 @@ export default function BuildOrderFilters({
     HasProjectCodeFilter(),
     IssuedByFilter(),
     ResponsibleFilter(),
-    PartCategoryFilter()
+    PartCategoryFilter(),
+    TagsFilter({ modelType: ModelType.build })
   ];
 
   const dateFilters: TableFilter[] = [

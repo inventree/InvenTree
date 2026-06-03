@@ -25,7 +25,6 @@ import type { TableColumn } from '@lib/types/Tables';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
-  useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields,
   useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
@@ -41,6 +40,7 @@ import {
   LinkColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
@@ -70,8 +70,6 @@ export default function SalesOrderShipmentTable({
     customerId: customerId,
     pending: !selectedShipment.shipment_date
   });
-
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -303,7 +301,8 @@ export default function SalesOrderShipmentTable({
         name: 'delivered',
         label: t`Delivered`,
         description: t`Show shipments which have been delivered`
-      }
+      },
+      TagsFilter({ modelType: ModelType.salesordershipment })
     ];
   }, []);
 
