@@ -34,7 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11990](https://github.com/inventree/InvenTree/pull/11990) build output operations performed via the API now offload the work to a background task, and now return a task ID which can be used to monitor the progress of the task. This allows for better performance and responsiveness when performing build output operations, as the work is performed asynchronously in the background.
 - [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.
 - [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.
-- [#11751](https://github.com/inventree/InvenTree/issues/11751) updates interactive CLI handling for `invoke superuser` (and interactive `delete_data`) to bypass Invoke PTY mediation in Docker TTY environments, preventing dropped first keypress and username prompt stalls.
 
 ### Removed
 
