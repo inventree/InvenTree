@@ -10,6 +10,7 @@ import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { TagsField } from './CommonFields';
 
 export function useTransferOrderFields({
   duplicateOrderId
@@ -36,6 +37,7 @@ export function useTransferOrderFields({
         }
       },
       consume: {},
+      tags: TagsField({}),
       link: {},
       responsible: {
         filters: {

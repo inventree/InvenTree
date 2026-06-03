@@ -57,6 +57,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { TagsField } from './CommonFields';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -287,6 +288,7 @@ export function usePurchaseOrderFields({
           structural: false
         }
       },
+      tags: TagsField({}),
       link: {},
       contact: {
         icon: <IconUser />,
