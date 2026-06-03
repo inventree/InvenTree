@@ -2731,30 +2731,6 @@ order_api_urls = [
                         SalesOrderComplete.as_view(),
                         name='api-so-complete',
                     ),
-                ]),
-            ),
-            # Sales order detail view
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'allocate/',
-                        SalesOrderAllocate.as_view(),
-                        name='api-so-allocate',
-                    ),
-                    path(
-                        'allocate-serials/',
-                        SalesOrderAllocateSerials.as_view(),
-                        name='api-so-allocate-serials',
-                    ),
-                    path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
-                    path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
-                    path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
-                    path(
-                        'complete/',
-                        SalesOrderComplete.as_view(),
-                        name='api-so-complete',
-                    ),
                     meta_path(models.SalesOrder),
                     # SalesOrder detail endpoint
                     path('', SalesOrderDetail.as_view(), name='api-so-detail'),
