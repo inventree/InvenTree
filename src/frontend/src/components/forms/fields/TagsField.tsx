@@ -66,6 +66,7 @@ export default function TagsField({
     <TagsInput
       {...reducedDefinition}
       ref={field.ref}
+      placeholder={definition.placeholder}
       aria-label={`tags-field-${field.name}`}
       value={tags}
       onChange={onChange}
