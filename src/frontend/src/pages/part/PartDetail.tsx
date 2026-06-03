@@ -190,7 +190,8 @@ export default function PartDetail() {
     endpoint: ApiEndpoints.part_list,
     pk: id,
     params: {
-      path_detail: true
+      path_detail: true,
+      tags: true
     },
     refetchOnMount: true
   });
@@ -998,6 +999,7 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
