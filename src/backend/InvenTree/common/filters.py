@@ -19,6 +19,7 @@ from django.db.models import (
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 
+import django_filters.rest_framework.filters as rest_filters
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 
@@ -91,6 +92,36 @@ def filter_content_type(
         q |= Q(**{f'{field_name}__isnull': True})
 
     return queryset.filter(q)
+
+
+class TagsFilter(rest_filters.CharFilter):
+    """Filter which accepts a comma-separated list of tag names and returns only objects that have ALL of the specified tags.
+
+    Example usage in a FilterSet:
+        tags = TagsFilter(label=_('Tags'))
+
+    Example query:
+        ?tags=apple,banana   → returns only items tagged with both 'apple' AND 'banana'
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the filter."""
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Tags')
+
+        super().__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        """Filter queryset to items matching all provided tag names."""
+        if not value:
+            return qs
+
+        tag_names = [t.strip() for t in value.split(',') if t.strip()]
+
+        for tag in tag_names:
+            qs = qs.filter(tags__name__iexact=tag)
+
+        return qs.distinct()
 
 
 """A list of valid operators for filtering part parameters."""
