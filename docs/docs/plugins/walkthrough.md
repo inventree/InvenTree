@@ -119,7 +119,7 @@ function AttachmentCarouselPanel({context}: {context: InvenTreePluginContext;}) 
 }
 
 // This is the function which is called by InvenTree to render the actual panel component
-export function renderAttachmentCarouselPanel(context: InvenTreePluginContext) {
+export function RenderAttachmentCarouselPanel(context: InvenTreePluginContext) {
     checkPluginVersion(context);
     return <AttachmentCarouselPanel context={context} />;
 }
@@ -300,7 +300,7 @@ Back to the walkthrough, open `core.py` in the `attachment_carousel` folder and 
                     'title': 'Attachment Carousel',
                     'description': 'Custom panel description',
                     'icon': 'ti:carousel-horizontal:outline',
-                    'source': self.plugin_static_file('Panel.js:renderAttachmentCarouselPanel'),
+                    'source': self.plugin_static_file('Panel.js:RenderAttachmentCarouselPanel'),
                     'context': {
                         # Provide additional context data to the panel
                         'settings': self.get_settings_dict(),
@@ -385,7 +385,7 @@ panels.append({
     'description': 'Custom panel description',
 -   'icon': 'ti:mood-smile:outline',
 +   'icon': 'ti:carousel-horizontal:outline',
-    'source': self.plugin_static_file('Panel.js:renderAttachmentCarouselPanel'),
+    'source': self.plugin_static_file('Panel.js:RenderAttachmentCarouselPanel'),
     'context': {
         # Provide additional context data to the panel
         'settings': self.get_settings_dict(),
@@ -519,7 +519,7 @@ panels.append({
     'title': 'Attachment Carousel',
     'description': 'Custom panel description',
     'icon': 'ti:carousel-horizontal:outline',
-    'source': self.plugin_static_file('Panel.js:renderAttachmentCarouselPanel'),
+    'source': self.plugin_static_file('Panel.js:RenderAttachmentCarouselPanel'),
     'context': {
         # Provide additional context data to the panel
         'settings': self.get_settings_dict(),
