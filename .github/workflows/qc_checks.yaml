@@ -667,7 +667,7 @@ jobs:
   web_ui:
     name: Tests - Web UI [${{ matrix.browser }}]
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 60
     needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     strategy:
