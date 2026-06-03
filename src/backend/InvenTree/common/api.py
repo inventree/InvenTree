@@ -505,6 +505,27 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
+class TagFilter(FilterSet):
+    """Custom filters for the TagList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = Tag
+        fields = []
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter to tags which have been applied to the given model type."""
+        ct = common.filters.determine_content_type(value)
+
+        if ct is None:
+            raise ValidationError({'model_type': f'Invalid model type: {value}'})
+
+        return queryset.filter(taggit_taggeditem_items__content_type=ct).distinct()
+
+
 class TagMixin:
     """Mixin class for Tag views."""
 
@@ -516,6 +537,7 @@ class TagMixin:
 class TagList(TagMixin, ListCreateAPI):
     """List view for all tags."""
 
+    filterset_class = TagFilter
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['name']
     search_fields = ['name']
