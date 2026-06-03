@@ -79,6 +79,7 @@ class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
