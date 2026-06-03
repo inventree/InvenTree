@@ -83,6 +83,7 @@ export function useSupplierPartFields({
         icon: <IconHash />
       },
       description: {},
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -118,6 +119,7 @@ export function useManufacturerPartFields() {
       },
       MPN: {},
       description: {},
+      tags: TagsField({}),
       link: {}
     };
 

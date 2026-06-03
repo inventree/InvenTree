@@ -213,6 +213,7 @@ class ManufacturerPartSerializer(
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
     NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -314,6 +315,7 @@ class SupplierPartSerializer(
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
     NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPart object."""
 

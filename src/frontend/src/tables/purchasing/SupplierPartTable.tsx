@@ -37,6 +37,7 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
+import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -60,7 +61,8 @@ export function SupplierPartTable({
       {
         name: 'active',
         value: 'true'
-      }
+      },
+      TagsFilter({ modelType: ModelType.supplierpart })
     ];
 
     if (!supplierId) {
