@@ -3,9 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
 
-const MAX_WORKERS: number = 3;
-const MAX_RETRIES: number = 2;
-
 /* We optionally spin-up services based on the testing mode:
  *
  * Local Development:
@@ -29,16 +26,22 @@ const MAX_RETRIES: number = 2;
 const BASE_URL: string =
   process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 
+// If running in "production" mode, we can use multiple workers to speed up the tests
+const MAX_WORKERS: number = BASE_URL.endsWith('8000') ? 3 : 1;
+const MAX_RETRIES: number = IS_CI ? 2 : 5;
+
 console.log('Running Playwright Tests:');
 console.log('- Base URL:', BASE_URL);
+console.log('- Max Workers:', MAX_WORKERS);
+console.log('- Max Retries:', MAX_RETRIES);
 
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
   timeout: 90000,
   forbidOnly: !!IS_CI,
-  retries: IS_CI ? MAX_RETRIES : 0,
-  workers: IS_CI ? MAX_WORKERS : 1,
+  retries: MAX_RETRIES,
+  workers: MAX_WORKERS,
   reporter: IS_CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
   /* Configure projects for major browsers */
