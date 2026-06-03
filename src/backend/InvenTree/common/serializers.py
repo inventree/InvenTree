@@ -12,6 +12,7 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
+from taggit.models import Tag
 
 import common.filters
 import common.models as common_models
@@ -420,6 +421,29 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, allow_null=True
     )
+
+
+@register_importer()
+class TagSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the Tag model."""
+
+    class Meta:
+        """Meta options for TagSerializer."""
+
+        model = Tag
+        fields = ['pk', 'name', 'slug']
+        read_only_fields = ['pk', 'slug']
+
+    def validate(self, data):
+        """Slugify the received name to generate the slug."""
+        from django.utils.text import slugify
+
+        name = data.get('name', None)
+
+        if name is not None:
+            data['slug'] = slugify(name)
+
+        return data
 
 
 @register_importer()
