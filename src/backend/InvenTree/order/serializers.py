@@ -1378,7 +1378,6 @@ class SalesOrderShipmentSerializer(
             'invoice_number',
             'barcode_hash',
             'link',
-            'notes',
             # Extra detail fields
             'parameters',
             'checked_by_detail',
