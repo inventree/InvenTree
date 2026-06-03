@@ -29,6 +29,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
+    InvenTreeTaggitSerializer,
     OptionalField,
 )
 from plugin import registry as plugin_registry
@@ -744,7 +745,9 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
+class AttachmentSerializer(
+    FilterableSerializerMixin, InvenTreeTaggitSerializer, InvenTreeModelSerializer
+):
     """Serializer class for the Attachment model."""
 
     class Meta:
