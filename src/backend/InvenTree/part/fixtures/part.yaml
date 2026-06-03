@@ -104,7 +104,6 @@
   fields:
     name: 'Bob'
     description: 'Can we build it? Yes we can!'
-    notes: 'Some notes associated with this part'
     assembly: true
     salable: true
     purchaseable: false
