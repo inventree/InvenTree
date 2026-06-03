@@ -910,10 +910,6 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
-    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
-
-    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
-
     # Created date filters
     created_before = InvenTreeDateFilter(
         label='Updated before', field_name='creation_date', lookup_expr='lt'
