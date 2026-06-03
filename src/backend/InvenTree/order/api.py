@@ -22,6 +22,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
+import common.filters
 import common.models
 import common.serializers
 import common.settings
@@ -276,6 +277,8 @@ class OrderFilter(FilterSet):
         q4 = Q(target_date__lte=value)
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -1447,6 +1450,8 @@ class SalesOrderShipmentFilter(FilterSet):
         q2 = Q(order__status_custom_key=value)
 
         return queryset.filter(q1 | q2).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
