@@ -3,9 +3,9 @@ import { IconTag } from '@tabler/icons-react';
 
 export default function TagsList({
   tags
-}: {
+}: Readonly<{
   tags: string[];
-}) {
+}>) {
   if (!tags || tags.length === 0) {
     return null;
   }
