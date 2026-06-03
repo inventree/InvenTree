@@ -41,6 +41,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -613,6 +614,7 @@ export default function PartDetail() {
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
+          <TagsList tags={part.tags} />
           {enableRevisionSelection && (
             <Paper p='sm' withBorder>
               <Stack gap='xs'>
