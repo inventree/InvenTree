@@ -52,6 +52,7 @@ export type TableFilter = {
   apiFilter?: Record<string, any>;
   model?: ModelType;
   modelRenderer?: (instance: any) => string;
+  transform?: (item: any) => TableFilterChoice;
 };
 
 /*

@@ -399,6 +399,29 @@ export function ResponsibleFilter(): TableFilter {
   });
 }
 
+export function TagsFilter({
+  modelType
+}: {
+  modelType?: ModelType;
+}): TableFilter {
+  return {
+    name: 'tags',
+    label: t`Tags`,
+    description: t`Filter by tags`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.tag_list),
+    model: ModelType.tag,
+    modelRenderer: (instance: any) => instance.slug,
+    apiFilter: { model_type: modelType },
+    transform: (item: any) => {
+      return {
+        value: item.slug.toString(),
+        label: item.name.toString()
+      };
+    }
+  };
+}
+
 export function UserFilter({
   name,
   label,

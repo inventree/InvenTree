@@ -152,6 +152,8 @@ class ManufacturerPartFilter(FilterSet):
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
 
+    tags = common.filters.TagsFilter(label=_('Tags'))
+
 
 class ManufacturerOutputOptions(OutputConfiguration):
     """Available output options for the ManufacturerPart endpoints."""
@@ -305,6 +307,8 @@ class SupplierPartFilter(FilterSet):
             return queryset.filter(in_stock__gt=0)
         else:
             return queryset.exclude(in_stock__gt=0)
+
+    tags = common.filters.TagsFilter(label=_('Tags'))
 
 
 class SupplierPartOutputOptions(OutputConfiguration):

@@ -319,5 +319,11 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/settings/admin/errors',
     url_detail: '/settings/admin/errors/:pk/',
     icon: 'exclamation'
+  },
+  tag: {
+    label: () => t`Tag`,
+    label_multiple: () => t`Tags`,
+    api_endpoint: ApiEndpoints.tag_list,
+    icon: 'tag'
   }
 };

@@ -144,7 +144,15 @@ function FilterElement({
             model: filterProps.model,
             label: t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
-              onValueChange(value, filterProps.modelRenderer?.(instance));
+              if (filterProps.transform) {
+                const choice = filterProps.transform(instance);
+                onValueChange(choice.value, choice.label);
+              } else {
+                onValueChange(
+                  value,
+                  filterProps.modelRenderer?.(instance) ?? value
+                );
+              }
             }
           }}
         />

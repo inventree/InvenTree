@@ -373,6 +373,8 @@ class StockLocationFilter(FilterSet):
 
         return queryset
 
+    tags = common.filters.TagsFilter(label=_('Tags'))
+
 
 class StockLocationMixin(SerializerContextMixin):
     """Mixin class for StockLocation API endpoints."""
@@ -1040,6 +1042,8 @@ class StockFilter(FilterSet):
 
         children = loc_obj.getUniqueChildren()
         return queryset.filter(location__in=children)
+
+    tags = common.filters.TagsFilter(label=_('Tags'))
 
 
 class StockApiMixin(SerializerContextMixin):
