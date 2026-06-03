@@ -1,12 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Text } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import { useRef } from 'react';
 
 import { Boundary } from '@lib/components/Boundary';
 import { identifierString } from '@lib/functions/Conversion';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { LanguageContext } from '../../contexts/LanguageContext';
 import { useRemotePlugin } from '../../hooks/UseRemotePlugin';
 
 /**
@@ -37,23 +36,29 @@ export default function RemoteComponent({
       containerRef
     });
 
-  return componentFn ? (
-    <Boundary label={identifierString(`RemoteComponent-${exportName}`)}>
-      <LanguageContext key={remountKey}>
-        {componentFn(pluginContext)}
-      </LanguageContext>
-    </Boundary>
-  ) : errorMsg ? (
-    <Alert
-      color='red'
-      title={t`Error Loading Plugin Content`}
-      icon={<IconExclamationCircle />}
-    >
-      <Text>{errorMsg}</Text>
-    </Alert>
+  const content = componentFn ? (
+    componentFn(pluginContext)
   ) : (
-    <Boundary label={identifierString(`RemoteComponent-${exportName}`)}>
-      <div ref={containerRef} />
-    </Boundary>
+    <div ref={containerRef} />
+  );
+
+  return (
+    <Stack>
+      {errorMsg && (
+        <Alert
+          color='red'
+          title={t`Error Loading Plugin Content`}
+          icon={<IconExclamationCircle />}
+        >
+          <Text>{errorMsg}</Text>
+        </Alert>
+      )}
+      <Boundary
+        key={remountKey}
+        label={identifierString(`RemoteComponent-${exportName}`)}
+      >
+        {content}
+      </Boundary>
+    </Stack>
   );
 }
