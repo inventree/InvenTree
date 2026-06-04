@@ -164,6 +164,8 @@ Frequently used combinations of filters can be saved as a named *filter group*, 
 
 The **Saved Filter Groups** panel is displayed at the bottom of the filter drawer. When one or more filters are active, a **Save current filters** button is available. Clicking it opens an inline name input — enter a name and press Enter (or click the confirm icon) to save the group. Press Escape or click the cancel icon to discard.
 
+{{ image("concepts/ui_table_filter_groups.png", "Filter Groups") }}
+
 Previously saved filter groups are listed in the panel. Each entry shows the group name alongside two actions:
 
 - **Load** (green reload icon): Replaces the current active filters with the filters stored in that group. The table immediately re-fetches data using the restored filters.
