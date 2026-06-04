@@ -1171,6 +1171,4 @@ if _media:
 PRESIGNED_URL_EXPIRATION = 600
 
 # Taggit settings
-TAGGIT_CASE_INSENSITIVE = get_boolean_setting(
-    'INVENTREE_TAGGIT_CASE_INSENSITIVE', 'taggit.case_insensitive', True
-)
+TAGGIT_CASE_INSENSITIVE = True
