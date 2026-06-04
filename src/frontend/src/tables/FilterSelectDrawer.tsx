@@ -336,56 +336,51 @@ function SavedFilterSets({
 
   const hasSavedSets = filterSet.savedFilterSets.length > 0;
 
-  if (!hasFilters && !hasSavedSets) {
-    return null;
-  }
-
   return (
     <Stack gap='xs' justify='flex-end'>
       <Space h='md' />
       <StylishText size='md'>{t`Saved Filter Groups`}</StylishText>
       <Divider />
-      {hasFilters && (
-        <Stack gap='xs'>
-          {saving ? (
-            <Group gap='xs' wrap='nowrap'>
-              <TextInput
-                style={{ flex: 1 }}
-                placeholder={t`Filter set name`}
-                value={saveName}
-                onChange={(e) => setSaveName(e.currentTarget.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') confirmSave();
-                  if (e.key === 'Escape') setSaving(false);
-                }}
-                autoFocus
-              />
-              <Tooltip label={t`Save`} withinPortal>
-                <ActionIcon
-                  aria-label='save-filter-set'
-                  color='green'
-                  variant='subtle'
-                  onClick={confirmSave}
-                  disabled={!saveName.trim()}
-                >
-                  <IconCheck />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label={t`Cancel`} withinPortal>
-                <CloseButton onClick={() => setSaving(false)} />
-              </Tooltip>
-            </Group>
-          ) : (
-            <Button
-              color='blue'
-              variant='subtle'
-              onClick={() => setSaving(true)}
-            >
-              <Text>{t`Save current filters`}</Text>
-            </Button>
-          )}
-        </Stack>
-      )}
+      <Stack gap='xs'>
+        {saving ? (
+          <Group gap='xs' wrap='nowrap'>
+            <TextInput
+              style={{ flex: 1 }}
+              placeholder={t`Filter set name`}
+              value={saveName}
+              onChange={(e) => setSaveName(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') confirmSave();
+                if (e.key === 'Escape') setSaving(false);
+              }}
+              autoFocus
+            />
+            <Tooltip label={t`Save`} withinPortal>
+              <ActionIcon
+                aria-label='save-filter-set'
+                color='green'
+                variant='subtle'
+                onClick={confirmSave}
+                disabled={!saveName.trim()}
+              >
+                <IconCheck />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label={t`Cancel`} withinPortal>
+              <CloseButton onClick={() => setSaving(false)} />
+            </Tooltip>
+          </Group>
+        ) : (
+          <Button
+            color='blue'
+            variant='subtle'
+            disabled={!hasFilters}
+            onClick={() => setSaving(true)}
+          >
+            <Text>{t`Save current filters`}</Text>
+          </Button>
+        )}
+      </Stack>
       {hasSavedSets && (
         <Stack gap='xs'>
           {filterSet.savedFilterSets.map((set) => (
