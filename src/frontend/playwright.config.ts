@@ -59,7 +59,8 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     }
   ],
 
