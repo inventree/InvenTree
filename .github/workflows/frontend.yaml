@@ -92,11 +92,15 @@ jobs:
           include-hidden-files: true
 
   firefox:
-    name: Tests [Firefox]
+    name: Tests [Firefox ${{ matrix.shard }} / 2]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["build", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     services:
       postgres:
         image: postgres:17
@@ -157,11 +161,11 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
-          name: playwright-report-firefox
+          name: playwright-report-firefox-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 14
 
@@ -240,7 +244,7 @@ jobs:
         if: always()
         with:
           name: blob-report-${{ matrix.shard }}
-          path: blob-report/
+          path: src/frontend/blob-report/
           retention-days: 1
       - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
@@ -248,7 +252,7 @@ jobs:
         if: always()
         with:
           name: coverage-${{ matrix.shard }}
-          path: .nyc_output/
+          path: src/frontend/.nyc_output/
           retention-days: 1
       - name: Playwright Report [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
