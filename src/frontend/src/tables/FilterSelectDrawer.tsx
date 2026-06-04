@@ -336,7 +336,12 @@ function SavedFilterSets({
       <Divider />
       <Stack gap='xs'>
         {filterSet.savedFilterSets.map((set) => (
-          <Paper key={set.name} p='sm' shadow='sm' radius='xs'>
+          <Paper
+            key={`filter-group-${set.name}`}
+            p='sm'
+            shadow='sm'
+            radius='xs'
+          >
             <Group justify='space-between' wrap='nowrap'>
               <Group gap='xs' wrap='nowrap'>
                 <ActionIcon size='sm' variant='transparent'>
@@ -356,6 +361,7 @@ function SavedFilterSets({
                     size='sm'
                     variant='transparent'
                     color='green'
+                    aria-label={`load-filter-group-${set.name}`}
                     onClick={() => filterSet.loadFilterSet(set.name)}
                   >
                     <IconReload />
@@ -370,6 +376,7 @@ function SavedFilterSets({
                     size='sm'
                     variant='transparent'
                     color='red'
+                    aria-label={`delete-filter-group-${set.name}`}
                     onClick={() => filterSet.deleteFilterSet(set.name)}
                   >
                     <IconX style={{ transform: 'rotate(180deg)' }} />
@@ -487,7 +494,8 @@ export function FilterSelectDrawer({
               <Group gap='xs' wrap='nowrap'>
                 <TextInput
                   style={{ flex: 1 }}
-                  placeholder={t`Filter set name`}
+                  aria-label='filter-group-name'
+                  placeholder={t`Group name`}
                   value={saveName}
                   onChange={(e) => setSaveName(e.currentTarget.value)}
                   onKeyDown={(e) => {
