@@ -211,7 +211,7 @@ jobs:
           invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
       - name: Install dependencies
-        run: invoke int.frontend-install
+        run: invoke int.frontend-compile --extract
       - name: Cache Playwright browsers
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # pin@v4.3.0
         id: playwright-cache
@@ -256,7 +256,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
-          name: playwright-report-chromium
+          name: playwright-report-chromium-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 7
 
