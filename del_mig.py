@@ -1,3 +1,4 @@
+"""Delete migrations."""
 import sqlite3
 
 conn = sqlite3.connect(r'C:\Users\adity\Pictures\projects\InvenTree\_test\inventree.db')
