@@ -118,34 +118,32 @@ export default function LayoutComponent() {
 
   return (
     <ProtectedRoute>
-      <>
-        <Flex direction='column' mih='100vh'>
-          <Header />
-          <Container className={classes.layoutContent} size='100%'>
-            <Boundary label={'layout'}>
-              <Outlet />
-            </Boundary>
-            {/* </ErrorBoundary> */}
-          </Container>
-          <Space h='xl' />
-          <Footer />
-          {userSettings.isSet('SHOW_SPOTLIGHT') && (
-            <Spotlight
-              actions={actions}
-              store={firstStore}
-              highlightQuery
-              scrollable
-              searchProps={{
-                leftSection: <IconSearch size='1.2rem' />,
-                placeholder: t`Search...`
-              }}
-              shortcut={['mod + K']}
-              nothingFound={t`Nothing found...`}
-            />
-          )}
-        </Flex>
-        <GlobalImporterDrawer />
-      </>
+      <Flex direction='column' mih='100vh'>
+        <Header />
+        <Container className={classes.layoutContent} size='100%'>
+          <Boundary label={'layout'}>
+            <Outlet />
+          </Boundary>
+          {/* </ErrorBoundary> */}
+        </Container>
+        <Space h='xl' />
+        <Footer />
+        {userSettings.isSet('SHOW_SPOTLIGHT') && (
+          <Spotlight
+            actions={actions}
+            store={firstStore}
+            highlightQuery
+            scrollable
+            searchProps={{
+              leftSection: <IconSearch size='1.2rem' />,
+              placeholder: t`Search...`
+            }}
+            shortcut={['mod + K']}
+            nothingFound={t`Nothing found...`}
+          />
+        )}
+      </Flex>
+      <GlobalImporterDrawer />
     </ProtectedRoute>
   );
 }

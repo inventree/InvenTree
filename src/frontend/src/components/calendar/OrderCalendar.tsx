@@ -30,7 +30,7 @@ import {
   ProjectCodeFilter,
   ResponsibleFilter
 } from '../../tables/Filter';
-import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
+import { getStatusColor, StatusRenderer } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
 /**

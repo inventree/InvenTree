@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 500
+INVENTREE_API_VERSION = 501
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v501 -> 2026-06-04 : https://github.com/inventree/InvenTree/pull/12072
+    - Add RepairOrder models and endpoints
 
 v500 -> 2026-06-03 : https://github.com/inventree/InvenTree/pull/12077
     - Adds "tags" fields to multiple new model types
