@@ -41,16 +41,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      server: ${{ steps.filter.outputs.server }}
-      migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
-      api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
-      cicd: ${{ steps.filter.outputs.cicd }}
-      requirements: ${{ steps.filter.outputs.requirements }}
-      runner-perf: ${{ steps.runner-perf.outputs.runner }}
-      performance: ${{ steps.performance.outputs.force-performance }}
-      submit-performance: ${{ steps.runner-perf.outputs.submit-performance }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
@@ -60,55 +52,15 @@ jobs:
         id: filter
         with:
           filters: |
-            server:
-              - 'src/backend/InvenTree/**'
-              - 'src/backend/requirements.txt'
-              - 'src/backend/requirements-dev.txt'
-            migrations:
-              - '**/test_migrations.py'
-              - '**/migrations/**'
-              - '.github/workflows**'
-              - 'src/backend/requirements.txt'
-            api:
-              - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
-            cicd:
-              - '.github/workflows/**'
-            requirements:
-              - 'src/backend/requirements.txt'
-              - 'src/backend/requirements-dev.txt'
-              - 'docs/requirements.txt'
-              - 'contrib/dev_reqs/requirements.txt'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
-      - name: Is performance testing being forced?
-        run: echo "force-performance=true" >> $GITHUB_OUTPUT
-        id: performance
-        if: |
-          contains(github.event.pull_request.labels.*.name, 'performance-run')
-      - name: Which runner to use?
-        env:
-          GITHUB_REF: ${{ github.ref }}
-          PERFORMANCE: ${{ steps.performance.outputs.force-performance }}
-        id: runner-perf
-        # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: |
-          is_main_push=false
-          if [[ '${{ github.event_name }}' == 'push' && "$GITHUB_REF" == 'refs/heads/master' ]]; then
-            is_main_push=true
-          fi
-          if [[ '${{ github.repository }}' == 'inventree/InvenTree' && ( "$is_main_push" == 'true' || "$PERFORMANCE" == 'true' ) ]]; then
-            echo "runner=codspeed-macro" >> "$GITHUB_OUTPUT"
-            echo "submit-performance=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "runner=ubuntu-24.04" >> "$GITHUB_OUTPUT"
-            echo "submit-performance=false" >> "$GITHUB_OUTPUT"
-          fi
+
 
   build:
     name: Build
