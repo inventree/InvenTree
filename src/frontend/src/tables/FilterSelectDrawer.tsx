@@ -26,7 +26,12 @@ import type {
   TableFilterChoice,
   TableFilterType
 } from '@lib/types/Filters';
-import { IconCheck } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconFilterStar,
+  IconReload,
+  IconX
+} from '@tabler/icons-react';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   filterDisplayLabel,
@@ -359,7 +364,8 @@ function SavedFilterSets({
               <ActionIcon
                 aria-label='save-filter-set'
                 color='green'
-                variant='subtle'
+                size='sm'
+                variant='transparent'
                 onClick={confirmSave}
                 disabled={!saveName.trim()}
               >
@@ -367,7 +373,15 @@ function SavedFilterSets({
               </ActionIcon>
             </Tooltip>
             <Tooltip label={t`Cancel`} withinPortal>
-              <CloseButton onClick={() => setSaving(false)} />
+              <ActionIcon
+                aria-label='cancel-save-filter-set'
+                color='red'
+                size='sm'
+                variant='transparent'
+                onClick={() => setSaving(false)}
+              >
+                <IconX />
+              </ActionIcon>
             </Tooltip>
           </Group>
         ) : (
@@ -386,25 +400,42 @@ function SavedFilterSets({
           {filterSet.savedFilterSets.map((set) => (
             <Paper key={set.name} p='sm' shadow='sm' radius='xs'>
               <Group justify='space-between' wrap='nowrap'>
-                <Text size='sm' style={{ flex: 1 }} truncate>
-                  {set.name}
-                </Text>
                 <Group gap='xs' wrap='nowrap'>
-                  <Button
-                    size='xs'
-                    variant='subtle'
-                    color='green'
-                    onClick={() => filterSet.loadFilterSet(set.name)}
+                  <ActionIcon size='sm' variant='transparent'>
+                    <IconFilterStar />
+                  </ActionIcon>
+                  <Text size='sm' style={{ flex: 1 }} truncate>
+                    {set.name}
+                  </Text>
+                </Group>
+                <Group gap='xs' wrap='nowrap'>
+                  <Tooltip
+                    label={t`Load filter group`}
+                    withinPortal
+                    position='top-end'
                   >
-                    {t`Load`}
-                  </Button>
-                  <Tooltip label={t`Delete filter set`} withinPortal>
-                    <CloseButton
+                    <ActionIcon
                       size='sm'
-                      c='red'
-                      aria-label={`delete-filter-set-${set.name}`}
+                      variant='transparent'
+                      color='green'
+                      onClick={() => filterSet.loadFilterSet(set.name)}
+                    >
+                      <IconReload />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip
+                    label={t`Delete filter group`}
+                    withinPortal
+                    position='top-end'
+                  >
+                    <ActionIcon
+                      size='sm'
+                      variant='transparent'
+                      color='red'
                       onClick={() => filterSet.deleteFilterSet(set.name)}
-                    />
+                    >
+                      <IconX style={{ transform: 'rotate(180deg)' }} />
+                    </ActionIcon>
                   </Tooltip>
                 </Group>
               </Group>
@@ -505,7 +536,10 @@ export function FilterSelectDrawer({
             </Button>
           )}
         </Stack>
-        <SavedFilterSets filterSet={filterSet} hasFilters={hasFilters} />
+        <Stack gap='xs'>
+          <SavedFilterSets filterSet={filterSet} hasFilters={hasFilters} />
+          <Space h='sm' />
+        </Stack>
       </Stack>
     </Drawer>
   );
