@@ -245,14 +245,6 @@ jobs:
           name: playwright-report-chromium-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 7
-      - name: Upload Blob Report [${{ matrix.shard }} / 4]
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        id: blob-upload
-        if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
-        with:
-          name: blob-report-${{ matrix.shard }}
-          path: src/frontend/blob-report/
-          retention-days: 1
       - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         id: coverage-upload
@@ -283,23 +275,6 @@ jobs:
           install: false
           update: false
 
-      - name: Download Blob Reports
-        uses: actions/download-artifact@v8
-        with:
-          pattern: blob-report-*
-          path: all-blob-reports/
-          merge-multiple: true
-
-      - name: Merge Playwright reports
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
-
-      - name: Upload Merged HTML Report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-
       - name: Download Coverage Artifacts
         uses: actions/download-artifact@v8
         with:
@@ -326,12 +301,3 @@ jobs:
           slug: inventree/InvenTree
           flags: web
           files: ./coverage/lcov.info
-
-      # - name: Upload bundler info
-      #   if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      #   run: |
-      #     cd src/frontend
-      #     yarn install
-      #     yarn run build
