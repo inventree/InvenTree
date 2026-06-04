@@ -337,16 +337,21 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -414,16 +419,21 @@ export function useScrapBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -480,15 +490,20 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (

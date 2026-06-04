@@ -334,6 +334,24 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     )
     .waitFor();
   await page.getByRole('cell', { name: 'Quantity: 16' }).waitFor();
+
+  // Adjust the quantity field - we will only 'partially' scrap this output
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('10');
+
+  // Next, adjust the "location" field - and check that the "quantity" field does not change
+  // Ref: https://github.com/inventree/InvenTree/pull/12081
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByTitle('Factory/Mechanical Lab').click();
+  await page.waitForTimeout(250);
+
+  // Check the 'quantity' value again - it should not have changed
+  const quantityValue = await page
+    .getByRole('textbox', { name: 'number-field-quantity' })
+    .inputValue();
+  expect(quantityValue).toBe('10');
+
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 
