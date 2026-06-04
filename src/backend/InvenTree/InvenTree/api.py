@@ -102,12 +102,10 @@ class LicenseView(APIView):
         frontend = InvenTree.config.get_base_dir().joinpath(
             'web/static/web/.vite/dependencies.json'
         )
-        return JsonResponse(
-            {
-                'backend': read_license_file(backend),
-                'frontend': read_license_file(frontend),
-            }
-        )
+        return JsonResponse({
+            'backend': read_license_file(backend),
+            'frontend': read_license_file(frontend),
+        })
 
 
 class VersionViewSerializer(serializers.Serializer):
@@ -146,27 +144,25 @@ class VersionView(APIView):
     @extend_schema(responses={200: OpenApiResponse(response=VersionViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
-        return JsonResponse(
-            {
-                'dev': InvenTree.version.isInvenTreeDevelopmentVersion(),
-                'up_to_date': InvenTree.version.isInvenTreeUpToDate(),
-                'version': {
-                    'server': InvenTree.version.inventreeVersion(),
-                    'api': InvenTree.version.inventreeApiVersion(),
-                    'commit_hash': InvenTree.version.inventreeCommitHash(),
-                    'commit_date': InvenTree.version.inventreeCommitDate(),
-                    'commit_branch': InvenTree.version.inventreeBranch(),
-                    'python': InvenTree.version.inventreePythonVersion(),
-                    'django': InvenTree.version.inventreeDjangoVersion(),
-                },
-                'links': {
-                    'doc': InvenTree.version.inventreeDocUrl(),
-                    'code': InvenTree.version.inventreeGithubUrl(),
-                    'app': InvenTree.version.inventreeAppUrl(),
-                    'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
-                },
-            }
-        )
+        return JsonResponse({
+            'dev': InvenTree.version.isInvenTreeDevelopmentVersion(),
+            'up_to_date': InvenTree.version.isInvenTreeUpToDate(),
+            'version': {
+                'server': InvenTree.version.inventreeVersion(),
+                'api': InvenTree.version.inventreeApiVersion(),
+                'commit_hash': InvenTree.version.inventreeCommitHash(),
+                'commit_date': InvenTree.version.inventreeCommitDate(),
+                'commit_branch': InvenTree.version.inventreeBranch(),
+                'python': InvenTree.version.inventreePythonVersion(),
+                'django': InvenTree.version.inventreeDjangoVersion(),
+            },
+            'links': {
+                'doc': InvenTree.version.inventreeDocUrl(),
+                'code': InvenTree.version.inventreeGithubUrl(),
+                'app': InvenTree.version.inventreeAppUrl(),
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
+            },
+        })
 
 
 class VersionInformationSerializer(serializers.Serializer):
@@ -437,37 +433,35 @@ class BulkOperationMixin:
         queryset = self.get_queryset()
 
         if not items and all_filter is None:
-            raise ValidationError(
-                {
-                    'non_field_errors': _(
-                        'List of items must be provided for bulk operation'
-                    )
-                }
-            )
+            raise ValidationError({
+                'non_field_errors': _(
+                    'List of items must be provided for bulk operation'
+                )
+            })
 
         if items:
             if type(items) is not list:
-                raise ValidationError(
-                    {'non_field_errors': _('Items must be provided as a list')}
-                )
+                raise ValidationError({
+                    'non_field_errors': _('Items must be provided as a list')
+                })
 
             # Filter by primary key
             try:
                 queryset = queryset.filter(pk__in=items)
             except Exception:
-                raise ValidationError(
-                    {'non_field_errors': _('Invalid items list provided')}
-                )
+                raise ValidationError({
+                    'non_field_errors': _('Invalid items list provided')
+                })
 
         if all_filter and not helpers.str2bool(all_filter):
-            raise ValidationError(
-                {'non_field_errors': _('All filter must only be used with true')}
-            )
+            raise ValidationError({
+                'non_field_errors': _('All filter must only be used with true')
+            })
 
         if queryset.count() == 0:
-            raise ValidationError(
-                {'non_field_errors': _('No items match the provided criteria')}
-            )
+            raise ValidationError({
+                'non_field_errors': _('No items match the provided criteria')
+            })
 
         return queryset
 

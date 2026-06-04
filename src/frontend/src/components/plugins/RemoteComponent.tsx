@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
+import { type Root, createRoot } from 'react-dom/client';
 import { api, queryClient } from '../../App';
 import { ApiProvider } from '../../contexts/ApiContext';
 import { LanguageContext } from '../../contexts/LanguageContext';

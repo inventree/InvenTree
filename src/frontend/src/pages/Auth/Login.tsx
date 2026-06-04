@@ -7,8 +7,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
 import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
-import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
+import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import {
   defaultHostKey,

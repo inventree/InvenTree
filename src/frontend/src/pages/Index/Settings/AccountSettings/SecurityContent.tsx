@@ -32,7 +32,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { authApi, ProviderLogin } from '../../../../functions/auth';
+import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';

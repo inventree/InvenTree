@@ -104,14 +104,12 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
         }
 
         if export_pricing_data:
-            stocktake_headers.update(
-                {
-                    'pricing_min': _('Minimum Unit Cost'),
-                    'pricing_max': _('Maximum Unit Cost'),
-                    'pricing_min_total': _('Minimum Total Cost'),
-                    'pricing_max_total': _('Maximum Total Cost'),
-                }
-            )
+            stocktake_headers.update({
+                'pricing_min': _('Minimum Unit Cost'),
+                'pricing_max': _('Maximum Unit Cost'),
+                'pricing_min_total': _('Minimum Total Cost'),
+                'pricing_max_total': _('Maximum Total Cost'),
+            })
 
         return stocktake_headers
 

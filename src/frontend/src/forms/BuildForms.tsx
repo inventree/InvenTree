@@ -17,11 +17,11 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import {
   RenderStockItem,

@@ -1,11 +1,11 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import {
   type RowAction,
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';

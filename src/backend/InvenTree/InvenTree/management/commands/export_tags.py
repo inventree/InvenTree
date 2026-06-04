@@ -49,13 +49,11 @@ def discover_tags():
             for tag_name, tag_func in library.tags.items():
                 title, body, metadata = utils.parse_docstring(tag_func.__doc__)
                 tag_library = module_name.split('.')[-1]
-                tags.append(
-                    {
-                        'name': tag_name,
-                        'title': title,
-                        'body': body,
-                        'meta': metadata,
-                        'library': tag_library,
-                    }
-                )
+                tags.append({
+                    'name': tag_name,
+                    'title': title,
+                    'body': body,
+                    'meta': metadata,
+                    'library': tag_library,
+                })
     return tags

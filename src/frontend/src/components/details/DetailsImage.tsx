@@ -12,8 +12,8 @@ import {
   Image,
   Overlay,
   Paper,
-  rem,
   Text,
+  rem,
   useMantineColorScheme
 } from '@mantine/core';
 import {

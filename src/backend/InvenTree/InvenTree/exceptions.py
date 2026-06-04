@@ -40,13 +40,11 @@ def log_error(
     """
     import InvenTree.ready
 
-    if any(
-        [
-            InvenTree.ready.isImportingData(),
-            InvenTree.ready.isRunningMigrations(),
-            InvenTree.ready.isRunningBackup(),
-        ]
-    ):
+    if any([
+        InvenTree.ready.isImportingData(),
+        InvenTree.ready.isRunningMigrations(),
+        InvenTree.ready.isRunningBackup(),
+    ]):
         logger.exception('Exception occurred during import, migration, or backup')
         return
 

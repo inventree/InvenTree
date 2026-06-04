@@ -524,68 +524,54 @@ user_urls = [
     # Individual user endpoints
     path(
         'me/',
-        include(
-            [
-                path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
-                path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-                path(
-                    'token/',
-                    ensure_csrf_cookie(GetAuthToken.as_view()),
-                    name='api-token',
-                ),
-                path('', MeUserDetail.as_view(), name='api-user-me'),
-            ]
-        ),
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
     ),
     # User related endpoints
     path(
         'tokens/',
-        include(
-            [
-                path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
-                path('', TokenListView.as_view(), name='api-token-list'),
-            ]
-        ),
+        include([
+            path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
+            path('', TokenListView.as_view(), name='api-token-list'),
+        ]),
     ),
     path(
         'owner/',
-        include(
-            [
-                path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-                path('', OwnerList.as_view(), name='api-owner-list'),
-            ]
-        ),
+        include([
+            path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
+        ]),
     ),
     path(
         'group/',
-        include(
-            [
-                path('<int:pk>/', GroupDetail.as_view(), name='api-group-detail'),
-                path('', GroupList.as_view(), name='api-group-list'),
-            ]
-        ),
+        include([
+            path('<int:pk>/', GroupDetail.as_view(), name='api-group-detail'),
+            path('', GroupList.as_view(), name='api-group-list'),
+        ]),
     ),
     path(
         'ruleset/',
-        include(
-            [
-                path('<int:pk>/', RuleSetDetail.as_view(), name='api-ruleset-detail'),
-                path('', RuleSetList.as_view(), name='api-ruleset-list'),
-            ]
-        ),
+        include([
+            path('<int:pk>/', RuleSetDetail.as_view(), name='api-ruleset-detail'),
+            path('', RuleSetList.as_view(), name='api-ruleset-list'),
+        ]),
     ),
     path(
         '<int:pk>/',
-        include(
-            [
-                path(
-                    'set-password/',
-                    UserDetailSetPassword.as_view(),
-                    name='api-user-set-password',
-                ),
-                path('', UserDetail.as_view(), name='api-user-detail'),
-            ]
-        ),
+        include([
+            path(
+                'set-password/',
+                UserDetailSetPassword.as_view(),
+                name='api-user-set-password',
+            ),
+            path('', UserDetail.as_view(), name='api-user-detail'),
+        ]),
     ),
     path('', UserList.as_view(), name='api-user-list'),
 ]

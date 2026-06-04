@@ -505,16 +505,14 @@ class SupplierPriceBreakDetail(SupplierPriceBreakMixin, RetrieveUpdateDestroyAPI
 manufacturer_part_api_urls = [
     path(
         '<int:pk>/',
-        include(
-            [
-                meta_path(ManufacturerPart),
-                path(
-                    '',
-                    ManufacturerPartDetail.as_view(),
-                    name='api-manufacturer-part-detail',
-                ),
-            ]
-        ),
+        include([
+            meta_path(ManufacturerPart),
+            path(
+                '',
+                ManufacturerPartDetail.as_view(),
+                name='api-manufacturer-part-detail',
+            ),
+        ]),
     ),
     # Catch anything else
     path('', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
@@ -524,12 +522,10 @@ manufacturer_part_api_urls = [
 supplier_part_api_urls = [
     path(
         '<int:pk>/',
-        include(
-            [
-                meta_path(SupplierPart),
-                path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
-            ]
-        ),
+        include([
+            meta_path(SupplierPart),
+            path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+        ]),
     ),
     # Catch anything else
     path('', SupplierPartList.as_view(), name='api-supplier-part-list'),
@@ -542,57 +538,45 @@ company_api_urls = [
     # Supplier price breaks
     path(
         'price-break/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    SupplierPriceBreakDetail.as_view(),
-                    name='api-part-supplier-price-detail',
-                ),
-                path(
-                    '',
-                    SupplierPriceBreakList.as_view(),
-                    name='api-part-supplier-price-list',
-                ),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                SupplierPriceBreakDetail.as_view(),
+                name='api-part-supplier-price-detail',
+            ),
+            path(
+                '',
+                SupplierPriceBreakList.as_view(),
+                name='api-part-supplier-price-list',
+            ),
+        ]),
     ),
     path(
         '<int:pk>/',
-        include(
-            [
-                meta_path(Company),
-                path('', CompanyDetail.as_view(), name='api-company-detail'),
-            ]
-        ),
+        include([
+            meta_path(Company),
+            path('', CompanyDetail.as_view(), name='api-company-detail'),
+        ]),
     ),
     path(
         'contact/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(Contact),
-                            path(
-                                '', ContactDetail.as_view(), name='api-contact-detail'
-                            ),
-                        ]
-                    ),
-                ),
-                path('', ContactList.as_view(), name='api-contact-list'),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(Contact),
+                    path('', ContactDetail.as_view(), name='api-contact-detail'),
+                ]),
+            ),
+            path('', ContactList.as_view(), name='api-contact-list'),
+        ]),
     ),
     path(
         'address/',
-        include(
-            [
-                path('<int:pk>/', AddressDetail.as_view(), name='api-address-detail'),
-                path('', AddressList.as_view(), name='api-address-list'),
-            ]
-        ),
+        include([
+            path('<int:pk>/', AddressDetail.as_view(), name='api-address-detail'),
+            path('', AddressList.as_view(), name='api-address-list'),
+        ]),
     ),
     path('', CompanyList.as_view(), name='api-company-list'),
 ]

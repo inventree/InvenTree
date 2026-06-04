@@ -1,4 +1,4 @@
-import { ApiEndpoints, apiUrl, ModelType } from '@lib/index';
+import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {

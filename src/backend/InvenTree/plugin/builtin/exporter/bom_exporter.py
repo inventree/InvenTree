@@ -285,17 +285,15 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         for supplier_part in bom_item.sub_part.supplier_parts.all():
             manufacturer_part = supplier_part.manufacturer_part
-            supplier_part_data.update(
-                {
-                    f'supplier_name_{idx}': supplier_part.supplier.name
-                    if supplier_part.supplier
-                    else '',
-                    f'supplier_sku_{idx}': supplier_part.SKU,
-                    f'supplier_mpn_{idx}': manufacturer_part.MPN
-                    if manufacturer_part
-                    else '',
-                }
-            )
+            supplier_part_data.update({
+                f'supplier_name_{idx}': supplier_part.supplier.name
+                if supplier_part.supplier
+                else '',
+                f'supplier_sku_{idx}': supplier_part.SKU,
+                f'supplier_mpn_{idx}': manufacturer_part.MPN
+                if manufacturer_part
+                else '',
+            })
 
             idx += 1
 
@@ -310,14 +308,12 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         idx = 0
 
         for manufacturer_part in bom_item.sub_part.manufacturer_parts.all():
-            manufacturer_part_data.update(
-                {
-                    f'manufacturer_name_{idx}': manufacturer_part.manufacturer.name
-                    if manufacturer_part.manufacturer
-                    else '',
-                    f'manufacturer_mpn_{idx}': manufacturer_part.MPN,
-                }
-            )
+            manufacturer_part_data.update({
+                f'manufacturer_name_{idx}': manufacturer_part.manufacturer.name
+                if manufacturer_part.manufacturer
+                else '',
+                f'manufacturer_mpn_{idx}': manufacturer_part.MPN,
+            })
 
             idx += 1
 

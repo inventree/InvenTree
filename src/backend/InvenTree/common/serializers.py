@@ -136,13 +136,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
         if self.instance.confirm():
             req_data = self.context['request'].data
             if not 'manual_confirm' in req_data or not req_data['manual_confirm']:
-                raise serializers.ValidationError(
-                    {
-                        'manual_confirm': _(
-                            'This setting requires confirmation before changing. Please confirm the change.'
-                        )
-                    }
-                )
+                raise serializers.ValidationError({
+                    'manual_confirm': _(
+                        'This setting requires confirmation before changing. Please confirm the change.'
+                    )
+                })
         return ret
 
 
@@ -588,16 +586,14 @@ class TaskDetailSerializer(serializers.Serializer):
 
         if task_id is None or type(task_id) is bool:
             # If the task_id is a boolean, the task has been run synchronously
-            return cls(
-                {
-                    'task_id': '',
-                    'exists': False,
-                    'pending': False,
-                    'complete': task_id is not None,
-                    'success': False if task_id is None else bool(task_id),
-                    'http_status': 404 if task_id is None else 200,
-                }
-            )
+            return cls({
+                'task_id': '',
+                'exists': False,
+                'pending': False,
+                'complete': task_id is not None,
+                'success': False if task_id is None else bool(task_id),
+                'http_status': 404 if task_id is None else 200,
+            })
 
         # A non-boolean result indicates that the task has been offloaded to the background worker
         success = django_q.models.Success.objects.filter(id=task_id).first()
@@ -622,16 +618,14 @@ class TaskDetailSerializer(serializers.Serializer):
         # - 404: Task does not exist
         http_status = 200 if exists or queued else 404
 
-        return cls(
-            {
-                'task_id': task_id,
-                'exists': exists or queued,
-                'pending': queued,
-                'complete': complete,
-                'success': bool(success),
-                'http_status': http_status,
-            }
-        )
+        return cls({
+            'task_id': task_id,
+            'exists': exists or queued,
+            'pending': queued,
+            'complete': complete,
+            'success': bool(success),
+            'http_status': http_status,
+        })
 
 
 class TaskOverviewSerializer(serializers.Serializer):
@@ -1069,9 +1063,10 @@ class SelectionListSerializer(InvenTreeModelSerializer):
                 data={'list': current_inst.list.pk if current_inst else None, **choice},
             )
             serializer.is_valid(raise_exception=raise_exception)
-            _choices_validated.append(
-                {**serializer.validated_data, 'id': choice.get('id')}
-            )
+            _choices_validated.append({
+                **serializer.validated_data,
+                'id': choice.get('id'),
+            })
         self._choices_validated = _choices_validated
 
         return super().is_valid(raise_exception=raise_exception)
@@ -1080,9 +1075,10 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         """Create a new selection list. Save the choices separately."""
         list_entry = common_models.SelectionList.objects.create(**validated_data)
         for choice_data in self._choices_validated:
-            common_models.SelectionListEntry.objects.create(
-                **{**choice_data, 'list': list_entry}
-            )
+            common_models.SelectionListEntry.objects.create(**{
+                **choice_data,
+                'list': list_entry,
+            })
         return list_entry
 
     def update(self, instance, validated_data):

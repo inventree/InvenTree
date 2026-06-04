@@ -14,7 +14,6 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserState } from '../../states/UserState';
-import { BuildLineSubTable } from '../build/BuildLineTable';
 import {
   DescriptionColumn,
   PartColumn,
@@ -24,6 +23,7 @@ import {
 import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
+import { BuildLineSubTable } from '../build/BuildLineTable';
 
 /**
  * A "simplified" BuildOrderLineItem table showing all outstanding build order allocations for a given part.

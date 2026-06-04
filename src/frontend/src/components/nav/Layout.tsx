@@ -4,9 +4,9 @@ import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
 import {
-  createSpotlight,
   Spotlight,
-  type SpotlightActionData
+  type SpotlightActionData,
+  createSpotlight
 } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';

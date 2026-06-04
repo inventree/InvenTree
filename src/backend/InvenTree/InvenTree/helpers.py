@@ -612,9 +612,9 @@ def extract_serial_numbers(
         raise ValidationError([_('Invalid quantity provided')])
 
     if expected_quantity > 1000:
-        raise ValidationError(
-            {'quantity': [_('Cannot serialize more than 1000 items at once')]}
-        )
+        raise ValidationError({
+            'quantity': [_('Cannot serialize more than 1000 items at once')]
+        })
 
     input_string = str(input_string).strip() if input_string else ''
 
@@ -783,9 +783,9 @@ def extract_serial_numbers(
         n = len(serials)
         q = expected_quantity
 
-        raise ValidationError(
-            [_(f'Number of unique serial numbers ({n}) must match quantity ({q})')]
-        )
+        raise ValidationError([
+            _(f'Number of unique serial numbers ({n}) must match quantity ({q})')
+        ])
 
     return serials
 

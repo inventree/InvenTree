@@ -1,9 +1,9 @@
 import { Boundary } from '@lib/components/Boundary';
 import { isTrue } from '@lib/functions/Conversion';
 import {
+  type NestedDict,
   constructFormUrl,
-  mapFields,
-  type NestedDict
+  mapFields
 } from '@lib/functions/Forms';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import {
@@ -40,8 +40,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { constructField, extractAvailableFields } from '../../functions/forms';
-import { ApiFormField } from './fields/ApiFormField';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
+import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
   props: _props,

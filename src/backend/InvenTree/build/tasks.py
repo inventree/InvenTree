@@ -402,18 +402,16 @@ def check_build_stock(build):
         if available < required:
             # There is not sufficient stock for this part
 
-            lines.append(
-                {
-                    'link': InvenTree.helpers_model.construct_absolute_url(
-                        sub_part.get_absolute_url()
-                    ),
-                    'part': sub_part,
-                    'in_stock': in_stock,
-                    'allocated': allocated,
-                    'available': available,
-                    'required': required,
-                }
-            )
+            lines.append({
+                'link': InvenTree.helpers_model.construct_absolute_url(
+                    sub_part.get_absolute_url()
+                ),
+                'part': sub_part,
+                'in_stock': in_stock,
+                'allocated': allocated,
+                'available': available,
+                'required': required,
+            })
 
     if len(lines) == 0:
         # Nothing to do

@@ -69,9 +69,9 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if isinstance(instance, part.models.BomItem):
             if self.get_setting('BOM_ITEM_INTEGER'):
                 if float(instance.quantity) != int(instance.quantity):
-                    self.raise_error(
-                        {'quantity': 'Bom item quantity must be an integer'}
-                    )
+                    self.raise_error({
+                        'quantity': 'Bom item quantity must be an integer'
+                    })
 
         if isinstance(instance, part.models.Part):
             # If the part description is being updated, prevent it from being reduced in length
@@ -81,9 +81,9 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 new_desc = deltas['description']['new']
 
                 if len(new_desc) < len(old_desc):
-                    self.raise_error(
-                        {'description': 'Part description cannot be shortened'}
-                    )
+                    self.raise_error({
+                        'description': 'Part description cannot be shortened'
+                    })
 
     def validate_part_name(self, name: str, part):
         """Custom validation for Part name field.

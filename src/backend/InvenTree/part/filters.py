@@ -342,7 +342,8 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> Query
     """
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F(reference), function='SUM', output_field=FloatField())
             )
             .values('total')
@@ -369,7 +370,8 @@ def annotate_category_parts() -> QuerySet:
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')
@@ -414,7 +416,8 @@ def annotate_sub_categories() -> QuerySet:
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')

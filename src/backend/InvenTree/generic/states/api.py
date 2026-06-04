@@ -188,28 +188,22 @@ urlpattern = [
     # Custom state
     path(
         'custom/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    CustomStateDetail.as_view(),
-                    name='api-custom-state-detail',
-                ),
-                path('', CustomStateList.as_view(), name='api-custom-state-list'),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/', CustomStateDetail.as_view(), name='api-custom-state-detail'
+            ),
+            path('', CustomStateList.as_view(), name='api-custom-state-list'),
+        ]),
     ),
     # Generic status views
     path(
         '',
-        include(
-            [
-                path(
-                    f'<str:{StatusView.MODEL_REF}>/',
-                    include([path('', StatusView.as_view(), name='api-status')]),
-                ),
-                path('', AllStatusViews.as_view(), name='api-status-all'),
-            ]
-        ),
+        include([
+            path(
+                f'<str:{StatusView.MODEL_REF}>/',
+                include([path('', StatusView.as_view(), name='api-status')]),
+            ),
+            path('', AllStatusViews.as_view(), name='api-status-all'),
+        ]),
     ),
 ]

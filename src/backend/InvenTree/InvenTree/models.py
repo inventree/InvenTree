@@ -206,9 +206,9 @@ class MetadataMixin(models.Model):
             self.metadata = {}
 
         if type(self.metadata) is not dict:
-            raise ValidationError(
-                {'metadata': _('Metadata must be a python dict object')}
-            )
+            raise ValidationError({
+                'metadata': _('Metadata must be a python dict object')
+            })
 
     metadata = models.JSONField(
         blank=True,
@@ -396,22 +396,22 @@ class ReferenceIndexingMixin(models.Model):
         try:
             info = InvenTree.format.parse_format_string(pattern)
         except Exception as exc:
-            raise ValidationError(
-                {'value': _('Improperly formatted pattern') + ': ' + str(exc)}
-            )
+            raise ValidationError({
+                'value': _('Improperly formatted pattern') + ': ' + str(exc)
+            })
 
         # Check that only 'allowed' keys are provided
         for key in info:
             if key not in ctx:
-                raise ValidationError(
-                    {'value': _('Unknown format key specified') + f": '{key}'"}
-                )
+                raise ValidationError({
+                    'value': _('Unknown format key specified') + f": '{key}'"
+                })
 
         # Check that the 'ref' variable is specified
         if 'ref' not in info:
-            raise ValidationError(
-                {'value': _('Missing required format key') + ": 'ref'"}
-            )
+            raise ValidationError({
+                'value': _('Missing required format key') + ": 'ref'"
+            })
 
     @classmethod
     def validate_reference_field(cls, value):
@@ -625,7 +625,8 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
     def get_parameters(self) -> QuerySet:
         """Return all Parameter instances for this model."""
         return (
-            self.parameters_list.all()
+            self.parameters_list
+            .all()
             .prefetch_related('template', 'model_type')
             .order_by('template__name')
         )
@@ -769,7 +770,8 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             for child in self.get_children():
                 # Store a flattened list of node IDs for each of the lower trees
                 nodes = list(
-                    child.get_descendants(include_self=True)
+                    child
+                    .get_descendants(include_self=True)
                     .values_list('pk', flat=True)
                     .distinct()
                 )
@@ -1143,9 +1145,9 @@ class PathStringMixin(models.Model):
             # Refresh the model instance from the database
             self.refresh_from_db()
 
-        return InvenTree.helpers.constructPathString(
-            [getattr(item, self.PATH_FIELD, item.pk) for item in self.path]
-        )
+        return InvenTree.helpers.constructPathString([
+            getattr(item, self.PATH_FIELD, item.pk) for item in self.path
+        ])
 
     def validate_unique(self, exclude=None):
         """Validate that this tree instance satisfies our uniqueness requirements.

@@ -1,12 +1,12 @@
-import { ApiEndpoints, apiUrl, ModelType, ProgressBar } from '@lib/index';
+import { ApiEndpoints, ModelType, ProgressBar, apiUrl } from '@lib/index';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import { IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { StandaloneField } from '../components/forms/StandaloneField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';

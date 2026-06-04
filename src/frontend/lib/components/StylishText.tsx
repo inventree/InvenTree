@@ -1,8 +1,8 @@
 import {
-  darken,
-  getThemeColor,
   type MantineSize,
   Text,
+  darken,
+  getThemeColor,
   useMantineTheme
 } from '@mantine/core';
 import type { JSX } from 'react';

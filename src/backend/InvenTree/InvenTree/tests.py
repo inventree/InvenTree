@@ -50,12 +50,10 @@ class TreeFixtureTest(TestCase):
 
     def node_string(self, node):
         """Construct a string representation of a tree node."""
-        return ':'.join(
-            [
-                str(getattr(node, attr, None))
-                for attr in ['parent', 'level', 'lft', 'rght']
-            ]
-        )
+        return ':'.join([
+            str(getattr(node, attr, None))
+            for attr in ['parent', 'level', 'lft', 'rght']
+        ])
 
     def run_tree_test(self, model):
         """Run MPTT test for a given model type.
@@ -1218,13 +1216,11 @@ class TestSettings(InvenTreeTestCase):
             self.assertEqual(user_count(), 1)
 
             # enough set
-            self.run_reload(
-                {
-                    'INVENTREE_ADMIN_USER': 'admin',  # set username
-                    'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
-                    'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
-                }
-            )
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': 'admin',  # set username
+                'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+                'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
+            })
             self.assertEqual(user_count(), 2)
 
             username2 = 'testuser1'
@@ -1235,13 +1231,11 @@ class TestSettings(InvenTreeTestCase):
             user_model.objects.create_user(username2, email2, password2)
             self.assertEqual(user_count(), 3)
             # check it will not be created again
-            self.run_reload(
-                {
-                    'INVENTREE_ADMIN_USER': username2,
-                    'INVENTREE_ADMIN_EMAIL': email2,
-                    'INVENTREE_ADMIN_PASSWORD': password2,
-                }
-            )
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': username2,
+                'INVENTREE_ADMIN_EMAIL': email2,
+                'INVENTREE_ADMIN_PASSWORD': password2,
+            })
             self.assertEqual(user_count(), 3)
 
     def test_initial_install(self):

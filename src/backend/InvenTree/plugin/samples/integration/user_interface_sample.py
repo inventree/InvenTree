@@ -76,31 +76,27 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         # A broken panel which tries to load a non-existent JS file
         if target_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
-            panels.append(
-                {
-                    'key': 'broken-panel',
-                    'title': 'Broken Panel',
-                    'source': '/this/does/not/exist.js',
-                }
-            )
+            panels.append({
+                'key': 'broken-panel',
+                'title': 'Broken Panel',
+                'source': '/this/does/not/exist.js',
+            })
 
         # A dynamic panel which will be injected into the UI (loaded from external file)
         # Note that we additionally provide some "context" data to the front-end render function
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
-            panels.append(
-                {
-                    'key': 'dynamic-panel',
-                    'title': 'Dynamic Panel',
-                    'source': self.plugin_static_file('sample_panel.js'),
-                    'icon': 'ti:wave-saw-tool:outline',
-                    'context': {
-                        'version': INVENTREE_SW_VERSION,
-                        'plugin_version': self.VERSION,
-                        'random': random.randint(1, 100),
-                        'time': time.time(),
-                    },
-                }
-            )
+            panels.append({
+                'key': 'dynamic-panel',
+                'title': 'Dynamic Panel',
+                'source': self.plugin_static_file('sample_panel.js'),
+                'icon': 'ti:wave-saw-tool:outline',
+                'context': {
+                    'version': INVENTREE_SW_VERSION,
+                    'plugin_version': self.VERSION,
+                    'random': random.randint(1, 100),
+                    'time': time.time(),
+                },
+            })
 
         # Next, add a custom panel which will appear on the 'part' page
         # Note that this content is rendered from a template file,
@@ -113,41 +109,35 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
             # Only display this panel for "active" parts
             if part and part.active:
-                panels.append(
-                    {
-                        'key': 'part-panel',
-                        'title': _('Part Panel'),
-                        'source': self.plugin_static_file(
-                            'sample_panel.js:renderPartPanel'
-                        ),
-                        'icon': 'ti:package:outline',
-                        'context': {'part_name': part.name if part else ''},
-                    }
-                )
+                panels.append({
+                    'key': 'part-panel',
+                    'title': _('Part Panel'),
+                    'source': self.plugin_static_file(
+                        'sample_panel.js:renderPartPanel'
+                    ),
+                    'icon': 'ti:package:outline',
+                    'context': {'part_name': part.name if part else ''},
+                })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if target_model == 'purchaseorder' and self.get_setting(
             'ENABLE_PURCHASE_ORDER_PANELS'
         ):
-            panels.append(
-                {
-                    'key': 'purchase_order_panel',
-                    'title': 'Purchase Order Panel',
-                    'source': self.plugin_static_file('sample_panel.js:renderPoPanel'),
-                }
-            )
+            panels.append({
+                'key': 'purchase_order_panel',
+                'title': 'Purchase Order Panel',
+                'source': self.plugin_static_file('sample_panel.js:renderPoPanel'),
+            })
 
         # Admin panel - only visible to admin users
         if request.user.is_superuser:
-            panels.append(
-                {
-                    'key': 'admin-panel',
-                    'title': 'Admin Panel',
-                    'source': self.plugin_static_file(
-                        'sample_panel.js:renderAdminOnlyPanel'
-                    ),
-                }
-            )
+            panels.append({
+                'key': 'admin-panel',
+                'title': 'Admin Panel',
+                'source': self.plugin_static_file(
+                    'sample_panel.js:renderAdminOnlyPanel'
+                ),
+            })
 
         return panels
 
@@ -184,16 +174,14 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         # Admin item - only visible to users with superuser access
         if request.user.is_superuser:
-            items.append(
-                {
-                    'key': 'admin-dashboard-item',
-                    'title': _('Admin Dashboard Item'),
-                    'description': _('This is an admin-only dashboard item.'),
-                    'source': self.plugin_static_file('admin_dashboard_item.js'),
-                    'options': {'width': 4, 'height': 2},
-                    'context': {'secret-key': 'this-is-a-secret'},
-                }
-            )
+            items.append({
+                'key': 'admin-dashboard-item',
+                'title': _('Admin Dashboard Item'),
+                'description': _('This is an admin-only dashboard item.'),
+                'source': self.plugin_static_file('admin_dashboard_item.js'),
+                'options': {'width': 4, 'height': 2},
+                'context': {'secret-key': 'this-is-a-secret'},
+            })
 
         return items
 

@@ -1,4 +1,4 @@
-import { ApiEndpoints, apiUrl, ModelType, useTable } from '@lib/index';
+import { ApiEndpoints, ModelType, apiUrl, useTable } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
 import { Group, Paper } from '@mantine/core';
 import { IconCornerLeftUp } from '@tabler/icons-react';

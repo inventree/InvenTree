@@ -142,7 +142,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
       const available = quantity - allocated;
 
       const extra: ReactNode[] = [];
-      let color;
+      let color: string | undefined;
       let text = formatDecimal(quantity);
 
       // Handle case where stock item detail is not provided

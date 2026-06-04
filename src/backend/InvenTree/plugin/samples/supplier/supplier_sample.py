@@ -34,25 +34,23 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         for material in ['Steel', 'Aluminium', 'Brass']:
             for size in ['M1', 'M2', 'M3', 'M4', 'M5']:
                 for length in range(5, 30, 5):
-                    self.sample_data.append(
-                        {
-                            'material': material,
-                            'thread': size,
-                            'length': length,
-                            'sku': f'BOLT-{material}-{size}-{length}',
-                            'name': f'Bolt {size}x{length}mm {material}',
-                            'description': f'This is a sample part description demonstration purposes for the {size}x{length} {material} bolt.',
-                            'price': {
-                                1: [1.0, 'EUR'],
-                                10: [0.9, 'EUR'],
-                                100: [0.8, 'EUR'],
-                                5000: [0.5, 'EUR'],
-                            },
-                            'link': f'https://example.com/sample-part-{size}-{length}-{material}',
-                            'image_url': r'https://github.com/inventree/demo-dataset/blob/main/media/part_images/flat-head.png?raw=true',
-                            'brand': 'Bolt Manufacturer',
-                        }
-                    )
+                    self.sample_data.append({
+                        'material': material,
+                        'thread': size,
+                        'length': length,
+                        'sku': f'BOLT-{material}-{size}-{length}',
+                        'name': f'Bolt {size}x{length}mm {material}',
+                        'description': f'This is a sample part description demonstration purposes for the {size}x{length} {material} bolt.',
+                        'price': {
+                            1: [1.0, 'EUR'],
+                            10: [0.9, 'EUR'],
+                            100: [0.8, 'EUR'],
+                            5000: [0.5, 'EUR'],
+                        },
+                        'link': f'https://example.com/sample-part-{size}-{length}-{material}',
+                        'image_url': r'https://github.com/inventree/demo-dataset/blob/main/media/part_images/flat-head.png?raw=true',
+                        'brand': 'Bolt Manufacturer',
+                    })
 
     def get_suppliers(self) -> list[supplier.Supplier]:
         """Return a list of available suppliers."""
@@ -190,13 +188,11 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         )
 
         SupplierPriceBreak.objects.filter(part=spp).delete()
-        SupplierPriceBreak.objects.bulk_create(
-            [
-                SupplierPriceBreak(
-                    part=spp, quantity=quantity, price=price, price_currency=currency
-                )
-                for quantity, (price, currency) in data['price'].items()
-            ]
-        )
+        SupplierPriceBreak.objects.bulk_create([
+            SupplierPriceBreak(
+                part=spp, quantity=quantity, price=price, price_currency=currency
+            )
+            for quantity, (price, currency) in data['price'].items()
+        ])
 
         return spp

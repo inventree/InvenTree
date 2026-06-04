@@ -25,14 +25,12 @@ logger = structlog.get_logger('inventree')
 
 def is_method_like(method) -> bool:
     """Check if a method is callable and not a property."""
-    return any(
-        [
-            callable(method),
-            isinstance(method, classmethod),
-            isinstance(method, staticmethod),
-            isinstance(method, property),
-        ]
-    )
+    return any([
+        callable(method),
+        isinstance(method, classmethod),
+        isinstance(method, staticmethod),
+        isinstance(method, property),
+    ])
 
 
 def mark_final(method):

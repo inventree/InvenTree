@@ -134,14 +134,12 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         p_test = ParameterTemplate(name='Test Parameter')
         p_len.save()
         p_test.save()
-        PartCategoryParameterTemplate.objects.bulk_create(
-            [
-                PartCategoryParameterTemplate(category=category, template=p_len),
-                PartCategoryParameterTemplate(
-                    category=category, template=p_test, default_value='Test Value'
-                ),
-            ]
-        )
+        PartCategoryParameterTemplate.objects.bulk_create([
+            PartCategoryParameterTemplate(category=category, template=p_len),
+            PartCategoryParameterTemplate(
+                category=category, template=p_test, default_value='Test Value'
+            ),
+        ])
         res = self.post(
             url,
             {

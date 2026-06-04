@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium, type FullConfig, request } from '@playwright/test';
+import { type FullConfig, chromium, request } from '@playwright/test';
 import {
   adminuser,
   allaccessuser,

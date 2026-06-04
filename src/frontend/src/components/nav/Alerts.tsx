@@ -7,8 +7,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
-import type { ServerAPIProps } from '../../states/states';
 import { useUserState } from '../../states/UserState';
+import type { ServerAPIProps } from '../../states/states';
 
 interface AlertInfo {
   key: string;

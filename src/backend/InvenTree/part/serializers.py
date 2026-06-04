@@ -544,16 +544,16 @@ class InitialSupplierSerializer(serializers.Serializer):
         if company.models.ManufacturerPart.objects.filter(
             manufacturer=data.get('manufacturer', None), MPN=data.get('mpn', '')
         ).exists():
-            raise serializers.ValidationError(
-                {'mpn': _('Manufacturer part matching this MPN already exists')}
-            )
+            raise serializers.ValidationError({
+                'mpn': _('Manufacturer part matching this MPN already exists')
+            })
 
         if company.models.SupplierPart.objects.filter(
             supplier=data.get('supplier', None), SKU=data.get('sku', '')
         ).exists():
-            raise serializers.ValidationError(
-                {'sku': _('Supplier part matching this SKU already exists')}
-            )
+            raise serializers.ValidationError({
+                'sku': _('Supplier part matching this SKU already exists')
+            })
 
         return data
 
@@ -1571,16 +1571,14 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
                 )
 
             if override_min > override_max:
-                raise ValidationError(
-                    {
-                        'override_min': _(
-                            'Minimum price must not be greater than maximum price'
-                        ),
-                        'override_max': _(
-                            'Maximum price must not be less than minimum price'
-                        ),
-                    }
-                )
+                raise ValidationError({
+                    'override_min': _(
+                        'Minimum price must not be greater than maximum price'
+                    ),
+                    'override_max': _(
+                        'Maximum price must not be less than minimum price'
+                    ),
+                })
 
         return data
 

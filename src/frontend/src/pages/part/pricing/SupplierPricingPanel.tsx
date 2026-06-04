@@ -9,8 +9,8 @@ import { useMemo } from 'react';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
-  calculateSupplierPartUnitPrice,
-  SupplierPriceBreakColumns
+  SupplierPriceBreakColumns,
+  calculateSupplierPartUnitPrice
 } from '../../../tables/purchasing/SupplierPriceBreakTable';
 import { NoPricingData } from './PricingPanel';
 

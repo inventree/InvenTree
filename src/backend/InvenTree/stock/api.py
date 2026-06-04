@@ -1149,22 +1149,20 @@ class StockList(
             try:
                 supplier_part = SupplierPart.objects.get(pk=supplier_part_id)
             except Exception:
-                raise ValidationError(
-                    {'supplier_part': _('The given supplier part does not exist')}
-                )
+                raise ValidationError({
+                    'supplier_part': _('The given supplier part does not exist')
+                })
 
             if supplier_part.base_quantity() != 1:
                 # Skip this check if pack size is 1 - makes no difference
                 # use_pack_size = True -> Multiply quantity by pack size
                 # use_pack_size = False -> Use quantity as is
                 if 'use_pack_size' not in data:
-                    raise ValidationError(
-                        {
-                            'use_pack_size': _(
-                                'The supplier part has a pack size defined, but flag use_pack_size not set'
-                            )
-                        }
-                    )
+                    raise ValidationError({
+                        'use_pack_size': _(
+                            'The supplier part has a pack size defined, but flag use_pack_size not set'
+                        )
+                    })
                 elif bool(data.get('use_pack_size')):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
@@ -1192,15 +1190,11 @@ class StockList(
         # Assign serial numbers for a trackable part
         if serial_numbers:
             if not part.trackable:
-                raise ValidationError(
-                    {
-                        'serial_numbers': [
-                            _(
-                                'Serial numbers cannot be supplied for a non-trackable part'
-                            )
-                        ]
-                    }
-                )
+                raise ValidationError({
+                    'serial_numbers': [
+                        _('Serial numbers cannot be supplied for a non-trackable part')
+                    ]
+                })
 
             # If serial numbers are specified, check that they match!
             try:
@@ -1229,9 +1223,10 @@ class StockList(
                     raise ValidationError({'serial_numbers': errors})
 
             except DjangoValidationError as e:
-                raise ValidationError(
-                    {'quantity': e.messages, 'serial_numbers': e.messages}
-                )
+                raise ValidationError({
+                    'quantity': e.messages,
+                    'serial_numbers': e.messages,
+                })
 
         if serials is not None:
             """If the stock item is going to be serialized, set the quantity to 1."""
@@ -1471,13 +1466,11 @@ class StockItemTestResultFilter(FilterSet):
             item = StockItem.objects.get(pk=value)
 
         except StockItem.DoesNotExist:
-            raise ValidationError(
-                {
-                    'stock_item': _('Stock item with ID {id} does not exist').format(
-                        id=value
-                    )
-                }
-            )
+            raise ValidationError({
+                'stock_item': _('Stock item with ID {id} does not exist').format(
+                    id=value
+                )
+            })
 
         items = [item]
 
@@ -1709,50 +1702,36 @@ class StockTrackingList(
 stock_api_urls = [
     path(
         'location/',
-        include(
-            [
-                path('tree/', StockLocationTree.as_view(), name='api-location-tree'),
-                # Stock location detail endpoints
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(StockLocation),
-                            path(
-                                '',
-                                StockLocationDetail.as_view(),
-                                name='api-location-detail',
-                            ),
-                        ]
-                    ),
-                ),
-                path('', StockLocationList.as_view(), name='api-location-list'),
-            ]
-        ),
+        include([
+            path('tree/', StockLocationTree.as_view(), name='api-location-tree'),
+            # Stock location detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(StockLocation),
+                    path('', StockLocationDetail.as_view(), name='api-location-detail'),
+                ]),
+            ),
+            path('', StockLocationList.as_view(), name='api-location-list'),
+        ]),
     ),
     # Stock location type endpoints
     path(
         'location-type/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(StockLocationType),
-                            path(
-                                '',
-                                StockLocationTypeDetail.as_view(),
-                                name='api-location-type-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(StockLocationType),
+                    path(
+                        '',
+                        StockLocationTypeDetail.as_view(),
+                        name='api-location-type-detail',
                     ),
-                ),
-                path(
-                    '', StockLocationTypeList.as_view(), name='api-location-type-list'
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path('', StockLocationTypeList.as_view(), name='api-location-type-list'),
+        ]),
     ),
     # Endpoints for bulk stock adjustment actions
     path('count/', StockCount.as_view(), name='api-stock-count'),
@@ -1766,84 +1745,66 @@ stock_api_urls = [
     # StockItemTestResult API endpoints
     path(
         'test/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(StockItemTestResult),
-                            path(
-                                '',
-                                StockItemTestResultDetail.as_view(),
-                                name='api-stock-test-result-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(StockItemTestResult),
+                    path(
+                        '',
+                        StockItemTestResultDetail.as_view(),
+                        name='api-stock-test-result-detail',
                     ),
-                ),
-                path(
-                    '',
-                    StockItemTestResultList.as_view(),
-                    name='api-stock-test-result-list',
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path(
+                '', StockItemTestResultList.as_view(), name='api-stock-test-result-list'
+            ),
+        ]),
     ),
     # StockItemTracking API endpoints
     path(
         'track/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    StockTrackingDetail.as_view(),
-                    name='api-stock-tracking-detail',
-                ),
-                # Stock tracking status code information
-                path(
-                    'status/',
-                    StatusView.as_view(),
-                    {StatusView.MODEL_REF: StockHistoryCode},
-                    name='api-stock-tracking-status-codes',
-                ),
-                path('', StockTrackingList.as_view(), name='api-stock-tracking-list'),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                StockTrackingDetail.as_view(),
+                name='api-stock-tracking-detail',
+            ),
+            # Stock tracking status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: StockHistoryCode},
+                name='api-stock-tracking-status-codes',
+            ),
+            path('', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+        ]),
     ),
     # Detail views for a single stock item
     path(
         '<int:pk>/',
-        include(
-            [
-                path(
-                    'convert/',
-                    StockItemConvert.as_view(),
-                    name='api-stock-item-convert',
-                ),
-                path(
-                    'install/',
-                    StockItemInstall.as_view(),
-                    name='api-stock-item-install',
-                ),
-                meta_path(StockItem),
-                path(
-                    'serialize/',
-                    StockItemSerialize.as_view(),
-                    name='api-stock-item-serialize',
-                ),
-                path(
-                    'uninstall/',
-                    StockItemUninstall.as_view(),
-                    name='api-stock-item-uninstall',
-                ),
-                path(
-                    'serial-numbers/',
-                    StockItemSerialNumbers.as_view(),
-                    name='api-stock-item-serial-numbers',
-                ),
-                path('', StockDetail.as_view(), name='api-stock-detail'),
-            ]
-        ),
+        include([
+            path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
+            path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+            meta_path(StockItem),
+            path(
+                'serialize/',
+                StockItemSerialize.as_view(),
+                name='api-stock-item-serialize',
+            ),
+            path(
+                'uninstall/',
+                StockItemUninstall.as_view(),
+                name='api-stock-item-uninstall',
+            ),
+            path(
+                'serial-numbers/',
+                StockItemSerialNumbers.as_view(),
+                name='api-stock-item-serial-numbers',
+            ),
+            path('', StockDetail.as_view(), name='api-stock-detail'),
+        ]),
     ),
     # Stock item status code information
     path(

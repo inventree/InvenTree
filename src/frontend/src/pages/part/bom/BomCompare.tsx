@@ -1,4 +1,4 @@
-import { ApiEndpoints, apiUrl, ModelType, StylishText } from '@lib/index';
+import { ApiEndpoints, ModelType, StylishText, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,

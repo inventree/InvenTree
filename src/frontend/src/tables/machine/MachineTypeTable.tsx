@@ -1,5 +1,5 @@
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { StylishText } from '@lib/components/StylishText';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';

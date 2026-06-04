@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Browser, Page } from '@playwright/test';
 import {
+  type UserType,
   allaccessuser,
   loginUrl,
   logoutUrl,
-  type UserType,
   webUrl
 } from './defaults';
 import { navigate } from './helpers.js';

@@ -186,9 +186,9 @@ class PluginDetail(RetrieveDestroyAPI):
         cfg = self.get_object()
 
         if cfg.active:
-            raise ValidationError(
-                {'detail': _('Plugin cannot be deleted as it is currently active')}
-            )
+            raise ValidationError({
+                'detail': _('Plugin cannot be deleted as it is currently active')
+            })
 
         return super().delete(request, *args, **kwargs)
 
@@ -496,16 +496,16 @@ class RegistryStatusView(APIView):
         for stage, errors in registry.errors.items():
             for error_detail in errors:
                 for name, message in error_detail.items():
-                    error_list.append(
-                        {'stage': stage, 'name': name, 'message': message}
-                    )
+                    error_list.append({
+                        'stage': stage,
+                        'name': name,
+                        'message': message,
+                    })
 
-        result = PluginSerializers.PluginRegistryStatusSerializer(
-            {
-                'registry_errors': error_list,
-                'active_plugins': PluginConfig.objects.filter(active=True).count(),
-            }
-        ).data
+        result = PluginSerializers.PluginRegistryStatusSerializer({
+            'registry_errors': error_list,
+            'active_plugins': PluginConfig.objects.filter(active=True).count(),
+        }).data
 
         return Response(result)
 
@@ -523,97 +523,81 @@ plugin_api_urls = [
     path('locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
     path(
         'plugins/',
-        include(
-            [
-                # UI plugins
-                path('ui/', include(ui_plugins_api_urls)),
-                # Plugin management
-                path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
-                path('install/', PluginInstall.as_view(), name='api-plugin-install'),
-                # Registry status
-                path(
-                    'status/',
-                    RegistryStatusView.as_view(),
-                    name='api-plugin-registry-status',
-                ),
-                path(
-                    'settings/',
-                    include(
-                        [
+        include([
+            # UI plugins
+            path('ui/', include(ui_plugins_api_urls)),
+            # Plugin management
+            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
+            # Registry status
+            path(
+                'status/',
+                RegistryStatusView.as_view(),
+                name='api-plugin-registry-status',
+            ),
+            path(
+                'settings/',
+                include([
+                    path(
+                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
+                    )
+                ]),
+            ),
+            # Lookup for individual plugins (based on 'plugin', not 'pk')
+            path(
+                '<str:plugin>/',
+                include([
+                    path(
+                        'user-settings/',
+                        include([
+                            re_path(
+                                r'^(?P<key>\w+)/',
+                                PluginUserSettingDetail.as_view(),
+                                name='api-plugin-user-setting-detail',
+                            ),
                             path(
                                 '',
-                                PluginSettingList.as_view(),
-                                name='api-plugin-setting-list',
-                            )
-                        ]
+                                PluginUserSettingList.as_view(),
+                                name='api-plugin-user-setting-list',
+                            ),
+                        ]),
                     ),
-                ),
-                # Lookup for individual plugins (based on 'plugin', not 'pk')
-                path(
-                    '<str:plugin>/',
-                    include(
-                        [
-                            path(
-                                'user-settings/',
-                                include(
-                                    [
-                                        re_path(
-                                            r'^(?P<key>\w+)/',
-                                            PluginUserSettingDetail.as_view(),
-                                            name='api-plugin-user-setting-detail',
-                                        ),
-                                        path(
-                                            '',
-                                            PluginUserSettingList.as_view(),
-                                            name='api-plugin-user-setting-list',
-                                        ),
-                                    ]
-                                ),
+                    path(
+                        'settings/',
+                        include([
+                            re_path(
+                                r'^(?P<key>\w+)/',
+                                PluginSettingDetail.as_view(),
+                                name='api-plugin-setting-detail',
                             ),
                             path(
-                                'settings/',
-                                include(
-                                    [
-                                        re_path(
-                                            r'^(?P<key>\w+)/',
-                                            PluginSettingDetail.as_view(),
-                                            name='api-plugin-setting-detail',
-                                        ),
-                                        path(
-                                            '',
-                                            PluginAllSettingList.as_view(),
-                                            name='api-plugin-settings',
-                                        ),
-                                    ]
-                                ),
+                                '',
+                                PluginAllSettingList.as_view(),
+                                name='api-plugin-settings',
                             ),
-                            meta_path(
-                                PluginConfig,
-                                lookup_field='key',
-                                lookup_field_ref='plugin',
-                            ),
-                            path(
-                                'activate/',
-                                PluginActivate.as_view(),
-                                name='api-plugin-detail-activate',
-                            ),
-                            path(
-                                'uninstall/',
-                                PluginUninstall.as_view(),
-                                name='api-plugin-uninstall',
-                            ),
-                            path(
-                                'admin/',
-                                PluginAdminDetail.as_view(),
-                                name='api-plugin-admin',
-                            ),
-                            path('', PluginDetail.as_view(), name='api-plugin-detail'),
-                        ]
+                        ]),
                     ),
-                ),
-                path('', PluginList.as_view(), name='api-plugin-list'),
-            ]
-        ),
+                    meta_path(
+                        PluginConfig, lookup_field='key', lookup_field_ref='plugin'
+                    ),
+                    path(
+                        'activate/',
+                        PluginActivate.as_view(),
+                        name='api-plugin-detail-activate',
+                    ),
+                    path(
+                        'uninstall/',
+                        PluginUninstall.as_view(),
+                        name='api-plugin-uninstall',
+                    ),
+                    path(
+                        'admin/', PluginAdminDetail.as_view(), name='api-plugin-admin'
+                    ),
+                    path('', PluginDetail.as_view(), name='api-plugin-detail'),
+                ]),
+            ),
+            path('', PluginList.as_view(), name='api-plugin-list'),
+        ]),
     ),
     path('supplier/', include(supplier_api_urls)),
 ]

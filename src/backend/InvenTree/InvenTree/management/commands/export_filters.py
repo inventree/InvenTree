@@ -48,13 +48,11 @@ def discover_filters():
             for filter_name, filter_func in library.filters.items():
                 title, body, metadata = utils.parse_docstring(filter_func.__doc__)
                 tag_library = module_name.split('.')[-1]
-                filters.append(
-                    {
-                        'name': filter_name,
-                        'title': title,
-                        'body': body,
-                        'meta': metadata,
-                        'library': tag_library,
-                    }
-                )
+                filters.append({
+                    'name': filter_name,
+                    'title': title,
+                    'body': body,
+                    'meta': metadata,
+                    'library': tag_library,
+                })
     return filters

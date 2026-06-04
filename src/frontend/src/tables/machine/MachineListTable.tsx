@@ -1,14 +1,14 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import {
   DetailDrawer,
   DetailDrawerLink
 } from '@lib/components/nav/DetailDrawer';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { formatDecimal, RowDeleteAction, RowEditAction } from '@lib/index';
+import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
 import type {
   InvenTreeTableProps,
   RowAction,

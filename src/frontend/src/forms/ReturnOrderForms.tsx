@@ -15,8 +15,8 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { StandaloneField } from '../components/forms/StandaloneField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';

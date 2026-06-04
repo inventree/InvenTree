@@ -1,4 +1,4 @@
-import { ApiEndpoints, apiUrl, UserRoles } from '@lib/index';
+import { ApiEndpoints, UserRoles, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Button, Stack } from '@mantine/core';
 import { IconClipboardList } from '@tabler/icons-react';

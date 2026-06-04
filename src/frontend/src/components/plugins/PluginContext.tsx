@@ -33,9 +33,9 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import {
+  type ImporterOpenOptions,
   closeGlobalImporter,
   getGlobalImporterState,
-  type ImporterOpenOptions,
   openGlobalImporter
 } from '../../states/ImporterState';
 import { useLocalState } from '../../states/LocalState';

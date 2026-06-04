@@ -1,6 +1,6 @@
 import { ActionButton } from '@lib/components/ActionButton';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { RowAction } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';

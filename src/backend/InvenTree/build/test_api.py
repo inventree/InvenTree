@@ -1871,22 +1871,20 @@ class BuildCustomStatusTest(BuildAPITest):
         next_tree_id = (Build.objects.aggregate(m=Max('tree_id'))['m'] or 0) + 1
 
         # Create 100 build orders, cycling through the 10 custom statuses
-        Build.objects.bulk_create(
-            [
-                Build(
-                    part=part,
-                    reference=f'BO-QTEST-{i}',
-                    quantity=1,
-                    status=custom_statuses[i % 10].logical_key,
-                    status_custom_key=custom_statuses[i % 10].key,
-                    lft=1,
-                    rght=2,
-                    level=0,
-                    tree_id=next_tree_id + i,
-                )
-                for i in range(100)
-            ]
-        )
+        Build.objects.bulk_create([
+            Build(
+                part=part,
+                reference=f'BO-QTEST-{i}',
+                quantity=1,
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+                lft=1,
+                rght=2,
+                level=0,
+                tree_id=next_tree_id + i,
+            )
+            for i in range(100)
+        ])
 
         # Lookup: custom_key -> custom_status_object, for quick per-row assertions
         custom_lookup = {cs.key: cs for cs in custom_statuses}

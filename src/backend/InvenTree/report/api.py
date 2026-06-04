@@ -367,24 +367,20 @@ label_api_urls = [
     # Label templates
     path(
         'template/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(report.models.LabelTemplate),
-                            path(
-                                '',
-                                LabelTemplateDetail.as_view(),
-                                name='api-label-template-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(report.models.LabelTemplate),
+                    path(
+                        '',
+                        LabelTemplateDetail.as_view(),
+                        name='api-label-template-detail',
                     ),
-                ),
-                path('', LabelTemplateList.as_view(), name='api-label-template-list'),
-            ]
-        ),
+                ]),
+            ),
+            path('', LabelTemplateList.as_view(), name='api-label-template-list'),
+        ]),
     ),
 ]
 
@@ -394,51 +390,41 @@ report_api_urls = [
     # Report templates
     path(
         'template/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(report.models.ReportTemplate),
-                            path(
-                                '',
-                                ReportTemplateDetail.as_view(),
-                                name='api-report-template-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(report.models.ReportTemplate),
+                    path(
+                        '',
+                        ReportTemplateDetail.as_view(),
+                        name='api-report-template-detail',
                     ),
-                ),
-                path('', ReportTemplateList.as_view(), name='api-report-template-list'),
-            ]
-        ),
+                ]),
+            ),
+            path('', ReportTemplateList.as_view(), name='api-report-template-list'),
+        ]),
     ),
     # Report assets
     path(
         'asset/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    ReportAssetDetail.as_view(),
-                    name='api-report-asset-detail',
-                ),
-                path('', ReportAssetList.as_view(), name='api-report-asset-list'),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/', ReportAssetDetail.as_view(), name='api-report-asset-detail'
+            ),
+            path('', ReportAssetList.as_view(), name='api-report-asset-list'),
+        ]),
     ),
     # Report snippets
     path(
         'snippet/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    ReportSnippetDetail.as_view(),
-                    name='api-report-snippet-detail',
-                ),
-                path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                ReportSnippetDetail.as_view(),
+                name='api-report-snippet-detail',
+            ),
+            path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
+        ]),
     ),
 ]

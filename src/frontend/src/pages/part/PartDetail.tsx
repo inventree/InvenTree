@@ -103,11 +103,11 @@ import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
-import { BomActions } from './bom/BomActions';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
+import { BomActions } from './bom/BomActions';
 
 /**
  * Render a part revision selector component

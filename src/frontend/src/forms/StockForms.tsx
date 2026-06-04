@@ -39,11 +39,11 @@ import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';

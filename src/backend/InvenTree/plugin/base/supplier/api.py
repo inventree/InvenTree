@@ -68,16 +68,14 @@ class ListSupplier(APIView):
         """List all available supplier plugins."""
         suppliers = []
         for plugin in registry.with_mixin(PluginMixinEnum.SUPPLIER):
-            suppliers.extend(
-                [
-                    {
-                        'plugin_slug': plugin.slug,
-                        'supplier_slug': supplier.slug,
-                        'supplier_name': supplier.name,
-                    }
-                    for supplier in plugin.get_suppliers()
-                ]
-            )
+            suppliers.extend([
+                {
+                    'plugin_slug': plugin.slug,
+                    'supplier_slug': supplier.slug,
+                    'supplier_name': supplier.name,
+                }
+                for supplier in plugin.get_suppliers()
+            ])
 
         return Response(suppliers)
 
@@ -230,16 +228,14 @@ class ImportPart(APIView):
                     )
             parameters.sort(key=lambda x: x.on_category, reverse=True)
 
-        response = ImportResultSerializer(
-            {
-                'part_id': part.pk,
-                'part_detail': part,
-                'supplier_part_id': supplier_part.pk,
-                'manufacturer_part_id': manufacturer_part.pk,
-                'pricing': pricing,
-                'parameters': parameters,
-            }
-        ).data
+        response = ImportResultSerializer({
+            'part_id': part.pk,
+            'part_detail': part,
+            'supplier_part_id': supplier_part.pk,
+            'manufacturer_part_id': manufacturer_part.pk,
+            'pricing': pricing,
+            'parameters': parameters,
+        }).data
         return Response(response)
 
 

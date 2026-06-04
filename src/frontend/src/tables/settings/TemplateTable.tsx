@@ -1,10 +1,10 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import {
   type RowAction,
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';

@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { createApi } from './api';
 
 export const clickOnParamFilter = async (page: Page, name: string) => {

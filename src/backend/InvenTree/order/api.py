@@ -2393,9 +2393,9 @@ class OrderCalendarExport(ICalFeed):
 
         # Still nothing - return Unauth. header with info on how to authenticate
         # Information is needed by client, eg Thunderbird
-        response = JsonResponse(
-            {'detail': 'Authentication credentials were not provided.'}
-        )
+        response = JsonResponse({
+            'detail': 'Authentication credentials were not provided.'
+        })
         response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
         return response
@@ -2563,9 +2563,9 @@ class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
 repair_order_api_urls = [
     path(
         '<int:pk>/',
-        include(
-            [path('', RepairOrderDetail.as_view(), name='api-repair-order-detail')]
-        ),
+        include([
+            path('', RepairOrderDetail.as_view(), name='api-repair-order-detail')
+        ]),
     ),
     path('', RepairOrderList.as_view(), name='api-repair-order-list'),
 ]
@@ -2573,15 +2573,13 @@ repair_order_api_urls = [
 repair_order_line_api_urls = [
     path(
         '<int:pk>/',
-        include(
-            [
-                path(
-                    '',
-                    RepairOrderLineItemDetail.as_view(),
-                    name='api-repair-order-line-detail',
-                )
-            ]
-        ),
+        include([
+            path(
+                '',
+                RepairOrderLineItemDetail.as_view(),
+                name='api-repair-order-line-detail',
+            )
+        ]),
     ),
     path('', RepairOrderLineItemList.as_view(), name='api-repair-order-line-list'),
 ]
@@ -2589,15 +2587,13 @@ repair_order_line_api_urls = [
 repair_order_allocation_api_urls = [
     path(
         '<int:pk>/',
-        include(
-            [
-                path(
-                    '',
-                    RepairOrderAllocationDetail.as_view(),
-                    name='api-repair-order-allocation-detail',
-                )
-            ]
-        ),
+        include([
+            path(
+                '',
+                RepairOrderAllocationDetail.as_view(),
+                name='api-repair-order-allocation-detail',
+            )
+        ]),
     ),
     path(
         '', RepairOrderAllocationList.as_view(), name='api-repair-order-allocation-list'
@@ -2609,465 +2605,383 @@ order_api_urls = [
     # API endpoints for purchase orders
     path(
         'po/',
-        include(
-            [
-                # Individual purchase order detail URLs
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            path(
-                                'cancel/',
-                                PurchaseOrderCancel.as_view(),
-                                name='api-po-cancel',
-                            ),
-                            path(
-                                'hold/', PurchaseOrderHold.as_view(), name='api-po-hold'
-                            ),
-                            path(
-                                'complete/',
-                                PurchaseOrderComplete.as_view(),
-                                name='api-po-complete',
-                            ),
-                            path(
-                                'issue/',
-                                PurchaseOrderIssue.as_view(),
-                                name='api-po-issue',
-                            ),
-                            meta_path(models.PurchaseOrder),
-                            path(
-                                'receive/',
-                                PurchaseOrderReceive.as_view(),
-                                name='api-po-receive',
-                            ),
-                            # PurchaseOrder detail API endpoint
-                            path(
-                                '', PurchaseOrderDetail.as_view(), name='api-po-detail'
-                            ),
-                        ]
+        include([
+            # Individual purchase order detail URLs
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),
-                ),
-                # Purchase order status code information
-                path(
-                    'status/',
-                    StatusView.as_view(),
-                    {StatusView.MODEL_REF: PurchaseOrderStatus},
-                    name='api-po-status-codes',
-                ),
-                # Purchase order list
-                path('', PurchaseOrderList.as_view(), name='api-po-list'),
-            ]
-        ),
+                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
+                    path(
+                        'complete/',
+                        PurchaseOrderComplete.as_view(),
+                        name='api-po-complete',
+                    ),
+                    path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
+                    meta_path(models.PurchaseOrder),
+                    path(
+                        'receive/',
+                        PurchaseOrderReceive.as_view(),
+                        name='api-po-receive',
+                    ),
+                    # PurchaseOrder detail API endpoint
+                    path('', PurchaseOrderDetail.as_view(), name='api-po-detail'),
+                ]),
+            ),
+            # Purchase order status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: PurchaseOrderStatus},
+                name='api-po-status-codes',
+            ),
+            # Purchase order list
+            path('', PurchaseOrderList.as_view(), name='api-po-list'),
+        ]),
     ),
     # API endpoints for purchase order line items
     path(
         'po-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.PurchaseOrderLineItem),
-                            path(
-                                '',
-                                PurchaseOrderLineItemDetail.as_view(),
-                                name='api-po-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.PurchaseOrderLineItem),
+                    path(
+                        '',
+                        PurchaseOrderLineItemDetail.as_view(),
+                        name='api-po-line-detail',
                     ),
-                ),
-                path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
-            ]
-        ),
+                ]),
+            ),
+            path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
+        ]),
     ),
     # API endpoints for purchase order extra line
     path(
         'po-extra-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.PurchaseOrderExtraLine),
-                            path(
-                                '',
-                                PurchaseOrderExtraLineDetail.as_view(),
-                                name='api-po-extra-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.PurchaseOrderExtraLine),
+                    path(
+                        '',
+                        PurchaseOrderExtraLineDetail.as_view(),
+                        name='api-po-extra-line-detail',
                     ),
-                ),
-                path(
-                    '',
-                    PurchaseOrderExtraLineList.as_view(),
-                    name='api-po-extra-line-list',
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path(
+                '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
+            ),
+        ]),
     ),
     # API endpoints for sales orders
     path(
         'so/',
-        include(
-            [
-                path(
-                    'shipment/',
-                    include(
-                        [
+        include([
+            path(
+                'shipment/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        include([
                             path(
-                                '<int:pk>/',
-                                include(
-                                    [
-                                        path(
-                                            'ship/',
-                                            SalesOrderShipmentComplete.as_view(),
-                                            name='api-so-shipment-ship',
-                                        ),
-                                        meta_path(models.SalesOrderShipment),
-                                        path(
-                                            '',
-                                            SalesOrderShipmentDetail.as_view(),
-                                            name='api-so-shipment-detail',
-                                        ),
-                                    ]
-                                ),
+                                'ship/',
+                                SalesOrderShipmentComplete.as_view(),
+                                name='api-so-shipment-ship',
                             ),
+                            meta_path(models.SalesOrderShipment),
                             path(
                                 '',
-                                SalesOrderShipmentList.as_view(),
-                                name='api-so-shipment-list',
+                                SalesOrderShipmentDetail.as_view(),
+                                name='api-so-shipment-detail',
                             ),
-                        ]
+                        ]),
                     ),
-                ),
-                # Sales order detail view
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            path(
-                                'allocate/',
-                                SalesOrderAllocate.as_view(),
-                                name='api-so-allocate',
-                            ),
-                            path(
-                                'allocate-serials/',
-                                SalesOrderAllocateSerials.as_view(),
-                                name='api-so-allocate-serials',
-                            ),
-                            path(
-                                'auto-allocate/',
-                                SalesOrderAutoAllocate.as_view(),
-                                name='api-so-auto-allocate',
-                            ),
-                            path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
-                            path(
-                                'cancel/',
-                                SalesOrderCancel.as_view(),
-                                name='api-so-cancel',
-                            ),
-                            path(
-                                'issue/', SalesOrderIssue.as_view(), name='api-so-issue'
-                            ),
-                            path(
-                                'complete/',
-                                SalesOrderComplete.as_view(),
-                                name='api-so-complete',
-                            ),
-                            meta_path(models.SalesOrder),
-                            # SalesOrder detail endpoint
-                            path('', SalesOrderDetail.as_view(), name='api-so-detail'),
-                        ]
+                    path(
+                        '',
+                        SalesOrderShipmentList.as_view(),
+                        name='api-so-shipment-list',
                     ),
-                ),
-                # Sales order status code information
-                path(
-                    'status/',
-                    StatusView.as_view(),
-                    {StatusView.MODEL_REF: SalesOrderStatus},
-                    name='api-so-status-codes',
-                ),
-                # Sales order list view
-                path('', SalesOrderList.as_view(), name='api-so-list'),
-            ]
-        ),
+                ]),
+            ),
+            # Sales order detail view
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'allocate/',
+                        SalesOrderAllocate.as_view(),
+                        name='api-so-allocate',
+                    ),
+                    path(
+                        'allocate-serials/',
+                        SalesOrderAllocateSerials.as_view(),
+                        name='api-so-allocate-serials',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        SalesOrderAutoAllocate.as_view(),
+                        name='api-so-auto-allocate',
+                    ),
+                    path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
+                    path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+                    path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
+                    path(
+                        'complete/',
+                        SalesOrderComplete.as_view(),
+                        name='api-so-complete',
+                    ),
+                    meta_path(models.SalesOrder),
+                    # SalesOrder detail endpoint
+                    path('', SalesOrderDetail.as_view(), name='api-so-detail'),
+                ]),
+            ),
+            # Sales order status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: SalesOrderStatus},
+                name='api-so-status-codes',
+            ),
+            # Sales order list view
+            path('', SalesOrderList.as_view(), name='api-so-list'),
+        ]),
     ),
     # API endpoints for sales order line items
     path(
         'so-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.SalesOrderLineItem),
-                            path(
-                                '',
-                                SalesOrderLineItemDetail.as_view(),
-                                name='api-so-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.SalesOrderLineItem),
+                    path(
+                        '',
+                        SalesOrderLineItemDetail.as_view(),
+                        name='api-so-line-detail',
                     ),
-                ),
-                path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
-            ]
-        ),
+                ]),
+            ),
+            path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
+        ]),
     ),
     # API endpoints for sales order extra line
     path(
         'so-extra-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.SalesOrderExtraLine),
-                            path(
-                                '',
-                                SalesOrderExtraLineDetail.as_view(),
-                                name='api-so-extra-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.SalesOrderExtraLine),
+                    path(
+                        '',
+                        SalesOrderExtraLineDetail.as_view(),
+                        name='api-so-extra-line-detail',
                     ),
-                ),
-                path(
-                    '', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
+        ]),
     ),
     # API endpoints for sales order allocations
     path(
         'so-allocation/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    SalesOrderAllocationDetail.as_view(),
-                    name='api-so-allocation-detail',
-                ),
-                path(
-                    '',
-                    SalesOrderAllocationList.as_view(),
-                    name='api-so-allocation-list',
-                ),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                SalesOrderAllocationDetail.as_view(),
+                name='api-so-allocation-detail',
+            ),
+            path('', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
+        ]),
     ),
     # API endpoints for return orders
     path(
         'ro/',
-        include(
-            [
-                # Return Order detail endpoints
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            path(
-                                'cancel/',
-                                ReturnOrderCancel.as_view(),
-                                name='api-return-order-cancel',
-                            ),
-                            path(
-                                'hold/', ReturnOrderHold.as_view(), name='api-ro-hold'
-                            ),
-                            path(
-                                'complete/',
-                                ReturnOrderComplete.as_view(),
-                                name='api-return-order-complete',
-                            ),
-                            path(
-                                'issue/',
-                                ReturnOrderIssue.as_view(),
-                                name='api-return-order-issue',
-                            ),
-                            path(
-                                'receive/',
-                                ReturnOrderReceive.as_view(),
-                                name='api-return-order-receive',
-                            ),
-                            meta_path(models.ReturnOrder),
-                            path(
-                                '',
-                                ReturnOrderDetail.as_view(),
-                                name='api-return-order-detail',
-                            ),
-                        ]
+        include([
+            # Return Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'cancel/',
+                        ReturnOrderCancel.as_view(),
+                        name='api-return-order-cancel',
                     ),
-                ),
-                # Return order status code information
-                path(
-                    'status/',
-                    StatusView.as_view(),
-                    {StatusView.MODEL_REF: ReturnOrderStatus},
-                    name='api-return-order-status-codes',
-                ),
-                # Return Order list
-                path('', ReturnOrderList.as_view(), name='api-return-order-list'),
-            ]
-        ),
+                    path('hold/', ReturnOrderHold.as_view(), name='api-ro-hold'),
+                    path(
+                        'complete/',
+                        ReturnOrderComplete.as_view(),
+                        name='api-return-order-complete',
+                    ),
+                    path(
+                        'issue/',
+                        ReturnOrderIssue.as_view(),
+                        name='api-return-order-issue',
+                    ),
+                    path(
+                        'receive/',
+                        ReturnOrderReceive.as_view(),
+                        name='api-return-order-receive',
+                    ),
+                    meta_path(models.ReturnOrder),
+                    path(
+                        '', ReturnOrderDetail.as_view(), name='api-return-order-detail'
+                    ),
+                ]),
+            ),
+            # Return order status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: ReturnOrderStatus},
+                name='api-return-order-status-codes',
+            ),
+            # Return Order list
+            path('', ReturnOrderList.as_view(), name='api-return-order-list'),
+        ]),
     ),
     # API endpoints for return order lines
     path(
         'ro-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.ReturnOrderLineItem),
-                            path(
-                                '',
-                                ReturnOrderLineItemDetail.as_view(),
-                                name='api-return-order-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.ReturnOrderLineItem),
+                    path(
+                        '',
+                        ReturnOrderLineItemDetail.as_view(),
+                        name='api-return-order-line-detail',
                     ),
-                ),
-                # Return order line item status code information
-                path(
-                    'status/',
-                    StatusView.as_view(),
-                    {StatusView.MODEL_REF: ReturnOrderLineStatus},
-                    name='api-return-order-line-status-codes',
-                ),
-                path(
-                    '',
-                    ReturnOrderLineItemList.as_view(),
-                    name='api-return-order-line-list',
-                ),
-            ]
-        ),
+                ]),
+            ),
+            # Return order line item status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: ReturnOrderLineStatus},
+                name='api-return-order-line-status-codes',
+            ),
+            path(
+                '', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'
+            ),
+        ]),
     ),
     # API endpoints for return order extra line
     path(
         'ro-extra-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.ReturnOrderExtraLine),
-                            path(
-                                '',
-                                ReturnOrderExtraLineDetail.as_view(),
-                                name='api-return-order-extra-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.ReturnOrderExtraLine),
+                    path(
+                        '',
+                        ReturnOrderExtraLineDetail.as_view(),
+                        name='api-return-order-extra-line-detail',
                     ),
-                ),
-                path(
-                    '',
-                    ReturnOrderExtraLineList.as_view(),
-                    name='api-return-order-extra-line-list',
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path(
+                '',
+                ReturnOrderExtraLineList.as_view(),
+                name='api-return-order-extra-line-list',
+            ),
+        ]),
     ),
     # API endpoints for transfer orders
     path(
         'transfer-order/',
-        include(
-            [
-                # Transfer Order detail endpoints
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            path(
-                                'allocate/',
-                                TransferOrderAllocate.as_view(),
-                                name='api-transfer-order-allocate',
-                            ),
-                            path(
-                                'allocate-serials/',
-                                TransferOrderAllocateSerials.as_view(),
-                                name='api-transfer-order-allocate-serials',
-                            ),
-                            path(
-                                'cancel/',
-                                TransferOrderCancel.as_view(),
-                                name='api-transfer-order-cancel',
-                            ),
-                            path(
-                                'hold/',
-                                TransferOrderHold.as_view(),
-                                name='api-transfer-order-hold',
-                            ),
-                            path(
-                                'complete/',
-                                TransferOrderComplete.as_view(),
-                                name='api-transfer-order-complete',
-                            ),
-                            path(
-                                'issue/',
-                                TransferOrderIssue.as_view(),
-                                name='api-transfer-order-issue',
-                            ),
-                            meta_path(models.TransferOrder),
-                            path(
-                                '',
-                                TransferOrderDetail.as_view(),
-                                name='api-transfer-order-detail',
-                            ),
-                        ]
+        include([
+            # Transfer Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'allocate/',
+                        TransferOrderAllocate.as_view(),
+                        name='api-transfer-order-allocate',
                     ),
-                ),
-                # Transfer Order list
-                path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
-            ]
-        ),
+                    path(
+                        'allocate-serials/',
+                        TransferOrderAllocateSerials.as_view(),
+                        name='api-transfer-order-allocate-serials',
+                    ),
+                    path(
+                        'cancel/',
+                        TransferOrderCancel.as_view(),
+                        name='api-transfer-order-cancel',
+                    ),
+                    path(
+                        'hold/',
+                        TransferOrderHold.as_view(),
+                        name='api-transfer-order-hold',
+                    ),
+                    path(
+                        'complete/',
+                        TransferOrderComplete.as_view(),
+                        name='api-transfer-order-complete',
+                    ),
+                    path(
+                        'issue/',
+                        TransferOrderIssue.as_view(),
+                        name='api-transfer-order-issue',
+                    ),
+                    meta_path(models.TransferOrder),
+                    path(
+                        '',
+                        TransferOrderDetail.as_view(),
+                        name='api-transfer-order-detail',
+                    ),
+                ]),
+            ),
+            # Transfer Order list
+            path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
+        ]),
     ),
     # API endpoints for transfer order line items
     path(
         'transfer-order-line/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    include(
-                        [
-                            meta_path(models.TransferOrderLineItem),
-                            path(
-                                '',
-                                TransferOrderLineItemDetail.as_view(),
-                                name='api-transfer-order-line-detail',
-                            ),
-                        ]
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.TransferOrderLineItem),
+                    path(
+                        '',
+                        TransferOrderLineItemDetail.as_view(),
+                        name='api-transfer-order-line-detail',
                     ),
-                ),
-                path(
-                    '',
-                    TransferOrderLineItemList.as_view(),
-                    name='api-transfer-order-line-list',
-                ),
-            ]
-        ),
+                ]),
+            ),
+            path(
+                '',
+                TransferOrderLineItemList.as_view(),
+                name='api-transfer-order-line-list',
+            ),
+        ]),
     ),
     # API endpoints for sales order allocations
     path(
         'transfer-order-allocation/',
-        include(
-            [
-                path(
-                    '<int:pk>/',
-                    TransferOrderAllocationDetail.as_view(),
-                    name='api-transfer-order-allocation-detail',
-                ),
-                path(
-                    '',
-                    TransferOrderAllocationList.as_view(),
-                    name='api-transfer-order-allocation-list',
-                ),
-            ]
-        ),
+        include([
+            path(
+                '<int:pk>/',
+                TransferOrderAllocationDetail.as_view(),
+                name='api-transfer-order-allocation-detail',
+            ),
+            path(
+                '',
+                TransferOrderAllocationList.as_view(),
+                name='api-transfer-order-allocation-list',
+            ),
+        ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
     re_path(
