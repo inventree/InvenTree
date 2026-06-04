@@ -413,10 +413,10 @@ export function TagsFilter({
     multi: true,
     apiUrl: apiUrl(ApiEndpoints.tag_list),
     model: ModelType.tag,
-    modelRenderer: (instance: any) => instance.slug,
+    modelRenderer: (instance: any) => instance.name,
     apiFilter: modelType ? { model_type: modelType } : undefined,
     transform: (item: any) => ({
-      value: item.slug.toString(),
+      value: item.name.toString(),
       label: item.name.toString()
     })
   };
