@@ -1,5 +1,7 @@
+import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
+import { TagsFilter } from '../Filter';
 
 /**
  * Construct a set of filters for the part table
@@ -141,6 +143,9 @@ export function PartTableFilters(): TableFilter[] {
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
       type: 'boolean'
-    }
+    },
+    TagsFilter({
+      modelType: ModelType.part
+    })
   ];
 }

@@ -24,6 +24,7 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.settings
 import InvenTree.exceptions
@@ -1248,6 +1249,25 @@ class InvenTreeNotesMixin(models.Model):
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
+
+
+class InvenTreeTagsMixin(models.Model):
+    """A mixin class for adding tag functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - tags : A text field for storing comma-separated tags
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    tags = TaggableManager(blank=True)
 
 
 class InvenTreeBarcodeMixin(models.Model):

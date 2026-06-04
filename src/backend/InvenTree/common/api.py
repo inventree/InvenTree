@@ -36,6 +36,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from sql_util.utils import SubqueryCount
+from taggit.models import Tag
 
 import common.filters
 import common.models
@@ -504,6 +505,48 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
+class TagFilter(FilterSet):
+    """Custom filters for the TagList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = Tag
+        fields = []
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter to tags which have been applied to the given model type."""
+        ct = common.filters.determine_content_type(value)
+
+        if ct is None:
+            raise ValidationError({'model_type': f'Invalid model type: {value}'})
+
+        return queryset.filter(taggit_taggeditem_items__content_type=ct).distinct()
+
+
+class TagMixin:
+    """Mixin class for Tag views."""
+
+    serializer_class = common.serializers.TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [IsStaffOrReadOnlyScope]
+
+
+class TagList(TagMixin, ListCreateAPI):
+    """List view for all tags."""
+
+    filterset_class = TagFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+
+class TagDetail(TagMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a particular tag."""
+
+
 class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     """List view for custom units."""
 
@@ -744,6 +787,8 @@ class AttachmentFilter(FilterSet):
         if value:
             return queryset.exclude(attachment=None).exclude(attachment='')
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class AttachmentMixin:
@@ -1552,6 +1597,14 @@ common_api_urls = [
                 ]),
             ),
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
+        ]),
+    ),
+    # Tags (via django-taggit)
+    path(
+        'tag/',
+        include([
+            path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
+            path('', TagList.as_view(), name='api-tag-list'),
         ]),
     ),
     # Flags

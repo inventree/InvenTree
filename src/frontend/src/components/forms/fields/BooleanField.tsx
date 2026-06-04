@@ -34,13 +34,13 @@ export function BooleanField({
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
+    return isTrue(value ?? definition.default ?? false);
   }, [value]);
 
   return (
     <Switch
       {...definition}
-      defaultValue={definition.default ?? false}
+      defaultValue={undefined}
       checked={booleanValue}
       id={fieldId}
       aria-label={`boolean-field-${fieldName}`}
