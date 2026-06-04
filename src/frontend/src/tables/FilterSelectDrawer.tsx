@@ -315,6 +315,112 @@ function FilterAddGroup({
   );
 }
 
+function SavedFilterSets({
+  filterSet,
+  hasFilters
+}: Readonly<{
+  filterSet: FilterSetState;
+  hasFilters: boolean;
+}>) {
+  const [saving, setSaving] = useState<boolean>(false);
+  const [saveName, setSaveName] = useState<string>('');
+
+  const confirmSave = useCallback(() => {
+    const name = saveName.trim();
+    if (name) {
+      filterSet.saveFilterSet(name);
+    }
+    setSaveName('');
+    setSaving(false);
+  }, [saveName, filterSet]);
+
+  const hasSavedSets = filterSet.savedFilterSets.length > 0;
+
+  if (!hasFilters && !hasSavedSets) {
+    return null;
+  }
+
+  return (
+    <Stack gap='xs' justify='flex-end'>
+      <Space h='md' />
+      <StylishText size='md'>{t`Saved Filter Groups`}</StylishText>
+      <Divider />
+      {hasFilters && (
+        <Stack gap='xs'>
+          {saving ? (
+            <Group gap='xs' wrap='nowrap'>
+              <TextInput
+                style={{ flex: 1 }}
+                placeholder={t`Filter set name`}
+                value={saveName}
+                onChange={(e) => setSaveName(e.currentTarget.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') confirmSave();
+                  if (e.key === 'Escape') setSaving(false);
+                }}
+                autoFocus
+              />
+              <Tooltip label={t`Save`} withinPortal>
+                <ActionIcon
+                  aria-label='save-filter-set'
+                  color='green'
+                  variant='subtle'
+                  onClick={confirmSave}
+                  disabled={!saveName.trim()}
+                >
+                  <IconCheck />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label={t`Cancel`} withinPortal>
+                <CloseButton onClick={() => setSaving(false)} />
+              </Tooltip>
+            </Group>
+          ) : (
+            <Button
+              color='blue'
+              variant='subtle'
+              onClick={() => setSaving(true)}
+            >
+              <Text>{t`Save current filters`}</Text>
+            </Button>
+          )}
+        </Stack>
+      )}
+      {hasSavedSets && (
+        <Stack gap='xs'>
+          {filterSet.savedFilterSets.map((set) => (
+            <Paper key={set.name} p='sm' shadow='sm' radius='xs'>
+              <Group justify='space-between' wrap='nowrap'>
+                <Text size='sm' style={{ flex: 1 }} truncate>
+                  {set.name}
+                </Text>
+                <Group gap='xs' wrap='nowrap'>
+                  <Button
+                    size='xs'
+                    variant='subtle'
+                    color='green'
+                    onClick={() => filterSet.loadFilterSet(set.name)}
+                  >
+                    {t`Load`}
+                  </Button>
+                  <Tooltip label={t`Delete filter set`} withinPortal>
+                    <CloseButton
+                      size='sm'
+                      c='red'
+                      aria-label={`delete-filter-set-${set.name}`}
+                      onClick={() => filterSet.deleteFilterSet(set.name)}
+                    />
+                  </Tooltip>
+                </Group>
+              </Group>
+            </Paper>
+          ))}
+        </Stack>
+      )}
+    </Stack>
+  );
+}
+
 export function FilterSelectDrawer({
   title,
   availableFilters,
@@ -352,55 +458,59 @@ export function FilterSelectDrawer({
         'aria-label': 'filter-drawer-close'
       }}
       title={<StylishText size='lg'>{title ?? t`Table Filters`}</StylishText>}
+      styles={{ body: { height: '100%', overflow: 'hidden' } }}
     >
       <Divider />
       <Space h='sm' />
-      <Stack gap='xs'>
-        {hasFilters &&
-          filterSet.activeFilters?.map((f) => (
-            <FilterItem
-              key={f.name}
-              flt={f}
-              filterSet={filterSet}
-              availableFilters={availableFilters}
-            />
-          ))}
-        {addFilter && (
-          <Stack gap='xs'>
-            <FilterAddGroup
-              filterSet={filterSet}
-              availableFilters={availableFilters}
-            />
-          </Stack>
-        )}
-        {addFilter && (
-          <Button
-            onClick={() => setAddFilter(false)}
-            color='orange'
-            variant='subtle'
-          >
-            <Text>{t`Cancel`}</Text>
-          </Button>
-        )}
-        {!addFilter &&
-          filterSet.activeFilters.length < availableFilters.length && (
+      <Stack gap='xs' justify='space-between'>
+        <Stack gap='xs'>
+          {hasFilters &&
+            filterSet.activeFilters?.map((f) => (
+              <FilterItem
+                key={f.name}
+                flt={f}
+                filterSet={filterSet}
+                availableFilters={availableFilters}
+              />
+            ))}
+          {addFilter && (
+            <Stack gap='xs'>
+              <FilterAddGroup
+                filterSet={filterSet}
+                availableFilters={availableFilters}
+              />
+            </Stack>
+          )}
+          {addFilter && (
             <Button
-              onClick={() => setAddFilter(true)}
-              color='green'
+              onClick={() => setAddFilter(false)}
+              color='orange'
               variant='subtle'
             >
-              <Text>{t`Add Filter`}</Text>
+              <Text>{t`Cancel`}</Text>
             </Button>
           )}
-        {!addFilter && filterSet.activeFilters.length > 0 && (
-          <Button
-            onClick={filterSet.clearActiveFilters}
-            color='red'
-            variant='subtle'
-          >
-            <Text>{t`Clear Filters`}</Text>
-          </Button>
-        )}
+          {!addFilter &&
+            filterSet.activeFilters.length < availableFilters.length && (
+              <Button
+                onClick={() => setAddFilter(true)}
+                color='green'
+                variant='subtle'
+              >
+                <Text>{t`Add Filter`}</Text>
+              </Button>
+            )}
+          {!addFilter && filterSet.activeFilters.length > 0 && (
+            <Button
+              onClick={filterSet.clearActiveFilters}
+              color='red'
+              variant='subtle'
+            >
+              <Text>{t`Clear Filters`}</Text>
+            </Button>
+          )}
+        </Stack>
+        <SavedFilterSets filterSet={filterSet} hasFilters={hasFilters} />
       </Stack>
     </Drawer>
   );
