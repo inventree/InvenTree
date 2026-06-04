@@ -1,9 +1,8 @@
+import { TOTP } from 'otpauth';
 import { expect, test } from './baseFixtures.js';
 import { logoutUrl, noaccessuser } from './defaults.js';
 import { navigate } from './helpers.js';
 import { doLogin } from './login.js';
-
-import { TOTP } from 'otpauth';
 
 /**
  * Test various types of login failure

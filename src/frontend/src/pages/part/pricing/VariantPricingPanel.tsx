@@ -1,13 +1,12 @@
-import { t } from '@lingui/core/macro';
-import { BarChart } from '@mantine/charts';
-import { SimpleGrid, Stack } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { BarChart } from '@mantine/charts';
+import { SimpleGrid, Stack } from '@mantine/core';
+import { type ReactNode, useMemo } from 'react';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';

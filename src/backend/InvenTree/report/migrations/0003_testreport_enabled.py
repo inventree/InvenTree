@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0002_delete_reporttemplate'),
-    ]
+    dependencies = [('report', '0002_delete_reporttemplate')]
 
     operations = [
         migrations.AddField(
             model_name='testreport',
             name='enabled',
-            field=models.BooleanField(default=True, help_text='Report template is enabled', verbose_name='Enabled'),
-        ),
+            field=models.BooleanField(
+                default=True,
+                help_text='Report template is enabled',
+                verbose_name='Enabled',
+            ),
+        )
     ]

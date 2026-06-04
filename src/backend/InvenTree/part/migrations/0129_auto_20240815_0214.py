@@ -15,7 +15,6 @@ def set_testable(apps, schema_editor):
     So, we have added a new field 'testable' to the Part model,
     which is updated in this migration to match the value of the 'trackable' field.
     """
-
     Part = apps.get_model('part', 'Part')
 
     # By default, 'testable' is False - so we only need to update parts marked as 'trackable'
@@ -27,10 +26,7 @@ def set_testable(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0128_part_testable'),
-    ]
+    dependencies = [('part', '0128_part_testable')]
 
     operations = [
         migrations.RunPython(set_testable, reverse_code=migrations.RunPython.noop)

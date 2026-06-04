@@ -5,18 +5,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0005_auto_20210119_0815'),
-    ]
+    dependencies = [('report', '0005_auto_20210119_0815')]
 
     operations = [
         migrations.CreateModel(
             name='ReportSnippet',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('snippet', models.FileField(help_text='Report snippet file', upload_to='report/snippets', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])])),
-                ('description', models.CharField(help_text='Snippet file description', max_length=250)),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'snippet',
+                    models.FileField(
+                        help_text='Report snippet file',
+                        upload_to='report/snippets',
+                        validators=[
+                            django.core.validators.FileExtensionValidator(
+                                allowed_extensions=['html', 'htm']
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    'description',
+                    models.CharField(
+                        help_text='Snippet file description', max_length=250
+                    ),
+                ),
             ],
-        ),
+        )
     ]

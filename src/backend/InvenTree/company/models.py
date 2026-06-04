@@ -684,17 +684,19 @@ class SupplierPart(
                 if not self.part.units and not InvenTree.conversion.is_dimensionless(
                     native_value
                 ):
-                    raise ValidationError({
-                        'pack_quantity': _(
-                            'Pack units must be compatible with the base part units'
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'pack_quantity': _(
+                                'Pack units must be compatible with the base part units'
+                            )
+                        }
+                    )
 
                 # Native value must be greater than zero
                 if float(native_value.magnitude) <= 0:
-                    raise ValidationError({
-                        'pack_quantity': _('Pack units must be greater than zero')
-                    })
+                    raise ValidationError(
+                        {'pack_quantity': _('Pack units must be greater than zero')}
+                    )
 
                 # Update native pack units value
                 self.pack_quantity_native = Decimal(native_value.magnitude)
@@ -705,11 +707,13 @@ class SupplierPart(
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
             if self.manufacturer_part.part != self.part:
-                raise ValidationError({
-                    'manufacturer_part': _(
-                        'Linked manufacturer part must reference the same base part'
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'manufacturer_part': _(
+                            'Linked manufacturer part must reference the same base part'
+                        )
+                    }
+                )
 
     def save(self, *args, **kwargs):
         """Overriding save method to connect an existing ManufacturerPart."""

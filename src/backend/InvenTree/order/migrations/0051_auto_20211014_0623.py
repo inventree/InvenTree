@@ -4,10 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0050_alter_purchaseorderlineitem_destination'),
-    ]
+    dependencies = [('order', '0050_alter_purchaseorderlineitem_destination')]
 
     operations = [
         migrations.AddField(

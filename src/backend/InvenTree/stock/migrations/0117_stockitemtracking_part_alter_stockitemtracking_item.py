@@ -5,32 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("part", "0146_auto_20251203_1241"),
-        ("stock", "0116_alter_stockitem_link"),
+        ('part', '0146_auto_20251203_1241'),
+        ('stock', '0116_alter_stockitem_link'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="stockitemtracking",
-            name="part",
+            model_name='stockitemtracking',
+            name='part',
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="stock_tracking_info",
-                to="part.part",
+                related_name='stock_tracking_info',
+                to='part.part',
             ),
         ),
         migrations.AlterField(
-            model_name="stockitemtracking",
-            name="item",
+            model_name='stockitemtracking',
+            name='item',
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name="tracking_info",
-                to="stock.stockitem",
+                related_name='tracking_info',
+                to='stock.stockitem',
             ),
         ),
     ]

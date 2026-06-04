@@ -175,7 +175,7 @@ export default function DashboardLayout() {
   }, [widgets]);
 
   const onLayoutChange = useCallback(
-    (layout: any, newLayouts: any) => {
+    (_layout: any, newLayouts: any) => {
       // Reconstruct layouts based on the widget requirements
       Object.keys(newLayouts).forEach((key) => {
         newLayouts[key] = updateLayoutForWidget(
@@ -297,45 +297,43 @@ export default function DashboardLayout() {
         </Alert>
       )}
       {layouts && loaded && availableWidgets.loaded ? (
-        <>
-          {widgetLabels.length == 0 ? (
-            <>
-              <Center>
-                <Card shadow='xs' padding='xl' style={{ width: '100%' }}>
-                  <Alert
-                    color='blue'
-                    title={t`No Widgets Selected`}
-                    icon={<IconInfoCircle />}
-                  >
-                    <Text>{t`Use the menu to add widgets to the dashboard`}</Text>
-                  </Alert>
-                </Card>
-              </Center>
-              {showSampleDashboard && (
-                <>
-                  <Space h='lg' />
-                  {WidgetGrid(
-                    defaultLayouts,
-                    () => {},
-                    editing,
-                    defaultWidgets,
-                    removing,
-                    () => {}
-                  )}
-                </>
-              )}
-            </>
-          ) : (
-            WidgetGrid(
-              layouts,
-              onLayoutChange,
-              editing,
-              widgets,
-              removing,
-              removeWidget
-            )
-          )}
-        </>
+        widgetLabels.length == 0 ? (
+          <>
+            <Center>
+              <Card shadow='xs' padding='xl' style={{ width: '100%' }}>
+                <Alert
+                  color='blue'
+                  title={t`No Widgets Selected`}
+                  icon={<IconInfoCircle />}
+                >
+                  <Text>{t`Use the menu to add widgets to the dashboard`}</Text>
+                </Alert>
+              </Card>
+            </Center>
+            {showSampleDashboard && (
+              <>
+                <Space h='lg' />
+                {WidgetGrid(
+                  defaultLayouts,
+                  () => {},
+                  editing,
+                  defaultWidgets,
+                  removing,
+                  () => {}
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          WidgetGrid(
+            layouts,
+            onLayoutChange,
+            editing,
+            widgets,
+            removing,
+            removeWidget
+          )
+        )
       ) : (
         <Center>
           <Loader size='xl' />

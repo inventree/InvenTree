@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { api } from '../App';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';

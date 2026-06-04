@@ -93,8 +93,7 @@ class BarcodeView(CreateAPIView):
             if num_scans > max_scans:
                 n = num_scans - max_scans
                 old_scan_ids = list(
-                    BarcodeScanResult.objects
-                    .all()
+                    BarcodeScanResult.objects.all()
                     .order_by('timestamp')
                     .values_list('pk', flat=True)[:n]
                 )
@@ -304,23 +303,27 @@ class BarcodeAssign(BarcodeView):
             if instance := kwargs.get(label):
                 # Check that the user has the required permission
                 if not check_user_permission(request.user, model, 'change'):
-                    raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {model}'
-                    })
+                    raise PermissionDenied(
+                        {
+                            'error': f'You do not have the required permissions for {model}'
+                        }
+                    )
 
                 instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
 
-                return Response({
-                    'success': f'Assigned barcode to {label} instance',
-                    label: {'pk': instance.pk},
-                    'barcode_data': barcode,
-                    'barcode_hash': barcode_hash,
-                })
+                return Response(
+                    {
+                        'success': f'Assigned barcode to {label} instance',
+                        label: {'pk': instance.pk},
+                        'barcode_data': barcode,
+                        'barcode_hash': barcode_hash,
+                    }
+                )
 
         # If we got here, it means that no valid model types were provided
-        raise ValidationError({
-            'error': f"Missing data: provide one of '{valid_labels}'"
-        })
+        raise ValidationError(
+            {'error': f"Missing data: provide one of '{valid_labels}'"}
+        )
 
 
 class BarcodeUnassign(BarcodeView):
@@ -346,14 +349,14 @@ class BarcodeUnassign(BarcodeView):
                 matched_labels.append(label)
 
         if len(matched_labels) == 0:
-            raise ValidationError({
-                'error': f"Missing data: Provide one of '{model_names}'"
-            })
+            raise ValidationError(
+                {'error': f"Missing data: Provide one of '{model_names}'"}
+            )
 
         if len(matched_labels) > 1:
-            raise ValidationError({
-                'error': f"Multiple conflicting fields: '{model_names}'"
-            })
+            raise ValidationError(
+                {'error': f"Multiple conflicting fields: '{model_names}'"}
+            )
 
         # At this stage, we know that we have received a single valid field
         for model in supported_models:
@@ -362,16 +365,18 @@ class BarcodeUnassign(BarcodeView):
             if instance := data.get(label, None):
                 # Check that the user has the required permission
                 if not check_user_permission(request.user, model, 'change'):
-                    raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {model}'
-                    })
+                    raise PermissionDenied(
+                        {
+                            'error': f'You do not have the required permissions for {model}'
+                        }
+                    )
 
                 # Unassign the barcode data from the model instance
                 instance.unassign_barcode()
 
-                return Response({
-                    'success': f'Barcode unassigned from {label} instance'
-                })
+                return Response(
+                    {'success': f'Barcode unassigned from {label} instance'}
+                )
 
         # If we get to this point, something has gone wrong!
         raise ValidationError({'error': 'Could not unassign barcode'})
@@ -868,16 +873,20 @@ barcode_api_urls = [
     # Barcode scan history
     path(
         'history/',
-        include([
-            path(
-                '<int:pk>/',
-                BarcodeScanResultDetail.as_view(),
-                name='api-barcode-scan-result-detail',
-            ),
-            path(
-                '', BarcodeScanResultList.as_view(), name='api-barcode-scan-result-list'
-            ),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    BarcodeScanResultDetail.as_view(),
+                    name='api-barcode-scan-result-detail',
+                ),
+                path(
+                    '',
+                    BarcodeScanResultList.as_view(),
+                    name='api-barcode-scan-result-list',
+                ),
+            ]
+        ),
     ),
     # Generate a barcode for a database object
     path('generate/', BarcodeGenerate.as_view(), name='api-barcode-generate'),

@@ -32,12 +32,14 @@ def can_cache_registry() -> bool:
     """
     import InvenTree.ready
 
-    return not any([
-        InvenTree.ready.isImportingData(),
-        InvenTree.ready.isRunningBackup(),
-        InvenTree.ready.isRunningMigrations(),
-        InvenTree.ready.isInTestMode(),
-    ])
+    return not any(
+        [
+            InvenTree.ready.isImportingData(),
+            InvenTree.ready.isRunningBackup(),
+            InvenTree.ready.isRunningMigrations(),
+            InvenTree.ready.isInTestMode(),
+        ]
+    )
 
 
 def get_unit_registry_hash():

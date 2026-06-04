@@ -4,25 +4,37 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0092_part_last_stocktake'),
-    ]
+    dependencies = [('part', '0092_part_last_stocktake')]
 
     operations = [
         migrations.AddField(
             model_name='partinternalpricebreak',
             name='updated',
-            field=models.DateTimeField(auto_now=True, help_text='Timestamp of last update', null=True, verbose_name='Updated'),
+            field=models.DateTimeField(
+                auto_now=True,
+                help_text='Timestamp of last update',
+                null=True,
+                verbose_name='Updated',
+            ),
         ),
         migrations.AddField(
             model_name='partsellpricebreak',
             name='updated',
-            field=models.DateTimeField(auto_now=True, help_text='Timestamp of last update', null=True, verbose_name='Updated'),
+            field=models.DateTimeField(
+                auto_now=True,
+                help_text='Timestamp of last update',
+                null=True,
+                verbose_name='Updated',
+            ),
         ),
         migrations.AlterField(
             model_name='partpricing',
             name='updated',
-            field=models.DateTimeField(auto_now=True, help_text='Timestamp of last update', null=True, verbose_name='Updated'),
+            field=models.DateTimeField(
+                auto_now=True,
+                help_text='Timestamp of last update',
+                null=True,
+                verbose_name='Updated',
+            ),
         ),
     ]

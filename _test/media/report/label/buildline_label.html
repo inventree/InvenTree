@@ -1,0 +1,74 @@
+{% extends "label/label_base.html" %}
+{% load barcode report %}
+{% load inventree_extras %}
+
+<!--
+This is an example template for printing labels against BuildLine objects.
+Refer to the documentation for a full list of available template variables.
+-->
+
+{% block style %}
+
+{{ block.super }}
+
+.label {
+  margin: 1mm;
+}
+
+.qr {
+  position: absolute;
+  height: 28mm;
+  width: 28mm;
+  top: 0mm;
+  right: 0mm;
+  float: right;
+}
+
+.label-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1pt solid black;
+}
+
+.label-table tr {
+  width: 100%;
+  border-bottom: 1pt solid black;
+  padding: 2.5mm;
+}
+
+.label-table td {
+  padding: 3mm;
+}
+
+{% endblock style %}
+
+{% block content %}
+
+<div class='label'>
+<table class='label-table'>
+  <tr>
+    <td>
+      <b>Build Order:</b> {{ build.reference }}<br>
+      <b>Build Qty:</b> {% decimal build.quantity %}<br>
+    </td>
+    <td>
+      <img class='qr' alt='build qr' src='{% qrcode build.barcode %}'>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b>Part:</b> {{ part.name }}<br>
+      {% if part.IPN %}
+      <b>IPN:</b> {{ part.IPN }}<br>
+      {% endif %}
+      <b>Qty / Unit:</b> {% decimal bom_item.quantity %} {% if part.units %}[{{ part.units }}]{% endif %}<br>
+      <b>Qty Total:</b> {% decimal quantity %} {% if part.units %}[{{ part.units }}]{% endif %}
+    </td>
+    <td>
+      <img class='qr' alt='part qr' src='{% qrcode part.barcode %}'>
+    </td>
+  </tr>
+</table>
+</div>
+
+{% endblock content %}

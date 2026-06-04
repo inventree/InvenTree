@@ -347,9 +347,9 @@ class ExtendedUserSerializer(UserSerializer):
 
         if 'is_superuser' in self.context['request'].data:
             if not request_user.is_superuser:
-                raise PermissionDenied({
-                    'is_superuser': _('Only a superuser can adjust this field')
-                })
+                raise PermissionDenied(
+                    {'is_superuser': _('Only a superuser can adjust this field')}
+                )
 
         return value
 

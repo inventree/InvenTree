@@ -1,6 +1,5 @@
-import { t } from '@lingui/core/macro';
-
 import { ActionButton } from '@lib/components/ActionButton';
+import { t } from '@lingui/core/macro';
 import type { FloatingPosition } from '@mantine/core';
 import { InvenTreeIcon } from '../../functions/icons';
 

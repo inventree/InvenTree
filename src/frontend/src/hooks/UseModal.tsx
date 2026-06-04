@@ -1,9 +1,8 @@
+import { StylishText } from '@lib/components/StylishText';
+import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
-import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
 import { useUserSettingsState } from '../states/SettingsStates';
 
 export function useModal(props: UseModalProps): UseModalReturn {

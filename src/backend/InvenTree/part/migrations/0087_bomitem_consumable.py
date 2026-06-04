@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0086_auto_20220912_0007'),
-    ]
+    dependencies = [('part', '0086_auto_20220912_0007')]
 
     operations = [
         migrations.AddField(
             model_name='bomitem',
             name='consumable',
-            field=models.BooleanField(default=False, help_text='This BOM item is consumable (it is not tracked in build orders)', verbose_name='Consumable'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='This BOM item is consumable (it is not tracked in build orders)',
+                verbose_name='Consumable',
+            ),
+        )
     ]

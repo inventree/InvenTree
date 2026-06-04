@@ -5,7 +5,6 @@ from django.db import migrations
 
 def update_order_references(order_model, prefix):
     """Update all references of the given model, with the specified prefix"""
-
     n = 0
 
     for order in order_model.objects.all():
@@ -20,7 +19,6 @@ def update_order_references(order_model, prefix):
 
 def update_salesorder_reference(apps, schema_editor):
     """Migrate the reference pattern for the SalesOrder model"""
-
     # Extract the existing "prefix" value
     InvenTreeSetting = apps.get_model('common', 'inventreesetting')
 
@@ -39,8 +37,7 @@ def update_salesorder_reference(apps, schema_editor):
         setting.save()
     except InvenTreeSetting.DoesNotExist:
         setting = InvenTreeSetting.objects.create(
-            key='SALESORDER_REFERENCE_PATTERN',
-            value=pattern,
+            key='SALESORDER_REFERENCE_PATTERN', value=pattern
         )
 
     # Update any existing sales order references
@@ -48,17 +45,18 @@ def update_salesorder_reference(apps, schema_editor):
     n = update_order_references(SalesOrder, prefix)
 
     if n > 0:
-        print(f"Updated reference field for {n} SalesOrder objects")
+        print(f'Updated reference field for {n} SalesOrder objects')
 
 
 def update_purchaseorder_reference(apps, schema_editor):
     """Migrate the reference pattern for the PurchaseOrder model"""
-
     # Extract the existing "prefix" value
     InvenTreeSetting = apps.get_model('common', 'inventreesetting')
 
     try:
-        prefix = InvenTreeSetting.objects.get(key='PURCHASEORDER_REFERENCE_PREFIX').value
+        prefix = InvenTreeSetting.objects.get(
+            key='PURCHASEORDER_REFERENCE_PREFIX'
+        ).value
     except Exception:
         prefix = 'PO-'
 
@@ -72,8 +70,7 @@ def update_purchaseorder_reference(apps, schema_editor):
         setting.save()
     except InvenTreeSetting.DoesNotExist:
         setting = InvenTreeSetting.objects.create(
-            key='PURCHASEORDER_REFERENCE_PATTERN',
-            value=pattern,
+            key='PURCHASEORDER_REFERENCE_PATTERN', value=pattern
         )
 
     # Update any existing sales order references
@@ -81,22 +78,17 @@ def update_purchaseorder_reference(apps, schema_editor):
     n = update_order_references(PurchaseOrder, prefix)
 
     if n > 0:
-        print(f"Updated reference field for {n} PurchaseOrder objects")
+        print(f'Updated reference field for {n} PurchaseOrder objects')
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0073_alter_purchaseorder_reference'),
-    ]
+    dependencies = [('order', '0073_alter_purchaseorder_reference')]
 
     operations = [
         migrations.RunPython(
-            update_salesorder_reference,
-            reverse_code=migrations.RunPython.noop,
+            update_salesorder_reference, reverse_code=migrations.RunPython.noop
         ),
         migrations.RunPython(
-            update_purchaseorder_reference,
-            reverse_code=migrations.RunPython.noop,
-        )
+            update_purchaseorder_reference, reverse_code=migrations.RunPython.noop
+        ),
     ]

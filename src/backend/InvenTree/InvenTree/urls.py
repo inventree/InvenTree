@@ -67,18 +67,20 @@ apipatterns = [
     path('stock/', include(stock.api.stock_api_urls)),
     path(
         'generate/',
-        include([
-            path(
-                'batch-code/',
-                stock.api.GenerateBatchCode.as_view(),
-                name='api-generate-batch-code',
-            ),
-            path(
-                'serial-number/',
-                stock.api.GenerateSerialNumber.as_view(),
-                name='api-generate-serial-number',
-            ),
-        ]),
+        include(
+            [
+                path(
+                    'batch-code/',
+                    stock.api.GenerateBatchCode.as_view(),
+                    name='api-generate-batch-code',
+                ),
+                path(
+                    'serial-number/',
+                    stock.api.GenerateSerialNumber.as_view(),
+                    name='api-generate-serial-number',
+                ),
+            ]
+        ),
     ),
     path('user/', include(users.api.user_urls)),
     # Plugin endpoints
@@ -101,19 +103,22 @@ apipatterns = [
     # Auth API endpoints
     path(
         'auth/',
-        include([
-            path(
-                'login-redirect/',
-                users.api.LoginRedirect.as_view(),
-                name='api-login-redirect',
-            ),
-            path(
-                '',
-                include(
-                    (build_urlpatterns(Client.BROWSER), 'headless'), namespace='browser'
+        include(
+            [
+                path(
+                    'login-redirect/',
+                    users.api.LoginRedirect.as_view(),
+                    name='api-login-redirect',
                 ),
-            ),  # Allauth headless logic (only the browser client is included as we only use sessions based auth there)
-        ]),
+                path(
+                    '',
+                    include(
+                        (build_urlpatterns(Client.BROWSER), 'headless'),
+                        namespace='browser',
+                    ),
+                ),  # Allauth headless logic (only the browser client is included as we only use sessions based auth there)
+            ]
+        ),
     ),
     # Magic login URLs
     path(

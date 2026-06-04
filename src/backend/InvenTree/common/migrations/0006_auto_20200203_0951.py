@@ -4,14 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('common', '0005_auto_20190915_1256'),
-    ]
+    dependencies = [('common', '0005_auto_20190915_1256')]
 
     operations = [
         migrations.AlterModelOptions(
             name='inventreesetting',
-            options={'verbose_name': 'InvenTree Setting', 'verbose_name_plural': 'InvenTree Settings'},
-        ),
+            options={
+                'verbose_name': 'InvenTree Setting',
+                'verbose_name_plural': 'InvenTree Settings',
+            },
+        )
     ]

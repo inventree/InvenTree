@@ -1,7 +1,6 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
-
-import { StylishText } from '@lib/components/StylishText';
 import { ConfigValueList } from '../../../../components/settings/ConfigValueList';
 import { EmailTable } from '../../../../tables/settings/EmailTable';
 

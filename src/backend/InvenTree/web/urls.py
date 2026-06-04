@@ -29,23 +29,28 @@ def cui_compatibility_urls(base: str) -> list:
         # Company patterns
         path(
             'company/',
-            include([
-                path(
-                    'customers/',
-                    RedirectView.as_view(url=f'/{base}/sales/index/customers'),
-                ),
-                path(
-                    'manufacturers/',
-                    RedirectView.as_view(url=f'/{base}/purchasing/index/manufacturers'),
-                ),
-                path(
-                    'suppliers/',
-                    RedirectView.as_view(url=f'/{base}/purchasing/index/suppliers'),
-                ),
-                re_path(
-                    r'(?P<pk>\d+)/', RedirectView.as_view(url=f'/{base}/company/%(pk)s')
-                ),
-            ]),
+            include(
+                [
+                    path(
+                        'customers/',
+                        RedirectView.as_view(url=f'/{base}/sales/index/customers'),
+                    ),
+                    path(
+                        'manufacturers/',
+                        RedirectView.as_view(
+                            url=f'/{base}/purchasing/index/manufacturers'
+                        ),
+                    ),
+                    path(
+                        'suppliers/',
+                        RedirectView.as_view(url=f'/{base}/purchasing/index/suppliers'),
+                    ),
+                    re_path(
+                        r'(?P<pk>\d+)/',
+                        RedirectView.as_view(url=f'/{base}/company/%(pk)s'),
+                    ),
+                ]
+            ),
         ),
         # "Part" app views
         re_path(
@@ -58,72 +63,82 @@ def cui_compatibility_urls(base: str) -> list:
         # "Build" app views (requires some custom handling)
         path(
             'build/',
-            include([
-                re_path(
-                    r'^(?P<pk>\d+)/',
-                    RedirectView.as_view(
-                        url=f'/{base}/manufacturing/build-order/%(pk)s'
+            include(
+                [
+                    re_path(
+                        r'^(?P<pk>\d+)/',
+                        RedirectView.as_view(
+                            url=f'/{base}/manufacturing/build-order/%(pk)s'
+                        ),
                     ),
-                ),
-                re_path('.*', RedirectView.as_view(url=f'/{base}/manufacturing/')),
-            ]),
+                    re_path('.*', RedirectView.as_view(url=f'/{base}/manufacturing/')),
+                ]
+            ),
         ),
         # "Order" app views
         path(
             'order/',
-            include([
-                path(
-                    'purchase-order/',
-                    include([
-                        re_path(
-                            r'^(?P<pk>\d+)/',
-                            RedirectView.as_view(
-                                url=f'/{base}/purchasing/purchase-order/%(pk)s'
-                            ),
+            include(
+                [
+                    path(
+                        'purchase-order/',
+                        include(
+                            [
+                                re_path(
+                                    r'^(?P<pk>\d+)/',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/purchasing/purchase-order/%(pk)s'
+                                    ),
+                                ),
+                                re_path(
+                                    '.*',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/purchasing/index/purchaseorders/'
+                                    ),
+                                ),
+                            ]
                         ),
-                        re_path(
-                            '.*',
-                            RedirectView.as_view(
-                                url=f'/{base}/purchasing/index/purchaseorders/'
-                            ),
+                    ),
+                    path(
+                        'sales-order/',
+                        include(
+                            [
+                                re_path(
+                                    r'^(?P<pk>\d+)/',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/sales/sales-order/%(pk)s'
+                                    ),
+                                ),
+                                re_path(
+                                    '.*',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/sales/index/salesorders/'
+                                    ),
+                                ),
+                            ]
                         ),
-                    ]),
-                ),
-                path(
-                    'sales-order/',
-                    include([
-                        re_path(
-                            r'^(?P<pk>\d+)/',
-                            RedirectView.as_view(
-                                url=f'/{base}/sales/sales-order/%(pk)s'
-                            ),
+                    ),
+                    path(
+                        'return-order/',
+                        include(
+                            [
+                                re_path(
+                                    r'^(?P<pk>\d+)/',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/sales/return-order/%(pk)s'
+                                    ),
+                                ),
+                                re_path(
+                                    '.*',
+                                    RedirectView.as_view(
+                                        url=f'/{base}/sales/index/returnorders/'
+                                    ),
+                                ),
+                            ]
                         ),
-                        re_path(
-                            '.*',
-                            RedirectView.as_view(
-                                url=f'/{base}/sales/index/salesorders/'
-                            ),
-                        ),
-                    ]),
-                ),
-                path(
-                    'return-order/',
-                    include([
-                        re_path(
-                            r'^(?P<pk>\d+)/',
-                            RedirectView.as_view(
-                                url=f'/{base}/sales/return-order/%(pk)s'
-                            ),
-                        ),
-                        re_path(
-                            '.*',
-                            RedirectView.as_view(
-                                url=f'/{base}/sales/index/returnorders/'
-                            ),
-                        ),
-                    ]),
-                ),
-            ]),
+                    ),
+                ]
+            ),
         ),
     ]
 
@@ -131,14 +146,16 @@ def cui_compatibility_urls(base: str) -> list:
 urlpatterns = [
     path(
         f'{settings.FRONTEND_URL_BASE}/',
-        include([
-            path(
-                'set-password?uid=<uid>&token=<token>',
-                spa_view,
-                name='password_reset_confirm',
-            ),
-            re_path('.*', spa_view, name='web-wildcard'),
-        ]),
+        include(
+            [
+                path(
+                    'set-password?uid=<uid>&token=<token>',
+                    spa_view,
+                    name='password_reset_confirm',
+                ),
+                re_path('.*', spa_view, name='web-wildcard'),
+            ]
+        ),
     ),
     path(settings.FRONTEND_URL_BASE, spa_view, name='web'),
 ]

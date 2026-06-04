@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -14,8 +15,6 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconBackspace } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 

@@ -1,23 +1,11 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import {
-  IconInfoCircle,
-  IconKey,
-  IconLock,
-  IconLockOpen,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import {
   type RowAction,
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -26,7 +14,18 @@ import useTable from '@lib/hooks/UseTable';
 import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn, TableState } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
+import {
+  IconInfoCircle,
+  IconKey,
+  IconLock,
+  IconLockOpen,
+  IconUserCircle
+} from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
@@ -430,7 +429,7 @@ export function UserTable({
           size='xl'
           title={t`Edit User`}
           renderContent={(id) => {
-            if (!id || !id.startsWith('user-')) return false;
+            if (!id?.startsWith('user-')) return false;
             return (
               <UserDrawer
                 id={id.replace('user-', '')}

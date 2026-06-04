@@ -1,3 +1,5 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import type { HostList } from '@lib/types/Server';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -19,9 +21,6 @@ import {
   IconServer,
   IconServerSpark
 } from '@tabler/icons-react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import type { HostList } from '@lib/types/Server';
 import { useShallow } from 'zustand/react/shallow';
 import { translateHostName } from '../../defaults/defaultHostList';
 import { Wrapper } from '../../pages/Auth/Layout';

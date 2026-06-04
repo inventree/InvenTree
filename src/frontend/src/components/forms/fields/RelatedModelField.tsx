@@ -1,12 +1,20 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '@lib/enums/ModelInformation';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
+  darken,
   Group,
   Input,
-  darken,
   useMantineColorScheme,
   useMantineTheme
 } from '@mantine/core';
 import { useDebouncedValue, useId } from '@mantine/hooks';
+import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
@@ -22,17 +30,8 @@ import {
   type UseFormReturn,
   useFormContext
 } from 'react-hook-form';
-import Select from 'react-select';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import {
-  ModelInformationDict,
-  type TranslatableModelInformationInterface
-} from '@lib/enums/ModelInformation';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldType } from '@lib/types/Forms';
-import { IconPlus } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
+import Select from 'react-select';
 import { useApi } from '../../../contexts/ApiContext';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
@@ -174,7 +173,7 @@ export function RelatedModelField({
 
   // Determine whether a barcode field should be added
   const addBarcodeField: boolean = useMemo(() => {
-    if (!modelInfo || !modelInfo.supports_barcode) {
+    if (!modelInfo?.supports_barcode) {
       return false;
     }
 
@@ -191,7 +190,7 @@ export function RelatedModelField({
 
   // Callback function to handle barcode scan results
   const onBarcodeScan = useCallback(
-    (barcode: string, response: any) => {
+    (_barcode: string, response: any) => {
       // Fetch model information from the response
       const modelData = response?.[definition.model ?? ''] ?? null;
 

@@ -1,16 +1,15 @@
-import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
+import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { useDocumentVisibility } from '@mantine/hooks';
+import { IconExclamationCircle } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';

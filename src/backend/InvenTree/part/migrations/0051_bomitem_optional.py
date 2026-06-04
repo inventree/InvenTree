@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0050_auto_20200917_2315'),
-    ]
+    dependencies = [('part', '0050_auto_20200917_2315')]
 
     operations = [
         migrations.AddField(
             model_name='bomitem',
             name='optional',
-            field=models.BooleanField(default=False, help_text='This BOM item is optional'),
-        ),
+            field=models.BooleanField(
+                default=False, help_text='This BOM item is optional'
+            ),
+        )
     ]

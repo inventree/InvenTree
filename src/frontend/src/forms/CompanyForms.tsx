@@ -38,7 +38,7 @@ export function useSupplierPartFields({
           purchaseable: true,
           active: true
         },
-        onValueChange: (value: any, record: any) => {
+        onValueChange: (_value: any, record: any) => {
           setPart(record);
         }
       },

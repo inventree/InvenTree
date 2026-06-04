@@ -4,10 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0018_auto_20190907_0941'),
-    ]
+    dependencies = [('part', '0018_auto_20190907_0941')]
 
     operations = [
         migrations.AddField(

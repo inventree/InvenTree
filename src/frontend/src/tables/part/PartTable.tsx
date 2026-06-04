@@ -9,8 +9,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
+import type { InvenTreeTableProps, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import {
@@ -101,7 +100,7 @@ function partTableColumns(): TableColumn[] {
 
         let text = String(formatDecimal(stock));
 
-        let color: string | undefined = undefined;
+        let color: string | undefined;
 
         if (min_stock > stock) {
           extra.push(

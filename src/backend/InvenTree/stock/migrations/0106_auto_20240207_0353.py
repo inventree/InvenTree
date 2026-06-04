@@ -12,6 +12,7 @@ def set_template(apps, schema_editor):
     - If still no matches, create a new PartTestTemplate object
     """
     import time
+
     import InvenTree.helpers
 
     StockItemTestResult = apps.get_model('stock', 'stockitemtestresult')
@@ -28,10 +29,10 @@ def set_template(apps, schema_editor):
     if n_results == 0:
         return
 
-    print(f"\n{n_results} StockItemTestResult objects do not have matching templates!")
-    print(f"Updating test results for {len(parts)} unique parts...")
+    print(f'\n{n_results} StockItemTestResult objects do not have matching templates!')
+    print(f'Updating test results for {len(parts)} unique parts...')
 
-    # Keep a map of test templates 
+    # Keep a map of test templates
     part_tree_map = {}
 
     t1 = time.time()
@@ -46,7 +47,7 @@ def set_template(apps, schema_editor):
         part_results = results.filter(stock_item__part=part)
         test_names = part_results.values_list('test', flat=True).distinct()
 
-        key_map = part_tree_map.get(tree_id, None) or {}
+        key_map = part_tree_map.get(tree_id) or {}
 
         for name in test_names:
             template = None
@@ -57,21 +58,23 @@ def set_template(apps, schema_editor):
                 # We have a template for this key
                 pass
 
-            elif template := PartTestTemplate.objects.filter(part__tree_id=part.tree_id, key=key).first():
-                # We have found an existing template for this test
-                pass
-        
-            elif template := PartTestTemplate.objects.filter(
-                part__tree_id=part.tree_id,
-                part__lft__lte=part.lft,
-                part__rght__gte=part.rght,
-                key=key).first():
+            elif (
+                template := PartTestTemplate.objects.filter(
+                    part__tree_id=part.tree_id, key=key
+                ).first()
+            ) or (
+                template := PartTestTemplate.objects.filter(
+                    part__tree_id=part.tree_id,
+                    part__lft__lte=part.lft,
+                    part__rght__gte=part.rght,
+                    key=key,
+                ).first()
+            ):
                 # We have found an existing template for this test
                 pass
 
             # Create a new template, based on the available test information
             else:
-
                 # Find the parent part template
                 top_level_part = part
 
@@ -79,9 +82,7 @@ def set_template(apps, schema_editor):
                     top_level_part = top_level_part.variant_of
 
                 template = PartTestTemplate.objects.create(
-                    part=top_level_part,
-                    test_name=name,
-                    key=key,
+                    part=top_level_part, test_name=name, key=key
                 )
 
                 new_templates += 1
@@ -91,43 +92,41 @@ def set_template(apps, schema_editor):
 
             # Update the key map for this part tree
             key_map[key] = template
-            
+
         # Update the part tree map
         part_tree_map[tree_id] = key_map
 
     t2 = time.time()
     dt = t2 - t1
 
-    print(f"Updated {n_results} StockItemTestResult objects in {dt:.3f} seconds.")
+    print(f'Updated {n_results} StockItemTestResult objects in {dt:.3f} seconds.')
 
     if new_templates > 0:
-        print(f"Created {new_templates} new templates!")
+        print(f'Created {new_templates} new templates!')
 
     # Check that there are now zero reamining results without templates
     results = StockItemTestResult.objects.filter(template=None)
-    assert(results.count() == 0)
+    assert results.count() == 0
 
 
 def remove_template(apps, schema_editor):
     """Remove template links from existing StockItemTestResult objects."""
-
     StockItemTestResult = apps.get_model('stock', 'stockitemtestresult')
     results = StockItemTestResult.objects.all()
     results.update(template=None)
 
     if results.count() > 0:
-        print(f"\nRemoved template links from {results.count()} StockItemTestResult objects")
+        print(
+            f'\nRemoved template links from {results.count()} StockItemTestResult objects'
+        )
 
 
 class Migration(migrations.Migration):
-
     atomic = False
 
     dependencies = [
         ('stock', '0105_stockitemtestresult_template'),
-        ('part', '0121_auto_20240207_0344')
+        ('part', '0121_auto_20240207_0344'),
     ]
 
-    operations = [
-        migrations.RunPython(set_template, reverse_code=remove_template),
-    ]
+    operations = [migrations.RunPython(set_template, reverse_code=remove_template)]

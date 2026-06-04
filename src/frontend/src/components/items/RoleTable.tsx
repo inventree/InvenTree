@@ -125,108 +125,106 @@ export function RoleTable({
   };
 
   return (
-    <>
-      <Stack gap='xs'>
-        <Table striped withColumnBorders withRowBorders withTableBorder>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>
-                <Text fw={700}>
-                  <Trans>Role</Trans>
-                </Text>
-              </Table.Th>
-              <Table.Th>
-                <Text fw={700}>
-                  <Trans>View</Trans>
-                </Text>
-              </Table.Th>
-              <Table.Th>
-                <Text fw={700}>
-                  <Trans>Change</Trans>
-                </Text>
-              </Table.Th>
-              <Table.Th>
-                <Text fw={700}>
-                  <Trans>Add</Trans>
-                </Text>
-              </Table.Th>
-              <Table.Th>
-                <Text fw={700}>
-                  <Trans>Delete</Trans>
-                </Text>
-              </Table.Th>
+    <Stack gap='xs'>
+      <Table striped withColumnBorders withRowBorders withTableBorder>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Role</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>View</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Change</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Add</Trans>
+              </Text>
+            </Table.Th>
+            <Table.Th>
+              <Text fw={700}>
+                <Trans>Delete</Trans>
+              </Text>
+            </Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {sortedRulesets.map((rule) => (
+            <Table.Tr key={rule.pk ?? rule.name}>
+              <Table.Td>
+                <Group gap='xs'>
+                  <Text>{rule.label}</Text>
+                  {rule.edited && <Text>*</Text>}
+                </Group>
+              </Table.Td>
+              <Table.Td>
+                <Checkbox
+                  disabled={!editable}
+                  checked={rule.can_view}
+                  onChange={() => onToggle(rule, 'can_view')}
+                />
+              </Table.Td>
+              <Table.Td>
+                <Checkbox
+                  disabled={!editable}
+                  checked={rule.can_change}
+                  onChange={() => onToggle(rule, 'can_change')}
+                />
+              </Table.Td>
+              <Table.Td>
+                <Checkbox
+                  disabled={!editable}
+                  checked={rule.can_add}
+                  onChange={() => onToggle(rule, 'can_add')}
+                />
+              </Table.Td>
+              <Table.Td>
+                <Checkbox
+                  disabled={!editable}
+                  checked={rule.can_delete}
+                  onChange={() => onToggle(rule, 'can_delete')}
+                />
+              </Table.Td>
             </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {sortedRulesets.map((rule) => (
-              <Table.Tr key={rule.pk ?? rule.name}>
-                <Table.Td>
-                  <Group gap='xs'>
-                    <Text>{rule.label}</Text>
-                    {rule.edited && <Text>*</Text>}
-                  </Group>
-                </Table.Td>
-                <Table.Td>
-                  <Checkbox
-                    disabled={!editable}
-                    checked={rule.can_view}
-                    onChange={() => onToggle(rule, 'can_view')}
-                  />
-                </Table.Td>
-                <Table.Td>
-                  <Checkbox
-                    disabled={!editable}
-                    checked={rule.can_change}
-                    onChange={() => onToggle(rule, 'can_change')}
-                  />
-                </Table.Td>
-                <Table.Td>
-                  <Checkbox
-                    disabled={!editable}
-                    checked={rule.can_add}
-                    onChange={() => onToggle(rule, 'can_add')}
-                  />
-                </Table.Td>
-                <Table.Td>
-                  <Checkbox
-                    disabled={!editable}
-                    checked={rule.can_delete}
-                    onChange={() => onToggle(rule, 'can_delete')}
-                  />
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-        {editable && (
-          <Group justify='right'>
-            <Tooltip label={t`Reset group roles`} disabled={!edited}>
-              <Button
-                color='red'
-                onClick={() => {
-                  setRulesets(roles);
-                }}
-                disabled={!edited}
-                leftSection={<IconReload />}
-              >
-                {t`Reset`}
-              </Button>
-            </Tooltip>
-            <Tooltip label={t`Save group roles`} disabled={!edited}>
-              <Button
-                color='green'
-                onClick={() => {
-                  onSave(rulesets);
-                }}
-                disabled={!edited}
-                leftSection={<IconCircleCheck />}
-              >
-                {t`Save`}
-              </Button>
-            </Tooltip>
-          </Group>
-        )}
-      </Stack>
-    </>
+          ))}
+        </Table.Tbody>
+      </Table>
+      {editable && (
+        <Group justify='right'>
+          <Tooltip label={t`Reset group roles`} disabled={!edited}>
+            <Button
+              color='red'
+              onClick={() => {
+                setRulesets(roles);
+              }}
+              disabled={!edited}
+              leftSection={<IconReload />}
+            >
+              {t`Reset`}
+            </Button>
+          </Tooltip>
+          <Tooltip label={t`Save group roles`} disabled={!edited}>
+            <Button
+              color='green'
+              onClick={() => {
+                onSave(rulesets);
+              }}
+              disabled={!edited}
+              leftSection={<IconCircleCheck />}
+            >
+              {t`Save`}
+            </Button>
+          </Tooltip>
+        </Group>
+      )}
+    </Stack>
   );
 }

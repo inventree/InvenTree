@@ -1,7 +1,6 @@
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { Stack } from '@mantine/core';
 import type { ReactNode } from 'react';
-
-import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import type { PluginUIFeature } from './PluginUIFeature';
 import RemoteComponent from './RemoteComponent';
 

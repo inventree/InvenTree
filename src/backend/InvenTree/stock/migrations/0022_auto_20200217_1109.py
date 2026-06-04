@@ -4,11 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     atomic = False
 
-    dependencies = [
-        ('stock', '0021_auto_20200215_2232'),
-    ]
+    dependencies = [('stock', '0021_auto_20200215_2232')]
 
     operations = []

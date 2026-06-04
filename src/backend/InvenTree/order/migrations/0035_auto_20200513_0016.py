@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0034_auto_20200512_1054'),
-    ]
+    dependencies = [('order', '0034_auto_20200512_1054')]
 
     operations = [
         migrations.AlterField(
             model_name='purchaseorderattachment',
             name='comment',
-            field=models.CharField(blank=True, help_text='File comment', max_length=100),
+            field=models.CharField(
+                blank=True, help_text='File comment', max_length=100
+            ),
         ),
         migrations.AlterField(
             model_name='salesorderattachment',
             name='comment',
-            field=models.CharField(blank=True, help_text='File comment', max_length=100),
+            field=models.CharField(
+                blank=True, help_text='File comment', max_length=100
+            ),
         ),
     ]

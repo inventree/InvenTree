@@ -4,14 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('company', '0040_alter_company_currency'),
-    ]
+    dependencies = [('company', '0040_alter_company_currency')]
 
     operations = [
         migrations.AlterModelOptions(
             name='company',
-            options={'ordering': ['name'], 'verbose_name': 'Company', 'verbose_name_plural': 'Companies'},
-        ),
+            options={
+                'ordering': ['name'],
+                'verbose_name': 'Company',
+                'verbose_name_plural': 'Companies',
+            },
+        )
     ]

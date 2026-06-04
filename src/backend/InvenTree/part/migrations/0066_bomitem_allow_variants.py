@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0065_auto_20210505_2144'),
-    ]
+    dependencies = [('part', '0065_auto_20210505_2144')]
 
     operations = [
         migrations.AddField(
             model_name='bomitem',
             name='allow_variants',
-            field=models.BooleanField(default=False, help_text='Stock items for variant parts can be used for this BOM item', verbose_name='Allow Variants'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='Stock items for variant parts can be used for this BOM item',
+                verbose_name='Allow Variants',
+            ),
+        )
     ]

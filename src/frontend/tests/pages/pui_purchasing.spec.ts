@@ -541,7 +541,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   const quantityInput = await page.getByRole('textbox', {
     name: 'number-field-quantity'
   });
-  const quantity = Number.parseInt(await quantityInput.inputValue());
+  const quantity = Number.parseInt(await quantityInput.inputValue(), 10);
   await quantityInput.fill((quantity + 100).toString());
 
   await page.getByRole('button', { name: 'Submit' }).click();

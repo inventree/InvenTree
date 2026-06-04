@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0013_auto_20191118_2323'),
-    ]
+    dependencies = [('order', '0013_auto_20191118_2323')]
 
     operations = [
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='received',
-            field=models.DecimalField(decimal_places=5, default=0, help_text='Number of items received', max_digits=15),
-        ),
+            field=models.DecimalField(
+                decimal_places=5,
+                default=0,
+                help_text='Number of items received',
+                max_digits=15,
+            ),
+        )
     ]

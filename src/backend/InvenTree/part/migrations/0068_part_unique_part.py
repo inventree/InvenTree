@@ -4,14 +4,13 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0067_partinternalpricebreak'),
-    ]
+    dependencies = [('part', '0067_partinternalpricebreak')]
 
     operations = [
         migrations.AddConstraint(
             model_name='part',
-            constraint=models.UniqueConstraint(fields=('name', 'IPN', 'revision'), name='unique_part'),
-        ),
+            constraint=models.UniqueConstraint(
+                fields=('name', 'IPN', 'revision'), name='unique_part'
+            ),
+        )
     ]

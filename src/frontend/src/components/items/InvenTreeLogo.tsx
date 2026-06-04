@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { ActionIcon } from '@mantine/core';
-import { type ReactNode, forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';

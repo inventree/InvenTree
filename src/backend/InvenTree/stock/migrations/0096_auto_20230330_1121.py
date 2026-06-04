@@ -14,7 +14,6 @@ def update_stock_history(apps, schema_editor):
     - Check that it does *not* have any appropriate history
     - Add the appropriate history!
     """
-
     from stock.status_codes import StockHistoryCode
 
     StockItem = apps.get_model('stock', 'stockitem')
@@ -27,10 +26,17 @@ def update_stock_history(apps, schema_editor):
 
     for item in items:
         # Find newest relevant history
-        history = StockItemTracking.objects.filter(
-            item=item,
-            tracking_type__in=[StockHistoryCode.SENT_TO_CUSTOMER, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER]
-        ).order_by('-date').first()
+        history = (
+            StockItemTracking.objects.filter(
+                item=item,
+                tracking_type__in=[
+                    StockHistoryCode.SENT_TO_CUSTOMER,
+                    StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER,
+                ],
+            )
+            .order_by('-date')
+            .first()
+        )
 
         if not history:
             continue
@@ -49,17 +55,14 @@ def update_stock_history(apps, schema_editor):
         n += 1
 
     if n > 0:
-        print(f"Updated {n} StockItemTracking entries with SalesOrder data")
+        print(f'Updated {n} StockItemTracking entries with SalesOrder data')
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0095_stocklocation_external'),
-    ]
+    dependencies = [('stock', '0095_stocklocation_external')]
 
     operations = [
         migrations.RunPython(
-            update_stock_history, reverse_code=migrations.RunPython.noop,
+            update_stock_history, reverse_code=migrations.RunPython.noop
         )
     ]

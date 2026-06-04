@@ -1166,10 +1166,12 @@ class StockItemListTest(StockAPITestCase):
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
-        StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1, level=0, tree_id=0, lft=0, rght=0)
-            for _ in range(100)
-        ])
+        StockItem.objects.bulk_create(
+            [
+                StockItem(part=prt, quantity=1, level=0, tree_id=0, lft=0, rght=0)
+                for _ in range(100)
+            ]
+        )
 
         # List *all* stock items
         self.get(self.list_url, {}, max_query_count=35)
@@ -1449,19 +1451,21 @@ class CustomStockItemStatusTest(StockAPITestCase):
         part = Part.objects.filter(active=True, virtual=False).first()
 
         # Create 500 stock items, cycling through the 10 custom statuses
-        StockItem.objects.bulk_create([
-            StockItem(
-                part=part,
-                quantity=1,
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
-                status=custom_statuses[i % 10].logical_key,
-                status_custom_key=custom_statuses[i % 10].key,
-            )
-            for i in range(500)
-        ])
+        StockItem.objects.bulk_create(
+            [
+                StockItem(
+                    part=part,
+                    quantity=1,
+                    level=0,
+                    tree_id=0,
+                    lft=0,
+                    rght=0,
+                    status=custom_statuses[i % 10].logical_key,
+                    status_custom_key=custom_statuses[i % 10].key,
+                )
+                for i in range(500)
+            ]
+        )
 
         # Lookup: custom_key -> custom_status_object, for quick per-row assertions
         custom_lookup = {cs.key: cs for cs in custom_statuses}

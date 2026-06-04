@@ -387,11 +387,9 @@ def content_excludes(
 
     # Optionally exclude plugin information
     if not allow_plugins:
-        excludes.extend([
-            'plugin.pluginconfig',
-            'plugin.pluginsetting',
-            'plugin.pluginusersetting',
-        ])
+        excludes.extend(
+            ['plugin.pluginconfig', 'plugin.pluginsetting', 'plugin.pluginusersetting']
+        )
 
     # Optionally exclude SSO application information
     if not allow_sso:

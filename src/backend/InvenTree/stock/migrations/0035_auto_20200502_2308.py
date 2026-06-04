@@ -5,15 +5,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0034_auto_20200426_0602'),
-    ]
+    dependencies = [('stock', '0034_auto_20200426_0602')]
 
     operations = [
         migrations.AlterField(
             model_name='stockitem',
             name='status',
-            field=models.PositiveIntegerField(choices=[(10, 'OK'), (50, 'Attention needed'), (55, 'Damaged'), (60, 'Destroyed'), (70, 'Lost'), (65, 'Rejected'), (85, 'Returned'), (110, 'Shipped'), (120, 'Used for Build'), (130, 'Installed in Stock Item')], default=10, validators=[django.core.validators.MinValueValidator(0)]),
-        ),
+            field=models.PositiveIntegerField(
+                choices=[
+                    (10, 'OK'),
+                    (50, 'Attention needed'),
+                    (55, 'Damaged'),
+                    (60, 'Destroyed'),
+                    (70, 'Lost'),
+                    (65, 'Rejected'),
+                    (85, 'Returned'),
+                    (110, 'Shipped'),
+                    (120, 'Used for Build'),
+                    (130, 'Installed in Stock Item'),
+                ],
+                default=10,
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
+        )
     ]

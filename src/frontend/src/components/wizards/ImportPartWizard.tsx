@@ -1,4 +1,4 @@
-import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
+import { ApiEndpoints, apiUrl, ModelType } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -545,7 +545,10 @@ export default function ImportPartWizard({
     async ({
       categoryId,
       partId
-    }: { categoryId?: number; partId?: number }) => {
+    }: {
+      categoryId?: number;
+      partId?: number;
+    }) => {
       setIsImporting(true);
       try {
         const importResult = await api.post(

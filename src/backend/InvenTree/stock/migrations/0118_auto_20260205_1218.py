@@ -5,7 +5,6 @@ from django.db import migrations
 
 def add_part_links(apps, schema_editor):
     """Add links to the Part model for all existing StockItemTracking entries."""
-
     StockItemTracking = apps.get_model('stock', 'StockItemTracking')
 
     history_entries = []
@@ -13,10 +12,11 @@ def add_part_links(apps, schema_editor):
     N = StockItemTracking.objects.count()
 
     if N > 0:
-        print(f"\nUpdating {N} StockItemTracking entries with part links...")
+        print(f'\nUpdating {N} StockItemTracking entries with part links...')
 
-    for tracking in StockItemTracking.objects.filter(part__isnull=True).select_related('item__part'):
-
+    for tracking in StockItemTracking.objects.filter(part__isnull=True).select_related(
+        'item__part'
+    ):
         item = tracking.item
 
         # No item link - skip
@@ -40,7 +40,7 @@ def add_part_links(apps, schema_editor):
         if len(history_entries) >= 100:
             StockItemTracking.objects.bulk_update(history_entries, ['part'])
             history_entries = []
-            print(".", end='', flush=True)
+            print('.', end='', flush=True)
 
     if len(history_entries) > 0:
         StockItemTracking.objects.bulk_update(history_entries, ['part'])
@@ -48,7 +48,6 @@ def add_part_links(apps, schema_editor):
 
 def remove_null_items(apps, schema_editor):
     """Reverse migration - remove any StockItemTracking entries which have a null item link."""
-
     StockItemTracking = apps.get_model('stock', 'StockItemTracking')
 
     null_items = StockItemTracking.objects.filter(item__isnull=True)
@@ -57,17 +56,12 @@ def remove_null_items(apps, schema_editor):
 
     if count > 0:
         null_items.delete()
-        print(f"\nDeleted {count} StockItemTracking entries with null item links")
+        print(f'\nDeleted {count} StockItemTracking entries with null item links')
+
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("stock", "0117_stockitemtracking_part_alter_stockitemtracking_item"),
+        ('stock', '0117_stockitemtracking_part_alter_stockitemtracking_item')
     ]
 
-    operations = [
-        migrations.RunPython(
-            add_part_links,
-            reverse_code=remove_null_items,
-        )
-    ]
+    operations = [migrations.RunPython(add_part_links, reverse_code=remove_null_items)]

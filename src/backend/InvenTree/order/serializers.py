@@ -391,17 +391,19 @@ class PurchaseOrderSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrder
-        fields = AbstractOrderSerializer.order_fields([
-            'complete_date',
-            'supplier',
-            'supplier_detail',
-            'supplier_reference',
-            'supplier_name',
-            'total_price',
-            'order_currency',
-            'destination',
-            'updated_at',
-        ])
+        fields = AbstractOrderSerializer.order_fields(
+            [
+                'complete_date',
+                'supplier',
+                'supplier_detail',
+                'supplier_reference',
+                'supplier_name',
+                'total_price',
+                'order_currency',
+                'destination',
+                'updated_at',
+            ]
+        )
         read_only_fields = [
             'issue_date',
             'complete_date',
@@ -558,28 +560,30 @@ class PurchaseOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrderLineItem
-        fields = AbstractLineItemSerializer.line_fields([
-            'part',
-            'build_order',
-            'overdue',
-            'received',
-            'purchase_price',
-            'purchase_price_currency',
-            'auto_pricing',
-            'destination',
-            'total_price',
-            'merge_items',
-            'sku',
-            'mpn',
-            'ipn',
-            'internal_part',
-            'internal_part_name',
-            # Filterable detail fields
-            'build_order_detail',
-            'destination_detail',
-            'part_detail',
-            'supplier_part_detail',
-        ])
+        fields = AbstractLineItemSerializer.line_fields(
+            [
+                'part',
+                'build_order',
+                'overdue',
+                'received',
+                'purchase_price',
+                'purchase_price_currency',
+                'auto_pricing',
+                'destination',
+                'total_price',
+                'merge_items',
+                'sku',
+                'mpn',
+                'ipn',
+                'internal_part',
+                'internal_part_name',
+                # Filterable detail fields
+                'build_order_detail',
+                'destination_detail',
+                'part_detail',
+                'supplier_part_detail',
+            ]
+        )
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -788,10 +792,12 @@ class PurchaseOrderLineItemSerializer(
             supplier_part is not None
             and supplier_part.supplier != purchase_order.supplier
         ):
-            raise ValidationError({
-                'part': _('Supplier must match purchase order'),
-                'order': _('Purchase order must match supplier'),
-            })
+            raise ValidationError(
+                {
+                    'part': _('Supplier must match purchase order'),
+                    'order': _('Purchase order must match supplier'),
+                }
+            )
 
         return data
 
@@ -1026,9 +1032,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                 item['location'] = line.get_destination()
 
             if not item['location']:
-                raise ValidationError({
-                    'location': _('Destination location must be specified')
-                })
+                raise ValidationError(
+                    {'location': _('Destination location must be specified')}
+                )
 
             barcode = item.get('barcode', '')
 
@@ -1079,19 +1085,21 @@ class SalesOrderSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrder
-        fields = AbstractOrderSerializer.order_fields([
-            'customer',
-            'customer_detail',
-            'customer_reference',
-            'shipment_date',
-            'total_price',
-            'order_currency',
-            'shipments_count',
-            'completed_shipments_count',
-            'allocated_lines',
-            'updated_at',
-            'tags',
-        ])
+        fields = AbstractOrderSerializer.order_fields(
+            [
+                'customer',
+                'customer_detail',
+                'customer_reference',
+                'shipment_date',
+                'total_price',
+                'order_currency',
+                'shipments_count',
+                'completed_shipments_count',
+                'allocated_lines',
+                'updated_at',
+                'tags',
+            ]
+        )
         read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
 
@@ -1195,22 +1203,24 @@ class SalesOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderLineItem
-        fields = AbstractLineItemSerializer.line_fields([
-            'allocated',
-            'customer_detail',
-            'overdue',
-            'part',
-            'part_detail',
-            'sale_price',
-            'sale_price_currency',
-            'shipped',
-            # Annotated fields for part stocking information
-            'available_stock',
-            'available_variant_stock',
-            'building',
-            'on_order',
-            # Filterable detail fields
-        ])
+        fields = AbstractLineItemSerializer.line_fields(
+            [
+                'allocated',
+                'customer_detail',
+                'overdue',
+                'part',
+                'part_detail',
+                'sale_price',
+                'sale_price_currency',
+                'shipped',
+                # Annotated fields for part stocking information
+                'available_stock',
+                'available_variant_stock',
+                'building',
+                'on_order',
+                # Filterable detail fields
+            ]
+        )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1684,14 +1694,14 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
                 stock_item.hasRequiredTests()
                 and not stock_item.passedAllRequiredTests()
             ):
-                raise ValidationError({
-                    'stock_item': _('Stock item has not passed all required tests')
-                })
+                raise ValidationError(
+                    {'stock_item': _('Stock item has not passed all required tests')}
+                )
 
         if stock_item.serialized and quantity != 1:
-            raise ValidationError({
-                'quantity': _('Quantity must be 1 for serialized stock item')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity must be 1 for serialized stock item')}
+            )
 
         q = normalize(stock_item.unallocated_quantity())
 
@@ -2148,15 +2158,17 @@ class ReturnOrderSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrder
-        fields = AbstractOrderSerializer.order_fields([
-            'complete_date',
-            'customer',
-            'customer_detail',
-            'customer_reference',
-            'order_currency',
-            'total_price',
-            'updated_at',
-        ])
+        fields = AbstractOrderSerializer.order_fields(
+            [
+                'complete_date',
+                'customer',
+                'customer_detail',
+                'customer_reference',
+                'order_currency',
+                'total_price',
+                'updated_at',
+            ]
+        )
         read_only_fields = ['creation_date', 'updated_at']
 
     def skip_create_fields(self):
@@ -2342,16 +2354,18 @@ class ReturnOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderLineItem
-        fields = AbstractLineItemSerializer.line_fields([
-            'item',
-            'received_date',
-            'outcome',
-            'price',
-            'price_currency',
-            # Filterable detail fields
-            'item_detail',
-            'part_detail',
-        ])
+        fields = AbstractLineItemSerializer.line_fields(
+            [
+                'item',
+                'received_date',
+                'outcome',
+                'price',
+                'price_currency',
+                # Filterable detail fields
+                'item_detail',
+                'part_detail',
+            ]
+        )
 
     order_detail = OptionalField(
         serializer_class=ReturnOrderSerializer,
@@ -2435,14 +2449,16 @@ class TransferOrderSerializer(
         """Metaclass options."""
 
         model = order.models.TransferOrder
-        fields = AbstractOrderSerializer.order_fields([
-            'take_from',
-            'take_from_detail',
-            'destination',
-            'destination_detail',
-            'consume',
-            'complete_date',
-        ])
+        fields = AbstractOrderSerializer.order_fields(
+            [
+                'take_from',
+                'take_from_detail',
+                'destination',
+                'destination_detail',
+                'consume',
+                'complete_date',
+            ]
+        )
         read_only_fields = ['creation_date']
         extra_kwargs = {}
 
@@ -2595,19 +2611,21 @@ class TransferOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.TransferOrderLineItem
-        fields = AbstractLineItemSerializer.line_fields([
-            'allocated',
-            'overdue',
-            'part',
-            'part_detail',
-            'transferred',
-            # Annotated fields for part stocking information
-            'available_stock',
-            'available_variant_stock',
-            'building',
-            'on_order',
-            # Filterable detail fields
-        ])
+        fields = AbstractLineItemSerializer.line_fields(
+            [
+                'allocated',
+                'overdue',
+                'part',
+                'part_detail',
+                'transferred',
+                # Annotated fields for part stocking information
+                'available_stock',
+                'available_variant_stock',
+                'building',
+                'on_order',
+                # Filterable detail fields
+            ]
+        )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -2775,9 +2793,9 @@ class TransferOrderAllocationItemSerializer(serializers.Serializer):
         quantity = data['quantity']
 
         if stock_item.serialized and quantity != 1:
-            raise ValidationError({
-                'quantity': _('Quantity must be 1 for serialized stock item')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity must be 1 for serialized stock item')}
+            )
 
         q = normalize(stock_item.unallocated_quantity())
 

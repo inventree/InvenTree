@@ -7,15 +7,12 @@ from InvenTree.helpers import constructPathString
 
 def update_pathstring(apps, schema_editor):
     """Construct pathstring for all existing PartCategory objects"""
-
     PartCategory = apps.get_model('part', 'partcategory')
 
     n = PartCategory.objects.count()
 
     if n > 0:
-
         for cat in PartCategory.objects.all():
-
             # Construct complete path for category
             path = [cat.name]
 
@@ -35,14 +32,8 @@ def update_pathstring(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0082_partcategory_pathstring'),
-    ]
+    dependencies = [('part', '0082_partcategory_pathstring')]
 
     operations = [
-        migrations.RunPython(
-            update_pathstring,
-            reverse_code=migrations.RunPython.noop
-        )
+        migrations.RunPython(update_pathstring, reverse_code=migrations.RunPython.noop)
     ]

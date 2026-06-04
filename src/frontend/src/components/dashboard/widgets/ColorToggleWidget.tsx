@@ -1,7 +1,6 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
-
-import { StylishText } from '@lib/components/StylishText';
 import { ColorToggle } from '../../items/ColorToggle';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 

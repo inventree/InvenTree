@@ -1,18 +1,17 @@
-import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { type PanelType, apiUrl } from '@lib/index';
+import { apiUrl, type PanelType } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconInfoCircle,
   IconList,
   IconListCheck
 } from '@tabler/icons-react';
+import { type ReactNode, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';

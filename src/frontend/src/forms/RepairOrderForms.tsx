@@ -1,10 +1,5 @@
-import { t } from '@lingui/core/macro';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useMemo } from 'react';
-
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 
 export function useRepairOrderFields({
   duplicateOrderId

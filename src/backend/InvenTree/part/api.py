@@ -1557,156 +1557,196 @@ part_api_urls = [
     # Base URL for PartCategory API endpoints
     path(
         'category/',
-        include([
-            path('tree/', CategoryTree.as_view(), name='api-part-category-tree'),
-            path(
-                'parameters/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            meta_path(PartCategoryParameterTemplate),
+        include(
+            [
+                path('tree/', CategoryTree.as_view(), name='api-part-category-tree'),
+                path(
+                    'parameters/',
+                    include(
+                        [
+                            path(
+                                '<int:pk>/',
+                                include(
+                                    [
+                                        meta_path(PartCategoryParameterTemplate),
+                                        path(
+                                            '',
+                                            CategoryParameterDetail.as_view(),
+                                            name='api-part-category-parameter-detail',
+                                        ),
+                                    ]
+                                ),
+                            ),
                             path(
                                 '',
-                                CategoryParameterDetail.as_view(),
-                                name='api-part-category-parameter-detail',
+                                CategoryParameterList.as_view(),
+                                name='api-part-category-parameter-list',
                             ),
-                        ]),
+                        ]
                     ),
-                    path(
-                        '',
-                        CategoryParameterList.as_view(),
-                        name='api-part-category-parameter-list',
+                ),
+                # Category detail endpoints
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(PartCategory),
+                            # PartCategory detail endpoint
+                            path(
+                                '',
+                                CategoryDetail.as_view(),
+                                name='api-part-category-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            # Category detail endpoints
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(PartCategory),
-                    # PartCategory detail endpoint
-                    path('', CategoryDetail.as_view(), name='api-part-category-detail'),
-                ]),
-            ),
-            path('', CategoryList.as_view(), name='api-part-category-list'),
-        ]),
+                ),
+                path('', CategoryList.as_view(), name='api-part-category-list'),
+            ]
+        ),
     ),
     # Base URL for PartTestTemplate API endpoints
     path(
         'test-template/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(PartTestTemplate),
-                    path(
-                        '',
-                        PartTestTemplateDetail.as_view(),
-                        name='api-part-test-template-detail',
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(PartTestTemplate),
+                            path(
+                                '',
+                                PartTestTemplateDetail.as_view(),
+                                name='api-part-test-template-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            path(
-                '', PartTestTemplateList.as_view(), name='api-part-test-template-list'
-            ),
-        ]),
+                ),
+                path(
+                    '',
+                    PartTestTemplateList.as_view(),
+                    name='api-part-test-template-list',
+                ),
+            ]
+        ),
     ),
     # Base URL for part sale pricing
     path(
         'sale-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartSalePriceDetail.as_view(),
-                name='api-part-sale-price-detail',
-            ),
-            path('', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    PartSalePriceDetail.as_view(),
+                    name='api-part-sale-price-detail',
+                ),
+                path('', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
+            ]
+        ),
     ),
     # Base URL for part internal pricing
     path(
         'internal-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartInternalPriceDetail.as_view(),
-                name='api-part-internal-price-detail',
-            ),
-            path(
-                '', PartInternalPriceList.as_view(), name='api-part-internal-price-list'
-            ),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    PartInternalPriceDetail.as_view(),
+                    name='api-part-internal-price-detail',
+                ),
+                path(
+                    '',
+                    PartInternalPriceList.as_view(),
+                    name='api-part-internal-price-list',
+                ),
+            ]
+        ),
     ),
     # Base URL for PartRelated API endpoints
     path(
         'related/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(PartRelated),
-                    path(
-                        '', PartRelatedDetail.as_view(), name='api-part-related-detail'
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(PartRelated),
+                            path(
+                                '',
+                                PartRelatedDetail.as_view(),
+                                name='api-part-related-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            path('', PartRelatedList.as_view(), name='api-part-related-list'),
-        ]),
+                ),
+                path('', PartRelatedList.as_view(), name='api-part-related-list'),
+            ]
+        ),
     ),
     # Part stocktake data
     path(
         'stocktake/',
-        include([
-            path(
-                '<int:pk>/',
-                PartStocktakeDetail.as_view(),
-                name='api-part-stocktake-detail',
-            ),
-            path(
-                'generate/',
-                PartStocktakeGenerate.as_view(),
-                name='api-part-stocktake-generate',
-            ),
-            path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    PartStocktakeDetail.as_view(),
+                    name='api-part-stocktake-detail',
+                ),
+                path(
+                    'generate/',
+                    PartStocktakeGenerate.as_view(),
+                    name='api-part-stocktake-generate',
+                ),
+                path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
+            ]
+        ),
     ),
     path(
         'thumbs/',
-        include([
-            path('', PartThumbs.as_view(), name='api-part-thumbs'),
-            path(
-                '<int:pk>/', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'
-            ),
-        ]),
+        include(
+            [
+                path('', PartThumbs.as_view(), name='api-part-thumbs'),
+                path(
+                    '<int:pk>/',
+                    PartThumbsUpdate.as_view(),
+                    name='api-part-thumbs-update',
+                ),
+            ]
+        ),
     ),
     path(
         '<int:pk>/',
-        include([
-            # Endpoint for extra serial number information
-            path(
-                'serial-numbers/',
-                PartSerialNumberDetail.as_view(),
-                name='api-part-serial-number-detail',
-            ),
-            path(
-                'requirements/',
-                PartRequirements.as_view(),
-                name='api-part-requirements',
-            ),
-            # Endpoint for duplicating a BOM for the specific Part
-            path('bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
-            # Endpoint for validating a BOM for the specific Part
-            path(
-                'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
-            ),
-            # Part metadata
-            meta_path(Part),
-            # Part pricing
-            path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
-            # Part detail endpoint
-            path('', PartDetail.as_view(), name='api-part-detail'),
-        ]),
+        include(
+            [
+                # Endpoint for extra serial number information
+                path(
+                    'serial-numbers/',
+                    PartSerialNumberDetail.as_view(),
+                    name='api-part-serial-number-detail',
+                ),
+                path(
+                    'requirements/',
+                    PartRequirements.as_view(),
+                    name='api-part-requirements',
+                ),
+                # Endpoint for duplicating a BOM for the specific Part
+                path('bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+                # Endpoint for validating a BOM for the specific Part
+                path(
+                    'bom-validate/',
+                    PartValidateBOM.as_view(),
+                    name='api-part-bom-validate',
+                ),
+                # Part metadata
+                meta_path(Part),
+                # Part pricing
+                path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+                # Part detail endpoint
+                path('', PartDetail.as_view(), name='api-part-detail'),
+            ]
+        ),
     ),
     path('', PartList.as_view(), name='api-part-list'),
 ]
@@ -1714,31 +1754,41 @@ part_api_urls = [
 bom_api_urls = [
     path(
         'substitute/',
-        include([
-            # Detail view
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(BomItemSubstitute),
-                    path(
-                        '',
-                        BomItemSubstituteDetail.as_view(),
-                        name='api-bom-substitute-detail',
+        include(
+            [
+                # Detail view
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(BomItemSubstitute),
+                            path(
+                                '',
+                                BomItemSubstituteDetail.as_view(),
+                                name='api-bom-substitute-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            # Catch all
-            path('', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
-        ]),
+                ),
+                # Catch all
+                path(
+                    '', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'
+                ),
+            ]
+        ),
     ),
     # BOM Item Detail
     path(
         '<int:pk>/',
-        include([
-            path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            meta_path(BomItem),
-            path('', BomDetail.as_view(), name='api-bom-item-detail'),
-        ]),
+        include(
+            [
+                path(
+                    'validate/', BomItemValidate.as_view(), name='api-bom-item-validate'
+                ),
+                meta_path(BomItem),
+                path('', BomDetail.as_view(), name='api-bom-item-detail'),
+            ]
+        ),
     ),
     # Catch-all
     path('', BomList.as_view(), name='api-bom-list'),

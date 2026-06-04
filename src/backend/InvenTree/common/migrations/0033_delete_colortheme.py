@@ -4,13 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    dependencies = [('common', '0032_selectionlist_selectionlistentry_and_more')]
 
-    dependencies = [
-        ("common", "0032_selectionlist_selectionlistentry_and_more"),
-    ]
-
-    operations = [
-        migrations.DeleteModel(
-            name="ColorTheme",
-        ),
-    ]
+    operations = [migrations.DeleteModel(name='ColorTheme')]

@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0127_remove_partcategory_icon_partcategory__icon'),
-    ]
+    dependencies = [('part', '0127_remove_partcategory_icon_partcategory__icon')]
 
     operations = [
         migrations.AddField(
             model_name='part',
             name='testable',
-            field=models.BooleanField(default=False, help_text='Can this part have test results recorded against it?', verbose_name='Testable'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='Can this part have test results recorded against it?',
+                verbose_name='Testable',
+            ),
+        )
     ]

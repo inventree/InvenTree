@@ -1,7 +1,6 @@
+import { ApiEndpoints, apiUrl } from '@lib/index';
 import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-
-import { ApiEndpoints, apiUrl } from '@lib/index';
 import { frontendID, serviceName } from './defaults/defaults';
 import { useLocalState } from './states/LocalState';
 

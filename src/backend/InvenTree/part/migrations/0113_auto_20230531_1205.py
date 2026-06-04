@@ -4,35 +4,57 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0112_auto_20230525_1606'),
-    ]
+    dependencies = [('part', '0112_auto_20230525_1606')]
 
     operations = [
         migrations.AddField(
             model_name='bomitemsubstitute',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='partcategoryparametertemplate',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='partparameter',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='partrelated',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='parttesttemplate',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
     ]

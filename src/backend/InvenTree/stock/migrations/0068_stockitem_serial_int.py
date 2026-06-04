@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0067_alter_stockitem_part'),
-    ]
+    dependencies = [('stock', '0067_alter_stockitem_part')]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='serial_int',
             field=models.IntegerField(default=0),
-        ),
+        )
     ]

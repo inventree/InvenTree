@@ -4,14 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    dependencies = [('part', '0138_auto_20250718_2342')]
 
-    dependencies = [
-        ("part", "0138_auto_20250718_2342"),
-    ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name="bomitem",
-            name="overage",
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name='bomitem', name='overage')]

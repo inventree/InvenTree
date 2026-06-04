@@ -1,3 +1,12 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
@@ -10,6 +19,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -27,17 +37,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
-import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
-import type { PanelType } from '@lib/types/Panel';
-import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -334,7 +333,7 @@ export default function StockDetail() {
         label: t`Parent Item`,
         model: ModelType.stockitem,
         hidden: !stockitem.parent,
-        model_formatter: (model: any) => {
+        model_formatter: (_model: any) => {
           return t`Parent stock item`;
         }
       },
@@ -855,7 +854,7 @@ export default function StockDetail() {
   const scanIntoLocation = useBarcodeScanDialog({
     title: t`Scan Into Location`,
     modelType: ModelType.stocklocation,
-    callback: async (barcode, response) => {
+    callback: async (_barcode, response) => {
       const pk = response.stocklocation.pk;
 
       return api

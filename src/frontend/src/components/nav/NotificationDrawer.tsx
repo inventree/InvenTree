@@ -1,3 +1,14 @@
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -22,16 +33,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { Boundary } from '@lib/components/Boundary';
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import { getBaseUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
 import { useUserState } from '../../states/UserState';
 

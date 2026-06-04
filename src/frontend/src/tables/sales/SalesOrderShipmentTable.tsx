@@ -1,12 +1,3 @@
-import { t } from '@lingui/core/macro';
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconTruckDelivery
-} from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -22,6 +13,14 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconTruckDelivery
+} from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
@@ -71,7 +70,7 @@ export default function SalesOrderShipmentTable({
     pending: !selectedShipment.shipment_date
   });
 
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
+  const _completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,

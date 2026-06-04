@@ -36,17 +36,19 @@ def validate_part_name_format(value):
         # make sure at least one and only one field is present inside the parser
         field_names = field_name_regex.findall(jinja_template)
         if len(field_names) < 1:
-            raise ValidationError({
-                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
-            })
+            raise ValidationError(
+                {
+                    'value': 'At least one field must be present inside a jinja template container i.e {{}}'
+                }
+            )
 
         for field_name in field_names:
             try:
                 Part._meta.get_field(field_name)
             except FieldDoesNotExist:
-                raise ValidationError({
-                    'value': f'{field_name} does not exist in Part Model'
-                })
+                raise ValidationError(
+                    {'value': f'{field_name} does not exist in Part Model'}
+                )
 
     # Attempt to render the template with a dummy Part instance
     # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated

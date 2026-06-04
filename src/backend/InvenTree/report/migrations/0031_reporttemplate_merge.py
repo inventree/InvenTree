@@ -4,19 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("report", "0030_alter_labeltemplate_model_type_and_more"),
-    ]
+    dependencies = [('report', '0030_alter_labeltemplate_model_type_and_more')]
 
     operations = [
         migrations.AddField(
-            model_name="reporttemplate",
-            name="merge",
+            model_name='reporttemplate',
+            name='merge',
             field=models.BooleanField(
                 default=False,
-                help_text="Render a single report against selected items",
-                verbose_name="Merge",
+                help_text='Render a single report against selected items',
+                verbose_name='Merge',
             ),
-        ),
+        )
     ]

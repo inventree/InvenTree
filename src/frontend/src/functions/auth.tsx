@@ -8,14 +8,14 @@ import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
-import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
-import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
+import { useUserState } from '../states/UserState';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -45,10 +45,7 @@ function post(path: string, params: any, method = 'post') {
   form.action = path;
 
   for (const key in params) {
-    if (
-      params.hasOwn?.(key) ||
-      Object.prototype.hasOwnProperty.call(params, key)
-    ) {
+    if (params.hasOwn?.(key) || Object.hasOwn(params, key)) {
       const hiddenField = document.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = key;
@@ -581,7 +578,7 @@ export const getTotpSecret = async (setTotpQr: any) => {
 export function handleVerifyTotp(
   value: string,
   navigate: NavigateFunction,
-  location: Location<any>
+  _location: Location<any>
 ) {
   return () => {
     authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {

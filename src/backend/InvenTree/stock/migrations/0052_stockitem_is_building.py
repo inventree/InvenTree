@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0051_auto_20200928_0928'),
-    ]
+    dependencies = [('stock', '0051_auto_20200928_0928')]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='is_building',
             field=models.BooleanField(default=False),
-        ),
+        )
     ]

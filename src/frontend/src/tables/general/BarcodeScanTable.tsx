@@ -104,21 +104,19 @@ export default function BarcodeScanTable({
   }, [table.selectedIds]);
 
   return (
-    <>
-      <InvenTreeTable
-        tableState={table}
-        tableData={records}
-        columns={tableColumns}
-        props={{
-          enableFilters: false,
-          enableSelection: true,
-          enablePagination: false,
-          enableSearch: false,
-          enableRefresh: false,
-          rowActions: rowActions,
-          tableActions: tableActions
-        }}
-      />
-    </>
+    <InvenTreeTable
+      tableState={table}
+      tableData={records}
+      columns={tableColumns}
+      props={{
+        enableFilters: false,
+        enableSelection: true,
+        enablePagination: false,
+        enableSearch: false,
+        enableRefresh: false,
+        rowActions: rowActions,
+        tableActions: tableActions
+      }}
+    />
   );
 }

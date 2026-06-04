@@ -149,7 +149,7 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
     onClose: () => {
       props.onClose?.();
     },
-    checkClose: (response, form) => {
+    checkClose: (_response, _form) => {
       // Keep the form open
       return false;
     },

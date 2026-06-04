@@ -4,14 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0071_auto_20211205_1733'),
-    ]
+    dependencies = [('stock', '0071_auto_20211205_1733')]
 
     operations = [
-        migrations.RemoveField(
-            model_name='stockitem',
-            name='scheduled_for_deletion',
-        ),
+        migrations.RemoveField(model_name='stockitem', name='scheduled_for_deletion')
     ]

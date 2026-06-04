@@ -4,14 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    dependencies = [('stock', '0053_auto_20201110_0513')]
 
-    dependencies = [
-        ('stock', '0053_auto_20201110_0513'),
-    ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='stockitem',
-            name='build_order',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name='stockitem', name='build_order')]

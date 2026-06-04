@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0011_part_revision'),
-    ]
+    dependencies = [('part', '0011_part_revision')]
 
     operations = [
         migrations.AddField(
             model_name='bomitem',
             name='reference',
-            field=models.CharField(blank=True, help_text='BOM item reference', max_length=500),
+            field=models.CharField(
+                blank=True, help_text='BOM item reference', max_length=500
+            ),
         ),
         migrations.AlterField(
             model_name='bomitem',
             name='note',
-            field=models.CharField(blank=True, help_text='BOM item notes', max_length=500),
+            field=models.CharField(
+                blank=True, help_text='BOM item notes', max_length=500
+            ),
         ),
     ]

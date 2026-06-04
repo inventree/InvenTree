@@ -1,3 +1,7 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -8,8 +12,8 @@ import {
   Image,
   Overlay,
   Paper,
-  Text,
   rem,
+  Text,
   useMantineColorScheme
 } from '@mantine/core';
 import {
@@ -19,13 +23,8 @@ import {
 } from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useEffect, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { StylishText } from '@lib/components/StylishText';
-import type { UserRoles } from '@lib/enums/Roles';
-import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
@@ -432,41 +431,37 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   };
 
   return (
-    <>
-      <Grid.Col span={{ base: 12, sm: 4 }}>
-        <AspectRatio
-          ref={ref}
+    <Grid.Col span={{ base: 12, sm: 4 }}>
+      <AspectRatio
+        ref={ref}
+        maw={IMAGE_DIMENSION}
+        ratio={1}
+        pos='relative'
+        visibleFrom='xs'
+      >
+        <ApiImage
+          src={img}
+          thumbnail={props.thumbnail}
+          mah={IMAGE_DIMENSION}
           maw={IMAGE_DIMENSION}
-          ratio={1}
-          pos='relative'
-          visibleFrom='xs'
-        >
-          <>
-            <ApiImage
-              src={img}
-              thumbnail={props.thumbnail}
-              mah={IMAGE_DIMENSION}
-              maw={IMAGE_DIMENSION}
-              onClick={expandImage}
-            />
-            {props.appRole &&
-              permissions.hasChangeRole(props.appRole) &&
-              hasOverlay &&
-              hovered && (
-                <Overlay color='black' opacity={0.8} onClick={expandImage}>
-                  <ImageActionButtons
-                    visible={hovered}
-                    actions={props.imageActions}
-                    apiPath={props.apiPath}
-                    hasImage={!!props.src}
-                    pk={props.pk}
-                    setImage={setAndRefresh}
-                  />
-                </Overlay>
-              )}
-          </>
-        </AspectRatio>
-      </Grid.Col>
-    </>
+          onClick={expandImage}
+        />
+        {props.appRole &&
+          permissions.hasChangeRole(props.appRole) &&
+          hasOverlay &&
+          hovered && (
+            <Overlay color='black' opacity={0.8} onClick={expandImage}>
+              <ImageActionButtons
+                visible={hovered}
+                actions={props.imageActions}
+                apiPath={props.apiPath}
+                hasImage={!!props.src}
+                pk={props.pk}
+                setImage={setAndRefresh}
+              />
+            </Overlay>
+          )}
+      </AspectRatio>
+    </Grid.Col>
   );
 }

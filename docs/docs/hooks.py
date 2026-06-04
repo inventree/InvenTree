@@ -74,11 +74,9 @@ def fetch_rtd_versions():
     current_version = os.environ.get('READTHEDOCS_VERSION', None)
 
     if current_version and not any(x['title'] == current_version for x in versions):
-        versions.append({
-            'version': current_version,
-            'title': current_version,
-            'aliases': [],
-        })
+        versions.append(
+            {'version': current_version, 'title': current_version, 'aliases': []}
+        )
 
     output_filename = here.joinpath('versions.json')
 

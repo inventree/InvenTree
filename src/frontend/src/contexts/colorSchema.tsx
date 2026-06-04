@@ -1,7 +1,7 @@
 import {
+  isMantineColorScheme,
   type MantineColorScheme,
-  type MantineColorSchemeManager,
-  isMantineColorScheme
+  type MantineColorSchemeManager
 } from '@mantine/core';
 
 export interface LocalStorageColorSchemeManagerOptions {

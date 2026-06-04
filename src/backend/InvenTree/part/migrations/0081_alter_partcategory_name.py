@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0080_alter_part_image'),
-    ]
+    dependencies = [('part', '0080_alter_part_image')]
 
     operations = [
         migrations.AlterField(
             model_name='partcategory',
             name='name',
-            field=models.CharField(help_text='Name', max_length=100, verbose_name='Name'),
-        ),
+            field=models.CharField(
+                help_text='Name', max_length=100, verbose_name='Name'
+            ),
+        )
     ]

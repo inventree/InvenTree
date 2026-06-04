@@ -1,7 +1,6 @@
+import { t } from '@lingui/core/macro';
 import { Select } from '@mantine/core';
 import { useEffect, useState } from 'react';
-
-import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import {
   activateLocale,

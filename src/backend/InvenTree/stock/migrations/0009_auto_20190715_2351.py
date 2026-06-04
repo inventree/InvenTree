@@ -4,10 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0008_stockitemtracking_url'),
-    ]
+    dependencies = [('stock', '0008_stockitemtracking_url')]
 
     operations = [
         migrations.AlterField(

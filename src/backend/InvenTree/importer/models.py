@@ -277,10 +277,12 @@ class DataImportSession(models.Model):
             missing_fields.append(field)
 
         if len(missing_fields) > 0:
-            raise DjangoValidationError({
-                'error': _('Some required fields have not been mapped'),
-                'fields': missing_fields,
-            })
+            raise DjangoValidationError(
+                {
+                    'error': _('Some required fields have not been mapped'),
+                    'fields': missing_fields,
+                }
+            )
 
         # No errors, so trigger the data import process
         self.trigger_data_import()
@@ -455,35 +457,39 @@ class DataImportColumnMap(models.Model):
             self.column not in ['', None]
             and columns.filter(column=self.column).exists()
         ):
-            raise DjangoValidationError({
-                'column': _('Column is already mapped to a database field')
-            })
+            raise DjangoValidationError(
+                {'column': _('Column is already mapped to a database field')}
+            )
 
         if columns.filter(field=self.field).exists():
-            raise DjangoValidationError({
-                'field': _('Field is already mapped to a data column')
-            })
+            raise DjangoValidationError(
+                {'field': _('Field is already mapped to a data column')}
+            )
 
     def clean(self):
         """Validate the column mapping."""
         super().clean()
 
         if not self.session:
-            raise DjangoValidationError({
-                'session': _('Column mapping must be linked to a valid import session')
-            })
+            raise DjangoValidationError(
+                {
+                    'session': _(
+                        'Column mapping must be linked to a valid import session'
+                    )
+                }
+            )
 
         if self.column and self.column not in self.session.columns:
-            raise DjangoValidationError({
-                'column': _('Column does not exist in the data file')
-            })
+            raise DjangoValidationError(
+                {'column': _('Column does not exist in the data file')}
+            )
 
         field_def = self.field_definition
 
         if not field_def:
-            raise DjangoValidationError({
-                'field': _('Field does not exist in the target model')
-            })
+            raise DjangoValidationError(
+                {'field': _('Field does not exist in the target model')}
+            )
 
         if field_def.get('read_only', False):
             raise DjangoValidationError({'field': _('Selected field is read-only')})
@@ -754,9 +760,9 @@ class DataImportRow(models.Model):
             )
 
         if not model:
-            raise DjangoValidationError({
-                'session': f'No related model found for field: {field_name}'
-            })
+            raise DjangoValidationError(
+                {'session': f'No related model found for field: {field_name}'}
+            )
 
         valid_items = set()
 

@@ -4,20 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0097_partstocktakereport'),
-    ]
+    dependencies = [('part', '0097_partstocktakereport')]
 
     operations = [
         migrations.AddField(
             model_name='partstocktake',
             name='item_count',
-            field=models.IntegerField(default=1, help_text='Number of individual stock entries at time of stocktake', verbose_name='Item Count'),
+            field=models.IntegerField(
+                default=1,
+                help_text='Number of individual stock entries at time of stocktake',
+                verbose_name='Item Count',
+            ),
         ),
         migrations.AddField(
             model_name='partstocktakereport',
             name='part_count',
-            field=models.IntegerField(default=0, help_text='Number of parts covered by stocktake', verbose_name='Part Count'),
+            field=models.IntegerField(
+                default=0,
+                help_text='Number of parts covered by stocktake',
+                verbose_name='Part Count',
+            ),
         ),
     ]

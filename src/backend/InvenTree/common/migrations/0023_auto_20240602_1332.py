@@ -10,9 +10,9 @@ import InvenTree.config
 
 def set_currencies(apps, schema_editor):
     """Set the default currency codes.
-    
+
     Ref: https://github.com/inventree/InvenTree/pull/7390
-    
+
     Previously, the allowed currency codes were set in the external configuration
     (e.g via the configuration file or environment variables).
 
@@ -21,11 +21,10 @@ def set_currencies(apps, schema_editor):
     So, this data migration exists to transfer any configured currency codes,
     from the external configuration, into the database settings model.
     """
-
     InvenTreeSetting = apps.get_model('common', 'InvenTreeSetting')
 
     key = 'CURRENCY_CODES'
-    
+
     codes = InvenTree.config.get_setting('INVENTREE_CURRENCIES', 'currencies', None)
 
     if codes is None:
@@ -42,36 +41,32 @@ def set_currencies(apps, schema_editor):
 
         if code in CURRENCIES:
             valid_codes.add(code)
-    
+
     if len(valid_codes) == 0:
-        print(f"No currency codes found in configuration file - skipping migration")
+        print('No currency codes found in configuration file - skipping migration')
         return
-    
+
     value = ','.join(valid_codes)
 
     if not settings.TESTING:  # pragma: no cover
-        print(f"Found existing currency codes:", value)
+        print('Found existing currency codes:', value)
 
     setting = InvenTreeSetting.objects.filter(key=key).first()
 
     if setting:
         if not settings.TESTING:  # pragma: no cover
-            print(f"- Updating existing setting for currency codes")
+            print('- Updating existing setting for currency codes')
         setting.value = value
         setting.save()
     else:
         if not settings.TESTING:  # pragma: no cover
-            print(f"- Creating new setting for currency codes")
+            print('- Creating new setting for currency codes')
         setting = InvenTreeSetting(key=key, value=value)
         setting.save()
 
 
-
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('common', '0022_projectcode_responsible'),
-    ]
+    dependencies = [('common', '0022_projectcode_responsible')]
 
     operations = [
         migrations.RunPython(set_currencies, reverse_code=migrations.RunPython.noop)

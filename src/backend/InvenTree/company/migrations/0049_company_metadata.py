@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('company', '0048_auto_20220913_0312'),
-    ]
+    dependencies = [('company', '0048_auto_20220913_0312')]
 
     operations = [
         migrations.AddField(
             model_name='company',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
-        ),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
+        )
     ]

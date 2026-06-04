@@ -267,7 +267,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   let sn = 1;
 
-  sn = Number.parseInt(placeholder.split('+')[0].trim());
+  sn = Number.parseInt(placeholder.split('+')[0].trim(), 10);
 
   // Generate some new serial numbers
   await page

@@ -50,8 +50,10 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useUserSettingsState } from '../../states/SettingsStates';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -64,7 +66,7 @@ export default function Stock() {
   const { id: _id } = useParams();
 
   const id = useMemo(
-    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '', 10)) ? _id : undefined),
     [_id]
   );
 
@@ -359,7 +361,7 @@ export default function Stock() {
   const scanInStockItem = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
     modelType: ModelType.stockitem,
-    callback: async (barcode, response) => {
+    callback: async (_barcode, response) => {
       const item = response.stockitem.instance;
 
       // Scan the stock item into the current location
@@ -390,7 +392,7 @@ export default function Stock() {
   const scanInStockLocation = useBarcodeScanDialog({
     title: t`Scan Stock Location`,
     modelType: ModelType.stocklocation,
-    callback: async (barcode, response) => {
+    callback: async (_barcode, response) => {
       const pk = response.stocklocation.pk;
 
       // Set the parent location

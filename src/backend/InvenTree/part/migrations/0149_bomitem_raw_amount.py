@@ -9,7 +9,7 @@ from InvenTree.helpers import normalize
 
 def set_default_raw_amount(apps, schema_editor):
     """Initialize the 'raw_amount' field for existing BomItem records."""
-    BomItem = apps.get_model("part", "BomItem")
+    BomItem = apps.get_model('part', 'BomItem')
 
     to_update = []
     updated_count = 0
@@ -26,7 +26,7 @@ def set_default_raw_amount(apps, schema_editor):
         to_update.append(item)
 
         if len(to_update) >= BATCH_SIZE:
-            BomItem.objects.bulk_update(to_update, ["raw_amount"])
+            BomItem.objects.bulk_update(to_update, ['raw_amount'])
             updated_count += len(to_update)
             to_update = []
 
@@ -36,12 +36,16 @@ def set_default_raw_amount(apps, schema_editor):
 
     # Handle any remaining items that were not updated in the loop
     if len(to_update) > 0:
-        BomItem.objects.bulk_update(to_update, ["raw_amount"])
+        BomItem.objects.bulk_update(to_update, ['raw_amount'])
         updated_count += len(to_update)
 
-    assert updated_count == N_BOM_ITEMS, f"Expected to update {N_BOM_ITEMS} BomItem records, but updated {updated_count} records instead."
+    assert updated_count == N_BOM_ITEMS, (
+        f'Expected to update {N_BOM_ITEMS} BomItem records, but updated {updated_count} records instead.'
+    )
 
-    assert BomItem.objects.filter(raw_amount="").count() == 0, "There are BomItem records with an empty 'raw_amount' field after migration."
+    assert BomItem.objects.filter(raw_amount='').count() == 0, (
+        "There are BomItem records with an empty 'raw_amount' field after migration."
+    )
 
     if updated_count > 0:
         print(f"Initialized 'raw_amount' field for {updated_count} BomItem records.")
@@ -55,32 +59,32 @@ class Migration(migrations.Migration):
     3. Mark the 'raw_amount' field as blank=False, now that the quantity values have been copied across
     """
 
-    dependencies = [
-        ("part", "0148_auto_20260427_2233"),
-    ]
+    dependencies = [('part', '0148_auto_20260427_2233')]
 
     operations = [
         migrations.AddField(
-            model_name="bomitem",
-            name="raw_amount",
+            model_name='bomitem',
+            name='raw_amount',
             field=models.CharField(
                 blank=True,
                 null=False,
-                help_text="Amount of sub-part consumed to produce one part",
+                help_text='Amount of sub-part consumed to produce one part',
                 max_length=25,
-                verbose_name="Amount",
+                verbose_name='Amount',
             ),
         ),
-        migrations.RunPython(set_default_raw_amount, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            set_default_raw_amount, reverse_code=migrations.RunPython.noop
+        ),
         migrations.AlterField(
-            model_name="bomitem",
-            name="raw_amount",
+            model_name='bomitem',
+            name='raw_amount',
             field=models.CharField(
                 blank=False,
                 null=False,
-                help_text="Amount of sub-part consumed to produce one part",
+                help_text='Amount of sub-part consumed to produce one part',
                 max_length=25,
-                verbose_name="Amount",
+                verbose_name='Amount',
             ),
         ),
     ]

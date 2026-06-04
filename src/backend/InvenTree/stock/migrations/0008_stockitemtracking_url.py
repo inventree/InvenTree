@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0007_auto_20190618_0042'),
-    ]
+    dependencies = [('stock', '0007_auto_20190618_0042')]
 
     operations = [
         migrations.AddField(
             model_name='stockitemtracking',
             name='URL',
-            field=models.URLField(blank=True, help_text='Link to external page for further information'),
-        ),
+            field=models.URLField(
+                blank=True, help_text='Link to external page for further information'
+            ),
+        )
     ]

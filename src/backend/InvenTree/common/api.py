@@ -635,12 +635,14 @@ class BackgroundTaskOverview(APIView):
 
         import InvenTree.status
 
-        serializer = common.serializers.TaskOverviewSerializer({
-            'is_running': InvenTree.status.is_worker_running(),
-            'pending_tasks': q_models.OrmQ.objects.count(),
-            'scheduled_tasks': q_models.Schedule.objects.count(),
-            'failed_tasks': q_models.Failure.objects.count(),
-        })
+        serializer = common.serializers.TaskOverviewSerializer(
+            {
+                'is_running': InvenTree.status.is_worker_running(),
+                'pending_tasks': q_models.OrmQ.objects.count(),
+                'scheduled_tasks': q_models.Schedule.objects.count(),
+                'failed_tasks': q_models.Failure.objects.count(),
+            }
+        )
 
         return Response(serializer.data)
 
@@ -932,9 +934,11 @@ class ParameterTemplateFilter(FilterSet):
         content_type = common.filters.determine_content_type(value)
 
         if not content_type:
-            raise ValidationError({
-                'exists_for_model': 'Invalid model type provided - unable to determine content type'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_model': 'Invalid model type provided - unable to determine content type'
+                }
+            )
 
         # If the 'filter_exists_for_model_id' filter is applied, defer to that
         if self.request.query_params.get('exists_for_model_id', None):
@@ -967,16 +971,20 @@ class ParameterTemplateFilter(FilterSet):
         exists_for_model = self.request.query_params.get('exists_for_model', None)
 
         if not exists_for_model:
-            raise ValidationError({
-                'exists_for_model': 'Invalid model type provided - unable to determine content type'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_model': 'Invalid model type provided - unable to determine content type'
+                }
+            )
 
         content_type = common.filters.determine_content_type(exists_for_model)
 
         if not content_type:
-            raise ValidationError({
-                'exists_for_model': 'Invalid model type provided - unable to determine content type'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_model': 'Invalid model type provided - unable to determine content type'
+                }
+            )
 
         model_class = content_type.model_class()
 
@@ -985,9 +993,11 @@ class ParameterTemplateFilter(FilterSet):
             instance = model_class.objects.get(pk=value)
         except (model_class.DoesNotExist, ValueError):
             # If the model instance does not exist, then we can return an empty queryset
-            raise ValidationError({
-                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+                }
+            )
 
         # If the provided model is a "tree" structure, then we should also include any child objects in the filter
         if isinstance(instance, InvenTree.models.InvenTreeTree):
@@ -1045,9 +1055,11 @@ class ParameterTemplateFilter(FilterSet):
         related_model = self.request.query_params.get('exists_for_related_model', None)
 
         if not model or not related_model:
-            raise ValidationError({
-                'exists_for_model': 'Invalid model type provided - unable to determine content type'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_model': 'Invalid model type provided - unable to determine content type'
+                }
+            )
 
         # Determine content type for the base model, to ensure they are valid
         model_type = common.filters.determine_content_type(model)
@@ -1061,9 +1073,11 @@ class ParameterTemplateFilter(FilterSet):
                 related_model
             )
         except FieldDoesNotExist:
-            raise ValidationError({
-                'exists_for_related_model': 'Invalid related model - no such field on the base model'
-            })
+            raise ValidationError(
+                {
+                    'exists_for_related_model': 'Invalid related model - no such field on the base model'
+                }
+            )
         if related_model_field := model_type.model_class()._meta.get_field(
             related_model
         ):
@@ -1089,9 +1103,9 @@ class ParameterTemplateFilter(FilterSet):
             related_instances = [related_instance.pk]
 
         # Next, find all instances of the base model which are related to the related model instances
-        model_instances = model_type.model_class().objects.filter(**{
-            f'{related_model}__in': related_instances
-        })
+        model_instances = model_type.model_class().objects.filter(
+            **{f'{related_model}__in': related_instances}
+        )
         model_instance_ids = list(model_instances.values_list('pk', flat=True))
 
         # Now, filter against model type and model id
@@ -1436,30 +1450,38 @@ class ObservabilityEnd(CreateAPI):
 selection_urls = [
     path(
         '<int:pk>/',
-        include([
-            # Entries
-            path(
-                'entry/',
-                include([
-                    path(
-                        '<int:entrypk>/',
-                        include([
+        include(
+            [
+                # Entries
+                path(
+                    'entry/',
+                    include(
+                        [
+                            path(
+                                '<int:entrypk>/',
+                                include(
+                                    [
+                                        path(
+                                            '',
+                                            SelectionEntryDetail.as_view(),
+                                            name='api-selectionlistentry-detail',
+                                        )
+                                    ]
+                                ),
+                            ),
                             path(
                                 '',
-                                SelectionEntryDetail.as_view(),
-                                name='api-selectionlistentry-detail',
-                            )
-                        ]),
+                                SelectionEntryList.as_view(),
+                                name='api-selectionlistentry-list',
+                            ),
+                        ]
                     ),
-                    path(
-                        '',
-                        SelectionEntryList.as_view(),
-                        name='api-selectionlistentry-list',
-                    ),
-                ]),
-            ),
-            path('', SelectionListDetail.as_view(), name='api-selectionlist-detail'),
-        ]),
+                ),
+                path(
+                    '', SelectionListDetail.as_view(), name='api-selectionlist-detail'
+                ),
+            ]
+        ),
     ),
     path('', SelectionListList.as_view(), name='api-selectionlist-list'),
 ]
@@ -1469,30 +1491,34 @@ settings_api_urls = [
     # User settings
     path(
         'user/',
-        include([
-            # User Settings Detail
-            re_path(
-                r'^(?P<key>\w+)/',
-                UserSettingsDetail.as_view(),
-                name='api-user-setting-detail',
-            ),
-            # User Settings List
-            path('', UserSettingsList.as_view(), name='api-user-setting-list'),
-        ]),
+        include(
+            [
+                # User Settings Detail
+                re_path(
+                    r'^(?P<key>\w+)/',
+                    UserSettingsDetail.as_view(),
+                    name='api-user-setting-detail',
+                ),
+                # User Settings List
+                path('', UserSettingsList.as_view(), name='api-user-setting-list'),
+            ]
+        ),
     ),
     # Global settings
     path(
         'global/',
-        include([
-            # Global Settings Detail
-            re_path(
-                r'^(?P<key>\w+)/',
-                GlobalSettingsDetail.as_view(),
-                name='api-global-setting-detail',
-            ),
-            # Global Settings List
-            path('', GlobalSettingsList.as_view(), name='api-global-setting-list'),
-        ]),
+        include(
+            [
+                # Global Settings Detail
+                re_path(
+                    r'^(?P<key>\w+)/',
+                    GlobalSettingsDetail.as_view(),
+                    name='api-global-setting-detail',
+                ),
+                # Global Settings List
+                path('', GlobalSettingsList.as_view(), name='api-global-setting-list'),
+            ]
+        ),
     ),
 ]
 
@@ -1504,133 +1530,175 @@ common_api_urls = [
     # Background task information
     path(
         'background-task/',
-        include([
-            path('pending/', PendingTaskList.as_view(), name='api-pending-task-list'),
-            path(
-                'scheduled/',
-                ScheduledTaskList.as_view(),
-                name='api-scheduled-task-list',
-            ),
-            path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
-            path(
-                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
-            ),
-            path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
-        ]),
+        include(
+            [
+                path(
+                    'pending/', PendingTaskList.as_view(), name='api-pending-task-list'
+                ),
+                path(
+                    'scheduled/',
+                    ScheduledTaskList.as_view(),
+                    name='api-scheduled-task-list',
+                ),
+                path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+                path(
+                    '<str:task_id>/',
+                    BackgroundTaskDetail.as_view(),
+                    name='api-task-detail',
+                ),
+                path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
+            ]
+        ),
     ),
     # Attachments
     path(
         'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.Attachment),
-                    path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
-                ]),
-            ),
-            path('', AttachmentList.as_view(), name='api-attachment-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(common.models.Attachment),
+                            path(
+                                '',
+                                AttachmentDetail.as_view(),
+                                name='api-attachment-detail',
+                            ),
+                        ]
+                    ),
+                ),
+                path('', AttachmentList.as_view(), name='api-attachment-list'),
+            ]
+        ),
     ),
     # Parameters and templates
     path(
         'parameter/',
-        include([
-            path(
-                'template/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            meta_path(common.models.ParameterTemplate),
+        include(
+            [
+                path(
+                    'template/',
+                    include(
+                        [
+                            path(
+                                '<int:pk>/',
+                                include(
+                                    [
+                                        meta_path(common.models.ParameterTemplate),
+                                        path(
+                                            '',
+                                            ParameterTemplateDetail.as_view(),
+                                            name='api-parameter-template-detail',
+                                        ),
+                                    ]
+                                ),
+                            ),
                             path(
                                 '',
-                                ParameterTemplateDetail.as_view(),
-                                name='api-parameter-template-detail',
+                                ParameterTemplateList.as_view(),
+                                name='api-parameter-template-list',
                             ),
-                        ]),
+                        ]
                     ),
-                    path(
-                        '',
-                        ParameterTemplateList.as_view(),
-                        name='api-parameter-template-list',
+                ),
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(common.models.Parameter),
+                            path(
+                                '',
+                                ParameterDetail.as_view(),
+                                name='api-parameter-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.Parameter),
-                    path('', ParameterDetail.as_view(), name='api-parameter-detail'),
-                ]),
-            ),
-            path('', ParameterList.as_view(), name='api-parameter-list'),
-        ]),
+                ),
+                path('', ParameterList.as_view(), name='api-parameter-list'),
+            ]
+        ),
     ),
     # Metadata
     path(
         'metadata/',
-        include([
-            path(
-                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
-                GenericMetadataView.as_view(),
-                name='api-generic-metadata',
-            ),
-            path(
-                '<str:model>/<int:pk>/',
-                SimpleGenericMetadataView.as_view(),
-                name='api-generic-metadata',
-            ),
-        ]),
+        include(
+            [
+                path(
+                    '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                    GenericMetadataView.as_view(),
+                    name='api-generic-metadata',
+                ),
+                path(
+                    '<str:model>/<int:pk>/',
+                    SimpleGenericMetadataView.as_view(),
+                    name='api-generic-metadata',
+                ),
+            ]
+        ),
     ),
     # Project codes
     path(
         'project-code/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.ProjectCode),
-                    path(
-                        '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(common.models.ProjectCode),
+                            path(
+                                '',
+                                ProjectCodeDetail.as_view(),
+                                name='api-project-code-detail',
+                            ),
+                        ]
                     ),
-                ]),
-            ),
-            path('', ProjectCodeList.as_view(), name='api-project-code-list'),
-        ]),
+                ),
+                path('', ProjectCodeList.as_view(), name='api-project-code-list'),
+            ]
+        ),
     ),
     # Tags (via django-taggit)
     path(
         'tag/',
-        include([
-            path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
-            path('', TagList.as_view(), name='api-tag-list'),
-        ]),
+        include(
+            [
+                path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
+                path('', TagList.as_view(), name='api-tag-list'),
+            ]
+        ),
     ),
     # Flags
     path(
         'flags/',
-        include([
-            path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
-            path('', FlagList.as_view(), name='api-flag-list'),
-        ]),
+        include(
+            [
+                path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
+                path('', FlagList.as_view(), name='api-flag-list'),
+            ]
+        ),
     ),
     # Status
     path('generic/status/', include(generic_states_api_urls)),
     # Contenttype
     path(
         'contenttype/',
-        include([
-            path(
-                '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
-            ),
-            path(
-                'model/<str:model>/',
-                ContentTypeModelDetail.as_view(),
-                name='api-contenttype-detail-modelname',
-            ),
-            path('', ContentTypeList.as_view(), name='api-contenttype-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    ContentTypeDetail.as_view(),
+                    name='api-contenttype-detail',
+                ),
+                path(
+                    'model/<str:model>/',
+                    ContentTypeModelDetail.as_view(),
+                    name='api-contenttype-detail-modelname',
+                ),
+                path('', ContentTypeList.as_view(), name='api-contenttype-list'),
+            ]
+        ),
     ),
     # Icons
     path('icons/', IconList.as_view(), name='api-icon-list'),
@@ -1639,22 +1707,26 @@ common_api_urls = [
     # System APIs (related to basic system functions)
     path(
         'system/',
-        include([
-            # Health check
-            path('health/', HealthCheckView.as_view(), name='api-system-health')
-        ]),
+        include(
+            [
+                # Health check
+                path('health/', HealthCheckView.as_view(), name='api-system-health')
+            ]
+        ),
     ),
     # Internal System APIs - DO NOT USE
     path(
         'system-internal/',
-        include([
-            # Observability
-            path(
-                'observability/end',
-                ObservabilityEnd.as_view(),
-                name='api-system-observability',
-            )
-        ]),
+        include(
+            [
+                # Observability
+                path(
+                    'observability/end',
+                    ObservabilityEnd.as_view(),
+                    name='api-system-observability',
+                )
+            ]
+        ),
     ),
     # Router
     path('', include(common_router.urls)),

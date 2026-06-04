@@ -1,12 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
-import { Wrapper } from './Layout';
-
 import { Button } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
 import { QrRegistrationForm } from '../Index/Settings/AccountSettings/QrRegistrationForm';
+import { Wrapper } from './Layout';
 
 export default function MFASetup() {
   const navigate = useNavigate();

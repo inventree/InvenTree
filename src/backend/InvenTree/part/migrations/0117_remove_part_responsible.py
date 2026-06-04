@@ -4,14 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    dependencies = [('part', '0116_auto_20231023_0332')]
 
-    dependencies = [
-        ('part', '0116_auto_20231023_0332'),
-    ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='part',
-            name='responsible',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name='part', name='responsible')]

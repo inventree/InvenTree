@@ -6,9 +6,10 @@ from django.db.models import deletion
 
 def update_category_parameters(apps, schema_editor):
     """Copy the 'parameter_template' field to the new 'template' field."""
-
-    PartCategoryParameterTemplate = apps.get_model("part", "PartCategoryParameterTemplate")
-    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
+    PartCategoryParameterTemplate = apps.get_model(
+        'part', 'PartCategoryParameterTemplate'
+    )
+    ParameterTemplate = apps.get_model('common', 'ParameterTemplate')
 
     category_parameters_to_update = []
 
@@ -16,23 +17,23 @@ def update_category_parameters(apps, schema_editor):
         template = ParameterTemplate.objects.get(pk=cat_param.parameter_template_id)
         cat_param.template = template
         category_parameters_to_update.append(cat_param)
-        
+
     if len(category_parameters_to_update) > 0:
-        
-        print(f"Updating {len(category_parameters_to_update)} PartCategoryParameterTemplate records.")
-        
+        print(
+            f'Updating {len(category_parameters_to_update)} PartCategoryParameterTemplate records.'
+        )
+
         PartCategoryParameterTemplate.objects.bulk_update(
-            category_parameters_to_update,
-            fields=["template"],
-            batch_size=250,
-       )
+            category_parameters_to_update, fields=['template'], batch_size=250
+        )
 
 
 def reverse_update_category_parameters(apps, schema_editor):
     """Copy the 'template' field back to the 'parameter_template' field."""
-
-    PartParameterTemplate = apps.get_model("part", "PartParameterTemplate")
-    PartCategoryParameterTemplate = apps.get_model("part", "PartCategoryParameterTemplate")
+    PartParameterTemplate = apps.get_model('part', 'PartParameterTemplate')
+    PartCategoryParameterTemplate = apps.get_model(
+        'part', 'PartCategoryParameterTemplate'
+    )
 
     category_parameters_to_update = []
 
@@ -40,74 +41,66 @@ def reverse_update_category_parameters(apps, schema_editor):
         template = PartParameterTemplate.objects.get(pk=cat_param.template_id)
         cat_param.parameter_template = template
         category_parameters_to_update.append(cat_param)
-        
+
     if len(category_parameters_to_update) > 0:
-        
-        print(f"Reversing update of {len(category_parameters_to_update)} PartCategoryParameterTemplate records.")
-        
+        print(
+            f'Reversing update of {len(category_parameters_to_update)} PartCategoryParameterTemplate records.'
+        )
+
         PartCategoryParameterTemplate.objects.bulk_update(
-            category_parameters_to_update,
-            fields=["parameter_template"],
-            batch_size=250,
-       )
+            category_parameters_to_update, fields=['parameter_template'], batch_size=250
+        )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("part", "0144_auto_20251203_1045"),
-        ("common", "0040_parametertemplate_parameter")
+        ('part', '0144_auto_20251203_1045'),
+        ('common', '0040_parametertemplate_parameter'),
     ]
 
     operations = [
         # Remove the obsolete "part" field from the PartParameter model
-        migrations.RemoveField(
-            model_name="partparameter",
-            name="part",
-        ),
+        migrations.RemoveField(model_name='partparameter', name='part'),
         # Add a new "template" field to the PartCategoryParameterTemplate model
         migrations.AddField(
-            model_name="partcategoryparametertemplate",
-            name="template",
+            model_name='partcategoryparametertemplate',
+            name='template',
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=deletion.CASCADE,
-                related_name="part_categories",
-                to="common.parametertemplate",
+                related_name='part_categories',
+                to='common.parametertemplate',
             ),
         ),
         # Remove unique constraint on PartCategoryParameterTemplate model
         migrations.RemoveConstraint(
-            model_name="partcategoryparametertemplate",
-            name="unique_category_parameter_template_pair",
+            model_name='partcategoryparametertemplate',
+            name='unique_category_parameter_template_pair',
         ),
         # Perform data migration for the PartCategoryParameterTemplate model
         migrations.RunPython(
-            update_category_parameters,
-            reverse_code=reverse_update_category_parameters,
+            update_category_parameters, reverse_code=reverse_update_category_parameters
         ),
         # Remove the obsolete "part_template" field from the PartCategoryParameterTemplate model
         migrations.RemoveField(
-            model_name="partcategoryparametertemplate",
-            name="parameter_template",
+            model_name='partcategoryparametertemplate', name='parameter_template'
         ),
         # Remove nullable attribute from the new 'template' field
         migrations.AlterField(
-            model_name="partcategoryparametertemplate",
-            name="template",
+            model_name='partcategoryparametertemplate',
+            name='template',
             field=models.ForeignKey(
                 on_delete=deletion.CASCADE,
-                related_name="part_categories",
-                to="common.parametertemplate",
+                related_name='part_categories',
+                to='common.parametertemplate',
             ),
         ),
         # Update uniqueness constraint on PartCategoryParameterTemplate model
         migrations.AddConstraint(
-            model_name="partcategoryparametertemplate",
+            model_name='partcategoryparametertemplate',
             constraint=models.UniqueConstraint(
-                fields=("category", "template"),
-                name="unique_category_parameter_pair",
+                fields=('category', 'template'), name='unique_category_parameter_pair'
             ),
         ),
     ]

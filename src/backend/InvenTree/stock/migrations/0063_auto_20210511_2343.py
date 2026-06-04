@@ -4,26 +4,11 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0062_auto_20210511_2151'),
-    ]
+    dependencies = [('stock', '0062_auto_20210511_2151')]
 
     operations = [
-        migrations.RemoveField(
-            model_name='stockitemtracking',
-            name='link',
-        ),
-        migrations.RemoveField(
-            model_name='stockitemtracking',
-            name='quantity',
-        ),
-        migrations.RemoveField(
-            model_name='stockitemtracking',
-            name='system',
-        ),
-        migrations.RemoveField(
-            model_name='stockitemtracking',
-            name='title',
-        ),
+        migrations.RemoveField(model_name='stockitemtracking', name='link'),
+        migrations.RemoveField(model_name='stockitemtracking', name='quantity'),
+        migrations.RemoveField(model_name='stockitemtracking', name='system'),
+        migrations.RemoveField(model_name='stockitemtracking', name='title'),
     ]

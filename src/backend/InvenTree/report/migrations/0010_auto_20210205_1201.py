@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0009_testreport_revision'),
-    ]
+    dependencies = [('report', '0009_testreport_revision')]
 
     operations = [
         migrations.AlterField(
             model_name='testreport',
             name='revision',
-            field=models.PositiveIntegerField(default=1, editable=False, help_text='Report revision number (auto-increments)', verbose_name='Revision'),
-        ),
+            field=models.PositiveIntegerField(
+                default=1,
+                editable=False,
+                help_text='Report revision number (auto-increments)',
+                verbose_name='Revision',
+            ),
+        )
     ]

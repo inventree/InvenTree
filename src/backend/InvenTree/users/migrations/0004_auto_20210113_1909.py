@@ -4,15 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('users', '0003_auto_20201005_2227'),
-    ]
+    dependencies = [('users', '0003_auto_20201005_2227')]
 
     operations = [
         migrations.AlterField(
             model_name='ruleset',
             name='name',
-            field=models.CharField(choices=[('admin', 'Admin'), ('part_category', 'Part Categories'), ('part', 'Parts'), ('stock_location', 'Stock Locations'), ('stock', 'Stock Items'), ('build', 'Build Orders'), ('purchase_order', 'Purchase Orders'), ('sales_order', 'Sales Orders')], help_text='Permission set', max_length=50),
-        ),
+            field=models.CharField(
+                choices=[
+                    ('admin', 'Admin'),
+                    ('part_category', 'Part Categories'),
+                    ('part', 'Parts'),
+                    ('stock_location', 'Stock Locations'),
+                    ('stock', 'Stock Items'),
+                    ('build', 'Build Orders'),
+                    ('purchase_order', 'Purchase Orders'),
+                    ('sales_order', 'Sales Orders'),
+                ],
+                help_text='Permission set',
+                max_length=50,
+            ),
+        )
     ]

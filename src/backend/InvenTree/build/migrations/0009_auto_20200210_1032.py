@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('build', '0008_auto_20200201_1247'),
-    ]
+    dependencies = [('build', '0008_auto_20200201_1247')]
 
     operations = [
         migrations.AlterField(
             model_name='build',
             name='creation_date',
             field=models.DateField(auto_now_add=True),
-        ),
+        )
     ]

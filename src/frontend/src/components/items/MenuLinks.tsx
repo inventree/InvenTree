@@ -1,3 +1,6 @@
+import { StylishText } from '@lib/components/StylishText';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import {
   Anchor,
   Divider,
@@ -10,10 +13,6 @@ import {
 } from '@mantine/core';
 import { type JSX, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { StylishText } from '@lib/components/StylishText';
-import { navigateToLink } from '@lib/functions/Navigation';
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
 
 export interface MenuLinkItem {
@@ -49,66 +48,64 @@ export function MenuLinks({
   }
 
   return (
-    <>
-      <Stack gap='xs'>
-        <Divider />
-        <StylishText size='md'>{title}</StylishText>
-        <Divider />
-        <SimpleGrid
-          cols={{ base: 1, '400px': 2 }}
-          type='container'
-          spacing={0}
-          p={3}
-        >
-          {visibleLinks.map((item) => (
-            <Tooltip
-              key={`menu-link-tooltip-${item.id}`}
-              label={item.description}
-              hidden={!item.description}
-            >
-              {item.link && item.external ? (
-                <Anchor href={item.link}>
-                  <Group wrap='nowrap'>
-                    {item.external && (
-                      <InvenTreeIcon
-                        icon={item.icon ?? 'link'}
-                        iconProps={{ size: '14' }}
-                      />
-                    )}
-                    <Text fw={500} p={5}>
-                      {item.title}
-                    </Text>
-                  </Group>
-                </Anchor>
-              ) : (
-                <UnstyledButton
-                  onClick={(event) => {
-                    if (item.link) {
-                      beforeClick?.();
-                      navigateToLink(item.link, navigate, event);
-                    } else if (item.action) {
-                      beforeClick?.();
-                      item.action();
-                    }
-                  }}
-                >
-                  <Group wrap='nowrap'>
-                    {item.icon && (
-                      <InvenTreeIcon
-                        icon={item.icon}
-                        iconProps={{ size: '14' }}
-                      />
-                    )}
-                    <Text fw={500} p={5}>
-                      {item.title}
-                    </Text>
-                  </Group>
-                </UnstyledButton>
-              )}
-            </Tooltip>
-          ))}
-        </SimpleGrid>
-      </Stack>
-    </>
+    <Stack gap='xs'>
+      <Divider />
+      <StylishText size='md'>{title}</StylishText>
+      <Divider />
+      <SimpleGrid
+        cols={{ base: 1, '400px': 2 }}
+        type='container'
+        spacing={0}
+        p={3}
+      >
+        {visibleLinks.map((item) => (
+          <Tooltip
+            key={`menu-link-tooltip-${item.id}`}
+            label={item.description}
+            hidden={!item.description}
+          >
+            {item.link && item.external ? (
+              <Anchor href={item.link}>
+                <Group wrap='nowrap'>
+                  {item.external && (
+                    <InvenTreeIcon
+                      icon={item.icon ?? 'link'}
+                      iconProps={{ size: '14' }}
+                    />
+                  )}
+                  <Text fw={500} p={5}>
+                    {item.title}
+                  </Text>
+                </Group>
+              </Anchor>
+            ) : (
+              <UnstyledButton
+                onClick={(event) => {
+                  if (item.link) {
+                    beforeClick?.();
+                    navigateToLink(item.link, navigate, event);
+                  } else if (item.action) {
+                    beforeClick?.();
+                    item.action();
+                  }
+                }}
+              >
+                <Group wrap='nowrap'>
+                  {item.icon && (
+                    <InvenTreeIcon
+                      icon={item.icon}
+                      iconProps={{ size: '14' }}
+                    />
+                  )}
+                  <Text fw={500} p={5}>
+                    {item.title}
+                  </Text>
+                </Group>
+              </UnstyledButton>
+            )}
+          </Tooltip>
+        ))}
+      </SimpleGrid>
+    </Stack>
   );
 }

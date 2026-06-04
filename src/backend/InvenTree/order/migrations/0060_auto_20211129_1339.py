@@ -4,19 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0059_salesordershipment_tracking_number'),
-    ]
+    dependencies = [('order', '0059_salesordershipment_tracking_number')]
 
     operations = [
         migrations.AlterField(
             model_name='salesordershipment',
             name='reference',
-            field=models.CharField(default='1', help_text='Shipment number', max_length=100, verbose_name='Shipment'),
+            field=models.CharField(
+                default='1',
+                help_text='Shipment number',
+                max_length=100,
+                verbose_name='Shipment',
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='salesordershipment',
-            unique_together={('order', 'reference')},
+            name='salesordershipment', unique_together={('order', 'reference')}
         ),
     ]

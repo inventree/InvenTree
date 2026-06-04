@@ -4,31 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0023_auto_20240421_0455'),
-    ]
+    dependencies = [('report', '0023_auto_20240421_0455')]
 
     operations = [
-        migrations.DeleteModel(
-            name='BillOfMaterialsReport',
-        ),
-        migrations.DeleteModel(
-            name='BuildReport',
-        ),
-        migrations.DeleteModel(
-            name='PurchaseOrderReport',
-        ),
-        migrations.DeleteModel(
-            name='ReturnOrderReport',
-        ),
-        migrations.DeleteModel(
-            name='SalesOrderReport',
-        ),
-        migrations.DeleteModel(
-            name='StockLocationReport',
-        ),
-        migrations.DeleteModel(
-            name='TestReport',
-        ),
+        migrations.DeleteModel(name='BillOfMaterialsReport'),
+        migrations.DeleteModel(name='BuildReport'),
+        migrations.DeleteModel(name='PurchaseOrderReport'),
+        migrations.DeleteModel(name='ReturnOrderReport'),
+        migrations.DeleteModel(name='SalesOrderReport'),
+        migrations.DeleteModel(name='StockLocationReport'),
+        migrations.DeleteModel(name='TestReport'),
     ]

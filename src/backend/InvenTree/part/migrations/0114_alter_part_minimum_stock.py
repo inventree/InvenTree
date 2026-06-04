@@ -5,15 +5,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0113_auto_20230531_1205'),
-    ]
+    dependencies = [('part', '0113_auto_20230531_1205')]
 
     operations = [
         migrations.AlterField(
             model_name='part',
             name='minimum_stock',
-            field=models.DecimalField(decimal_places=6, default=0, help_text='Minimum allowed stock level', max_digits=19, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Minimum Stock'),
-        ),
+            field=models.DecimalField(
+                decimal_places=6,
+                default=0,
+                help_text='Minimum allowed stock level',
+                max_digits=19,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name='Minimum Stock',
+            ),
+        )
     ]

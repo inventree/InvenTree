@@ -1,9 +1,8 @@
+import { useStoredTableState } from '@lib/states/StoredTableState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
-
-import { useStoredTableState } from '@lib/states/StoredTableState';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useLocalState } from '../states/LocalState';

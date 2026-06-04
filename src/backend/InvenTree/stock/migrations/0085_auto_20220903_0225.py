@@ -5,7 +5,6 @@ from django.db import migrations
 
 def uid_to_barcode(apps, schama_editor):
     """Migrate old 'uid' field to new 'barcode_hash' field"""
-
     StockItem = apps.get_model('stock', 'stockitem')
 
     # Find all StockItem objects with non-empty UID field
@@ -16,11 +15,11 @@ def uid_to_barcode(apps, schama_editor):
         item.save()
 
     if items.count() > 0:
-        print(f"Updated barcode data for {items.count()} StockItem objects")
+        print(f'Updated barcode data for {items.count()} StockItem objects')
+
 
 def barcode_to_uid(apps, schema_editor):
     """Migrate new 'barcode_hash' field to old 'uid' field"""
-
     StockItem = apps.get_model('stock', 'stockitem')
 
     # Find all StockItem objects with non-empty UID field
@@ -31,18 +30,10 @@ def barcode_to_uid(apps, schema_editor):
         item.save()
 
     if items.count() > 0:
-        print(f"Updated barcode data for {items.count()} StockItem objects")
+        print(f'Updated barcode data for {items.count()} StockItem objects')
 
 
 class Migration(migrations.Migration):
+    dependencies = [('stock', '0084_auto_20220903_0154')]
 
-    dependencies = [
-        ('stock', '0084_auto_20220903_0154'),
-    ]
-
-    operations = [
-        migrations.RunPython(
-            uid_to_barcode,
-            reverse_code=barcode_to_uid
-        )
-    ]
+    operations = [migrations.RunPython(uid_to_barcode, reverse_code=barcode_to_uid)]

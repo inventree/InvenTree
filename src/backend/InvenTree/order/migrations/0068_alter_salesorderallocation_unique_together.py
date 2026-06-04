@@ -4,14 +4,10 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0067_auto_20220516_1120'),
-    ]
+    dependencies = [('order', '0067_auto_20220516_1120')]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='salesorderallocation',
-            unique_together=set(),
-        ),
+            name='salesorderallocation', unique_together=set()
+        )
     ]

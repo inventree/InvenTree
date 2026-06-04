@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def move_address_to_new_model(apps, schema_editor):
     Company = apps.get_model('company', 'Company')
     Address = apps.get_model('company', 'Address')
@@ -10,13 +11,12 @@ def move_address_to_new_model(apps, schema_editor):
             # Address field might exceed length of new model fields
             l1 = company.address[:50]
             l2 = company.address[50:100]
-            Address.objects.create(company=company,
-                                   title="Primary",
-                                   primary=True,
-                                   line1=l1,
-                                   line2=l2)
+            Address.objects.create(
+                company=company, title='Primary', primary=True, line1=l1, line2=l2
+            )
             company.address = ''
             company.save()
+
 
 def revert_address_move(apps, schema_editor):
     Address = apps.get_model('company', 'Address')
@@ -27,11 +27,10 @@ def revert_address_move(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('company', '0063_auto_20230502_1956'),
-    ]
+    dependencies = [('company', '0063_auto_20230502_1956')]
 
     operations = [
-        migrations.RunPython(move_address_to_new_model, reverse_code=revert_address_move)
+        migrations.RunPython(
+            move_address_to_new_model, reverse_code=revert_address_move
+        )
     ]

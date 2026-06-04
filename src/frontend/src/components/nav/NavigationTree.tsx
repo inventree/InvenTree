@@ -1,3 +1,13 @@
+import { StylishText } from '@lib/components/StylishText';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
@@ -22,17 +32,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { StylishText } from '@lib/components/StylishText';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import {
-  eventModified,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiIcon } from '../items/ApiIcon';
 
@@ -95,7 +94,7 @@ export default function NavigationTree({
     const nodes: Record<number, any> = {};
     const tree: TreeNodeData[] = [];
 
-    if (!query || !query?.data?.length) {
+    if (!query?.data?.length) {
       return [];
     }
 

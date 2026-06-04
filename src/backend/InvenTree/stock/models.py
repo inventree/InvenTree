@@ -940,11 +940,13 @@ class StockItem(
         - Quantity must be 1 if the StockItem has a serial number
         """
         if self.location is not None and self.location.structural:
-            raise ValidationError({
-                'location': _(
-                    'Stock items cannot be located into structural stock locations!'
-                )
-            })
+            raise ValidationError(
+                {
+                    'location': _(
+                        'Stock items cannot be located into structural stock locations!'
+                    )
+                }
+            )
 
         super().clean()
 
@@ -961,11 +963,13 @@ class StockItem(
 
             # Prevent editing of serial numbers if the item already has a serial number assigned
             if 'serial' in deltas and deltas['serial']['old'] not in [None, '']:
-                raise ValidationError({
-                    'serial': _(
-                        'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'serial': _(
+                            'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
+                        )
+                    }
+                )
 
         # Custom validation of batch code
         self.validate_batch_code()
@@ -973,15 +977,19 @@ class StockItem(
         try:
             # Trackable parts must have integer values for quantity field!
             if self.part.trackable and self.quantity != int(self.quantity):
-                raise ValidationError({
-                    'quantity': _('Quantity must be integer value for trackable parts')
-                })
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Quantity must be integer value for trackable parts'
+                        )
+                    }
+                )
 
             # Virtual parts cannot have stock items created against them
             if self.part.virtual:
-                raise ValidationError({
-                    'part': _('Stock item cannot be created for virtual parts')
-                })
+                raise ValidationError(
+                    {'part': _('Stock item cannot be created for virtual parts')}
+                )
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
             # It *seems* that this only occurs in unit testing, though.
@@ -995,34 +1003,40 @@ class StockItem(
         try:
             if self.supplier_part is not None:
                 if self.supplier_part.part != self.part:
-                    raise ValidationError({
-                        'supplier_part': _(
-                            f"Part type ('{self.supplier_part.part}') must be {self.part}"
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'supplier_part': _(
+                                f"Part type ('{self.supplier_part.part}') must be {self.part}"
+                            )
+                        }
+                    )
 
             if self.part is not None:
                 # A part with a serial number MUST have the quantity set to 1
                 if self.serial:
                     if self.quantity > 1:
-                        raise ValidationError({
-                            'quantity': _(
-                                'Quantity must be 1 for item with a serial number'
-                            ),
-                            'serial': _(
-                                'Serial number cannot be set if quantity greater than 1'
-                            ),
-                        })
+                        raise ValidationError(
+                            {
+                                'quantity': _(
+                                    'Quantity must be 1 for item with a serial number'
+                                ),
+                                'serial': _(
+                                    'Serial number cannot be set if quantity greater than 1'
+                                ),
+                            }
+                        )
 
                     if self.quantity == 0:
                         self.quantity = 1
 
                     elif self.quantity > 1:
-                        raise ValidationError({
-                            'quantity': _(
-                                'Quantity must be 1 for item with a serial number'
-                            )
-                        })
+                        raise ValidationError(
+                            {
+                                'quantity': _(
+                                    'Quantity must be 1 for item with a serial number'
+                                )
+                            }
+                        )
 
                     # Serial numbered items cannot be deleted on depletion
                     self.delete_on_deplete = False
@@ -1036,9 +1050,9 @@ class StockItem(
 
         # If the item is marked as "is_building", it must point to a build!
         if self.is_building and not self.build:
-            raise ValidationError({
-                'build': _('Item must have a build reference if is_building=True')
-            })
+            raise ValidationError(
+                {'build': _('Item must have a build reference if is_building=True')}
+            )
 
         # If the item points to a build, check that the Part references match
         if self.build:
@@ -1049,9 +1063,13 @@ class StockItem(
                 # Part reference is one of the valid conversion options for the build output
                 pass
             else:
-                raise ValidationError({
-                    'build': _('Build reference does not point to the same part object')
-                })
+                raise ValidationError(
+                    {
+                        'build': _(
+                            'Build reference does not point to the same part object'
+                        )
+                    }
+                )
 
     def get_absolute_url(self):
         """Return url for instance."""
@@ -1485,14 +1503,14 @@ class StockItem(
         if quantity is not None and not self.serialized:
             # If quantity is specified, we are splitting the stock item
             if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity must be greater than zero')}
+                )
 
             if quantity > self.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity exceeds available stock')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity exceeds available stock')}
+                )
 
             if quantity < self.quantity:
                 # Split the stock item
@@ -1848,12 +1866,14 @@ class StockItem(
         if check_in_production and self.is_building:
             return False
 
-        return all([
-            self.sales_order is None,  # Not assigned to a SalesOrder
-            self.belongs_to is None,  # Not installed inside another StockItem
-            self.customer is None,  # Not assigned to a customer
-            self.consumed_by is None,  # Not consumed by a build
-        ])
+        return all(
+            [
+                self.sales_order is None,  # Not assigned to a SalesOrder
+                self.belongs_to is None,  # Not installed inside another StockItem
+                self.customer is None,  # Not assigned to a customer
+                self.consumed_by is None,  # Not consumed by a build
+            ]
+        )
 
     @property
     def in_stock(self) -> bool:
@@ -1990,21 +2010,23 @@ class StockItem(
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > self.quantity:
-            raise ValidationError({
-                'quantity': _(
-                    f'Quantity must not exceed available stock quantity ({self.quantity})'
-                )
-            })
+            raise ValidationError(
+                {
+                    'quantity': _(
+                        f'Quantity must not exceed available stock quantity ({self.quantity})'
+                    )
+                }
+            )
 
         if type(serials) not in [list, tuple]:
-            raise ValidationError({
-                'serial_numbers': _('Serial numbers must be provided as a list')
-            })
+            raise ValidationError(
+                {'serial_numbers': _('Serial numbers must be provided as a list')}
+            )
 
         if quantity != len(serials):
-            raise ValidationError({
-                'quantity': _('Quantity does not match serial numbers')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity does not match serial numbers')}
+            )
 
         # Test if each of the serial numbers are valid
         existing = self.part.find_conflicting_serial_numbers(serials)
@@ -2020,9 +2042,9 @@ class StockItem(
 
         if location:
             if location.structural:
-                raise ValidationError({
-                    'location': _('Cannot assign stock to structural location')
-                })
+                raise ValidationError(
+                    {'location': _('Cannot assign stock to structural location')}
+                )
 
             data['location_id'] = location.pk
 
@@ -2137,9 +2159,9 @@ class StockItem(
                         part=self.part, test_name=test_name
                     )
                 else:
-                    raise ValidationError({
-                        'template': _('Test template does not exist')
-                    })
+                    raise ValidationError(
+                        {'template': _('Test template does not exist')}
+                    )
 
         kwargs['template'] = template
         kwargs['stock_item'] = self
@@ -3135,9 +3157,9 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
             raise ValidationError({'value': _('Value must be provided for this test')})
 
         if template.requires_attachment and not self.attachment:
-            raise ValidationError({
-                'attachment': _('Attachment must be uploaded for this test')
-            })
+            raise ValidationError(
+                {'attachment': _('Attachment must be uploaded for this test')}
+            )
 
         if choices := template.get_choices():
             if self.value not in choices:

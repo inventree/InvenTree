@@ -66,9 +66,9 @@ class Command(BaseCommand):
 
         def get_model_items_with_icons(model: models.Model, icon_field: str):
             """Return a list of models with icon fields."""
-            return model.objects.exclude(**{f'{icon_field}__isnull': True}).exclude(**{
-                f'{icon_field}__exact': ''
-            })
+            return model.objects.exclude(**{f'{icon_field}__isnull': True}).exclude(
+                **{f'{icon_field}__exact': ''}
+            )
 
         # Generate output icon map file
         if kwargs['output_file']:
@@ -97,10 +97,9 @@ class Command(BaseCommand):
                         }
 
                     if kwargs['include_items']:
-                        icons[icon]['items'].append({
-                            'model': model.__name__.lower(),
-                            'id': item.id,
-                        })
+                        icons[icon]['items'].append(
+                            {'model': model.__name__.lower(), 'id': item.id}
+                        )
 
             self.stdout.write(f'Writing icon map for {len(icons.keys())} icons')
             with open(kwargs['output_file'], 'w', encoding='utf-8') as f:

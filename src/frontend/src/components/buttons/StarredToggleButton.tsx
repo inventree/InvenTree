@@ -51,7 +51,7 @@ export default function StarredToggleButton({
       });
   }
 
-  if (!instance || !instance.pk) {
+  if (!instance?.pk) {
     return <></>;
   }
 

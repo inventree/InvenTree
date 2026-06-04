@@ -1,11 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { Accordion, Stack } from '@mantine/core';
-import { useMemo } from 'react';
-
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
+import { t } from '@lingui/core/macro';
+import { Accordion, Stack } from '@mantine/core';
+import { useMemo } from 'react';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';
@@ -34,7 +33,7 @@ function AllUnitTable() {
         enableColumnSwitching: false,
         dataFormatter: (data: any) => {
           const units = data.available_units ?? {};
-          return Object.entries(units).map(([key, values]: [string, any]) => {
+          return Object.entries(units).map(([_key, values]: [string, any]) => {
             return {
               name: values.name,
               is_alias: values.is_alias,

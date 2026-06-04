@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0099_alter_bomitem_inherited'),
-    ]
+    dependencies = [('part', '0099_alter_bomitem_inherited')]
 
     operations = [
         migrations.AlterField(
             model_name='bomitem',
             name='reference',
-            field=models.CharField(blank=True, help_text='BOM item reference', max_length=5000, verbose_name='Reference'),
-        ),
+            field=models.CharField(
+                blank=True,
+                help_text='BOM item reference',
+                max_length=5000,
+                verbose_name='Reference',
+            ),
+        )
     ]

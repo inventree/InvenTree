@@ -1,3 +1,5 @@
+import type { AuthProvider } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
 import { Button, Tooltip } from '@mantine/core';
 import {
   IconBrandAzure,
@@ -13,12 +15,8 @@ import {
   IconBrandTwitter,
   IconLogin
 } from '@tabler/icons-react';
-
-import type { AuthProvider } from '@lib/types/Auth';
-import { t } from '@lingui/core/macro';
-import { ProviderLogin } from '../../functions/auth';
-
 import type { JSX } from 'react';
+import { ProviderLogin } from '../../functions/auth';
 
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,

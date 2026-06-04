@@ -1,13 +1,11 @@
 import { ActionIcon, Divider, Drawer, Group, Stack, Text } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
-
-import type { UiSizeType } from '../../types/Core';
-
+import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { useLocalLibState } from '../../states/LocalLibState';
+import type { UiSizeType } from '../../types/Core';
 import { StylishText } from '../StylishText';
 import * as classes from './DetailDrawer.css';
 

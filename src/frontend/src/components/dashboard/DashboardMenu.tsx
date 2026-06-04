@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -16,8 +17,6 @@ import {
   IconLayoutGridRemove
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
 import useInstanceName from '../../hooks/UseInstanceName';
 import { useUserState } from '../../states/UserState';
 

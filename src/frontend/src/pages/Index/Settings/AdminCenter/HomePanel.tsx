@@ -6,8 +6,8 @@ import { type JSX, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
   type ExtendedAlertInfo,
-  ServerAlert,
-  getAlerts
+  getAlerts,
+  ServerAlert
 } from '../../../../components/nav/Alerts';
 import { QuickAction } from '../../../../components/settings/QuickAction';
 import { useServerApiState } from '../../../../states/ServerApiState';

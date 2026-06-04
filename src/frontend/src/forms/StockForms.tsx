@@ -39,11 +39,11 @@ import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
@@ -116,8 +116,8 @@ export function useStockFields({
 
     // Find the highest price break that is less than or equal to the quantity
     const priceBreak = Object.entries(pricing)
-      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
-      .find(([br]) => quantity >= Number.parseInt(br));
+      .sort(([a], [b]) => Number.parseInt(b, 10) - Number.parseInt(a, 10))
+      .find(([br]) => quantity >= Number.parseInt(br, 10));
 
     if (priceBreak) {
       setPurchasePrice(priceBreak[1][0]);
@@ -1577,7 +1577,7 @@ export function useTestResultFields({
           include_inherited: true,
           part: partId
         },
-        onValueChange: (value: any, record: any) => {
+        onValueChange: (_value: any, record: any) => {
           // Adjust the type of the "value" field based on the selected template
           if (record?.choices) {
             const _choices: string[] = record.choices.split(',');

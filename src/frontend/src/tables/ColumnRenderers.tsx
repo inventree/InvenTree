@@ -1,6 +1,13 @@
 /**
  * Common rendering functions for table column data.
  */
+
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/Conversion';
+import { cancelEvent } from '@lib/functions/Events';
+import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import {
   Anchor,
@@ -17,13 +24,6 @@ import {
   IconLink,
   IconLock
 } from '@tabler/icons-react';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import type { ModelType } from '@lib/enums/ModelType';
-import { resolveItem } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
-import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import type { ReactNode } from 'react';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
@@ -142,11 +142,11 @@ export function StockColumn(props: StockColumnProps): TableColumn {
       const available = quantity - allocated;
 
       const extra: ReactNode[] = [];
-      let color = undefined;
+      let color;
       let text = formatDecimal(quantity);
 
       // Handle case where stock item detail is not provided
-      if (!stock_item || !stock_item.pk) {
+      if (!stock_item?.pk) {
         return props.nullMessage ?? '-';
       }
 
@@ -287,11 +287,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
   };
 }
 
-export function CompanyColumn({
-  company
-}: {
-  company: any;
-}) {
+export function CompanyColumn({ company }: { company: any }) {
   return company ? (
     <Group gap='xs' wrap='nowrap'>
       <Thumbnail
@@ -317,7 +313,7 @@ export function PathColumn(props: TableColumnProps): TableColumn {
     render: (record: any) => {
       const instance = resolveItem(record, props.accessor ?? '');
 
-      if (!instance || !instance.name) {
+      if (!instance?.name) {
         return '-';
       }
 
@@ -347,7 +343,7 @@ export function PathColumnPlainText(props: TableColumnProps): TableColumn {
     render: (record: any) => {
       const instance = resolveItem(record, props.accessor ?? '');
 
-      if (!instance || !instance.pathstring) {
+      if (!instance?.pathstring) {
         return '-';
       }
 

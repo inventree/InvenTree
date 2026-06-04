@@ -1,17 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
-import { IconFileCode } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import {
   type RowAction,
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -20,6 +13,12 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { IconFileCode } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CodeEditor,
   PdfPreview,

@@ -1,3 +1,8 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
@@ -8,12 +13,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -58,7 +57,7 @@ export default function SalesOrderShipmentDetail() {
   const user = useUserState();
   const navigate = useNavigate();
 
-  const userId = useMemo(() => user.userId(), [user]);
+  const _userId = useMemo(() => user.userId(), [user]);
 
   const {
     instance: shipment,
@@ -219,30 +218,28 @@ export default function SalesOrderShipmentDetail() {
     ];
 
     return (
-      <>
-        <ItemDetailsGrid>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.sales_order}
-              apiPath={ApiEndpoints.company_list}
-              src={customer?.image}
-              pk={customer?.pk}
-              imageActions={{
-                selectExisting: false,
-                downloadImage: false,
-                uploadFile: false,
-                deleteFile: false
-              }}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={data} />
-            </Grid.Col>
-          </Grid>
-          <DetailsTable fields={tr} item={data} />
-          <DetailsTable fields={bl} item={data} />
-          <DetailsTable fields={br} item={data} />
-        </ItemDetailsGrid>
-      </>
+      <ItemDetailsGrid>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.sales_order}
+            apiPath={ApiEndpoints.company_list}
+            src={customer?.image}
+            pk={customer?.pk}
+            imageActions={{
+              selectExisting: false,
+              downloadImage: false,
+              uploadFile: false,
+              deleteFile: false
+            }}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
+            <DetailsTable fields={tl} item={data} />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
+      </ItemDetailsGrid>
     );
   }, [shipment, shipmentQuery, customer, customerQuery]);
 

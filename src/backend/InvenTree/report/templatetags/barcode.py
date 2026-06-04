@@ -79,13 +79,15 @@ def qrcode(data: str, **kwargs) -> str:
     optimize = kwargs.pop('optimize', 1)
 
     # Construct QR code object
-    qr = QRCode(**{
-        'box_size': 20,
-        'border': 1,
-        'version': None,
-        **kwargs,
-        'error_correction': QR_ECL_LEVEL_MAP[kwargs.get('error_correction', 'M')],
-    })
+    qr = QRCode(
+        **{
+            'box_size': 20,
+            'border': 1,
+            'version': None,
+            **kwargs,
+            'error_correction': QR_ECL_LEVEL_MAP[kwargs.get('error_correction', 'M')],
+        }
+    )
     qr.add_data(data, optimize=optimize)
     qr.make(fit=False)  # if version is None, it will automatically use fit=True
 

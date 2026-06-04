@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0065_auto_20210701_0509'),
-    ]
+    dependencies = [('stock', '0065_auto_20210701_0509')]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='scheduled_for_deletion',
-            field=models.BooleanField(default=False, help_text='This StockItem will be deleted by the background worker', verbose_name='Scheduled for deletion'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='This StockItem will be deleted by the background worker',
+                verbose_name='Scheduled for deletion',
+            ),
+        )
     ]

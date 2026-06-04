@@ -1,3 +1,4 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
@@ -13,8 +14,6 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconExclamationCircle } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
 import type { panelOptions } from '../PartPricingPanel';
 
 function AccordionControl(props: AccordionControlProps) {

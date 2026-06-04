@@ -1,18 +1,17 @@
-import { t } from '@lingui/core/macro';
-import { Container, Flex, Space } from '@mantine/core';
-import {
-  Spotlight,
-  type SpotlightActionData,
-  createSpotlight
-} from '@mantine/spotlight';
-import { IconSearch } from '@tabler/icons-react';
-import { type JSX, useEffect, useMemo, useState } from 'react';
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-
 import { Boundary } from '@lib/components/Boundary';
 import { identifierString } from '@lib/functions/Conversion';
 import { ApiEndpoints, apiUrl } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { Container, Flex, Space } from '@mantine/core';
+import {
+  createSpotlight,
+  Spotlight,
+  type SpotlightActionData
+} from '@mantine/spotlight';
+import { IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { type JSX, useEffect, useMemo, useState } from 'react';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';

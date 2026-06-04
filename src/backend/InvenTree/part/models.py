@@ -223,8 +223,7 @@ class PartCategory(
     def prefetch_parts_parameters(self, cascade=True):
         """Prefectch parts parameters."""
         return (
-            self
-            .get_parts(cascade=cascade)
+            self.get_parts(cascade=cascade)
             .prefetch_related('parameters_list', 'parameters_list__template')
             .all()
         )
@@ -614,8 +613,7 @@ class Part(
                 if previous.image is not None and self.image != previous.image:
                     # Are there any (other) parts which reference the image?
                     n_refs = (
-                        Part.objects
-                        .filter(image=previous.image)
+                        Part.objects.filter(image=previous.image)
                         .exclude(pk=self.pk)
                         .count()
                     )
@@ -676,18 +674,22 @@ class Part(
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({
-                    'sub_part': _(
-                        f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'sub_part': _(
+                            f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
+                        )
+                    }
+                )
 
             if self.tree_id == parent.tree_id:
-                raise ValidationError({
-                    'sub_part': _(
-                        f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'sub_part': _(
+                            f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
+                        )
+                    }
+                )
 
             bom_items = self.get_bom_items()
 
@@ -695,11 +697,13 @@ class Part(
             for item in bom_items.all():
                 # Check for simple match
                 if item.sub_part == parent:
-                    raise ValidationError({
-                        'sub_part': _(
-                            f"Part '{parent}' is  used in BOM for '{self}' (recursive)"
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'sub_part': _(
+                                f"Part '{parent}' is  used in BOM for '{self}' (recursive)"
+                            )
+                        }
+                    )
 
                 # And recursively check too
                 if recursive:
@@ -775,37 +779,41 @@ class Part(
         # Part cannot be a revision of itself
         if self.revision_of:
             if self.revision_of == self:
-                raise ValidationError({
-                    'revision_of': _('Part cannot be a revision of itself')
-                })
+                raise ValidationError(
+                    {'revision_of': _('Part cannot be a revision of itself')}
+                )
 
             # If this part is a revision, it must have a revision code
             if not self.revision:
-                raise ValidationError({
-                    'revision': _(
-                        'Revision code must be specified for a part marked as a revision'
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'revision': _(
+                            'Revision code must be specified for a part marked as a revision'
+                        )
+                    }
+                )
 
             if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
                 if not self.assembly or not self.revision_of.assembly:
-                    raise ValidationError({
-                        'revision_of': _(
-                            'Revisions are only allowed for assembly parts'
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'revision_of': _(
+                                'Revisions are only allowed for assembly parts'
+                            )
+                        }
+                    )
 
             # Cannot have a revision of a "template" part
             if self.revision_of.is_template:
-                raise ValidationError({
-                    'revision_of': _('Cannot make a revision of a template part')
-                })
+                raise ValidationError(
+                    {'revision_of': _('Cannot make a revision of a template part')}
+                )
 
             # parent part must point to the same template (via variant_of)
             if self.variant_of != self.revision_of.variant_of:
-                raise ValidationError({
-                    'revision_of': _('Parent part must point to the same template')
-                })
+                raise ValidationError(
+                    {'revision_of': _('Parent part must point to the same template')}
+                )
 
     def validate_serial_number(
         self,
@@ -1031,16 +1039,15 @@ class Part(
             parts = parts.exclude(pk=self.pk)
 
             if parts.exists():
-                raise ValidationError({
-                    'IPN': _('Duplicate IPN not allowed in part settings')
-                })
+                raise ValidationError(
+                    {'IPN': _('Duplicate IPN not allowed in part settings')}
+                )
 
         if (
             self.revision_of
             and self.revision
             and (
-                Part.objects
-                .exclude(pk=self.pk)
+                Part.objects.exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
                 .exists()
             )
@@ -1049,8 +1056,7 @@ class Part(
 
         # Ensure unique across (Name, revision, IPN) (as specified)
         if (self.revision or self.IPN) and (
-            Part.objects
-            .exclude(pk=self.pk)
+            Part.objects.exclude(pk=self.pk)
             .filter(name=self.name, revision=self.revision, IPN=self.IPN)
             .exists()
         ):
@@ -1069,9 +1075,13 @@ class Part(
             then we will force the parent part to be trackable.
         """
         if self.category is not None and self.category.structural:
-            raise ValidationError({
-                'category': _('Parts cannot be assigned to structural part categories!')
-            })
+            raise ValidationError(
+                {
+                    'category': _(
+                        'Parts cannot be assigned to structural part categories!'
+                    )
+                }
+            )
 
         # Check the 'revision' and 'revision_of' fields
         self.validate_revision()
@@ -1820,12 +1830,14 @@ class Part(
             # If this instance has not been saved, foreign-key lookups will fail
             return 0
 
-        return sum([
-            self.build_order_allocation_count(**kwargs),
-            self.sales_order_allocation_count(**kwargs),
-            # For now, stock allocated to a transfer order will not impact its availability
-            # self.transfer_order_allocation_count(**kwargs),
-        ])
+        return sum(
+            [
+                self.build_order_allocation_count(**kwargs),
+                self.sales_order_allocation_count(**kwargs),
+                # For now, stock allocated to a transfer order will not impact its availability
+                # self.transfer_order_allocation_count(**kwargs),
+            ]
+        )
 
     def stock_entries(
         self, include_variants=True, include_external=True, in_stock=None, location=None
@@ -3708,11 +3720,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         self.key = helpers.generateTestKey(self.test_name)
 
         if len(self.key) == 0:
-            raise ValidationError({
-                'test_name': _(
-                    'Invalid template name - must include at least one alphanumeric character'
-                )
-            })
+            raise ValidationError(
+                {
+                    'test_name': _(
+                        'Invalid template name - must include at least one alphanumeric character'
+                    )
+                }
+            )
 
         # Check that 'choices' are in fact valid
         if self.choices is None:
@@ -3741,9 +3755,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     def validate_unique(self, exclude=None):
         """Test that this test template is 'unique' within this part tree."""
         if not self.part.testable:
-            raise ValidationError({
-                'part': _('Test templates can only be created for testable parts')
-            })
+            raise ValidationError(
+                {'part': _('Test templates can only be created for testable parts')}
+            )
 
         # Check that this test is unique for this part
         # (including template parts of which this part is a variant)
@@ -3754,11 +3768,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         )
 
         if tests.exists():
-            raise ValidationError({
-                'test_name': _(
-                    'Test template with the same key already exists for part'
-                )
-            })
+            raise ValidationError(
+                {
+                    'test_name': _(
+                        'Test template with the same key already exists for part'
+                    )
+                }
+            )
 
         super().validate_unique(exclude)
 
@@ -3962,25 +3978,27 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             if not self.sub_part.units and not InvenTree.conversion.is_dimensionless(
                 quantity
             ):
-                raise ValidationError({
-                    'raw_amount': _('Invalid quantity - no units specified for part')
-                })
+                raise ValidationError(
+                    {'raw_amount': _('Invalid quantity - no units specified for part')}
+                )
 
             allow_zero_qty = get_global_setting('PART_BOM_ALLOW_ZERO_QUANTITY', False)
 
             if allow_zero_qty:
                 if float(quantity.magnitude) < 0:
-                    raise ValidationError({
-                        'raw_amount': _(
-                            'Quantity must be greater than or equal to zero'
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'raw_amount': _(
+                                'Quantity must be greater than or equal to zero'
+                            )
+                        }
+                    )
 
             else:
                 if float(quantity.magnitude) <= 0:
-                    raise ValidationError({
-                        'raw_amount': _('Quantity must be greater than zero')
-                    })
+                    raise ValidationError(
+                        {'raw_amount': _('Quantity must be greater than zero')}
+                    )
 
             # Normalize the quantity, to maximum 5 decimal places
             quantity = Decimal(quantity.magnitude)
@@ -4310,11 +4328,13 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
                     if self.quantity != int(self.quantity):
-                        raise ValidationError({
-                            'quantity': _(
-                                'Quantity must be integer value for trackable parts'
-                            )
-                        })
+                        raise ValidationError(
+                            {
+                                'quantity': _(
+                                    'Quantity must be integer value for trackable parts'
+                                )
+                            }
+                        )
 
                     # Force the upstream part to be trackable if the sub_part is trackable
                     if not self.part.trackable:
@@ -4495,9 +4515,9 @@ class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
         super().validate_unique(exclude=exclude)
 
         if self.part == self.bom_item.sub_part:
-            raise ValidationError({
-                'part': _('Substitute part cannot be the same as the master part')
-            })
+            raise ValidationError(
+                {'part': _('Substitute part cannot be the same as the master part')}
+            )
 
     @staticmethod
     def get_api_url():

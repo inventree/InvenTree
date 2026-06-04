@@ -1,9 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -13,8 +7,14 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Group, Text } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUserState } from '../../states/UserState';
+import { BuildLineSubTable } from '../build/BuildLineTable';
 import {
   DescriptionColumn,
   PartColumn,
@@ -24,7 +24,6 @@ import {
 import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
-import { BuildLineSubTable } from '../build/BuildLineTable';
 
 /**
  * A "simplified" BuildOrderLineItem table showing all outstanding build order allocations for a given part.

@@ -1,10 +1,9 @@
-import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
-import { lazy } from 'react';
-
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { t } from '@lingui/core/macro';
+import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
+import { lazy } from 'react';
 import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';

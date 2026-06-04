@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0087_bomitem_consumable'),
-    ]
+    dependencies = [('part', '0087_bomitem_consumable')]
 
     operations = [
         migrations.AlterField(
             model_name='partparametertemplate',
             name='name',
-            field=models.CharField(help_text='Parameter Name', max_length=100, unique=True, verbose_name='Name'),
-        ),
+            field=models.CharField(
+                help_text='Parameter Name',
+                max_length=100,
+                unique=True,
+                verbose_name='Name',
+            ),
+        )
     ]

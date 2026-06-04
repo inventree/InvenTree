@@ -1,3 +1,19 @@
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
+import { cancelEvent } from '@lib/functions/Events';
+import {
+  eventModified,
+  getBaseUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import type {
+  PanelGroupType,
+  PanelIndicatorType,
+  PanelType
+} from '@lib/types/Panel';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Box,
@@ -13,10 +29,12 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
+import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
   useCallback,
@@ -32,22 +50,6 @@ import {
   useNavigate,
   useParams
 } from 'react-router-dom';
-
-import { Boundary } from '@lib/components/Boundary';
-import { StylishText } from '@lib/components/StylishText';
-import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { identifierString } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
-import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-import type {
-  PanelGroupType,
-  PanelIndicatorType,
-  PanelType
-} from '@lib/types/Panel';
-import { t } from '@lingui/core/macro';
-import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';

@@ -30,46 +30,44 @@ export default function BarcodeKeyboardInput({
   );
 
   return (
-    <>
-      <Stack gap='sm'>
-        <FocusTrap active>
-          <TextInput
-            data-autofocus
-            aria-label='barcode-scan-keyboard-input'
-            value={text}
-            onChange={(event) => {
-              setText(event.currentTarget?.value);
-            }}
-            onKeyDown={(event) => {
-              let key = event.key;
+    <Stack gap='sm'>
+      <FocusTrap active>
+        <TextInput
+          data-autofocus
+          aria-label='barcode-scan-keyboard-input'
+          value={text}
+          onChange={(event) => {
+            setText(event.currentTarget?.value);
+          }}
+          onKeyDown={(event) => {
+            let key = event.key;
 
-              if (event.ctrlKey) {
-                if (event.code in BarcodeControlKeys) {
-                  // Prevent most of the keyboard shortcuts.
-                  // Not all of them will be blocked, browser don't allow this:
-                  // https://stackoverflow.com/questions/59952382/using-preventdefault-to-override-opening-new-tab
-                  event.preventDefault();
-                  key = BarcodeControlKeys[event.code];
-                  setText((prev) => prev + key);
-                }
+            if (event.ctrlKey) {
+              if (event.code in BarcodeControlKeys) {
+                // Prevent most of the keyboard shortcuts.
+                // Not all of them will be blocked, browser don't allow this:
+                // https://stackoverflow.com/questions/59952382/using-preventdefault-to-override-opening-new-tab
+                event.preventDefault();
+                key = BarcodeControlKeys[event.code];
+                setText((prev) => prev + key);
               }
+            }
 
-              if (
-                key === 'Enter' ||
-                key === String.fromCharCode(4) // End of transmission
-              ) {
-                onTextScan(text);
-              }
-            }}
-            placeholder={t`Enter barcode data`}
-            leftSection={<IconQrcode />}
-            w='100%'
-          />
-        </FocusTrap>
-        <Button fullWidth disabled={!text} onClick={() => onTextScan(text)}>
-          {actionText}
-        </Button>
-      </Stack>
-    </>
+            if (
+              key === 'Enter' ||
+              key === String.fromCharCode(4) // End of transmission
+            ) {
+              onTextScan(text);
+            }
+          }}
+          placeholder={t`Enter barcode data`}
+          leftSection={<IconQrcode />}
+          w='100%'
+        />
+      </FocusTrap>
+      <Button fullWidth disabled={!text} onClick={() => onTextScan(text)}>
+        {actionText}
+      </Button>
+    </Stack>
   );
 }

@@ -1,0 +1,183 @@
+{% extends "report/inventree_report_base.html" %}
+
+{% load i18n %}
+{% load report %}
+{% load inventree_extras %}
+
+{% block style %}
+.test-table {
+    width: 100%;
+}
+
+{% block bottom_left %}
+content: "{% format_date date %}";
+{% endblock bottom_left %}
+
+{% block bottom_center %}
+content: "{% inventree_version shortstring=True %}";
+{% endblock bottom_center %}
+
+{% block top_center %}
+content: "{% trans 'Stock Item Test Report' %}";
+{% endblock top_center %}
+
+.test-row {
+    padding: 3px;
+}
+
+.test-pass {
+    color: #5f5;
+}
+
+.test-fail {
+    color: #F55;
+}
+
+.test-not-found {
+    color: #33A;
+}
+
+.required-test-not-found {
+    color: #EEE;
+    background-color: #F55;
+}
+
+.container {
+    padding: 5px;
+    border: 1px solid;
+}
+
+.text-left {
+    display: inline-block;
+    width: 50%;
+}
+
+.img-right {
+    display: inline;
+    align-content: right;
+    align-items: right;
+    width: 50%;
+}
+
+.part-img {
+    height: 4cm;
+}
+
+{% endblock style %}
+
+{% block pre_page_content %}
+
+{% endblock pre_page_content %}
+
+{% block page_content %}
+
+<div class='container'>
+    <div class='text-left'>
+        <h2>
+            {{ part.full_name }}
+        </h2>
+        <p>{{ part.description }}</p>
+        <p><em>{{ stock_item.location }}</em></p>
+        <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
+    </div>
+    <div class='img-right'>
+        <img class='part-img' alt='{% trans "Part image" %}' src="{% part_image part height=480 %}">
+        <hr>
+        <h4>
+            {% if stock_item.is_serialized %}
+            {% trans "Serial Number" %}: {{ stock_item.serial }}
+            {% else %}
+            {% trans "Quantity" %}: {% decimal stock_item.quantity %}
+            {% endif %}
+        </h4>
+    </div>
+</div>
+
+{% if test_keys|length > 0 %}
+<h3>{% trans "Test Results" %}</h3>
+
+<table class='table test-table'>
+    <thead>
+        <tr>
+            <th>{% trans "Test" %}</th>
+            <th>{% trans "Result" %}</th>
+            <th>{% trans "Value" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Date" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan='5'><hr></td>
+        </tr>
+        {% for key in test_keys %}
+        {% getkey test_templates key as test_template %}
+        {% getkey results key as test_result %}
+        <tr class='test-row'>
+            <td>
+                {% if test_template %}
+                {% render_html_text test_template.test_name bold=test_template.required %}
+                {% elif test_result %}
+                {% render_html_text test_result.test italic=True %}
+                {% else %}
+                <!-- No matching test template or result for {{ key }} -->
+                <span style='color: red;'>{{ key }}</span>
+                {% endif %}
+            </td>
+            {% if test_result %}
+            {% if test_result.result %}
+            <td class='test-pass'>{% trans "Pass" %}</td>
+            {% else %}
+            <td class='test-fail'>{% trans "Fail" %}</td>
+            {% endif %}
+            <td>{{ test_result.value }}</td>
+            <td>{{ test_result.user.username }}</td>
+            <td>{% format_date test_result.date.date %}</td>
+            {% else %}
+            {% if test_template.required %}
+            <td colspan='4' class='required-test-not-found'>{% trans "No result (required)" %}</td>
+            {% else %}
+            <td colspan='4' class='test-not-found'>{% trans "No result" %}</td>
+            {% endif %}
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<em>No tests defined for this stock item</em>
+{% endif %}
+
+{% if installed_items|length > 0 %}
+<h3>{% trans "Installed Items" %}</h3>
+
+<table class='table test-table'>
+    <thead>
+    </thead>
+    <tbody>
+    {% for sub_item in installed_items %}
+        <tr>
+            <td>
+                <img src='{% part_image sub_item.part height=240 %}' class='part-img' alt='{% trans "Part image" %}' style='max-width: 24px; max-height: 24px;'>
+                {{ sub_item.part.full_name }}
+            </td>
+            <td>
+                {% if sub_item.serialized %}
+                {% trans "Serial" %}: {{ sub_item.serial }}
+                {% else %}
+                {% trans "Quantity" %}: {% decimal sub_item.quantity %}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock page_content %}
+
+{% block post_page_content %}
+
+{% endblock post_page_content %}

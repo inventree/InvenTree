@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react';
 import {
+  createTheme,
   MantineProvider,
-  type MantineThemeOverride,
-  createTheme
+  type MantineThemeOverride
 } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
@@ -15,15 +15,15 @@ import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
-import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
+import { LanguageContext } from './LanguageContext';
 
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
   const [userTheme] = useLocalState(useShallow((state) => [state.userTheme]));
 
-  let customUserTheme: MantineThemeOverride | undefined = undefined;
+  let customUserTheme: MantineThemeOverride | undefined;
 
   // Theme
   try {

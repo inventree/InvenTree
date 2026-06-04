@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0012_buildreport'),
-    ]
+    dependencies = [('report', '0012_buildreport')]
 
     operations = [
         migrations.AddField(
             model_name='testreport',
             name='include_installed',
-            field=models.BooleanField(default=False, help_text='Include test results for stock items installed inside assembled item', verbose_name='Include Installed Tests'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='Include test results for stock items installed inside assembled item',
+                verbose_name='Include Installed Tests',
+            ),
+        )
     ]

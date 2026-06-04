@@ -209,9 +209,9 @@ class RegistryStatusView(APIView):
     )
     def get(self, request):
         """Provide status data for the machine registry."""
-        result = MachineSerializers.MachineRegistryStatusSerializer({
-            'registry_errors': [{'message': str(error)} for error in registry.errors]
-        }).data
+        result = MachineSerializers.MachineRegistryStatusSerializer(
+            {'registry_errors': [{'message': str(error)} for error in registry.errors]}
+        ).data
 
         return Response(result)
 
@@ -226,24 +226,32 @@ machine_api_urls = [
     # detail views for a single Machine
     path(
         '<uuid:pk>/',
-        include([
-            # settings
-            path(
-                'settings/',
-                include([
-                    re_path(
-                        r'^(?P<config_type>M|D)/(?P<key>\w+)/',
-                        MachineSettingDetail.as_view(),
-                        name='api-machine-settings-detail',
+        include(
+            [
+                # settings
+                path(
+                    'settings/',
+                    include(
+                        [
+                            re_path(
+                                r'^(?P<config_type>M|D)/(?P<key>\w+)/',
+                                MachineSettingDetail.as_view(),
+                                name='api-machine-settings-detail',
+                            ),
+                            path(
+                                '',
+                                MachineSettingList.as_view(),
+                                name='api-machine-settings',
+                            ),
+                        ]
                     ),
-                    path('', MachineSettingList.as_view(), name='api-machine-settings'),
-                ]),
-            ),
-            # restart
-            path('restart/', MachineRestart.as_view(), name='api-machine-restart'),
-            # detail
-            path('', MachineDetail.as_view(), name='api-machine-detail'),
-        ]),
+                ),
+                # restart
+                path('restart/', MachineRestart.as_view(), name='api-machine-restart'),
+                # detail
+                path('', MachineDetail.as_view(), name='api-machine-detail'),
+            ]
+        ),
     ),
     # machine list and create
     path('', MachineList.as_view(), name='api-machine-list'),

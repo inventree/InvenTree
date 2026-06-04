@@ -102,10 +102,12 @@ class InvenTreeExchange(SimpleExchangeBackend):
             # Clear out existing rates
             backend.clear_rates()
 
-            Rate.objects.bulk_create([
-                Rate(currency=currency, value=amount, backend=backend)
-                for currency, amount in rates.items()
-            ])
+            Rate.objects.bulk_create(
+                [
+                    Rate(currency=currency, value=amount, backend=backend)
+                    for currency, amount in rates.items()
+                ]
+            )
         else:
             logger.info(
                 'No exchange rates returned from backend - currencies not updated'

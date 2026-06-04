@@ -50,10 +50,12 @@ def spa_bundle(manifest_path: str | Path = '', app: str = 'web'):
     # JS (based on index.html file as entrypoint)
     index = manifest_data.get('index.html')
     dynamic_files = index.get('dynamicImports', [])
-    imports_files = ''.join([
-        f'<script type="module" src="{get_url(manifest_data[file]["file"])}"></script>'
-        for file in dynamic_files
-    ])
+    imports_files = ''.join(
+        [
+            f'<script type="module" src="{get_url(manifest_data[file]["file"])}"></script>'
+            for file in dynamic_files
+        ]
+    )
     return_string += (
         f'<script type="module" src="{get_url(index["file"])}"></script>{imports_files}'
     )

@@ -1,3 +1,14 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -15,6 +26,7 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCalendarExclamation,
   IconCoins,
   IconCurrencyDollar,
   IconHash,
@@ -26,28 +38,14 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { apiUrl } from '@lib/functions/Api';
-import { toNumber } from '@lib/functions/Conversion';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
@@ -133,7 +131,7 @@ export function usePurchaseOrderLineItemFields({
           part_active: true,
           price_breaks: true
         },
-        onValueChange: (value, record) => {
+        onValueChange: (_value, record) => {
           setPriceBreaks(record?.price_breaks ?? []);
           setPart(record?.part_detail ?? {});
         },
@@ -881,7 +879,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
       },
       items: {
         field_type: 'table',
-        value: filteredItems.map((elem, idx) => {
+        value: filteredItems.map((elem, _idx) => {
           return {
             line_item: elem.pk,
             location: elem.destination ?? elem.destination_detail?.pk ?? null,

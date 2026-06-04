@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0025_auto_20191118_2316'),
-    ]
+    dependencies = [('part', '0025_auto_20191118_2316')]
 
     operations = [
         migrations.AlterField(
             model_name='part',
             name='notes',
-            field=models.TextField(help_text='Part notes - supports Markdown formatting'),
-        ),
+            field=models.TextField(
+                help_text='Part notes - supports Markdown formatting'
+            ),
+        )
     ]

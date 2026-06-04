@@ -1,8 +1,7 @@
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconLanguage } from '@tabler/icons-react';
-
-import { t } from '@lingui/core/macro';
 import { LanguageSelect } from './LanguageSelect';
 
 export function LanguageToggle() {

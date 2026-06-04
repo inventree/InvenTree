@@ -2,19 +2,15 @@
 
 import logging
 
-from django.db import migrations
+from django.db import connection, migrations
 
 from moneyed import CURRENCIES
-from django.db import migrations, connection
-from company.models import SupplierPriceBreak
-
 
 logger = logging.getLogger('inventree')
 
 
 def migrate_currencies(apps, schema_editor):
-    """
-    Migrate from the 'old' method of handling currencies,
+    """Migrate from the 'old' method of handling currencies,
     to the new method which uses the django-money library.
 
     Previously, we created a custom Currency model,
@@ -23,8 +19,7 @@ def migrate_currencies(apps, schema_editor):
     Here we will attempt to map each existing "currency" reference
     for the SupplierPriceBreak model, to a new django-money compatible currency.
     """
-
-    logger.debug("Updating currency references for SupplierPriceBreak model...")
+    logger.debug('Updating currency references for SupplierPriceBreak model...')
 
     # A list of available currency codes
     currency_codes = CURRENCIES.keys()
@@ -44,19 +39,21 @@ def migrate_currencies(apps, schema_editor):
         suffix = suffix.strip().upper()
 
         if suffix not in currency_codes:
-            print("Missing suffix:", suffix)
+            print('Missing suffix:', suffix)
 
             while suffix not in currency_codes:
                 # Ask the user to input a valid currency
                 print(f"Could not find a valid currency matching '{suffix}'.")
-                print("Please enter a valid currency code")
-                suffix = str(input("> ")).strip()
+                print('Please enter a valid currency code')
+                suffix = str(input('> ')).strip()
 
-        if pk not in remap.keys():
+        if pk not in remap:
             remap[pk] = suffix
 
     # Now iterate through each PartSellPriceBreak and update the rows
-    response = cursor.execute('SELECT id, cost, currency_id, price, price_currency from part_partsellpricebreak;')
+    response = cursor.execute(
+        'SELECT id, cost, currency_id, price, price_currency from part_partsellpricebreak;'
+    )
 
     results = cursor.fetchall()
 
@@ -66,33 +63,38 @@ def migrate_currencies(apps, schema_editor):
         pk, cost, currency_id, price, price_currency = row
 
         # Copy the 'cost' field across to the 'price' field
-        response = cursor.execute(f'UPDATE part_partsellpricebreak set price={cost} where id={pk};')
+        response = cursor.execute(
+            f'UPDATE part_partsellpricebreak set price={cost} where id={pk};'
+        )
 
         # Extract the updated currency code
         currency_code = remap.get(currency_id, 'USD')
 
         # Update the currency code
-        response = cursor.execute(f"UPDATE part_partsellpricebreak set price_currency='{currency_code}' where id={pk};")
+        response = cursor.execute(
+            f"UPDATE part_partsellpricebreak set price_currency='{currency_code}' where id={pk};"
+        )
 
         count += 1
 
     if count > 0:  # pragma: no cover
-        print(f"Updated {count} SupplierPriceBreak rows")
+        print(f'Updated {count} SupplierPriceBreak rows')
+
 
 def reverse_currencies(apps, schema_editor):  # pragma: no cover
-    """
-    Reverse the "update" process.
+    """Reverse the "update" process.
 
     Here we may be in the situation that the legacy "Currency" table is empty,
     and so we have to re-populate it based on the new price_currency codes.
     """
-
-    print("Reversing currency migration...")
+    print('Reversing currency migration...')
 
     cursor = connection.cursor()
 
     # Extract a list of currency codes which are in use
-    response = cursor.execute(f'SELECT id, price, price_currency from part_partsellpricebreak;')
+    response = cursor.execute(
+        'SELECT id, price, price_currency from part_partsellpricebreak;'
+    )
 
     results = cursor.fetchall()
 
@@ -104,14 +106,18 @@ def reverse_currencies(apps, schema_editor):  # pragma: no cover
         codes_in_use.add(code)
 
         # Copy the 'price' field back into the 'cost' field
-        response = cursor.execute(f'UPDATE part_partsellpricebreak set cost={price} where id={pk};')
+        response = cursor.execute(
+            f'UPDATE part_partsellpricebreak set cost={price} where id={pk};'
+        )
 
     # Keep a dict of which currency objects map to which code
     code_map = {}
 
     # For each currency code in use, check if we have a matching Currency object
     for code in codes_in_use:
-        response = cursor.execute(f"SELECT id, suffix from common_currency where suffix='{code}';")
+        response = cursor.execute(
+            f"SELECT id, suffix from common_currency where suffix='{code}';"
+        )
         row = cursor.fetchone()
 
         if row is not None:
@@ -123,7 +129,7 @@ def reverse_currencies(apps, schema_editor):  # pragma: no cover
             description = CURRENCIES[code]
 
             # Create a new object in the database
-            print(f"Creating new Currency object for {code}")
+            print(f'Creating new Currency object for {code}')
 
             # Construct a query to create a new Currency object
             query = f"INSERT into common_currency (symbol, suffix, description, value, base) VALUES ('$', '{code}', '{description}', 1.0, False);"
@@ -133,23 +139,22 @@ def reverse_currencies(apps, schema_editor):  # pragma: no cover
             code_map[code] = cursor.lastrowid
 
     # Ok, now we know how each suffix maps to a Currency object
-    for suffix in code_map.keys():
+    for suffix in code_map:
         pk = code_map[suffix]
 
         # Update the table to point to the Currency objects
-        print(f"Currency {suffix} -> pk {pk}")
+        print(f'Currency {suffix} -> pk {pk}')
 
-        response = cursor.execute(f"UPDATE part_partsellpricebreak set currency_id={pk} where price_currency='{suffix}';")
+        response = cursor.execute(
+            f"UPDATE part_partsellpricebreak set currency_id={pk} where price_currency='{suffix}';"
+        )
 
 
 class Migration(migrations.Migration):
-
     atomic = False
 
-    dependencies = [
-        ('part', '0055_auto_20201110_1001'),
-    ]
+    dependencies = [('part', '0055_auto_20201110_1001')]
 
     operations = [
-        migrations.RunPython(migrate_currencies, reverse_code=reverse_currencies),
+        migrations.RunPython(migrate_currencies, reverse_code=reverse_currencies)
     ]

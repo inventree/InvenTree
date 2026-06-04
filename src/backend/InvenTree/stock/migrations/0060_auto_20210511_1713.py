@@ -4,10 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0059_auto_20210404_2016'),
-    ]
+    dependencies = [('stock', '0059_auto_20210404_2016')]
 
     operations = [
         migrations.AddField(
@@ -23,6 +20,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitemtracking',
             name='title',
-            field=models.CharField(blank=True, help_text='Tracking entry title', max_length=250, verbose_name='Title'),
+            field=models.CharField(
+                blank=True,
+                help_text='Tracking entry title',
+                max_length=250,
+                verbose_name='Title',
+            ),
         ),
     ]

@@ -4,15 +4,10 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('company', '0027_remove_supplierpricebreak_currency'),
         ('part', '0057_remove_partsellpricebreak_currency'),
         ('common', '0008_remove_inventreesetting_description'),
     ]
 
-    operations = [
-        migrations.DeleteModel(
-            name='Currency',
-        ),
-    ]
+    operations = [migrations.DeleteModel(name='Currency')]

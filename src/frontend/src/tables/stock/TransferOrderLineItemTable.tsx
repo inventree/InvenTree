@@ -4,14 +4,14 @@ import useTable from '@lib/hooks/UseTable';
 import {
   ActionButton,
   AddItemButton,
+  formatDecimal,
   ModelType,
   ProgressBar,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction,
   RowViewAction,
-  UserRoles,
-  formatDecimal
+  UserRoles
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';

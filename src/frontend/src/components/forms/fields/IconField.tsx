@@ -1,3 +1,4 @@
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -20,8 +21,6 @@ import Fuse from 'fuse.js';
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
-
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useShallow } from 'zustand/react/shallow';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';

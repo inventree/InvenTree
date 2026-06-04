@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0091_partstocktake'),
-    ]
+    dependencies = [('part', '0091_partstocktake')]
 
     operations = [
         migrations.AddField(
             model_name='part',
             name='last_stocktake',
-            field=models.DateField(blank=True, null=True, verbose_name='Last Stocktake'),
-        ),
+            field=models.DateField(
+                blank=True, null=True, verbose_name='Last Stocktake'
+            ),
+        )
     ]

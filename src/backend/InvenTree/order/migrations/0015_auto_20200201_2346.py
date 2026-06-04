@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0014_auto_20191118_2328'),
-    ]
+    dependencies = [('order', '0014_auto_20191118_2328')]
 
     operations = [
         migrations.AlterField(
             model_name='purchaseorder',
             name='notes',
             field=models.TextField(blank=True, help_text='Order notes'),
-        ),
+        )
     ]

@@ -5,15 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('common', '0002_auto_20190902_2304'),
-    ]
+    dependencies = [('common', '0002_auto_20190902_2304')]
 
     operations = [
         migrations.AlterField(
             model_name='currency',
             name='value',
-            field=models.DecimalField(decimal_places=5, default=1.0, help_text='Currency Value', max_digits=10, validators=[django.core.validators.MinValueValidator(1e-05), django.core.validators.MaxValueValidator(100000)]),
-        ),
+            field=models.DecimalField(
+                decimal_places=5,
+                default=1.0,
+                help_text='Currency Value',
+                max_digits=10,
+                validators=[
+                    django.core.validators.MinValueValidator(1e-05),
+                    django.core.validators.MaxValueValidator(100000),
+                ],
+            ),
+        )
     ]

@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0045_auto_20200605_0932'),
-    ]
+    dependencies = [('part', '0045_auto_20200605_0932')]
 
     operations = [
         migrations.AlterField(
             model_name='partcategory',
             name='default_keywords',
-            field=models.CharField(blank=True, help_text='Default keywords for parts in this category', max_length=250, null=True),
-        ),
+            field=models.CharField(
+                blank=True,
+                help_text='Default keywords for parts in this category',
+                max_length=250,
+                null=True,
+            ),
+        )
     ]

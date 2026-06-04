@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0094_auto_20230220_0025'),
-    ]
+    dependencies = [('stock', '0094_auto_20230220_0025')]
 
     operations = [
         migrations.AddField(
             model_name='stocklocation',
             name='external',
-            field=models.BooleanField(default=False, help_text='This is an external stock location', verbose_name='External'),
-        ),
+            field=models.BooleanField(
+                default=False,
+                help_text='This is an external stock location',
+                verbose_name='External',
+            ),
+        )
     ]

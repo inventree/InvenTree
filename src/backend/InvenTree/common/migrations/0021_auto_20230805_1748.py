@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('common', '0020_customunit'),
-    ]
+    dependencies = [('common', '0020_customunit')]
 
     operations = [
         migrations.AlterField(
             model_name='inventreesetting',
             name='value',
-            field=models.CharField(blank=True, help_text='Settings value', max_length=2000),
+            field=models.CharField(
+                blank=True, help_text='Settings value', max_length=2000
+            ),
         ),
         migrations.AlterField(
             model_name='inventreeusersetting',
             name='value',
-            field=models.CharField(blank=True, help_text='Settings value', max_length=2000),
+            field=models.CharField(
+                blank=True, help_text='Settings value', max_length=2000
+            ),
         ),
     ]

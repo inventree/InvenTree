@@ -4,19 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("build", "0056_alter_build_link"),
-    ]
+    dependencies = [('build', '0056_alter_build_link')]
 
     operations = [
         migrations.AddField(
-            model_name="build",
-            name="external",
+            model_name='build',
+            name='external',
             field=models.BooleanField(
                 default=False,
-                help_text="This build order is fulfilled externally",
-                verbose_name="External Build",
+                help_text='This build order is fulfilled externally',
+                verbose_name='External Build',
             ),
-        ),
+        )
     ]

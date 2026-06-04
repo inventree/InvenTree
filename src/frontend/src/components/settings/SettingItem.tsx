@@ -1,3 +1,8 @@
+import { Boundary } from '@lib/components/Boundary';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { Setting } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
 import {
   Button,
@@ -12,12 +17,6 @@ import {
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { Boundary } from '@lib/components/Boundary';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type { Setting } from '@lib/types/Settings';
 import { api } from '../../App';
 import { vars } from '../../theme';
 import { RenderInstance } from '../render/Instance';
@@ -116,7 +115,7 @@ function SettingValue({
             setModelInstance(null);
           }
         })
-        .catch((error) => {
+        .catch((_error) => {
           setModelInstance(null);
         });
     }

@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import { useMemo } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { StandaloneField } from '../components/forms/StandaloneField';
 
 function BuildAllocateLineRow({
   props

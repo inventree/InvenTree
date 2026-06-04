@@ -2,19 +2,24 @@
 
 import django.core.validators
 from django.db import migrations, models
-import report.models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0006_reportsnippet'),
-    ]
+    dependencies = [('report', '0006_reportsnippet')]
 
     operations = [
         migrations.AlterField(
             model_name='testreport',
             name='template',
-            field=models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template'),
-        ),
+            field=models.FileField(
+                help_text='Report template file',
+                upload_to='report',
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=['html', 'htm']
+                    )
+                ],
+                verbose_name='Template',
+            ),
+        )
     ]

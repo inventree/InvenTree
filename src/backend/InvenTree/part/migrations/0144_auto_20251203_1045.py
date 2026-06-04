@@ -6,17 +6,15 @@ from django.db.models import deletion
 
 def update_parameter(apps, schema_editor):
     """Data migration to update existing PartParameter records.
-    
+
     - Set 'model_type' to the ContentType for 'part.Part'
     - Set 'model_id' to the existing 'part_id' value
     """
-
-    PartParameter = apps.get_model("part", "PartParameter")
-    ContentType = apps.get_model("contenttypes", "ContentType")
+    PartParameter = apps.get_model('part', 'PartParameter')
+    ContentType = apps.get_model('contenttypes', 'ContentType')
 
     part_content_type, created = ContentType.objects.get_or_create(
-        app_label="part",
-        model="part",
+        app_label='part', model='part'
     )
 
     parameters_to_update = []
@@ -28,15 +26,13 @@ def update_parameter(apps, schema_editor):
         parameter.model_type = part_content_type
         parameter.model_id = parameter.part_id
         parameters_to_update.append(parameter)
-        
+
     if len(parameters_to_update) > 0:
-        
-        print(f"Updating {len(parameters_to_update)} PartParameter records.")
-        
+        print(f'Updating {len(parameters_to_update)} PartParameter records.')
+
         PartParameter.objects.bulk_update(
-            parameters_to_update,
-            fields=["model_type", "model_id"],
-       )
+            parameters_to_update, fields=['model_type', 'model_id']
+        )
 
     # Ensure that the number of updated records matches the total number of records
     assert PartParameter.objects.count() == N
@@ -48,31 +44,26 @@ def update_parameter(apps, schema_editor):
 
 def reverse_update_parameter(apps, schema_editor):
     """Reverse data migration to restore existing PartParameter records.
-    
+
     - Set 'part_id' to the existing 'model_id' value
     """
-
-    PartParameter = apps.get_model("part", "PartParameter")
+    PartParameter = apps.get_model('part', 'PartParameter')
 
     parmeters_to_update = []
 
     for parameter in PartParameter.objects.all():
         parameter.part = parameter.model_id
         parmeters_to_update.append(parameter)
-        
+
     if len(parmeters_to_update) > 0:
-        
-        print(f"Reversing update of {len(parmeters_to_update)} PartParameter records.")
-        
-        PartParameter.objects.bulk_update(
-            parmeters_to_update,
-            fields=["part"],
-       )
+        print(f'Reversing update of {len(parmeters_to_update)} PartParameter records.')
+
+        PartParameter.objects.bulk_update(parmeters_to_update, fields=['part'])
 
 
 class Migration(migrations.Migration):
     """Data migration for making the PartParameterTemplate and PartParameter models generic.
-    
+
     - Add new fields to the "PartParameterTemplate" and "PartParameter" models
     - Migrate existing data to populate the new fields
     - Make the new fields non-nullable (if appropriate)
@@ -81,81 +72,78 @@ class Migration(migrations.Migration):
 
     atomic = False
 
-    dependencies = [
-        ("part", "0143_alter_part_image"),
-    ]
+    dependencies = [('part', '0143_alter_part_image')]
 
     operations = [
         # Add the new "enabled" field to the PartParameterTemplate model
         migrations.AddField(
-            model_name="partparametertemplate",
-            name="enabled",
+            model_name='partparametertemplate',
+            name='enabled',
             field=models.BooleanField(
                 default=True,
-                help_text="Is this parameter template enabled?",
-                verbose_name="Enabled",
+                help_text='Is this parameter template enabled?',
+                verbose_name='Enabled',
             ),
         ),
         # Add the "model_type" field to the PartParmaeterTemplate model
         migrations.AddField(
-            model_name="partparametertemplate",
-            name="model_type",
+            model_name='partparametertemplate',
+            name='model_type',
             field=models.ForeignKey(
-                blank=True, null=True,
-                help_text="Target model type for this parameter template",
+                blank=True,
+                null=True,
+                help_text='Target model type for this parameter template',
                 on_delete=deletion.SET_NULL,
-                to="contenttypes.contenttype",
-                verbose_name="Model type",
+                to='contenttypes.contenttype',
+                verbose_name='Model type',
             ),
         ),
         # Add the "model_type" field to the PartParameter model
         # Note: This field is initially nullable, to allow existing records to remain valid.
         migrations.AddField(
-            model_name="partparameter",
-            name="model_type",
+            model_name='partparameter',
+            name='model_type',
             field=models.ForeignKey(
-                blank=True, null=True,
+                blank=True,
+                null=True,
                 on_delete=deletion.CASCADE,
-                to="contenttypes.contenttype",
+                to='contenttypes.contenttype',
             ),
         ),
         # Add the "model_id" field to the PartParameter model
         # Note: This field is initially nullable, to allow existing records to remain valid.
         migrations.AddField(
-            model_name="partparameter",
-            name="model_id",
+            model_name='partparameter',
+            name='model_id',
             field=models.PositiveIntegerField(
-                blank=True, null=True,
-                help_text="ID of the target model for this parameter",
-                verbose_name="Model ID",
-            )
+                blank=True,
+                null=True,
+                help_text='ID of the target model for this parameter',
+                verbose_name='Model ID',
+            ),
         ),
         # Migrate existing PartParameter records to populate the new fields
-        migrations.RunPython(
-            update_parameter,
-            reverse_code=reverse_update_parameter,
-        ),
+        migrations.RunPython(update_parameter, reverse_code=reverse_update_parameter),
         # Update the "model_type" field on the PartParameter model to be non-nullable
         migrations.AlterField(
-            model_name="partparameter",
-            name="model_type",
+            model_name='partparameter',
+            name='model_type',
             field=models.ForeignKey(
-                on_delete=deletion.CASCADE,
-                to="contenttypes.contenttype",
+                on_delete=deletion.CASCADE, to='contenttypes.contenttype'
             ),
         ),
         # Update the "model_id" field on the PartParameter model to be non-nullable
         migrations.AlterField(
-            model_name="partparameter",
-            name="model_id",
+            model_name='partparameter',
+            name='model_id',
             field=models.PositiveIntegerField(
-                help_text="ID of the target model for this parameter",
-                verbose_name="Model ID",
-            )
+                help_text='ID of the target model for this parameter',
+                verbose_name='Model ID',
+            ),
         ),
         # Remove the "unique_together" constraint on the PartParameter model
         migrations.AlterUniqueTogether(
-            name="partparameter",
+            name='partparameter',
             unique_together={('model_type', 'model_id', 'template')},
         ),
     ]

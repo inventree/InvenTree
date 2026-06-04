@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('company', '0054_companyattachment'),
-    ]
+    dependencies = [('company', '0054_companyattachment')]
 
     operations = [
         migrations.AddField(
             model_name='manufacturerpart',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='supplierpart',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
     ]

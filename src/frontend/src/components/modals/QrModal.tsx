@@ -1,4 +1,3 @@
-import {} from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 import { lazy } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
@@ -19,7 +18,7 @@ export function QrModal({
   function close() {
     context.closeModal(id);
   }
-  function navigate() {
+  function _navigate() {
     context.closeModal(id);
   }
 

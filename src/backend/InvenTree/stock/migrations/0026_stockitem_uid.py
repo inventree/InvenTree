@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0025_auto_20200405_2243'),
-    ]
+    dependencies = [('stock', '0025_auto_20200405_2243')]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='uid',
-            field=models.CharField(blank=True, help_text='Unique identifier field', max_length=128),
-        ),
+            field=models.CharField(
+                blank=True, help_text='Unique identifier field', max_length=128
+            ),
+        )
     ]

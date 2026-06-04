@@ -4,13 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    dependencies = [('plugin', '0010_pluginusersetting')]
 
-    dependencies = [
-        ("plugin", "0010_pluginusersetting"),
-    ]
-
-    operations = [
-        migrations.DeleteModel(
-            name="NotificationUserSetting",
-        ),
-    ]
+    operations = [migrations.DeleteModel(name='NotificationUserSetting')]

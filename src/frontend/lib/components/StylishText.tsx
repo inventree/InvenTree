@@ -1,12 +1,12 @@
 import {
-  type MantineSize,
-  Text,
   darken,
   getThemeColor,
+  type MantineSize,
+  Text,
   useMantineTheme
 } from '@mantine/core';
-import { useMemo } from 'react';
 import type { JSX } from 'react';
+import { useMemo } from 'react';
 
 // Hook that memoizes the gradient color based on the primary color of the theme
 const useThematicGradient = () => {

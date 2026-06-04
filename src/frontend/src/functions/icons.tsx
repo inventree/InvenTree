@@ -97,7 +97,6 @@ import {
   IconTag,
   IconTax,
   IconTestPipe,
-  IconToggleRight,
   IconTool,
   IconTools,
   IconTransfer,

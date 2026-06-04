@@ -1,8 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Text } from '@mantine/core';
-import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
@@ -21,6 +16,10 @@ import { formatDecimal } from '@lib/functions/Formatting';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Text } from '@mantine/core';
+import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RenderInstance } from '../../components/render/Instance';
 import { formatCurrency } from '../../defaults/formatters';

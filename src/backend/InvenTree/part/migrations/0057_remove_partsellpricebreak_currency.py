@@ -4,14 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0056_auto_20201110_1125'),
-    ]
+    dependencies = [('part', '0056_auto_20201110_1125')]
 
     operations = [
-        migrations.RemoveField(
-            model_name='partsellpricebreak',
-            name='currency',
-        ),
+        migrations.RemoveField(model_name='partsellpricebreak', name='currency')
     ]

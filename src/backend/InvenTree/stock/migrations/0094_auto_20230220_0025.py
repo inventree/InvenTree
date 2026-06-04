@@ -30,15 +30,12 @@ def fix_purchase_price(apps, schema_editor):
     - Are linked to a supplier_part
     - We can determine correctly that the calculation was misapplied
     """
-
     StockItem = apps.get_model('stock', 'stockitem')
 
-    items = StockItem.objects.exclude(
-        purchase_order=None
-    ).exclude(
-        supplier_part=None
-    ).exclude(
-        purchase_price=None
+    items = (
+        StockItem.objects.exclude(purchase_order=None)
+        .exclude(supplier_part=None)
+        .exclude(purchase_price=None)
     )
 
     try:
@@ -63,19 +60,15 @@ def fix_purchase_price(apps, schema_editor):
                     n_updated += 1
 
     if n_updated > 0:
-        logger.info(f"Corrected purchase_price field for {n_updated} stock items.")
+        logger.info(f'Corrected purchase_price field for {n_updated} stock items.')
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('company', '0047_supplierpart_pack_size'),
         ('stock', '0093_auto_20230217_2140'),
     ]
 
     operations = [
-        migrations.RunPython(
-            fix_purchase_price,
-            reverse_code=migrations.RunPython.noop,
-        )
+        migrations.RunPython(fix_purchase_price, reverse_code=migrations.RunPython.noop)
     ]

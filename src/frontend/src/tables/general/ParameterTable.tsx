@@ -1,12 +1,12 @@
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
+  apiUrl,
+  formatDecimal,
   ModelType,
   RowDeleteAction,
   RowEditAction,
-  YesNoButton,
-  apiUrl,
-  formatDecimal
+  YesNoButton
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';

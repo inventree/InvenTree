@@ -177,23 +177,31 @@ class Build(
             if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
                 # Check that the BOM is valid
                 if not self.part.is_bom_valid():
-                    raise ValidationError({
-                        'part': _('Assembly BOM has not been validated')
-                    })
+                    raise ValidationError(
+                        {'part': _('Assembly BOM has not been validated')}
+                    )
 
             if get_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART'):
                 # Check that the part is active
                 if not self.part.active:
-                    raise ValidationError({
-                        'part': _('Build order cannot be created for an inactive part')
-                    })
+                    raise ValidationError(
+                        {
+                            'part': _(
+                                'Build order cannot be created for an inactive part'
+                            )
+                        }
+                    )
 
             if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
                 # Check that the part is locked
                 if not self.part.locked:
-                    raise ValidationError({
-                        'part': _('Build order cannot be created for an unlocked part')
-                    })
+                    raise ValidationError(
+                        {
+                            'part': _(
+                                'Build order cannot be created for an unlocked part'
+                            )
+                        }
+                    )
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
@@ -208,17 +216,19 @@ class Build(
         super().clean()
 
         if self.external and not self.part.purchaseable:
-            raise ValidationError({
-                'external': _(
-                    'Build orders can only be externally fulfilled for purchaseable parts'
-                )
-            })
+            raise ValidationError(
+                {
+                    'external': _(
+                        'Build orders can only be externally fulfilled for purchaseable parts'
+                    )
+                }
+            )
 
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
-                raise ValidationError({
-                    'responsible': _('Responsible user or group must be specified')
-                })
+                raise ValidationError(
+                    {'responsible': _('Responsible user or group must be specified')}
+                )
 
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
@@ -226,9 +236,9 @@ class Build(
 
         # Target date should be *after* the start date
         if self.start_date and self.target_date and self.start_date > self.target_date:
-            raise ValidationError({
-                'target_date': _('Target date must be after start date')
-            })
+            raise ValidationError(
+                {'target_date': _('Target date must be after start date')}
+            )
 
     def report_context(self) -> BuildReportContext:
         """Generate custom report context data."""
@@ -859,9 +869,9 @@ class Build(
             location = self.destination or self.part.get_default_location()
 
         if self.part.has_trackable_parts and not serials:
-            raise ValidationError({
-                'serials': _('Serial numbers must be provided for trackable parts')
-            })
+            raise ValidationError(
+                {'serials': _('Serial numbers must be provided for trackable parts')}
+            )
 
         outputs = []
 
@@ -1050,9 +1060,9 @@ class Build(
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > output.quantity:
-            raise ValidationError({
-                'quantity': _('Quantity cannot be greater than the output quantity')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity cannot be greater than the output quantity')}
+            )
 
         user = kwargs.get('user')
         notes = kwargs.get('notes', '')
@@ -1152,14 +1162,18 @@ class Build(
                 )
 
             if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity must be greater than zero')}
+                )
 
             if quantity > output.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity cannot be greater than the output quantity')
-                })
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Quantity cannot be greater than the output quantity'
+                        )
+                    }
+                )
 
             # Split the stock item
             output = output.splitStock(quantity, user=user, allow_production=True)
@@ -1902,9 +1916,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         # BomItem did not exist or could not be validated.
         # Search for a new one
         if not valid:
-            raise ValidationError({
-                'stock_item': _('Selected stock item does not match BOM line')
-            })
+            raise ValidationError(
+                {'stock_item': _('Selected stock item does not match BOM line')}
+            )
 
     def check_allocated_quantity(self, raise_error: bool = False):
         """Ensure that the allocated quantity is valid.
@@ -1927,9 +1941,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         # Quantity must be 1 for serialized stock
         if self.stock_item.serialized and self.quantity != 1:
             self.quantity = 1
-            raise ValidationError({
-                'quantity': _('Quantity must be 1 for serialized stock')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity must be 1 for serialized stock')}
+            )
 
         # Allocated quantity cannot exceed available stock quantity
         if self.quantity > self.stock_item.quantity:

@@ -3,13 +3,13 @@ import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   type ApiFormFieldSet,
-  type ModelType,
-  UserRoles,
-  YesNoButton,
   apiUrl,
   formatDecimal,
   getDetailUrl,
-  navigateToLink
+  type ModelType,
+  navigateToLink,
+  UserRoles,
+  YesNoButton
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
@@ -67,8 +67,7 @@ function ParameterCell({
 
   if (
     template.units &&
-    parameter &&
-    parameter.data_numeric &&
+    parameter?.data_numeric &&
     parameter.data_numeric != parameter.data
   ) {
     const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });

@@ -4,14 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('common', '0007_colortheme'),
-    ]
+    dependencies = [('common', '0007_colortheme')]
 
     operations = [
-        migrations.RemoveField(
-            model_name='inventreesetting',
-            name='description',
-        ),
+        migrations.RemoveField(model_name='inventreesetting', name='description')
     ]

@@ -1,3 +1,9 @@
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import type { InvenTreeTableProps, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -17,14 +23,6 @@ import {
 import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { StylishText } from '@lib/components/StylishText';
-import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import type { TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { InfoItem } from '../../components/items/InfoItem';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -112,94 +110,92 @@ function MachineTypeDrawer({
   );
 
   return (
-    <>
-      <Stack>
-        <Group wrap='nowrap'>
-          <StylishText size='md'>
-            {machineType ? machineType.name : machineTypeSlug}
-          </StylishText>
-        </Group>
+    <Stack>
+      <Group wrap='nowrap'>
+        <StylishText size='md'>
+          {machineType ? machineType.name : machineTypeSlug}
+        </StylishText>
+      </Group>
 
-        {!machineType && (
-          <Alert
-            color='red'
-            title={t`Not Found`}
-            icon={<IconExclamationCircle />}
-          >
-            <Text>{t`Machine type not found.`}</Text>
-          </Alert>
-        )}
-
-        <Accordion
-          multiple
-          defaultValue={['machine-type-info', 'machine-drivers']}
+      {!machineType && (
+        <Alert
+          color='red'
+          title={t`Not Found`}
+          icon={<IconExclamationCircle />}
         >
-          <Accordion.Item value='machine-type-info'>
-            <Accordion.Control>
-              <StylishText size='lg'>{t`Machine Type Information`}</StylishText>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Card withBorder>
-                <Stack pos='relative' gap='xs'>
-                  <LoadingOverlay
-                    visible={isFetching}
-                    overlayProps={{ opacity: 0 }}
-                  />
+          <Text>{t`Machine type not found.`}</Text>
+        </Alert>
+      )}
+
+      <Accordion
+        multiple
+        defaultValue={['machine-type-info', 'machine-drivers']}
+      >
+        <Accordion.Item value='machine-type-info'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Machine Type Information`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Card withBorder>
+              <Stack pos='relative' gap='xs'>
+                <LoadingOverlay
+                  visible={isFetching}
+                  overlayProps={{ opacity: 0 }}
+                />
+                <InfoItem
+                  name={t`Name`}
+                  value={machineType?.name}
+                  type='text'
+                />
+                <InfoItem
+                  name={t`Slug`}
+                  value={machineType?.slug}
+                  type='text'
+                />
+                <InfoItem
+                  name={t`Description`}
+                  value={machineType?.description}
+                  type='text'
+                />
+                {!machineType?.is_builtin && (
                   <InfoItem
-                    name={t`Name`}
-                    value={machineType?.name}
+                    name={t`Provider plugin`}
+                    value={machineType?.provider_plugin?.name}
                     type='text'
+                    link={
+                      machineType?.provider_plugin?.pk !== null
+                        ? `../../plugin/${machineType?.provider_plugin?.pk}/`
+                        : undefined
+                    }
+                    detailDrawerLink
                   />
-                  <InfoItem
-                    name={t`Slug`}
-                    value={machineType?.slug}
-                    type='text'
-                  />
-                  <InfoItem
-                    name={t`Description`}
-                    value={machineType?.description}
-                    type='text'
-                  />
-                  {!machineType?.is_builtin && (
-                    <InfoItem
-                      name={t`Provider plugin`}
-                      value={machineType?.provider_plugin?.name}
-                      type='text'
-                      link={
-                        machineType?.provider_plugin?.pk !== null
-                          ? `../../plugin/${machineType?.provider_plugin?.pk}/`
-                          : undefined
-                      }
-                      detailDrawerLink
-                    />
-                  )}
-                  <InfoItem
-                    name={t`Provider file`}
-                    value={machineType?.provider_file}
-                    type='code'
-                  />
-                  <InfoItem
-                    name={t`Builtin`}
-                    value={machineType?.is_builtin}
-                    type='boolean'
-                  />
-                </Stack>
-              </Card>
-            </Accordion.Panel>
-          </Accordion.Item>
-          <Accordion.Item value='machine-drivers'>
-            <Accordion.Control>
-              <StylishText size='lg'>{t`Available Drivers`}</StylishText>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Card withBorder>
-                <MachineDriverTable machineType={machineTypeSlug} prefix='..' />
-              </Card>
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-      </Stack>
-    </>
+                )}
+                <InfoItem
+                  name={t`Provider file`}
+                  value={machineType?.provider_file}
+                  type='code'
+                />
+                <InfoItem
+                  name={t`Builtin`}
+                  value={machineType?.is_builtin}
+                  type='boolean'
+                />
+              </Stack>
+            </Card>
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='machine-drivers'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Available Drivers`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Card withBorder>
+              <MachineDriverTable machineType={machineTypeSlug} prefix='..' />
+            </Card>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Stack>
   );
 }
 
@@ -369,7 +365,7 @@ export function MachineTypeListTable({
         title={t`Machine Type Detail`}
         size={'xl'}
         renderContent={(id) => {
-          if (!id || !id.startsWith('type-')) return false;
+          if (!id?.startsWith('type-')) return false;
           return (
             <MachineTypeDrawer machineTypeSlug={id.replace('type-', '')} />
           );
@@ -379,7 +375,7 @@ export function MachineTypeListTable({
         title={t`Machine Driver Detail`}
         size={'xl'}
         renderContent={(id) => {
-          if (!id || !id.startsWith('driver-')) return false;
+          if (!id?.startsWith('driver-')) return false;
           return (
             <MachineDriverDrawer
               machineDriverSlug={id.replace('driver-', '')}

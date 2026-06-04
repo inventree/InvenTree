@@ -4,20 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('order', '0061_merge_0054_auto_20211201_2139_0060_auto_20211129_1339'),
+        ('order', '0061_merge_0054_auto_20211201_2139_0060_auto_20211129_1339')
     ]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorderlineitem',
             name='target_date',
-            field=models.DateField(blank=True, help_text='Target shipping date for this line item', null=True, verbose_name='Target Date'),
+            field=models.DateField(
+                blank=True,
+                help_text='Target shipping date for this line item',
+                null=True,
+                verbose_name='Target Date',
+            ),
         ),
         migrations.AddField(
             model_name='salesorderlineitem',
             name='target_date',
-            field=models.DateField(blank=True, help_text='Target shipping date for this line item', null=True, verbose_name='Target Date'),
+            field=models.DateField(
+                blank=True,
+                help_text='Target shipping date for this line item',
+                null=True,
+                verbose_name='Target Date',
+            ),
         ),
     ]

@@ -4,25 +4,37 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0040_salesorder_target_date'),
-    ]
+    dependencies = [('order', '0040_salesorder_target_date')]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorder',
             name='target_date',
-            field=models.DateField(blank=True, help_text='Expected date for order delivery. Order will be overdue after this date.', null=True, verbose_name='Target Delivery Date'),
+            field=models.DateField(
+                blank=True,
+                help_text='Expected date for order delivery. Order will be overdue after this date.',
+                null=True,
+                verbose_name='Target Delivery Date',
+            ),
         ),
         migrations.AlterField(
             model_name='purchaseorder',
             name='complete_date',
-            field=models.DateField(blank=True, help_text='Date order was completed', null=True, verbose_name='Completion Date'),
+            field=models.DateField(
+                blank=True,
+                help_text='Date order was completed',
+                null=True,
+                verbose_name='Completion Date',
+            ),
         ),
         migrations.AlterField(
             model_name='purchaseorder',
             name='issue_date',
-            field=models.DateField(blank=True, help_text='Date order was issued', null=True, verbose_name='Issue Date'),
+            field=models.DateField(
+                blank=True,
+                help_text='Date order was issued',
+                null=True,
+                verbose_name='Issue Date',
+            ),
         ),
     ]

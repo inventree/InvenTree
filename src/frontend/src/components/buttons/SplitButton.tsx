@@ -1,3 +1,5 @@
+import { identifierString } from '@lib/functions/Conversion';
+import type { TablerIconType } from '@lib/types/Icons';
 import {
   ActionIcon,
   Button,
@@ -9,9 +11,6 @@ import {
 } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-
-import { identifierString } from '@lib/functions/Conversion';
-import type { TablerIconType } from '@lib/types/Icons';
 import * as classes from './SplitButton.css';
 
 interface SplitButtonOption {

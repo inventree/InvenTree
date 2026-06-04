@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('stock', '0057_stock_location_item_owner'),
-    ]
+    dependencies = [('stock', '0057_stock_location_item_owner')]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='packaging',
-            field=models.CharField(blank=True, help_text='Packaging this stock item is stored in', max_length=50, null=True, verbose_name='Packaging'),
-        ),
+            field=models.CharField(
+                blank=True,
+                help_text='Packaging this stock item is stored in',
+                max_length=50,
+                null=True,
+                verbose_name='Packaging',
+            ),
+        )
     ]

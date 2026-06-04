@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('plugin', '0008_pluginconfig_package_name'),
-    ]
+    dependencies = [('plugin', '0008_pluginconfig_package_name')]
 
     operations = [
         migrations.AlterField(
             model_name='pluginconfig',
             name='key',
-            field=models.CharField(db_index=True, help_text='Key of plugin', max_length=255, unique=True, verbose_name='Key'),
-        ),
+            field=models.CharField(
+                db_index=True,
+                help_text='Key of plugin',
+                max_length=255,
+                unique=True,
+                verbose_name='Key',
+            ),
+        )
     ]

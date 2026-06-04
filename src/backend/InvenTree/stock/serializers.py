@@ -286,9 +286,9 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
             else:
-                raise ValidationError({
-                    'test': _('No matching test found for this part')
-                })
+                raise ValidationError(
+                    {'test': _('No matching test found for this part')}
+                )
 
         if not template:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -299,11 +299,13 @@ class StockItemTestResultSerializer(
         finished = data.get('finished_datetime')
 
         if started is not None and finished is not None and started > finished:
-            raise ValidationError({
-                'finished_datetime': _(
-                    'The test finished time cannot be earlier than the test started time'
-                )
-            })
+            raise ValidationError(
+                {
+                    'finished_datetime': _(
+                        'The test finished time cannot be earlier than the test started time'
+                    )
+                }
+            )
         return data
 
 
@@ -882,9 +884,13 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError({
-                'quantity': _('Quantity to install must not exceed available quantity')
-            })
+            raise ValidationError(
+                {
+                    'quantity': _(
+                        'Quantity to install must not exceed available quantity'
+                    )
+                }
+            )
 
         return data
 

@@ -4,35 +4,57 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('report', '0016_auto_20210513_1303'),
-    ]
+    dependencies = [('report', '0016_auto_20210513_1303')]
 
     operations = [
         migrations.AddField(
             model_name='billofmaterialsreport',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='buildreport',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='purchaseorderreport',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='salesorderreport',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
         migrations.AddField(
             model_name='testreport',
             name='metadata',
-            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+            field=models.JSONField(
+                blank=True,
+                help_text='JSON metadata field, for use by external plugins',
+                null=True,
+                verbose_name='Plugin Metadata',
+            ),
         ),
     ]

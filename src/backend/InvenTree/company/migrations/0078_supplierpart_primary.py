@@ -4,19 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("company", "0077_delete_manufacturerpartparameter"),
-    ]
+    dependencies = [('company', '0077_delete_manufacturerpartparameter')]
 
     operations = [
         migrations.AddField(
-            model_name="supplierpart",
-            name="primary",
+            model_name='supplierpart',
+            name='primary',
             field=models.BooleanField(
                 default=False,
-                help_text="Is this the primary supplier part for the linked Part?",
-                verbose_name="Primary",
+                help_text='Is this the primary supplier part for the linked Part?',
+                verbose_name='Primary',
             ),
-        ),
+        )
     ]

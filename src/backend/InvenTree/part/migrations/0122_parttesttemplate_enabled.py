@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('part', '0121_auto_20240207_0344'),
-    ]
+    dependencies = [('part', '0121_auto_20240207_0344')]
 
     operations = [
         migrations.AddField(
             model_name='parttesttemplate',
             name='enabled',
-            field=models.BooleanField(default=True, help_text='Is this test enabled?', verbose_name='Enabled'),
-        ),
+            field=models.BooleanField(
+                default=True, help_text='Is this test enabled?', verbose_name='Enabled'
+            ),
+        )
     ]

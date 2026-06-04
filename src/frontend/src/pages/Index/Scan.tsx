@@ -1,3 +1,9 @@
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { notYetImplemented } from '@lib/functions/Notification';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -12,21 +18,14 @@ import {
   Text
 } from '@mantine/core';
 import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconNumber,
   IconQuestionMark
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { notYetImplemented } from '@lib/functions/Notification';
-import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';

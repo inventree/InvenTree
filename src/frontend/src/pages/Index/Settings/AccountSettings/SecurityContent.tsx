@@ -32,7 +32,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { ProviderLogin, authApi } from '../../../../functions/auth';
+import { authApi, ProviderLogin } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
@@ -46,7 +46,7 @@ export function SecurityContent() {
   const user = useUserState();
 
   const onError = useCallback(
-    (error: unknown, componentStack: string | undefined, eventId: string) => {
+    (error: unknown, _componentStack: string | undefined, _eventId: string) => {
       console.error(`ERR: Error rendering component: ${error}`);
     },
     []
@@ -181,7 +181,7 @@ function EmailSection() {
       .then(() => {
         refetch();
       })
-      .catch((err) => {
+      .catch((_err) => {
         hideNotification('email-error');
 
         showNotification({

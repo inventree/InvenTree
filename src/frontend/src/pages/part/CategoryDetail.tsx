@@ -1,5 +1,11 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Group, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconCategory,
   IconInfoCircle,
@@ -11,13 +17,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import type { PanelType } from '@lib/types/Panel';
-import { useLocalStorage } from '@mantine/hooks';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
@@ -58,7 +57,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 export default function CategoryDetail() {
   const { id: _id } = useParams();
   const id = useMemo(
-    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '', 10)) ? _id : undefined),
     [_id]
   );
 

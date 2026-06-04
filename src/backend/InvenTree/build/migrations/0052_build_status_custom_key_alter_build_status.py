@@ -9,42 +9,39 @@ import InvenTree.status_codes
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("build", "0051_delete_buildorderattachment"),
-    ]
+    dependencies = [('build', '0051_delete_buildorderattachment')]
 
     operations = [
         migrations.AddField(
-            model_name="build",
-            name="status_custom_key",
+            model_name='build',
+            name='status_custom_key',
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text="Additional status information for this item",
+                help_text='Additional status information for this item',
                 null=True,
-                verbose_name="Custom status key",
+                verbose_name='Custom status key',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.BuildStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AlterField(
-            model_name="build",
-            name="status",
+            model_name='build',
+            name='status',
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.BuildStatus.items(),
                 default=10,
-                help_text="Build status code",
+                help_text='Build status code',
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.BuildStatus
                     ),
                 ],
-                verbose_name="Build Status",
+                verbose_name='Build Status',
             ),
         ),
     ]

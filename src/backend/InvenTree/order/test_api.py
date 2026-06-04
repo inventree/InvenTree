@@ -776,15 +776,17 @@ class PurchaseOrderTest(OrderTest):
 
         # Create 100 purchase orders, cycling through the custom statuses
         supplier = Company.objects.filter(is_supplier=True).first()
-        models.PurchaseOrder.objects.bulk_create([
-            models.PurchaseOrder(
-                supplier=supplier,
-                reference=f'PO-QTEST-{i}',
-                status=custom_statuses[i % 10].logical_key,
-                status_custom_key=custom_statuses[i % 10].key,
-            )
-            for i in range(100)
-        ])
+        models.PurchaseOrder.objects.bulk_create(
+            [
+                models.PurchaseOrder(
+                    supplier=supplier,
+                    reference=f'PO-QTEST-{i}',
+                    status=custom_statuses[i % 10].logical_key,
+                    status_custom_key=custom_statuses[i % 10].key,
+                )
+                for i in range(100)
+            ]
+        )
 
         # Query count must stay below the fixed threshold for all limit values.
         # An N+1 bug would push limit=50 or limit=100 well over the threshold.
@@ -1310,10 +1312,12 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_LINES = 250
 
         # Create some line items
-        models.PurchaseOrderLineItem.objects.bulk_create([
-            models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
-            for i in range(N_LINES)
-        ])
+        models.PurchaseOrderLineItem.objects.bulk_create(
+            [
+                models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
+                for i in range(N_LINES)
+            ]
+        )
 
         # Place the order
         po.place_order()
@@ -2290,11 +2294,9 @@ class SalesOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -2342,11 +2344,9 @@ class SalesOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -3698,11 +3698,9 @@ class TransferOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -3721,8 +3719,7 @@ class TransferOrderAllocateTest(OrderTest):
         trackable_lines = self.order.lines.filter(part__trackable=True)
         for line in trackable_lines:
             stock_item = (
-                line.part.stock_items
-                .exclude(serial=None)
+                line.part.stock_items.exclude(serial=None)
                 .filter(StockItem.IN_STOCK_FILTER)
                 .first()
             )
@@ -3760,8 +3757,7 @@ class TransferOrderAllocateTest(OrderTest):
 
             # Allocate a matching variant
             parts: list[Part] = (
-                Part.objects
-                .exclude(virtual=True)
+                Part.objects.exclude(virtual=True)
                 .exclude(is_template=True)
                 .filter(variant_of=line.part.pk)
             )
@@ -3789,11 +3785,9 @@ class TransferOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 

@@ -486,8 +486,7 @@ def parameter(
 
     # First try with exact match
     if (
-        parameter := instance.parameters
-        .prefetch_related('template')
+        parameter := instance.parameters.prefetch_related('template')
         .filter(template__name=parameter_name)
         .first()
     ):
@@ -495,8 +494,7 @@ def parameter(
 
     # Next, try with case-insensitive match
     if (
-        parameter := instance.parameters
-        .prefetch_related('template')
+        parameter := instance.parameters.prefetch_related('template')
         .filter(template__name__iexact=parameter_name)
         .first()
     ):

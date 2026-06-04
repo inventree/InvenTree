@@ -1,7 +1,6 @@
+import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
-
-import { StylishText } from '@lib/components/StylishText';
 import { LanguageSelect } from '../../items/LanguageSelect';
 import type { DashboardWidgetProps } from '../DashboardWidget';
 

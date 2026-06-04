@@ -1,4 +1,21 @@
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  DetailDrawer,
+  DetailDrawerLink
+} from '@lib/components/nav/DetailDrawer';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import { formatDecimal, RowDeleteAction, RowEditAction } from '@lib/index';
+import type {
+  InvenTreeTableProps,
+  RowAction,
+  TableColumn
+} from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
@@ -21,21 +38,6 @@ import { IconCheck, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { AddItemButton } from '@lib/components/AddItemButton';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import {
-  DetailDrawer,
-  DetailDrawerLink
-} from '@lib/components/nav/DetailDrawer';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
-import type { RowAction, TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
-import { Trans } from '@lingui/react/macro';
 import { api } from '../../App';
 import {
   DeleteItemAction,
@@ -141,7 +143,10 @@ function restartMachine({
 export function useMachineTypeDriver({
   includeTypes = true,
   includeDrivers = true
-}: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+}: {
+  includeTypes?: boolean;
+  includeDrivers?: boolean;
+} = {}) {
   const api = useApi();
 
   const {
@@ -275,265 +280,260 @@ function MachineDrawer({
   }, [machine?.properties]);
 
   return (
-    <>
-      <Stack gap='xs'>
-        {machineEditModal.modal}
-        {machineDeleteModal.modal}
-        <Group justify='space-between'>
-          <Group>
-            {machine && <MachineStatusIndicator machine={machine} />}
-            <StylishText size='md'>{machine?.name ?? t`Machine`}</StylishText>
-          </Group>
-          <Group>
-            {machine?.restart_required && (
-              <Badge color='red'>
-                <Trans>Restart required</Trans>
-              </Badge>
-            )}
-            <OptionsActionDropdown
-              tooltip={t`Machine Actions`}
-              actions={[
-                EditItemAction({
-                  tooltip: t`Edit machine`,
-                  onClick: machineEditModal.open
-                }),
-                DeleteItemAction({
-                  tooltip: t`Delete machine`,
-                  onClick: machineDeleteModal.open
-                }),
-                {
-                  icon: <IconRefresh />,
-                  name: t`Restart`,
-                  tooltip:
-                    t`Restart machine` +
-                    (machine?.restart_required
-                      ? ` (${t`manual restart required`})`
-                      : ''),
-                  indicator: machine?.restart_required
-                    ? { color: 'red' }
-                    : undefined,
-                  onClick: () => {
-                    if (machine) {
-                      restartMachine({
-                        machinePk: machine?.pk,
-                        callback: refreshAll
-                      });
-                    }
+    <Stack gap='xs'>
+      {machineEditModal.modal}
+      {machineDeleteModal.modal}
+      <Group justify='space-between'>
+        <Group>
+          {machine && <MachineStatusIndicator machine={machine} />}
+          <StylishText size='md'>{machine?.name ?? t`Machine`}</StylishText>
+        </Group>
+        <Group>
+          {machine?.restart_required && (
+            <Badge color='red'>
+              <Trans>Restart required</Trans>
+            </Badge>
+          )}
+          <OptionsActionDropdown
+            tooltip={t`Machine Actions`}
+            actions={[
+              EditItemAction({
+                tooltip: t`Edit machine`,
+                onClick: machineEditModal.open
+              }),
+              DeleteItemAction({
+                tooltip: t`Delete machine`,
+                onClick: machineDeleteModal.open
+              }),
+              {
+                icon: <IconRefresh />,
+                name: t`Restart`,
+                tooltip:
+                  t`Restart machine` +
+                  (machine?.restart_required
+                    ? ` (${t`manual restart required`})`
+                    : ''),
+                indicator: machine?.restart_required
+                  ? { color: 'red' }
+                  : undefined,
+                onClick: () => {
+                  if (machine) {
+                    restartMachine({
+                      machinePk: machine?.pk,
+                      callback: refreshAll
+                    });
                   }
                 }
-              ]}
-            />
-          </Group>
+              }
+            ]}
+          />
         </Group>
+      </Group>
 
-        <Accordion
-          multiple
-          defaultValue={[
-            'machine-info',
-            'machine-properties',
-            'machine-settings',
-            'driver-settings'
-          ]}
-        >
-          <Accordion.Item
-            key={`machine-info-${machinePk}`}
-            value='machine-info'
-          >
-            <Accordion.Control>
-              <StylishText size='lg'>{t`General`}</StylishText>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Paper withBorder p='md'>
-                <Stack gap='md'>
-                  <Stack pos='relative' gap='xs'>
-                    <LoadingOverlay
-                      visible={isFetching}
-                      overlayProps={{ opacity: 0 }}
-                    />
-                    <InfoItem name={t`Machine Type`}>
-                      <Group gap='xs'>
-                        {machineType ? (
-                          <DetailDrawerLink
-                            to={`../type-${machine?.machine_type}`}
-                            text={machineType.name}
-                          />
-                        ) : (
-                          <Text>{machine?.machine_type}</Text>
-                        )}
-                        {machine && !machineType && <UnavailableIndicator />}
-                      </Group>
-                    </InfoItem>
-                    <InfoItem name={t`Machine Driver`}>
-                      <Group gap='xs'>
-                        {machineDriver ? (
-                          <DetailDrawerLink
-                            to={`../driver-${machine?.driver}`}
-                            text={machineDriver.name}
-                          />
-                        ) : (
-                          <Text>{machine?.driver}</Text>
-                        )}
-                        {!machine?.is_driver_available && (
-                          <UnavailableIndicator />
-                        )}
-                      </Group>
-                    </InfoItem>
-                    <InfoItem name={t`Initialized`}>
-                      <YesNoButton value={machine?.initialized || false} />
-                    </InfoItem>
-                    <InfoItem name={t`Active`}>
-                      <YesNoButton value={machine?.active || false} />
-                    </InfoItem>
-                    <InfoItem name={t`Status`}>
-                      <Flex direction='column'>
-                        {machine?.status === -1 ? (
-                          <Text fz='xs'>No status</Text>
-                        ) : (
-                          StatusRenderer({
-                            status: `${machine?.status || -1}`,
-                            type: `${machine?.status_model}` as any
-                          })
-                        )}
-                        <Text fz='sm'>{machine?.status_text}</Text>
-                      </Flex>
-                    </InfoItem>
-                    <Group justify='space-between' gap='xs'>
-                      <Text fz='sm' fw={700}>
-                        <Trans>Errors</Trans>:
-                      </Text>
-                      {machine && machine?.machine_errors.length > 0 ? (
-                        <Badge color='red' style={{ marginLeft: '10px' }}>
-                          {machine?.machine_errors.length}
-                        </Badge>
+      <Accordion
+        multiple
+        defaultValue={[
+          'machine-info',
+          'machine-properties',
+          'machine-settings',
+          'driver-settings'
+        ]}
+      >
+        <Accordion.Item key={`machine-info-${machinePk}`} value='machine-info'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`General`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Paper withBorder p='md'>
+              <Stack gap='md'>
+                <Stack pos='relative' gap='xs'>
+                  <LoadingOverlay
+                    visible={isFetching}
+                    overlayProps={{ opacity: 0 }}
+                  />
+                  <InfoItem name={t`Machine Type`}>
+                    <Group gap='xs'>
+                      {machineType ? (
+                        <DetailDrawerLink
+                          to={`../type-${machine?.machine_type}`}
+                          text={machineType.name}
+                        />
                       ) : (
-                        <Text fz='xs'>
-                          <Trans>No errors reported</Trans>
-                        </Text>
+                        <Text>{machine?.machine_type}</Text>
                       )}
-                      <List w='100%'>
-                        {machine?.machine_errors.map((error, i) => (
-                          <List.Item key={i}>
-                            <Code>{error}</Code>
-                          </List.Item>
-                        ))}
-                      </List>
+                      {machine && !machineType && <UnavailableIndicator />}
                     </Group>
-                  </Stack>
+                  </InfoItem>
+                  <InfoItem name={t`Machine Driver`}>
+                    <Group gap='xs'>
+                      {machineDriver ? (
+                        <DetailDrawerLink
+                          to={`../driver-${machine?.driver}`}
+                          text={machineDriver.name}
+                        />
+                      ) : (
+                        <Text>{machine?.driver}</Text>
+                      )}
+                      {!machine?.is_driver_available && (
+                        <UnavailableIndicator />
+                      )}
+                    </Group>
+                  </InfoItem>
+                  <InfoItem name={t`Initialized`}>
+                    <YesNoButton value={machine?.initialized || false} />
+                  </InfoItem>
+                  <InfoItem name={t`Active`}>
+                    <YesNoButton value={machine?.active || false} />
+                  </InfoItem>
+                  <InfoItem name={t`Status`}>
+                    <Flex direction='column'>
+                      {machine?.status === -1 ? (
+                        <Text fz='xs'>No status</Text>
+                      ) : (
+                        StatusRenderer({
+                          status: `${machine?.status || -1}`,
+                          type: `${machine?.status_model}` as any
+                        })
+                      )}
+                      <Text fz='sm'>{machine?.status_text}</Text>
+                    </Flex>
+                  </InfoItem>
+                  <Group justify='space-between' gap='xs'>
+                    <Text fz='sm' fw={700}>
+                      <Trans>Errors</Trans>:
+                    </Text>
+                    {machine && machine?.machine_errors.length > 0 ? (
+                      <Badge color='red' style={{ marginLeft: '10px' }}>
+                        {machine?.machine_errors.length}
+                      </Badge>
+                    ) : (
+                      <Text fz='xs'>
+                        <Trans>No errors reported</Trans>
+                      </Text>
+                    )}
+                    <List w='100%'>
+                      {machine?.machine_errors.map((error, i) => (
+                        <List.Item key={i}>
+                          <Code>{error}</Code>
+                        </List.Item>
+                      ))}
+                    </List>
+                  </Group>
                 </Stack>
-              </Paper>
-            </Accordion.Panel>
-          </Accordion.Item>
+              </Stack>
+            </Paper>
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item
+          key={`machine-properties-${machinePk}`}
+          value='machine-properties'
+        >
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Properties`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Paper withBorder p='md'>
+              <Stack gap='sm'>
+                {groupedProperties.map(({ group, properties }) => (
+                  <Stack key={group} gap={0}>
+                    {group && (
+                      <Text fz='sm' fw={700} mb={2}>
+                        {group}
+                      </Text>
+                    )}
+                    <Table
+                      variant='vertical'
+                      withTableBorder
+                      verticalSpacing={4}
+                    >
+                      <Table.Tbody>
+                        {properties.map((prop) => (
+                          <Table.Tr key={prop.key}>
+                            <Table.Th w={250}>{prop.key}</Table.Th>
+                            <Table.Td>
+                              {prop.type === 'bool' ? (
+                                <YesNoButton
+                                  value={
+                                    `${prop.value}`.toLowerCase() === 'true'
+                                  }
+                                />
+                              ) : prop.type === 'progress' ? (
+                                <Group>
+                                  <Progress
+                                    value={
+                                      (Number.parseInt(prop.value, 10) /
+                                        prop.max_progress) *
+                                      100
+                                    }
+                                    flex={1}
+                                  />
+                                  <Text>
+                                    {prop.value} / {prop.max_progress}
+                                  </Text>
+                                </Group>
+                              ) : prop.type === 'int' ? (
+                                <Text size='sm'>{prop.value}</Text>
+                              ) : prop.type === 'float' ? (
+                                <Text size='sm'>
+                                  {formatDecimal(
+                                    Number.parseFloat(prop.value),
+                                    { digits: 4 }
+                                  )}
+                                </Text>
+                              ) : (
+                                <Text size='sm'>{prop.value}</Text>
+                              )}
+                            </Table.Td>
+                          </Table.Tr>
+                        ))}
+                      </Table.Tbody>
+                    </Table>
+                  </Stack>
+                ))}
+              </Stack>
+            </Paper>
+          </Accordion.Panel>
+        </Accordion.Item>
+        {machine?.is_driver_available && (
           <Accordion.Item
-            key={`machine-properties-${machinePk}`}
-            value='machine-properties'
+            key={`machine-settings-${machinePk}`}
+            value='machine-settings'
           >
             <Accordion.Control>
-              <StylishText size='lg'>{t`Properties`}</StylishText>
+              <StylishText size='lg'>{t`Machine Settings`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <Paper withBorder p='md'>
-                <Stack gap='sm'>
-                  {groupedProperties.map(({ group, properties }) => (
-                    <Stack key={group} gap={0}>
-                      {group && (
-                        <Text fz='sm' fw={700} mb={2}>
-                          {group}
-                        </Text>
-                      )}
-                      <Table
-                        variant='vertical'
-                        withTableBorder
-                        verticalSpacing={4}
-                      >
-                        <Table.Tbody>
-                          {properties.map((prop) => (
-                            <Table.Tr key={prop.key}>
-                              <Table.Th w={250}>{prop.key}</Table.Th>
-                              <Table.Td>
-                                {prop.type === 'bool' ? (
-                                  <YesNoButton
-                                    value={
-                                      `${prop.value}`.toLowerCase() === 'true'
-                                    }
-                                  />
-                                ) : prop.type === 'progress' ? (
-                                  <Group>
-                                    <Progress
-                                      value={
-                                        (Number.parseInt(prop.value) /
-                                          prop.max_progress) *
-                                        100
-                                      }
-                                      flex={1}
-                                    />
-                                    <Text>
-                                      {prop.value} / {prop.max_progress}
-                                    </Text>
-                                  </Group>
-                                ) : prop.type === 'int' ? (
-                                  <Text size='sm'>{prop.value}</Text>
-                                ) : prop.type === 'float' ? (
-                                  <Text size='sm'>
-                                    {formatDecimal(
-                                      Number.parseFloat(prop.value),
-                                      { digits: 4 }
-                                    )}
-                                  </Text>
-                                ) : (
-                                  <Text size='sm'>{prop.value}</Text>
-                                )}
-                              </Table.Td>
-                            </Table.Tr>
-                          ))}
-                        </Table.Tbody>
-                      </Table>
-                    </Stack>
-                  ))}
-                </Stack>
+              <Paper withBorder p='xs'>
+                <MachineSettingList
+                  machinePk={machinePk}
+                  configType='M'
+                  onChange={refreshAll}
+                />
               </Paper>
             </Accordion.Panel>
           </Accordion.Item>
-          {machine?.is_driver_available && (
-            <Accordion.Item
-              key={`machine-settings-${machinePk}`}
-              value='machine-settings'
-            >
-              <Accordion.Control>
-                <StylishText size='lg'>{t`Machine Settings`}</StylishText>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Paper withBorder p='xs'>
-                  <MachineSettingList
-                    machinePk={machinePk}
-                    configType='M'
-                    onChange={refreshAll}
-                  />
-                </Paper>
-              </Accordion.Panel>
-            </Accordion.Item>
-          )}
-          {machine?.is_driver_available && (
-            <Accordion.Item
-              key={`driver-settings-${machinePk}`}
-              value='driver-settings'
-            >
-              <Accordion.Control>
-                <StylishText size='lg'>{t`Driver Settings`}</StylishText>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Paper withBorder p='xs'>
-                  <MachineSettingList
-                    machinePk={machinePk}
-                    configType='D'
-                    onChange={refreshAll}
-                  />
-                </Paper>
-              </Accordion.Panel>
-            </Accordion.Item>
-          )}
-        </Accordion>
-      </Stack>
-    </>
+        )}
+        {machine?.is_driver_available && (
+          <Accordion.Item
+            key={`driver-settings-${machinePk}`}
+            value='driver-settings'
+          >
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Driver Settings`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Paper withBorder p='xs'>
+                <MachineSettingList
+                  machinePk={machinePk}
+                  configType='D'
+                  onChange={refreshAll}
+                />
+              </Paper>
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
+      </Accordion>
+    </Stack>
   );
 }
 
@@ -765,7 +765,7 @@ export function MachineListTable({
           title={t`Machine Detail`}
           size={'xl'}
           renderContent={(id) => {
-            if (!id || !id.startsWith('machine-')) return false;
+            if (!id?.startsWith('machine-')) return false;
             return (
               <MachineDrawer
                 machinePk={id.replace('machine-', '')}

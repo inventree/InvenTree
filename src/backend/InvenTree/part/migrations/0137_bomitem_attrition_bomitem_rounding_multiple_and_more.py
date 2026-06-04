@@ -5,51 +5,48 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("part", "0136_partparameter_note_partparameter_updated_and_more"),
-    ]
+    dependencies = [('part', '0136_partparameter_note_partparameter_updated_and_more')]
 
     operations = [
         migrations.AddField(
-            model_name="bomitem",
-            name="attrition",
+            model_name='bomitem',
+            name='attrition',
             field=models.DecimalField(
                 decimal_places=3,
                 default=0,
-                help_text="Estimated attrition for a build, expressed as a percentage (0-100)",
+                help_text='Estimated attrition for a build, expressed as a percentage (0-100)',
                 max_digits=6,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name="Attrition",
+                verbose_name='Attrition',
             ),
         ),
         migrations.AddField(
-            model_name="bomitem",
-            name="rounding_multiple",
+            model_name='bomitem',
+            name='rounding_multiple',
             field=models.DecimalField(
                 blank=True,
                 decimal_places=5,
                 default=None,
-                help_text="Round up required production quantity to nearest multiple of this value",
+                help_text='Round up required production quantity to nearest multiple of this value',
                 max_digits=15,
                 null=True,
                 validators=[django.core.validators.MinValueValidator(0)],
-                verbose_name="Rounding Multiple",
+                verbose_name='Rounding Multiple',
             ),
         ),
         migrations.AddField(
-            model_name="bomitem",
-            name="setup_quantity",
+            model_name='bomitem',
+            name='setup_quantity',
             field=models.DecimalField(
                 decimal_places=5,
                 default=0,
-                help_text="Extra required quantity for a build, to account for setup losses",
+                help_text='Extra required quantity for a build, to account for setup losses',
                 max_digits=15,
                 validators=[django.core.validators.MinValueValidator(0)],
-                verbose_name="Setup Quantity",
+                verbose_name='Setup Quantity',
             ),
         ),
     ]

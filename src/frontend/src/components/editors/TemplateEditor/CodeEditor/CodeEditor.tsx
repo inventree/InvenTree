@@ -100,7 +100,7 @@ const tooltips = hoverTooltip((view, pos, side) => {
     pos: start,
     end,
     above: true,
-    create(view) {
+    create(_view) {
       return { dom: renderHelp(tagsMap[text]) };
     }
   };
@@ -125,34 +125,36 @@ const extensions = [
   })
 ];
 
-export const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
-  const editor = useRef<HTMLDivElement | null>(null);
-  const [code, setCode] = useState('');
-  const { setContainer } = useCodeMirror({
-    container: editor.current,
-    extensions,
-    value: code,
-    onChange: (value) => setCode(value),
-    theme: vscodeDark
-  });
+export const CodeEditorComponent: EditorComponent = forwardRef(
+  (_props, ref) => {
+    const editor = useRef<HTMLDivElement | null>(null);
+    const [code, setCode] = useState('');
+    const { setContainer } = useCodeMirror({
+      container: editor.current,
+      extensions,
+      value: code,
+      onChange: (value) => setCode(value),
+      theme: vscodeDark
+    });
 
-  useImperativeHandle(ref, () => ({
-    setCode: (code) => setCode(code),
-    getCode: () => code
-  }));
+    useImperativeHandle(ref, () => ({
+      setCode: (code) => setCode(code),
+      getCode: () => code
+    }));
 
-  useEffect(() => {
-    if (editor.current) {
-      setContainer(editor.current);
-    }
-  }, [editor.current]);
+    useEffect(() => {
+      if (editor.current) {
+        setContainer(editor.current);
+      }
+    }, [editor.current]);
 
-  return (
-    <div style={{ display: 'flex', flex: '1', position: 'relative' }}>
-      <div
-        style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
-        ref={editor}
-      />
-    </div>
-  );
-});
+    return (
+      <div style={{ display: 'flex', flex: '1', position: 'relative' }}>
+        <div
+          style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
+          ref={editor}
+        />
+      </div>
+    );
+  }
+);
