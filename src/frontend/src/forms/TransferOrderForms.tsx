@@ -2,7 +2,7 @@ import { ApiEndpoints, ModelType, ProgressBar, apiUrl } from '@lib/index';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
-import { IconCalendar, IconUsers } from '@tabler/icons-react';
+import { IconAddressBook, IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
@@ -37,6 +37,12 @@ export function useTransferOrderFields({
       },
       consume: {},
       link: {},
+      address: {
+        icon: <IconAddressBook />,
+        filters: {
+          internal: true
+        }
+      },
       responsible: {
         filters: {
           is_active: true

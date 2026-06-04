@@ -25,10 +25,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function AddressTable({
   companyId,
-  params
+  internal
 }: Readonly<{
-  companyId: number;
-  params?: any;
+  companyId?: number;
+  internal?: boolean;
 }>) {
   const user = useUserState();
 
@@ -101,8 +101,10 @@ export function AddressTable({
   }, []);
 
   const addressFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      company: {},
+    const fields: ApiFormFieldSet = {
+      company: {
+        required: true
+      },
       title: {},
       primary: {},
       line1: {},
@@ -115,14 +117,22 @@ export function AddressTable({
       internal_shipping_notes: {},
       link: {}
     };
-  }, []);
+
+    if (internal) {
+      fields.company.required = false;
+      fields.company.value = null;
+      fields.company.hidden = true;
+    }
+
+    return fields;
+  }, [internal]);
 
   const newAddress = useCreateApiFormModal({
     url: ApiEndpoints.address_list,
     title: t`Add Address`,
     fields: addressFields,
     initialData: {
-      company: companyId
+      company: internal ? null : companyId
     },
     successMessage: t`Address created`,
     table: table
@@ -135,7 +145,7 @@ export function AddressTable({
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    table: table
+    onFormSuccess: table.refreshTable
   });
 
   const deleteAddress = useDeleteApiFormModal({
@@ -205,7 +215,7 @@ export function AddressTable({
           rowActions: rowActions,
           tableActions: tableActions,
           params: {
-            ...params,
+            internal: internal,
             company: companyId
           }
         }}

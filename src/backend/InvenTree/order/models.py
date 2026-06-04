@@ -311,6 +311,7 @@ class Order(
 
     - PurchaseOrder
     - SalesOrder
+    - ReturnOrder
 
     Attributes:
         reference: Unique order number / reference / code
@@ -328,6 +329,7 @@ class Order(
     REQUIRE_RESPONSIBLE_SETTING = None
     UNLOCK_SETTING = None
     IMPORT_ID_FIELDS = ['reference']
+    INTERNAL_ADDRESS: bool = True
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -420,16 +422,29 @@ class Order(
                 'start_date': _('Start date must be before target date'),
             })
 
-        # Check that the referenced 'address' matches the correct 'company'
-        if (
-            hasattr(self, 'company')
-            and self.company
-            and self.address
-            and (self.address.company != self.company)
-        ):
-            raise ValidationError({
-                'address': _('Address does not match selected company')
-            })
+        self.clean_address()
+
+    def clean_address(self):
+        """Check that the address field is valid."""
+        if self.INTERNAL_ADDRESS:
+            # Check that the address is an 'internal' address (i.e. not linked to a company)
+            if self.address and self.address.company:
+                raise ValidationError({
+                    'address': _(
+                        'Address must be an internal address (not linked to a company)'
+                    )
+                })
+        else:
+            # Check that the referenced 'address' matches the correct 'company'
+            if (
+                hasattr(self, 'company')
+                and self.company
+                and self.address
+                and (self.address.company != self.company)
+            ):
+                raise ValidationError({
+                    'address': _('Address does not match selected company')
+                })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -572,7 +587,7 @@ class Order(
         blank=True,
         null=True,
         verbose_name=_('Address'),
-        help_text=_('Company address for this order'),
+        help_text=_('Address for this order'),
         related_name='+',
     )
 
@@ -586,8 +601,22 @@ class Order(
 
     @property
     def order_address(self):
-        """Return the Address associated with this order."""
-        return self.address or self.company.primary_address
+        """Return the Address associated with this order.
+
+        - If this is an 'internal' order (i.e. INTERNAL_ADDRESS = True), fall back to the primary internal address.
+        - Otherwise, we can fall back to the primary address of the associated company if no address is specified on the order itself.
+        """
+        # Return address if directly specified
+        if address := self.address:
+            return address
+
+        if self.INTERNAL_ADDRESS:
+            # Return the primary internal address (i.e. where company is null)
+            return Address.objects.filter(company=None).order_by('-primary').first()
+        elif self.company:
+            return self.company.primary_address
+        else:
+            return None
 
     @classmethod
     def get_status_class(cls):
@@ -1336,6 +1365,9 @@ class SalesOrder(TotalPriceMixin, Order):
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
     UNLOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
+
+    # SalesOrder address must point to the external company (customer)
+    INTERNAL_ADDRESS = False
 
     class Meta:
         """Model meta options."""

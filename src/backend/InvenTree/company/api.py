@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
+from rest_framework.exceptions import PermissionDenied
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
@@ -105,19 +106,49 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ContactSerializer
 
 
+class AddressFilter(FilterSet):
+    """Custom API filters for the Address list endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Address
+        fields = ['company']
+
+    internal = rest_filters.BooleanFilter(
+        label=_('Internal Address'), field_name='company', lookup_expr='isnull'
+    )
+
+
+def _require_staff_for_internal_address(request, address_company) -> None:
+    """Raise PermissionDenied if the address is internal and the user is not staff."""
+    if address_company is None and not request.user.is_staff:
+        raise PermissionDenied(_('Only staff users can modify internal addresses'))
+
+
 class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Address model."""
 
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+    filterset_class = AddressFilter
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['company']
 
     ordering_fields = ['title']
 
     ordering = 'title'
+
+    def perform_create(self, serializer):
+        """Enforce staff-only creation of internal addresses."""
+        company = serializer.validated_data.get('company', None)
+        _require_staff_for_internal_address(self.request, company)
+        super().perform_create(serializer)
+
+    def validate_delete(self, queryset, request) -> None:
+        """Prevent non-staff users from bulk-deleting internal addresses."""
+        if not request.user.is_staff and queryset.filter(company__isnull=True).exists():
+            raise PermissionDenied(_('Only staff users can delete internal addresses'))
 
 
 class AddressDetail(RetrieveUpdateDestroyAPI):
@@ -125,6 +156,16 @@ class AddressDetail(RetrieveUpdateDestroyAPI):
 
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+
+    def perform_update(self, serializer):
+        """Enforce staff-only updates to internal addresses."""
+        _require_staff_for_internal_address(self.request, serializer.instance.company)
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        """Enforce staff-only deletion of internal addresses."""
+        _require_staff_for_internal_address(self.request, instance.company)
+        super().perform_destroy(instance)
 
 
 class ManufacturerPartFilter(FilterSet):

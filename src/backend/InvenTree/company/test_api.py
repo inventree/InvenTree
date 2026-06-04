@@ -397,6 +397,28 @@ class AddressTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), self.num_addr)
 
+    def test_filter_internal(self):
+        """Test the ?internal= filter returns only internal / only company addresses."""
+        n_internal = 2
+        Address.objects.bulk_create([
+            Address(company=None, title=f'Internal {idx}') for idx in range(n_internal)
+        ])
+
+        total = Address.objects.count()
+        n_company = total - n_internal
+
+        # internal=true → only addresses with company=None
+        response = self.get(self.url, {'internal': True}, expected_code=200)
+        self.assertEqual(len(response.data), n_internal)
+        for item in response.data:
+            self.assertIsNone(item['company'])
+
+        # internal=false → only addresses with a company set
+        response = self.get(self.url, {'internal': False}, expected_code=200)
+        self.assertEqual(len(response.data), n_company)
+        for item in response.data:
+            self.assertIsNotNone(item['company'])
+
     def test_create(self):
         """Test creating a new address."""
         company = Company.objects.first()
@@ -464,6 +486,140 @@ class AddressTest(InvenTreeAPITestCase):
         self.delete(url, expected_code=204)
 
         self.get(url, expected_code=404)
+
+
+class InternalAddressPermissionTest(InvenTreeAPITestCase):
+    """Tests that internal addresses (company=None) require staff for write operations."""
+
+    # Start as non-staff so most tests can verify the 403 path first
+    is_staff = False
+    roles = ['purchase_order.add', 'purchase_order.change', 'purchase_order.delete']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create one company address and one internal address for use across tests."""
+        super().setUpTestData()
+
+        cls.company = Company.objects.create(
+            name='Test Co', description='A test company'
+        )
+        cls.company_address = Address.objects.create(
+            company=cls.company, title='Company HQ'
+        )
+        cls.internal_address = Address.objects.create(
+            company=None, title='Our Warehouse'
+        )
+
+        cls.list_url = reverse('api-address-list')
+        cls.internal_url = reverse(
+            'api-address-detail', kwargs={'pk': cls.internal_address.pk}
+        )
+        cls.company_url = reverse(
+            'api-address-detail', kwargs={'pk': cls.company_address.pk}
+        )
+
+    # --- Create ---
+
+    def test_create_internal_address_non_staff_forbidden(self):
+        """Non-staff cannot create an internal address (no company field)."""
+        self.post(self.list_url, {'title': 'New Depot'}, expected_code=403)
+
+    def test_create_internal_address_staff_allowed(self):
+        """Staff users can create an internal address."""
+        self.user.is_staff = True
+        self.user.save()
+        try:
+            response = self.post(
+                self.list_url, {'title': 'Staff Depot'}, expected_code=201
+            )
+            self.assertIsNone(response.data['company'])
+        finally:
+            self.user.is_staff = False
+            self.user.save()
+
+    def test_create_company_address_non_staff_allowed(self):
+        """Non-staff can still create a regular company-linked address."""
+        self.post(
+            self.list_url,
+            {'company': self.company.pk, 'title': 'Branch Office'},
+            expected_code=201,
+        )
+
+    # --- Update ---
+
+    def test_update_internal_address_non_staff_forbidden(self):
+        """Non-staff cannot PATCH an internal address."""
+        self.patch(self.internal_url, {'title': 'Renamed'}, expected_code=403)
+
+    def test_update_internal_address_staff_allowed(self):
+        """Staff users can PATCH an internal address."""
+        self.user.is_staff = True
+        self.user.save()
+        try:
+            self.patch(
+                self.internal_url, {'title': 'Updated Warehouse'}, expected_code=200
+            )
+        finally:
+            self.user.is_staff = False
+            self.user.save()
+
+    def test_update_company_address_non_staff_allowed(self):
+        """Non-staff can PATCH a regular company-linked address."""
+        self.patch(self.company_url, {'title': 'Updated HQ'}, expected_code=200)
+
+    # --- Delete (detail) ---
+
+    def test_delete_internal_address_non_staff_forbidden(self):
+        """Non-staff cannot DELETE an internal address."""
+        self.delete(self.internal_url, expected_code=403)
+        # Confirm the object still exists
+        self.assertTrue(Address.objects.filter(pk=self.internal_address.pk).exists())
+
+    def test_delete_internal_address_staff_allowed(self):
+        """Staff users can DELETE an internal address."""
+        addr = Address.objects.create(company=None, title='Temporary')
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+        self.user.is_staff = True
+        self.user.save()
+        try:
+            self.delete(url, expected_code=204)
+            self.assertFalse(Address.objects.filter(pk=addr.pk).exists())
+        finally:
+            self.user.is_staff = False
+            self.user.save()
+
+    def test_delete_company_address_non_staff_allowed(self):
+        """Non-staff can DELETE a regular company-linked address."""
+        addr = Address.objects.create(company=self.company, title='Temporary Branch')
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+        self.delete(url, expected_code=204)
+
+    # --- Bulk delete ---
+
+    def test_bulk_delete_internal_address_non_staff_forbidden(self):
+        """Non-staff cannot bulk-delete a set that contains internal addresses."""
+        addr = Address.objects.create(company=None, title='Bulk Target')
+        self.delete(self.list_url, data={'items': [addr.pk]}, expected_code=403)
+        self.assertTrue(Address.objects.filter(pk=addr.pk).exists())
+
+    def test_bulk_delete_internal_address_staff_allowed(self):
+        """Staff users can bulk-delete internal addresses."""
+        addr = Address.objects.create(company=None, title='Bulk Internal')
+        self.user.is_staff = True
+        self.user.save()
+        try:
+            self.delete(self.list_url, data={'items': [addr.pk]}, expected_code=200)
+            self.assertFalse(Address.objects.filter(pk=addr.pk).exists())
+        finally:
+            self.user.is_staff = False
+            self.user.save()
+
+    def test_bulk_delete_company_addresses_non_staff_allowed(self):
+        """Non-staff can bulk-delete a set that contains only company-linked addresses."""
+        a1 = Address.objects.create(company=self.company, title='Bulk A')
+        a2 = Address.objects.create(company=self.company, title='Bulk B')
+        self.delete(self.list_url, data={'items': [a1.pk, a2.pk]}, expected_code=200)
+        self.assertFalse(Address.objects.filter(pk__in=[a1.pk, a2.pk]).exists())
 
 
 class ManufacturerTest(InvenTreeAPITestCase):

@@ -56,7 +56,7 @@ A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/
 ### Addresses
 
 A company can have multiple registered addresses for use with all types of orders.
-An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
+An address is broken down to internationally recognized elements that are designed to allow for formatting an address according to user needs.
 Addresses are composed differently across the world, and InvenTree reflects this by splitting addresses into components:
 
 | Field | Description |
@@ -97,6 +97,9 @@ Each company can have exactly one (1) primary address.
 This address is the default shown on the company profile, and the one that is automatically suggested when creating an order.
 Marking a new address as primary will remove the mark from the old primary address.
 
+!!! info "Effective order address"
+    When an order ([Sales Order](../sales/sales_order.md)) has no explicit address assigned, InvenTree uses the customer's primary address as the effective delivery address. This fallback ensures that reports and shipping labels always have an address to render, even if none was explicitly chosen on the order.
+
 #### Managing Addresses
 
 Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon("map-2") }} Addresses</span> navigation tab, from the company detail page.
@@ -104,3 +107,31 @@ Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon(
 Here, the addresses associated with the company are listed, and can be added, edited, or deleted.
 
 {{ image("concepts/edit_address.png", "Edit Address") }}
+
+### Internal Addresses
+
+In addition to addresses linked to external companies, InvenTree supports **internal addresses** — addresses that belong to your own organization rather than to any external company.
+
+Internal addresses are used when the delivery destination is one of your own sites rather than a customer or supplier location. Orders that use internal addresses include:
+
+| Order Type | Address Meaning |
+| --- | --- |
+| [Purchase Order](../purchasing/purchase_order.md) | Optional delivery destination for incoming goods |
+| [Return Order](../sales/return_order.md) | Optional location to which returned items are sent |
+| [Transfer Order](../stock/transfer_order.md) | Optional destination for an internal stock transfer |
+
+!!! info "Sales Orders use external addresses"
+    [Sales Orders](../sales/sales_order.md) are addressed to the *customer*, so they use addresses linked to the customer company, not internal addresses.
+
+#### Managing Internal Addresses
+
+Internal addresses are managed from the **Admin Center**, under the *Addresses* panel. Only staff users can create, edit, or delete internal addresses.
+
+Each internal address uses the same fields as a company address (Title, Line 1, Line 2, Postal Code, City, Province, Country).
+
+#### Primary Internal Address
+
+One internal address can be marked as the **primary** address. This address is the default suggestion when assigning a delivery address to a new order. Marking a different address as primary will automatically remove the mark from the previous primary address.
+
+!!! info "Effective order address"
+    When a Purchase Order, Return Order, or Transfer Order has no explicit address assigned, InvenTree falls back to the primary internal address as the effective delivery address. This ensures that reports and shipping documents always have an address to render. If no internal address exists at all, the effective address is blank.

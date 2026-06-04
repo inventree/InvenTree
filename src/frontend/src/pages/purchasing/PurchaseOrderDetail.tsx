@@ -33,6 +33,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
+import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
@@ -223,6 +224,17 @@ export default function PurchaseOrderDetail() {
         label: t`Link`,
         copy: true,
         hidden: !order.link
+      },
+      {
+        type: 'text',
+        name: 'address',
+        label: t`Delivery Address`,
+        icon: 'address',
+        hidden: !order.address,
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : undefined
       },
       {
         type: 'text',

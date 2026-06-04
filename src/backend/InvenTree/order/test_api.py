@@ -18,7 +18,7 @@ from rest_framework import status
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, SupplierPart, SupplierPriceBreak
+from company.models import Address, Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -439,6 +439,28 @@ class PurchaseOrderTest(OrderTest):
 
         # Revert the setting to previous value
         InvenTreeSetting.set_setting(setting, False)
+
+    def test_po_address(self):
+        """Test that the PurchaseOrder 'address' field must be an internal address."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        url = reverse('api-po-detail', kwargs={'pk': po.pk})
+
+        # An internal address (company=None) must be accepted
+        internal_address = Address.objects.create(
+            company=None, title='Warehouse', line1='1 Internal St', country='AU'
+        )
+        response = self.patch(url, {'address': internal_address.pk}, expected_code=200)
+        self.assertEqual(response.data['address'], internal_address.pk)
+
+        # An external address (linked to a company) must be rejected
+        external_address = Address.objects.create(
+            company=Company.objects.first(),
+            title='Supplier site',
+            line1='2 External St',
+            country='AU',
+        )
+        response = self.patch(url, {'address': external_address.pk}, expected_code=400)
+        self.assertIn('Address must be an internal address', str(response.data))
 
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""
@@ -1687,6 +1709,49 @@ class SalesOrderTest(OrderTest):
             expected_code=201,
         )
 
+    def test_so_address(self):
+        """Test that the SalesOrder 'address' field must match the customer company."""
+        self.assignRole('sales_order.add')
+
+        customer = Company.objects.filter(is_customer=True).first()
+
+        # Create a fresh SO so that full_clean passes reference validation on PATCH
+        so = self.post(
+            reverse('api-so-list'),
+            {
+                'customer': customer.pk,
+                'reference': 'SO-88881',
+                'description': 'addr test',
+            },
+            expected_code=201,
+        ).data
+        url = reverse('api-so-detail', kwargs={'pk': so['pk']})
+
+        # Address belonging to the order's customer must be accepted
+        customer_address = Address.objects.create(
+            company=customer, title='Customer site', line1='1 Customer St', country='AU'
+        )
+        response = self.patch(url, {'address': customer_address.pk}, expected_code=200)
+        self.assertEqual(response.data['address'], customer_address.pk)
+
+        # Address belonging to a different company must be rejected
+        other_company = Company.objects.exclude(pk=customer.pk).first()
+        wrong_address = Address.objects.create(
+            company=other_company,
+            title='Wrong company',
+            line1='2 Other St',
+            country='AU',
+        )
+        response = self.patch(url, {'address': wrong_address.pk}, expected_code=400)
+        self.assertIn('Address does not match selected company', str(response.data))
+
+        # An internal address (company=None) must also be rejected for a SalesOrder
+        internal_address = Address.objects.create(
+            company=None, title='Internal', line1='3 Internal St', country='AU'
+        )
+        response = self.patch(url, {'address': internal_address.pk}, expected_code=400)
+        self.assertIn('Address does not match selected company', str(response.data))
+
     def test_so_duplicate(self):
         """Test SalesOrder duplication via the API."""
         from common.models import Parameter, ParameterTemplate
@@ -2648,6 +2713,28 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         rma = models.ReturnOrder.objects.get(pk=1)
         self.assertEqual(rma.customer_reference, 'customer ref')
 
+    def test_ro_address(self):
+        """Test that the ReturnOrder 'address' field must be an internal address."""
+        self.assignRole('return_order.change')
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        # An internal address (company=None) must be accepted
+        internal_address = Address.objects.create(
+            company=None, title='Goods-in bay', line1='1 Internal St', country='AU'
+        )
+        response = self.patch(url, {'address': internal_address.pk}, expected_code=200)
+        self.assertEqual(response.data['address'], internal_address.pk)
+
+        # An external address (linked to a company) must be rejected
+        external_address = Address.objects.create(
+            company=Company.objects.first(),
+            title='Customer site',
+            line1='2 External St',
+            country='AU',
+        )
+        response = self.patch(url, {'address': external_address.pk}, expected_code=400)
+        self.assertIn('Address must be an internal address', str(response.data))
+
     def test_ro_issue(self):
         """Test the 'issue' order for a ReturnOrder."""
         order = models.ReturnOrder.objects.get(pk=1)
@@ -3122,6 +3209,27 @@ class TransferOrderTest(OrderTest):
             {'reference': 'TO-12345', 'description': 'A better test transfer order'},
             expected_code=201,
         )
+
+    def test_to_address(self):
+        """Test that the TransferOrder 'address' field must be an internal address."""
+        url = reverse('api-transfer-order-detail', kwargs={'pk': 1})
+
+        # An internal address (company=None) must be accepted
+        internal_address = Address.objects.create(
+            company=None, title='Dispatch bay', line1='1 Internal St', country='AU'
+        )
+        response = self.patch(url, {'address': internal_address.pk}, expected_code=200)
+        self.assertEqual(response.data['address'], internal_address.pk)
+
+        # An external address (linked to a company) must be rejected
+        external_address = Address.objects.create(
+            company=Company.objects.first(),
+            title='External site',
+            line1='2 External St',
+            country='AU',
+        )
+        response = self.patch(url, {'address': external_address.pk}, expected_code=400)
+        self.assertIn('Address must be an internal address', str(response.data))
 
     def test_transfer_order_cancel(self):
         """Test API endpoint for cancelling a TransferOrder."""
