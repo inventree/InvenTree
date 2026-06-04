@@ -1521,8 +1521,6 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
-    # Uploaded images for notes
-    path('notes-image/', NotesImageList.as_view(), name='api-notes-image-list'),
     # Background task information
     path(
         'background-task/',
@@ -1558,6 +1556,8 @@ common_api_urls = [
     path(
         'note/',
         include([
+            # Uploaded images for notes
+            path('image/', NotesImageList.as_view(), name='api-notes-image-list'),
             path(
                 '<int:pk>/',
                 include([
