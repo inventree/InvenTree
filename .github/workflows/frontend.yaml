@@ -238,22 +238,6 @@ jobs:
         run: |
           cd src/frontend
           npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
-      - name: Upload Blob Report [${{ matrix.shard }} / 4]
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        id: blob-upload
-        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
-        with:
-          name: blob-report-${{ matrix.shard }}
-          path: src/frontend/blob-report/
-          retention-days: 1
-      - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        id: coverage-upload
-        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
-        with:
-          name: coverage-${{ matrix.shard }}
-          path: src/frontend/.nyc_output/
-          retention-days: 1
       - name: Playwright Report [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
@@ -261,6 +245,22 @@ jobs:
           name: playwright-report-chromium-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 7
+      - name: Upload Blob Report [${{ matrix.shard }} / 4]
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        id: blob-upload
+        if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: src/frontend/blob-report/
+          retention-days: 1
+      - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        id: coverage-upload
+        if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
+        with:
+          name: coverage-${{ matrix.shard }}
+          path: src/frontend/.nyc_output/
+          retention-days: 1
 
   # Recombine the coverage reports from the 4 shards, and upload to Codecov
   coverage:
