@@ -352,9 +352,9 @@ class Order(
             if self.get_db_instance().status != self.status:
                 pass
             else:
-                raise ValidationError({
-                    'reference': _('This order is locked and cannot be modified')
-                })
+                raise ValidationError(
+                    {'reference': _('This order is locked and cannot be modified')}
+                )
 
         # Reference calculations
         self.reference_int = self.rebuild_reference_field(self.reference)
@@ -399,9 +399,13 @@ class Order(
         if self.REQUIRE_RESPONSIBLE_SETTING:
             if get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False):
                 if not self.responsible:
-                    raise ValidationError({
-                        'responsible': _('Responsible user or group must be specified')
-                    })
+                    raise ValidationError(
+                        {
+                            'responsible': _(
+                                'Responsible user or group must be specified'
+                            )
+                        }
+                    )
 
         # Check that the referenced 'contact' matches the correct 'company'
         if (
@@ -411,16 +415,18 @@ class Order(
             and self.contact
             and (self.contact.company != self.company)
         ):
-            raise ValidationError({
-                'contact': _('Contact does not match selected company')
-            })
+            raise ValidationError(
+                {'contact': _('Contact does not match selected company')}
+            )
 
         # Target date should be *after* the start date
         if self.start_date and self.target_date and self.start_date > self.target_date:
-            raise ValidationError({
-                'target_date': _('Target date must be after start date'),
-                'start_date': _('Start date must be before target date'),
-            })
+            raise ValidationError(
+                {
+                    'target_date': _('Target date must be after start date'),
+                    'start_date': _('Start date must be before target date'),
+                }
+            )
 
         # Check that the referenced 'address' matches the correct 'company'
         if (
@@ -429,9 +435,9 @@ class Order(
             and self.address
             and (self.address.company != self.company)
         ):
-            raise ValidationError({
-                'address': _('Address does not match selected company')
-            })
+            raise ValidationError(
+                {'address': _('Address does not match selected company')}
+            )
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -476,8 +482,7 @@ class Order(
         Makes use of the overdue_filter() method to avoid code duplication
         """
         return (
-            self.__class__.objects
-            .filter(pk=self.pk)
+            self.__class__.objects.filter(pk=self.pk)
             .filter(self.__class__.overdue_filter())
             .exists()
         )
@@ -781,16 +786,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         try:
             quantity = int(quantity)
             if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity must be greater than zero')}
+                )
         except ValueError:
             raise ValidationError({'quantity': _('Invalid quantity provided')})
 
         if supplier_part.supplier != self.supplier:
-            raise ValidationError({
-                'supplier': _('Part supplier must match PO supplier')
-            })
+            raise ValidationError(
+                {'supplier': _('Part supplier must match PO supplier')}
+            )
 
         if group:
             # Check if there is already a matching line item (for this PurchaseOrder)
@@ -1075,9 +1080,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             try:
                 if quantity < 0:
-                    raise ValidationError({
-                        'quantity': _('Quantity must be a positive number')
-                    })
+                    raise ValidationError(
+                        {'quantity': _('Quantity must be a positive number')}
+                    )
                 quantity = InvenTree.helpers.clean_decimal(quantity)
             except TypeError:
                 raise ValidationError({'quantity': _('Invalid quantity provided')})
@@ -1951,9 +1956,9 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         Calls save method on the linked order
         """
         if self.order and self.order.check_locked():
-            raise ValidationError({
-                'non_field_errors': _('The order is locked and cannot be modified')
-            })
+            raise ValidationError(
+                {'non_field_errors': _('The order is locked and cannot be modified')}
+            )
 
         update_order = kwargs.pop('update_order', True)
 
@@ -1976,9 +1981,9 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         Calls save method on the linked order
         """
         if self.order and self.order.check_locked():
-            raise ValidationError({
-                'non_field_errors': _('The order is locked and cannot be modified')
-            })
+            raise ValidationError(
+                {'non_field_errors': _('The order is locked and cannot be modified')}
+            )
 
         super().delete(*args, **kwargs)
         self.order.save()
@@ -2137,33 +2142,37 @@ class PurchaseOrderLineItem(OrderLineItem):
 
         if self.build_order:
             if not self.build_order.external:
-                raise ValidationError({
-                    'build_order': _('Build order must be marked as external')
-                })
+                raise ValidationError(
+                    {'build_order': _('Build order must be marked as external')}
+                )
 
             if part:
                 if not part.assembly:
-                    raise ValidationError({
-                        'build_order': _(
-                            'Build orders can only be linked to assembly parts'
-                        )
-                    })
+                    raise ValidationError(
+                        {
+                            'build_order': _(
+                                'Build orders can only be linked to assembly parts'
+                            )
+                        }
+                    )
 
                 if self.build_order.part != self.part.part:
-                    raise ValidationError({
-                        'build_order': _('Build order part must match line item part')
-                    })
+                    raise ValidationError(
+                        {'build_order': _('Build order part must match line item part')}
+                    )
 
         # Extra checks for external builds
         if part and part.assembly and get_global_setting('BUILDORDER_EXTERNAL_BUILDS'):
             if not self.build_order and get_global_setting(
                 'BUILDORDER_EXTERNAL_REQUIRED'
             ):
-                raise ValidationError({
-                    'build_order': _(
-                        'An external build order is required for assembly parts'
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'build_order': _(
+                            'An external build order is required for assembly parts'
+                        )
+                    }
+                )
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
@@ -2347,9 +2356,9 @@ class SalesOrderLineItem(OrderLineItem):
 
         if self.part:
             if not self.part.salable:
-                raise ValidationError({
-                    'part': _('Only salable parts can be assigned to a sales order')
-                })
+                raise ValidationError(
+                    {'part': _('Only salable parts can be assigned to a sales order')}
+                )
 
     order = models.ForeignKey(
         SalesOrder,
@@ -2510,9 +2519,9 @@ class SalesOrderShipment(
 
         if self.order and self.shipment_address:
             if self.shipment_address.company != self.order.customer:
-                raise ValidationError({
-                    'shipment_address': _('Shipment address must match the customer')
-                })
+                raise ValidationError(
+                    {'shipment_address': _('Shipment address must match the customer')}
+                )
 
     @staticmethod
     def get_api_url() -> str:
@@ -3244,19 +3253,19 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
             raise ValidationError({'item': _('Stock item must be specified')})
 
         if self.quantity > self.item.quantity:
-            raise ValidationError({
-                'quantity': _('Return quantity exceeds stock quantity')
-            })
+            raise ValidationError(
+                {'quantity': _('Return quantity exceeds stock quantity')}
+            )
 
         if self.quantity <= 0:
-            raise ValidationError({
-                'quantity': _('Return quantity must be greater than zero')
-            })
+            raise ValidationError(
+                {'quantity': _('Return quantity must be greater than zero')}
+            )
 
         if self.item.serialized and self.quantity != 1:
-            raise ValidationError({
-                'quantity': _('Invalid quantity for serialized stock item')
-            })
+            raise ValidationError(
+                {'quantity': _('Invalid quantity for serialized stock item')}
+            )
 
     order = models.ForeignKey(
         ReturnOrder,
@@ -4006,11 +4015,20 @@ def update_order_on_lineitem_change(sender, instance, **kwargs):
 
 
 class RepairOrder(
+    StatusCodeMixin,
+    StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A RepairOrder represents a repair request from a customer."""
+
+    STATUS_CLASS = RepairOrderStatus
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
 
     class Meta:
         """Model meta options."""
@@ -4049,11 +4067,12 @@ class RepairOrder(
         help_text=_('Reported symptoms or issues'),
     )
 
-    status = models.IntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=RepairOrderStatus.PENDING.value,
         choices=RepairOrderStatus.items(),
-        verbose_name=_('Status'),
+        status_class=RepairOrderStatus,
         help_text=_('Repair order status'),
+        verbose_name=_('Status'),
     )
 
     @staticmethod
