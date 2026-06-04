@@ -57,7 +57,7 @@ function getHmrCallbacks(url: string) {
   return w.__plugin_hmr_callbacks[url];
 }
 
-const hasHmr = import.meta?.hot !== undefined;
+const hasHmr = import.meta.hot !== undefined;
 
 export function useRemotePlugin({
   context,
