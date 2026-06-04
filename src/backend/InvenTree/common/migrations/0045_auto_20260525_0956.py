@@ -4,7 +4,37 @@ from tqdm import tqdm
 
 from django.db import migrations
 
-from InvenTree.helpers import markdown_to_html
+
+def get_markdownify_settings() -> dict:
+    """Return the settings for markdownify, or an empty dict if not defined."""
+
+    from django.conf import settings
+
+    try:
+        return settings.MARKDOWNIFY['default']
+    except (AttributeError, KeyError):
+        return {}
+
+
+def markdown_to_html(value: str) -> str:
+    """Convert a markdown string to HTML.
+
+    This function will remove javascript and other potentially harmful content from the markdown string.
+    """
+    import markdown
+
+    markdownify_settings = get_markdownify_settings()
+    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
+    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+
+    html = markdown.markdown(
+        value or '',
+        extensions=extensions,
+        extension_configs=extension_configs,
+        output_format='html',
+    )
+
+    return html
 
 
 def migrate_notes(apps, schema_editor):

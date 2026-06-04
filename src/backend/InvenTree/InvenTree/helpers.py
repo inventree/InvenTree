@@ -29,12 +29,6 @@ from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-from InvenTree.sanitizer import (
-    DEFAULT_ATTRS,
-    DEFAULT_CSS,
-    DEFAULT_PROTOCOLS,
-    DEFAULT_TAGS,
-)
 
 logger = structlog.get_logger('inventree')
 
@@ -937,76 +931,6 @@ def remove_non_printable_characters(value: str, remove_newline=True) -> str:
         cleaned = regex.sub('', cleaned)
 
     return cleaned
-
-
-def get_markdownify_settings() -> dict:
-    """Return the settings for markdownify, or an empty dict if not defined."""
-    try:
-        return settings.MARKDOWNIFY['default']
-    except (AttributeError, KeyError):
-        return {}
-
-
-def markdown_to_html(value: str) -> str:
-    """Convert a markdown string to HTML.
-
-    This function will remove javascript and other potentially harmful content from the markdown string.
-    """
-    import markdown
-
-    markdownify_settings = get_markdownify_settings()
-    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
-    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
-
-    html = markdown.markdown(
-        value or '',
-        extensions=extensions,
-        extension_configs=extension_configs,
-        output_format='html',
-    )
-
-    return html
-
-
-def clean_markdown(value: str) -> str:
-    """Clean a markdown string.
-
-    This function will remove javascript and other potentially harmful content from the markdown string.
-    """
-    html = markdown_to_html(value)
-
-    markdownify_settings = get_markdownify_settings()
-
-    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
-    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEFAULT_ATTRS)
-    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
-    whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
-    )
-
-    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
-    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
-        attrs_dict = {'*': set(whitelist_attrs)}
-    elif isinstance(whitelist_attrs, dict):
-        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
-    else:
-        attrs_dict = None
-
-    # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = nh3.clean(
-        html,
-        tags=set(whitelist_tags),
-        attributes=attrs_dict,
-        url_schemes=set(whitelist_protocols),
-        filter_style_properties=set(whitelist_styles),
-        link_rel=None,
-        strip_comments=True,
-    )
-
-    if html != clean_html:
-        raise ValidationError(_('Data contains prohibited markdown content'))
-
-    return value
 
 
 def hash_barcode(barcode_data: str) -> str:
