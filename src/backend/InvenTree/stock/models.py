@@ -23,7 +23,6 @@ import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from taggit.managers import TaggableManager
 
 import build.models
 import common.models
@@ -126,6 +125,7 @@ class StockLocation(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.MetadataMixin,
@@ -148,8 +148,6 @@ class StockLocation(
 
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
-
-    tags = TaggableManager(blank=True)
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
@@ -426,6 +424,7 @@ class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
@@ -618,8 +617,6 @@ class StockItem(
             'test_template_list': self.part.getTestTemplates(),
             'test_templates': self.part.getTestTemplateMap(),
         }
-
-    tags = TaggableManager(blank=True)
 
     # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method

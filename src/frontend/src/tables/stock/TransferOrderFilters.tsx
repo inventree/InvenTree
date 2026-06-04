@@ -1,5 +1,5 @@
-import { ModelType } from '@lib/enums/ModelType';
-import type { TableFilter } from '@lib/types/Filters';
+import { ModelType, type TableFilter } from '@lib/index';
+import { t } from '@lingui/core/macro';
 import {
   AssignedToMeFilter,
   CompletedAfterFilter,
@@ -8,8 +8,6 @@ import {
   CreatedBeforeFilter,
   CreatedByFilter,
   HasProjectCodeFilter,
-  HasStartDateFilter,
-  HasTargetDateFilter,
   IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
@@ -22,12 +20,10 @@ import {
   StartDateBeforeFilter,
   TagsFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter,
-  UpdatedAfterFilter,
-  UpdatedBeforeFilter
+  TargetDateBeforeFilter
 } from '../Filter';
 
-export default function SalesOrderFilters({
+export default function TransferOrderFilters({
   partId,
   includeDateFilters = true
 }: {
@@ -35,7 +31,7 @@ export default function SalesOrderFilters({
   includeDateFilters?: boolean;
 }): TableFilter[] {
   const filters: TableFilter[] = [
-    OrderStatusFilter({ model: ModelType.salesorder }),
+    OrderStatusFilter({ model: ModelType.transferorder }),
     OutstandingFilter(),
     OverdueFilter(),
     AssignedToMeFilter(),
@@ -43,7 +39,7 @@ export default function SalesOrderFilters({
     ProjectCodeFilter(),
     ResponsibleFilter(),
     CreatedByFilter(),
-    TagsFilter({ modelType: ModelType.salesorder })
+    TagsFilter({ modelType: ModelType.transferorder })
   ];
 
   const dateFilters: TableFilter[] = [
@@ -55,12 +51,20 @@ export default function SalesOrderFilters({
     TargetDateAfterFilter(),
     StartDateBeforeFilter(),
     StartDateAfterFilter(),
-    HasTargetDateFilter(),
-    HasStartDateFilter(),
+    {
+      name: 'has_target_date',
+      type: 'boolean',
+      label: t`Has Target Date`,
+      description: t`Show orders with a target date`
+    },
+    {
+      name: 'has_start_date',
+      type: 'boolean',
+      label: t`Has Start Date`,
+      description: t`Show orders with a start date`
+    },
     CompletedBeforeFilter(),
-    CompletedAfterFilter(),
-    UpdatedBeforeFilter(),
-    UpdatedAfterFilter()
+    CompletedAfterFilter()
   ];
 
   if (includeDateFilters) {

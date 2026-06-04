@@ -35,6 +35,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
+import { TagsList } from '@lib/index';
 import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import { notifications } from '@mantine/notifications';
@@ -118,7 +119,8 @@ export default function StockDetail() {
     params: {
       part_detail: true,
       location_detail: true,
-      path_detail: true
+      path_detail: true,
+      tags: true
     }
   });
 
@@ -445,19 +447,23 @@ export default function StockDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            apiPath={ApiEndpoints.part_list}
-            src={
-              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
-            }
-            pk={stockitem.part}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={data} />
-          </Grid.Col>
-        </Grid>
+        <Stack gap='xs'>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.part}
+              apiPath={ApiEndpoints.part_list}
+              src={
+                stockitem.part_detail?.image ??
+                stockitem?.part_detail?.thumbnail
+              }
+              pk={stockitem.part}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <DetailsTable fields={tl} item={data} />
+            </Grid.Col>
+          </Grid>
+          <TagsList tags={stockitem.tags} />
+        </Stack>
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />
@@ -702,6 +708,7 @@ export default function StockDetail() {
     title: t`Edit Stock Item`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

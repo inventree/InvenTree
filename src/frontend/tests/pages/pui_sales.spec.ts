@@ -276,6 +276,29 @@ test('Sales Orders - Shipments', async ({ browser }) => {
     .click();
 });
 
+// Filter Shipments by tag
+test('Sales Orders - Shipments - Tags', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/index/shipments' });
+
+  // Filter by tag
+  await clearTableFilters(page);
+  await page.getByRole('button', { name: 'table-select-filters' }).click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).fill('tag');
+  await page.getByRole('option', { name: 'Tags' }).click();
+  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  // Apply the "Requires Payment" tag filter
+  await page.getByRole('option', { name: 'Requires Payment' }).click();
+  await page.getByRole('button', { name: 'apply-tags-filter' }).click();
+  await page.getByRole('button', { name: 'filter-drawer-close' }).click();
+
+  // Click through to one of the selected shipments
+  await page.getByRole('cell', { name: 'SO0007' }).click();
+  await page.getByText('Sales Order: SO0007').first().waitFor();
+  await page.getByText('Requires Payment', { exact: true }).first().waitFor();
+});
+
 // Complete a shipment against a sales order
 test('Sales Orders - Complete Shipment', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
