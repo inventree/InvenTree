@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { type PanelType, apiUrl } from '@lib/index';
+import { type PanelType, TagsList, apiUrl } from '@lib/index';
 import {
   IconBookmark,
   IconInfoCircle,
@@ -62,7 +62,9 @@ export default function TransferOrderDetail() {
   } = useInstance({
     endpoint: ApiEndpoints.transfer_order_list,
     pk: id,
-    params: {}
+    params: {
+      tags: true
+    }
   });
 
   const toStatus = useStatusCodes({ modelType: ModelType.transferorder });
@@ -233,18 +235,21 @@ export default function TransferOrderDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          {/* TODO: what image do we show for a Transfer Order? */}
-          {/* <DetailsImage
+        <Stack gap='xs'>
+          <Grid grow>
+            {/* TODO: what image do we show for a Transfer Order? */}
+            {/* <DetailsImage
                         appRole={UserRoles.transfer_order}
                         apiPath={ApiEndpoints.transfer_order_list}
                         src="/static/img/blank_image.png"
                         pk={order.pk}
                     /> */}
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={order} />
-          </Grid.Col>
-        </Grid>
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <DetailsTable fields={tl} item={order} />
+            </Grid.Col>
+          </Grid>
+          <TagsList tags={order.tags} />
+        </Stack>
         <DetailsTable fields={tr} item={order} />
         <DetailsTable fields={bl} item={order} />
         <DetailsTable fields={br} item={order} />
@@ -369,6 +374,7 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

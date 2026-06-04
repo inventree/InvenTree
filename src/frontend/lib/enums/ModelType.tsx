@@ -38,7 +38,8 @@ export enum ModelType {
   contenttype = 'contenttype',
   selectionlist = 'selectionlist',
   selectionentry = 'selectionentry',
-  error = 'error'
+  error = 'error',
+  tag = 'tag'
 }
 
 export enum PluginPanelKey {
