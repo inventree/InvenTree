@@ -7,7 +7,7 @@ title: Notes
 *Notes* allow free-form rich-text content to be written and stored against a specific object within InvenTree. Notes can be used to record observations, instructions, historical context, or any other information associated with a model instance.
 
 !!! note "Business Logic"
-    Notes are not used for any core business logic within InvenTree. They are intended to provide supplementary documentation and context for objects, which can be useful for reference, communication, or reporting purposes.
+    Notes are not to be used for any core business logic within InvenTree. They are intended to provide supplementary documentation and context for objects, which can be useful for reference, communication, or reporting purposes. Plugins should not use them for storage and opt for object metadata or custom models instead.
 
 Notes can be associated with various InvenTree models, and each model can have multiple notes associated with it. The user interface provides a dedicated "Notes" tab on the detail page of any model that supports notes, allowing users to easily view and manage notes for that object.
 
