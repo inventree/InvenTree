@@ -409,7 +409,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   let make_link = props.field_data?.link ?? true;
 
   // Construct the "return value" for the fetched data
-  let value;
+  let value: any;
 
   if (props.field_data.model_formatter) {
     value = props.field_data.model_formatter(data) ?? value;

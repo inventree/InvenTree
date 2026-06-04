@@ -2159,9 +2159,9 @@ class StockItem(
                         part=self.part, test_name=test_name
                     )
                 else:
-                    raise ValidationError(
-                        {'template': _('Test template does not exist')}
-                    )
+                    raise ValidationError({
+                        'template': _('Test template does not exist')
+                    })
 
         kwargs['template'] = template
         kwargs['stock_item'] = self
@@ -3157,9 +3157,9 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
             raise ValidationError({'value': _('Value must be provided for this test')})
 
         if template.requires_attachment and not self.attachment:
-            raise ValidationError(
-                {'attachment': _('Attachment must be uploaded for this test')}
-            )
+            raise ValidationError({
+                'attachment': _('Attachment must be uploaded for this test')
+            })
 
         if choices := template.get_choices():
             if self.value not in choices:
