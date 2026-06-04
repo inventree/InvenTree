@@ -321,25 +321,13 @@ function FilterAddGroup({
 }
 
 function SavedFilterSets({
-  filterSet,
-  hasFilters
+  filterSet
 }: Readonly<{
   filterSet: FilterSetState;
-  hasFilters: boolean;
 }>) {
-  const [saving, setSaving] = useState<boolean>(false);
-  const [saveName, setSaveName] = useState<string>('');
-
-  const confirmSave = useCallback(() => {
-    const name = saveName.trim();
-    if (name) {
-      filterSet.saveFilterSet(name);
-    }
-    setSaveName('');
-    setSaving(false);
-  }, [saveName, filterSet]);
-
-  const hasSavedSets = filterSet.savedFilterSets.length > 0;
+  if (filterSet.savedFilterSets.length === 0) {
+    return null;
+  }
 
   return (
     <Stack gap='xs' justify='flex-end'>
@@ -347,102 +335,51 @@ function SavedFilterSets({
       <StylishText size='md'>{t`Saved Filter Groups`}</StylishText>
       <Divider />
       <Stack gap='xs'>
-        {saving ? (
-          <Group gap='xs' wrap='nowrap'>
-            <TextInput
-              style={{ flex: 1 }}
-              placeholder={t`Filter set name`}
-              value={saveName}
-              onChange={(e) => setSaveName(e.currentTarget.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') confirmSave();
-                if (e.key === 'Escape') setSaving(false);
-              }}
-              autoFocus
-            />
-            <Tooltip label={t`Save`} withinPortal>
-              <ActionIcon
-                aria-label='save-filter-set'
-                color='green'
-                size='sm'
-                variant='transparent'
-                onClick={confirmSave}
-                disabled={!saveName.trim()}
-              >
-                <IconCheck />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label={t`Cancel`} withinPortal>
-              <ActionIcon
-                aria-label='cancel-save-filter-set'
-                color='red'
-                size='sm'
-                variant='transparent'
-                onClick={() => setSaving(false)}
-              >
-                <IconX />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-        ) : (
-          <Button
-            color='blue'
-            variant='subtle'
-            disabled={!hasFilters}
-            onClick={() => setSaving(true)}
-          >
-            <Text>{t`Save current filters`}</Text>
-          </Button>
-        )}
-      </Stack>
-      {hasSavedSets && (
-        <Stack gap='xs'>
-          {filterSet.savedFilterSets.map((set) => (
-            <Paper key={set.name} p='sm' shadow='sm' radius='xs'>
-              <Group justify='space-between' wrap='nowrap'>
-                <Group gap='xs' wrap='nowrap'>
-                  <ActionIcon size='sm' variant='transparent'>
-                    <IconFilterStar />
-                  </ActionIcon>
-                  <Text size='sm' style={{ flex: 1 }} truncate>
-                    {set.name}
-                  </Text>
-                </Group>
-                <Group gap='xs' wrap='nowrap'>
-                  <Tooltip
-                    label={t`Load filter group`}
-                    withinPortal
-                    position='top-end'
-                  >
-                    <ActionIcon
-                      size='sm'
-                      variant='transparent'
-                      color='green'
-                      onClick={() => filterSet.loadFilterSet(set.name)}
-                    >
-                      <IconReload />
-                    </ActionIcon>
-                  </Tooltip>
-                  <Tooltip
-                    label={t`Delete filter group`}
-                    withinPortal
-                    position='top-end'
-                  >
-                    <ActionIcon
-                      size='sm'
-                      variant='transparent'
-                      color='red'
-                      onClick={() => filterSet.deleteFilterSet(set.name)}
-                    >
-                      <IconX style={{ transform: 'rotate(180deg)' }} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
+        {filterSet.savedFilterSets.map((set) => (
+          <Paper key={set.name} p='sm' shadow='sm' radius='xs'>
+            <Group justify='space-between' wrap='nowrap'>
+              <Group gap='xs' wrap='nowrap'>
+                <ActionIcon size='sm' variant='transparent'>
+                  <IconFilterStar />
+                </ActionIcon>
+                <Text size='sm' style={{ flex: 1 }} truncate>
+                  {set.name}
+                </Text>
               </Group>
-            </Paper>
-          ))}
-        </Stack>
-      )}
+              <Group gap='xs' wrap='nowrap'>
+                <Tooltip
+                  label={t`Load filter group`}
+                  withinPortal
+                  position='top-end'
+                >
+                  <ActionIcon
+                    size='sm'
+                    variant='transparent'
+                    color='green'
+                    onClick={() => filterSet.loadFilterSet(set.name)}
+                  >
+                    <IconReload />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip
+                  label={t`Delete filter group`}
+                  withinPortal
+                  position='top-end'
+                >
+                  <ActionIcon
+                    size='sm'
+                    variant='transparent'
+                    color='red'
+                    onClick={() => filterSet.deleteFilterSet(set.name)}
+                  >
+                    <IconX style={{ transform: 'rotate(180deg)' }} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+            </Group>
+          </Paper>
+        ))}
+      </Stack>
     </Stack>
   );
 }
@@ -461,6 +398,8 @@ export function FilterSelectDrawer({
   onClose: () => void;
 }>) {
   const [addFilter, setAddFilter] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
+  const [saveName, setSaveName] = useState<string>('');
 
   // Hide the "add filter" selection whenever the selected filters change
   useEffect(() => {
@@ -468,10 +407,17 @@ export function FilterSelectDrawer({
   }, [filterSet.activeFilters]);
 
   const hasFilters: boolean = useMemo(() => {
-    const filters = filterSet?.activeFilters ?? [];
-
-    return filters.length > 0;
+    return (filterSet?.activeFilters ?? []).length > 0;
   }, [filterSet.activeFilters]);
+
+  const confirmSave = useCallback(() => {
+    const name = saveName.trim();
+    if (name) {
+      filterSet.saveFilterSet(name);
+    }
+    setSaveName('');
+    setSaving(false);
+  }, [saveName, filterSet]);
 
   return (
     <Drawer
@@ -511,7 +457,7 @@ export function FilterSelectDrawer({
             <Button
               onClick={() => setAddFilter(false)}
               color='orange'
-              variant='subtle'
+              variant='light'
             >
               <Text>{t`Cancel`}</Text>
             </Button>
@@ -521,23 +467,71 @@ export function FilterSelectDrawer({
               <Button
                 onClick={() => setAddFilter(true)}
                 color='green'
-                variant='subtle'
+                variant='light'
               >
                 <Text>{t`Add Filter`}</Text>
               </Button>
             )}
-          {!addFilter && filterSet.activeFilters.length > 0 && (
+          {!addFilter && hasFilters && (
             <Button
               onClick={filterSet.clearActiveFilters}
               color='red'
-              variant='subtle'
+              variant='light'
             >
               <Text>{t`Clear Filters`}</Text>
             </Button>
           )}
+          {!addFilter &&
+            hasFilters &&
+            (saving ? (
+              <Group gap='xs' wrap='nowrap'>
+                <TextInput
+                  style={{ flex: 1 }}
+                  placeholder={t`Filter set name`}
+                  value={saveName}
+                  onChange={(e) => setSaveName(e.currentTarget.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmSave();
+                    if (e.key === 'Escape') setSaving(false);
+                  }}
+                  autoFocus
+                />
+                <Tooltip label={t`Save`} withinPortal>
+                  <ActionIcon
+                    aria-label='save-filter-set'
+                    color='green'
+                    size='sm'
+                    variant='transparent'
+                    onClick={confirmSave}
+                    disabled={!saveName.trim()}
+                  >
+                    <IconCheck />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t`Cancel`} withinPortal>
+                  <ActionIcon
+                    aria-label='cancel-save-filter-set'
+                    color='red'
+                    size='sm'
+                    variant='transparent'
+                    onClick={() => setSaving(false)}
+                  >
+                    <IconX />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+            ) : (
+              <Button
+                color='blue'
+                variant='light'
+                onClick={() => setSaving(true)}
+              >
+                <Text>{t`Save current filters`}</Text>
+              </Button>
+            ))}
         </Stack>
         <Stack gap='xs'>
-          <SavedFilterSets filterSet={filterSet} hasFilters={hasFilters} />
+          <SavedFilterSets filterSet={filterSet} />
           <Space h='sm' />
         </Stack>
       </Stack>
