@@ -28,7 +28,7 @@ const BASE_URL: string =
 
 // If running in "production" mode, we can use multiple workers to speed up the tests
 const MAX_WORKERS: number = BASE_URL.endsWith('8000') ? 3 : 1;
-const MAX_RETRIES: number = IS_CI ? 2 : 5;
+const MAX_RETRIES: number = IS_CI ? 1 : 2;
 
 console.log('Running Playwright Tests:');
 console.log('- Base URL:', BASE_URL);
