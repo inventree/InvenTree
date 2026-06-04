@@ -16,6 +16,7 @@ from rest_framework.response import Response
 
 import build.models as build_models
 import build.serializers
+import common.filters
 import common.models
 import common.serializers
 import part.models as part_models
@@ -306,6 +307,8 @@ class BuildFilter(FilterSet):
         )
 
         return queryset
+
+    tags = common.filters.TagsFilter()
 
 
 class BuildMixin:
