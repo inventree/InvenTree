@@ -158,6 +158,22 @@ Select the "table filters" button to open the filter selection menu
 
 Table filters are saved across browser sessions, allowing users to maintain their preferred filter settings when returning to the particular table view.
 
+#### Saved Filter Groups
+
+Frequently used combinations of filters can be saved as a named *filter group*, allowing them to be quickly recalled later without having to re-add each filter individually.
+
+The **Saved Filter Groups** panel is displayed at the bottom of the filter drawer. When one or more filters are active, a **Save current filters** button is available. Clicking it opens an inline name input — enter a name and press Enter (or click the confirm icon) to save the group. Press Escape or click the cancel icon to discard.
+
+Previously saved filter groups are listed in the panel. Each entry shows the group name alongside two actions:
+
+- **Load** (green reload icon): Replaces the current active filters with the filters stored in that group. The table immediately re-fetches data using the restored filters.
+- **Delete** (red × icon): Permanently removes the saved filter group.
+
+Saved filter groups are stored in the browser's local storage and are specific to each table or calendar view, so groups saved for one view are not available in another. They persist across browser sessions until explicitly deleted.
+
+!!! info "Loading a filter group replaces active filters"
+    Loading a saved filter group replaces all currently active filters with those stored in the group. Any unsaved active filters will be overwritten.
+
 ### Data Sorting
 
 Some table columns support data sorting, allowing the dataset to be sorted in ascending or descending order based on the values in that column. To sort a column, click on the column header. Clicking the column header again will toggle the sort order between ascending and descending. The current sort order is indicated by an arrow icon in the column header.
