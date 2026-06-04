@@ -30413,24 +30413,18 @@ components:
           format: double
           readOnly: true
           nullable: true
-        pricing_min:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,13}(?:\.\d{0,6})?$
-          readOnly: true
-          nullable: true
         sub_part_detail:
           allOf:
           - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
           title: Component
-        category_detail:
-          allOf:
-          - $ref: '#/components/schemas/Category'
+        pricing_min:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,6})?$
           readOnly: true
           nullable: true
-          title: Category
         part_detail:
           allOf:
           - $ref: '#/components/schemas/PartBrief'
@@ -30443,6 +30437,12 @@ components:
             $ref: '#/components/schemas/BomItemSubstitute'
           readOnly: true
           nullable: true
+        category_detail:
+          allOf:
+          - $ref: '#/components/schemas/Category'
+          readOnly: true
+          nullable: true
+          title: Category
     PatchedBomItemSubstitute:
       type: object
       description: Serializer for the BomItemSubstitute class.
@@ -30675,12 +30675,6 @@ components:
         bom_reference:
           type: string
           readOnly: true
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
-          title: Part
         stock_item_detail:
           allOf:
           - $ref: '#/components/schemas/StockItem'
@@ -30693,6 +30687,12 @@ components:
           readOnly: true
           nullable: true
           title: Build
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
+          readOnly: true
+          nullable: true
+          title: Part
         location_detail:
           allOf:
           - $ref: '#/components/schemas/LocationBrief'
@@ -30791,42 +30791,42 @@ components:
           type: number
           format: double
           readOnly: true
-        bom_item_detail:
-          allOf:
-          - $ref: '#/components/schemas/BomItem'
-          readOnly: true
-          nullable: true
-          title: BOM Item
-        assembly_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
-          title: Assembly
         allocations:
           type: array
           items:
             $ref: '#/components/schemas/BuildItem'
           readOnly: true
           nullable: true
+        bom_item_detail:
+          allOf:
+          - $ref: '#/components/schemas/BomItem'
+          readOnly: true
+          nullable: true
+          title: BOM Item
         build_detail:
           allOf:
           - $ref: '#/components/schemas/Build'
           readOnly: true
           nullable: true
           title: Build
-        category_detail:
-          allOf:
-          - $ref: '#/components/schemas/Category'
-          readOnly: true
-          nullable: true
-          title: Category
         part_detail:
           allOf:
           - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
           title: Part
+        category_detail:
+          allOf:
+          - $ref: '#/components/schemas/Category'
+          readOnly: true
+          nullable: true
+          title: Category
+        assembly_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
+          readOnly: true
+          nullable: true
+          title: Assembly
     PatchedCategory:
       type: object
       description: Serializer for PartCategory.
@@ -31000,15 +31000,15 @@ components:
           type: string
           description: Company Tax ID
           maxLength: 50
-        primary_address:
-          allOf:
-          - $ref: '#/components/schemas/AddressBrief'
-          readOnly: true
-          nullable: true
         parameters:
           type: array
           items:
             $ref: '#/components/schemas/Parameter'
+          readOnly: true
+          nullable: true
+        primary_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressBrief'
           readOnly: true
           nullable: true
     PatchedContact:
@@ -31518,10 +31518,6 @@ components:
           - $ref: '#/components/schemas/StockLocationType'
           readOnly: true
           nullable: true
-        tags:
-          type: array
-          items:
-            type: string
         path:
           type: array
           items:
@@ -31534,6 +31530,10 @@ components:
             $ref: '#/components/schemas/Parameter'
           readOnly: true
           nullable: true
+        tags:
+          type: array
+          items:
+            type: string
     PatchedMachineConfig:
       type: object
       description: Serializer for a MachineConfig.
@@ -31694,14 +31694,14 @@ components:
           nullable: true
           description: Markdown notes (optional)
           maxLength: 50000
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
         manufacturer_detail:
           allOf:
           - $ref: '#/components/schemas/CompanyBrief'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
         pretty_name:
@@ -32191,6 +32191,12 @@ components:
           writeOnly: true
           default: true
           description: Copy parameter templates from selected part category
+        parameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Parameter'
+          readOnly: true
+          nullable: true
         price_breaks:
           type: array
           items:
@@ -32207,20 +32213,14 @@ components:
           - $ref: '#/components/schemas/Category'
           readOnly: true
           nullable: true
-        category_path:
-          type: array
-          items:
-            $ref: '#/components/schemas/TreePath'
-          readOnly: true
-          nullable: true
         tags:
           type: array
           items:
             type: string
-        parameters:
+        category_path:
           type: array
           items:
-            $ref: '#/components/schemas/Parameter'
+            $ref: '#/components/schemas/TreePath'
           readOnly: true
           nullable: true
     PatchedPartBomValidate:
@@ -33133,14 +33133,14 @@ components:
           - $ref: '#/components/schemas/LocationBrief'
           readOnly: true
           nullable: true
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
         order_detail:
           allOf:
           - $ref: '#/components/schemas/PurchaseOrder'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
     PatchedRepairOrder:
@@ -33466,15 +33466,15 @@ components:
           readOnly: true
           nullable: true
           description: Timestamp of last update
-        customer_detail:
-          allOf:
-          - $ref: '#/components/schemas/CompanyBrief'
-          readOnly: true
-          nullable: true
         parameters:
           type: array
           items:
             $ref: '#/components/schemas/Parameter'
+          readOnly: true
+          nullable: true
+        customer_detail:
+          allOf:
+          - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
     PatchedReturnOrderExtraLine:
@@ -33632,14 +33632,14 @@ components:
           - $ref: '#/components/schemas/StockItem'
           readOnly: true
           nullable: true
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
         order_detail:
           allOf:
           - $ref: '#/components/schemas/ReturnOrder'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
     PatchedRuleSet:
@@ -33859,15 +33859,15 @@ components:
           readOnly: true
           nullable: true
           description: Timestamp of last update
-        customer_detail:
-          allOf:
-          - $ref: '#/components/schemas/CompanyBrief'
-          readOnly: true
-          nullable: true
         parameters:
           type: array
           items:
             $ref: '#/components/schemas/Parameter'
+          readOnly: true
+          nullable: true
+        customer_detail:
+          allOf:
+          - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
     PatchedSalesOrderAllocation:
@@ -33922,6 +33922,11 @@ components:
           - $ref: '#/components/schemas/StockItem'
           readOnly: true
           nullable: true
+        order_detail:
+          allOf:
+          - $ref: '#/components/schemas/SalesOrder'
+          readOnly: true
+          nullable: true
         customer_detail:
           allOf:
           - $ref: '#/components/schemas/CompanyBrief'
@@ -33930,11 +33935,6 @@ components:
         location_detail:
           allOf:
           - $ref: '#/components/schemas/LocationBrief'
-          readOnly: true
-          nullable: true
-        order_detail:
-          allOf:
-          - $ref: '#/components/schemas/SalesOrder'
           readOnly: true
           nullable: true
     PatchedSalesOrderExtraLine:
@@ -34097,9 +34097,9 @@ components:
           type: number
           format: double
           readOnly: true
-        customer_detail:
+        order_detail:
           allOf:
-          - $ref: '#/components/schemas/CompanyBrief'
+          - $ref: '#/components/schemas/SalesOrder'
           readOnly: true
           nullable: true
         part_detail:
@@ -34107,9 +34107,9 @@ components:
           - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
-        order_detail:
+        customer_detail:
           allOf:
-          - $ref: '#/components/schemas/SalesOrder'
+          - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
     PatchedSalesOrderShipment:
@@ -34189,15 +34189,15 @@ components:
           - $ref: '#/components/schemas/SalesOrder'
           readOnly: true
           nullable: true
-        customer_detail:
-          allOf:
-          - $ref: '#/components/schemas/CompanyBrief'
-          readOnly: true
-          nullable: true
         parameters:
           type: array
           items:
             $ref: '#/components/schemas/Parameter'
+          readOnly: true
+          nullable: true
+        customer_detail:
+          allOf:
+          - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
     PatchedSelectionEntry:
@@ -34491,12 +34491,6 @@ components:
           readOnly: true
           nullable: true
           title: Part
-        tests:
-          type: array
-          items:
-            $ref: '#/components/schemas/StockItemTestResult'
-          readOnly: true
-          nullable: true
         supplier_part_detail:
           allOf:
           - $ref: '#/components/schemas/SupplierPart'
@@ -34509,16 +34503,22 @@ components:
             $ref: '#/components/schemas/TreePath'
           readOnly: true
           nullable: true
+        tags:
+          type: array
+          items:
+            type: string
         location_detail:
           allOf:
           - $ref: '#/components/schemas/LocationBrief'
           readOnly: true
           nullable: true
           title: Location
-        tags:
+        tests:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/StockItemTestResult'
+          readOnly: true
+          nullable: true
     PatchedStockItemTestResult:
       type: object
       description: Serializer for the StockItemTestResult model.
@@ -34707,40 +34707,40 @@ components:
           type: string
           readOnly: true
           nullable: true
-        price_breaks:
-          type: array
-          items:
-            $ref: '#/components/schemas/SupplierPriceBreakBrief'
-          readOnly: true
-          nullable: true
-        manufacturer_part_detail:
-          allOf:
-          - $ref: '#/components/schemas/ManufacturerPart'
-          readOnly: true
-          nullable: true
-          title: Manufacturer Part
         manufacturer_detail:
           allOf:
           - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
           title: Manufacturer
-        tags:
-          type: array
-          items:
-            type: string
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
-          title: Part
         supplier_detail:
           allOf:
           - $ref: '#/components/schemas/CompanyBrief'
           readOnly: true
           nullable: true
           title: Supplier
+        price_breaks:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplierPriceBreakBrief'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
+          readOnly: true
+          nullable: true
+          title: Part
+        tags:
+          type: array
+          items:
+            type: string
+        manufacturer_part_detail:
+          allOf:
+          - $ref: '#/components/schemas/ManufacturerPart'
+          readOnly: true
+          nullable: true
+          title: Manufacturer Part
         parameters:
           type: array
           items:
@@ -34782,14 +34782,14 @@ components:
           readOnly: true
           nullable: true
           description: Timestamp of last update
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/SupplierPart'
-          readOnly: true
-          nullable: true
         supplier_detail:
           allOf:
           - $ref: '#/components/schemas/CompanyBrief'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/SupplierPart'
           readOnly: true
           nullable: true
     PatchedTransferOrder:
@@ -34985,14 +34985,14 @@ components:
         location:
           type: integer
           readOnly: true
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
         order_detail:
           allOf:
           - $ref: '#/components/schemas/TransferOrder'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
         item_detail:
@@ -35087,14 +35087,14 @@ components:
           type: number
           format: double
           readOnly: true
-        part_detail:
-          allOf:
-          - $ref: '#/components/schemas/PartBrief'
-          readOnly: true
-          nullable: true
         order_detail:
           allOf:
           - $ref: '#/components/schemas/TransferOrder'
+          readOnly: true
+          nullable: true
+        part_detail:
+          allOf:
+          - $ref: '#/components/schemas/PartBrief'
           readOnly: true
           nullable: true
     PatchedUserProfile:
