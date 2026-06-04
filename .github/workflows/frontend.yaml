@@ -157,7 +157,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          env PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
@@ -233,9 +233,7 @@ jobs:
         id: tests
         run: |
           cd src/frontend
-          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
-          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
-          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png"npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
+          npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
       - name: Upload Blob Report [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
         id: blob-upload

@@ -52,7 +52,8 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     },
     {
       name: 'firefox',
