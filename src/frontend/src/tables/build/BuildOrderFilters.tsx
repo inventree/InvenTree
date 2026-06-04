@@ -44,8 +44,6 @@ export default function BuildOrderFilters({
     OrderStatusFilter({ model: ModelType.build }),
     OverdueFilter(),
     AssignedToMeFilter(),
-    CompletedBeforeFilter(),
-    CompletedAfterFilter(),
     ProjectCodeFilter(),
     HasProjectCodeFilter(),
     IssuedByFilter(),
@@ -57,6 +55,8 @@ export default function BuildOrderFilters({
   const dateFilters: TableFilter[] = [
     MinDateFilter(),
     MaxDateFilter(),
+    CompletedBeforeFilter(),
+    CompletedAfterFilter(),
     CreatedBeforeFilter(),
     CreatedAfterFilter(),
     TargetDateBeforeFilter(),
