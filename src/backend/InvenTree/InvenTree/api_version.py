@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 499
+INVENTREE_API_VERSION = 500
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v500 -> 2026-06-04 : https://github.com/inventree/InvenTree/pull/12072
+    - Adds RepairOrder models and API endpoints
 
 v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
     - Fixes search field issues on the BarcodeScanHistory API endpoint
