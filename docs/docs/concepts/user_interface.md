@@ -171,7 +171,7 @@ Previously saved filter groups are listed in the panel. Each entry shows the gro
 - **Load** (green reload icon): Replaces the current active filters with the filters stored in that group. The table immediately re-fetches data using the restored filters.
 - **Delete** (red × icon): Permanently removes the saved filter group.
 
-Saved filter groups are stored in the browser's local storage and are specific to each table or calendar view, so groups saved for one view are not available in another. They persist across browser sessions until explicitly deleted.
+Saved filter groups are stored in the browser's local storage and are specific to each table or calendar view, so groups saved for one view are not available in another. They persist across local browser sessions until explicitly deleted. Filter groups are not shared to other devices.
 
 !!! info "Loading a filter group replaces active filters"
     Loading a saved filter group replaces all currently active filters with those stored in the group. Any unsaved active filters will be overwritten.
