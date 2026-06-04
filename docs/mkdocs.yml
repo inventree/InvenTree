@@ -102,6 +102,7 @@ nav:
     - Project Codes: concepts/project_codes.md
     - Attachments: concepts/attachments.md
     - Parameters: concepts/parameters.md
+    - Tags: concepts/tags.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
