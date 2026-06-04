@@ -231,7 +231,9 @@ class BuildTest(BuildTestBase):
 
         # Set build reference back to default value
         set_global_setting(
-            'BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None  # noqa: RUF027
+            'BUILDORDER_REFERENCE_PATTERN',
+            'BO-{ref:04d}',  # noqa: RUF027
+            change_user=None,
         )
 
     def test_ref_validation(self):
@@ -262,7 +264,9 @@ class BuildTest(BuildTestBase):
 
         # Set build reference back to default value
         set_global_setting(
-            'BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None  # noqa: RUF027
+            'BUILDORDER_REFERENCE_PATTERN',
+            'BO-{ref:04d}',  # noqa: RUF027
+            change_user=None,
         )
 
     def test_next_ref(self):
