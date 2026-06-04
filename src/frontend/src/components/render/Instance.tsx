@@ -55,13 +55,15 @@ import {
   RenderParameterTemplate,
   RenderProjectCode,
   RenderSelectionEntry,
-  RenderSelectionList,
-  RenderTag
+  RenderSelectionList
 } from './Generic';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
   RenderReturnOrderLineItem,
+  RenderRepairOrder,
+  RenderRepairOrderLineItem,
+  RenderRepairOrderAllocation,
   RenderSalesOrder,
   RenderSalesOrderShipment,
   RenderTransferOrder,
@@ -99,6 +101,9 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
+  [ModelType.repairorder]: RenderRepairOrder,
+  [ModelType.repairorderlineitem]: RenderRepairOrderLineItem,
+  [ModelType.repairorderallocation]: RenderRepairOrderAllocation,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.transferorder]: RenderTransferOrder,
@@ -117,8 +122,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.selectionentry]: RenderSelectionEntry,
-  [ModelType.error]: RenderError,
-  [ModelType.tag]: RenderTag
+  [ModelType.error]: RenderError
 };
 
 /**

@@ -146,6 +146,17 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
+    globalSettings.isSet('REPAIRORDER_ENABLED') &&
+      user?.hasViewRole(UserRoles.repair_order) &&
+      _actions.push({
+        id: 'repair-orders',
+        label: t`Repair Orders`,
+        description: t`Go to Repair Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['repairorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
     globalSettings.isSet('BARCODE_ENABLE') &&
       _actions.push({
         id: 'scan',

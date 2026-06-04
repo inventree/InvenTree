@@ -200,6 +200,14 @@ export enum ApiEndpoints {
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
 
+  repair_order_list = 'order/repair/',
+  repair_order_issue = 'order/repair/:id/issue/',
+  repair_order_hold = 'order/repair/:id/hold/',
+  repair_order_cancel = 'order/repair/:id/cancel/',
+  repair_order_complete = 'order/repair/:id/complete/',
+  repair_order_line_list = 'order/repair-line/',
+  repair_order_allocation_list = 'order/repair-allocation/',
+
   transfer_order_list = 'order/transfer-order/',
   transfer_order_issue = 'order/transfer-order/:id/issue/',
   transfer_order_hold = 'order/transfer-order/:id/hold/',
@@ -259,7 +267,6 @@ export enum ApiEndpoints {
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
-  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'

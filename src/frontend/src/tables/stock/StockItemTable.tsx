@@ -44,7 +44,6 @@ import {
   SerialLTEFilter,
   StatusFilterOptions,
   SupplierFilter,
-  TagsFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
 } from '../Filter';
@@ -307,8 +306,7 @@ function stockItemTableFilters({
       name: 'external',
       label: t`External Location`,
       description: t`Show items in an external location`
-    },
-    TagsFilter({ modelType: ModelType.stockitem })
+    }
   ];
 }
 

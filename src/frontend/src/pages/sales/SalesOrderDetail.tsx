@@ -11,7 +11,6 @@ import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
-import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -76,8 +75,7 @@ export default function SalesOrderDetail() {
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
     params: {
-      customer_detail: true,
-      tags: true
+      customer_detail: true
     }
   });
 
@@ -289,20 +287,17 @@ export default function SalesOrderDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={order.customer_detail?.image}
-              pk={order.customer}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={order} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={order.tags} />
-        </Stack>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={ApiEndpoints.company_list}
+            src={order.customer_detail?.image}
+            pk={order.customer}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
+            <DetailsTable fields={tl} item={order} />
+          </Grid.Col>
+        </Grid>
         <DetailsTable fields={tr} item={order} />
         <DetailsTable fields={bl} item={order} />
         <DetailsTable fields={br} item={order} />
@@ -330,7 +325,6 @@ export default function SalesOrderDetail() {
     pk: order.pk,
     title: t`Edit Sales Order`,
     fields: salesOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

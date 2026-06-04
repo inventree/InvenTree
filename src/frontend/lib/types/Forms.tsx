@@ -99,8 +99,7 @@ export type ApiFormFieldType = {
     | 'file upload'
     | 'nested object'
     | 'dependent field'
-    | 'table'
-    | 'tags';
+    | 'table';
   api_url?: string;
   pk_field?: string;
   model?: ModelType;

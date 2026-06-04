@@ -36,7 +36,6 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
-import { TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
@@ -125,7 +124,6 @@ export function useBuildOrderFields({
         },
         value: destination
       },
-      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },

@@ -19,7 +19,6 @@ import {
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
-  TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter,
   UpdatedAfterFilter,
@@ -39,8 +38,7 @@ export default function PurchaseOrderFilters({
     ProjectCodeFilter(),
     HasProjectCodeFilter(),
     ResponsibleFilter(),
-    CreatedByFilter(),
-    TagsFilter({ modelType: ModelType.purchaseorder })
+    CreatedByFilter()
   ];
 
   const dateFilters: TableFilter[] = [

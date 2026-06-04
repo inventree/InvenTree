@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -33,10 +33,8 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
-import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
-import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
+import { useRepairOrderFields } from '../../forms/RepairOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -45,17 +43,11 @@ import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
-import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
+import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
 
-/**
- * Detail page for a single ReturnOrder
- */
-export default function ReturnOrderDetail() {
+export default function RepairOrderDetail() {
   const { id } = useParams();
-
   const user = useUserState();
-
   const globalSettings = useGlobalSettingsState();
 
   const {
@@ -63,39 +55,27 @@ export default function ReturnOrderDetail() {
     instanceQuery,
     refreshInstance
   } = useInstance({
-    endpoint: ApiEndpoints.return_order_list,
+    endpoint: ApiEndpoints.repair_order_list,
     pk: id,
     params: {
-      customer_detail: true
+      customer_detail: true,
+      asset_detail: true
     }
   });
 
-  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+  const roStatus = useStatusCodes({ modelType: ModelType.repairorder });
 
   const orderOpen = useMemo(() => {
     return (
       order.status == roStatus.PENDING ||
-      order.status == roStatus.PLACED ||
       order.status == roStatus.IN_PROGRESS ||
       order.status == roStatus.ON_HOLD
     );
   }, [order, roStatus]);
 
   const lineItemsEditable: boolean = useMemo(() => {
-    if (orderOpen) {
-      return true;
-    } else {
-      return globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS');
-    }
+    return orderOpen || globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS');
   }, [orderOpen, globalSettings]);
-
-  const orderCurrency = useMemo(() => {
-    return (
-      order.order_currency ||
-      order.customer_detail?.currency ||
-      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
-    );
-  }, [order, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -110,19 +90,18 @@ export default function ReturnOrderDetail() {
         copy: true
       },
       {
-        type: 'text',
-        name: 'customer_reference',
-        label: t`Customer Reference`,
-        icon: 'customer',
-        copy: true,
-        hidden: !order.customer_reference
-      },
-      {
         type: 'link',
         name: 'customer',
         icon: 'customers',
         label: t`Customer`,
         model: ModelType.company
+      },
+      {
+        type: 'link',
+        name: 'asset',
+        icon: 'part',
+        label: t`Fixed Asset`,
+        model: ModelType.stockitem
       },
       {
         type: 'text',
@@ -131,16 +110,23 @@ export default function ReturnOrderDetail() {
         copy: true
       },
       {
+        type: 'text',
+        name: 'symptoms',
+        label: t`Symptoms`,
+        copy: true,
+        hidden: !order.symptoms
+      },
+      {
         type: 'status',
         name: 'status',
         label: t`Status`,
-        model: ModelType.returnorder
+        model: ModelType.repairorder
       },
       {
         type: 'status',
         name: 'status_custom_key',
         label: t`Custom Status`,
-        model: ModelType.returnorder,
+        model: ModelType.repairorder,
         icon: 'status',
         hidden:
           !order.status_custom_key || order.status_custom_key == order.status
@@ -153,144 +139,6 @@ export default function ReturnOrderDetail() {
         name: 'line_items',
         label: t`Line Items`,
         icon: 'list'
-      },
-      {
-        type: 'progressbar',
-        name: 'completed',
-        icon: 'progress',
-        label: t`Completed Line Items`,
-        total: order.line_items,
-        progress: order.completed_lines
-      },
-      {
-        type: 'text',
-        name: 'currency',
-        label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.customer_detail?.currency
-      },
-      {
-        type: 'text',
-        name: 'total_price',
-        label: t`Total Cost`,
-        value_formatter: () => {
-          return formatCurrency(order?.total_price, {
-            currency: order?.order_currency || order?.customer_detail?.currency
-          });
-        }
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !order.link
-      },
-      {
-        type: 'text',
-        name: 'address',
-        label: t`Return Address`,
-        icon: 'address',
-        value_formatter: () =>
-          order.address_detail ? (
-            <RenderAddress instance={order.address_detail} />
-          ) : (
-            <Text size='sm' c='red'>{t`Not specified`}</Text>
-          )
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.name',
-        label: t`Contact`,
-        icon: 'user',
-        copy: true,
-        hidden: !order.contact
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.email',
-        label: t`Contact Email`,
-        icon: 'email',
-        copy: true,
-        hidden: !order.contact_detail?.email
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.phone',
-        label: t`Contact Phone`,
-        icon: 'phone',
-        copy: true,
-        hidden: !order.contact_detail?.phone
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !order.project_code
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Creation Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.creation_date
-      },
-      {
-        type: 'date',
-        name: 'issue_date',
-        label: t`Issue Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.issue_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.start_date
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        copy: true,
-        hidden: !order.target_date
-      },
-      {
-        type: 'date',
-        name: 'complete_date',
-        icon: 'calendar_check',
-        label: t`Completion Date`,
-        copy: true,
-        hidden: !order.complete_date
-      },
-      {
-        type: 'date',
-        name: 'updated_at',
-        label: t`Last Updated`,
-        icon: 'calendar',
-        copy: true,
-        showTime: true,
-        hidden: !order.updated_at
       }
     ];
 
@@ -298,7 +146,7 @@ export default function ReturnOrderDetail() {
       <ItemDetailsGrid>
         <Grid grow>
           <DetailsImage
-            appRole={UserRoles.purchase_order}
+            appRole={UserRoles.repair_order}
             apiPath={ApiEndpoints.company_list}
             src={order.customer_detail?.image}
             pk={order.customer}
@@ -308,8 +156,6 @@ export default function ReturnOrderDetail() {
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
   }, [order, instanceQuery]);
@@ -329,35 +175,18 @@ export default function ReturnOrderDetail() {
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['line-items', 'extra-items']}
+            defaultValue={['line-items']}
           >
             <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
                 <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
-                <ReturnOrderLineItemTable
+                <RepairOrderLineItemTable
                   orderId={order.pk}
                   order={order}
                   orderDetailRefresh={refreshInstance}
-                  customerId={order.customer}
                   editable={lineItemsEditable}
-                  currency={orderCurrency}
-                />
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value='extra-items' key='extraitems'>
-              <Accordion.Control>
-                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <ExtraLineItemTable
-                  endpoint={ApiEndpoints.return_order_extra_line_list}
-                  orderId={order.pk}
-                  orderDetailRefresh={refreshInstance}
-                  currency={orderCurrency}
-                  editable={lineItemsEditable}
-                  role={UserRoles.return_order}
                 />
               </Accordion.Panel>
             </Accordion.Item>
@@ -365,20 +194,20 @@ export default function ReturnOrderDetail() {
         )
       },
       ParametersPanel({
-        model_type: ModelType.returnorder,
+        model_type: ModelType.repairorder,
         model_id: order.pk
       }),
       AttachmentPanel({
-        model_type: ModelType.returnorder,
+        model_type: ModelType.repairorder,
         model_id: order.pk
       }),
       NotesPanel({
-        model_type: ModelType.returnorder,
+        model_type: ModelType.repairorder,
         model_id: order.pk,
         has_note: !!order.notes
       })
     ];
-  }, [order, id, user]);
+  }, [order, id, user, lineItemsEditable]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -386,80 +215,77 @@ export default function ReturnOrderDetail() {
       : [
           <StatusRenderer
             status={order.status_custom_key}
-            type={ModelType.returnorder}
+            type={ModelType.repairorder}
             options={{ size: 'lg' }}
           />
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields({});
+  const repairOrderFields = useRepairOrderFields({});
 
-  const duplicateReturnOrderFields = useReturnOrderFields({
+  const duplicateRepairOrderFields = useRepairOrderFields({
     duplicateOrderId: order.pk
   });
 
-  const editReturnOrder = useEditApiFormModal({
-    url: ApiEndpoints.return_order_list,
+  const editRepairOrder = useEditApiFormModal({
+    url: ApiEndpoints.repair_order_list,
     pk: order.pk,
-    title: t`Edit Return Order`,
-    fields: returnOrderFields,
+    title: t`Edit Repair Order`,
+    fields: repairOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
   });
 
-  const duplicateReturnOrderInitialData = useMemo(() => {
+  const duplicateRepairOrderInitialData = useMemo(() => {
     const data = { ...order };
-    // if we set the reference to null/undefined, it will be left blank in the form
-    // if we omit the reference altogether, it will be auto-generated via reference pattern
-    // from the OPTIONS response
     delete data.reference;
     return data;
   }, [order]);
 
-  const duplicateReturnOrder = useCreateApiFormModal({
-    url: ApiEndpoints.return_order_list,
-    title: t`Add Return Order`,
-    fields: duplicateReturnOrderFields,
-    initialData: duplicateReturnOrderInitialData,
-    modelType: ModelType.returnorder,
+  const duplicateRepairOrder = useCreateApiFormModal({
+    url: ApiEndpoints.repair_order_list,
+    title: t`Add Repair Order`,
+    fields: duplicateRepairOrderFields,
+    initialData: duplicateRepairOrderInitialData,
+    modelType: ModelType.repairorder,
     follow: true
   });
 
   const issueOrder = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.return_order_issue, order.pk),
-    title: t`Issue Return Order`,
+    url: apiUrl(ApiEndpoints.repair_order_issue, order.pk),
+    title: t`Issue Repair Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
   });
 
   const cancelOrder = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.return_order_cancel, order.pk),
-    title: t`Cancel Return Order`,
+    url: apiUrl(ApiEndpoints.repair_order_cancel, order.pk),
+    title: t`Cancel Repair Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
     successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.return_order_hold, order.pk),
-    title: t`Hold Return Order`,
+    url: apiUrl(ApiEndpoints.repair_order_hold, order.pk),
+    title: t`Hold Repair Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
   });
 
   const completeOrder = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.return_order_complete, order.pk),
-    title: t`Complete Return Order`,
+    url: apiUrl(ApiEndpoints.repair_order_complete, order.pk),
+    title: t`Complete Repair Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`,
     successMessage: t`Order completed`
   });
 
   const orderActions = useMemo(() => {
-    const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
+    const canEdit: boolean = user.hasChangeRole(UserRoles.repair_order);
 
     const canIssue: boolean =
       canEdit &&
@@ -468,7 +294,6 @@ export default function ReturnOrderDetail() {
     const canHold: boolean =
       canEdit &&
       (order.status == roStatus.PENDING ||
-        order.status == roStatus.PLACED ||
         order.status == roStatus.IN_PROGRESS);
 
     const canCancel: boolean =
@@ -495,14 +320,14 @@ export default function ReturnOrderDetail() {
         color='green'
         onClick={() => completeOrder.open()}
       />,
-      <AdminButton model={ModelType.returnorder} id={order.pk} />,
+      <AdminButton model={ModelType.repairorder} id={order.pk} />,
       <BarcodeActionDropdown
-        model={ModelType.returnorder}
+        model={ModelType.repairorder}
         pk={order.pk}
         hash={order?.barcode_hash}
       />,
       <PrintingActions
-        modelType={ModelType.returnorder}
+        modelType={ModelType.repairorder}
         items={[order.pk]}
         enableReports
         enableLabels
@@ -511,16 +336,16 @@ export default function ReturnOrderDetail() {
         tooltip={t`Order Actions`}
         actions={[
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.return_order),
+            hidden: !user.hasChangeRole(UserRoles.repair_order),
             tooltip: t`Edit order`,
             onClick: () => {
-              editReturnOrder.open();
+              editRepairOrder.open();
             }
           }),
           DuplicateItemAction({
             tooltip: t`Duplicate order`,
-            hidden: !user.hasChangeRole(UserRoles.return_order),
-            onClick: () => duplicateReturnOrder.open()
+            hidden: !user.hasChangeRole(UserRoles.repair_order),
+            onClick: () => duplicateRepairOrder.open()
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
@@ -535,48 +360,42 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, orderOpen, roStatus]);
+  }, [user, order, roStatus]);
 
   const subtitle: string = useMemo(() => {
-    let t = order.customer_detail?.name || '';
-
-    if (order.customer_reference) {
-      t += ` (${order.customer_reference})`;
-    }
-
-    return t;
+    return order.customer_detail?.name || '';
   }, [order]);
 
   return (
     <>
-      {editReturnOrder.modal}
+      {editRepairOrder.modal}
       {issueOrder.modal}
       {cancelOrder.modal}
       {holdOrder.modal}
       {completeOrder.modal}
-      {duplicateReturnOrder.modal}
+      {duplicateRepairOrder.modal}
       <InstanceDetail
         query={instanceQuery}
-        requiredRole={UserRoles.return_order}
+        requiredRole={UserRoles.repair_order}
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Return Order`}: ${order.reference}`}
+            title={`${t`Repair Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
             lastCrumb={[
-              { name: order.reference, url: `/sales/return-order/${order.pk}` }
+              { name: order.reference, url: `/sales/repair-order/${order.pk}` }
             ]}
-            editAction={editReturnOrder.open}
-            editEnabled={user.hasChangePermission(ModelType.returnorder)}
+            editAction={editRepairOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.repairorder)}
           />
           <PanelGroup
-            pageKey='returnorder'
+            pageKey='repairorder'
             panels={orderPanels}
-            model={ModelType.returnorder}
+            model={ModelType.repairorder}
             reloadInstance={instanceQuery.refetch}
             instance={order}
             id={order.pk}

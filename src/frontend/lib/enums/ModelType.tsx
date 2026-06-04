@@ -24,6 +24,9 @@ export enum ModelType {
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
   returnorderlineitem = 'returnorderlineitem',
+  repairorder = 'repairorder',
+  repairorderlineitem = 'repairorderlineitem',
+  repairorderallocation = 'repairorderallocation',
   transferorder = 'transferorder',
   transferorderlineitem = 'transferorderlineitem',
   importsession = 'importsession',
@@ -38,8 +41,7 @@ export enum ModelType {
   contenttype = 'contenttype',
   selectionlist = 'selectionlist',
   selectionentry = 'selectionentry',
-  error = 'error',
-  tag = 'tag'
+  error = 'error'
 }
 
 export enum PluginPanelKey {

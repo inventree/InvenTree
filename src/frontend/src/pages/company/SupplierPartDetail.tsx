@@ -9,7 +9,6 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -68,8 +67,7 @@ export default function SupplierPartDetail() {
     params: {
       part_detail: true,
       supplier_detail: true,
-      manufacturer_detail: true,
-      tags: true
+      manufacturer_detail: true
     }
   });
 
@@ -223,23 +221,20 @@ export default function SupplierPartDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.part}
-              src={supplierPart?.part_detail?.image}
-              apiPath={apiUrl(
-                ApiEndpoints.part_list,
-                supplierPart?.part_detail?.pk
-              )}
-              pk={supplierPart?.part_detail?.pk}
-            />
-            <Grid.Col span={8}>
-              <DetailsTable title={t`Part Details`} fields={tl} item={data} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={supplierPart.tags} />
-        </Stack>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            src={supplierPart?.part_detail?.image}
+            apiPath={apiUrl(
+              ApiEndpoints.part_list,
+              supplierPart?.part_detail?.pk
+            )}
+            pk={supplierPart?.part_detail?.pk}
+          />
+          <Grid.Col span={8}>
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
+          </Grid.Col>
+        </Grid>
         <DetailsTable title={t`Supplier`} fields={bl} item={data} />
         <DetailsTable title={t`Packaging`} fields={br} item={data} />
         <DetailsTable title={t`Availability`} fields={tr} item={data} />
@@ -344,7 +339,6 @@ export default function SupplierPartDetail() {
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
