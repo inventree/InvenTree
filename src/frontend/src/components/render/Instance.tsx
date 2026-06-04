@@ -55,7 +55,8 @@ import {
   RenderParameterTemplate,
   RenderProjectCode,
   RenderSelectionEntry,
-  RenderSelectionList
+  RenderSelectionList,
+  RenderTag
 } from './Generic';
 import {
   RenderPurchaseOrder,
@@ -122,7 +123,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.selectionentry]: RenderSelectionEntry,
-  [ModelType.error]: RenderError
+  [ModelType.error]: RenderError,
+  [ModelType.tag]: RenderTag
 };
 
 /**

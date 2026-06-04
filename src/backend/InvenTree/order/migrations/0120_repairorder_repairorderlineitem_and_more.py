@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('reference', models.CharField(help_text='Repair Order Reference', max_length=100, unique=True, verbose_name='Reference')),
                 ('description', models.CharField(help_text='Repair order description', max_length=250, verbose_name='Description')),
                 ('symptoms', models.TextField(blank=True, help_text='Reported symptoms or issues', verbose_name='Symptoms')),
+                ('status_custom_key', generic.states.fields.ExtraInvenTreeCustomStatusModelField(blank=True, default=None, help_text='Additional status information for this item', null=True, validators=[generic.states.validators.CustomStatusCodeValidator(status_class=order.status_codes.RepairOrderStatus)], verbose_name='Custom status key')),
                 ('status', generic.states.fields.InvenTreeCustomStatusModelField(choices=[(10, 'Pending'), (20, 'In Progress'), (25, 'On Hold'), (30, 'Complete'), (40, 'Cancelled')], default=10, help_text='Repair order status', validators=[generic.states.validators.CustomStatusCodeValidator(status_class=order.status_codes.RepairOrderStatus)], verbose_name='Status')),
 
                 ('customer', models.ForeignKey(blank=True, help_text='Customer reference', limit_choices_to={'is_customer': True}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='repair_orders', to='company.company', verbose_name='Customer')),
