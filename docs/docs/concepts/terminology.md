@@ -13,7 +13,7 @@ Evolves around manufacturing of parts out of other parts. It keeps track of stoc
 
 ### Part Library Management *(PLM)*
 Keeps track of BOMs, part variants, possible substitutions, versions, IPNs and further part parameters.
-PLM can also mean product lifecycle management - those systems manage all stages from design through manufacturing up to customer support and recycling.
+PLM can also mean product lifecycle management – those systems manage all stages from design through manufacturing up to customer support and recycling.
 
 A similar system is [Partkeepr](https://partkeepr.org/) (seems mostly inactive - there is a 3rd party importer).
 
