@@ -244,6 +244,7 @@ jobs:
         with:
           name: playwright-report-chromium-${{ matrix.shard }}
           path: src/frontend/playwright-report/
+          if-no-files-found: error
           retention-days: 7
       - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
@@ -252,6 +253,7 @@ jobs:
         with:
           name: coverage-${{ matrix.shard }}
           path: src/frontend/.nyc_output/
+          if-no-files-found: error
           retention-days: 1
 
   # Recombine the coverage reports from the 4 shards, and upload to Codecov
