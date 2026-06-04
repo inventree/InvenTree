@@ -40,9 +40,6 @@
         "compile": "lingui compile --typescript"
     },
     "dependencies": {
-        "@blocknote/core": "^0.51.0",
-        "@blocknote/mantine": "^0.51.0",
-        "@blocknote/react": "^0.51.0",
         "@codemirror/autocomplete": "^6.20.1",
         "@codemirror/lang-liquid": "^6.3.2",
         "@codemirror/language": "^6.12.2",
@@ -151,9 +148,6 @@
         "vite-plugin-istanbul": "^8.0.0"
     },
     "overrides": {
-        "@blocknote/core": {
-            "prosemirror-model": ">=1.25.4"
-        }
     },
     "resolutions": {
         "undici": "^6.24.0",
