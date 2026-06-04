@@ -227,6 +227,8 @@ class RepairOrderLineItemAdmin(admin.ModelAdmin):
 
     list_display = ['order', 'part', 'quantity']
 
+    search_fields = ['order__reference', 'part__name', 'part__IPN']
+
     autocomplete_fields = ['order', 'part']
 
 
