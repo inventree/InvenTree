@@ -40,6 +40,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -103,10 +104,16 @@ export default function Calendar({
     [state.selectMonth]
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
   useEffect(() => {
     // Select initial month on first calendar render
     state.ref?.current?.getApi()?.gotoDate(new Date());
   }, []);
+
+  // Disconnect the observer when the component unmounts
+  useEffect(() => () => observerRef.current?.disconnect(), []);
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
@@ -127,8 +134,59 @@ export default function Calendar({
 
       // Pass the dates set to the parent component
       calendarProps.datesSet?.(dateInfo);
+
+      // After FullCalendar has re-rendered its month grid, set up an
+      // IntersectionObserver on each .fc-multimonth-month element. Using the
+      // FullCalendar scroller as the root means we detect visibility within
+      // the calendar's own scroll container (not the page viewport).
+      requestAnimationFrame(() => {
+        observerRef.current?.disconnect();
+
+        const container = containerRef.current;
+        if (!container) return;
+
+        const scrollRoot =
+          container.querySelector<HTMLElement>(
+            '.fc-scroller-liquid-absolute'
+          ) ?? container.querySelector<HTMLElement>('.fc-scroller');
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              // Stop watching once the month is seen — one trigger is enough
+              observer.unobserve(entry.target);
+              const firstDay = (
+                entry.target as HTMLElement
+              ).querySelector<HTMLElement>('[data-date]');
+              if (firstDay?.dataset.date) {
+                state.extendFetchRange(new Date(firstDay.dataset.date));
+              }
+            });
+          },
+          {
+            root: scrollRoot ?? null,
+            // Prefetch 300 px before the month scrolls fully into view
+            rootMargin: '300px 0px',
+            threshold: 0
+          }
+        );
+
+        observerRef.current = observer;
+        container
+          .querySelectorAll('.fc-multimonth-month')
+          .forEach((el) => observer.observe(el));
+      });
     },
-    [calendarLocale, calendarProps.datesSet, state.ref, state.setMonthName]
+    [
+      calendarLocale,
+      calendarProps.datesSet,
+      state.ref,
+      state.setMonthName,
+      state.setStartDate,
+      state.setEndDate,
+      state.extendFetchRange
+    ]
   );
 
   const wrappedEventContent = useCallback(
@@ -250,7 +308,7 @@ export default function Calendar({
             )}
           </Group>
         </Group>
-        <Box pos='relative'>
+        <Box pos='relative' ref={containerRef}>
           <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
@@ -259,7 +317,13 @@ export default function Calendar({
             views={{
               scrollYear: {
                 type: 'multiMonth',
-                duration: { months: 12 }
+                duration: {
+                  months: Number.parseInt(
+                    globalSettings.getSetting('CALENDAR_HORIZON_MONTHS') ??
+                      '12',
+                    10
+                  )
+                }
               }
             }}
             multiMonthMaxColumns={1}

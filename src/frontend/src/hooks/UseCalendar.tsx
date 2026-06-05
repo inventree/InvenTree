@@ -7,7 +7,7 @@ import type { UseModalReturn } from '@lib/types/Modals';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../App';
 import { showApiErrorMessage } from '../functions/notifications';
 import useDataExport from './UseDataExport';
@@ -29,6 +29,7 @@ import useDataExport from './UseDataExport';
  * prevMonth: A function to navigate to the previous month
  * currentMonth: A function to navigate to the current month
  * selectMonth: A function to select a specific month
+ * extendFetchRange: Expand the API fetch window to include the given date
  */
 export type CalendarState = {
   name: string;
@@ -46,6 +47,7 @@ export type CalendarState = {
   prevMonth: () => void;
   currentMonth: () => void;
   selectMonth: (date: DateValue) => void;
+  extendFetchRange: (date: Date) => void;
   query: UseQueryResult;
   exportModal: UseModalReturn;
   data: any;
@@ -72,10 +74,32 @@ export default function useCalendar({
 
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  // Tracks how far into the view we have fetched data. Starts at 3 months from
+  // startDate and grows as the user scrolls down through the year.
+  const [fetchedEndDate, setFetchedEndDate] = useState<Date | null>(null);
+
+  // When the user navigates to a new position, reset the fetch window to the
+  // first 3 months of the new view so we load incrementally again.
+  useEffect(() => {
+    if (startDate) {
+      setFetchedEndDate(dayjs(startDate).add(3, 'month').toDate());
+    }
+  }, [startDate]);
+
+  // Called by Calendar when a month element comes into the FullCalendar viewport.
+  // Extends fetchedEndDate by 3 months beyond the newly-visible month so data
+  // is ready before the user reaches it.
+  const extendFetchRange = useCallback((date: Date) => {
+    setFetchedEndDate((prev) => {
+      if (!prev || date > prev) {
+        return dayjs(date).add(3, 'month').toDate();
+      }
+      return prev;
+    });
+  }, []);
+
   // Generate a set of API query filters
   const queryFilters: Record<string, any> = useMemo(() => {
-    // Expand date range by one month, to ensure we capture all events
-
     let params = {
       ...(queryParams || {})
     };
@@ -91,18 +115,24 @@ export default function useCalendar({
       min_date: startDate
         ? dayjs(startDate).subtract(1, 'month').format('YYYY-MM-DD')
         : null,
-      max_date: endDate
-        ? dayjs(endDate).add(1, 'month').format('YYYY-MM-DD')
+      max_date: fetchedEndDate
+        ? dayjs(fetchedEndDate).format('YYYY-MM-DD')
         : null,
       search: searchTerm
     };
 
     return params;
-  }, [startDate, endDate, searchTerm, filterSet.activeFilters, queryParams]);
+  }, [
+    startDate,
+    fetchedEndDate,
+    searchTerm,
+    filterSet.activeFilters,
+    queryParams
+  ]);
 
   const query = useQuery({
-    enabled: !!startDate && !!endDate,
-    queryKey: ['calendar', name, endpoint, queryFilters, startDate, endDate],
+    enabled: !!startDate && !!fetchedEndDate,
+    queryKey: ['calendar', name, endpoint, queryFilters],
     throwOnError: (error: any) => {
       showApiErrorMessage({
         error: error,
@@ -112,7 +142,6 @@ export default function useCalendar({
       return true;
     },
     queryFn: async () => {
-      // Fetch data from the API
       return api
         .get(apiUrl(endpoint), {
           params: queryFilters
@@ -175,6 +204,7 @@ export default function useCalendar({
     prevMonth,
     currentMonth,
     selectMonth,
+    extendFetchRange,
     startDate,
     setStartDate,
     endDate,
