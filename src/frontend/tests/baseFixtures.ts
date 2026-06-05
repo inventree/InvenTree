@@ -2,9 +2,14 @@ import * as crypto from 'node:crypto';
 import * as fs from 'node:fs';
 import os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { type BrowserContext, test as baseTest } from '@playwright/test';
 
-const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
+const frontendDir = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..'
+);
+const istanbulCLIOutput = path.join(frontendDir, '.nyc_output');
 const platform = os.platform();
 let systemKeyVar: string;
 if (platform === 'darwin') {
