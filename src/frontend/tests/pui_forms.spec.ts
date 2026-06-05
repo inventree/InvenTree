@@ -1,6 +1,6 @@
-/** Unit tests for form validation, rendering, etc */
-import { expect, test } from 'playwright/test';
 import { createApi } from './api';
+/** Unit tests for form validation, rendering, etc */
+import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
 import { navigate } from './helpers';
 import { doCachedLogin } from './login';
