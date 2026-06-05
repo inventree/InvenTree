@@ -50,7 +50,7 @@ test('Tables - Filters', async ({ browser }) => {
   await page.getByRole('option', { name: 'Yes' }).click();
 
   // Save the filter group
-  await page.getByRole('button', { name: 'Save current filters' }).click();
+  await page.getByRole('button', { name: 'Save Filters' }).click();
   await page.getByRole('textbox', { name: 'filter-group-name' }).fill('custom');
   await page
     .getByRole('button', { name: 'save-filter-set', exact: true })

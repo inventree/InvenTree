@@ -428,7 +428,7 @@ export function FilterSelectDrawer({
 
   return (
     <Drawer
-      size='sm'
+      size='lg'
       position='right'
       withCloseButton={true}
       opened={opened}
@@ -534,7 +534,7 @@ export function FilterSelectDrawer({
                 variant='light'
                 onClick={() => setSaving(true)}
               >
-                <Text>{t`Save current filters`}</Text>
+                <Text>{t`Save Filters`}</Text>
               </Button>
             ))}
         </Stack>
