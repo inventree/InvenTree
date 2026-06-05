@@ -36,6 +36,7 @@ from InvenTree.serializers import (
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
+    InvenTreeTaggitSerializer,
     OptionalField,
 )
 from stock.generators import generate_batch_code
@@ -55,6 +56,7 @@ from .status_codes import BuildStatus
 class BuildSerializer(
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
+    InvenTreeTaggitSerializer,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     InvenTreeModelSerializer,
@@ -100,6 +102,7 @@ class BuildSerializer(
             'parameters',
             'priority',
             'level',
+            'tags',
         ]
         read_only_fields = [
             'completed',
@@ -123,6 +126,8 @@ class BuildSerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
     part_name = serializers.CharField(
         source='part.name', read_only=True, label=_('Part Name')

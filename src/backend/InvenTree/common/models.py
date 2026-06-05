@@ -52,7 +52,6 @@ from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
 from PIL import Image
 from rest_framework.exceptions import PermissionDenied
-from taggit.managers import TaggableManager
 
 import common.validators
 import InvenTree.conversion
@@ -1889,7 +1888,11 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class Attachment(
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -2121,8 +2124,6 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     file_size = models.PositiveIntegerField(
         default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
     )
-
-    tags = TaggableManager(blank=True)
 
     @property
     def basename(self):

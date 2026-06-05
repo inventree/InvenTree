@@ -37,6 +37,7 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
+    InvenTreeTaggitSerializer,
     OptionalField,
 )
 from order.status_codes import (
@@ -102,6 +103,7 @@ class DuplicateOrderSerializer(serializers.Serializer):
 class AbstractOrderSerializer(
     CustomStatusSerializerMixin,
     DataImportExportSerializerMixin,
+    InvenTreeTaggitSerializer,
     FilterableSerializerMixin,
     serializers.Serializer,
 ):
@@ -171,6 +173,8 @@ class AbstractOrderSerializer(
 
     parameters = common.filters.enable_parameters_filter()
 
+    tags = common.filters.enable_tags_filter()
+
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
@@ -234,6 +238,7 @@ class AbstractOrderSerializer(
             'project_code_label',
             'responsible_detail',
             'parameters',
+            'tags',
             *extra_fields,
         ]
 
@@ -1061,6 +1066,7 @@ class SalesOrderSerializer(
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
+    InvenTreeTaggitSerializer,
     InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrder model class."""
@@ -1080,6 +1086,7 @@ class SalesOrderSerializer(
             'completed_shipments_count',
             'allocated_lines',
             'updated_at',
+            'tags',
         ])
         read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
@@ -1160,6 +1167,8 @@ class SalesOrderSerializer(
     allocated_lines = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Allocated Lines')
     )
+
+    tags = common.filters.enable_tags_filter()
 
 
 class SalesOrderIssueSerializer(OrderAdjustSerializer):
@@ -1357,7 +1366,10 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
-    DataImportExportSerializerMixin, FilterableSerializerMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    FilterableSerializerMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
 
@@ -1384,6 +1396,7 @@ class SalesOrderShipmentSerializer(
             'customer_detail',
             'order_detail',
             'shipment_address_detail',
+            'tags',
         ]
 
     @staticmethod
@@ -1452,6 +1465,8 @@ class SalesOrderShipmentSerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
 
 class SalesOrderAllocationSerializer(

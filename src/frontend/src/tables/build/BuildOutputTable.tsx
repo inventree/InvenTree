@@ -170,7 +170,8 @@ export default function BuildOutputTable({
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId, build],
+    staleTime: 60 * 1000, // Cache for 1 minute
+    queryKey: ['buildoutputtests', partId, buildId],
     queryFn: async () => {
       if (!partId || partId < 0) {
         return [];
@@ -200,6 +201,7 @@ export default function BuildOutputTable({
 
   // Fetch the "tracked" BOM items associated with the partId
   const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
+    staleTime: 60 * 1000, // Cache for 1 minute
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {

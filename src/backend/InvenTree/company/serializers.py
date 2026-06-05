@@ -20,7 +20,7 @@ from InvenTree.serializers import (
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
-    InvenTreeTagModelSerializer,
+    InvenTreeTaggitSerializer,
     OptionalField,
 )
 
@@ -105,7 +105,10 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 
 @register_importer()
 class CompanySerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
 
@@ -138,6 +141,7 @@ class CompanySerializer(
             'primary_address',
             'tax_id',
             'parameters',
+            'tags',
         ]
 
     @staticmethod
@@ -180,6 +184,8 @@ class CompanySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
 
+    tags = common.filters.enable_tags_filter()
+
     parameters = common.filters.enable_parameters_filter()
 
 
@@ -202,7 +208,8 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 class ManufacturerPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTreeTagModelSerializer,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -301,7 +308,8 @@ class SupplierPriceBreakBriefSerializer(
 class SupplierPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTreeTagModelSerializer,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPart object."""
 

@@ -698,10 +698,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
         return self._save_tags(tag_object, to_be_tagged)
 
 
-class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
-    """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """Override the DRF native FileField serializer, to remove the leading server path.
 

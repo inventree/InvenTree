@@ -120,6 +120,51 @@ test('Build Order - Basic Tests', async ({ browser }) => {
     .waitFor();
 });
 
+// Test tags filtering against Build Orders
+test('Build Order - Tags', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/index/buildorders'
+  });
+
+  // Filter by tag
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await clearTableFilters(page);
+  await page.getByRole('button', { name: 'table-select-filters' }).click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).fill('tag');
+  await page.getByRole('option', { name: 'Tags' }).click();
+  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  // Check for expected tags
+  await page.getByRole('option', { name: 'Furniture' }).waitFor();
+  await page.getByRole('option', { name: 'Electronics' }).click();
+  await page.getByRole('option', { name: 'PCB Assembly' }).click();
+
+  // Apply the "Furniture" tag filter
+  await page.getByRole('button', { name: 'apply-tags-filter' }).click();
+  await page.getByRole('button', { name: 'filter-drawer-close' }).click();
+
+  // Check for expected results
+  await page.getByRole('cell', { name: 'BO0026' }).click();
+  await page.getByText('100 x 002.01-PCBA | Widget').waitFor();
+
+  // Check for tags displayed on BuildOrder detail page
+  await page.getByText('Electronics', { exact: true }).first().waitFor();
+  await page.getByText('PCB Assembly', { exact: true }).first().waitFor();
+
+  // Edit the build order
+  await page.keyboard.press('Control+E');
+
+  const tagsField = await page.getByRole('combobox', {
+    name: 'tags-field-tags'
+  });
+
+  await expect(tagsField).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 // Test that the build order reference field increments correctly
 test('Build Order - Reference', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -334,6 +379,24 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     )
     .waitFor();
   await page.getByRole('cell', { name: 'Quantity: 16' }).waitFor();
+
+  // Adjust the quantity field - we will only 'partially' scrap this output
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('10');
+
+  // Next, adjust the "location" field - and check that the "quantity" field does not change
+  // Ref: https://github.com/inventree/InvenTree/pull/12081
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByTitle('Factory/Mechanical Lab').click();
+  await page.waitForTimeout(250);
+
+  // Check the 'quantity' value again - it should not have changed
+  const quantityValue = await page
+    .getByRole('textbox', { name: 'number-field-quantity' })
+    .inputValue();
+  expect(quantityValue).toBe('10');
+
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 

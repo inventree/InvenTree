@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from PIL import Image
+from taggit.models import Tag
 
 import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -1453,3 +1454,170 @@ class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
             set_global_setting(
                 'INVENTREE_UPLOAD_MAX_SIZE', original_limit, change_user=None
             )
+
+
+class TagAPITests(InvenTreeAPITestCase):
+    """Tests for the Tag API endpoints and tag-based filtering."""
+
+    roles = 'all'
+
+    LIST_URL = 'api-tag-list'
+    DETAIL_URL = 'api-tag-detail'
+
+    def setUp(self):
+        """Create a small set of tagged objects for filter testing."""
+        super().setUp()
+
+        from part.models import Part
+
+        self.part_a = Part.objects.create(
+            name='Tagged Part A', description='Part with apple and banana tags'
+        )
+        self.part_b = Part.objects.create(
+            name='Tagged Part B', description='Part with apple tag only'
+        )
+        self.part_c = Part.objects.create(
+            name='Untagged Part C', description='Part with no tags'
+        )
+
+        self.part_a.tags.add('apple', 'banana')
+        self.part_b.tags.add('apple')
+
+    # ------------------------------------------------------------------
+    # Tag list / CRUD
+    # ------------------------------------------------------------------
+
+    def test_tag_list(self):
+        """Tag list endpoint should return all existing tags."""
+        url = reverse(self.LIST_URL)
+        response = self.get(url)
+
+        names = {t['name'] for t in response.data}
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_create(self):
+        """Staff users should be able to create tags via POST."""
+        url = reverse(self.LIST_URL)
+        n = Tag.objects.count()
+
+        response = self.post(url, {'name': 'cherry'}, expected_code=201)
+        self.assertEqual(response.data['name'], 'cherry')
+        self.assertEqual(Tag.objects.count(), n + 1)
+
+    def test_tag_create_non_staff(self):
+        """Non-staff users must not be able to create tags."""
+        self.user.is_staff = False
+        self.user.save()
+
+        url = reverse(self.LIST_URL)
+        self.post(url, {'name': 'forbidden'}, expected_code=403)
+
+    def test_tag_edit(self):
+        """Staff users should be able to rename a tag via PATCH."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        response = self.patch(url, {'name': 'blueberry'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'blueberry')
+
+        tag.refresh_from_db()
+        self.assertEqual(tag.name, 'blueberry')
+
+    def test_tag_delete(self):
+        """Staff users should be able to delete a tag."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        self.delete(url, expected_code=204)
+        self.assertFalse(Tag.objects.filter(name='banana').exists())
+
+    def test_tag_search(self):
+        """The list endpoint should support free-text search."""
+        url = reverse(self.LIST_URL)
+
+        response = self.get(url, data={'search': 'app'})
+        names = [t['name'] for t in response.data]
+        self.assertIn('apple', names)
+        self.assertNotIn('banana', names)
+
+    # ------------------------------------------------------------------
+    # Filter by model type
+    # ------------------------------------------------------------------
+
+    def test_tag_filter_model_type(self):
+        """Tags applied to a given model type should be returned when filtering by model_type."""
+        url = reverse(self.LIST_URL)
+
+        # Filter for tags applied to Part objects
+        response = self.get(url, data={'model_type': 'part.part'})
+        names = {t['name'] for t in response.data}
+
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_filter_model_type_unrelated(self):
+        """Filtering by a model type that has no tagged objects should return an empty list."""
+        url = reverse(self.LIST_URL)
+
+        # StockItem has no tagged objects in this test
+        response = self.get(url, data={'model_type': 'stock.stockitem'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_tag_filter_model_type_invalid(self):
+        """An unrecognised model_type value should return a 400 error."""
+        url = reverse(self.LIST_URL)
+        self.get(url, data={'model_type': 'notanapp.notamodel'}, expected_code=400)
+
+    # ------------------------------------------------------------------
+    # Filter Part list by tags
+    # ------------------------------------------------------------------
+
+    def test_part_filter_single_tag(self):
+        """Filtering parts by a single tag should return only parts with that tag."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+        self.assertNotIn(self.part_c.pk, pks)
+
+    def test_part_filter_multiple_tags_and(self):
+        """Filtering by comma-separated tags should return only parts that have ALL tags."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple,banana'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)  # only has 'apple'
+        self.assertNotIn(self.part_c.pk, pks)  # no tags at all
+
+    def test_part_filter_tag_case_insensitive(self):
+        """Tag filtering should be case-insensitive."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'APPLE'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+
+    def test_part_filter_nonexistent_tag(self):
+        """Filtering by a tag that no part has should return an empty result set."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'doesnotexist'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_part_filter_tag_whitespace(self):
+        """Whitespace around comma-separated tag names should be ignored."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': ' apple , banana '})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)

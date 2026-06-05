@@ -1169,3 +1169,6 @@ if 'dbbackup' not in STORAGES:
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
+
+# Taggit settings
+TAGGIT_CASE_INSENSITIVE = True

@@ -260,6 +260,7 @@ export enum ApiEndpoints {
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
+  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'
