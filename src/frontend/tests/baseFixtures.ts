@@ -2,9 +2,14 @@ import * as crypto from 'node:crypto';
 import * as fs from 'node:fs';
 import os from 'node:os';
 import * as path from 'node:path';
-import { test as baseTest } from '@playwright/test';
+import { fileURLToPath } from 'node:url';
+import { type BrowserContext, test as baseTest } from '@playwright/test';
 
-const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
+const frontendDir = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..'
+);
+const istanbulCLIOutput = path.join(frontendDir, '.nyc_output');
 const platform = os.platform();
 let systemKeyVar: string;
 if (platform === 'darwin') {
@@ -19,16 +24,16 @@ export function generateUUID(): string {
   return crypto.randomBytes(16).toString('hex');
 }
 
-export const test = baseTest.extend({
-  context: async ({ context }, use) => {
-    await context.addInitScript(() =>
-      window.addEventListener('beforeunload', () =>
-        (window as any).collectIstanbulCoverage(
-          JSON.stringify((window as any).__coverage__)
-        )
+async function setupCoverageCollection(context: BrowserContext) {
+  await context.addInitScript(() =>
+    window.addEventListener('beforeunload', () =>
+      (window as any).collectIstanbulCoverage?.(
+        JSON.stringify((window as any).__coverage__)
       )
-    );
-    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+    )
+  );
+  await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+  try {
     await context.exposeFunction(
       'collectIstanbulCoverage',
       (coverageJSON: string) => {
@@ -42,18 +47,68 @@ export const test = baseTest.extend({
           );
       }
     );
+  } catch {
+    // already exposed on this context (e.g. called twice for same context)
+  }
+}
+
+async function collectCoverageFromContext(context: BrowserContext) {
+  await Promise.allSettled(
+    context.pages().map(async (page) => {
+      try {
+        await Promise.race([
+          page.evaluate(() =>
+            (window as any).collectIstanbulCoverage?.(
+              JSON.stringify((window as any).__coverage__)
+            )
+          ),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Coverage collection timeout')),
+              2000
+            )
+          )
+        ]);
+      } catch {
+        // page may already be closed or script execution can be blocked during teardown
+      }
+    })
+  );
+}
+
+export const test = baseTest.extend<{}, {}>({
+  // Wrap browser.newPage so contexts created via doCachedLogin also get coverage
+  browser: [
+    async ({ browser }, use) => {
+      const origNewPage = browser.newPage.bind(browser);
+      (browser as any).newPage = async (
+        options?: Parameters<typeof browser.newPage>[0]
+      ) => {
+        const page = await origNewPage(options);
+        await setupCoverageCollection(page.context());
+        return page;
+      };
+      try {
+        await use(browser);
+      } finally {
+        (browser as any).newPage = origNewPage;
+        for (const context of browser.contexts()) {
+          await collectCoverageFromContext(context);
+        }
+      }
+    },
+    { scope: 'worker' }
+  ],
+
+  context: async ({ context }, use) => {
+    await setupCoverageCollection(context);
     await use(context);
-    for (const page of context.pages()) {
-      await page.evaluate(() =>
-        (window as any).collectIstanbulCoverage(
-          JSON.stringify((window as any).__coverage__)
-        )
-      );
-    }
+    await collectCoverageFromContext(context);
   },
+
   // Ensure no errors are thrown in the console
   page: async ({ page }, use) => {
-    const messages = [];
+    const messages: any[] = [];
     page.on('console', (msg) => {
       const url = msg.location().url;
       if (
