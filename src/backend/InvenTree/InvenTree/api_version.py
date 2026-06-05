@@ -10,7 +10,7 @@ INVENTREE_API_TEXT = """
 v500 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12022
     - Adds optional "merge" field to each item in the Stock Transfer API endpoint
     - When merge is enabled, transferred stock is combined into compatible existing stock at the destination
-    - Stock merge tracking entries now include an "added" delta field
+    - Stock merge tracking entries now include an "added" delta field.
 
 v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
     - Fixes search field issues on the BarcodeScanHistory API endpoint
