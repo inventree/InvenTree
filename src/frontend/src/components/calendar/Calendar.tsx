@@ -33,7 +33,8 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconDownload,
-  IconFilter
+  IconFilter,
+  IconRefresh
 } from '@tabler/icons-react';
 import {
   type ReactNode,
@@ -57,6 +58,7 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  enableRefresh?: boolean;
   eventTooltipContent?: (event: EventContentArg) => ReactNode;
   filters?: TableFilter[];
   isLoading?: boolean;
@@ -67,6 +69,7 @@ export default function Calendar({
   enableDownload,
   enableFilters = false,
   enableSearch,
+  enableRefresh = true,
   eventTooltipContent,
   isLoading,
   filters,
@@ -289,6 +292,18 @@ export default function Calendar({
           <Group justify='right' gap='xs' wrap='nowrap'>
             {enableSearch && (
               <SearchInput searchCallback={state.setSearchTerm} />
+            )}
+            {enableRefresh && (
+              <ActionIcon
+                variant='transparent'
+                aria-label='calendar-refresh'
+                disabled={isLoading}
+                onClick={() => state.query.refetch()}
+              >
+                <Tooltip label={t`Refresh calendar`} position='top-end'>
+                  <IconRefresh />
+                </Tooltip>
+              </ActionIcon>
             )}
             {enableFilters && filters && filters.length > 0 && (
               <Indicator
