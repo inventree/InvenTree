@@ -75,6 +75,18 @@ export default function Calendar({
 }: Readonly<InvenTreeCalendarProps>) {
   const globalSettings = useGlobalSettingsState();
 
+  const horizonMonths = useMemo(
+    () =>
+      Number.parseInt(
+        globalSettings.getSetting('CALENDAR_HORIZON_MONTHS') ?? '12',
+        10
+      ),
+    [globalSettings]
+  );
+
+  // When the horizon is a single month, fall back to the standard month grid.
+  const isScrollView = horizonMonths > 1;
+
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
@@ -313,21 +325,17 @@ export default function Calendar({
           <FullCalendar
             ref={state.ref}
             plugins={[dayGridPlugin, multiMonthPlugin, interactionPlugin]}
-            initialView='scrollYear'
-            views={{
-              scrollYear: {
-                type: 'multiMonth',
-                duration: {
-                  months: Number.parseInt(
-                    globalSettings.getSetting('CALENDAR_HORIZON_MONTHS') ??
-                      '12',
-                    10
-                  )
+            initialView={isScrollView ? 'scrollYear' : 'dayGridMonth'}
+            {...(isScrollView && {
+              views: {
+                scrollYear: {
+                  type: 'multiMonth',
+                  duration: { months: horizonMonths }
                 }
-              }
-            }}
-            multiMonthMaxColumns={1}
-            height='calc(100vh - 160px)'
+              },
+              multiMonthMaxColumns: 1,
+              height: 'calc(100vh - 160px)'
+            })}
             locales={allLocales}
             locale={calendarLocale}
             firstDay={Number.parseInt(
