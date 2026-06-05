@@ -254,6 +254,7 @@ jobs:
           name: coverage-${{ matrix.shard }}
           path: src/frontend/.nyc_output/
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 1
 
   # Recombine the coverage reports from the 4 shards, and upload to Codecov
