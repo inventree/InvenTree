@@ -27,6 +27,10 @@ Exposes sub-components related to DetailDrawer rendering:
 - `DetailDrawerComponent`
 - `useLocalLibState`
 
+#### Plugin System
+
+Enable React Fast Refresh support for plugin frontend development. Plugin modules exporting React components must start with a capital letter; otherwise, a full page reload occurs instead of a component-level update.
+
 ### 0.11.3 - April 2026
 
 Exposes additional type definitions related to rendering drawers from tables:
