@@ -1,6 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
@@ -15,6 +12,10 @@ import {
 import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';

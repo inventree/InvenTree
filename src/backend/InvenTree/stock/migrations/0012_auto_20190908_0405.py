@@ -3,9 +3,13 @@
 from django.db import migrations
 
 
+
 class Migration(migrations.Migration):
+
     atomic = False
 
-    dependencies = [('stock', '0011_auto_20190908_0404')]
+    dependencies = [
+        ('stock', '0011_auto_20190908_0404'),
+    ]
 
     operations = []

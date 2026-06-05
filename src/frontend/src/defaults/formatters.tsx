@@ -1,8 +1,9 @@
+import dayjs from 'dayjs';
+
 import {
   type FormatCurrencyOptionsInterface,
   formatCurrencyValue
 } from '@lib/functions/Formatting';
-import dayjs from 'dayjs';
 import {
   useGlobalSettingsState,
   useUserSettingsState

@@ -2,12 +2,13 @@
 
 import os
 
-from django.core.files.base import ContentFile
 from django.db import migrations
+from django.core.files.base import ContentFile
 
 
 def report_model_map():
     """Return a map of model_type: report_type keys."""
+
     return {
         'stockitem': 'testreport',
         'stocklocation': 'stocklocationreport',
@@ -15,21 +16,23 @@ def report_model_map():
         'part': 'billofmaterialsreport',
         'purchaseorder': 'purchaseorderreport',
         'salesorder': 'salesorderreport',
-        'returnorder': 'returnorderreport',
+        'returnorder': 'returnorderreport'
     }
 
 
 def forward(apps, schema_editor):
-    """Run forwards migration.
-
+    """Run forwards migration. 
+    
     - Create a new ReportTemplate instance for each existing report
     """
+
     # New 'generic' report template model
     ReportTemplate = apps.get_model('report', 'reporttemplate')
 
     count = 0
 
     for model_type, report_model in report_model_map().items():
+
         model = apps.get_model('report', report_model)
 
         for template in model.objects.all():
@@ -44,7 +47,7 @@ def forward(apps, schema_editor):
             if '/report/inventree/' in filename:
                 # Do not migrate internal report templates
                 continue
-
+        
             filename = os.path.basename(filename)
             filedata = template.template.open('r').read()
 
@@ -52,10 +55,8 @@ def forward(apps, schema_editor):
             offset = 1
 
             # Prevent duplicate names during migration
-            while ReportTemplate.objects.filter(
-                name=name, model_type=model_type
-            ).exists():
-                name = template.name + f'_{offset}'
+            while ReportTemplate.objects.filter(name=name, model_type=model_type).exists():
+                name = template.name + f"_{offset}"
                 offset += 1
 
             ReportTemplate.objects.create(
@@ -74,7 +75,7 @@ def forward(apps, schema_editor):
             count += 1
 
     if count > 0:
-        print(f'Migrated {count} report templates to new ReportTemplate model.')
+        print(f"Migrated {count} report templates to new ReportTemplate model.")
 
 
 def reverse(apps, schema_editor):
@@ -90,11 +91,16 @@ def reverse(apps, schema_editor):
         for item in ReportTemplate.objects.all():
             item.template.delete()
             item.delete()
-
-        print(f'Deleted {n} ReportTemplate objects and templates')
+        
+        print(f"Deleted {n} ReportTemplate objects and templates")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('report', '0022_reporttemplate')]
 
-    operations = [migrations.RunPython(forward, reverse_code=reverse)]
+    dependencies = [
+        ('report', '0022_reporttemplate'),
+    ]
+
+    operations = [
+        migrations.RunPython(forward, reverse_code=reverse)
+    ]

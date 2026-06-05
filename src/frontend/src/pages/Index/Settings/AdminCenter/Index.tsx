@@ -1,6 +1,3 @@
-import { PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
@@ -24,6 +21,10 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
+
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';

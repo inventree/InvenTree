@@ -6,58 +6,59 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('report', '0031_reporttemplate_merge'),
+        ("report", "0031_reporttemplate_merge"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='labeltemplate',
-            name='updated',
+            model_name="labeltemplate",
+            name="updated",
             field=models.DateTimeField(
                 blank=True,
                 default=None,
-                help_text='Timestamp of last update',
+                help_text="Timestamp of last update",
                 null=True,
-                verbose_name='Updated',
+                verbose_name="Updated",
             ),
         ),
         migrations.AddField(
-            model_name='labeltemplate',
-            name='updated_by',
+            model_name="labeltemplate",
+            name="updated_by",
             field=models.ForeignKey(
                 blank=True,
-                help_text='User who last updated this object',
+                help_text="User who last updated this object",
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name='%(class)s_updated',
+                related_name="%(class)s_updated",
                 to=settings.AUTH_USER_MODEL,
-                verbose_name='Update By',
+                verbose_name="Update By",
             ),
         ),
         migrations.AddField(
-            model_name='reporttemplate',
-            name='updated',
+            model_name="reporttemplate",
+            name="updated",
             field=models.DateTimeField(
                 blank=True,
                 default=None,
-                help_text='Timestamp of last update',
+                help_text="Timestamp of last update",
                 null=True,
-                verbose_name='Updated',
+                verbose_name="Updated",
             ),
         ),
         migrations.AddField(
-            model_name='reporttemplate',
-            name='updated_by',
+            model_name="reporttemplate",
+            name="updated_by",
             field=models.ForeignKey(
                 blank=True,
-                help_text='User who last updated this object',
+                help_text="User who last updated this object",
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name='%(class)s_updated',
+                related_name="%(class)s_updated",
                 to=settings.AUTH_USER_MODEL,
-                verbose_name='Update By',
+                verbose_name="Update By",
             ),
         ),
     ]

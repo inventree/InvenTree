@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('report', '0018_returnorderreport')]
+
+    dependencies = [
+        ('report', '0018_returnorderreport'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='returnorderreport',
             name='metadata',
-            field=models.JSONField(
-                blank=True,
-                help_text='JSON metadata field, for use by external plugins',
-                null=True,
-                verbose_name='Plugin Metadata',
-            ),
-        )
+            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+        ),
     ]

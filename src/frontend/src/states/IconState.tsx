@@ -1,8 +1,9 @@
+import { create } from 'zustand';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { create } from 'zustand';
 import { api } from '../App';
 import { generateUrl } from '../functions/urls';
 

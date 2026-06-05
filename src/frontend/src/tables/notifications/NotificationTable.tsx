@@ -1,9 +1,11 @@
+import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
+
 import type { RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { TableColumn, TableState } from '@lib/types/Tables';
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import type { TableState } from '@lib/types/Tables';
+import type { TableColumn } from '@lib/types/Tables';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function NotificationTable({

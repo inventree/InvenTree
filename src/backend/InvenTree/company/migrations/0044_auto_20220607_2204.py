@@ -5,29 +5,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0043_manufacturerpartattachment')]
+
+    dependencies = [
+        ('company', '0043_manufacturerpartattachment'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='supplierpart',
             name='availability_updated',
-            field=models.DateTimeField(
-                blank=True,
-                help_text='Date of last update of availability data',
-                null=True,
-                verbose_name='Availability Updated',
-            ),
+            field=models.DateTimeField(blank=True, help_text='Date of last update of availability data', null=True, verbose_name='Availability Updated'),
         ),
         migrations.AddField(
             model_name='supplierpart',
             name='available',
-            field=models.DecimalField(
-                decimal_places=3,
-                default=0,
-                help_text='Quantity available from supplier',
-                max_digits=10,
-                validators=[django.core.validators.MinValueValidator(0)],
-                verbose_name='Available',
-            ),
+            field=models.DecimalField(decimal_places=3, default=0, help_text='Quantity available from supplier', max_digits=10, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Available'),
         ),
     ]

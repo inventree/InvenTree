@@ -4,6 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0027_remove_supplierpricebreak_currency')]
 
-    operations = [migrations.RemoveField(model_name='supplierpricebreak', name='cost')]
+    dependencies = [
+        ('company', '0027_remove_supplierpricebreak_currency'),
+    ]
+
+    operations = [
+        migrations.RemoveField(
+            model_name='supplierpricebreak',
+            name='cost',
+        ),
+    ]

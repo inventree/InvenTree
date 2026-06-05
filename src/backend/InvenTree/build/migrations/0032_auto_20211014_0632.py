@@ -6,13 +6,17 @@ from django.db import migrations
 
 
 def build_refs(apps, schema_editor):
-    """Rebuild the integer "reference fields" for existing Build objects"""
+    """
+    Rebuild the integer "reference fields" for existing Build objects
+    """
+
     BuildOrder = apps.get_model('build', 'build')
 
     for build in BuildOrder.objects.all():
+
         ref = 0
 
-        result = re.match(r'^(\d+)', build.reference)
+        result = re.match(r"^(\d+)", build.reference)
 
         if result and len(result.groups()) == 1:
             try:
@@ -21,18 +25,24 @@ def build_refs(apps, schema_editor):
                 ref = 0
 
         # Clip integer value to ensure it does not overflow database field
-        if ref > 0x7FFFFFFF:
-            ref = 0x7FFFFFFF
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
 
         build.reference_int = ref
         build.save()
 
 
 class Migration(migrations.Migration):
+
     atomic = False
 
-    dependencies = [('build', '0031_build_reference_int')]
+    dependencies = [
+        ('build', '0031_build_reference_int'),
+    ]
 
     operations = [
-        migrations.RunPython(build_refs, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(
+            build_refs,
+            reverse_code=migrations.RunPython.noop
+        )
     ]

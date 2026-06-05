@@ -4,11 +4,20 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0024_auto_20200405_2239')]
+
+    dependencies = [
+        ('stock', '0024_auto_20200405_2239'),
+    ]
 
     operations = [
-        migrations.RenameField(model_name='stockitem', old_name='URL', new_name='link'),
         migrations.RenameField(
-            model_name='stockitemtracking', old_name='URL', new_name='link'
+            model_name='stockitem',
+            old_name='URL',
+            new_name='link',
+        ),
+        migrations.RenameField(
+            model_name='stockitemtracking',
+            old_name='URL',
+            new_name='link',
         ),
     ]

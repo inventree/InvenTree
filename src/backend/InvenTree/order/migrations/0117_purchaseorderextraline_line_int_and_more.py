@@ -5,6 +5,7 @@ from django.db import migrations, models
 
 def add_integer_line_number(apps, schema_editor):
     """Add integer line numbers to existing line items."""
+
     for model in [
         apps.get_model('order', 'PurchaseOrderLineItem'),
         apps.get_model('order', 'ReturnOrderLineItem'),
@@ -24,47 +25,50 @@ def add_integer_line_number(apps, schema_editor):
                 pass
 
         if len(items) > 0:
-            print(
-                f'- Updating {len(items)} line items for model {model._meta.model_name}'
-            )
+            print(f"- Updating {len(items)} line items for model {model._meta.model_name}")
             model.objects.bulk_update(items, ['line_int'], batch_size=250)
 
 
+
 class Migration(migrations.Migration):
-    dependencies = [('order', '0116_purchaseorderextraline_line_and_more')]
+
+    dependencies = [
+        ("order", "0116_purchaseorderextraline_line_and_more"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaseorderextraline',
-            name='line_int',
+            model_name="purchaseorderextraline",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='purchaseorderlineitem',
-            name='line_int',
+            model_name="purchaseorderlineitem",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='returnorderextraline',
-            name='line_int',
+            model_name="returnorderextraline",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='returnorderlineitem',
-            name='line_int',
+            model_name="returnorderlineitem",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='salesorderextraline',
-            name='line_int',
+            model_name="salesorderextraline",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='salesorderlineitem',
-            name='line_int',
+            model_name="salesorderlineitem",
+            name="line_int",
             field=models.IntegerField(default=0),
         ),
         migrations.RunPython(
-            code=add_integer_line_number, reverse_code=migrations.RunPython.noop
+            code=add_integer_line_number,
+            reverse_code=migrations.RunPython.noop,
         ),
     ]

@@ -5,16 +5,17 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type {
   InvenTreeTableProps,
   InvenTreeTableRenderProps,
-  TableColumn,
   TableState
 } from '@lib/types/Tables';
+import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Box, Stack } from '@mantine/core';
 import { IconArrowRight, IconClick } from '@tabler/icons-react';
@@ -299,13 +300,13 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
         render: wrappedRender,
-        cellsStyle: (_record: any, _index: number) => {
+        cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
             minWidth: width
           };
         },
-        titleStyle: (_record: any, _index: number) => {
+        titleStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
             minWidth: width
@@ -821,67 +822,70 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   }, [tableState.records]);
 
   return (
-    <Stack gap='xs'>
-      {!tableProps.noHeader && (
-        <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
-          <InvenTreeTableHeader
-            tableUrl={url}
-            tableState={tableState}
-            tableProps={tableProps}
-            hasSwitchableColumns={hasSwitchableColumns}
-            columns={dataColumns}
-            filters={filters}
-            queryFilters={searchParams}
-            clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
-            toggleColumn={toggleColumn}
-          />
+    <>
+      <Stack gap='xs'>
+        {!tableProps.noHeader && (
+          <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
+            <InvenTreeTableHeader
+              tableUrl={url}
+              tableState={tableState}
+              tableProps={tableProps}
+              hasSwitchableColumns={hasSwitchableColumns}
+              columns={dataColumns}
+              filters={filters}
+              queryFilters={searchParams}
+              clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
+              toggleColumn={toggleColumn}
+            />
+          </Boundary>
+        )}
+        <Boundary label={`InvenTreeTable-${cacheKey}`}>
+          <Box pos='relative'>
+            <DataTable
+              style={{
+                stickyHeader: stickyTableHeader ? 'top' : undefined
+              }}
+              height={
+                tableProps.height ??
+                (stickyTableHeader ? autoHeight : undefined)
+              }
+              withTableBorder={!tableProps.noHeader}
+              withColumnBorders
+              striped
+              highlightOnHover
+              loaderType={userTheme.loader}
+              pinLastColumn={tableProps.rowActions != undefined}
+              idAccessor={tableState.idAccessor ?? 'pk'}
+              minHeight={tableProps.minHeight ?? 300}
+              sortStatus={sortStatus}
+              onSortStatusChange={handleSortStatusChange}
+              selectedRecords={
+                enableSelection ? tableState.selectedRecords : undefined
+              }
+              onSelectedRecordsChange={
+                enableSelection ? onSelectedRecordsChange : undefined
+              }
+              isRecordSelectable={tableProps.isRecordSelectable}
+              rowExpansion={rowExpansion}
+              fetching={isFetching}
+              noRecordsText={missingRecordsText}
+              records={tableState.records}
+              storeColumnsKey={cacheKey}
+              columns={tableColumns.effectiveColumns}
+              onCellClick={supportsCellClick ? handleCellClick : undefined}
+              noHeader={tableProps.noHeader ?? false}
+              defaultColumnProps={{
+                textAlign: 'left'
+              }}
+              onCellContextMenu={
+                supportsContextMenu ? handleCellContextMenu : undefined
+              }
+              {...optionalParams}
+            />
+          </Box>
         </Boundary>
-      )}
-      <Boundary label={`InvenTreeTable-${cacheKey}`}>
-        <Box pos='relative'>
-          <DataTable
-            style={{
-              stickyHeader: stickyTableHeader ? 'top' : undefined
-            }}
-            height={
-              tableProps.height ?? (stickyTableHeader ? autoHeight : undefined)
-            }
-            withTableBorder={!tableProps.noHeader}
-            withColumnBorders
-            striped
-            highlightOnHover
-            loaderType={userTheme.loader}
-            pinLastColumn={tableProps.rowActions != undefined}
-            idAccessor={tableState.idAccessor ?? 'pk'}
-            minHeight={tableProps.minHeight ?? 300}
-            sortStatus={sortStatus}
-            onSortStatusChange={handleSortStatusChange}
-            selectedRecords={
-              enableSelection ? tableState.selectedRecords : undefined
-            }
-            onSelectedRecordsChange={
-              enableSelection ? onSelectedRecordsChange : undefined
-            }
-            isRecordSelectable={tableProps.isRecordSelectable}
-            rowExpansion={rowExpansion}
-            fetching={isFetching}
-            noRecordsText={missingRecordsText}
-            records={tableState.records}
-            storeColumnsKey={cacheKey}
-            columns={tableColumns.effectiveColumns}
-            onCellClick={supportsCellClick ? handleCellClick : undefined}
-            noHeader={tableProps.noHeader ?? false}
-            defaultColumnProps={{
-              textAlign: 'left'
-            }}
-            onCellContextMenu={
-              supportsContextMenu ? handleCellContextMenu : undefined
-            }
-            {...optionalParams}
-          />
-        </Box>
-      </Boundary>
-    </Stack>
+      </Stack>
+    </>
   );
 }
 

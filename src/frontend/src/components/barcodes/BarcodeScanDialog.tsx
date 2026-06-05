@@ -141,7 +141,7 @@ export function ScanInputHandler({
           const data = response.data ?? {};
 
           if (callback && data.success && response.status === 200) {
-            const _instance = null;
+            const instance = null;
 
             // If the caller is expecting a specific model type, check if it matches
             if (modelType) {

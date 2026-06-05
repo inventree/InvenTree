@@ -1,6 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
-import { ModelType } from '@lib/enums/ModelType';
-import type { ApiFormFieldSet } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -15,6 +12,10 @@ import {
 } from '@mantine/core';
 import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
+
+import { StylishText } from '@lib/components/StylishText';
+import { ModelType } from '@lib/enums/ModelType';
+import type { ApiFormFieldSet } from '@lib/index';
 import { useImportSession } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import ImporterDataSelector from './ImportDataSelector';

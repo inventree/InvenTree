@@ -4,9 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('company', '0079_auto_20260212_1054'),
-        ('part', '0146_auto_20251203_1241'),
+        ("company", "0079_auto_20260212_1054"),
+        ("part", "0146_auto_20251203_1241"),
     ]
 
-    operations = [migrations.RemoveField(model_name='part', name='default_supplier')]
+    operations = [
+        migrations.RemoveField(
+            model_name="part",
+            name="default_supplier",
+        ),
+    ]

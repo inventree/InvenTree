@@ -1,11 +1,12 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';

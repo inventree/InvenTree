@@ -4,12 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('plugin', '0003_pluginsetting')]
+
+    dependencies = [
+        ('plugin', '0003_pluginsetting'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='pluginsetting',
             name='key',
             field=models.CharField(help_text='Settings key', max_length=50),
-        )
+        ),
     ]

@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0084_partcategory_icon')]
+
+    dependencies = [
+        ('part', '0084_partcategory_icon'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='partparametertemplate',
             name='description',
-            field=models.CharField(
-                blank=True,
-                help_text='Parameter description',
-                max_length=250,
-                verbose_name='Description',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Parameter description', max_length=250, verbose_name='Description'),
+        ),
     ]

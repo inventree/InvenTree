@@ -4,16 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0139_remove_bomitem_overage')]
+
+    dependencies = [
+        ("part", "0139_remove_bomitem_overage"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='part',
-            name='bom_validated',
+            model_name="part",
+            name="bom_validated",
             field=models.BooleanField(
                 default=False,
-                help_text='Is the BOM for this part valid?',
-                verbose_name='BOM Validated',
+                help_text="Is the BOM for this part valid?",
+                verbose_name="BOM Validated",
             ),
-        )
+        ),
     ]

@@ -4,6 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('report', '0001_initial')]
 
-    operations = [migrations.DeleteModel(name='ReportTemplate')]
+    dependencies = [
+        ('report', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.DeleteModel(
+            name='ReportTemplate',
+        ),
+    ]

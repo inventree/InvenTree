@@ -1,8 +1,9 @@
-import type { SettingsStateProps } from '@lib/types/Settings';
-import { t } from '@lingui/core/macro';
 import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
+
+import type { SettingsStateProps } from '@lib/types/Settings';
+import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
 import { useServerApiState } from '../../states/ServerApiState';
@@ -78,10 +79,7 @@ export function Alerts() {
 export function ServerAlert({
   alert,
   closeAlert
-}: {
-  alert: ExtendedAlertInfo;
-  closeAlert?: (key: string) => void;
-}) {
+}: { alert: ExtendedAlertInfo; closeAlert?: (key: string) => void }) {
   return (
     <Alert
       withCloseButton={!!closeAlert}
@@ -114,7 +112,7 @@ export function getAlerts(
   inactive = false
 ): ExtendedAlertInfo[] {
   const n_migrations =
-    Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS'), 10) ?? 0;
+    Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
 
   const allAlerts: ExtendedAlertInfo[] = [
     {

@@ -1,3 +1,7 @@
+import { t } from '@lingui/core/macro';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -7,9 +11,6 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -162,7 +163,7 @@ export function CompanyTable({
           params: {
             ...params
           },
-          onRowClick: (record: any, _index: number, event: any) => {
+          onRowClick: (record: any, index: number, event: any) => {
             if (record.pk) {
               const base = path ?? 'company';
               navigateToLink(`/${base}/${record.pk}`, navigate, event);

@@ -1,4 +1,3 @@
-import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -17,6 +16,8 @@ import {
 } from '@mantine/core';
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
+
+import { StylishText } from '@lib/components/StylishText';
 import { useShallow } from 'zustand/react/shallow';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';

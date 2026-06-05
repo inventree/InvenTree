@@ -1,7 +1,8 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInstance } from './UseInstance';
 import useStatusCodes from './UseStatusCodes';
 

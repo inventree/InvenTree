@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0083_auto_20220731_2357')]
+
+    dependencies = [
+        ('part', '0083_auto_20220731_2357'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='partcategory',
             name='icon',
-            field=models.CharField(
-                blank=True,
-                help_text='Icon (optional)',
-                max_length=100,
-                verbose_name='Icon',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Icon (optional)', max_length=100, verbose_name='Icon'),
+        ),
     ]

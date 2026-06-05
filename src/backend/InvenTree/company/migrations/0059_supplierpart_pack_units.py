@@ -6,6 +6,7 @@ import InvenTree.fields
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('stock', '0094_auto_20230220_0025'),
         ('company', '0058_auto_20230515_0004'),
@@ -15,18 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='supplierpart',
             name='pack_quantity',
-            field=models.CharField(
-                blank=True,
-                help_text='Total quantity supplied in a single pack. Leave empty for single items.',
-                max_length=25,
-                verbose_name='Pack Quantity',
-            ),
+            field=models.CharField(blank=True, help_text='Total quantity supplied in a single pack. Leave empty for single items.', max_length=25, verbose_name='Pack Quantity'),
         ),
         migrations.AddField(
             model_name='supplierpart',
             name='pack_quantity_native',
-            field=InvenTree.fields.RoundingDecimalField(
-                decimal_places=10, default=1, max_digits=20, null=True
-            ),
+            field=InvenTree.fields.RoundingDecimalField(decimal_places=10, default=1, max_digits=20, null=True),
         ),
     ]

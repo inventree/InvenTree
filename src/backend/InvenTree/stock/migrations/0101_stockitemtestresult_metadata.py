@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0100_stockitem_consumed_by')]
+
+    dependencies = [
+        ('stock', '0100_stockitem_consumed_by'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='stockitemtestresult',
             name='metadata',
-            field=models.JSONField(
-                blank=True,
-                help_text='JSON metadata field, for use by external plugins',
-                null=True,
-                verbose_name='Plugin Metadata',
-            ),
-        )
+            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
+        ),
     ]

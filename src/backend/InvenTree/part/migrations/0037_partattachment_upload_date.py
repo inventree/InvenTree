@@ -4,12 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0036_partattachment_user')]
+
+    dependencies = [
+        ('part', '0036_partattachment_user'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='partattachment',
             name='upload_date',
             field=models.DateField(auto_now_add=True, null=True),
-        )
+        ),
     ]

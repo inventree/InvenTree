@@ -4,7 +4,6 @@ import json
 import os
 
 import pytest
-
 from inventree.api import InvenTreeAPI
 
 server = os.environ.get('INVENTREE_PYTHON_TEST_SERVER', 'http://127.0.0.1:12345')

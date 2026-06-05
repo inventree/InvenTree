@@ -1,7 +1,3 @@
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
@@ -13,6 +9,11 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
+
+import { ActionButton } from '@lib/components/ActionButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useApi } from '../contexts/ApiContext';
@@ -61,7 +62,7 @@ export default function NotificationsPage() {
                     .patch(url, {
                       read: true
                     })
-                    .then((_response) => {
+                    .then((response) => {
                       unreadTable.refreshTable();
                     });
                 }
@@ -99,7 +100,7 @@ export default function NotificationsPage() {
                     .patch(url, {
                       read: false
                     })
-                    .then((_response) => {
+                    .then((response) => {
                       readTable.refreshTable();
                     });
                 }
@@ -111,7 +112,7 @@ export default function NotificationsPage() {
                 onClick: () => {
                   api
                     .delete(apiUrl(ApiEndpoints.notifications_list, record.pk))
-                    .then((_response) => {
+                    .then((response) => {
                       readTable.refreshTable();
                     });
                 }

@@ -1,8 +1,3 @@
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
 import {
@@ -16,8 +11,15 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
@@ -287,30 +289,32 @@ function BuildOutputFormRow({
   }, [props, record]);
 
   return (
-    <Table.Tr>
-      <Table.Td>
-        <RenderPartColumn part={record.part_detail} />
-      </Table.Td>
-      <Table.Td>{stockItemColumn}</Table.Td>
-      {withQuantityColumn && (
+    <>
+      <Table.Tr>
         <Table.Td>
-          <TableFieldErrorWrapper props={props} errorKey='output'>
-            {quantityColumn}
-          </TableFieldErrorWrapper>
+          <RenderPartColumn part={record.part_detail} />
         </Table.Td>
-      )}
-      <Table.Td>{record.batch}</Table.Td>
-      <Table.Td>
-        <StatusRenderer
-          status={record.custom_status_key || record.status}
-          fallbackStatus={record.status}
-          type={ModelType.stockitem}
-        />{' '}
-      </Table.Td>
-      <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
-      </Table.Td>
-    </Table.Tr>
+        <Table.Td>{stockItemColumn}</Table.Td>
+        {withQuantityColumn && (
+          <Table.Td>
+            <TableFieldErrorWrapper props={props} errorKey='output'>
+              {quantityColumn}
+            </TableFieldErrorWrapper>
+          </Table.Td>
+        )}
+        <Table.Td>{record.batch}</Table.Td>
+        <Table.Td>
+          <StatusRenderer
+            status={record.custom_status_key || record.status}
+            fallbackStatus={record.status}
+            type={ModelType.stockitem}
+          />{' '}
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        </Table.Td>
+      </Table.Tr>
+    </>
   );
 }
 

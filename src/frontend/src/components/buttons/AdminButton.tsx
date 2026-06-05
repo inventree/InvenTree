@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
+import { IconUserStar } from '@tabler/icons-react';
+import { useCallback, useMemo } from 'react';
+
 import { ActionButton } from '@lib/components/ActionButton';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { eventModified } from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
-import { IconUserStar } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
@@ -29,7 +30,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
 
   const enabled: boolean = useMemo(() => {
     // Only users with superuser permission will see this button
-    if (!user?.isLoggedIn() || !user.isSuperuser()) {
+    if (!user || !user.isLoggedIn() || !user.isSuperuser()) {
       return false;
     }
 

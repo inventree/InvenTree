@@ -4,12 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0009_part_virtual')]
+
+    dependencies = [
+        ('part', '0009_part_virtual'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='part',
             name='name',
             field=models.CharField(help_text='Part name', max_length=100),
-        )
+        ),
     ]

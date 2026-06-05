@@ -1,13 +1,3 @@
-import { PassFailButton } from '@lib/components/YesNoButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { cancelEvent } from '@lib/functions/Events';
-import useTable from '@lib/hooks/UseTable';
-import { AddItemButton } from '@lib/index';
-import type { TableFilter } from '@lib/types/Filters';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
@@ -19,6 +9,17 @@ import {
   useMemo,
   useState
 } from 'react';
+
+import { PassFailButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import useTable from '@lib/hooks/UseTable';
+import { AddItemButton } from '@lib/index';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import type { UseFormReturn } from 'react-hook-form';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
@@ -122,7 +123,7 @@ export default function PartTestResultTable({
   }, [partId, testResultFields]);
 
   const generateTestResults = useCallback(
-    (data: any, _form: UseFormReturn) => {
+    (data: any, form: UseFormReturn) => {
       // Generate a list of test results for each selected output
       const results = table.selectedRecords.map((record: any) => {
         return {
@@ -327,7 +328,7 @@ export default function PartTestResultTable({
         key='add-test-result'
         tooltip={t`Add Test Result`}
         disabled={!table.hasSelectedRecords}
-        onClick={(_event: any) => {
+        onClick={(event: any) => {
           createTestResultMultiple.open();
         }}
       />
@@ -340,7 +341,7 @@ export default function PartTestResultTable({
         icon: <IconCirclePlus />,
         color: 'green',
         title: t`Add Test Result`,
-        onClick: (_event: any) => {
+        onClick: (event: any) => {
           setSelectedOutput(record.pk);
           setSelectedTemplate(undefined);
           createTestResult.open();

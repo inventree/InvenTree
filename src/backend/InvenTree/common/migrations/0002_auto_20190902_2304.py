@@ -4,10 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('common', '0001_initial')]
+
+    dependencies = [
+        ('common', '0001_initial'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='currency', options={'verbose_name_plural': 'Currencies'}
-        )
+            name='currency',
+            options={'verbose_name_plural': 'Currencies'},
+        ),
     ]

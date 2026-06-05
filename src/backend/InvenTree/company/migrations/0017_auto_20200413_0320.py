@@ -4,12 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0016_auto_20200412_2330')]
+
+    dependencies = [
+        ('company', '0016_auto_20200412_2330'),
+    ]
 
     operations = [
         migrations.RenameField(
             model_name='supplierpart',
             old_name='manufacturer',
             new_name='manufacturer_name',
-        )
+        ),
     ]

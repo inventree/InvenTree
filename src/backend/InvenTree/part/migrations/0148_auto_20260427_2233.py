@@ -5,22 +5,20 @@ from django.db import migrations
 
 def update_bom_role(apps, schema_editor):
     """Update the ruleset for the BOM role.
-
+    
     As the 'bom' role was previously covered by the 'part' role,
     we need to update the ruleset to include the correct models.
-
+    
     """
     from users.ruleset import RuleSetEnum
 
-    Group = apps.get_model('auth', 'Group')
-    RuleSet = apps.get_model('users', 'RuleSet')
+    Group = apps.get_model("auth", "Group")
+    RuleSet = apps.get_model("users", "RuleSet")
 
     # For each existing group, create a new 'bom' ruleset
     for group in Group.objects.all():
         # Find a matching 'part' ruleset for this group
-        if ruleset := RuleSet.objects.filter(
-            name=RuleSetEnum.PART, group=group
-        ).first():
+        if ruleset := RuleSet.objects.filter(name=RuleSetEnum.PART, group=group).first():
             # A 'part' ruleset exists for this group - create a new 'bom' ruleset based on this
             ruleset.pk = None  # Create a new instance
             ruleset.name = RuleSetEnum.BOM
@@ -28,15 +26,19 @@ def update_bom_role(apps, schema_editor):
 
         else:
             # No 'part' ruleset exists for this group - create a default 'bom' ruleset
-            RuleSet.objects.create(name=RuleSetEnum.BOM, group=group)
+            RuleSet.objects.create(
+                name=RuleSetEnum.BOM,
+                group=group
+            )
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('part', '0147_remove_part_default_supplier'),
-        ('users', '0014_userprofile'),
+        ("part", "0147_remove_part_default_supplier"),
+        ("users", "0014_userprofile")
     ]
 
     operations = [
-        migrations.RunPython(update_bom_role, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(update_bom_role, reverse_code=migrations.RunPython.noop),
     ]

@@ -4,44 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0041_auto_20200517_0348')]
+
+    dependencies = [
+        ('part', '0041_auto_20200517_0348'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='parttesttemplate',
             name='description',
-            field=models.CharField(
-                help_text='Enter description for this test',
-                max_length=100,
-                null=True,
-                verbose_name='Test Description',
-            ),
+            field=models.CharField(help_text='Enter description for this test', max_length=100, null=True, verbose_name='Test Description'),
         ),
         migrations.AddField(
             model_name='parttesttemplate',
             name='requires_attachment',
-            field=models.BooleanField(
-                default=False,
-                help_text='Does this test require a file attachment when adding a test result?',
-                verbose_name='Requires Attachment',
-            ),
+            field=models.BooleanField(default=False, help_text='Does this test require a file attachment when adding a test result?', verbose_name='Requires Attachment'),
         ),
         migrations.AddField(
             model_name='parttesttemplate',
             name='requires_value',
-            field=models.BooleanField(
-                default=False,
-                help_text='Does this test require a value when adding a test result?',
-                verbose_name='Requires Value',
-            ),
+            field=models.BooleanField(default=False, help_text='Does this test require a value when adding a test result?', verbose_name='Requires Value'),
         ),
         migrations.AlterField(
             model_name='parttesttemplate',
             name='test_name',
-            field=models.CharField(
-                help_text='Enter a name for the test',
-                max_length=100,
-                verbose_name='Test Name',
-            ),
+            field=models.CharField(help_text='Enter a name for the test', max_length=100, verbose_name='Test Name'),
         ),
     ]

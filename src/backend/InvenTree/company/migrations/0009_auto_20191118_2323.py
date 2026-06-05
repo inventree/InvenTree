@@ -5,17 +5,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0008_auto_20190913_1407')]
+
+    dependencies = [
+        ('company', '0008_auto_20190913_1407'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='supplierpricebreak',
             name='quantity',
-            field=models.DecimalField(
-                decimal_places=5,
-                default=1,
-                max_digits=15,
-                validators=[django.core.validators.MinValueValidator(1)],
-            ),
-        )
+            field=models.DecimalField(decimal_places=5, default=1, max_digits=15, validators=[django.core.validators.MinValueValidator(1)]),
+        ),
     ]

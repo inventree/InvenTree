@@ -1,5 +1,3 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -18,11 +16,14 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { showNotification } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { Suspense, useState } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { showNotification } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
 
@@ -144,7 +145,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
     queryKey: [ApiEndpoints.part_thumbs_list, page, searchText],
-    throwOnError: (_error: any) => {
+    throwOnError: (error: any) => {
       setTotalPages(1);
       setPage(1);
       return true;
@@ -187,7 +188,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
                     selectImage={setThumbImage}
                   />
                 ))
-              : [...Array(limit)].map((_elem, idx) => (
+              : [...Array(limit)].map((elem, idx) => (
                   <Skeleton
                     height={150}
                     width={150}

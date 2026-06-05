@@ -1,16 +1,3 @@
-import { CopyButton } from '@lib/components/CopyButton';
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import {
-  getBaseUrl,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { t } from '@lingui/core/macro';
 import {
   Anchor,
@@ -29,6 +16,17 @@ import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { CopyButton } from '@lib/components/CopyButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getBaseUrl, getDetailUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -227,7 +225,7 @@ function NameBadge({
 
   // Rendering a user's name for the badge
   function _render_name() {
-    if (!data?.pk) {
+    if (!data || !data.pk) {
       return '';
     } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
@@ -419,7 +417,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     value = data?.name;
   }
 
-  let color: MantineColor | undefined;
+  let color: MantineColor | undefined = undefined;
 
   if (value === undefined) {
     value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;

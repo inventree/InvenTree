@@ -4,37 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0105_auto_20241128_0431')]
+
+    dependencies = [
+        ('order', '0105_auto_20241128_0431'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorder',
             name='start_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Scheduled start date for this order',
-                null=True,
-                verbose_name='Start date',
-            ),
+            field=models.DateField(blank=True, help_text='Scheduled start date for this order', null=True, verbose_name='Start date'),
         ),
         migrations.AddField(
             model_name='returnorder',
             name='start_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Scheduled start date for this order',
-                null=True,
-                verbose_name='Start date',
-            ),
+            field=models.DateField(blank=True, help_text='Scheduled start date for this order', null=True, verbose_name='Start date'),
         ),
         migrations.AddField(
             model_name='salesorder',
             name='start_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Scheduled start date for this order',
-                null=True,
-                verbose_name='Start date',
-            ),
+            field=models.DateField(blank=True, help_text='Scheduled start date for this order', null=True, verbose_name='Start date'),
         ),
     ]

@@ -4,29 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0061_auto_20210511_0911')]
+
+    dependencies = [
+        ('stock', '0061_auto_20210511_0911'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='stockitemtracking',
             name='notes',
-            field=models.CharField(
-                blank=True,
-                help_text='Entry notes',
-                max_length=512,
-                null=True,
-                verbose_name='Notes',
-            ),
+            field=models.CharField(blank=True, help_text='Entry notes', max_length=512, null=True, verbose_name='Notes'),
         ),
         migrations.AlterField(
             model_name='stockitemtracking',
             name='title',
-            field=models.CharField(
-                blank=True,
-                help_text='Tracking entry title',
-                max_length=250,
-                null=True,
-                verbose_name='Title',
-            ),
+            field=models.CharField(blank=True, help_text='Tracking entry title', max_length=250, null=True, verbose_name='Title'),
         ),
     ]

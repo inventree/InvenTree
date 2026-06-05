@@ -4,40 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('common', '0017_notesimage')]
+
+    dependencies = [
+        ('common', '0017_notesimage'),
+    ]
 
     operations = [
         migrations.CreateModel(
             name='ProjectCode',
             fields=[
-                (
-                    'id',
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name='ID',
-                    ),
-                ),
-                (
-                    'code',
-                    models.CharField(
-                        help_text='Unique project code',
-                        max_length=50,
-                        unique=True,
-                        verbose_name='Project Code',
-                    ),
-                ),
-                (
-                    'description',
-                    models.CharField(
-                        blank=True,
-                        help_text='Project description',
-                        max_length=200,
-                        verbose_name='Description',
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('code', models.CharField(help_text='Unique project code', max_length=50, unique=True, verbose_name='Project Code')),
+                ('description', models.CharField(blank=True, help_text='Project description', max_length=200, verbose_name='Description')),
             ],
-            options={'verbose_name': 'Project Code'},
-        )
+            options={
+                'verbose_name': 'Project Code',
+            },
+        ),
     ]

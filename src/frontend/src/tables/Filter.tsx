@@ -1,9 +1,10 @@
+import { t } from '@lingui/core/macro';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { isTrue } from '@lib/functions/Conversion';
 import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
-import { t } from '@lingui/core/macro';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -345,9 +346,7 @@ export function IncludeVariantsFilter(): TableFilter {
 
 export function OrderStatusFilter({
   model
-}: {
-  model: ModelType;
-}): TableFilter {
+}: { model: ModelType }): TableFilter {
   return {
     name: 'status',
     label: t`Status`,

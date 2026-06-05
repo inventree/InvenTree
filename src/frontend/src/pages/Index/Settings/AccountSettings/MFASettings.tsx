@@ -268,7 +268,7 @@ function RemoveWebauthnModal({
         authenticators: [tokenId]
       }
     )
-      .then((_response) => {
+      .then((response) => {
         showNotification({
           title: t`WebAuthn Credential Removed`,
           message: t`WebAuthn credential removed successfully.`,
@@ -519,7 +519,7 @@ function RegisterTOTPModal({
           timeout: 30 * 1000
         }
       )
-      .then((_response) => {
+      .then((response) => {
         showNotification({
           title: t`TOTP Registered`,
           message: t`TOTP token registered successfully.`,
@@ -777,7 +777,7 @@ export default function MFASettings() {
             timeout: 30 * 1000
           }
         )
-        .then((_response) => {
+        .then((response) => {
           showNotification({
             title: t`WebAuthn Registered`,
             message: t`WebAuthn credential registered successfully`,

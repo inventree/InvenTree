@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react';
 
 export function KeepFormOpenSwitch({
   onChange
-}: {
-  onChange?: (v: boolean) => void;
-}) {
+}: { onChange?: (v: boolean) => void }) {
   const [keepOpen, setKeepOpen] = useState(false);
 
   useEffect(() => {

@@ -6,9 +6,7 @@ import { theme } from '../theme';
 
 function LoadingFallback({
   fullHeight = false
-}: {
-  fullHeight: boolean;
-}): JSX.Element {
+}: { fullHeight: boolean }): JSX.Element {
   return (
     <MantineProvider theme={theme} colorSchemeManager={colorSchema}>
       <Stack h={fullHeight ? '100vh' : undefined}>

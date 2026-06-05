@@ -4,8 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0043_auto_20200525_0420')]
+
+    dependencies = [
+        ('stock', '0043_auto_20200525_0420'),
+    ]
 
     operations = [
-        migrations.AlterUniqueTogether(name='stockitem', unique_together=set())
+        migrations.AlterUniqueTogether(
+            name='stockitem',
+            unique_together=set(),
+        ),
     ]

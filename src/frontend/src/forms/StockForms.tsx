@@ -116,8 +116,8 @@ export function useStockFields({
 
     // Find the highest price break that is less than or equal to the quantity
     const priceBreak = Object.entries(pricing)
-      .sort(([a], [b]) => Number.parseInt(b, 10) - Number.parseInt(a, 10))
-      .find(([br]) => quantity >= Number.parseInt(br, 10));
+      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
+      .find(([br]) => quantity >= Number.parseInt(br));
 
     if (priceBreak) {
       setPurchasePrice(priceBreak[1][0]);
@@ -1577,7 +1577,7 @@ export function useTestResultFields({
           include_inherited: true,
           part: partId
         },
-        onValueChange: (_value: any, record: any) => {
+        onValueChange: (value: any, record: any) => {
           // Adjust the type of the "value" field based on the selected template
           if (record?.choices) {
             const _choices: string[] = record.choices.split(',');

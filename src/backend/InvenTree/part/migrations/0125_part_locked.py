@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0124_delete_partattachment')]
+
+    dependencies = [
+        ('part', '0124_delete_partattachment'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='part',
             name='locked',
-            field=models.BooleanField(
-                default=False,
-                help_text='Locked parts cannot be edited',
-                verbose_name='Locked',
-            ),
-        )
+            field=models.BooleanField(default=False, help_text='Locked parts cannot be edited', verbose_name='Locked'),
+        ),
     ]

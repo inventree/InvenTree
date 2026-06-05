@@ -1,9 +1,10 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { UserTheme } from '@lib/types/Core';
 import type { HostList } from '@lib/types/Server';
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { api } from '../App';
 import { useUserState } from './UserState';
 

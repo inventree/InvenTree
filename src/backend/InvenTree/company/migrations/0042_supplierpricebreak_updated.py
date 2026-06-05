@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0041_alter_company_options')]
+
+    dependencies = [
+        ('company', '0041_alter_company_options'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='supplierpricebreak',
             name='updated',
-            field=models.DateTimeField(
-                auto_now=True, null=True, verbose_name='last updated'
-            ),
-        )
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='last updated'),
+        ),
     ]

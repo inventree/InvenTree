@@ -417,7 +417,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page
     .getByRole('cell', { name: 'my custom parameter', exact: true })
     .waitFor({ timeout: 500 })
-    .then(async (_cell) => {
+    .then(async (cell) => {
       await page
         .getByRole('cell', { name: 'my custom parameter' })
         .locator('..')
@@ -440,7 +440,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page
     .getByRole('cell', { name: 'some list' })
     .waitFor({ timeout: 500 })
-    .then(async (_cell) => {
+    .then(async (cell) => {
       await page
         .getByRole('cell', { name: 'some list' })
         .locator('..')

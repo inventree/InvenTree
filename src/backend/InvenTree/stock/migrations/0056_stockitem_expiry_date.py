@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0055_auto_20201117_1453')]
+
+    dependencies = [
+        ('stock', '0055_auto_20201117_1453'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='expiry_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Expiry date for stock item. Stock will be considered expired after this date',
-                null=True,
-                verbose_name='Expiry Date',
-            ),
-        )
+            field=models.DateField(blank=True, help_text='Expiry date for stock item. Stock will be considered expired after this date', null=True, verbose_name='Expiry Date'),
+        ),
     ]

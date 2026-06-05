@@ -1,3 +1,15 @@
+import { t } from '@lingui/core/macro';
+import { Badge, Group, Text, Tooltip } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import {
+  IconCircleCheck,
+  IconCirclePlus,
+  IconInfoCircle
+} from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -13,17 +25,6 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { t } from '@lingui/core/macro';
-import { Badge, Group, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import {
-  IconCircleCheck,
-  IconCirclePlus,
-  IconInfoCircle
-} from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
@@ -461,7 +462,7 @@ export default function StockItemTestResultTable({
         );
       },
       content: ({ record }: { record: any }) => {
-        if (!record?.results || record.results.length < 2) {
+        if (!record || !record.results || record.results.length < 2) {
           return null;
         }
 

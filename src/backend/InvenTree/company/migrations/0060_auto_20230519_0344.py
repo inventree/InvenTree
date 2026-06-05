@@ -7,6 +7,7 @@ from InvenTree.helpers import normalize
 
 def update_supplier_part_units(apps, schema_editor):
     """Migrate existing supplier part units to new field"""
+
     SupplierPart = apps.get_model('company', 'SupplierPart')
 
     supplier_parts = SupplierPart.objects.all()
@@ -18,11 +19,12 @@ def update_supplier_part_units(apps, schema_editor):
         sp.save()
 
     if supplier_parts.count() > 0:
-        print(f'Updated {supplier_parts.count()} supplier part units')
+        print(f"Updated {supplier_parts.count()} supplier part units")
 
 
 def reverse_pack_quantity(apps, schema_editor):
     """Reverse the migrations"""
+
     SupplierPart = apps.get_model('company', 'SupplierPart')
 
     supplier_parts = SupplierPart.objects.all()
@@ -32,10 +34,10 @@ def reverse_pack_quantity(apps, schema_editor):
         sp.save()
 
     if supplier_parts.count() > 0:
-        print(f'Updated {supplier_parts.count()} supplier part units')
-
+        print(f"Updated {supplier_parts.count()} supplier part units")
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('company', '0059_supplierpart_pack_units'),
         ('part', '0111_auto_20230521_1350'),
@@ -43,6 +45,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=update_supplier_part_units, reverse_code=reverse_pack_quantity
+            code=update_supplier_part_units,
+            reverse_code=reverse_pack_quantity,
         )
     ]

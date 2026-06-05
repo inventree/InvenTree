@@ -7,39 +7,42 @@ import common.validators
 
 
 class Migration(migrations.Migration):
-    dependencies = [('common', '0041_auto_20251203_1244')]
+
+    dependencies = [
+        ("common", "0041_auto_20251203_1244"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='attachment',
-            name='thumbnail',
+            model_name="attachment",
+            name="thumbnail",
             field=models.ImageField(
                 blank=True,
-                help_text='Thumbnail image for this attachment',
+                help_text="Thumbnail image for this attachment",
                 null=True,
-                upload_to='',
-                verbose_name='Thumbnail',
+                upload_to="",
+                verbose_name="Thumbnail",
             ),
         ),
         migrations.AddField(
-            model_name='attachment',
-            name='is_image',
+            model_name="attachment",
+            name="is_image",
             field=models.BooleanField(
                 default=False,
-                help_text='True if this attachment is a valid image file',
-                verbose_name='Is image',
+                help_text="True if this attachment is a valid image file",
+                verbose_name="Is image",
             ),
         ),
         migrations.AlterField(
-            model_name='attachment',
-            name='attachment',
+            model_name="attachment",
+            name="attachment",
             field=models.FileField(
                 blank=True,
-                help_text='Select file to attach',
+                help_text="Select file to attach",
                 null=True,
                 upload_to=common.models.rename_attachment,
                 validators=[common.validators.validate_attachment_file],
-                verbose_name='Attachment',
+                verbose_name="Attachment",
             ),
         ),
     ]

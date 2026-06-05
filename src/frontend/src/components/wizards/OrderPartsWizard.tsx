@@ -254,7 +254,7 @@ function SelectPartsStep({
       part: selectedRecord?.supplier_part?.pk,
       quantity: selectedRecord?.quantity
     },
-    onFormSuccess: (_response: any) => {
+    onFormSuccess: (response: any) => {
       // Remove the row from the list
       onRemovePart(selectedRecord?.part);
     },
@@ -307,7 +307,7 @@ function SelectPartsStep({
                   required: true,
                   autoFill: true,
                   value: record.supplier_part?.pk,
-                  onValueChange: (_value, instance) => {
+                  onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
@@ -357,7 +357,7 @@ function SelectPartsStep({
                     supplier: record.supplier_part?.supplier,
                     outstanding: true
                   },
-                  onValueChange: (_value, instance) => {
+                  onValueChange: (value, instance) => {
                     onSelectPurchaseOrder(record.part.pk, instance);
                   }
                 }}
@@ -453,7 +453,11 @@ function SelectPartsStep({
   );
 }
 
-export default function OrderPartsWizard({ parts }: { parts: any[] }) {
+export default function OrderPartsWizard({
+  parts
+}: {
+  parts: any[];
+}) {
   // Track a list of selected parts
   const [selectedParts, setSelectedParts] = useState<PartOrderRecord[]>([]);
 
@@ -548,7 +552,7 @@ export default function OrderPartsWizard({ parts }: { parts: any[] }) {
 
   // Render the select wizard step
   const renderStep = useCallback(
-    (_step: number) => {
+    (step: number) => {
       return (
         <SelectPartsStep
           records={selectedParts}
@@ -569,7 +573,7 @@ export default function OrderPartsWizard({ parts }: { parts: any[] }) {
   );
 
   const canStepForward = useCallback(
-    (_step: number): boolean => {
+    (step: number): boolean => {
       if (!selectedParts?.length) {
         wizard.setError(t`No parts selected`);
         wizard.setErrorDetail(t`You must select at least one part to order`);

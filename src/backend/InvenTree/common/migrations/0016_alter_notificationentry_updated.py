@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('common', '0015_newsfeedentry')]
+
+    dependencies = [
+        ('common', '0015_newsfeedentry'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='notificationentry',
             name='updated',
-            field=models.DateTimeField(
-                auto_now=True,
-                help_text='Timestamp of last update',
-                null=True,
-                verbose_name='Updated',
-            ),
-        )
+            field=models.DateTimeField(auto_now=True, help_text='Timestamp of last update', null=True, verbose_name='Updated'),
+        ),
     ]

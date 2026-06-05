@@ -4,23 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('users', '0002_auto_20201004_0158')]
+
+    dependencies = [
+        ('users', '0002_auto_20201004_0158'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='ruleset',
             name='can_add',
-            field=models.BooleanField(
-                default=False, help_text='Permission to add items', verbose_name='Add'
-            ),
+            field=models.BooleanField(default=False, help_text='Permission to add items', verbose_name='Add'),
         ),
         migrations.AlterField(
             model_name='ruleset',
             name='can_change',
-            field=models.BooleanField(
-                default=False,
-                help_text='Permissions to edit items',
-                verbose_name='Change',
-            ),
+            field=models.BooleanField(default=False, help_text='Permissions to edit items', verbose_name='Change'),
         ),
     ]

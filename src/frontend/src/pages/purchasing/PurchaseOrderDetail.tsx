@@ -1,14 +1,15 @@
+import { t } from '@lingui/core/macro';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
+import { type ReactNode, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
-import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
-import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
-import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';

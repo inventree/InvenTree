@@ -10,11 +10,13 @@ from djmoney.money import Money
 
 from common.currency import currency_code_default
 
+
 logger = logging.getLogger('inventree')
 
 
 def update_purchase_order_price(apps, schema_editor):
     """Calculate 'total_price' field for each PurchaseOrder"""
+
     PurchaseOrder = apps.get_model('order', 'purchaseorder')
 
     currency = currency_code_default()
@@ -23,6 +25,7 @@ def update_purchase_order_price(apps, schema_editor):
     invalid_count = 0
 
     for order in PurchaseOrder.objects.all():
+
         valid = True
 
         total_price = Money(0, currency)
@@ -30,9 +33,7 @@ def update_purchase_order_price(apps, schema_editor):
         for line in order.lines.all():
             if line.purchase_price:
                 try:
-                    total_price += (
-                        convert_money(line.purchase_price, currency) * line.quantity
-                    )
+                    total_price += convert_money(line.purchase_price, currency) * line.quantity
                 except MissingRate:
                     valid = False
                     break
@@ -51,21 +52,18 @@ def update_purchase_order_price(apps, schema_editor):
 
             valid_count += 1
         else:
-            invalid_count += 1
+            invalid_count +=1
 
     if valid_count > 0:
-        logger.info(
-            f"Updated 'total_price' field for {valid_count} PurchaseOrder instances"
-        )
+        logger.info(f"Updated 'total_price' field for {valid_count} PurchaseOrder instances")
 
     if invalid_count > 0:
-        logger.info(
-            f"'total_price' field could not be updated for {invalid_count} PurchaseOrder instances"
-        )
+        logger.info(f"'total_price' field could not be updated for {invalid_count} PurchaseOrder instances")
 
 
 def update_sales_order_price(apps, schema_editor):
     """Calculate 'total_price' field for each SalesOrder"""
+
     SalesOrder = apps.get_model('order', 'salesorder')
 
     currency = currency_code_default()
@@ -74,6 +72,7 @@ def update_sales_order_price(apps, schema_editor):
     invalid_count = 0
 
     for order in SalesOrder.objects.all():
+
         valid = True
 
         total_price = Money(0, currency)
@@ -81,9 +80,7 @@ def update_sales_order_price(apps, schema_editor):
         for line in order.lines.all():
             if line.sale_price:
                 try:
-                    total_price += (
-                        convert_money(line.sale_price, currency) * line.quantity
-                    )
+                    total_price += convert_money(line.sale_price, currency) * line.quantity
                 except MissingRate:
                     valid = False
                     break
@@ -102,27 +99,28 @@ def update_sales_order_price(apps, schema_editor):
 
             valid_count += 1
         else:
-            invalid_count += 1
+            invalid_count +=1
 
     if valid_count > 0:
-        logger.info(
-            f"Updated 'total_price' field for {valid_count} SalesOrder instances"
-        )
+        logger.info(f"Updated 'total_price' field for {valid_count} SalesOrder instances")
 
     if invalid_count > 0:
-        logger.info(
-            f"'total_price' field could not be updated for {invalid_count} SalesOrder instances"
-        )
+        logger.info(f"'total_price' field could not be updated for {invalid_count} SalesOrder instances")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0078_auto_20230304_0721')]
+
+    dependencies = [
+        ('order', '0078_auto_20230304_0721'),
+    ]
 
     operations = [
         migrations.RunPython(
-            update_purchase_order_price, reverse_code=migrations.RunPython.noop
+            update_purchase_order_price,
+            reverse_code=migrations.RunPython.noop
         ),
         migrations.RunPython(
-            update_sales_order_price, reverse_code=migrations.RunPython.noop
-        ),
+            update_sales_order_price,
+            reverse_code=migrations.RunPython.noop,
+        )
     ]

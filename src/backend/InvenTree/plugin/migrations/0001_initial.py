@@ -4,50 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     initial = True
 
-    dependencies = []
+    dependencies = [
+    ]
 
     operations = [
         migrations.CreateModel(
             name='PluginConfig',
             fields=[
-                (
-                    'id',
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name='ID',
-                    ),
-                ),
-                (
-                    'key',
-                    models.CharField(
-                        help_text='Key of plugin',
-                        max_length=255,
-                        unique=True,
-                        verbose_name='Key',
-                    ),
-                ),
-                (
-                    'name',
-                    models.CharField(
-                        blank=True,
-                        help_text='Name of the plugin',
-                        max_length=255,
-                        null=True,
-                        verbose_name='Name',
-                    ),
-                ),
-                (
-                    'active',
-                    models.BooleanField(
-                        default=False,
-                        help_text='Is the plugin active',
-                        verbose_name='Active',
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('key', models.CharField(help_text='Key of plugin', max_length=255, unique=True, verbose_name='Key')),
+                ('name', models.CharField(blank=True, help_text='Name of the plugin', max_length=255, null=True, verbose_name='Name')),
+                ('active', models.BooleanField(default=False, help_text='Is the plugin active', verbose_name='Active')),
             ],
-        )
+        ),
     ]

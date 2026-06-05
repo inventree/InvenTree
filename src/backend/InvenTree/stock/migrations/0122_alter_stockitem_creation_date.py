@@ -4,17 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0121_auto_20260526_0849')]
+
+    dependencies = [
+        ("stock", "0121_auto_20260526_0849"),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name='stockitem',
-            name='creation_date',
+            model_name="stockitem",
+            name="creation_date",
             field=models.DateTimeField(
                 auto_now_add=True,
-                help_text='Date that this stock item was created',
+                help_text="Date that this stock item was created",
                 null=True,
-                verbose_name='Creation Date',
+                verbose_name="Creation Date",
             ),
-        )
+        ),
     ]

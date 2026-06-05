@@ -4,10 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0017_auto_20200331_1000')]
+
+    dependencies = [
+        ('order', '0017_auto_20200331_1000'),
+    ]
 
     operations = [
         migrations.RenameField(
-            model_name='purchaseorder', old_name='URL', new_name='link'
-        )
+            model_name='purchaseorder',
+            old_name='URL',
+            new_name='link',
+        ),
     ]

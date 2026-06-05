@@ -4,27 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0109_add_additional_test_fields')]
+
+    dependencies = [
+        ('stock', '0109_add_additional_test_fields'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='stockitemtestresult',
             name='finished_datetime',
-            field=models.DateTimeField(
-                blank=True,
-                help_text='The timestamp of the test finish',
-                null=True,
-                verbose_name='Finished',
-            ),
+            field=models.DateTimeField(blank=True, help_text='The timestamp of the test finish', null=True, verbose_name='Finished'),
         ),
         migrations.AlterField(
             model_name='stockitemtestresult',
             name='started_datetime',
-            field=models.DateTimeField(
-                blank=True,
-                help_text='The timestamp of the test start',
-                null=True,
-                verbose_name='Started',
-            ),
+            field=models.DateTimeField(blank=True, help_text='The timestamp of the test start', null=True, verbose_name='Started'),
         ),
     ]

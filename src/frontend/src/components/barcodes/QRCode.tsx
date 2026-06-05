@@ -1,6 +1,3 @@
-import { CopyButton } from '@lib/components/CopyButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -20,10 +17,15 @@ import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { CopyButton } from '@lib/components/CopyButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
-import { extractErrorMessage } from '../../functions/api';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import type { QrCodeType } from '../items/ActionDropdown';
+
+import { extractErrorMessage } from '../../functions/api';
 import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
@@ -83,7 +85,7 @@ export const InvenTreeQRCode = ({
           pk: mdl_prop.pk
         })
         .then((res) => res.data?.barcode ?? ('' as string))
-        .catch((_error) => '');
+        .catch((error) => '');
     }
   });
 
@@ -156,7 +158,7 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
         [mdl_prop.model]: mdl_prop.pk,
         barcode: barcode
       })
-      .then((_response) => {
+      .then((response) => {
         setError('');
         modals.closeAll();
         location.reload();
@@ -185,7 +187,7 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
       .post(apiUrl(ApiEndpoints.barcode_unlink), {
         [mdl_prop.model]: mdl_prop.pk
       })
-      .then((_response) => {
+      .then((response) => {
         modals.closeAll();
         location.reload();
       });

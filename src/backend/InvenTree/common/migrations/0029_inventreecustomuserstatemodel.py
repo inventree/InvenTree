@@ -7,90 +7,91 @@ from common.models import state_color_mappings
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('common', '0028_colortheme_user_obj'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("common", "0028_colortheme_user_obj"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='InvenTreeCustomUserStateModel',
+            name="InvenTreeCustomUserStateModel",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.AutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
                 (
-                    'key',
+                    "key",
                     models.IntegerField(
-                        help_text='Value that will be saved in the models database',
-                        verbose_name='Key',
+                        help_text="Value that will be saved in the models database",
+                        verbose_name="Key",
                     ),
                 ),
                 (
-                    'name',
+                    "name",
                     models.CharField(
-                        help_text='Name of the state',
+                        help_text="Name of the state",
                         max_length=250,
-                        verbose_name='Name',
+                        verbose_name="Name",
                     ),
                 ),
                 (
-                    'label',
+                    "label",
                     models.CharField(
-                        help_text='Label that will be displayed in the frontend',
+                        help_text="Label that will be displayed in the frontend",
                         max_length=250,
-                        verbose_name='Label',
+                        verbose_name="Label",
                     ),
                 ),
                 (
-                    'color',
+                    "color",
                     models.CharField(
                         choices=state_color_mappings(),
-                        default='secondary',
-                        help_text='Color that will be displayed in the frontend',
+                        default="secondary",
+                        help_text="Color that will be displayed in the frontend",
                         max_length=10,
-                        verbose_name='Color',
+                        verbose_name="Color",
                     ),
                 ),
                 (
-                    'logical_key',
+                    "logical_key",
                     models.IntegerField(
-                        help_text='State logical key that is equal to this custom state in business logic',
-                        verbose_name='Logical Key',
+                        help_text="State logical key that is equal to this custom state in business logic",
+                        verbose_name="Logical Key",
                     ),
                 ),
                 (
-                    'reference_status',
+                    "reference_status",
                     models.CharField(
-                        help_text='Status set that is extended with this custom state',
+                        help_text="Status set that is extended with this custom state",
                         max_length=250,
-                        verbose_name='Reference Status Set',
+                        verbose_name="Reference Status Set",
                     ),
                 ),
                 (
-                    'model',
+                    "model",
                     models.ForeignKey(
                         blank=True,
-                        help_text='Model this state is associated with',
+                        help_text="Model this state is associated with",
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to='contenttypes.contenttype',
-                        verbose_name='Model',
+                        to="contenttypes.contenttype",
+                        verbose_name="Model",
                     ),
                 ),
             ],
             options={
-                'verbose_name': 'Custom State',
-                'verbose_name_plural': 'Custom States',
-                'unique_together': {
-                    ('model', 'reference_status', 'key', 'logical_key')
+                "verbose_name": "Custom State",
+                "verbose_name_plural": "Custom States",
+                "unique_together": {
+                    ("model", "reference_status", "key", "logical_key")
                 },
             },
-        )
+        ),
     ]

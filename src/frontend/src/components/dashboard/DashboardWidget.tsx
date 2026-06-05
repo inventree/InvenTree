@@ -1,9 +1,11 @@
-import { Boundary } from '@lib/components/Boundary';
-import type { ModelType } from '@lib/index';
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Box, Group, Overlay, Paper, Tooltip } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
+
+import { Boundary } from '@lib/components/Boundary';
+
+import type { ModelType } from '@lib/index';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import type { JSX } from 'react';
 
 /**

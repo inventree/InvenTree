@@ -4,18 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0049_auto_20200820_0454')]
+
+    dependencies = [
+        ('stock', '0049_auto_20200820_0454'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='stockitem',
             name='serial',
-            field=models.CharField(
-                blank=True,
-                help_text='Serial number for this item',
-                max_length=100,
-                null=True,
-                verbose_name='Serial Number',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Serial number for this item', max_length=100, null=True, verbose_name='Serial Number'),
+        ),
     ]

@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0027_auto_20200202_1024')]
+
+    dependencies = [
+        ('part', '0027_auto_20200202_1024'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='part',
             name='IPN',
-            field=models.CharField(
-                blank=True, help_text='Internal Part Number', max_length=100
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Internal Part Number', max_length=100),
+        ),
     ]

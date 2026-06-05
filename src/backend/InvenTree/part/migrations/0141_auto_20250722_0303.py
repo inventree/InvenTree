@@ -2,16 +2,16 @@
 
 from django.db import migrations
 
-
 def cache_bom_valid(apps, schema_editor):
     """Calculate and cache the BOM validity for all parts.
-
+    
     Procedure:
 
     - Find all parts which have linked BOM item(s)
     - Limit to parts which have a stored BOM checksum
     - For each such part, calculate and update the BOM "validity"
     """
+
     from InvenTree.tasks import offload_task
     from part.tasks import check_bom_valid
 
@@ -24,6 +24,7 @@ def cache_bom_valid(apps, schema_editor):
     parts_to_update = set()
 
     for item in bom_items:
+
         # Parts associated with this BomItem
         parts = []
 
@@ -33,7 +34,7 @@ def cache_bom_valid(apps, schema_editor):
                 Part.objects.filter(
                     tree_id=item.part.tree_id,
                     lft__gte=item.part.lft,
-                    rght__lte=item.part.rght,
+                    rght__lte=item.part.rght
                 )
             )
         else:
@@ -47,7 +48,7 @@ def cache_bom_valid(apps, schema_editor):
             # Part has no BOM checksum - skip
             if not part.bom_checksum:
                 continue
-
+        
             # Part has not already been validated
             if not part.bom_checked_date:
                 continue
@@ -55,15 +56,25 @@ def cache_bom_valid(apps, schema_editor):
             parts_to_update.add(part)
 
     if len(parts_to_update) > 0:
-        print(f'\nScheduling {len(parts_to_update)} parts to update BOM validity.')
+        print(f"\nScheduling {len(parts_to_update)} parts to update BOM validity.")
 
     for part in parts_to_update:
         # Offload task to recalculate the BOM checksum for this part
         # The background worker will process these when the server restarts
-        offload_task(check_bom_valid, part.pk, force_async=True, group='part')
+        offload_task(
+            check_bom_valid,
+            part.pk,
+            force_async=True,
+            group='part'
+        )
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0140_part_bom_validated')]
 
-    operations = [migrations.RunPython(cache_bom_valid, migrations.RunPython.noop)]
+    dependencies = [
+        ("part", "0140_part_bom_validated"),
+    ]
+
+    operations = [
+        migrations.RunPython(cache_bom_valid, migrations.RunPython.noop),
+    ]

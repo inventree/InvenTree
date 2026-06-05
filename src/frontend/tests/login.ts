@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import type { Browser, Page } from '@playwright/test';
 import {
   type UserType,
@@ -8,6 +6,9 @@ import {
   logoutUrl,
   webUrl
 } from './defaults';
+
+import fs from 'node:fs';
+import path from 'node:path';
 import { navigate } from './helpers.js';
 
 interface LoginOptions {

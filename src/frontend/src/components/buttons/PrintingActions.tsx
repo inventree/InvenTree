@@ -111,7 +111,7 @@ export function PrintingActions({
         active: true,
         mixin: 'labels'
       },
-      onValueChange: (_value: string, record?: any) => {
+      onValueChange: (value: string, record?: any) => {
         if (record?.key && record?.key != pluginKey) {
           setPluginKey(record.key);
         }

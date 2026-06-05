@@ -10,28 +10,31 @@ import InvenTree.status_codes
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0112_alter_stocklocation_custom_icon_and_more')]
+
+    dependencies = [
+        ("stock", "0112_alter_stocklocation_custom_icon_and_more"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='stockitem',
-            name='status_custom_key',
+            model_name="stockitem",
+            name="status_custom_key",
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text='Additional status information for this item',
+                help_text="Additional status information for this item",
                 null=True,
-                verbose_name='Custom status key',
+                verbose_name="Custom status key",
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.StockStatus
-                    )
+                    ),
                 ],
             ),
         ),
         migrations.AlterField(
-            model_name='stockitem',
-            name='status',
+            model_name="stockitem",
+            name="status",
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.StockStatus.items(),
                 default=10,

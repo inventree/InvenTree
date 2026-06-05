@@ -15,7 +15,11 @@ import { useUserState } from '../../states/UserState';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-function EmailStatusBadge({ status }: { status: any }): ReactNode {
+function EmailStatusBadge({
+  status
+}: {
+  status: any;
+}): ReactNode {
   switch (status) {
     case 'A':
       return <Badge color='blue'>{t`Announced`}</Badge>;
@@ -39,7 +43,7 @@ export function EmailTable() {
     title: t`Send Test Email`,
     fields: { email: {} },
     successMessage: t`Email sent successfully`,
-    onFormSuccess: (_data: any) => {
+    onFormSuccess: (data: any) => {
       table.refreshTable();
     }
   });

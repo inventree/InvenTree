@@ -1,10 +1,3 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Flex, Table } from '@mantine/core';
 import {
@@ -14,8 +7,17 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { apiUrl } from '@lib/functions/Api';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
@@ -177,36 +179,38 @@ function ReturnOrderLineItemFormRow({
   }, [record.quantity, record.item_detail]);
 
   return (
-    <Table.Tr>
-      <Table.Td>
-        <Flex gap='sm' align='center'>
-          <Thumbnail
-            size={40}
-            src={record.part_detail.thumbnail}
-            align='center'
+    <>
+      <Table.Tr>
+        <Table.Td>
+          <Flex gap='sm' align='center'>
+            <Thumbnail
+              size={40}
+              src={record.part_detail.thumbnail}
+              align='center'
+            />
+            <div>{record.part_detail.name}</div>
+          </Flex>
+        </Table.Td>
+        <Table.Td>{quantityDisplay}</Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'choice',
+              label: t`Status`,
+              choices: statusOptions,
+              onValueChange: (value) => {
+                props.changeFn(props.idx, 'status', value);
+              }
+            }}
+            defaultValue={record.item_detail?.status}
+            error={props.rowErrors?.status?.message}
           />
-          <div>{record.part_detail.name}</div>
-        </Flex>
-      </Table.Td>
-      <Table.Td>{quantityDisplay}</Table.Td>
-      <Table.Td>
-        <StandaloneField
-          fieldDefinition={{
-            field_type: 'choice',
-            label: t`Status`,
-            choices: statusOptions,
-            onValueChange: (value) => {
-              props.changeFn(props.idx, 'status', value);
-            }
-          }}
-          defaultValue={record.item_detail?.status}
-          error={props.rowErrors?.status?.message}
-        />
-      </Table.Td>
-      <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
-      </Table.Td>
-    </Table.Tr>
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        </Table.Td>
+      </Table.Tr>
+    </>
   );
 }
 

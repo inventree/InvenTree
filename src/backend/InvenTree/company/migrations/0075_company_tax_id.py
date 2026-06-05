@@ -4,17 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0074_alter_manufacturerpart_link')]
+
+    dependencies = [
+        ("company", "0074_alter_manufacturerpart_link"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='company',
-            name='tax_id',
+            model_name="company",
+            name="tax_id",
             field=models.CharField(
                 blank=True,
-                help_text='Company Tax ID',
+                help_text="Company Tax ID",
                 max_length=50,
-                verbose_name='Tax ID',
+                verbose_name="Tax ID",
             ),
-        )
+        ),
     ]

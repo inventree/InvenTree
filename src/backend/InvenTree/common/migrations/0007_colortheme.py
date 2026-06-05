@@ -4,23 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('common', '0006_auto_20200203_0951')]
+
+    dependencies = [
+        ('common', '0006_auto_20200203_0951'),
+    ]
 
     operations = [
         migrations.CreateModel(
             name='ColorTheme',
             fields=[
-                (
-                    'id',
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name='ID',
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(blank=True, default='', max_length=20)),
                 ('user', models.CharField(max_length=150, unique=True)),
             ],
-        )
+        ),
     ]

@@ -1,5 +1,3 @@
-import { PluginPanelKey } from '@lib/enums/ModelType';
-import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
@@ -19,6 +17,9 @@ import {
   IconTruckDelivery
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
+
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';

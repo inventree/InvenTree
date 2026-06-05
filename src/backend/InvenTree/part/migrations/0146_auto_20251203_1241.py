@@ -4,7 +4,10 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0145_auto_20251203_1238')]
+
+    dependencies = [
+        ("part", "0145_auto_20251203_1238"),
+    ]
 
     # Remove the PartParameterTemplate and PartParameter models
     # Note: We *DO NOT* drop the underlying database tables,
@@ -15,6 +18,6 @@ class Migration(migrations.Migration):
                 migrations.DeleteModel(name='PartParameterTemplate'),
                 migrations.DeleteModel(name='PartParameter'),
             ],
-            database_operations=[],
-        )
+            database_operations=[]
+        ),
     ]

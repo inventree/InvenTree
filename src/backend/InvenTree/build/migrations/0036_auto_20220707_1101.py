@@ -13,6 +13,7 @@ def update_build_reference(apps, schema_editor):
     - Generate a build order pattern based on the prefix value
     - Update any existing build order references with the specified prefix
     """
+
     InvenTreeSetting = apps.get_model('common', 'inventreesetting')
 
     try:
@@ -30,7 +31,8 @@ def update_build_reference(apps, schema_editor):
         setting.save()
     except InvenTreeSetting.DoesNotExist:
         setting = InvenTreeSetting.objects.create(
-            key='BUILDORDER_REFERENCE_PATTERN', value=pattern
+            key='BUILDORDER_REFERENCE_PATTERN',
+            value=pattern,
         )
 
     # Update any existing build order references with the prefix
@@ -45,14 +47,18 @@ def update_build_reference(apps, schema_editor):
             n += 1
 
     if n > 0:
-        print(f'Updated reference field for {n} BuildOrder objects')
+        print(f"Updated reference field for {n} BuildOrder objects")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0035_alter_build_notes')]
+
+    dependencies = [
+        ('build', '0035_alter_build_notes'),
+    ]
 
     operations = [
         migrations.RunPython(
-            update_build_reference, reverse_code=migrations.RunPython.noop
+            update_build_reference,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

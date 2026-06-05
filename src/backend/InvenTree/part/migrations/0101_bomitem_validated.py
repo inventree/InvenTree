@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0100_alter_bomitem_reference')]
+
+    dependencies = [
+        ('part', '0100_alter_bomitem_reference'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='bomitem',
             name='validated',
-            field=models.BooleanField(
-                default=False,
-                help_text='This BOM item has been validated',
-                verbose_name='Validated',
-            ),
-        )
+            field=models.BooleanField(default=False, help_text='This BOM item has been validated', verbose_name='Validated'),
+        ),
     ]

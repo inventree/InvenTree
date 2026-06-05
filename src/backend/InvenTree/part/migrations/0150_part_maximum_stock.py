@@ -5,19 +5,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0149_bomitem_raw_amount')]
+
+    dependencies = [
+        ("part", "0149_bomitem_raw_amount"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='part',
-            name='maximum_stock',
+            model_name="part",
+            name="maximum_stock",
             field=models.DecimalField(
                 decimal_places=6,
                 default=0,
-                help_text='Maximum allowed stock level',
+                help_text="Maximum allowed stock level",
                 max_digits=19,
                 validators=[django.core.validators.MinValueValidator(0)],
-                verbose_name='Maximum Stock',
+                verbose_name="Maximum Stock",
             ),
-        )
+        ),
     ]

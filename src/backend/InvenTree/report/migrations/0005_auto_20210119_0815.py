@@ -5,50 +5,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('report', '0004_auto_20200823_1104')]
+
+    dependencies = [
+        ('report', '0004_auto_20200823_1104'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='testreport',
             name='description',
-            field=models.CharField(
-                help_text='Report template description',
-                max_length=250,
-                verbose_name='Description',
-            ),
+            field=models.CharField(help_text='Report template description', max_length=250, verbose_name='Description'),
         ),
         migrations.AlterField(
             model_name='testreport',
             name='filters',
-            field=models.CharField(
-                blank=True,
-                help_text='Part query filters (comma-separated list of key=value pairs)',
-                max_length=250,
-                verbose_name='Filters',
-            ),
+            field=models.CharField(blank=True, help_text='Part query filters (comma-separated list of key=value pairs)', max_length=250, verbose_name='Filters'),
         ),
         migrations.AlterField(
             model_name='testreport',
             name='name',
-            field=models.CharField(
-                help_text='Template name',
-                max_length=100,
-                unique=True,
-                verbose_name='Name',
-            ),
+            field=models.CharField(help_text='Template name', max_length=100, unique=True, verbose_name='Name'),
         ),
         migrations.AlterField(
             model_name='testreport',
             name='template',
-            field=models.FileField(
-                help_text='Report template file',
-                upload_to='report',
-                validators=[
-                    django.core.validators.FileExtensionValidator(
-                        allowed_extensions=['html', 'htm', 'tex']
-                    )
-                ],
-                verbose_name='Template',
-            ),
+            field=models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])], verbose_name='Template'),
         ),
     ]

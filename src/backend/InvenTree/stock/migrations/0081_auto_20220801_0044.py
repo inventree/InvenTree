@@ -7,12 +7,15 @@ from InvenTree.helpers import constructPathString
 
 def update_pathstring(apps, schema_editor):
     """Construct pathstring for all existing StockLocation objects"""
+
     StockLocation = apps.get_model('stock', 'stocklocation')
 
     n = StockLocation.objects.count()
 
     if n > 0:
+
         for loc in StockLocation.objects.all():
+
             # Construct complete path for category
             path = [loc.name]
 
@@ -32,8 +35,14 @@ def update_pathstring(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0080_stocklocation_pathstring')]
+
+    dependencies = [
+        ('stock', '0080_stocklocation_pathstring'),
+    ]
 
     operations = [
-        migrations.RunPython(update_pathstring, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(
+            update_pathstring,
+            reverse_code=migrations.RunPython.noop
+        )
     ]

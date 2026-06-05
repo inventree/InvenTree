@@ -1,4 +1,3 @@
-import { Boundary } from '@lib/components/Boundary';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -11,9 +10,11 @@ import {
   Stack,
   Tooltip
 } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { IconCamera, IconScan } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+
+import { Boundary } from '@lib/components/Boundary';
+import { useLocalStorage } from '@mantine/hooks';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import BarcodeCameraInput from './BarcodeCameraInput';
 import BarcodeKeyboardInput from './BarcodeKeyboardInput';

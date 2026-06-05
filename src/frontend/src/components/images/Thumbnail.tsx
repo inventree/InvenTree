@@ -1,7 +1,8 @@
-import type { ThumbnailProps } from '@lib/types/Rendering';
 import { t } from '@lingui/core/macro';
 import { Anchor, Group, HoverCard, Image } from '@mantine/core';
 import { useMemo } from 'react';
+
+import type { ThumbnailProps } from '@lib/types/Rendering';
 import { ApiImage } from './ApiImage';
 
 /*

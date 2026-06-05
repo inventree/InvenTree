@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0046_auto_20200605_0931')]
+
+    dependencies = [
+        ('stock', '0046_auto_20200605_0931'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='stocklocation',
             name='description',
-            field=models.CharField(
-                blank=True, help_text='Description (optional)', max_length=250
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Description (optional)', max_length=250),
+        ),
     ]

@@ -1,5 +1,6 @@
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { Button, Tooltip } from '@mantine/core';
+
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
 
 /**

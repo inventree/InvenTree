@@ -1,5 +1,3 @@
-import { identifierString } from '@lib/functions/Conversion';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import {
   ActionIcon,
   Anchor,
@@ -11,6 +9,9 @@ import {
 import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { identifierString } from '@lib/functions/Conversion';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;

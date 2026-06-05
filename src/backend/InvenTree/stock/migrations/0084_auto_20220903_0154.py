@@ -4,27 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0083_stocklocation_icon')]
+
+    dependencies = [
+        ('stock', '0083_stocklocation_icon'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='stockitem',
             name='barcode_data',
-            field=models.CharField(
-                blank=True,
-                help_text='Third party barcode data',
-                max_length=500,
-                verbose_name='Barcode Data',
-            ),
+            field=models.CharField(blank=True, help_text='Third party barcode data', max_length=500, verbose_name='Barcode Data'),
         ),
         migrations.AddField(
             model_name='stockitem',
             name='barcode_hash',
-            field=models.CharField(
-                blank=True,
-                help_text='Unique hash of barcode data',
-                max_length=128,
-                verbose_name='Barcode Hash',
-            ),
+            field=models.CharField(blank=True, help_text='Unique hash of barcode data', max_length=128, verbose_name='Barcode Hash'),
         ),
     ]

@@ -4,15 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0008_auto_20190618_0042')]
+
+    dependencies = [
+        ('part', '0008_auto_20190618_0042'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='part',
             name='virtual',
-            field=models.BooleanField(
-                default=False,
-                help_text='Is this a virtual part, such as a software product or license?',
-            ),
-        )
+            field=models.BooleanField(default=False, help_text='Is this a virtual part, such as a software product or license?'),
+        ),
     ]

@@ -4,6 +4,7 @@ import logging
 
 from django.db import migrations
 
+
 logger = logging.getLogger('inventree')
 
 
@@ -21,8 +22,9 @@ def add_build_line_links(apps, schema_editor):
         - Link them against the relevant BuildLine object
         - The BuildLine objects should have been created in 0044_auto_20230528_1410.py
     """
-    BuildItem = apps.get_model('build', 'BuildItem')
-    BuildLine = apps.get_model('build', 'BuildLine')
+
+    BuildItem = apps.get_model("build", "BuildItem")
+    BuildLine = apps.get_model("build", "BuildLine")
 
     # Find any existing BuildItem objects
     build_items = BuildItem.objects.all()
@@ -30,13 +32,15 @@ def add_build_line_links(apps, schema_editor):
     n_missing = 0
 
     for item in build_items:
+
         # Find the relevant BuildLine object
         line = BuildLine.objects.filter(
-            build=item.build, bom_item=item.bom_item
+            build=item.build,
+            bom_item=item.bom_item
         ).first()
 
         if line is None:
-            logger.warning(f'BuildLine does not exist for BuildItem {item.pk}')
+            logger.warning(f"BuildLine does not exist for BuildItem {item.pk}")
             n_missing += 1
 
             if item.build is None or item.bom_item is None:
@@ -46,7 +50,7 @@ def add_build_line_links(apps, schema_editor):
             line = BuildLine.objects.create(
                 build=item.build,
                 bom_item=item.bom_item,
-                quantity=item.bom_item.quantity * item.build.quantity,
+                quantity=item.bom_item.quantity * item.build.quantity
             )
 
         # Link the BuildItem to the BuildLine
@@ -55,9 +59,7 @@ def add_build_line_links(apps, schema_editor):
         item.save()
 
     if build_items.count() > 0:
-        logger.info(
-            f'add_build_line_links: Updated {build_items.count()} BuildItem objects (added {n_missing})'
-        )
+        logger.info(f"add_build_line_links: Updated {build_items.count()} BuildItem objects (added {n_missing})")
 
 
 def reverse_build_links(apps, schema_editor):
@@ -65,7 +67,8 @@ def reverse_build_links(apps, schema_editor):
 
     Basically, iterate through each BuildItem and update the links based on the BuildLine
     """
-    BuildItem = apps.get_model('build', 'BuildItem')
+
+    BuildItem = apps.get_model("build", "BuildItem")
 
     items = BuildItem.objects.all()
 
@@ -75,12 +78,18 @@ def reverse_build_links(apps, schema_editor):
         item.save()
 
     if items.count() > 0:
-        logger.info(f'reverse_build_links: Updated {items.count()} BuildItem objects')
+        logger.info(f"reverse_build_links: Updated {items.count()} BuildItem objects")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0045_builditem_build_line')]
+
+    dependencies = [
+        ('build', '0045_builditem_build_line'),
+    ]
 
     operations = [
-        migrations.RunPython(add_build_line_links, reverse_code=reverse_build_links)
+        migrations.RunPython(
+            add_build_line_links,
+            reverse_code=reverse_build_links,
+        )
     ]

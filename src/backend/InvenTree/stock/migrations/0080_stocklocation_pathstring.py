@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0079_alter_stocklocation_name')]
+
+    dependencies = [
+        ('stock', '0079_alter_stocklocation_name'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='stocklocation',
             name='pathstring',
-            field=models.CharField(
-                blank=True, help_text='Path', max_length=250, verbose_name='Path'
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Path', max_length=250, verbose_name='Path'),
+        ),
     ]

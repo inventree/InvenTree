@@ -1,7 +1,8 @@
-import { StylishText } from '@lib/components/StylishText';
 import { Trans } from '@lingui/react/macro';
 import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text } from '@mantine/core';
+
+import { StylishText } from '@lib/components/StylishText';
 import * as classes from './GettingStartedCarousel.css';
 import type { MenuLinkItem } from './MenuLinks';
 

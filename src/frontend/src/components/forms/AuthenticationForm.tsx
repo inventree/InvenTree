@@ -195,10 +195,14 @@ export function AuthenticationForm() {
           <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
             {isLoggingIn ? (
               <Loader size='sm' />
-            ) : classicLoginMode ? (
-              <Trans>Log In</Trans>
             ) : (
-              <Trans>Send Email</Trans>
+              <>
+                {classicLoginMode ? (
+                  <Trans>Log In</Trans>
+                ) : (
+                  <Trans>Send Email</Trans>
+                )}
+              </>
             )}
           </Button>
         </Group>

@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0094_auto_20230514_2331')]
+
+    dependencies = [
+        ('order', '0094_auto_20230514_2331'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='salesordershipment',
             name='delivery_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Date of delivery of shipment',
-                null=True,
-                verbose_name='Delivery Date',
-            ),
-        )
+            field=models.DateField(blank=True, help_text='Date of delivery of shipment', null=True, verbose_name='Delivery Date'),
+        ),
     ]

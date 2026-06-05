@@ -1,10 +1,11 @@
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
@@ -52,7 +53,7 @@ export function usePluginPanels({
   const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
     queryKey: ['custom-plugin-panels', model, id, instance],
-    throwOnError: (_error: any) => {
+    throwOnError: (error: any) => {
       console.error('ERR: Failed to fetch plugin panels');
       return false;
     },

@@ -1,3 +1,6 @@
+import { t } from '@lingui/core/macro';
+import { useCallback, useMemo, useState } from 'react';
+
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -10,8 +13,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
 import { useRepairOrderLineItemFields } from '../../forms/RepairOrderForms';
 import {
   useCreateApiFormModal,
@@ -41,7 +42,7 @@ export default function RepairOrderLineItemTable({
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
-  const _inProgress: boolean = useMemo(() => {
+  const inProgress: boolean = useMemo(() => {
     return (
       order.status == roStatus.PENDING || order.status == roStatus.IN_PROGRESS
     );

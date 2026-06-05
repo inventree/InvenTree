@@ -4,12 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0118_transferorder')]
+
+    dependencies = [
+        ("order", "0118_transferorder"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='transferorderlineitem',
-            name='line_int',
+            model_name="transferorderlineitem",
+            name="line_int",
             field=models.IntegerField(default=0),
-        )
+        ),
     ]

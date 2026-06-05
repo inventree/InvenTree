@@ -18,7 +18,7 @@ export function generateUrl(url: string | URL, base?: string): string {
     } else {
       newUrl = url.toString();
     }
-  } catch (_e: any) {
+  } catch (e: any) {
     console.error(`ERR: generateURL failed. url='${url}', base='${base}'`);
   }
 

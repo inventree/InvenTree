@@ -4,7 +4,10 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0010_stockitem_build')]
+
+    dependencies = [
+        ('stock', '0010_stockitem_build'),
+    ]
 
     operations = [
         migrations.AddField(

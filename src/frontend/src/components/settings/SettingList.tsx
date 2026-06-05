@@ -1,14 +1,15 @@
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type { Setting, SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Divider, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { Setting, SettingsStateProps } from '@lib/types/Settings';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
@@ -92,7 +93,7 @@ export function SettingList({
 
   // Callback for editing a single setting instance
   const onValueEdit = useCallback(
-    (setting: Setting, _confirmed: boolean) => {
+    (setting: Setting, confirmed: boolean) => {
       setSetting(setting);
       editSettingModal.open();
     },

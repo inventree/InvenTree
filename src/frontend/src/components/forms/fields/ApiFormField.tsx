@@ -1,10 +1,11 @@
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, FileInput, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { IconFileUpload } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
+
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { IconFileUpload } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';

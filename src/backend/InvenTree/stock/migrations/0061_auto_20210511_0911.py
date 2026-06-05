@@ -8,9 +8,11 @@ from stock.status_codes import StockHistoryCode
 
 
 def update_history(apps, schema_editor):
-    """Update each existing StockItemTracking object,
+    """
+    Update each existing StockItemTracking object,
     convert the recorded "quantity" to a delta
     """
+
     StockItem = apps.get_model('stock', 'stockitem')
     StockItemTracking = apps.get_model('stock', 'stockitemtracking')
     StockLocation = apps.get_model('stock', 'stocklocation')
@@ -34,6 +36,7 @@ def update_history(apps, schema_editor):
         location._path = '/'.join(path)
 
     for item in StockItem.objects.all():  # pragma: no cover
+
         history = StockItemTracking.objects.filter(item=item).order_by('date')
 
         if history.count() == 0:
@@ -42,17 +45,20 @@ def update_history(apps, schema_editor):
         quantity = history[0].quantity
 
         for idx, entry in enumerate(history):
+
             deltas = {}
             updated = False
 
             q = entry.quantity
 
             if idx == 0 or q != quantity:
+
                 try:
-                    deltas['quantity'] = float(q)
+                    deltas['quantity']= float(q)
                     updated = True
                 except Exception:
                     print(f"WARNING: Error converting quantity '{q}'")
+
 
             quantity = q
 
@@ -65,15 +71,17 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.BUILD_OUTPUT_COMPLETED
 
             elif 'removed' in title and 'item' in title:
+
                 if entry.notes.lower().startswith('split '):
                     tracking_type = StockHistoryCode.SPLIT_CHILD_ITEM
                 else:
                     tracking_type = StockHistoryCode.STOCK_REMOVE
 
                 # Extract the number of removed items
-                result = re.search(r'^removed ([\d\.]+) items', title)
+                result = re.search(r"^removed ([\d\.]+) items", title)
 
                 if result:
+
                     removed = result.groups()[0]
 
                     try:
@@ -103,6 +111,7 @@ def update_history(apps, schema_editor):
                     matches = set()
 
                     for location in locations:
+
                         # Direct match for pathstring
                         if text == location._path:
                             matches.add(location)
@@ -112,13 +121,13 @@ def update_history(apps, schema_editor):
                             matches.add(location)
 
                         # Match for "name - description"
-                        compare = f'{location.name} - {location.description}'
+                        compare = f"{location.name} - {location.description}"
 
                         if text == compare:
                             matches.add(location)
 
                         # Match for "pathstring - description"
-                        compare = f'{location._path} - {location.description}'
+                        compare = f"{location._path} - {location.description}"
 
                         if text == compare:
                             matches.add(location)
@@ -148,9 +157,10 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.STOCK_ADD
 
                 # Extract the number of added items
-                result = re.search(r'^added ([\d\.]+) items', title)
+                result = re.search(r"^added ([\d\.]+) items", title)
 
                 if result:
+
                     added = result.groups()[0]
 
                     try:
@@ -188,14 +198,16 @@ def update_history(apps, schema_editor):
                 entry.save()
                 update_count += 1
 
+
     if update_count > 0:
-        print(
-            f'\n==========================\nUpdated {update_count} StockItemHistory entries'
-        )  # pragma: no cover
+        print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")  # pragma: no cover
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0060_auto_20210511_1713')]
+
+    dependencies = [
+        ('stock', '0060_auto_20210511_1713'),
+    ]
 
     operations = [
         migrations.RunPython(update_history, reverse_code=migrations.RunPython.noop)

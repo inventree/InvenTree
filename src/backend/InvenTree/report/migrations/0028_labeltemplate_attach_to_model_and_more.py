@@ -4,25 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('report', '0027_alter_labeltemplate_model_type_and_more')]
+
+    dependencies = [
+        ('report', '0027_alter_labeltemplate_model_type_and_more'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='labeltemplate',
             name='attach_to_model',
-            field=models.BooleanField(
-                default=False,
-                help_text='Save report output as an attachment against linked model instance when printing',
-                verbose_name='Attach to Model on Print',
-            ),
+            field=models.BooleanField(default=False, help_text='Save report output as an attachment against linked model instance when printing', verbose_name='Attach to Model on Print'),
         ),
         migrations.AddField(
             model_name='reporttemplate',
             name='attach_to_model',
-            field=models.BooleanField(
-                default=False,
-                help_text='Save report output as an attachment against linked model instance when printing',
-                verbose_name='Attach to Model on Print',
-            ),
+            field=models.BooleanField(default=False, help_text='Save report output as an attachment against linked model instance when printing', verbose_name='Attach to Model on Print'),
         ),
     ]

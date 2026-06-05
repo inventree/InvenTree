@@ -4,12 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0017_auto_20191118_2311')]
+
+    dependencies = [
+        ('stock', '0017_auto_20191118_2311'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='stockitem',
             name='notes',
             field=models.TextField(blank=True, help_text='Stock Item Notes'),
-        )
+        ),
     ]

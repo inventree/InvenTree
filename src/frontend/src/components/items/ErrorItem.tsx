@@ -8,8 +8,10 @@ export function ErrorItem({
   const error_message = error?.message || error?.toString() || t`Unknown error`;
 
   return (
-    <Alert color='red' title={t`An error occurred`}>
-      <Text>{error_message}</Text>
-    </Alert>
+    <>
+      <Alert color='red' title={t`An error occurred`}>
+        <Text>{error_message}</Text>
+      </Alert>
+    </>
   );
 }

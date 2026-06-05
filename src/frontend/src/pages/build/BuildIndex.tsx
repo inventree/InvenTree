@@ -1,11 +1,5 @@
-import type { EventContentArg } from '@fullcalendar/core';
-import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { TableFilter } from '@lib/types/Filters';
-import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import {
   IconCalendar,
   IconListDetails,
@@ -13,6 +7,13 @@ import {
   IconTools
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
+
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/types/Filters';
+import type { PanelType } from '@lib/types/Panel';
+import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';

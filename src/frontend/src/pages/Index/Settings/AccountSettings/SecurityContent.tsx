@@ -46,7 +46,7 @@ export function SecurityContent() {
   const user = useUserState();
 
   const onError = useCallback(
-    (error: unknown, _componentStack: string | undefined, _eventId: string) => {
+    (error: unknown, componentStack: string | undefined, eventId: string) => {
       console.error(`ERR: Error rendering component: ${error}`);
     },
     []
@@ -181,7 +181,7 @@ function EmailSection() {
       .then(() => {
         refetch();
       })
-      .catch((_err) => {
+      .catch((err) => {
         hideNotification('email-error');
 
         showNotification({

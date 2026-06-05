@@ -4,9 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     atomic = False
 
-    dependencies = [('part', '0038_auto_20200513_0016')]
+    dependencies = [
+        ('part', '0038_auto_20200513_0016'),
+    ]
 
     operations = [
         migrations.AddField(

@@ -2,11 +2,11 @@
  * Custom hook for retrieving a list of items from the API,
  * and turning them into "filters" for use in the frontend table framework.
  */
+import { useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilterChoice } from '@lib/types/Filters';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
 import { useApi } from '../contexts/ApiContext';
 
 type UseFilterProps = {

@@ -4,11 +4,25 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0141_auto_20250722_0303')]
+
+    dependencies = [
+        ("part", "0141_auto_20250722_0303"),
+    ]
 
     operations = [
-        migrations.RemoveField(model_name='part', name='last_stocktake'),
-        migrations.RemoveField(model_name='partstocktake', name='note'),
-        migrations.RemoveField(model_name='partstocktake', name='user'),
-        migrations.DeleteModel(name='PartStocktakeReport'),
+        migrations.RemoveField(
+            model_name="part",
+            name="last_stocktake",
+        ),
+        migrations.RemoveField(
+            model_name="partstocktake",
+            name="note",
+        ),
+        migrations.RemoveField(
+            model_name="partstocktake",
+            name="user",
+        ),
+        migrations.DeleteModel(
+            name="PartStocktakeReport",
+        ),
     ]

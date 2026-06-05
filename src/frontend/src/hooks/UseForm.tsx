@@ -1,11 +1,12 @@
-import type {
-  ApiFormModalProps,
-  BulkEditApiFormModalProps
-} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+import type {
+  ApiFormModalProps,
+  BulkEditApiFormModalProps
+} from '@lib/types/Forms';
 import { OptionsApiForm } from '../components/forms/ApiForm';
 import { useModalState } from '../states/ModalState';
 import { useModal } from './UseModal';

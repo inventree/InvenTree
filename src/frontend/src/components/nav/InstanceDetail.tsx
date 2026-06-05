@@ -1,6 +1,7 @@
+import { Center, Container, Loader } from '@mantine/core';
+
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
-import { Center, Container, Loader } from '@mantine/core';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useUserState } from '../../states/UserState';

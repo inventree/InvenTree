@@ -5,23 +5,25 @@ from django.db import migrations
 
 def set_key(apps, schema_editor):
     """Create a 'key' value for existing PartTestTemplate objects."""
+
     import InvenTree.helpers
 
     PartTestTemplate = apps.get_model('part', 'PartTestTemplate')
 
     for template in PartTestTemplate.objects.all():
-        template.key = InvenTree.helpers.generateTestKey(
-            str(template.test_name).strip()
-        )
+        template.key = InvenTree.helpers.generateTestKey(str(template.test_name).strip())
         template.save()
 
     if PartTestTemplate.objects.count() > 0:
-        print(
-            f"\nUpdated 'key' value for {PartTestTemplate.objects.count()} PartTestTemplate objects"
-        )
+        print(f"\nUpdated 'key' value for {PartTestTemplate.objects.count()} PartTestTemplate objects")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0120_parttesttemplate_key')]
 
-    operations = [migrations.RunPython(set_key, reverse_code=migrations.RunPython.noop)]
+    dependencies = [
+        ('part', '0120_parttesttemplate_key'),
+    ]
+
+    operations = [
+        migrations.RunPython(set_key, reverse_code=migrations.RunPython.noop)
+    ]

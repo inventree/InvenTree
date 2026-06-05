@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0037_partattachment_upload_date')]
+
+    dependencies = [
+        ('part', '0037_partattachment_upload_date'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='partattachment',
             name='comment',
-            field=models.CharField(
-                blank=True, help_text='File comment', max_length=100
-            ),
-        )
+            field=models.CharField(blank=True, help_text='File comment', max_length=100),
+        ),
     ]

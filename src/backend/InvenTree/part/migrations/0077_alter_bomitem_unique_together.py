@@ -4,6 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0076_auto_20220516_0819')]
 
-    operations = [migrations.AlterUniqueTogether(name='bomitem', unique_together=set())]
+    dependencies = [
+        ('part', '0076_auto_20220516_0819'),
+    ]
+
+    operations = [
+        migrations.AlterUniqueTogether(
+            name='bomitem',
+            unique_together=set(),
+        ),
+    ]

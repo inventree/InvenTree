@@ -4,6 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0064_move_address_field_to_address_model')]
 
-    operations = [migrations.RemoveField(model_name='company', name='address')]
+    dependencies = [
+        ('company', '0064_move_address_field_to_address_model'),
+    ]
+
+    operations = [
+        migrations.RemoveField(
+            model_name='company',
+            name='address',
+        ),
+    ]

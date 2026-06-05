@@ -4,9 +4,11 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('order', '0120_purchaseorder_tags_returnorder_tags_salesorder_tags_and_more'),
         ('order', '0120_repairorder_repairorderlineitem_and_more'),
     ]
 
-    operations = []
+    operations = [
+    ]

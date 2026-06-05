@@ -4,10 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0015_auto_20190820_0251')]
+
+    dependencies = [
+        ('part', '0015_auto_20190820_0251'),
+    ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='partparameter', unique_together={('part', 'template')}
-        )
+            name='partparameter',
+            unique_together={('part', 'template')},
+        ),
     ]

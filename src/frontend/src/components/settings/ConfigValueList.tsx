@@ -1,6 +1,7 @@
+import { Table } from '@mantine/core';
+
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { Trans } from '@lingui/react/macro';
-import { Table } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { api } from '../../App';

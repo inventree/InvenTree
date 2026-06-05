@@ -6,7 +6,8 @@ from order.status_codes import SalesOrderStatus
 
 
 def calculate_shipped_quantity(apps, schema_editor):
-    """In migration 0057 we added a new field 'shipped' to the SalesOrderLineItem model.
+    """
+    In migration 0057 we added a new field 'shipped' to the SalesOrderLineItem model.
 
     This field is used to record the number of items shipped,
     even if the actual stock items get deleted from the database.
@@ -17,15 +18,20 @@ def calculate_shipped_quantity(apps, schema_editor):
     - Otherwise, we use the "fulfilled" calculated quantity
 
     """
+
     StockItem = apps.get_model('stock', 'stockitem')
     SalesOrderLineItem = apps.get_model('order', 'salesorderlineitem')
 
     for item in SalesOrderLineItem.objects.all():  # pragma: no cover
+
         if item.order.status == SalesOrderStatus.SHIPPED:
             item.shipped = item.quantity
         else:
             # Calculate total stock quantity of items allocated to this order?
-            items = StockItem.objects.filter(sales_order=item.order, part=item.part)
+            items = StockItem.objects.filter(
+                sales_order=item.order,
+                part=item.part
+            )
 
             q = sum(item.quantity for item in items)
 
@@ -35,10 +41,14 @@ def calculate_shipped_quantity(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0057_salesorderlineitem_shipped')]
+
+    dependencies = [
+        ('order', '0057_salesorderlineitem_shipped'),
+    ]
 
     operations = [
         migrations.RunPython(
-            calculate_shipped_quantity, reverse_code=migrations.RunPython.noop
+            calculate_shipped_quantity,
+            reverse_code=migrations.RunPython.noop
         )
     ]

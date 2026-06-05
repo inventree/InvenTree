@@ -5,26 +5,28 @@ from django.db import migrations
 
 def link_primary_supplier_part(apps, schema_editor):
     """Mark 'primary' SupplierPart for each Part, if one exists."""
-    Part = apps.get_model('part', 'Part')
-    SupplierPart = apps.get_model('company', 'SupplierPart')
+
+    Part = apps.get_model("part", "Part")
+    SupplierPart = apps.get_model("company", "SupplierPart")
 
     # Find any part which links to a "default_supplier"
-    primary_supplier_ids = (
-        Part.objects.exclude(default_supplier=None)
-        .values_list('default_supplier_id', flat=True)
-        .distinct()
-    )
+    primary_supplier_ids = Part.objects.exclude(
+        default_supplier=None,
+    ).values_list("default_supplier_id", flat=True).distinct()
 
     if len(primary_supplier_ids) > 0:
         # Mark the relevant SupplierPart objects as "primary"
-        SupplierPart.objects.filter(pk__in=primary_supplier_ids).update(primary=True)
+        SupplierPart.objects.filter(
+            pk__in=primary_supplier_ids
+        ).update(primary=True)
 
-        print(f'Marked {len(primary_supplier_ids)} SupplierPart objects as primary')
+        print(f"Marked {len(primary_supplier_ids)} SupplierPart objects as primary")
 
 
 def reverse_link_primary_supplier_part(apps, schema_editor):
     """Add 'primary' SupplierPart for each Part."""
-    SupplierPart = apps.get_model('company', 'SupplierPart')
+
+    SupplierPart = apps.get_model("company", "SupplierPart")
 
     # Find any SupplierPart object marked as "primary"
     primary_supplier_parts = SupplierPart.objects.filter(primary=True)
@@ -36,15 +38,18 @@ def reverse_link_primary_supplier_part(apps, schema_editor):
             supplier_part.part.default_supplier = supplier_part
             supplier_part.part.save()
 
-        print(f'Linked {len(primary_supplier_parts)} primary SupplierPart objects')
+        print(f"Linked {len(primary_supplier_parts)} primary SupplierPart objects")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0078_supplierpart_primary')]
+
+    dependencies = [
+        ("company", "0078_supplierpart_primary"),
+    ]
 
     operations = [
         migrations.RunPython(
             code=link_primary_supplier_part,
             reverse_code=reverse_link_primary_supplier_part,
-        )
+        ),
     ]

@@ -2,12 +2,12 @@
 
 from django.db import migrations
 
-
 def convert_to_numeric_value(value: str, units: str):
     """Convert a value (with units) to a numeric value.
 
     Defaults to zero if the value cannot be converted.
     """
+
     import InvenTree.conversion
 
     # Default value is null
@@ -30,22 +30,19 @@ def convert_to_numeric_value(value: str, units: str):
 
 def copy_manufacturer_part_parameters(apps, schema_editor):
     """Copy ManufacturerPartParameter to Parameter."""
-    ManufacturerPartParameter = apps.get_model('company', 'ManufacturerPartParameter')
-    Parameter = apps.get_model('common', 'Parameter')
-    ParameterTemplate = apps.get_model('common', 'ParameterTemplate')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+
+    ManufacturerPartParameter = apps.get_model("company", "ManufacturerPartParameter")
+    Parameter = apps.get_model("common", "Parameter")
+    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
+    ContentType = apps.get_model("contenttypes", "ContentType")
     parameters = []
 
-    content_type, _created = ContentType.objects.get_or_create(
-        app_label='company', model='manufacturerpart'
-    )
+    content_type, _created = ContentType.objects.get_or_create(app_label='company', model='manufacturerpart')
 
     N = ManufacturerPartParameter.objects.count()
 
     if N > 0:
-        print(
-            f'\nMigrating {N} ManufacturerPartParameter objects to the Parameter table.'
-        )
+        print(f"\nMigrating {N} ManufacturerPartParameter objects to the Parameter table.")
 
     for parameter in ManufacturerPartParameter.objects.all():
         # Find the corresponding ParameterTemplate
@@ -58,43 +55,41 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
                 description='',
                 units=parameter.units or '',
                 model_type=None,
-                checkbox=False,
+                checkbox=False
             )
 
-        parameters.append(
-            Parameter(
-                template=template,
-                model_type=content_type,
-                model_id=parameter.manufacturer_part.id,
-                data=parameter.value,
-                data_numeric=convert_to_numeric_value(parameter.value, parameter.units),
-            )
-        )
+        parameters.append(Parameter(
+            template=template,
+            model_type=content_type,
+            model_id=parameter.manufacturer_part.id,
+            data=parameter.value,
+            data_numeric=convert_to_numeric_value(parameter.value, parameter.units),
+        ))
 
     if len(parameters) > 0:
         assert ParameterTemplate.objects.count() > 0
         Parameter.objects.bulk_create(parameters)
-        print(f'\nMigrated {len(parameters)} ManufacturerPartParameter instances.')
+        print(f"\nMigrated {len(parameters)} ManufacturerPartParameter instances.")
 
     assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
 
 
 def update_global_setting(apps, schema_editor):
     """Update global setting key from PART_PARAMETER_ENFORCE_UNITS to PARAMETER_ENFORCE_UNITS."""
-    GlobalSetting = apps.get_model('common', 'InvenTreeSetting')
+    GlobalSetting = apps.get_model("common", "InvenTreeSetting")
 
     OLD_KEY = 'PART_PARAMETER_ENFORCE_UNITS'
     NEW_KEY = 'PARAMETER_ENFORCE_UNITS'
 
     try:
         setting = GlobalSetting.objects.get(key=OLD_KEY)
-
+        
         if setting is not None:
             # Remove any existing new key
             GlobalSetting.objects.filter(key=NEW_KEY).delete()
             setting.key = NEW_KEY
             setting.save()
-            print(f'Updated global setting key from {OLD_KEY} to {NEW_KEY}.')
+            print(f"Updated global setting key from {OLD_KEY} to {NEW_KEY}.")
     except GlobalSetting.DoesNotExist:
         pass
 
@@ -105,15 +100,17 @@ class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
-        ('common', '0040_parametertemplate_parameter'),
-        ('part', '0145_auto_20251203_1238'),
+        ("common", "0040_parametertemplate_parameter"),
+        ("part", "0145_auto_20251203_1238"),
     ]
 
     operations = [
         migrations.RunPython(
-            update_global_setting, reverse_code=migrations.RunPython.noop
+            update_global_setting,
+            reverse_code=migrations.RunPython.noop
         ),
         migrations.RunPython(
-            copy_manufacturer_part_parameters, reverse_code=migrations.RunPython.noop
+            copy_manufacturer_part_parameters,
+            reverse_code=migrations.RunPython.noop
         ),
     ]

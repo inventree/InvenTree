@@ -5,17 +5,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0036_auto_20220707_1101')]
+
+    dependencies = [
+        ('build', '0036_auto_20220707_1101'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='build',
             name='priority',
-            field=models.PositiveIntegerField(
-                default=0,
-                help_text='Priority of this build order',
-                validators=[django.core.validators.MinValueValidator(0)],
-                verbose_name='Build Priority',
-            ),
-        )
+            field=models.PositiveIntegerField(default=0, help_text='Priority of this build order', validators=[django.core.validators.MinValueValidator(0)], verbose_name='Build Priority'),
+        ),
     ]

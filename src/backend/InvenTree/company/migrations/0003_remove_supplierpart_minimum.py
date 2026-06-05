@@ -4,6 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0002_auto_20190520_2204')]
 
-    operations = [migrations.RemoveField(model_name='supplierpart', name='minimum')]
+    dependencies = [
+        ('company', '0002_auto_20190520_2204'),
+    ]
+
+    operations = [
+        migrations.RemoveField(
+            model_name='supplierpart',
+            name='minimum',
+        ),
+    ]

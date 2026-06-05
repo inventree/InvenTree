@@ -1,10 +1,11 @@
+import { IconUsers } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { IconUsers } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -188,7 +189,7 @@ export function useParameterFields({
           for_model: modelType,
           enabled: true
         },
-        onValueChange: (_value: any, record: any) => {
+        onValueChange: (value: any, record: any) => {
           setSelectionListId(record?.selectionlist || null);
 
           // Adjust the type of the "data" field based on the selected template

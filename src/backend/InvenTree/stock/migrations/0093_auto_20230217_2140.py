@@ -4,14 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0092_alter_stockitem_updated')]
+
+    dependencies = [
+        ('stock', '0092_alter_stockitem_updated'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
             name='stocklocation',
-            options={
-                'verbose_name': 'Stock Location',
-                'verbose_name_plural': 'Stock Locations',
-            },
-        )
+            options={'verbose_name': 'Stock Location', 'verbose_name_plural': 'Stock Locations'},
+        ),
     ]

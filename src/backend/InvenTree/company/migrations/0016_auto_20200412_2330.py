@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('company', '0015_company_is_manufacturer')]
+
+    dependencies = [
+        ('company', '0015_company_is_manufacturer'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='company',
             name='is_manufacturer',
-            field=models.BooleanField(
-                default=False, help_text='Does this company manufacture parts?'
-            ),
-        )
+            field=models.BooleanField(default=False, help_text='Does this company manufacture parts?'),
+        ),
     ]

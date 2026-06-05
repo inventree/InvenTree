@@ -1,7 +1,4 @@
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType, UserRoles } from '@lib/index';
 import { t } from '@lingui/core/macro';
-import { openContextModal } from '@mantine/modals';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
@@ -14,8 +11,12 @@ import {
   IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
+
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType, UserRoles } from '@lib/index';
+import { openContextModal } from '@mantine/modals';
+import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useLocalState } from '../states/LocalState';
 import { useGlobalSettingsState } from '../states/SettingsStates';

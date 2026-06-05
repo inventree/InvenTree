@@ -1,6 +1,7 @@
-import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+
+import type { TableFilter } from '@lib/types/Filters';
 import { PartListTable } from './PartTable';
 
 /**

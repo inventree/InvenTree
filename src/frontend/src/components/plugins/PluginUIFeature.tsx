@@ -64,7 +64,7 @@ export const getPluginTemplateEditor = (
   func: PluginUIFuncWithoutInvenTreeContextType<TemplateEditorUIFeature>,
   template: TemplateI
 ) =>
-  forwardRef((_props, ref) => {
+  forwardRef((props, ref) => {
     const elRef = useRef<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | undefined>(undefined);
 
@@ -133,7 +133,7 @@ export const getPluginTemplatePreview = (
   func: PluginUIFuncWithoutInvenTreeContextType<TemplatePreviewUIFeature>,
   template: TemplateI
 ) =>
-  forwardRef((_props, ref) => {
+  forwardRef((props, ref) => {
     const elRef = useRef<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | undefined>(undefined);
 

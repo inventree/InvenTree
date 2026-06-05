@@ -37,7 +37,7 @@ export const useStoredTableState = create<StoredTableStateProps>()(
     (set, get) => ({
       pageSize: DEFAULT_PAGE_SIZE,
       setPageSize: (size: number) => {
-        set((_state) => ({
+        set((state) => ({
           pageSize: size
         }));
       },

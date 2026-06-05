@@ -4,10 +4,10 @@ import hashlib
 import logging
 
 from django.db import migrations
-
 from jinja2 import Template
 
 from InvenTree.helpers import normalize
+
 
 logger = logging.getLogger('inventree')
 
@@ -18,12 +18,14 @@ def update_bom_item(apps, schema_editor):
     The 'validated' field denotes whether this individual BomItem has been validated,
     which previously was calculated on the fly (which was very expensive).
     """
+
     BomItem = apps.get_model('part', 'bomitem')
     InvenTreeSetting = apps.get_model('common', 'inventreesetting')
 
     n = BomItem.objects.count()
 
     if n > 0:
+
         for item in BomItem.objects.all():
             """For each item, we need to re-calculate the "checksum", based on the *old* routine.
             Note that as we cannot access the ORM models, we have to do this "by hand"
@@ -68,7 +70,8 @@ def update_bom_item(apps, schema_editor):
             """
 
             if item.validated:
-                new_hash = hashlib.md5(b'')
+
+                new_hash = hashlib.md5(''.encode())
 
                 components = [
                     item.part.pk,
@@ -78,7 +81,7 @@ def update_bom_item(apps, schema_editor):
                     item.optional,
                     item.inherited,
                     item.consumable,
-                    item.allow_variants,
+                    item.allow_variants
                 ]
 
                 for component in components:
@@ -92,8 +95,14 @@ def update_bom_item(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0101_bomitem_validated')]
+
+    dependencies = [
+        ('part', '0101_bomitem_validated'),
+    ]
 
     operations = [
-        migrations.RunPython(update_bom_item, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(
+            update_bom_item,
+            reverse_code=migrations.RunPython.noop
+        )
     ]

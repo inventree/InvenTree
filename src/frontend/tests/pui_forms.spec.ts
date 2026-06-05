@@ -144,7 +144,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Generate a unique supplier name
-  const supplierName = `Supplier ${Date.now()}`;
+  const supplierName = `Supplier ${new Date().getTime()}`;
 
   // Fill with good data
   await page
@@ -180,7 +180,7 @@ test('Forms - Keep form open option', async ({ browser }) => {
   await page.getByLabel('action-button-add-stock-location').click();
 
   // Generate unique location name
-  const locationName = `New Sublocation ${Date.now()}`;
+  const locationName = `New Sublocation ${new Date().getTime()}`;
 
   await page.getByLabel('text-field-name', { exact: true }).fill(locationName);
 

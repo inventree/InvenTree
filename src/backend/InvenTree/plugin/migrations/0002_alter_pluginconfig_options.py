@@ -4,14 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [('plugin', '0001_initial')]
+
+    dependencies = [
+        ('plugin', '0001_initial'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
             name='pluginconfig',
-            options={
-                'verbose_name': 'Plugin Configuration',
-                'verbose_name_plural': 'Plugin Configurations',
-            },
-        )
+            options={'verbose_name': 'Plugin Configuration', 'verbose_name_plural': 'Plugin Configurations'},
+        ),
     ]

@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('part', '0024_auto_20191118_2139')]
+
+    dependencies = [
+        ('part', '0024_auto_20191118_2139'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='part',
             name='units',
-            field=models.CharField(
-                blank=True,
-                default='',
-                help_text='Stock keeping units for this part',
-                max_length=20,
-            ),
-        )
+            field=models.CharField(blank=True, default='', help_text='Stock keeping units for this part', max_length=20),
+        ),
     ]

@@ -55,7 +55,7 @@ type BomDisplayMode = 'all' | 'different' | 'common';
 function getBomDeltas(primary: any, secondary: any): string[] {
   const deltas: string[] = [];
 
-  Object.entries(DELTA_FIELDS).forEach(([field, _label]) => {
+  Object.entries(DELTA_FIELDS).forEach(([field, label]) => {
     if (primary?.[field] != secondary?.[field]) {
       deltas.push(field);
     }
@@ -71,7 +71,7 @@ function BomTableRow({
 }>) {
   const partMatch = !!item.primary && !!item.secondary;
 
-  const _quantityMatch =
+  const quantityMatch =
     partMatch && item.primary.quantity == item.secondary.quantity;
 
   const deltas: any[] = useMemo(() => {
@@ -164,7 +164,7 @@ function BomTableRow({
           {rowIcon}
           {partMatch && deltas.length > 0 ? (
             <Stack gap='xs'>
-              {deltas.map((delta, _index) => (
+              {deltas.map((delta, index) => (
                 <Group key={delta.field} gap='xs' justify='space-between'>
                   <Text size='xs'>{delta.label}</Text>
                   <Text size='xs'>{delta.primaryValue ?? '-'}</Text>
@@ -228,7 +228,7 @@ export function BomCompareDrawer({
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
 
-  const [_searchParam, setSearchParams] = useSearchParams();
+  const [searchParam, setSearchParams] = useSearchParams();
 
   // Fetch entire BOM for the part
   const primaryBom = useQuery({

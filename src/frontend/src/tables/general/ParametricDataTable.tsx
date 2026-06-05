@@ -67,7 +67,8 @@ function ParameterCell({
 
   if (
     template.units &&
-    parameter?.data_numeric &&
+    parameter &&
+    parameter.data_numeric &&
     parameter.data_numeric != parameter.data
   ) {
     const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });

@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('stock', '0082_alter_stockitem_link')]
+
+    dependencies = [
+        ('stock', '0082_alter_stockitem_link'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='stocklocation',
             name='icon',
-            field=models.CharField(
-                blank=True,
-                help_text='Icon (optional)',
-                max_length=100,
-                verbose_name='Icon',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Icon (optional)', max_length=100, verbose_name='Icon'),
+        ),
     ]

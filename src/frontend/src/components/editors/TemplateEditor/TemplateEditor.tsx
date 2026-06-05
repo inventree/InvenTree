@@ -1,7 +1,3 @@
-import { Boundary } from '@lib/components/Boundary';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -28,6 +24,11 @@ import {
 import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { Boundary } from '@lib/components/Boundary';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../App';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
@@ -287,7 +288,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             }}
           >
             <Tabs.List>
-              {editors.map((Editor, _index) => {
+              {editors.map((Editor, index) => {
                 return (
                   <Tabs.Tab
                     key={Editor.key}

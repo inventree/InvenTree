@@ -1,9 +1,10 @@
-import { StylishText } from '@lib/components/StylishText';
-import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { Center, Loader, Stack } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import { useMemo } from 'react';
+
+import { StylishText } from '@lib/components/StylishText';
+import { ModelType } from '@lib/enums/ModelType';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { getStatusCodeLabel } from '../render/StatusRenderer';
 
