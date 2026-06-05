@@ -174,7 +174,7 @@ test('Plugins - Panels', async ({ browser }) => {
 
   // Check out each of the plugin panels
   await loadTab(page, 'Broken Panel');
-  await page.getByText('Error occurred while loading plugin content').waitFor();
+  await page.getByText('Error Loading Plugin Content').waitFor();
   await loadTab(page, 'Dynamic Panel');
   await page.getByText('Instance ID: 69');
   await page
