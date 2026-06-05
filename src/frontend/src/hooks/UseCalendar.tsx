@@ -123,14 +123,20 @@ export default function useCalendar({
     }
   });
 
-  // Navigate to the previous month
+  // Navigate to the previous month (move start date back by 1 month)
   const prevMonth = useCallback(() => {
-    ref.current?.getApi().prev();
+    const api = ref.current?.getApi();
+    if (api) {
+      api.gotoDate(dayjs(api.getDate()).subtract(1, 'month').toDate());
+    }
   }, [ref]);
 
-  // Navigate to the next month
+  // Navigate to the next month (move start date forward by 1 month)
   const nextMonth = useCallback(() => {
-    ref.current?.getApi().next();
+    const api = ref.current?.getApi();
+    if (api) {
+      api.gotoDate(dayjs(api.getDate()).add(1, 'month').toDate());
+    }
   }, [ref]);
 
   // Navigate to the current month

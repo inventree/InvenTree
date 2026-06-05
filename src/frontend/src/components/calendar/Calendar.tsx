@@ -6,6 +6,7 @@ import type {
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import multiMonthPlugin from '@fullcalendar/multimonth';
 import FullCalendar from '@fullcalendar/react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -111,10 +112,15 @@ export default function Calendar({
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
       if (state.ref?.current) {
-        const api = state.ref.current.getApi();
+        // Show the starting month of the view (advance 15 days past any padding days)
+        const viewStart = new Date(dateInfo.start);
+        viewStart.setDate(viewStart.getDate() + 15);
+        const startMonthLabel = new Intl.DateTimeFormat(calendarLocale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(viewStart);
 
-        // Update calendar state
-        state.setMonthName(api.view.title);
+        state.setMonthName(startMonthLabel);
         state.setStartDate(dateInfo.start);
         state.setEndDate(dateInfo.end);
       }
@@ -122,7 +128,7 @@ export default function Calendar({
       // Pass the dates set to the parent component
       calendarProps.datesSet?.(dateInfo);
     },
-    [calendarProps.datesSet, state.ref, state.setMonthName]
+    [calendarLocale, calendarProps.datesSet, state.ref, state.setMonthName]
   );
 
   const wrappedEventContent = useCallback(
@@ -248,8 +254,16 @@ export default function Calendar({
           <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView='dayGridMonth'
+            plugins={[dayGridPlugin, multiMonthPlugin, interactionPlugin]}
+            initialView='scrollYear'
+            views={{
+              scrollYear: {
+                type: 'multiMonth',
+                duration: { months: 12 }
+              }
+            }}
+            multiMonthMaxColumns={1}
+            height='calc(100vh - 160px)'
             locales={allLocales}
             locale={calendarLocale}
             firstDay={Number.parseInt(
