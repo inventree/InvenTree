@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["build", "paths-filter"]
-    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -174,7 +174,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["build", "paths-filter"]
-    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     strategy:
       fail-fast: false
       matrix:
