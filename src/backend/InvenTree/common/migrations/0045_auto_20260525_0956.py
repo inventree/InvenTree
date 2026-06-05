@@ -122,7 +122,7 @@ class Migration(migrations.Migration):
 
     # Ensure that each app which supports 'notes' is up-to-date first
     dependencies = [
-        ("build", "0058_buildline_consumed"),
+        ("build", "0059_build_tags"),
         ("common", "0044_note"),
         ("company", "0079_auto_20260212_1054"),
         ("order", "0119_transferorderlineitem_line_int"),

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("build", "0058_buildline_consumed"),
+        ("build", "0059_build_tags"),
         ("common", "0046_remove_notesimage_model_id_and_more")
     ]
 
