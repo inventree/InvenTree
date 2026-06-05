@@ -6,7 +6,6 @@ import type {
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import multiMonthPlugin from '@fullcalendar/multimonth';
 import FullCalendar from '@fullcalendar/react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -41,7 +40,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -119,16 +117,10 @@ export default function Calendar({
     [state.selectMonth]
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
   useEffect(() => {
     // Select initial month on first calendar render
     state.ref?.current?.getApi()?.gotoDate(new Date());
   }, []);
-
-  // Disconnect the observer when the component unmounts
-  useEffect(() => () => observerRef.current?.disconnect(), []);
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
@@ -149,49 +141,6 @@ export default function Calendar({
 
       // Pass the dates set to the parent component
       calendarProps.datesSet?.(dateInfo);
-
-      // After FullCalendar has re-rendered its month grid, set up an
-      // IntersectionObserver on each .fc-multimonth-month element. Using the
-      // FullCalendar scroller as the root means we detect visibility within
-      // the calendar's own scroll container (not the page viewport).
-      requestAnimationFrame(() => {
-        observerRef.current?.disconnect();
-
-        const container = containerRef.current;
-        if (!container) return;
-
-        const scrollRoot =
-          container.querySelector<HTMLElement>(
-            '.fc-scroller-liquid-absolute'
-          ) ?? container.querySelector<HTMLElement>('.fc-scroller');
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              // Stop watching once the month is seen — one trigger is enough
-              observer.unobserve(entry.target);
-              const firstDay = (
-                entry.target as HTMLElement
-              ).querySelector<HTMLElement>('[data-date]');
-              if (firstDay?.dataset.date) {
-                state.extendFetchRange(new Date(firstDay.dataset.date));
-              }
-            });
-          },
-          {
-            root: scrollRoot ?? null,
-            // Prefetch 300 px before the month scrolls fully into view
-            rootMargin: '300px 0px',
-            threshold: 0
-          }
-        );
-
-        observerRef.current = observer;
-        container
-          .querySelectorAll('.fc-multimonth-month')
-          .forEach((el) => observer.observe(el));
-      });
     },
     [
       calendarLocale,
@@ -199,8 +148,7 @@ export default function Calendar({
       state.ref,
       state.setMonthName,
       state.setStartDate,
-      state.setEndDate,
-      state.extendFetchRange
+      state.setEndDate
     ]
   );
 
@@ -335,20 +283,19 @@ export default function Calendar({
             )}
           </Group>
         </Group>
-        <Box pos='relative' ref={containerRef}>
+        <Box pos='relative'>
           <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
-            plugins={[dayGridPlugin, multiMonthPlugin, interactionPlugin]}
-            initialView={isScrollView ? 'scrollYear' : 'dayGridMonth'}
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView={isScrollView ? 'scrollMultiMonth' : 'dayGridMonth'}
             {...(isScrollView && {
               views: {
-                scrollYear: {
-                  type: 'multiMonth',
+                scrollMultiMonth: {
+                  type: 'dayGrid',
                   duration: { months: horizonMonths }
                 }
               },
-              multiMonthMaxColumns: 1,
               height: 'calc(100vh - 160px)'
             })}
             locales={allLocales}
