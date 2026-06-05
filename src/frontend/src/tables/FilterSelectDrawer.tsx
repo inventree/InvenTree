@@ -621,7 +621,7 @@ export function FilterSelectDrawer({
                 variant='light'
                 onClick={() => setSaving(true)}
               >
-                <Text>{t`Save current filters`}</Text>
+                <Text>{t`Save Filters`}</Text>
               </Button>
             ))}
         </Stack>
