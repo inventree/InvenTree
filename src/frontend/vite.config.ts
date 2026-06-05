@@ -47,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
       }),
       istanbul({
         include: ['src/*', 'lib/*'],
-        exclude: ['node_modules', 'test/'],
+        exclude: ['node_modules/', 'playwright/', 'tests/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
       }),

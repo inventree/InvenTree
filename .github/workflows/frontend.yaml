@@ -1,0 +1,306 @@
+# Playwright testing for frontend code
+# Runs the following tests:
+# - Playwright tests in Firefox (against compiled frontend code)
+# - Playwright tests in Chromium (coverage enabled, against vite frontend code)
+# - Build frontend code and upload as artifact
+
+name: Frontend
+
+on:
+  push:
+    branches-ignore: ["l10*"]
+  pull_request:
+    branches-ignore: ["l10*"]
+
+env:
+  python_version: 3.11
+  node_version: 24
+  # The OS version must be set per job
+  server_start_sleep: 60
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INVENTREE_DB_ENGINE: postgresql
+  INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_HOST: "127.0.0.1"
+  INVENTREE_DB_PORT: 5432
+  INVENTREE_DB_USER: inventree_user
+  INVENTREE_DB_PASSWORD: inventree_password
+  INVENTREE_DEBUG: true
+  INVENTREE_PLUGINS_ENABLED: false
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+  INVENTREE_SITE_URL: http://localhost:8000
+
+permissions:
+  contents: read
+
+jobs:
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      force: ${{ steps.force.outputs.force }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'src/frontend/**'
+      - name: Is CI being forced?
+        run: echo "force=true" >> $GITHUB_OUTPUT
+        id: force
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'dependency') ||
+          contains(github.event.pull_request.labels.*.name, 'full-run')
+
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
+      - name: Write version file - SHA
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
+      - name: Zip frontend
+        run: |
+          cd src/backend/InvenTree/web/static
+          zip -r frontend-build.zip web/ web/.vite
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        with:
+          name: frontend-build
+          path: src/backend/InvenTree/web/static/web
+          include-hidden-files: true
+
+  firefox:
+    name: Tests [Firefox ${{ matrix.shard }} / 2]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: ["build", "paths-filter"]
+    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: inventree
+          POSTGRES_USER: inventree_user
+          POSTGRES_PASSWORD: inventree_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      VITE_COVERAGE: false
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+          install: true
+          update: true
+          apt-dependency: gettext postgresql-client libpq-dev
+          pip-dependency: psycopg2
+      - name: Set up test data
+        run: |
+          invoke dev.setup-test -iv
+          invoke int.rebuild-thumbnails
+      - name: Install dependencies
+        run: invoke int.frontend-compile --extract
+      - name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # pin@v4.3.0
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: cd src/frontend && npx playwright install --with-deps
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: cd src/frontend && npx playwright install-deps
+      - name: Install Sample Plugin
+        run: |
+          pip install -U inventree-plugin-creator
+          create-inventree-plugin --default
+          cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
+      - name: Run Playwright tests
+        id: tests
+        run: |
+          cd src/frontend
+          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
+          invoke static
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox --shard=${{ matrix.shard }}/2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        with:
+          name: playwright-report-firefox-${{ matrix.shard }}
+          path: src/frontend/playwright-report/
+          retention-days: 14
+
+  chromium:
+    name: Tests [Chromium ${{ matrix.shard }} / 4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: ["build", "paths-filter"]
+    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: inventree
+          POSTGRES_USER: inventree_user
+          POSTGRES_PASSWORD: inventree_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      COVERAGE: true
+      VITE_COVERAGE: true
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+          install: true
+          update: true
+          apt-dependency: gettext postgresql-client libpq-dev
+          pip-dependency: psycopg2
+      - name: Set up test data
+        run: |
+          invoke dev.setup-test -iv
+          invoke int.rebuild-thumbnails
+      - name: Install dependencies
+        run: invoke int.frontend-compile --extract
+      - name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # pin@v4.3.0
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: cd src/frontend && npx playwright install --with-deps
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: cd src/frontend && npx playwright install-deps
+      - name: Install Sample Plugin
+        run: |
+          pip install -U inventree-plugin-creator
+          create-inventree-plugin --default
+          cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
+      - name: Playwright [${{ matrix.shard }} / 4]
+        id: tests
+        run: |
+          cd src/frontend
+          npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
+      - name: Playwright Report [${{ matrix.shard }} / 4]
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        with:
+          name: playwright-report-chromium-${{ matrix.shard }}
+          path: src/frontend/playwright-report/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        id: coverage-upload
+        if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
+        with:
+          name: coverage-${{ matrix.shard }}
+          path: src/frontend/.nyc_output/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
+  # Recombine the coverage reports from the 4 shards, and upload to Codecov
+  coverage:
+    name: Merge coverage reports and upload to Codecov
+    runs-on: ubuntu-latest
+    needs: chromium
+    timeout-minutes: 30
+    if: always()
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+          install: false
+          update: false
+
+      - name: Download Coverage Artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
+        with:
+          pattern: coverage-*
+          path: all-coverage/
+          merge-multiple: true
+
+      - name: Merge Coverage Reports
+        run: |
+          mkdir -p .nyc_output
+          cp all-coverage/*.json .nyc_output/ 2>/dev/null || true
+          npx nyc merge .nyc_output merged-coverage.json
+          npx nyc report \
+            --tempdir .nyc_output \
+            --reporter=lcov \
+            --reporter=text-summary \
+            --report-dir ./coverage \
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: web
+          files: ./coverage/lcov.info
