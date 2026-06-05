@@ -43,8 +43,10 @@ component_management:
       name: Backend Apps
       paths:
         - src/backend/InvenTree/build/**
+        - src/backend/InvenTree/common/**
         - src/backend/InvenTree/company/**
         - src/backend/InvenTree/data_exporter/**
+        - src/backend/InvenTree/generic/**
         - src/backend/InvenTree/importer/**
         - src/backend/InvenTree/machine/**
         - src/backend/InvenTree/order/**
