@@ -72,7 +72,8 @@ component_management:
     - component_id: web
       name: Frontend
       paths:
-        - src/frontend/**
+        - src/frontend/lib/**
+        - src/frontend/src/**
       statuses:
         - type: project
           target: 68% # 90%
