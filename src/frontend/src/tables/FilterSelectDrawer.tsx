@@ -515,7 +515,7 @@ export function FilterSelectDrawer({
 
   return (
     <Drawer
-      size='sm'
+      size='lg'
       position='right'
       withCloseButton={true}
       opened={opened}
