@@ -48,17 +48,27 @@ async function setupCoverageCollection(context: BrowserContext) {
 }
 
 async function collectCoverageFromContext(context: BrowserContext) {
-  for (const page of context.pages()) {
-    try {
-      await page.evaluate(() =>
-        (window as any).collectIstanbulCoverage?.(
-          JSON.stringify((window as any).__coverage__)
-        )
-      );
-    } catch {
-      // page may already be closed
-    }
-  }
+  await Promise.allSettled(
+    context.pages().map(async (page) => {
+      try {
+        await Promise.race([
+          page.evaluate(() =>
+            (window as any).collectIstanbulCoverage?.(
+              JSON.stringify((window as any).__coverage__)
+            )
+          ),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Coverage collection timeout')),
+              2000
+            )
+          )
+        ]);
+      } catch {
+        // page may already be closed or script execution can be blocked during teardown
+      }
+    })
+  );
 }
 
 export const test = baseTest.extend<{}, {}>({
@@ -73,9 +83,13 @@ export const test = baseTest.extend<{}, {}>({
         await setupCoverageCollection(page.context());
         return page;
       };
-      await use(browser);
-      for (const context of browser.contexts()) {
-        await collectCoverageFromContext(context);
+      try {
+        await use(browser);
+      } finally {
+        (browser as any).newPage = origNewPage;
+        for (const context of browser.contexts()) {
+          await collectCoverageFromContext(context);
+        }
       }
     },
     { scope: 'worker' }
