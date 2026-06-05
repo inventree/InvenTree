@@ -255,16 +255,22 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
+    // Include all columns (even prop-hidden ones) so useDataTableColumns always
+    // has the full ordered list. This prevents dynamic columns (e.g. ones whose
+    // hidden flag depends on async data) from being treated as brand-new columns
+    // after load, which would place them after the ACTIONS column.
+    let cols: TableColumn[] = [...columns];
 
     cols = cols.map((col) => {
-      // If the column is *not* switchable, it is always visible
-      // Otherwise, check if it is "default hidden"
-
+      // Prop-level hidden takes priority (e.g. hidden: !hasTrackedItems).
+      // For switchable columns, visibility is driven by tableState.hiddenColumns.
+      // Non-switchable columns are always visible (unless hidden by props).
       const hidden: boolean =
-        col.switchable == false
-          ? false
-          : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
+        col.hidden === true
+          ? true
+          : col.switchable == false
+            ? false
+            : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
       // Wrap the render function with CopyableCell if copyable is enabled
       const originalRender = col.render;
@@ -382,11 +388,17 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     getInitialValueInEffect: false
   });
 
-  // Reset column ordering and custom widths when the component is mounted
+  // Reset column ordering when the column set changes (columns added/removed).
   // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
   useEffect(() => {
-    tableColumns.setColumnsOrder(dataColumns.map((col: any) => col.accessor));
-  }, [tableColumnNames]);
+    const savedOrder = tableColumns.columnsOrder.join(',');
+
+    if (savedOrder != tableColumnNames) {
+      // This is covering the edge case where the column order is not updated automatically
+      tableColumns.resetColumnsOrder();
+      tableColumns.setColumnsOrder(tableColumnNames.split(','));
+    }
+  }, [tableColumnNames, tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
