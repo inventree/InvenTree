@@ -5,6 +5,7 @@ import {
   IconBox,
   IconBuildingFactory2,
   IconCurrencyDollar,
+  IconDeviceDesktop,
   IconFileAnalytics,
   IconFingerprint,
   IconList,
@@ -54,10 +55,6 @@ export default function SystemSettings() {
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
                 'INVENTREE_RESTRICT_ABOUT',
-                'DISPLAY_FULL_NAMES',
-                'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON',
-                'CALENDAR_HORIZON_MONTHS',
                 'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
@@ -125,6 +122,21 @@ export default function SystemSettings() {
               'BARCODE_GENERATION_PLUGIN',
               'BARCODE_STORE_RESULTS',
               'BARCODE_RESULTS_MAX_NUM'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'display',
+        label: t`Display`,
+        icon: <IconDeviceDesktop />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
+              'WEEK_STARTS_ON',
+              'CALENDAR_HORIZON_MONTHS'
             ]}
           />
         )
