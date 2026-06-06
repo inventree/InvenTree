@@ -158,6 +158,23 @@ Select the "table filters" button to open the filter selection menu
 
 Table filters are saved across browser sessions, allowing users to maintain their preferred filter settings when returning to the particular table view.
 
+#### Column Filters
+
+Many table columns expose an inline filter icon directly in the column header, providing a quick way to filter by that column without opening the full filter drawer. Columns that support filtering display a small filter icon alongside the column title. The icon is highlighted when a filter for that column is currently active, giving an at-a-glance indication of which columns have active filters.
+
+Clicking the icon opens a compact popover anchored to the column header:
+
+{{ image("concepts/ui_table_column_filter_popover.png", "Column Filter Popover") }}
+
+**Single-filter columns** — for columns linked to one filter (e.g. *Active*, *Has IPN*, *Status*), selecting a value immediately applies the filter and the popover closes automatically.
+
+**Range columns** — for columns that represent a range concept (e.g. *Start Date*, *Target Date*, *Creation Date*), the popover stays open and presents multiple controls — for example *before* and *after* date pickers — so both bounds can be set in a single interaction.
+
+Once a filter is active, the popover shows a badge with the current value and a remove button (red ×) instead of the value picker. Clicking the × clears only that column's filter.
+
+!!! info "Column filters and the filter drawer share the same state"
+    Filters applied via a column popover appear immediately in the filter drawer's active-filter list, and filters added through the drawer are reflected in the column icons. Clearing all filters from the drawer also removes any filters set via column popovers.
+
 #### Saved Filter Groups
 
 Frequently used combinations of filters can be saved as a named *filter group*, allowing them to be quickly recalled later without having to re-add each filter individually.
