@@ -13,6 +13,7 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
+import { TagsField } from './CommonFields';
 
 /**
  * Field set for SupplierPart instance
@@ -82,6 +83,7 @@ export function useSupplierPartFields({
         icon: <IconHash />
       },
       description: {},
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -117,6 +119,7 @@ export function useManufacturerPartFields() {
       },
       MPN: {},
       description: {},
+      tags: TagsField({}),
       link: {}
     };
 
@@ -143,6 +146,7 @@ export function companyFields(): ApiFormFieldSet {
     email: {
       icon: <IconAt />
     },
+    tags: TagsField({}),
     tax_id: {},
     is_supplier: {},
     is_manufacturer: {},

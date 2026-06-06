@@ -1,10 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 499
+INVENTREE_API_VERSION = 501
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v501 -> 2026-06-05 : https://github.com/inventree/InvenTree/pull/12093
+    - Adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
+
+v500 -> 2026-06-03 : https://github.com/inventree/InvenTree/pull/12077
+    - Adds "tags" fields to multiple new model types
+    - Adds /api/tag/ endpoint for fetching tags
+    - Enable filtering various model types by tags
 
 v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
     - Fixes search field issues on the BarcodeScanHistory API endpoint
