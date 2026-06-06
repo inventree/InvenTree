@@ -182,7 +182,7 @@ function MultiApiFilterElement({
   );
 }
 
-function FilterElement({
+export function FilterElement({
   filterName,
   filterProps,
   valueOptions,
@@ -289,6 +289,13 @@ function FilterElement({
   }
 }
 
+function getFilterType(filter: TableFilter): TableFilterType {
+  if (filter.type) return filter.type;
+  if (filter.apiUrl && filter.model) return 'api';
+  if (filter.choices || filter.choiceFunction) return 'choice';
+  return 'boolean';
+}
+
 function FilterAddGroup({
   filterSet,
   availableFilters
@@ -330,19 +337,6 @@ function FilterAddGroup({
 
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
-
-  // Determine the filter "type" - if it is not supplied
-  const getFilterType = (filter: TableFilter): TableFilterType => {
-    if (filter.type) {
-      return filter.type;
-    } else if (filter.apiUrl && filter.model) {
-      return 'api';
-    } else if (filter.choices || filter.choiceFunction) {
-      return 'choice';
-    } else {
-      return 'boolean';
-    }
-  };
 
   // Extract filter definition
   const filterProps: TableFilter | undefined = useMemo(() => {
@@ -474,6 +468,82 @@ function SavedFilterSets({
           </Paper>
         ))}
       </Stack>
+    </Stack>
+  );
+}
+
+/*
+ * Popover content rendered when the user clicks a column's inline filter icon.
+ * Shows the current filter value (if active) with a remove button, then the
+ * value-picker so the user can apply or change the filter.
+ */
+export function ColumnFilterPopover({
+  filter,
+  filterSet,
+  close
+}: Readonly<{
+  filter: TableFilter;
+  filterSet: FilterSetState;
+  close: () => void;
+}>) {
+  const activeFilter = useMemo(
+    () => filterSet.activeFilters.find((f) => f.name === filter.name),
+    [filter.name, filterSet.activeFilters]
+  );
+
+  const filterProps = useMemo(
+    () => ({ ...filter, type: getFilterType(filter) }),
+    [filter]
+  );
+
+  const valueOptions = useMemo(
+    () => getTableFilterOptions(filterProps),
+    [filterProps]
+  );
+
+  const onValueChange = useCallback(
+    (value: string | null, displayValue?: any) => {
+      if (!value) return;
+      const newFilter: TableFilter = {
+        ...filterProps,
+        value,
+        displayValue:
+          displayValue ?? valueOptions.find((v) => v.value === value)?.label
+      };
+      const others = filterSet.activeFilters.filter(
+        (f) => f.name !== filter.name
+      );
+      filterSet.setActiveFilters([...others, newFilter]);
+      close();
+    },
+    [filter.name, filterProps, filterSet, valueOptions, close]
+  );
+
+  const removeFilter = useCallback(() => {
+    filterSet.setActiveFilters(
+      filterSet.activeFilters.filter((f) => f.name !== filter.name)
+    );
+    close();
+  }, [filter.name, filterSet, close]);
+
+  return (
+    <Stack gap='xs' p='xs'>
+      {activeFilter && (
+        <Group justify='space-between' wrap='nowrap'>
+          <Badge color='blue'>
+            {activeFilter.displayValue ?? activeFilter.value}
+          </Badge>
+          <Button size='xs' color='red' variant='light' onClick={removeFilter}>
+            {t`Remove`}
+          </Button>
+        </Group>
+      )}
+      <FilterElement
+        filterName={filter.name}
+        filterProps={filterProps}
+        valueOptions={valueOptions}
+        onValueChange={onValueChange}
+      />
     </Stack>
   );
 }

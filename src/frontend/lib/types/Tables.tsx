@@ -84,7 +84,7 @@ export type TableState = {
  * @param editable - Whether the value of this column can be edited
  * @param definition - Optional field definition for the column
  * @param render - A custom render function
- * @param filter - A custom filter function
+ * @param filter - Filter name (string) to look up from tableFilters and attach an inline icon, or a custom render function for the filter popover
  * @param filtering - Whether the column is filterable
  * @param width - The width of the column
  * @param minWidth - The minimum width of the column
@@ -109,7 +109,7 @@ export type TableColumnProps<T = any> = {
   editable?: boolean;
   definition?: ApiFormFieldType;
   render?: (record: T, index?: number) => any;
-  filter?: any;
+  filter?: string | (({ close }: { close: () => void }) => ReactNode);
   filtering?: boolean;
   width?: number;
   minWidth?: string | number;

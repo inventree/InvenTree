@@ -564,6 +564,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
     sortable: true,
     title: t`Project Code`,
     hidden: !enabled,
+    filter: 'project_code',
     render: (record: any) => {
       const project_code = resolveItem(
         record,
@@ -584,6 +585,7 @@ export function StatusColumn(props: StatusColumnProps): TableColumn {
 
   return {
     accessor: 'status',
+    filter: 'status',
     sortable: true,
     switchable: true,
     minWidth: '50px',
@@ -665,6 +667,7 @@ export function ResponsibleColumn(props: TableColumnProps): TableColumn {
     accessor: 'responsible_detail',
     ordering: 'responsible',
     title: t`Responsible`,
+    filter: 'responsible',
     ...props
   });
 }

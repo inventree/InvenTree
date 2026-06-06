@@ -38,6 +38,7 @@ import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
+import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -300,6 +301,21 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         };
       }
 
+      // col.filter can be:
+      //   string   → filter name; look it up in tableFilters and build inline popover
+      //   function → direct mantine-datatable render function (e.g. parametric columns)
+      //   undefined → no column filter
+      const namedFilter =
+        typeof col.filter === 'string'
+          ? filters.find((f) => f.name === col.filter)
+          : undefined;
+
+      const namedFilterActive = namedFilter
+        ? tableState.filterSet.activeFilters.some(
+            (f) => f.name === namedFilter.name
+          )
+        : false;
+
       return {
         ...col,
         hidden: hidden,
@@ -317,7 +333,19 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           return {
             minWidth: width
           };
-        }
+        },
+        ...(namedFilter
+          ? {
+              filtering: namedFilterActive,
+              filter: ({ close }: { close: () => void }) => (
+                <ColumnFilterPopover
+                  filter={namedFilter}
+                  filterSet={tableState.filterSet}
+                  close={close}
+                />
+              )
+            }
+          : {})
       };
     });
 
@@ -347,10 +375,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     return cols;
   }, [
     columns,
+    filters,
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords
+    tableState.selectedRecords,
+    tableState.filterSet.activeFilters
   ]);
 
   // Callback when column visibility is toggled
