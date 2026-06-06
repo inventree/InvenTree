@@ -274,6 +274,7 @@ export function FilterElement({
           label={brief ? undefined : t`Value`}
           placeholder={t`Select date value`}
           onChange={setDateValue}
+          popoverProps={{ withinPortal: false }}
         />
       );
     case 'choice':
