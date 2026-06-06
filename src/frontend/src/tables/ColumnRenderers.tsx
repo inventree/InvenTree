@@ -739,6 +739,7 @@ export function UpdatedAtColumn(props: TableColumnProps): TableColumn {
     accessor: 'updated_at',
     title: t`Updated`,
     defaultVisible: false,
+    filter: ['updated_before', 'updated_after'],
     extra: { showTime: true },
     ...props
   });
