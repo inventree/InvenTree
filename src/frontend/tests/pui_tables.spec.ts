@@ -9,6 +9,41 @@ import {
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
+// Test filtering by "quick filter" actions (against table columns)
+test('Tables - Quick Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts/'
+  });
+
+  await clearTableFilters(page);
+
+  await page
+    .getByRole('button', { name: 'Part Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-active' }).click();
+  await page.getByRole('option', { name: 'Yes' }).click();
+
+  await page
+    .getByRole('button', { name: 'Part Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-locked' }).click();
+  await page.getByRole('option', { name: 'No' }).click();
+
+  await page
+    .getByRole('button', { name: 'IPN Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-has_ipn' }).click();
+  await page.getByRole('option', { name: 'Yes' }).click();
+
+  await page.getByRole('cell', { name: 'ENCAB' }).first().waitFor();
+});
+
 test('Tables - Filters', async ({ browser }) => {
   // Head to the "build order list" page
   const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });

@@ -249,6 +249,7 @@ export function FilterElement({
           label={brief ? undefined : t`Value`}
           value={textValue}
           placeholder={t`Enter filter value`}
+          aria-label={`text-filter-${filterName}`}
           rightSection={
             <ActionIcon
               aria-label='apply-text-filter'
@@ -271,6 +272,7 @@ export function FilterElement({
     case 'date':
       return (
         <DateInput
+          aria-label={`date-filter-${filterName}`}
           label={brief ? undefined : t`Value`}
           placeholder={t`Select date value`}
           onChange={setDateValue}
@@ -283,6 +285,7 @@ export function FilterElement({
       return (
         <Select
           data={valueOptions}
+          aria-label={`choice-filter-${filterName}`}
           searchable={filterProps.type == 'choice'}
           label={brief ? undefined : t`Value`}
           withScrollArea={false}
