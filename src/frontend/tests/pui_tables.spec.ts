@@ -81,7 +81,10 @@ test('Tables - Filters', async ({ browser }) => {
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByRole('combobox', { name: 'Filter' }).click();
   await page.getByRole('option', { name: 'Outstanding' }).click();
-  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  await page
+    .getByRole('combobox', { name: 'choice-filter-outstanding' })
+    .click();
   await page.getByRole('option', { name: 'Yes' }).click();
 
   // Save the filter group
