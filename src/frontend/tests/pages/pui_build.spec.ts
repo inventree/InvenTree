@@ -557,7 +557,9 @@ test('Build Order - Consume Stock', async ({ browser }) => {
   // Issue the order
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Order issued').waitFor();
+
+  await page.getByText('Production').first().waitFor();
+  await page.getByRole('button', { name: 'Complete Order' }).waitFor();
 
   // Navigate to the "required parts" tab - and auto-allocate stock
   await loadTab(page, 'Required Parts');

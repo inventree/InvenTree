@@ -719,7 +719,6 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
   // Issue the order
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Order issued').waitFor();
   await page.getByText('Issued', { exact: true }).first().waitFor();
 
   await loadTab(page, 'Line Items');

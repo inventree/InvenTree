@@ -13,6 +13,19 @@ import InvenTree.ready
 logger = structlog.get_logger('inventree')
 
 
+def plugin_setting_overrides(slug: str) -> dict:
+    """Return a dictionary of plugin setting overrides for the given plugin slug.
+
+    These values are set via environment variables or configuration file.
+    """
+    from django.conf import settings
+
+    if hasattr(settings, 'PLUGIN_SETTING_OVERRIDES'):
+        return settings.PLUGIN_SETTING_OVERRIDES.get(slug, {}) or {}
+
+    return {}
+
+
 def global_setting_overrides() -> dict:
     """Return a dictionary of global settings overrides.
 
