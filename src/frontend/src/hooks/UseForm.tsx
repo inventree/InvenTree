@@ -189,3 +189,37 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
 
   return useApiFormModal(deleteProps);
 }
+
+export function useBulkDeleteApiFormModal({
+  items,
+  ...props
+}: BulkEditApiFormModalProps) {
+  const bulkDeleteProps = useMemo<ApiFormModalProps>(
+    () => ({
+      ...props,
+      method: 'DELETE',
+      submitText: props.submitText ?? t`Delete`,
+      submitColor: props.submitColor ?? 'red',
+      successMessage:
+        props.successMessage === null
+          ? null
+          : (props.successMessage ?? t`Items Deleted`),
+      preFormContent: props.preFormContent ?? (
+        <Alert
+          color={'red'}
+        >{t`Are you sure you want to delete the selected items?`}</Alert>
+      ),
+      fields: {
+        ...props.fields,
+        items: {
+          hidden: true,
+          field_type: 'number',
+          value: items
+        }
+      }
+    }),
+    [props, items]
+  );
+
+  return useApiFormModal(bulkDeleteProps);
+}

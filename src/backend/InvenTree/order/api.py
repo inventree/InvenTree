@@ -6,6 +6,7 @@ from typing import cast
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -664,6 +665,7 @@ class PurchaseOrderLineItemMixin(SerializerContextMixin):
 
 class PurchaseOrderLineItemList(
     PurchaseOrderLineItemMixin,
+    BulkUpdateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ListCreateDestroyAPIView,
@@ -676,6 +678,36 @@ class PurchaseOrderLineItemList(
 
     filterset_class = PurchaseOrderLineItemFilter
     output_options = PurchaseOrderLineItemOutputOptions
+
+    def patch(self, request, *args, **kwargs):
+        """Bulk update PurchaseOrderLineItem objects."""
+        queryset = self.get_bulk_queryset(request)
+        queryset = self.filter_update_queryset(queryset, request)
+
+        self.validate_update(queryset, request)
+
+        instance_data = []
+
+        with transaction.atomic():
+            for instance in queryset:
+                data = request.data.copy()
+                data.pop('items', None)
+
+                data['order'] = instance.order.pk
+                data['part'] = instance.part.pk
+
+                serializer = self.get_serializer(instance, data=data, partial=True)
+                serializer.is_valid(raise_exception=True)
+
+                if serializer.validated_data.get('auto_pricing', True):
+                    serializer.instance.update_pricing()
+
+                instance_data.append(serializer.data)
+
+        return Response(
+            {'success': f'Updated {queryset.count()} items', 'items': instance_data},
+            status=200,
+        )
 
     def create(self, request, *args, **kwargs):
         """Create or update a new PurchaseOrderLineItem object."""

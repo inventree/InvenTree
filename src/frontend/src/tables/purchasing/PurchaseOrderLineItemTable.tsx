@@ -1,6 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
-import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
+import {
+  IconEdit,
+  IconFileArrowLeft,
+  IconSquareArrowRight,
+  IconTrash
+} from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -30,6 +35,8 @@ import {
   useReceiveLineItems
 } from '../../forms/PurchaseOrderForms';
 import {
+  useBulkDeleteApiFormModal,
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -331,6 +338,30 @@ export function PurchaseOrderLineItemTable({
     table: table
   });
 
+  const bulkEditLineItems = useBulkEditApiFormModal({
+    url: ApiEndpoints.purchase_order_line_list,
+    items: table.selectedRecords.map((record) => record.pk),
+    title: t`Bulk Edit Line Items`,
+    fields: {
+      purchase_price_currency: {},
+      project_code: {},
+      target_date: {},
+      auto_pricing: {},
+      destination: {},
+      notes: {}
+    },
+
+    onFormSuccess: table.refreshTable
+  });
+
+  const bulkDeleteLineItems = useBulkDeleteApiFormModal({
+    url: ApiEndpoints.purchase_order_line_list,
+    items: table.selectedIds,
+    title: 'Delete Line Items',
+    onFormSuccess: table.refreshTable,
+    table: table
+  });
+
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
   const orderPlaced: boolean = useMemo(() => {
@@ -410,6 +441,26 @@ export function PurchaseOrderLineItemTable({
         hidden={!editable || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
+        disabled={table.selectedRecords.length === 0}
+        key='bulk-edit-line-items'
+        tooltip={t`Edit Line Items`}
+        icon={<IconEdit />}
+        onClick={() => {
+          bulkEditLineItems.open();
+        }}
+        hidden={!editable || !user?.hasChangeRole(UserRoles.purchase_order)}
+      />,
+      <ActionButton
+        disabled={table.selectedRecords.length === 0}
+        key='delete-line-items'
+        tooltip={t`Delete Line Items`}
+        icon={<IconTrash color='red' />}
+        onClick={() => {
+          bulkDeleteLineItems.open();
+        }}
+        hidden={!editable || !user?.hasDeleteRole(UserRoles.purchase_order)}
+      />,
+      <ActionButton
         key='receive-items'
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
@@ -427,6 +478,8 @@ export function PurchaseOrderLineItemTable({
       {newLine.modal}
       {editLine.modal}
       {deleteLine.modal}
+      {bulkEditLineItems.modal}
+      {bulkDeleteLineItems.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.purchase_order_line_list)}
         tableState={table}
