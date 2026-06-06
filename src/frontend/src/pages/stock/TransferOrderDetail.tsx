@@ -1,12 +1,12 @@
-import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { type PanelType, TagsList, apiUrl } from '@lib/index';
+import { type PanelType, apiUrl } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconInfoCircle,
@@ -62,9 +62,7 @@ export default function TransferOrderDetail() {
   } = useInstance({
     endpoint: ApiEndpoints.transfer_order_list,
     pk: id,
-    params: {
-      tags: true
-    }
+    params: {}
   });
 
   const toStatus = useStatusCodes({ modelType: ModelType.transferorder });
@@ -235,21 +233,18 @@ export default function TransferOrderDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            {/* TODO: what image do we show for a Transfer Order? */}
-            {/* <DetailsImage
+        <Grid grow>
+          {/* TODO: what image do we show for a Transfer Order? */}
+          {/* <DetailsImage
                         appRole={UserRoles.transfer_order}
                         apiPath={ApiEndpoints.transfer_order_list}
                         src="/static/img/blank_image.png"
                         pk={order.pk}
                     /> */}
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={order} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={order.tags} />
-        </Stack>
+          <Grid.Col span={{ base: 12, sm: 8 }}>
+            <DetailsTable fields={tl} item={order} />
+          </Grid.Col>
+        </Grid>
         <DetailsTable fields={tr} item={order} />
         <DetailsTable fields={bl} item={order} />
         <DetailsTable fields={br} item={order} />
@@ -374,7 +369,6 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

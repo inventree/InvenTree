@@ -22,7 +22,6 @@ import {
   CompanyColumn,
   DescriptionColumn
 } from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -116,8 +115,7 @@ export function CompanyTable({
         name: 'is_customer',
         label: t`Customer`,
         description: t`Show companies which are customers`
-      },
-      TagsFilter({ modelType: ModelType.company })
+      }
     ];
   }, []);
 

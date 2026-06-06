@@ -208,3 +208,34 @@ class TransferOrderAdmin(admin.ModelAdmin):
         'project_code',
         'responsible',
     ]
+
+
+@admin.register(models.RepairOrder)
+class RepairOrderAdmin(admin.ModelAdmin):
+    """Admin class for the RepairOrder model."""
+
+    list_display = ['reference', 'customer', 'status', 'description']
+
+    search_fields = ['reference', 'customer__name', 'description']
+
+    autocomplete_fields = ['customer']
+
+
+@admin.register(models.RepairOrderLineItem)
+class RepairOrderLineItemAdmin(admin.ModelAdmin):
+    """Admin class for RepairOrderLineItem model."""
+
+    list_display = ['order', 'part', 'quantity']
+
+    search_fields = ['order__reference', 'part__name', 'part__IPN']
+
+    autocomplete_fields = ['order', 'part']
+
+
+@admin.register(models.RepairOrderAllocation)
+class RepairOrderAllocationAdmin(admin.ModelAdmin):
+    """Admin class for RepairOrderAllocation model."""
+
+    list_display = ['line', 'item', 'quantity']
+
+    autocomplete_fields = ['line', 'item']

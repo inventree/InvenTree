@@ -81,6 +81,66 @@ export function RenderReturnOrderLineItem(
 }
 
 /**
+ * Inline rendering of a single RepairOrder instance
+ */
+export function RenderRepairOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const customer = instance?.customer_detail || {};
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status_custom_key,
+        type: ModelType.repairorder
+      })}
+      image={customer.thumbnail || customer.image}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.repairorder, instance.pk)
+          : undefined
+      }
+    />
+  );
+}
+
+export function RenderRepairOrderLineItem(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      suffix={StatusRenderer({
+        status: instance.outcome,
+        type: ModelType.repairorderlineitem
+      })}
+    />
+  );
+}
+
+export function RenderRepairOrderAllocation({
+  instance
+}: Readonly<{
+  instance: any;
+}>): ReactNode {
+  const order = instance.order_detail || {};
+
+  return (
+    <RenderInlineModel
+      primary={order.reference}
+      suffix={<Text size='xs'>{`${t`Allocation`} ${instance.pk}`}</Text>}
+    />
+  );
+}
+
+/**
  * Inline rendering of a single SalesOrder instance
  */
 export function RenderSalesOrder(

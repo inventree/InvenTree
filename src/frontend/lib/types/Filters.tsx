@@ -41,7 +41,6 @@ export type TableFilter = {
   name: string;
   label?: string;
   description?: string;
-  placeholder?: string;
   type?: TableFilterType;
   choices?: TableFilterChoice[];
   choiceFunction?: () => TableFilterChoice[];
@@ -53,8 +52,6 @@ export type TableFilter = {
   apiFilter?: Record<string, any>;
   model?: ModelType;
   modelRenderer?: (instance: any) => string;
-  transform?: (item: any) => TableFilterChoice;
-  multi?: boolean;
 };
 
 /*

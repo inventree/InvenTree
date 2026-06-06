@@ -29,7 +29,6 @@ import {
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -162,8 +161,7 @@ export function ManufacturerPartTable({
         active: !manufacturerId,
         description: t`Show manufacturer parts for active manufacturers.`,
         type: 'boolean'
-      },
-      TagsFilter({ modelType: ModelType.manufacturerpart })
+      }
     ];
   }, [manufacturerId]);
 

@@ -208,6 +208,28 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.return_order_line_list,
     icon: 'return_orders'
   },
+  repairorder: {
+    label: () => t`Repair Order`,
+    label_multiple: () => t`Repair Orders`,
+    url_overview: '/sales/index/repairorders',
+    url_detail: '/sales/repair-order/:pk/',
+    api_endpoint: ApiEndpoints.repair_order_list,
+    admin_url: '/order/repairorder/',
+    supports_barcode: true,
+    icon: 'repair_orders'
+  },
+  repairorderlineitem: {
+    label: () => t`Repair Order Line Item`,
+    label_multiple: () => t`Repair Order Line Items`,
+    api_endpoint: ApiEndpoints.repair_order_line_list,
+    icon: 'repair_orders'
+  },
+  repairorderallocation: {
+    label: () => t`Repair Order Allocation`,
+    label_multiple: () => t`Repair Order Allocations`,
+    api_endpoint: ApiEndpoints.repair_order_allocation_list,
+    icon: 'repair_orders'
+  },
   transferorder: {
     label: () => t`Transfer Order`,
     label_multiple: () => t`Transfer Orders`,

@@ -110,7 +110,6 @@ export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
 export { SearchInput } from './components/SearchInput';
 export { TableColumnSelect } from './components/TableColumnSelect';
-export { default as TagsList } from './components/TagsList';
 export { default as InvenTreeTable } from './components/InvenTreeTable';
 export {
   RowViewAction,

@@ -23,7 +23,6 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
-import { TagsField } from './CommonFields';
 
 export function useReturnOrderFields({
   duplicateOrderId
@@ -53,7 +52,6 @@ export function useReturnOrderFields({
         icon: <IconCalendar />
       },
       link: {},
-      tags: TagsField({}),
       contact: {
         icon: <IconUser />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {

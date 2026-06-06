@@ -71,7 +71,9 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       visible:
         user.hasViewRole(UserRoles.sales_order) ||
         (globalSettings.isSet('RETURNORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.return_order))
+          user.hasViewRole(UserRoles.return_order)) ||
+        (globalSettings.isSet('REPAIRORDER_ENABLED') &&
+          user.hasViewRole(UserRoles.repair_order))
     }
   ];
 

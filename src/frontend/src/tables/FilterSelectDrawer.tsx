@@ -7,7 +7,6 @@ import {
   Divider,
   Drawer,
   Group,
-  MultiSelect,
   Paper,
   Select,
   Space,
@@ -17,7 +16,12 @@ import {
   Tooltip
 } from '@mantine/core';
 import { DateInput, type DateValue } from '@mantine/dates';
-import { useQuery } from '@tanstack/react-query';
+import {
+  IconCheck,
+  IconFilterStar,
+  IconReload,
+  IconX
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -28,13 +32,6 @@ import type {
   TableFilterChoice,
   TableFilterType
 } from '@lib/types/Filters';
-import {
-  IconCheck,
-  IconFilterStar,
-  IconReload,
-  IconX
-} from '@tabler/icons-react';
-import { api } from '../App';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   filterDisplayLabel,
@@ -114,74 +111,6 @@ function FilterItem({
   );
 }
 
-/*
- * Multi-select element for 'api' filters with multi=true.
- * Fetches all options from the API then renders a searchable MultiSelect.
- * The user picks multiple values and confirms with an Apply button.
- */
-function MultiApiFilterElement({
-  filterProps,
-  onValueChange
-}: Readonly<{
-  filterProps: TableFilter;
-  onValueChange: (value: string | null, displayValue?: any) => void;
-}>) {
-  const [selected, setSelected] = useState<string[]>([]);
-
-  const query = useQuery({
-    queryKey: ['filter-options', filterProps.apiUrl, filterProps.apiFilter],
-    queryFn: () =>
-      api
-        .get(filterProps.apiUrl ?? '', { params: filterProps.apiFilter })
-        .then((r) => r.data),
-    enabled: !!filterProps.apiUrl
-  });
-
-  const options: TableFilterChoice[] = useMemo(() => {
-    const results: any[] = query.data?.results ?? query.data ?? [];
-    if (filterProps.transform) {
-      return results.map(filterProps.transform);
-    }
-    return results.map((item: any) => ({
-      value: String(item.pk ?? item.id ?? item.slug ?? item.value),
-      label: filterProps.modelRenderer?.(item) ?? String(item.name ?? item.pk)
-    }));
-  }, [query.data, filterProps.transform, filterProps.modelRenderer]);
-
-  const apply = useCallback(() => {
-    if (!selected.length) return;
-    const labels = selected.map(
-      (v) => options.find((o) => o.value === v)?.label ?? v
-    );
-    onValueChange(selected.join(','), labels.join(', '));
-  }, [selected, options, onValueChange]);
-
-  return (
-    <MultiSelect
-      data={options}
-      value={selected}
-      onChange={setSelected}
-      searchable
-      label={t`Value`}
-      placeholder={filterProps.placeholder ?? t`Select one or more values`}
-      maxDropdownHeight={400}
-      rightSectionPointerEvents='all'
-      rightSection={
-        <ActionIcon
-          aria-label='apply-tags-filter'
-          variant='transparent'
-          color='green'
-          size='md'
-          disabled={!selected.length}
-          onClick={apply}
-        >
-          <IconCheck />
-        </ActionIcon>
-      }
-    />
-  );
-}
-
 function FilterElement({
   filterName,
   filterProps,
@@ -209,14 +138,6 @@ function FilterElement({
 
   switch (filterProps.type) {
     case 'api':
-      if (filterProps.multi) {
-        return (
-          <MultiApiFilterElement
-            filterProps={filterProps}
-            onValueChange={onValueChange}
-          />
-        );
-      }
       return (
         <StandaloneField
           fieldName={`filter-${filterName}`}
@@ -228,15 +149,7 @@ function FilterElement({
             model: filterProps.model,
             label: t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
-              if (filterProps.transform) {
-                const choice = filterProps.transform(instance);
-                onValueChange(choice.value, choice.label);
-              } else {
-                onValueChange(
-                  value,
-                  filterProps.modelRenderer?.(instance) ?? value
-                );
-              }
+              onValueChange(value, filterProps.modelRenderer?.(instance));
             }
           }}
         />

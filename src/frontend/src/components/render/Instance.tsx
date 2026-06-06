@@ -60,6 +60,9 @@ import {
 } from './Generic';
 import {
   RenderPurchaseOrder,
+  RenderRepairOrder,
+  RenderRepairOrderAllocation,
+  RenderRepairOrderLineItem,
   RenderReturnOrder,
   RenderReturnOrderLineItem,
   RenderSalesOrder,
@@ -99,6 +102,9 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
+  [ModelType.repairorder]: RenderRepairOrder,
+  [ModelType.repairorderlineitem]: RenderRepairOrderLineItem,
+  [ModelType.repairorderallocation]: RenderRepairOrderAllocation,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.transferorder]: RenderTransferOrder,

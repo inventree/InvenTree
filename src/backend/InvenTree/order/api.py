@@ -2518,6 +2518,89 @@ class OrderCalendarExport(ICalFeed):
         return construct_absolute_url(item.get_absolute_url())
 
 
+class RepairOrderList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrder objects."""
+
+    queryset = models.RepairOrder.objects.all()
+    serializer_class = serializers.RepairOrderSerializer
+
+
+class RepairOrderDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrder object."""
+
+    queryset = models.RepairOrder.objects.all()
+    serializer_class = serializers.RepairOrderSerializer
+
+
+class RepairOrderLineItemList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderLineItem objects."""
+
+    queryset = models.RepairOrderLineItem.objects.all()
+    serializer_class = serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderLineItem object."""
+
+    queryset = models.RepairOrderLineItem.objects.all()
+    serializer_class = serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderAllocationList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderAllocation objects."""
+
+    queryset = models.RepairOrderAllocation.objects.all()
+    serializer_class = serializers.RepairOrderAllocationSerializer
+
+
+class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderAllocation object."""
+
+    queryset = models.RepairOrderAllocation.objects.all()
+    serializer_class = serializers.RepairOrderAllocationSerializer
+
+
+repair_order_api_urls = [
+    path(
+        '<int:pk>/',
+        include([
+            path('', RepairOrderDetail.as_view(), name='api-repair-order-detail')
+        ]),
+    ),
+    path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+]
+
+repair_order_line_api_urls = [
+    path(
+        '<int:pk>/',
+        include([
+            path(
+                '',
+                RepairOrderLineItemDetail.as_view(),
+                name='api-repair-order-line-detail',
+            )
+        ]),
+    ),
+    path('', RepairOrderLineItemList.as_view(), name='api-repair-order-line-list'),
+]
+
+repair_order_allocation_api_urls = [
+    path(
+        '<int:pk>/',
+        include([
+            path(
+                '',
+                RepairOrderAllocationDetail.as_view(),
+                name='api-repair-order-allocation-detail',
+            )
+        ]),
+    ),
+    path(
+        '', RepairOrderAllocationList.as_view(), name='api-repair-order-allocation-list'
+    ),
+]
+
+
 order_api_urls = [
     # API endpoints for purchase orders
     path(
@@ -2906,4 +2989,8 @@ order_api_urls = [
         OrderCalendarExport(),
         name='api-po-so-calendar',
     ),
+    # Repair Order endpoints
+    path('repair/', include(repair_order_api_urls)),
+    path('repair-line/', include(repair_order_line_api_urls)),
+    path('repair-allocation/', include(repair_order_allocation_api_urls)),
 ]
