@@ -236,6 +236,12 @@ ldap:
 #  INVENTREE_DEFAULT_CURRENCY: 'CNY'
 #  INVENTREE_RESTRICT_ABOUT: true
 
+# Override plugin settings (by plugin slug)
+# Settings specified here will be locked and cannot be changed via the UI
+#plugin_settings:
+#  plugin-slug:
+#    SETTING_KEY: 'value'
+
 # Storage configuration
 # Ref: https://docs.inventree.org/en/stable/start/config/#storage-backends
 storage:

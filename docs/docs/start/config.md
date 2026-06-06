@@ -555,6 +555,15 @@ To override global settings, provide a "dictionary" of settings overrides in the
 {{ configtable() }}
 {{ configsetting("INVENTREE_GLOBAL_SETTINGS") }} JSON object containing global settings overrides |
 
+## Override Plugin Settings
+
+If you have plugins installed which require configuration, you can provide plugin settings overrides in the configuration file, or via an environment variable.
+
+{{ configtable() }}
+{{ configsetting("INVENTREE_PLUGIN_SETTINGS") }} JSON object containing plugin settings overrides |
+
+Note that plugin settings overrides require knowledge of the plugin "slug" and the particular settings which are being overridden. You should refer to the plugin documentation for more information on available settings. If plugin overrides are specified, but no matching plugin is found, the overrides will be ignored.
+
 ## Other Settings
 
 Other available settings, not categorized above, are detailed in the table below:
