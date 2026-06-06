@@ -585,7 +585,7 @@ export function ColumnFilterPopover({
   const closeOnApply = filters.length === 1;
 
   return (
-    <Stack gap='xs' p='xs'>
+    <Stack gap={5} p={3}>
       {filters.map((filter, index) => (
         <Stack gap='xs' key={filter.name}>
           {index > 0 && <Divider />}
