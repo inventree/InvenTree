@@ -316,12 +316,30 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           )
         : false;
 
+      // Resolve the final filter prop:
+      //   named string that matched → build popover render function
+      //   named string with no match → undefined (suppress icon)
+      //   function → pass through unchanged (e.g. parametric columns)
+      const resolvedFilter = namedFilter
+        ? ({ close }: { close: () => void }) => (
+            <ColumnFilterPopover
+              filter={namedFilter}
+              filterSet={tableState.filterSet}
+              close={close}
+            />
+          )
+        : typeof col.filter === 'string'
+          ? undefined
+          : col.filter;
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
         render: wrappedRender,
+        filter: resolvedFilter,
+        filtering: namedFilter ? namedFilterActive : col.filtering,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -333,19 +351,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           return {
             minWidth: width
           };
-        },
-        ...(namedFilter
-          ? {
-              filtering: namedFilterActive,
-              filter: ({ close }: { close: () => void }) => (
-                <ColumnFilterPopover
-                  filter={namedFilter}
-                  filterSet={tableState.filterSet}
-                  close={close}
-                />
-              )
-            }
-          : {})
+        }
       };
     });
 
