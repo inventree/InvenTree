@@ -1243,6 +1243,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('6', _('Saturday')),
         ],
     },
+    'CALENDAR_HORIZON_MONTHS': {
+        'name': _('Calendar Horizon'),
+        'description': _(
+            'Number of months into the future to display in calendar views'
+        ),
+        'default': 12,
+        'validator': [int, MinValueValidator(1)],
+        'units': _('months'),
+    },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),

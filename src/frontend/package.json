@@ -150,6 +150,7 @@
     "overrides": {
     },
     "resolutions": {
+        "glob": "^13.0.0",
         "undici": "^6.24.0",
         "vite": "^6.4.2"
     }

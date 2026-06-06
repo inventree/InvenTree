@@ -197,6 +197,7 @@ export function useParameterFields({
             // This is a "checkbox" field
             setChoices([]);
             setFieldType('boolean');
+            setData('false');
           } else if (record?.choices) {
             const _choices: string[] = record.choices.split(',');
 
