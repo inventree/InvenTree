@@ -186,11 +186,13 @@ export function FilterElement({
   filterName,
   filterProps,
   valueOptions,
+  brief = false,
   onValueChange
 }: {
   filterName: string;
   filterProps: TableFilter;
   valueOptions: TableFilterChoice[];
+  brief?: boolean;
   onValueChange: (value: string | null, displayValue?: any) => void;
 }) {
   const setDateValue = useCallback(
@@ -226,7 +228,7 @@ export function FilterElement({
             filters: filterProps.apiFilter,
             placeholder: t`Select filter value`,
             model: filterProps.model,
-            label: t`Select filter value`,
+            label: brief ? undefined : t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
               if (filterProps.transform) {
                 const choice = filterProps.transform(instance);
@@ -244,7 +246,7 @@ export function FilterElement({
     case 'text':
       return (
         <TextInput
-          label={t`Value`}
+          label={brief ? undefined : t`Value`}
           value={textValue}
           placeholder={t`Enter filter value`}
           rightSection={
@@ -256,8 +258,10 @@ export function FilterElement({
               <IconCheck />
             </ActionIcon>
           }
-          onChange={(e) => setTextValue(e.currentTarget.value)}
-          onKeyDown={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTextValue(e.currentTarget.value)
+          }
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === 'Enter') {
               onValueChange(textValue);
             }
@@ -267,7 +271,7 @@ export function FilterElement({
     case 'date':
       return (
         <DateInput
-          label={t`Value`}
+          label={brief ? undefined : t`Value`}
           placeholder={t`Select date value`}
           onChange={setDateValue}
         />
@@ -279,7 +283,7 @@ export function FilterElement({
         <Select
           data={valueOptions}
           searchable={filterProps.type == 'choice'}
-          label={t`Value`}
+          label={brief ? undefined : t`Value`}
           withScrollArea={false}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
@@ -532,22 +536,29 @@ function FilterSection({
       <Text size='sm' fw={600}>
         {filter.label ?? filter.name}
       </Text>
-      {activeFilter && (
+      {activeFilter ? (
         <Group justify='space-between' wrap='nowrap'>
           <Badge color='blue'>
             {activeFilter.displayValue ?? activeFilter.value}
           </Badge>
-          <Button size='xs' color='red' variant='light' onClick={removeFilter}>
-            {t`Remove`}
-          </Button>
+          <ActionIcon
+            color='red'
+            variant='transparent'
+            size='sm'
+            onClick={removeFilter}
+          >
+            <IconX />
+          </ActionIcon>
         </Group>
+      ) : (
+        <FilterElement
+          filterName={filter.name}
+          filterProps={filterProps}
+          valueOptions={valueOptions}
+          brief={true}
+          onValueChange={onValueChange}
+        />
       )}
-      <FilterElement
-        filterName={filter.name}
-        filterProps={filterProps}
-        valueOptions={valueOptions}
-        onValueChange={onValueChange}
-      />
     </Stack>
   );
 }
@@ -572,16 +583,15 @@ export function ColumnFilterPopover({
   return (
     <Stack gap='xs' p='xs'>
       {filters.map((filter, index) => (
-        <>
-          {index > 0 && <Divider key={`divider-${filter.name}`} />}
+        <Stack gap='xs' key={filter.name}>
+          {index > 0 && <Divider />}
           <FilterSection
-            key={filter.name}
             filter={filter}
             filterSet={filterSet}
             closeOnApply={closeOnApply}
             close={close}
           />
-        </>
+        </Stack>
       ))}
     </Stack>
   );
@@ -693,8 +703,10 @@ export function FilterSelectDrawer({
                   aria-label='filter-group-name'
                   placeholder={t`Group name`}
                   value={saveName}
-                  onChange={(e) => setSaveName(e.currentTarget.value)}
-                  onKeyDown={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSaveName(e.currentTarget.value)
+                  }
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') confirmSave();
                     if (e.key === 'Escape') setSaving(false);
                   }}
