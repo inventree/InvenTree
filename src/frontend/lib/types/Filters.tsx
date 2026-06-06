@@ -58,6 +58,14 @@ export type TableFilter = {
 };
 
 /*
+ * A named snapshot of a set of active filters, saved to local storage.
+ */
+export type NamedFilterSet = {
+  name: string;
+  filters: Pick<TableFilter, 'name' | 'value' | 'displayValue'>[];
+};
+
+/*
  * Type definition for representing the state of a group of filters.
  * These may be applied to a data view (e.g. table, calendar) to filter the displayed data.
  *
@@ -65,10 +73,18 @@ export type TableFilter = {
  * activeFilters: An array of active filters
  * setActiveFilters: A function to set the active filters
  * clearActiveFilters: A function to clear all active filters
+ * savedFilterSets: Named filter set snapshots persisted to local storage
+ * saveFilterSet: Save the current active filters under a given name
+ * loadFilterSet: Replace active filters with a previously saved named set
+ * deleteFilterSet: Remove a saved named filter set by name
  */
 export type FilterSetState = {
   filterKey: string;
   activeFilters: TableFilter[];
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
+  savedFilterSets: NamedFilterSet[];
+  saveFilterSet: (name: string) => void;
+  loadFilterSet: (name: string) => void;
+  deleteFilterSet: (name: string) => void;
 };

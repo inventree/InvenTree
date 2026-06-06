@@ -158,6 +158,24 @@ Select the "table filters" button to open the filter selection menu
 
 Table filters are saved across browser sessions, allowing users to maintain their preferred filter settings when returning to the particular table view.
 
+#### Saved Filter Groups
+
+Frequently used combinations of filters can be saved as a named *filter group*, allowing them to be quickly recalled later without having to re-add each filter individually.
+
+The **Saved Filter Groups** panel is displayed at the bottom of the filter drawer. When one or more filters are active, a **Save current filters** button is available. Clicking it opens an inline name input — enter a name and press Enter (or click the confirm icon) to save the group. Press Escape or click the cancel icon to discard.
+
+{{ image("concepts/ui_table_filter_group.png", "Filter Groups") }}
+
+Previously saved filter groups are listed in the panel. Each entry shows the group name alongside two actions:
+
+- **Load** (green reload icon): Replaces the current active filters with the filters stored in that group. The table immediately re-fetches data using the restored filters.
+- **Delete** (red × icon): Permanently removes the saved filter group.
+
+Saved filter groups are stored in the browser's local storage and are specific to each table or calendar view, so groups saved for one view are not available in another. They persist across local browser sessions until explicitly deleted. Filter groups are not shared to other devices.
+
+!!! info "Loading a filter group replaces active filters"
+    Loading a saved filter group replaces all currently active filters with those stored in the group. Any unsaved active filters will be overwritten.
+
 ### Data Sorting
 
 Some table columns support data sorting, allowing the dataset to be sorted in ascending or descending order based on the values in that column. To sort a column, click on the column header. Clicking the column header again will toggle the sort order between ascending and descending. The current sort order is indicated by an arrow icon in the column header.
@@ -190,7 +208,7 @@ For tables which reference other objects within the system, clicking on a row wi
 
 ## Calendar Views
 
-Some [table views](#table-views) can be switched to a calendar view, which provides a visual representation of data based on date fields. The calendar view allows users to easily see and interact with data that is organized by date, such as scheduled tasks, events, or deadlines.
+Some [table views](#table-views) associated with various order types can be switched to a calendar view, which provides a visual representation of data based on date fields. The calendar view allows users to easily see and interact with data that is organized by date, such as scheduled tasks, events, or deadlines.
 
 To switch to the "calendar view" (for a table which supports it), click on the "calendar view" button located above and to the right of the table view:
 
@@ -199,6 +217,10 @@ To switch to the "calendar view" (for a table which supports it), click on the "
 This will display the data in a calendar format:
 
 {{ image("concepts/ui_calendar_view.png", "Calendar View") }}
+
+### Calendar Horizon
+
+The calendar view provides a configurable "horizon" setting, which allows users to adjust the number of months displayed in the calendar view.
 
 ## Parametric Views
 

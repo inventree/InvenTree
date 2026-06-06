@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12093](https://github.com/inventree/InvenTree/pull/12093) adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
+- [#12079](https://github.com/inventree/InvenTree/pull/12079) adds the ability to save filter groups for table and calendar views in the user interface. This allows users to save and reuse commonly used filter configurations, improving the usability and efficiency of the interface.
 - [#12077](https://github.com/inventree/InvenTree/pull/12077) adds "tags" fields to multiple new model types and a /api/tag/ endpoint for fetching tags. Also adds the ability to filter various model types by tags.
 - [#12019](https://github.com/inventree/InvenTree/pull/12019) adds a "location" field to the StockCount API endpoint, allowing users to specify a location when performing a stock count. This field is optional, and if not provided, the stock count will be performed without changing the location of the stock item. If a location is provided, the stock item(s) will be moved to the specified location as part of the stock count operation.
 - [#12011](https://github.com/inventree/InvenTree/pull/12011) adds a "creation_date" field to the StockItem API endpoint, allowing users to track when each stock item was created. This field is read-only and is automatically set to the current date and time when a new stock item is created.

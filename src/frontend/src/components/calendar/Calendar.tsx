@@ -32,7 +32,8 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconDownload,
-  IconFilter
+  IconFilter,
+  IconRefresh
 } from '@tabler/icons-react';
 import {
   type ReactNode,
@@ -55,6 +56,7 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  enableRefresh?: boolean;
   eventTooltipContent?: (event: EventContentArg) => ReactNode;
   filters?: TableFilter[];
   isLoading?: boolean;
@@ -65,6 +67,7 @@ export default function Calendar({
   enableDownload,
   enableFilters = false,
   enableSearch,
+  enableRefresh = true,
   eventTooltipContent,
   isLoading,
   filters,
@@ -72,6 +75,18 @@ export default function Calendar({
   ...calendarProps
 }: Readonly<InvenTreeCalendarProps>) {
   const globalSettings = useGlobalSettingsState();
+
+  const horizonMonths = useMemo(
+    () =>
+      Number.parseInt(
+        globalSettings.getSetting('CALENDAR_HORIZON_MONTHS') ?? '12',
+        10
+      ),
+    [globalSettings]
+  );
+
+  // When the horizon is a single month, fall back to the standard month grid.
+  const isScrollView = horizonMonths > 1;
 
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
@@ -111,10 +126,15 @@ export default function Calendar({
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
       if (state.ref?.current) {
-        const api = state.ref.current.getApi();
+        // Show the starting month of the view (advance 15 days past any padding days)
+        const viewStart = new Date(dateInfo.start);
+        viewStart.setDate(viewStart.getDate() + 15);
+        const startMonthLabel = new Intl.DateTimeFormat(calendarLocale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(viewStart);
 
-        // Update calendar state
-        state.setMonthName(api.view.title);
+        state.setMonthName(startMonthLabel);
         state.setStartDate(dateInfo.start);
         state.setEndDate(dateInfo.end);
       }
@@ -122,7 +142,14 @@ export default function Calendar({
       // Pass the dates set to the parent component
       calendarProps.datesSet?.(dateInfo);
     },
-    [calendarProps.datesSet, state.ref, state.setMonthName]
+    [
+      calendarLocale,
+      calendarProps.datesSet,
+      state.ref,
+      state.setMonthName,
+      state.setStartDate,
+      state.setEndDate
+    ]
   );
 
   const wrappedEventContent = useCallback(
@@ -214,6 +241,18 @@ export default function Calendar({
             {enableSearch && (
               <SearchInput searchCallback={state.setSearchTerm} />
             )}
+            {enableRefresh && (
+              <ActionIcon
+                variant='transparent'
+                aria-label='calendar-refresh'
+                disabled={isLoading}
+                onClick={() => state.query.refetch()}
+              >
+                <Tooltip label={t`Refresh calendar`} position='top-end'>
+                  <IconRefresh />
+                </Tooltip>
+              </ActionIcon>
+            )}
             {enableFilters && filters && filters.length > 0 && (
               <Indicator
                 size='xs'
@@ -249,7 +288,16 @@ export default function Calendar({
           <FullCalendar
             ref={state.ref}
             plugins={[dayGridPlugin, interactionPlugin]}
-            initialView='dayGridMonth'
+            initialView={isScrollView ? 'scrollMultiMonth' : 'dayGridMonth'}
+            {...(isScrollView && {
+              views: {
+                scrollMultiMonth: {
+                  type: 'dayGrid',
+                  duration: { months: horizonMonths }
+                }
+              },
+              height: 'calc(100vh - 160px)'
+            })}
             locales={allLocales}
             locale={calendarLocale}
             firstDay={Number.parseInt(

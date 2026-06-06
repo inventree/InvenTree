@@ -25,9 +25,9 @@ export function BooleanField({
 
   const { value } = field;
 
-  // Set default value if value is undefined
+  // Set default value if value is undefined or otherwise empty
   useEffect(() => {
-    if (value === undefined) {
+    if (value === undefined || value === null || value === '') {
       onChange(definition.default ?? false);
     }
   }, [value, definition]);

@@ -211,6 +211,7 @@ export default function OrderCalendar({
     <Calendar
       enableDownload
       enableFilters
+      enableRefresh
       enableSearch
       events={events}
       state={calendarState}
