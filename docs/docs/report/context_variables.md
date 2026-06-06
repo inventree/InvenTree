@@ -256,7 +256,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | expiry_date | Expiry date of the [StockItem](#stock-item) (optional) |
 | stocktake_date | Date of last stocktake for this item |
 | stocktake_user | User that performed the most recent stocktake |
-| review_needed | Flag if [StockItem](#stock-item) needs review |
 | delete_on_deplete | If True, [StockItem](#stock-item) will be deleted when the stock level gets to zero |
 | status | Status of this [StockItem](#stock-item) (ref: InvenTree.status_codes.StockStatus) |
 | status_label | Textual representation of the status e.g. "OK" |
