@@ -54,7 +54,8 @@ export function ParameterTable({
         accessor: 'template_detail.name',
         switchable: false,
         sortable: true,
-        ordering: 'name'
+        ordering: 'name',
+        filter: 'enabled'
       },
       DescriptionColumn({
         accessor: 'template_detail.description'
@@ -105,6 +106,7 @@ export function ParameterTable({
       UserColumn({
         accessor: 'updated_by_detail',
         ordering: 'updated_by',
+        filter: 'updated_by',
         title: t`Updated By`
       })
     ];

@@ -322,6 +322,7 @@ export default function BuildLineTable({
         ordering: 'part',
         sortable: true,
         switchable: false,
+        filter: ['assembly', 'testable', 'tracked'],
         render: (record: any) => {
           const hasAllocatedItems = record.allocatedQuantity > 0;
 

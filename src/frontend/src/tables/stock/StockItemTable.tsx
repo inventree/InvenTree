@@ -63,7 +63,8 @@ function stockItemTableColumns({
   return [
     PartColumn({
       accessor: 'part',
-      part: 'part_detail'
+      part: 'part_detail',
+      filter: ['active']
     }),
     IPNColumn({}),
     {
@@ -79,13 +80,21 @@ function stockItemTableColumns({
       accessor: '',
       title: t`Stock`,
       sortable: true,
-      ordering: 'stock'
+      ordering: 'stock',
+      filter: [
+        'available',
+        'allocated',
+        'consumed',
+        'installed',
+        'sent_to_customer'
+      ]
     }),
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: ['has_batch_code', 'batch']
     },
     LocationColumn({
       hidden: !showLocation,
