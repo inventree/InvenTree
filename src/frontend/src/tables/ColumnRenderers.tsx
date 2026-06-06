@@ -117,6 +117,7 @@ export function IPNColumn(props: TableColumnProps): TableColumn {
     switchable: true,
     title: t`IPN`,
     copyable: true,
+    filter: 'has_ipn',
     ...props
   };
 }
