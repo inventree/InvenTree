@@ -208,7 +208,7 @@ For tables which reference other objects within the system, clicking on a row wi
 
 ## Calendar Views
 
-Some [table views](#table-views) can be switched to a calendar view, which provides a visual representation of data based on date fields. The calendar view allows users to easily see and interact with data that is organized by date, such as scheduled tasks, events, or deadlines.
+Some [table views](#table-views) associated with various order types can be switched to a calendar view, which provides a visual representation of data based on date fields. The calendar view allows users to easily see and interact with data that is organized by date, such as scheduled tasks, events, or deadlines.
 
 To switch to the "calendar view" (for a table which supports it), click on the "calendar view" button located above and to the right of the table view:
 
@@ -217,6 +217,10 @@ To switch to the "calendar view" (for a table which supports it), click on the "
 This will display the data in a calendar format:
 
 {{ image("concepts/ui_calendar_view.png", "Calendar View") }}
+
+### Calendar Horizon
+
+The calendar view provides a configurable "horizon" setting, which allows users to adjust the number of months displayed in the calendar view.
 
 ## Parametric Views
 

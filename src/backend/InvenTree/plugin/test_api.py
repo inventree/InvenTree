@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound
 
 from InvenTree.unit_test import InvenTreeAPITestCase, PluginMixin
 from plugin.api import check_plugin
-from plugin.models import PluginConfig
+from plugin.models import PluginConfig, PluginSetting
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
@@ -672,3 +672,147 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
             # Successful uninstallation
             with self.assertRaises(PluginConfig.DoesNotExist):
                 PluginConfig.objects.get(key=slug)
+
+
+class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
+    """Tests for locked plugin settings (overridden via configuration).
+
+    When a plugin setting is specified in PLUGIN_SETTING_OVERRIDES:
+    - The API reports read_only=True for that setting
+    - The stored value always reflects the override, even after a PATCH attempt
+    - Other settings on the same plugin remain editable (read_only=False)
+    """
+
+    superuser = True
+
+    PLUGIN_SLUG = 'sample'
+
+    # Two settings from the sample plugin used across these tests
+    LOCKED_KEY = 'API_KEY'
+    LOCKED_VALUE = 'locked-api-key-value'
+
+    LOCKED_NUMERIC_KEY = 'NUMERICAL_SETTING'
+    LOCKED_NUMERIC_VALUE = 42
+
+    UNLOCKED_KEY = 'CHOICE_SETTING'
+
+    def setUp(self):
+        """Activate the sample plugin and confirm it is ready."""
+        super().setUp()
+
+        from plugin.registry import registry
+
+        registry.set_plugin_state(self.PLUGIN_SLUG, True)
+
+        self.cfg = PluginConfig.objects.filter(key=self.PLUGIN_SLUG).first()
+        self.assertIsNotNone(self.cfg)
+
+    def _setting_url(self, key):
+        return reverse(
+            'api-plugin-setting-detail', kwargs={'plugin': self.PLUGIN_SLUG, 'key': key}
+        )
+
+    # ------------------------------------------------------------------
+    # Helper that supplies the override context for all locked-setting tests
+    # ------------------------------------------------------------------
+    def _overrides(self):
+        return {
+            self.PLUGIN_SLUG: {
+                self.LOCKED_KEY: self.LOCKED_VALUE,
+                self.LOCKED_NUMERIC_KEY: self.LOCKED_NUMERIC_VALUE,
+            }
+        }
+
+    def test_locked_setting_read_only_flag(self):
+        """Locked settings must be reported as read_only=True via the API."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            response = self.get(self._setting_url(self.LOCKED_KEY), expected_code=200)
+            self.assertTrue(response.data['read_only'])
+
+    def test_unlocked_setting_not_read_only(self):
+        """Settings that are NOT overridden must be reported as read_only=False."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            response = self.get(self._setting_url(self.UNLOCKED_KEY), expected_code=200)
+            self.assertFalse(response.data['read_only'])
+
+    def test_locked_setting_returns_override_value(self):
+        """GET on a locked setting must return the configured override value."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            response = self.get(self._setting_url(self.LOCKED_KEY), expected_code=200)
+            self.assertEqual(response.data['value'], self.LOCKED_VALUE)
+
+    def test_locked_setting_model_get(self):
+        """PluginSetting.get_setting() must return the override value directly."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            value = PluginSetting.get_setting(self.LOCKED_KEY, plugin=self.cfg)
+            self.assertEqual(value, self.LOCKED_VALUE)
+
+            numeric = PluginSetting.get_setting(
+                self.LOCKED_NUMERIC_KEY, plugin=self.cfg
+            )
+            self.assertEqual(numeric, self.LOCKED_NUMERIC_VALUE)
+
+    def test_locked_setting_patch_ignored(self):
+        """PATCH to a locked setting must not change the value; override is re-applied."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            response = self.patch(
+                self._setting_url(self.LOCKED_KEY),
+                {'value': 'attacker-supplied-value'},
+                expected_code=200,
+            )
+            # The response value must reflect the override, not the submitted value
+            self.assertEqual(response.data['value'], self.LOCKED_VALUE)
+
+            # Confirm persistence: a subsequent GET also returns the locked value
+            response = self.get(self._setting_url(self.LOCKED_KEY), expected_code=200)
+            self.assertEqual(response.data['value'], self.LOCKED_VALUE)
+
+    def test_locked_numeric_setting_patch_ignored(self):
+        """PATCH to a locked numeric setting must not change the value."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            response = self.patch(
+                self._setting_url(self.LOCKED_NUMERIC_KEY),
+                {'value': 999},
+                expected_code=200,
+            )
+            self.assertEqual(int(response.data['value']), self.LOCKED_NUMERIC_VALUE)
+
+    def test_unlocked_setting_can_be_changed(self):
+        """Settings not in the override dict must still be freely editable."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            # Set an initial known value
+            self.patch(
+                self._setting_url(self.UNLOCKED_KEY), {'value': 'A'}, expected_code=200
+            )
+            response = self.get(self._setting_url(self.UNLOCKED_KEY), expected_code=200)
+            self.assertEqual(response.data['value'], 'A')
+
+            # Change it again to confirm mutability
+            self.patch(
+                self._setting_url(self.UNLOCKED_KEY), {'value': 'B'}, expected_code=200
+            )
+            response = self.get(self._setting_url(self.UNLOCKED_KEY), expected_code=200)
+            self.assertEqual(response.data['value'], 'B')
+
+    def test_locked_setting_model_save_enforced(self):
+        """Saving a PluginSetting instance directly must enforce the override value."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES=self._overrides()):
+            # Retrieve (or create) the DB object and try to write a different value
+            obj = PluginSetting.get_setting_object(self.LOCKED_KEY, plugin=self.cfg)
+            self.assertIsNotNone(obj)
+
+            obj.value = 'should-be-overwritten'
+            obj.save()
+
+            # Re-fetch from DB to confirm the override was enforced
+            obj.refresh_from_db()
+            self.assertEqual(obj.value, self.LOCKED_VALUE)
+
+    def test_no_overrides_settings_are_editable(self):
+        """Without any PLUGIN_SETTING_OVERRIDES, all settings default to read_only=False."""
+        with self.settings(PLUGIN_SETTING_OVERRIDES={}):
+            for key in [self.LOCKED_KEY, self.LOCKED_NUMERIC_KEY, self.UNLOCKED_KEY]:
+                response = self.get(self._setting_url(key), expected_code=200)
+                self.assertFalse(
+                    response.data['read_only'], msg=f'{key} should not be read_only'
+                )

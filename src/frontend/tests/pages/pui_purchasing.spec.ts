@@ -278,7 +278,7 @@ test('Purchase Orders - Calendar', async ({ browser }) => {
   await page.getByRole('button', { name: 'Feb' }).waitFor();
   await page.getByRole('button', { name: 'Dec' }).click();
 
-  await page.getByText('December').waitFor();
+  await page.getByText('December').first().waitFor();
 
   // Put back into table view
   await activateTableView(page);

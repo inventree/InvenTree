@@ -13,7 +13,8 @@ test('Login - Failures', async ({ page }) => {
     await page.getByRole('button', { name: 'Log In' }).click();
     await page.getByText('Login failed', { exact: true }).waitFor();
     await page.getByText('Check your input and try again').first().waitFor();
-    await page.locator('#login').getByRole('button').click();
+
+    await page.reload();
   };
 
   // Navigate to the 'login' page

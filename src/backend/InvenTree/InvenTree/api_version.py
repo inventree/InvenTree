@@ -6,8 +6,8 @@ INVENTREE_API_VERSION = 501
 
 INVENTREE_API_TEXT = """
 
-v501 -> 2026-06-04 : https://github.com/inventree/InvenTree/pull/12072
-    - Add RepairOrder models and endpoints
+v501 -> 2026-06-05 : https://github.com/inventree/InvenTree/pull/12093
+    - Adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
 
 v500 -> 2026-06-03 : https://github.com/inventree/InvenTree/pull/12077
     - Adds "tags" fields to multiple new model types
