@@ -638,6 +638,7 @@ export function CreatedByColumn(props: TableColumnProps): TableColumn {
     accessor: 'created_by',
     ordering: 'created_by',
     title: t`Created By`,
+    filter: 'created_by',
     ...props
   });
 }
@@ -667,7 +668,7 @@ export function ResponsibleColumn(props: TableColumnProps): TableColumn {
     accessor: 'responsible_detail',
     ordering: 'responsible',
     title: t`Responsible`,
-    filter: 'responsible',
+    filter: 'assigned_to',
     ...props
   });
 }
