@@ -151,22 +151,26 @@ function stockItemTableColumns({
     DateColumn({
       title: t`Created`,
       accessor: 'creation_date',
-      sortable: true
+      sortable: true,
+      filter: ['created_before', 'created_after']
     }),
     DateColumn({
       title: t`Last Updated`,
-      accessor: 'updated'
+      accessor: 'updated',
+      filter: ['updated_before', 'updated_after']
     }),
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
-      defaultVisible: false
+      defaultVisible: false,
+      filter: ['stale', 'expiry_before', 'expiry_after']
     }),
     DateColumn({
       accessor: 'stocktake_date',
       title: t`Stocktake Date`,
-      sortable: true
+      sortable: true,
+      filter: ['has_stocktake', 'stocktake_before', 'stocktake_after']
     })
   ];
 }

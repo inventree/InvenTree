@@ -433,6 +433,7 @@ export function BooleanColumn(props: TableColumn): TableColumn {
     sortable: true,
     switchable: true,
     minWidth: '75px',
+    filter: props.filter ?? props.accessor,
     render: (record: any) => (
       <Center>
         <YesNoButton value={resolveItem(record, props.accessor ?? '')} />

@@ -266,12 +266,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       // Prop-level hidden takes priority (e.g. hidden: !hasTrackedItems).
       // For switchable columns, visibility is driven by tableState.hiddenColumns.
       // Non-switchable columns are always visible (unless hidden by props).
-      const hidden: boolean =
-        col.hidden === true
-          ? true
-          : col.switchable == false
-            ? false
-            : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
+      const propHidden: boolean = col.hidden === true;
+      const hidden: boolean = propHidden
+        ? true
+        : col.switchable == false
+          ? false
+          : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
       // Wrap the render function with CopyableCell if copyable is enabled
       const originalRender = col.render;
@@ -349,6 +349,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         render: wrappedRender,
         filter: resolvedFilter,
         filtering: namedFilters.length > 0 ? namedFiltersActive : col.filtering,
+        propHidden: propHidden,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {

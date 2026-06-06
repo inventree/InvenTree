@@ -15,8 +15,8 @@ import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CompletionDateColumn,
   CreationDateColumn,
-  DateColumn,
   DescriptionColumn,
   IPNColumn,
   LinkColumn,
@@ -104,6 +104,7 @@ export function BuildOrderTable({
       BooleanColumn({
         accessor: 'external',
         title: t`External`,
+        filter: 'external',
         sortable: true,
         switchable: true,
         hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
@@ -115,11 +116,7 @@ export function BuildOrderTable({
         defaultVisible: false
       }),
       TargetDateColumn({}),
-      DateColumn({
-        accessor: 'completion_date',
-        title: t`Completion Date`,
-        sortable: true
-      }),
+      CompletionDateColumn({}),
       UserColumn({
         accessor: 'issued_by_detail',
         ordering: 'issued_by',

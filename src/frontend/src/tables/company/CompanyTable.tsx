@@ -64,6 +64,7 @@ export function CompanyTable({
       DescriptionColumn({}),
       BooleanColumn({
         accessor: 'active',
+        filter: 'active',
         title: t`Active`,
         sortable: true,
         switchable: true
