@@ -692,6 +692,7 @@ export function StartDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'start_date',
     title: t`Start Date`,
+    filter: ['has_start_date', 'start_date_before', 'start_date_after'],
     ...props
   });
 }
@@ -700,6 +701,7 @@ export function TargetDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'target_date',
     title: t`Target Date`,
+    filter: ['has_target_date', 'target_date_before', 'target_date_after'],
     ...props
   });
 }
@@ -708,6 +710,7 @@ export function CreationDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'creation_date',
     title: t`Creation Date`,
+    filter: ['created_before', 'created_after'],
     ...props
   });
 }
@@ -716,6 +719,7 @@ export function CompletionDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'completion_date',
     title: t`Completion Date`,
+    filter: ['completed_before', 'completed_after'],
     ...props
   });
 }
@@ -724,6 +728,7 @@ export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
     title: t`Shipment Date`,
+    filter: ['shipment_date_before', 'shipment_date_after'],
     ...props
   });
 }

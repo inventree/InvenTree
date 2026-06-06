@@ -302,35 +302,44 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       }
 
       // col.filter can be:
-      //   string   → filter name; look it up in tableFilters and build inline popover
+      //   string   → single filter name to look up in tableFilters
+      //   string[] → multiple filter names; all matches shown in one popover
       //   function → direct mantine-datatable render function (e.g. parametric columns)
       //   undefined → no column filter
-      const namedFilter =
+      const filterNames: string[] =
         typeof col.filter === 'string'
-          ? filters.find((f) => f.name === col.filter)
-          : undefined;
+          ? [col.filter]
+          : Array.isArray(col.filter)
+            ? col.filter
+            : [];
 
-      const namedFilterActive = namedFilter
-        ? tableState.filterSet.activeFilters.some(
-            (f) => f.name === namedFilter.name
-          )
-        : false;
+      const namedFilters: TableFilter[] =
+        filterNames.length > 0
+          ? filters.filter((f) => filterNames.includes(f.name))
+          : [];
+
+      const namedFiltersActive =
+        namedFilters.length > 0 &&
+        namedFilters.some((nf) =>
+          tableState.filterSet.activeFilters.some((af) => af.name === nf.name)
+        );
 
       // Resolve the final filter prop:
-      //   named string that matched → build popover render function
-      //   named string with no match → undefined (suppress icon)
+      //   named string(s) with matches → build popover render function
+      //   named string(s) with no match → undefined (suppress icon)
       //   function → pass through unchanged (e.g. parametric columns)
-      const resolvedFilter = namedFilter
-        ? ({ close }: { close: () => void }) => (
-            <ColumnFilterPopover
-              filter={namedFilter}
-              filterSet={tableState.filterSet}
-              close={close}
-            />
-          )
-        : typeof col.filter === 'string'
-          ? undefined
-          : col.filter;
+      const resolvedFilter =
+        namedFilters.length > 0
+          ? ({ close }: { close: () => void }) => (
+              <ColumnFilterPopover
+                filters={namedFilters}
+                filterSet={tableState.filterSet}
+                close={close}
+              />
+            )
+          : filterNames.length > 0
+            ? undefined
+            : col.filter;
 
       return {
         ...col,
@@ -339,7 +348,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
         render: wrappedRender,
         filter: resolvedFilter,
-        filtering: namedFilter ? namedFilterActive : col.filtering,
+        filtering: namedFilters.length > 0 ? namedFiltersActive : col.filtering,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {

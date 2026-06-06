@@ -109,7 +109,10 @@ export type TableColumnProps<T = any> = {
   editable?: boolean;
   definition?: ApiFormFieldType;
   render?: (record: T, index?: number) => any;
-  filter?: string | (({ close }: { close: () => void }) => ReactNode);
+  filter?:
+    | string
+    | string[]
+    | (({ close }: { close: () => void }) => ReactNode);
   filtering?: boolean;
   width?: number;
   minWidth?: string | number;

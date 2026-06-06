@@ -473,17 +473,18 @@ function SavedFilterSets({
 }
 
 /*
- * Popover content rendered when the user clicks a column's inline filter icon.
- * Shows the current filter value (if active) with a remove button, then the
- * value-picker so the user can apply or change the filter.
+ * Renders a single filter's title, active-value badge, remove button, and
+ * value-picker. Used as a building block inside ColumnFilterPopover.
  */
-export function ColumnFilterPopover({
+function FilterSection({
   filter,
   filterSet,
+  closeOnApply,
   close
 }: Readonly<{
   filter: TableFilter;
   filterSet: FilterSetState;
+  closeOnApply: boolean;
   close: () => void;
 }>) {
   const activeFilter = useMemo(
@@ -514,9 +515,9 @@ export function ColumnFilterPopover({
         (f) => f.name !== filter.name
       );
       filterSet.setActiveFilters([...others, newFilter]);
-      close();
+      if (closeOnApply) close();
     },
-    [filter.name, filterProps, filterSet, valueOptions, close]
+    [filter.name, filterProps, filterSet, valueOptions, closeOnApply, close]
   );
 
   const removeFilter = useCallback(() => {
@@ -527,7 +528,10 @@ export function ColumnFilterPopover({
   }, [filter.name, filterSet, close]);
 
   return (
-    <Stack gap='xs' p='xs'>
+    <Stack gap='xs'>
+      <Text size='sm' fw={600}>
+        {filter.label ?? filter.name}
+      </Text>
       {activeFilter && (
         <Group justify='space-between' wrap='nowrap'>
           <Badge color='blue'>
@@ -544,6 +548,41 @@ export function ColumnFilterPopover({
         valueOptions={valueOptions}
         onValueChange={onValueChange}
       />
+    </Stack>
+  );
+}
+
+/*
+ * Popover content rendered when the user clicks a column's inline filter icon.
+ * Renders one FilterSection per matched filter, each with its own title, active
+ * value, and value-picker. Auto-closes on apply only when there is a single
+ * filter (e.g. date-range columns stay open so both bounds can be set at once).
+ */
+export function ColumnFilterPopover({
+  filters,
+  filterSet,
+  close
+}: Readonly<{
+  filters: TableFilter[];
+  filterSet: FilterSetState;
+  close: () => void;
+}>) {
+  const closeOnApply = filters.length === 1;
+
+  return (
+    <Stack gap='xs' p='xs'>
+      {filters.map((filter, index) => (
+        <>
+          {index > 0 && <Divider key={`divider-${filter.name}`} />}
+          <FilterSection
+            key={filter.name}
+            filter={filter}
+            filterSet={filterSet}
+            closeOnApply={closeOnApply}
+            close={close}
+          />
+        </>
+      ))}
     </Stack>
   );
 }
