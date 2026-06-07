@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.5 - June 2026
+
+Fixes callback signature for `<LocalizedComponent>` to allow for an optional `loadLocale` function to be passed in, which is used to dynamically load locale messages for the plugin.
+
 ### 1.4.4 - June 2026
 
 Fixes bundling issues associated with the `InventreeHmrPlugin` plugin function.
