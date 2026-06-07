@@ -7,6 +7,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
@@ -755,8 +756,8 @@ test('Build Order - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
-  await page.getByLabel('action-menu-build-order-').click();
-  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  await openDetailAction(page, 'build-order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(

@@ -9,6 +9,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showParametricView,
   showTableView
@@ -1015,8 +1016,8 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   // Edit the category for multiple parts
   await page.getByLabel('Select record 1', { exact: true }).click();
   await page.getByLabel('Select record 2', { exact: true }).click();
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-set-category').click();
+
+  await openDetailAction(page, 'part', 'set-category');
 
   await page.getByLabel('related-field-category').fill('rnitu');
   await page.waitForTimeout(250);
@@ -1032,9 +1033,7 @@ test('Parts - Duplicate', async ({ browser }) => {
   });
 
   // Open "duplicate part" dialog
-  await page.getByLabel('action-menu-part-actions').click();
-
-  await page.getByLabel('action-menu-part-actions-duplicate').click();
+  await openDetailAction(page, 'part', 'duplicate');
 
   // Check for expected fields
   await page.getByText('Copy Image', { exact: true }).waitFor();
