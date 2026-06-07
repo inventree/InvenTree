@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
-- [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
+- [#12107](https://github.com/inventree/InvenTree/pull/12107) makes a breaking change to the `SalesOrderStatusGroups` enum, fixing a bug where the "shipped" status was not included in the "active" group. This change may affect any external client applications which make use of the `SalesOrderStatusGroups` enum, as the "shipped" status will now be included in the "active" group instead of the "complete" group. If you are using this enum in an external client application, you will need to update your application to account for this change.
+- [#9604](https://github.com/inventree/InvenTree/pull/9604) refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
 
 ### Added
