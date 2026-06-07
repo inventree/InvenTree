@@ -70,6 +70,9 @@ test('Parts - Tabs', async ({ browser }) => {
 test('Parts - Image Selection', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/911/details' });
 
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Select a new image from the available images
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
