@@ -38,6 +38,7 @@ import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
+import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -265,12 +266,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       // Prop-level hidden takes priority (e.g. hidden: !hasTrackedItems).
       // For switchable columns, visibility is driven by tableState.hiddenColumns.
       // Non-switchable columns are always visible (unless hidden by props).
-      const hidden: boolean =
-        col.hidden === true
-          ? true
-          : col.switchable == false
-            ? false
-            : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
+      const propHidden: boolean = col.hidden === true;
+      const hidden: boolean = propHidden
+        ? true
+        : col.switchable == false
+          ? false
+          : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
       // Wrap the render function with CopyableCell if copyable is enabled
       const originalRender = col.render;
@@ -300,12 +301,55 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         };
       }
 
+      // col.filter can be:
+      //   string   → single filter name to look up in tableFilters
+      //   string[] → multiple filter names; all matches shown in one popover
+      //   function → direct mantine-datatable render function (e.g. parametric columns)
+      //   undefined → no column filter
+      const filterNames: string[] =
+        typeof col.filter === 'string'
+          ? [col.filter]
+          : Array.isArray(col.filter)
+            ? col.filter
+            : [];
+
+      const namedFilters: TableFilter[] =
+        filterNames.length > 0
+          ? filters.filter((f) => filterNames.includes(f.name))
+          : [];
+
+      const namedFiltersActive =
+        namedFilters.length > 0 &&
+        namedFilters.some((nf) =>
+          tableState.filterSet.activeFilters.some((af) => af.name === nf.name)
+        );
+
+      // Resolve the final filter prop:
+      //   named string(s) with matches → build popover render function
+      //   named string(s) with no match → undefined (suppress icon)
+      //   function → pass through unchanged (e.g. parametric columns)
+      const resolvedFilter =
+        namedFilters.length > 0
+          ? ({ close }: { close: () => void }) => (
+              <ColumnFilterPopover
+                filters={namedFilters}
+                filterSet={tableState.filterSet}
+                close={close}
+              />
+            )
+          : filterNames.length > 0
+            ? undefined
+            : col.filter;
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
         render: wrappedRender,
+        filter: resolvedFilter,
+        filtering: namedFilters.length > 0 ? namedFiltersActive : col.filtering,
+        propHidden: propHidden,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -347,10 +391,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     return cols;
   }, [
     columns,
+    filters,
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords
+    tableState.selectedRecords,
+    tableState.filterSet.activeFilters
   ]);
 
   // Callback when column visibility is toggled

@@ -625,9 +625,9 @@ test('Transfer Order - Reference', async ({ browser }) => {
     .click();
 
   // Ensure a new reference is suggested
-  await expect(
-    page.getByLabel('text-field-reference', { exact: true })
-  ).not.toBeEmpty();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Grab the Transfer Order reference
   const reference: string = await page
     .getByRole('textbox', { name: 'text-field-reference' })

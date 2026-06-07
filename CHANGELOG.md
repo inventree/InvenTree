@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12103](https://github.com/inventree/InvenTree/pull/12103) adds column-based filtering to table views in the user interface. This extends the existing table filtering functionality by allowing users to apply filters directly to individual columns.
 - [#12093](https://github.com/inventree/InvenTree/pull/12093) adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
 - [#12079](https://github.com/inventree/InvenTree/pull/12079) adds the ability to save filter groups for table and calendar views in the user interface. This allows users to save and reuse commonly used filter configurations, improving the usability and efficiency of the interface.
 - [#12077](https://github.com/inventree/InvenTree/pull/12077) adds "tags" fields to multiple new model types and a /api/tag/ endpoint for fetching tags. Also adds the ability to filter various model types by tags.

@@ -171,11 +171,6 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      BooleanColumn({
-        accessor: 'sub_part_detail.virtual',
-        defaultVisible: false,
-        title: t`Virtual Part`
-      }),
       ReferenceColumn({
         switchable: true
       }),
@@ -274,6 +269,12 @@ export function BomTable({
           );
         }
       },
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        filter: 'sub_part_virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       BooleanColumn({
         accessor: 'optional',
         defaultVisible: false

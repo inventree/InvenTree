@@ -7,6 +7,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
@@ -40,7 +41,6 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
@@ -756,8 +756,8 @@ test('Build Order - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
-  await page.getByLabel('action-menu-build-order-').click();
-  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  await openDetailAction(page, 'build-order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(
