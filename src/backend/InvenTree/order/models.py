@@ -1191,6 +1191,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
                 for item in new_items:
                     item.set_status(status, custom_values=custom_stock_status_values)
+                    # run validation for serialized items plugin.validate_batch_code
+                    item.validate_batch_code()
+                    # run validation for serialized items plugin.validate_model_instance
+                    item.run_plugin_validation()
                     stock_items.append(item)
 
             else:
@@ -1213,6 +1217,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
+            # bulk_create() bypasses save()/clean() methods, so manual validation is required for each item
+            for item in bulk_create_items:
+                # run validation for items plugin.validate_batch_code
+                item.validate_batch_code()
+                # run validation for items plugin.validate_model_instance
+                item.run_plugin_validation()
+
             stock.models.StockItem.objects.bulk_create(
                 bulk_create_items, batch_size=250
             )
