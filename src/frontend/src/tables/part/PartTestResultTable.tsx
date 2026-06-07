@@ -26,7 +26,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { LocationColumn, PartColumn } from '../ColumnRenderers';
+import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -256,6 +256,7 @@ export default function PartTestResultTable({
         title: t`Stock Item`,
         sortable: true,
         switchable: false,
+        filter: ['in_stock', 'is_building'],
         render: (record: any) => {
           if (record.serial) {
             return `# ${record.serial}`;
@@ -284,10 +285,15 @@ export default function PartTestResultTable({
           }
         }
       },
+      StatusColumn({
+        accessor: 'status',
+        model: ModelType.stockitem
+      }),
       {
         accessor: 'batch',
         title: t`Batch Code`,
         sortable: true,
+        filter: ['batch', 'has_batch_code'],
         switchable: true,
         copyable: true
       },

@@ -117,6 +117,7 @@ export function IPNColumn(props: TableColumnProps): TableColumn {
     switchable: true,
     title: t`IPN`,
     copyable: true,
+    filter: 'has_ipn',
     ...props
   };
 }
@@ -433,6 +434,7 @@ export function BooleanColumn(props: TableColumn): TableColumn {
     sortable: true,
     switchable: true,
     minWidth: '75px',
+    filter: props.filter ?? props.accessor,
     render: (record: any) => (
       <Center>
         <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
@@ -564,6 +566,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
     sortable: true,
     title: t`Project Code`,
     hidden: !enabled,
+    filter: 'project_code',
     render: (record: any) => {
       const project_code = resolveItem(
         record,
@@ -584,6 +587,7 @@ export function StatusColumn(props: StatusColumnProps): TableColumn {
 
   return {
     accessor: 'status',
+    filter: 'status',
     sortable: true,
     switchable: true,
     minWidth: '50px',
@@ -636,6 +640,7 @@ export function CreatedByColumn(props: TableColumnProps): TableColumn {
     accessor: 'created_by',
     ordering: 'created_by',
     title: t`Created By`,
+    filter: 'created_by',
     ...props
   });
 }
@@ -665,6 +670,7 @@ export function ResponsibleColumn(props: TableColumnProps): TableColumn {
     accessor: 'responsible_detail',
     ordering: 'responsible',
     title: t`Responsible`,
+    filter: 'assigned_to',
     ...props
   });
 }
@@ -688,6 +694,7 @@ export function StartDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'start_date',
     title: t`Start Date`,
+    filter: ['has_start_date', 'start_date_before', 'start_date_after'],
     ...props
   });
 }
@@ -696,6 +703,7 @@ export function TargetDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'target_date',
     title: t`Target Date`,
+    filter: ['has_target_date', 'target_date_before', 'target_date_after'],
     ...props
   });
 }
@@ -704,6 +712,7 @@ export function CreationDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'creation_date',
     title: t`Creation Date`,
+    filter: ['created_before', 'created_after'],
     ...props
   });
 }
@@ -712,6 +721,7 @@ export function CompletionDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'completion_date',
     title: t`Completion Date`,
+    filter: ['completed_before', 'completed_after'],
     ...props
   });
 }
@@ -720,6 +730,7 @@ export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
     title: t`Shipment Date`,
+    filter: ['shipment_date_before', 'shipment_date_after'],
     ...props
   });
 }
@@ -729,6 +740,7 @@ export function UpdatedAtColumn(props: TableColumnProps): TableColumn {
     accessor: 'updated_at',
     title: t`Updated`,
     defaultVisible: false,
+    filter: ['updated_before', 'updated_after'],
     extra: { showTime: true },
     ...props
   });

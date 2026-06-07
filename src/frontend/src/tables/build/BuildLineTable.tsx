@@ -322,6 +322,7 @@ export default function BuildLineTable({
         ordering: 'part',
         sortable: true,
         switchable: false,
+        filter: ['assembly', 'testable', 'tracked'],
         render: (record: any) => {
           const hasAllocatedItems = record.allocatedQuantity > 0;
 
@@ -356,12 +357,14 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
+        filter: 'optional',
         hidden: hasOutput,
         defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
+        filter: 'consumable',
         hidden: hasOutput,
         defaultVisible: false
       }),
@@ -381,6 +384,7 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
+        filter: 'tracked',
         hidden: hasOutput,
         defaultVisible: false
       }),
@@ -457,6 +461,7 @@ export default function BuildLineTable({
       {
         accessor: 'available_stock',
         sortable: true,
+        filter: 'available',
         switchable: false,
         render: renderAvailableColumn
       },
@@ -481,12 +486,14 @@ export default function BuildLineTable({
       DecimalColumn({
         accessor: 'on_order',
         defaultVisible: false,
+        filter: 'on_order',
         sortable: true
       }),
       {
         accessor: 'allocated',
         switchable: false,
         sortable: true,
+        filter: 'allocated',
         hidden: !isActive,
         minWidth: 125,
         render: (record: any) => {
@@ -532,6 +539,7 @@ export default function BuildLineTable({
       {
         accessor: 'consumed',
         sortable: true,
+        filter: 'consumed',
         hidden: !!output?.pk,
         minWidth: 125,
         render: (record: any) => {

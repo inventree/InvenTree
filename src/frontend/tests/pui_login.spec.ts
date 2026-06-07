@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { logoutUrl, noaccessuser } from './defaults.js';
-import { navigate } from './helpers.js';
+import { navigate, openDetailAction } from './helpers.js';
 import { doLogin } from './login.js';
 
 import { TOTP } from 'otpauth';
@@ -54,8 +54,8 @@ test('Login - Change Password', async ({ page }) => {
 
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account', { waitUntil: 'networkidle' });
-  await page.getByLabel('action-menu-account-actions').click();
-  await page.getByLabel('action-menu-account-actions-change-password').click();
+
+  await openDetailAction(page, 'account', 'change-password');
 
   // First attempt with some errors
   await page.getByLabel('password', { exact: true }).fill('youshallnotpass');
