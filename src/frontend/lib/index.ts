@@ -155,5 +155,4 @@ export {
 export { useLocalLibState } from './states/LocalLibState';
 
 // Plugin development utilities and hooks
-export { default as InventreeHmrPlugin } from './plugin/InventreeHmrPlugin';
 export { default as LocalizedComponent } from './plugin/LocalizedComponent';
