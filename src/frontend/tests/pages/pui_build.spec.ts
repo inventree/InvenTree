@@ -366,6 +366,18 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   await row.getByText(/150 \/ 150/).waitFor();
 
+  // Open the allocation menu for the red widget
+  const mainRedWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  const mainRedRow = await getRowFromCell(mainRedWidget);
+
+  await mainRedRow.getByLabel(/row-action-menu-/i).click();
+
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .waitFor();
+
+  await page.keyboard.press('Escape');
+
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
@@ -442,9 +454,13 @@ test('Build Order - Allocation', async ({ browser }) => {
   const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
-  await page
-    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
-    .waitFor();
+
+  const allocateStockBtn = page.getByRole('menuitem', {
+    name: 'Allocate Stock',
+    exact: true
+  });
+  await expect(allocateStockBtn).toBeEnabled();
+
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
