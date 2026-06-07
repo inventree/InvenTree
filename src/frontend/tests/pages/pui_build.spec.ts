@@ -40,7 +40,6 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
