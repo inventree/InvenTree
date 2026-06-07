@@ -6,7 +6,7 @@ This file contains historical changelog information for the InvenTree UI compone
 
 ### HMR Support
 
-Adds support for React Fast Refresh in plugin development. This allows for a much smoother development experience when working on plugin frontends, as changes to React components will now trigger a component-level update rather than a full page reload.
+Adds support for React Fast Refresh in plugin development. This allows for a much smoother development experience when working on UI plugins, as changes to React components will now trigger a component-level update rather than a full page reload.
 
 ### Localized Components
 
