@@ -3,35 +3,35 @@ import { I18nProvider } from '@lingui/react';
 import { Skeleton } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
-/**
- * Attempt to load the locale file for the given locale, returning null if it fails
- */
-async function tryLoadLocale(locale: string): Promise<any> {
+export type LocaleLoader = (locale: string) => Promise<any>;
+
+async function tryLoadLocale(
+  locale: string,
+  loader: LocaleLoader
+): Promise<any> {
   try {
-    const messages = await import(`./locales/${locale}/messages.ts`);
-    return messages;
+    return await loader(locale);
   } catch (error) {
     console.warn(`Failed to load locale ${locale}`);
     return null;
   }
 }
 
-/**
- * Helper function to dynamically load frontend translations,
- * based on the provided locale.
- */
-async function loadPluginLocale(i18n: I18n, locale: string) {
+async function loadPluginLocale(
+  i18n: I18n,
+  locale: string,
+  loader: LocaleLoader
+) {
   let messages = null;
 
-  // Find the most specific locale file possible, with fallbacks to less specific locales if necessary
-  messages = await tryLoadLocale(locale);
+  messages = await tryLoadLocale(locale, loader);
 
   if (!messages && locale.includes('-')) {
     const fallbackLocale = locale.split('-')[0];
     console.debug(
       `Locale ${locale} not found, trying fallback locale ${fallbackLocale}`
     );
-    messages = await tryLoadLocale(fallbackLocale);
+    messages = await tryLoadLocale(fallbackLocale, loader);
   }
 
   if (!messages && locale.includes('_')) {
@@ -39,12 +39,12 @@ async function loadPluginLocale(i18n: I18n, locale: string) {
     console.debug(
       `Locale ${locale} not found, trying fallback locale ${fallbackLocale}`
     );
-    messages = await tryLoadLocale(fallbackLocale);
+    messages = await tryLoadLocale(fallbackLocale, loader);
   }
 
   if (!messages && locale !== 'en') {
     console.debug(`Locale ${locale} not found, trying fallback locale en`);
-    messages = await tryLoadLocale('en');
+    messages = await tryLoadLocale('en', loader);
   }
 
   if (messages?.messages) {
@@ -55,6 +55,9 @@ async function loadPluginLocale(i18n: I18n, locale: string) {
   }
 }
 
+const defaultLocaleLoader: LocaleLoader = (locale) =>
+  import(`./locales/${locale}/messages.ts`);
+
 /**
  * Wrapper function for a plugin-defined component which needs to support dynamic locale loading.
  *
@@ -63,21 +66,24 @@ async function loadPluginLocale(i18n: I18n, locale: string) {
 export default function LocalizedComponent({
   i18n,
   locale,
+  loadLocale,
   children
 }: {
   i18n: I18n;
   locale: string;
+  loadLocale?: LocaleLoader;
   children: React.ReactNode;
 }) {
   const [loaded, setLoaded] = useState(false);
 
-  // Reload the component when the locale changes
   useEffect(() => {
     setLoaded(false);
-    loadPluginLocale(i18n, locale).then(() => {
-      setLoaded(true);
-    });
-  }, [i18n, locale]);
+    loadPluginLocale(i18n, locale, loadLocale ?? defaultLocaleLoader).then(
+      () => {
+        setLoaded(true);
+      }
+    );
+  }, [i18n, locale, loadLocale]);
 
   return loaded ? (
     <I18nProvider i18n={i18n}>{children}</I18nProvider>
