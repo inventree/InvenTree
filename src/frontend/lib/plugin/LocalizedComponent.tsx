@@ -3,6 +3,14 @@ import { I18nProvider } from '@lingui/react';
 import { Skeleton } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
+/*
+ * To dynamically load locale messages from a plugin context,
+ * the plugin MUST supply a callback function which can be used to load the locale messages for the plugin.
+ * This is because the plugin frontend code is built separately from the main frontend,
+ * and so cannot directly import locale messages from the main frontend.
+ *
+ * Refer to the inventree-plugin-creator tool for an example of how to use this component in a plugin context.
+ */
 export type LocaleLoader = (locale: string) => Promise<any>;
 
 async function tryLoadLocale(
@@ -17,6 +25,12 @@ async function tryLoadLocale(
   }
 }
 
+/**
+ * @param i18n - The i18n instance from the plugin context
+ * @param locale - The current locale to load
+ * @param loader - The callback function to load the locale messages for the plugin
+ * @returns A React component which will load the locale messages and render the children once loaded
+ */
 async function loadPluginLocale(
   i18n: I18n,
   locale: string,
@@ -55,13 +69,19 @@ async function loadPluginLocale(
   }
 }
 
-const defaultLocaleLoader: LocaleLoader = (locale) =>
-  import(`./locales/${locale}/messages.ts`);
+// A default locale loader which can be used if the plugin does not supply its own loader function
+// Note: This will return null, as the plugin is expected to supply its own loader function which can load the locale messages for the plugin
+const defaultLocaleLoader: LocaleLoader = async (locale) => null;
 
 /**
  * Wrapper function for a plugin-defined component which needs to support dynamic locale loading.
  *
  * This is primarily designed for usage by the InvenTree plugin creator tool
+ *
+ * @param i18n - The i18n instance from the plugin context
+ * @param locale - The current locale to load
+ * @param loadLocale - The callback function to load the locale messages for the plugin
+ * @param children - The child components to render once the locale is loaded
  */
 export default function LocalizedComponent({
   i18n,
