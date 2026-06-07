@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.3 - June 2026
+
+Expose the `InventreeHmrPlugin` on a different path (`@inventreedb/ui/vite`) to avoid vite bundling issues.
+
 ### 1.4.2 - June 2026
 
 Fixes a bug in the `LocalizedComponent` function
