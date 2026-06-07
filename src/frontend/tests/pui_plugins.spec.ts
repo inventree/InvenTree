@@ -1,4 +1,4 @@
-import test from 'playwright/test';
+import { test } from './baseFixtures';
 
 import { adminuser } from './defaults.js';
 import {
@@ -174,7 +174,7 @@ test('Plugins - Panels', async ({ browser }) => {
 
   // Check out each of the plugin panels
   await loadTab(page, 'Broken Panel');
-  await page.getByText('Error occurred while loading plugin content').waitFor();
+  await page.getByText('Error Loading Plugin Content').waitFor();
   await loadTab(page, 'Dynamic Panel');
   await page.getByText('Instance ID: 69');
   await page
@@ -253,3 +253,60 @@ test('Plugins - Locate Item', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
 });
+
+/**
+ * Perform a full run through of validating a UI plugin:
+ *
+ * - Activate the plugin
+ * - Check that a custom panel is added
+ * - Check that expected translated text is added
+ * - Check that expected UI elements can be operated
+ *
+ * Note: This tests assumes that:
+ *
+ * - The inventree-plugin-creator tool has been installed
+ * - The default plugin has been created, build and installed
+ */
+test('Plugins - Creator', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser
+  });
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    plugin: 'my-custom-plugin',
+    state: true
+  });
+
+  // Allow time for installation of plugin static files, etc
+  await page.waitForTimeout(2500);
+
+  await navigate(page, 'part/106/details/');
+  await loadTab(page, 'My Custom Plugin');
+
+  // Check for correctly translated code
+  await page.getByText('Translated text, provided by custom code!').waitFor();
+
+  // Check for incrementing counter value
+  for (let i = 0; i < 5; i++) {
+    await page.getByText(`Counter: ${i}`).waitFor();
+    await page.getByRole('button', { name: 'Increment Counter' }).click();
+  }
+
+  // Edit part form
+  await page.getByRole('button', { name: 'Edit Part' }).click();
+  await page
+    .getByText('This is a custom form launched from within a plugin!')
+    .waitFor();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('New part name');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // View a custom table
+  await page.getByRole('button', { name: 'Custom Table Example' }).click();
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('red');
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('cell', { name: 'Red Square Table' }).first().waitFor();
+});
+// Ensure that the sample full run plugin is enabled

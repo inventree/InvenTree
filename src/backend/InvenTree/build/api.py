@@ -16,6 +16,7 @@ from rest_framework.response import Response
 
 import build.models as build_models
 import build.serializers
+import common.filters
 import common.models
 import common.serializers
 import part.models as part_models
@@ -306,6 +307,8 @@ class BuildFilter(FilterSet):
         )
 
         return queryset
+
+    tags = common.filters.TagsFilter()
 
 
 class BuildMixin:
@@ -735,13 +738,80 @@ class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
         ctx['to_complete'] = False
         return ctx
 
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override POST to offload scrapping to the background worker."""
+        from build.tasks import scrap_build_outputs
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        task_id = offload_task(
+            scrap_build_outputs,
+            build.pk,
+            outputs=[
+                {
+                    'output_id': item['output'].pk,
+                    'quantity': float(item['quantity'])
+                    if item.get('quantity') is not None
+                    else None,
+                }
+                for item in data['outputs']
+            ],
+            location_id=data['location'].pk,
+            notes=data.get('notes', ''),
+            discard_allocations=data.get('discard_allocations', False),
+            user_id=self.request.user.pk,
+            group='build',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
+
 
 class BuildOutputComplete(BuildOrderContextMixin, CreateAPI):
     """API endpoint for completing build outputs."""
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildOutputCompleteSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override POST to offload build output completion to the background worker."""
+        from build.tasks import complete_build_outputs
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        location = data.get('location')
+
+        task_id = offload_task(
+            complete_build_outputs,
+            build.pk,
+            outputs=[
+                {
+                    'output_id': item['output'].pk,
+                    'quantity': float(item['quantity'])
+                    if item.get('quantity') is not None
+                    else None,
+                }
+                for item in data['outputs']
+            ],
+            location_id=location.pk if location else None,
+            status=data.get('status_custom_key'),
+            notes=data.get('notes', ''),
+            user_id=self.request.user.pk,
+            group='build',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class BuildOutputDelete(BuildOrderContextMixin, CreateAPI):
@@ -750,14 +820,32 @@ class BuildOutputDelete(BuildOrderContextMixin, CreateAPI):
     def get_serializer_context(self):
         """Add extra context information to the endpoint serializer."""
         ctx = super().get_serializer_context()
-
         ctx['to_complete'] = False
-
         return ctx
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildOutputDeleteSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Override POST to offload build output deletion to the background worker."""
+        from build.tasks import delete_build_outputs
+        from InvenTree.tasks import offload_task
+
+        build = self.get_build()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        task_id = offload_task(
+            delete_build_outputs,
+            build.pk,
+            output_ids=[item['output'].pk for item in data['outputs']],
+            group='build',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class BuildFinish(BuildOrderContextMixin, CreateAPI):
@@ -801,6 +889,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
+        build_lines = data.get('build_lines', [])
+
         # Offload the task to the background worker
         task_id = offload_task(
             auto_allocate_build,
@@ -811,6 +901,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
             substitutes=data['substitutes'],
             optional_items=data['optional_items'],
             item_type=data.get('item_type', 'untracked'),
+            stock_sort_by=data['stock_sort_by'],
+            line_ids=[line.pk for line in build_lines] if build_lines else None,
             group='build',
         )
 

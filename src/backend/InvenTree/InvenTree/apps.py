@@ -64,9 +64,20 @@ class InvenTreeConfig(AppConfig):
             self.collect_tasks()
             self.start_background_tasks()
 
-            if not InvenTree.ready.isInTestMode():  # pragma: no cover
+            if (
+                not InvenTree.ready.isInTestMode()
+                and not InvenTree.ready.isInWorkerThread()
+            ):  # pragma: no cover
                 # Let the background worker check for migrations
-                InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                # Don't offload task if we are already *in* the background worker, otherwise we might end up in a deadlock situation
+
+                try:
+                    InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                except Exception as exc:
+                    logger.exception(
+                        'Failed to offload check_for_migrations task: %s', exc
+                    )
+
                 # Update exchange rates
                 InvenTree.tasks.offload_task(
                     InvenTree.tasks.update_exchange_rates, force_async=True

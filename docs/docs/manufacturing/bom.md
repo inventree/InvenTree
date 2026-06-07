@@ -118,7 +118,7 @@ By default, the BOM is displayed in "view" mode. To edit the BOM, click on the {
 
 ### Importing a BOM
 
-BOM data can be imported from an existing file (such as CSV or Excel) from the *BOM* panel for a particular part/assembly. This process is a special case of the more general [data import process](../settings/import.md).
+BOM data can be imported from an existing file (such as CSV or Excel) from the *BOM* panel for a particular part/assembly. This process is a special case of the more general [data import process](../concepts/data_import.md).
 
 At the top of the *BOM* panel, click on the {{ icon("file-arrow-left", color="green", title="Import BOM Data") }} icon to open the import dialog.
 

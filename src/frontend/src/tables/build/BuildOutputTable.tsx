@@ -170,7 +170,8 @@ export default function BuildOutputTable({
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId, build],
+    staleTime: 60 * 1000, // Cache for 1 minute
+    queryKey: ['buildoutputtests', partId, buildId],
     queryFn: async () => {
       if (!partId || partId < 0) {
         return [];
@@ -200,6 +201,7 @@ export default function BuildOutputTable({
 
   // Fetch the "tracked" BOM items associated with the partId
   const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
+    staleTime: 60 * 1000, // Cache for 1 minute
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {
@@ -346,31 +348,80 @@ export default function BuildOutputTable({
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
+  const [completeTaskId, setCompleteTaskId] = useState<string>('');
+  const [scrapTaskId, setScrapTaskId] = useState<string>('');
+  const [deleteTaskId, setDeleteTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: completeTaskId,
+    message: t`Completing build outputs`,
+    successMessage: t`Build outputs have been completed`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: scrapTaskId,
+    message: t`Scrapping build outputs`,
+    successMessage: t`Build outputs have been scrapped`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: deleteTaskId,
+    message: t`Cancelling build outputs`,
+    successMessage: t`Build outputs have been cancelled`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
     hasTrackedItems: hasTrackedItems,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setCompleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const scrapBuildOutputsForm = useScrapBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setScrapTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const cancelBuildOutputsForm = useCancelBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setDeleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 

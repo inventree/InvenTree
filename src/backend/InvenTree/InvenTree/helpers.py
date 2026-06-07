@@ -550,29 +550,31 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
+    from InvenTree.ready import isReadOnlyCommand
     from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
-    # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-        try:
-            if not hasattr(plugin, 'increment_serial_number'):
-                continue
+    if not isReadOnlyCommand():
+        # First, let any plugins attempt to increment the serial number
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            try:
+                if not hasattr(plugin, 'increment_serial_number'):
+                    continue
 
-            signature = inspect.signature(plugin.increment_serial_number)
+                signature = inspect.signature(plugin.increment_serial_number)
 
-            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
-            if 'part' in signature.parameters:
-                result = plugin.increment_serial_number(serial, part=part)
-            else:
-                result = plugin.increment_serial_number(serial)
-            if result is not None:
-                return str(result)
-        except Exception:
-            log_error('increment_serial_number', plugin=plugin.slug)
+                # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+                if 'part' in signature.parameters:
+                    result = plugin.increment_serial_number(serial, part=part)
+                else:
+                    result = plugin.increment_serial_number(serial)
+                if result is not None:
+                    return str(result)
+            except Exception:
+                log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules

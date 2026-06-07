@@ -20,7 +20,7 @@ import {
   type SubmitHandler,
   useForm
 } from 'react-hook-form';
-import { type NavigateFunction, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
 import { isTrue } from '@lib/functions/Conversion';
@@ -176,14 +176,15 @@ export function ApiForm({
     props.onKeepOpenChange?.(v);
   };
 
-  // Accessor for the navigation function (which is used to redirect the user)
-  let navigate: NavigateFunction | null = null;
+  let navigate = props.navigate || null;
 
-  try {
-    navigate = useNavigate();
-  } catch (_error) {
-    // Note: If we launch a form within a plugin context, useNavigate() may not be available
-    navigate = null;
+  if (!navigate) {
+    try {
+      navigate = useNavigate();
+    } catch (_error) {
+      // Note: If we launch a form within a plugin context, useNavigate() may not be available
+      navigate = null;
+    }
   }
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
@@ -658,6 +659,7 @@ export function ApiForm({
                           definition={field}
                           control={form.control}
                           url={url}
+                          navigate={navigate}
                           setFields={setFields}
                           onKeyDown={(value) => {
                             if (

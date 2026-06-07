@@ -31,6 +31,7 @@ import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { TagsField } from './CommonFields';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -64,6 +65,7 @@ export function useSalesOrderFields({
       target_date: {
         icon: <IconCalendar />
       },
+      tags: TagsField({}),
       link: {},
       contact: {
         icon: <IconUser />,
@@ -537,6 +539,7 @@ export function useSalesOrderShipmentFields({
       },
       tracking_number: {},
       invoice_number: {},
+      tags: TagsField({}),
       link: {}
     };
   }, [customerId, pending]);
@@ -583,4 +586,29 @@ export function useSalesOrderAllocationFields({
       }
     };
   }, [orderId, shipment]);
+}
+
+export function useSalesOrderAutoAllocateFields({
+  orderId
+}: {
+  orderId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      interchangeable: {},
+      stock_sort_by: {},
+      serialized_stock: {},
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      },
+      line_items: {
+        hidden: true
+      }
+    };
+  }, [orderId]);
 }

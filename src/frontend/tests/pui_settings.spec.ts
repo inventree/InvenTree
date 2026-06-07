@@ -385,10 +385,20 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
   await page.waitForTimeout(500);
 
-  // Barcode history is displayed in table
-  barcodes.forEach(async (barcode) => {
+  const checkBarcode = async (barcode: string) => {
+    await page.getByRole('textbox', { name: 'table-search-input' }).clear();
+    await page
+      .getByRole('textbox', { name: 'table-search-input' })
+      .fill(barcode);
+    await page.waitForLoadState('networkidle');
     await page.getByText(barcode).first().waitFor();
-  });
+  };
+
+  for (const barcode of barcodes) {
+    await checkBarcode(barcode);
+  }
+
+  await page.waitForTimeout(2500);
 });
 
 test('Settings - Admin - Parameter', async ({ browser }) => {

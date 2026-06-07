@@ -14,6 +14,7 @@ from opentelemetry import trace
 import common.notifications
 import InvenTree.helpers_model
 import order.models
+import stock.models as stock_models
 from InvenTree.tasks import ScheduledTask, scheduled_task
 from order.events import PurchaseOrderEvents, SalesOrderEvents
 from order.status_codes import (
@@ -273,3 +274,38 @@ def complete_sales_order_shipment(
 
     # Trigger event signalling that the shipment has been completed
     trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=shipment.pk)
+
+
+@tracer.start_as_current_span('auto_allocate_sales_order')
+def auto_allocate_sales_order(
+    order_id: int,
+    location_id: Optional[int] = None,
+    exclude_location_id: Optional[int] = None,
+    shipment_id: Optional[int] = None,
+    line_ids: Optional[list] = None,
+    **kwargs,
+):
+    """Run auto-allocation for a specified SalesOrder."""
+    sales_order = order.models.SalesOrder.objects.get(pk=order_id)
+
+    location = (
+        stock_models.StockLocation.objects.get(pk=location_id) if location_id else None
+    )
+    exclude_location = (
+        stock_models.StockLocation.objects.get(pk=exclude_location_id)
+        if exclude_location_id
+        else None
+    )
+    shipment = (
+        order.models.SalesOrderShipment.objects.get(pk=shipment_id)
+        if shipment_id
+        else None
+    )
+
+    sales_order.auto_allocate_stock(
+        location=location,
+        exclude_location=exclude_location,
+        shipment=shipment,
+        line_ids=line_ids or None,
+        **kwargs,
+    )

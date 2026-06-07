@@ -10,6 +10,7 @@ export interface ModelInformationInterface {
   url_detail?: string;
   api_endpoint: ApiEndpoints;
   admin_url?: string;
+  pk_field?: string;
   supports_barcode?: boolean;
   icon: keyof InvenTreeIconType;
 }
@@ -117,8 +118,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'history'
   },
   build: {
-    label: () => t`Build`,
-    label_multiple: () => t`Builds`,
+    label: () => t`Build Order`,
+    label_multiple: () => t`Build Orders`,
     url_overview: '/manufacturing/index/buildorders/',
     url_detail: '/manufacturing/build-order/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
@@ -206,6 +207,22 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Return Order Line Items`,
     api_endpoint: ApiEndpoints.return_order_line_list,
     icon: 'return_orders'
+  },
+  transferorder: {
+    label: () => t`Transfer Order`,
+    label_multiple: () => t`Transfer Orders`,
+    url_overview: '/stock/location/index/transfer-orders',
+    url_detail: '/stock/transfer-order/:pk/',
+    api_endpoint: ApiEndpoints.transfer_order_list,
+    admin_url: '/order/transferorder/',
+    supports_barcode: true,
+    icon: 'transfer_orders'
+  },
+  transferorderlineitem: {
+    label: () => t`Transfer Order Line Item`,
+    label_multiple: () => t`Transfer Order Line Items`,
+    api_endpoint: ApiEndpoints.transfer_order_line_list,
+    icon: 'transfer-orders'
   },
   address: {
     label: () => t`Address`,
@@ -302,5 +319,11 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/settings/admin/errors',
     url_detail: '/settings/admin/errors/:pk/',
     icon: 'exclamation'
+  },
+  tag: {
+    label: () => t`Tag`,
+    label_multiple: () => t`Tags`,
+    api_endpoint: ApiEndpoints.tag_list,
+    icon: 'tag'
   }
 };

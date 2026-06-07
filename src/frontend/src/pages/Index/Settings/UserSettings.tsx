@@ -9,7 +9,7 @@ import {
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
-import { lazy, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { PluginPanelKey } from '@lib/enums/ModelType';
 import type { PanelType } from '@lib/types/Panel';
@@ -18,14 +18,10 @@ import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
-import { Loadable } from '../../../functions/loading';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
 import { AccountContent } from './AccountSettings/UserPanel';
-
-const PluginSettingsGroup = Loadable(
-  lazy(() => import('./PluginSettingsGroup'))
-);
+import PluginSettingsGroup from './PluginSettingsGroup';
 
 /**
  * User settings page
@@ -65,6 +61,7 @@ export default function UserSettings() {
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
+              'SHOW_EXTRA_MODEL_INFO',
               'SHOW_FULL_LOCATION_IN_TABLES',
               'SHOW_FULL_CATEGORY_IN_TABLES',
               'SHOW_BOM_SUBASSEMBLY_LEVELS'
@@ -130,7 +127,9 @@ export default function UserSettings() {
         name: 'plugins',
         label: t`Plugin Settings`,
         icon: <IconPlugConnected />,
-        content: <PluginSettingsGroup global={false} />
+        content: (
+          <PluginSettingsGroup global={false} includeBaseSettings={true} />
+        )
       }
     ];
   }, []);

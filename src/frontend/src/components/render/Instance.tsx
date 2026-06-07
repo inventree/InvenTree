@@ -1,16 +1,20 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
   Alert,
   Anchor,
+  Box,
   Group,
+  HoverCard,
   type MantineSize,
   Paper,
   Skeleton,
   Space,
+  Stack,
   Text
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
@@ -24,9 +28,16 @@ import type {
 } from '@lib/types/Rendering';
 
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
-import { getBaseUrl, navigateToLink, shortenString } from '@lib/index';
+import {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink,
+  shortenString
+} from '@lib/index';
+import { IconLink } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { usePluginState } from '../../states/PluginState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -44,14 +55,17 @@ import {
   RenderParameterTemplate,
   RenderProjectCode,
   RenderSelectionEntry,
-  RenderSelectionList
+  RenderSelectionList,
+  RenderTag
 } from './Generic';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
   RenderReturnOrderLineItem,
   RenderSalesOrder,
-  RenderSalesOrderShipment
+  RenderSalesOrderShipment,
+  RenderTransferOrder,
+  RenderTransferOrderLineItem
 } from './Order';
 import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
 import { RenderPlugin } from './Plugin';
@@ -87,6 +101,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
+  [ModelType.transferorder]: RenderTransferOrder,
+  [ModelType.transferorderlineitem]: RenderTransferOrderLineItem,
   [ModelType.stocklocation]: RenderStockLocation,
   [ModelType.stocklocationtype]: RenderStockLocationType,
   [ModelType.stockitem]: RenderStockItem,
@@ -101,7 +117,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.selectionentry]: RenderSelectionEntry,
-  [ModelType.error]: RenderError
+  [ModelType.error]: RenderError,
+  [ModelType.tag]: RenderTag
 };
 
 /**
@@ -121,11 +138,98 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
     props.custom_model ?? props.model ?? ''
   );
 
-  // provider component
-  if (!RenderComponent) {
-    return <UnknownRenderer model={props.model} />;
-  }
-  return <RenderComponent {...props} />;
+  const userSettings = useUserSettingsState();
+
+  // Extract model information from the defined model type
+  const modelInfo = useMemo(() => {
+    if (!props.model) {
+      return undefined;
+    }
+
+    return ModelInformationDict[
+      props.model.toString().toLowerCase() as ModelType
+    ];
+  }, [props.model]);
+
+  const showHover: boolean = useMemo(() => {
+    if (!modelInfo) {
+      return false;
+    }
+
+    // Override with the props.showHover attribute
+    if (props.showHover !== undefined) {
+      return props.showHover;
+    }
+
+    // If not specified, fall back to the user configured setting
+    return userSettings.isSet('SHOW_EXTRA_MODEL_INFO');
+  }, [props.showHover, modelInfo, userSettings]);
+
+  // Extract model ID from the provided instance data, using the defined primary key field (or 'pk' as a fallback)
+  const modelId = useMemo(() => {
+    if (!modelInfo || !props.instance) {
+      return undefined;
+    }
+
+    return props.instance[modelInfo.pk_field ?? 'pk'];
+  }, [modelInfo, props.instance]);
+
+  const detailUrl = useMemo(() => {
+    if (!props.model) {
+      return undefined;
+    }
+
+    return getDetailUrl(props.model, modelId, true);
+  }, [props.model]);
+
+  return (
+    <HoverCard
+      disabled={!showHover}
+      position='top-end'
+      withinPortal
+      openDelay={500}
+      closeDelay={100}
+      zIndex={99999}
+    >
+      <HoverCard.Target>
+        <Box>
+          {!!RenderComponent ? (
+            <RenderComponent {...props} />
+          ) : (
+            <UnknownRenderer model={props.model} />
+          )}
+        </Box>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <Stack gap='xs'>
+          <Group justify='space-between'>
+            <Text size='sm' fw='bold'>
+              {modelInfo?.label()}
+            </Text>
+            {modelId && <Text size='xs'>{`[${t`ID`}: ${modelId}]`}</Text>}
+          </Group>
+          {detailUrl && (
+            <Anchor
+              href={detailUrl}
+              target='_blank'
+              onClick={(event) => {
+                if (props.navigate) {
+                  navigateToLink(detailUrl, props.navigate, event);
+                }
+              }}
+            >
+              <Group gap='xs' wrap='nowrap'>
+                <ActionIcon variant='transparent' size='xs'>
+                  <IconLink />
+                </ActionIcon>
+                <Text size='sm'>{t`View details`}</Text>
+              </Group>
+            </Anchor>
+          )}
+        </Stack>
+      </HoverCard.Dropdown>
+    </HoverCard>
+  );
 }
 
 export function RenderRemoteInstance({

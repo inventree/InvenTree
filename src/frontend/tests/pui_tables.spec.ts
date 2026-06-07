@@ -3,10 +3,46 @@ import { stevenuser } from './defaults.js';
 import {
   clearTableFilters,
   navigate,
+  openFilterDrawer,
   setTableChoiceFilter,
   toggleColumnSorting
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
+
+// Test filtering by "quick filter" actions (against table columns)
+test('Tables - Quick Filters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts/'
+  });
+
+  await clearTableFilters(page);
+
+  await page
+    .getByRole('button', { name: 'Part Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-active' }).click();
+  await page.getByRole('option', { name: 'Yes' }).click();
+
+  await page
+    .getByRole('button', { name: 'Part Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-locked' }).click();
+  await page.getByRole('option', { name: 'No' }).click();
+
+  await page
+    .getByRole('button', { name: 'IPN Not sorted' })
+    .getByRole('button')
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: 'choice-filter-has_ipn' }).click();
+  await page.getByRole('option', { name: 'Yes' }).click();
+
+  await page.getByRole('cell', { name: 'ENCAB' }).first().waitFor();
+});
 
 test('Tables - Filters', async ({ browser }) => {
   // Head to the "build order list" page
@@ -39,6 +75,34 @@ test('Tables - Filters', async ({ browser }) => {
   await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
 
   await clearTableFilters(page);
+
+  // Next, let's create a "custom filter group" and apply it
+  await openFilterDrawer(page);
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).click();
+  await page.getByRole('option', { name: 'Outstanding' }).click();
+
+  await page
+    .getByRole('combobox', { name: 'choice-filter-outstanding' })
+    .click();
+  await page.getByRole('option', { name: 'Yes' }).click();
+
+  // Save the filter group
+  await page.getByRole('button', { name: 'Save Filters' }).click();
+  await page.getByRole('textbox', { name: 'filter-group-name' }).fill('custom');
+  await page
+    .getByRole('button', { name: 'save-filter-set', exact: true })
+    .click();
+
+  // Clear filters, and then restore from saved group
+  await page.getByRole('button', { name: 'Clear Filters' }).click();
+  await page.getByRole('button', { name: 'load-filter-group-custom' }).click();
+  await page.getByText('Show outstanding items').first().waitFor();
+
+  // Remove the filter group
+  await page
+    .getByRole('button', { name: 'delete-filter-group-custom' })
+    .click();
 });
 
 test('Tables - Pagination', async ({ browser }) => {

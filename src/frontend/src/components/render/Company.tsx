@@ -50,11 +50,11 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance.thumbnail || instance.image}
-      primary={instance.name}
-      suffix={instance.description}
+      image={instance?.thumbnail || instance?.image}
+      primary={instance?.name}
+      suffix={instance?.description}
       url={
-        props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
+        props.link ? getDetailUrl(ModelType.company, instance?.pk) : undefined
       }
     />
   );

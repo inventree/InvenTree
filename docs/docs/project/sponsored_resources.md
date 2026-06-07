@@ -1,5 +1,5 @@
 ---
-title: Resources InvenTree receives
+title: Sponsored Resources
 ---
 
 The InvenTree project is grateful to receive resources from various vendors free of charge.
@@ -18,5 +18,6 @@ Individuals and companies can also support via [GitHub sponsors](https://github.
 ## Past Supporters
 
 Non comprehensive list of past supporters. The project stops consuming resources for various reasons, this does not mean they are not good resources.
+
 - [Coveralls](https://coveralls.io/) - Code coverage as a service
 - [Deepsource](https://deepsource.io/) - Code quality and security analysis

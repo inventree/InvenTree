@@ -9,6 +9,7 @@ import {
   clickOnRowMenu,
   loadTab,
   navigate,
+  openDetailAction,
   openFilterDrawer,
   setTableChoiceFilter,
   showCalendarView,
@@ -278,7 +279,7 @@ test('Purchase Orders - Calendar', async ({ browser }) => {
   await page.getByRole('button', { name: 'Feb' }).waitFor();
   await page.getByRole('button', { name: 'Dec' }).click();
 
-  await page.getByText('December').waitFor();
+  await page.getByText('December').first().waitFor();
 
   // Put back into table view
   await activateTableView(page);
@@ -292,8 +293,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-view').click();
+  await openDetailAction(page, 'barcode', 'view');
   await page.getByRole('img', { name: 'QR Code' }).waitFor();
   await page.getByRole('banner').getByRole('button').click();
 
@@ -314,8 +314,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   }
 
   // Link to barcode
-  await page.getByLabel('action-menu-barcode-actions', { exact: true }).click();
-  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+  await openDetailAction(page, 'barcode', 'link-barcode');
 
   await page.getByLabel('barcode-input-scanner').click();
 
@@ -338,8 +337,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByText('Purchase Order: PO0013', { exact: true }).waitFor();
 
   // Unlink barcode
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+  await openDetailAction(page, 'barcode', 'unlink-barcode');
   await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
   await page.getByText('This will remove the link to').waitFor();
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
@@ -431,8 +429,8 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
     await page.getByLabel(`Select record ${ii}`, { exact: true }).click();
   }
 
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-order-parts').click();
+  await openDetailAction(page, 'part', 'order-parts');
+
   await page
     .getByRole('heading', { name: 'Order Parts' })
     .locator('div')
@@ -456,8 +454,7 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
   await navigate(page, 'part/69/');
   await page.waitForURL('**/part/69/**');
 
-  await page.getByLabel('action-menu-stock-actions').click();
-  await page.getByLabel('action-menu-stock-actions-order').click();
+  await openDetailAction(page, 'stock', 'order');
 
   // Select supplier part
   await page.getByLabel('related-field-supplier_part').click();
@@ -630,8 +627,7 @@ test('Purchase Orders - Duplicate', async ({ browser }) => {
     url: 'purchasing/purchase-order/13/detail'
   });
 
-  await page.getByLabel('action-menu-order-actions').click();
-  await page.getByLabel('action-menu-order-actions-duplicate').click();
+  await openDetailAction(page, 'order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(

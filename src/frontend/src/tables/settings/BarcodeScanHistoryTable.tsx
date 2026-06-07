@@ -258,23 +258,28 @@ export default function BarcodeScanHistoryTable() {
             icon={<IconExclamationCircle />}
             title={t`Logging Disabled`}
           >
-            <Text>{t`Barcode logging is not enabled`}</Text>
+            <Text>
+              {t`Barcode logging is not enabled.`}{' '}
+              {t`No barcode scan history will be recorded.`}
+            </Text>
           </Alert>
         )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.barcode_history)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            tableFilters: filters,
-            enableBulkDelete: canDelete,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              setSelectedResult(row);
-              open();
-            }
-          }}
-        />
+        {globalSettings.isSet('BARCODE_STORE_RESULTS') && (
+          <InvenTreeTable
+            url={apiUrl(ApiEndpoints.barcode_history)}
+            tableState={table}
+            columns={tableColumns}
+            props={{
+              tableFilters: filters,
+              enableBulkDelete: canDelete,
+              rowActions: rowActions,
+              onRowClick: (row) => {
+                setSelectedResult(row);
+                open();
+              }
+            }}
+          />
+        )}
       </Stack>
     </>
   );

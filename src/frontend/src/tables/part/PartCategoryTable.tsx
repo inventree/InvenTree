@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
-import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -23,7 +22,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -64,14 +63,11 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         copyable: true,
         sortable: true
       },
-      {
+      BooleanColumn({
         accessor: 'structural',
         sortable: true,
-        defaultVisible: false,
-        render: (record: any) => {
-          return <YesNoButton value={record.structural} />;
-        }
-      },
+        defaultVisible: false
+      }),
       {
         accessor: 'part_count',
         sortable: true

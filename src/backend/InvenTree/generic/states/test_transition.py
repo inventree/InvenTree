@@ -121,3 +121,7 @@ class TransitionTests(InvenTreeTestCase):
             self.assertIn(
                 "ValueError('This is a broken transition plugin!')", str(cm.output[0])
             )
+
+        # Ensure the plugin is now disabled
+        registry.set_plugin_state('sample-transition', False)
+        registry.set_plugin_state('sample-broken-transition', False)

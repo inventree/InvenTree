@@ -36,6 +36,7 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
@@ -124,6 +125,7 @@ export function useBuildOrderFields({
         },
         value: destination
       },
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -239,6 +241,10 @@ export function useBuildAutoAllocateFields({
       optional_items: {
         hidden: item_type === 'tracked',
         value: item_type === 'tracked' ? false : undefined
+      },
+      stock_sort_by: {},
+      build_lines: {
+        hidden: true
       }
     };
   }, [item_type]);
@@ -337,16 +343,21 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -385,7 +396,7 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been completed`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -414,16 +425,21 @@ export function useScrapBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -466,7 +482,7 @@ export function useScrapBuildOutputsForm({
     ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been scrapped`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -480,15 +496,20 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        output: output.pk
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -527,7 +548,7 @@ export function useCancelBuildOutputsForm({
     ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`,
+    successMessage: null,
     size: '80%'
   });
 }

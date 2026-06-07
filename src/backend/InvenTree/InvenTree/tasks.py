@@ -178,7 +178,7 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
 
     # Iterate through all available tasks, with the most recent first
     for task in OrmQ.objects.all().order_by('-id'):
-        if task.func() != taskname and task.task['func'] != taskname:
+        if task.func() != taskname and task.task.get('func') != taskname:
             # Task does not match
             continue
 
@@ -282,40 +282,31 @@ def offload_task(
             # function was passed - use that
             _func = taskname
         else:
-            # Split path
+            # Split on the last dot: everything before is the module path,
+            # everything after is the function name. rsplit handles any depth
+            # (e.g. 'app.module.func' or 'app.sub.module.func').
             try:
-                app, mod, func = taskname.split('.')
-                app_mod = app + '.' + mod
+                module_path, func_name = taskname.rsplit('.', 1)
             except ValueError:
                 raise_warning(
                     f"WARNING: '{taskname}' not started - Malformed function path"
                 )
                 return False
 
-            # Import module from app
             try:
-                _mod = importlib.import_module(app_mod)
+                _mod = importlib.import_module(module_path)
             except ModuleNotFoundError:
                 log_error('offload_task', scope='worker')
                 raise_warning(
-                    f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
+                    f"WARNING: '{taskname}' not started - No module named '{module_path}'"
                 )
                 return False
 
-            # Retrieve function
-            try:
-                _func = getattr(_mod, func)
-            except AttributeError:  # pragma: no cover
-                # getattr does not work for local import
-                _func = None
-
-            try:
-                if not _func:
-                    _func = eval(func)  # pragma: no cover
-            except NameError:
+            _func = getattr(_mod, func_name, None)
+            if _func is None:
                 log_error('offload_task', scope='worker')
                 raise_warning(
-                    f"WARNING: '{taskname}' not started - No function named '{func}'"
+                    f"WARNING: '{taskname}' not started - No function named '{func_name}'"
                 )
                 return False
 

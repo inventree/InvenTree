@@ -50,11 +50,16 @@ def setup_tracing(
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
+
     if endpoint is None or headers is None:
         print(
             'Tracing endpoint or headers not specified - skipping tracing setup'
         )  # pragma: no cover
         return  # pragma: no cover
+
+    # check if trace is already set up - if so, skip
+    if trace.get_tracer_provider() is not None:
+        return
 
     # Logger configuration
     logger = logging.getLogger('inventree')
@@ -163,29 +168,34 @@ def setup_tracing(
 
 def setup_instruments(db_engine: str):  # pragma: no cover
     """Run auto-instrumentation for OpenTelemetry tracing."""
-    DjangoInstrumentor().instrument()
-    RedisInstrumentor().instrument()
-    RequestsInstrumentor().instrument()
-    SystemMetricsInstrumentor().instrument()
+    if not DjangoInstrumentor()._is_instrumented_by_opentelemetry:
+        DjangoInstrumentor().instrument()
+        RedisInstrumentor().instrument()
+        RequestsInstrumentor().instrument()
+        SystemMetricsInstrumentor().instrument()
 
     db_engine = str(db_engine).lower().strip()
 
     # DBs
     if 'sqlite' in db_engine:
-        SQLite3Instrumentor().instrument()
+        inst = SQLite3Instrumentor()
+        if not inst._is_instrumented_by_opentelemetry:
+            inst.instrument()
     elif 'postgresql' in db_engine:
         try:
             from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
 
-            PsycopgInstrumentor().instrument(
-                enable_commenter=False, commenter_options={}
-            )
+            inst = PsycopgInstrumentor()
+            if not inst._is_instrumented_by_opentelemetry:
+                inst.instrument(enable_commenter=False, commenter_options={})
         except ModuleNotFoundError:
             pass
     elif 'mysql' in db_engine:
         try:
             from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
 
-            PyMySQLInstrumentor().instrument()
+            inst = PyMySQLInstrumentor()
+            if not inst._is_instrumented_by_opentelemetry:
+                inst.instrument()
         except ModuleNotFoundError:
             pass

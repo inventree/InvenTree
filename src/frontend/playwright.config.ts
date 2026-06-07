@@ -3,9 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
 
-const MAX_WORKERS: number = 3;
-const MAX_RETRIES: number = 3;
-
 /* We optionally spin-up services based on the testing mode:
  *
  * Local Development:
@@ -26,21 +23,28 @@ const MAX_RETRIES: number = 3;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-const BASE_URL: string = IS_CI
-  ? 'http://localhost:8000'
-  : 'http://localhost:5173';
+const BASE_URL: string =
+  process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
+
+// If running in "production" mode, we can use multiple workers to speed up the tests
+const MAX_WORKERS: number = BASE_URL.endsWith('8000') ? 3 : 1;
+const MAX_RETRIES: number = IS_CI ? 1 : 2;
 
 console.log('Running Playwright Tests:');
 console.log('- Base URL:', BASE_URL);
+console.log('- Max Workers:', MAX_WORKERS);
+console.log('- Max Retries:', MAX_RETRIES);
 
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
   timeout: 90000,
   forbidOnly: !!IS_CI,
-  retries: IS_CI ? MAX_RETRIES : 0,
-  workers: IS_CI ? MAX_WORKERS : 1,
-  reporter: IS_CI ? [['html', { open: 'never' }], ['github']] : 'list',
+  retries: MAX_RETRIES,
+  workers: MAX_WORKERS,
+  reporter: IS_CI
+    ? [['html', { open: 'never' }], ['blob'], ['github']]
+    : 'list',
 
   /* Configure projects for major browsers */
   projects: [
@@ -57,13 +61,6 @@ export default defineConfig({
         ...devices['Desktop Firefox']
       },
       testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
-    },
-    {
-      name: 'customization',
-      use: {
-        ...devices['Desktop Firefox']
-      },
-      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
     }
   ],
 
@@ -89,7 +86,9 @@ export default defineConfig({
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
         INVENTREE_LOGIN_ATTEMPTS: '100',
-        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
+        INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png',
+        INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,

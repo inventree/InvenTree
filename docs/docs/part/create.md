@@ -48,7 +48,7 @@ If the *Add Supplier Data* option is checked, then supplier part and manufacture
 
 Parts can be imported from an external file, by selecting the *Import from File* option.
 
-This action opens the [data import wizard](../settings/import.md), which steps the user through the process of importing parts from the selected file.
+This action opens the [data import wizard](../concepts/data_import.md), which steps the user through the process of importing parts from the selected file.
 
 ## Import from Supplier
 

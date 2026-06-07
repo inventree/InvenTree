@@ -204,3 +204,21 @@ def rebuild_parameters(template_id):
 
     if n > 0:
         logger.info("Rebuilt %s parameters for template '%s'", n, template.name)
+
+
+@tracer.start_as_current_span('rebuild_attachment')
+def rebuild_attachment(attachment_id: int):
+    """Rebuild the given attachment, if possible.
+
+    This task is called whenever an attachment is saved, and perform the following tasks:
+
+    - Check if the attachment is an image file, and update the "is_image" field accordingly
+    - Attempt to generate a thumbnail for the attachment
+    """
+    from common.models import Attachment
+
+    attachment = Attachment.objects.get(pk=attachment_id)
+
+    attachment.is_image = attachment.check_is_image()
+    attachment.generate_thumbnail()
+    attachment.save(rebuild=False)

@@ -10,13 +10,15 @@ import {
   IconShoppingCart,
   IconTable
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import type { EventContentArg } from '@fullcalendar/core';
 import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
@@ -37,12 +39,21 @@ function PurchaseOrderCalendar() {
     return PurchaseOrderFilters({ includeDateFilters: false });
   }, []);
 
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'supplier_detail'
+    });
+  }, []);
+
   return (
     <OrderCalendar
       model={ModelType.purchaseorder}
       role={UserRoles.purchase_order}
-      params={{ outstanding: true }}
+      params={{ outstanding: true, supplier_detail: true }}
       filters={calendarFilters}
+      tooltip={renderTooltip}
     />
   );
 }

@@ -1,4 +1,4 @@
-import test from '@playwright/test';
+import { test } from '../baseFixtures';
 import { loadTab } from '../helpers';
 import { doCachedLogin } from '../login';
 

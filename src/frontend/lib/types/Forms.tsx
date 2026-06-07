@@ -2,6 +2,7 @@ import type { DefaultMantineColor, MantineStyleProp } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { JSX, ReactNode } from 'react';
 import type { FieldValues, UseFormReturn } from 'react-hook-form';
+import type { NavigateFunction } from 'react-router-dom';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import type { ModelType } from '../enums/ModelType';
 import type { PathParams, UiSizeType } from './Core';
@@ -98,7 +99,8 @@ export type ApiFormFieldType = {
     | 'file upload'
     | 'nested object'
     | 'dependent field'
-    | 'table';
+    | 'table'
+    | 'tags';
   api_url?: string;
   pk_field?: string;
   model?: ModelType;
@@ -160,6 +162,7 @@ export type ApiFormFieldSet = Record<string, ApiFormFieldType>;
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
+ * @param navigate : Optional navigate function to use for following results (if follow is true)
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
@@ -189,6 +192,7 @@ export interface ApiFormProps {
   follow?: boolean;
   actions?: ApiFormAction[];
   timeout?: number;
+  navigate?: NavigateFunction;
   keepOpenOption?: boolean;
   onKeepOpenChange?: (keepOpen: boolean) => void;
 }

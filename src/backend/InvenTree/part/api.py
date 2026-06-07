@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
@@ -264,9 +265,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = str2bool(request.data.get('delete_parts', False))
+        serializer = part_serializers.CategoryDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        delete_parts = str2bool(serializer.validated_data.get('delete_parts', False))
         delete_child_categories = str2bool(
-            request.data.get('delete_child_categories', False)
+            serializer.validated_data.get('delete_child_categories', False)
         )
 
         return super().destroy(
@@ -907,9 +911,7 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
-    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
-
-    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+    tags = common.filters.TagsFilter()
 
     # Created date filters
     created_before = InvenTreeDateFilter(

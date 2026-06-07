@@ -29,6 +29,7 @@ import {
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
+import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -85,12 +86,14 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: !!partId
+        switchable: !!partId,
+        filter: 'part_active'
       }),
       IPNColumn({}),
       {
         accessor: 'manufacturer',
         sortable: true,
+        filter: 'manufacturer_active',
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
         )
@@ -161,7 +164,8 @@ export function ManufacturerPartTable({
         active: !manufacturerId,
         description: t`Show manufacturer parts for active manufacturers.`,
         type: 'boolean'
-      }
+      },
+      TagsFilter({ modelType: ModelType.manufacturerpart })
     ];
   }, [manufacturerId]);
 

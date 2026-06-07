@@ -1,7 +1,7 @@
 # Please keep this list sorted - if you pin a version provide a reason
 django<6.0                              # Django package
 blessed                                 # CLI for Q Monitor
-cryptography>=47.0.0                    # Core cryptographic functionality
+cryptography>=48.0.0                    # Core cryptographic functionality
 django-anymail[amazon_ses,postal]       # Email backend for various providers
 django-allauth[mfa,socialaccount,saml,openid,headless]   # SSO for external providers via OpenID
 django-cleanup                          # Automated deletion of old / unused uploaded files
@@ -52,6 +52,7 @@ rapidfuzz                               # Fuzzy string matching
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
+tqdm                                    # Progress bars for CLI
 weasyprint                              # PDF generation
 whitenoise                              # Enhanced static file serving
 

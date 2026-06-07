@@ -4,8 +4,10 @@ import io
 import os
 
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
+from PIL import Image
 
 
 def get_legacy_models():
@@ -207,6 +209,85 @@ class TestForwardMigrations(MigratorTestCase):
             'stockitem',
         ]:
             self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
+
+
+class TestAttachmentThumbnailMigration(MigratorTestCase):
+    """Test that migration 0043 correctly populates is_image and generates thumbnails for existing attachments."""
+
+    migrate_from = ('common', '0041_auto_20251203_1244')
+    migrate_to = ('common', '0043_auto_20260518_1206')
+
+    def prepare(self):
+        """Create a set of attachments with different file types in the pre-migration state.
+
+        At this point the Attachment model has no is_image or thumbnail fields yet.
+        Files are written to storage directly through the FileField so that the
+        data migration can find them at their stored paths.
+        """
+        Attachment = self.old_state.apps.get_model('common', 'Attachment')
+
+        # 1. Valid PNG image — migration should set is_image=True and create a thumbnail
+        buf = io.BytesIO()
+        Image.new('RGB', (100, 100), color='blue').save(buf, format='PNG')
+        Attachment.objects.create(
+            model_type='part',
+            model_id=1,
+            attachment=ContentFile(buf.getvalue(), name='valid_image.png'),
+            comment='valid_image',
+        )
+
+        # 2. File with a .png extension but non-image content — migration should leave is_image=False
+        Attachment.objects.create(
+            model_type='part',
+            model_id=1,
+            attachment=ContentFile(b'this is not image data', name='corrupt.png'),
+            comment='corrupt_image',
+        )
+
+        # 3. Plain text file — migration should leave is_image=False with no thumbnail
+        Attachment.objects.create(
+            model_type='part',
+            model_id=1,
+            attachment=ContentFile(b'Hello, InvenTree!', name='document.txt'),
+            comment='text_file',
+        )
+
+        # 4. Link attachment (no file at all) — migration should skip it entirely
+        Attachment.objects.create(
+            model_type='part',
+            model_id=1,
+            link='https://example.com/resource',
+            comment='link_attachment',
+        )
+
+        self.assertEqual(Attachment.objects.count(), 4)
+
+    def test_attachment_thumbnails_after_migration(self):
+        """After applying migrations 0042 and 0043, verify is_image and thumbnail are correct."""
+        Attachment = self.new_state.apps.get_model('common', 'Attachment')
+
+        self.assertEqual(Attachment.objects.count(), 4)
+
+        # Valid image → is_image set, thumbnail file created in storage
+        att = Attachment.objects.get(comment='valid_image')
+        self.assertTrue(att.is_image)
+        self.assertTrue(att.thumbnail)
+        self.assertTrue(default_storage.exists(att.thumbnail.name))
+
+        # Corrupt image → is_image not set, no thumbnail
+        att = Attachment.objects.get(comment='corrupt_image')
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+        # Text file → is_image not set, no thumbnail
+        att = Attachment.objects.get(comment='text_file')
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+        # Link attachment → is_image not set, no thumbnail
+        att = Attachment.objects.get(comment='link_attachment')
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
 
 
 def prep_currency_migration(self, vals: str):

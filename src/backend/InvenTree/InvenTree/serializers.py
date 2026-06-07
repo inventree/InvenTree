@@ -699,10 +699,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
         return self._save_tags(tag_object, to_be_tagged)
 
 
-class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
-    """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """Override the DRF native FileField serializer, to remove the leading server path.
 
@@ -762,6 +758,56 @@ class InvenTreeDecimalField(serializers.FloatField):
             return Decimal(str(data))
         except Exception:
             raise serializers.ValidationError(_('Invalid value'))
+
+
+class CustomStatusSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models that support custom status values.
+
+    Provides a `status_text` SerializerMethodField that resolves custom
+    status labels with a single database query per model per serializer
+    context (i.e. one query for a whole list page) rather than one query per
+    object (N+1).
+    """
+
+    status_text = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_status_text(self, instance) -> Optional[str]:
+        """Return the human-readable status text for the instance.
+
+        Uses a per-context cache keyed by model name so that all objects in a
+        single serialization pass share one DB hit for custom label lookup.
+
+        During write operations DRF may call to_representation on the raw
+        validated_data dict rather than a model instance (e.g. when building
+        response headers).  Return None in that case — the response body is
+        always produced from a real instance via a separate serializer call.
+        """
+        if not hasattr(instance, 'get_custom_status'):
+            return None
+
+        custom_key = instance.get_custom_status()
+
+        if custom_key is None:
+            return instance.status_class.label(instance.get_status())
+
+        model_name = instance._meta.model_name
+        cache_key = f'_custom_status_labels_{model_name}'
+
+        # Cache a dict of custom status labels for this model, if not already cached
+        if cache_key not in self.context:
+            from common.models import InvenTreeCustomUserStateModel
+
+            self.context[cache_key] = {
+                obj.key: obj.label
+                for obj in InvenTreeCustomUserStateModel.objects.filter(
+                    model__model=model_name
+                )
+            }
+
+        return self.context[cache_key].get(
+            custom_key, instance.status_class.label(instance.get_status())
+        )
 
 
 class NotesFieldMixin:

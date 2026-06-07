@@ -286,6 +286,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
+        'units': 'MB',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
+    },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),
@@ -394,6 +401,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Plugin to use for internal barcode data generation'),
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
+    },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
     },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),
@@ -904,6 +917,26 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
         'name': _('Block Incomplete Item Tests'),
         'description': _(
@@ -1209,6 +1242,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('5', _('Friday')),
             ('6', _('Saturday')),
         ],
+    },
+    'CALENDAR_HORIZON_MONTHS': {
+        'name': _('Calendar Horizon'),
+        'description': _(
+            'Number of months into the future to display in calendar views'
+        ),
+        'default': 12,
+        'validator': [int, MinValueValidator(1)],
+        'units': _('months'),
     },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),

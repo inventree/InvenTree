@@ -56,7 +56,11 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
+TESTING = (
+    'test' in sys.argv
+    or 'TESTING' in os.environ
+    or any('pytest' in arg for arg in sys.argv)
+)
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -1096,6 +1100,21 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)
 
+# Plugin settings overrides
+# If provided, these values will override any plugin settings (and prevent them from being changed)
+# Specified as a nested dict: {plugin_slug: {SETTING_KEY: value}}
+PLUGIN_SETTING_OVERRIDES = get_setting(
+    'INVENTREE_PLUGIN_SETTINGS', 'plugin_settings', typecast=dict
+)
+
+if len(PLUGIN_SETTING_OVERRIDES) > 0:
+    logger.info(
+        'INVE-I1: Plugin settings overrides: %s', list(PLUGIN_SETTING_OVERRIDES.keys())
+    )
+    for slug, overrides in PLUGIN_SETTING_OVERRIDES.items():
+        for key in overrides:
+            logger.debug('- Override value for %s.%s = ********', slug, key)
+
 # User interface customization values
 CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
 
@@ -1165,3 +1184,6 @@ if 'dbbackup' not in STORAGES:
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
+
+# Taggit settings
+TAGGIT_CASE_INSENSITIVE = True

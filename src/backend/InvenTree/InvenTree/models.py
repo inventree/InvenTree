@@ -24,6 +24,7 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.settings
 import InvenTree.exceptions
@@ -92,9 +93,22 @@ class PluginValidationMixin(DiffMixin):
     Any model class which inherits from this mixin will be exposed to the plugin validation system.
     """
 
+    def should_plugin_validate(self):
+        """Return True if this model instance should be validated by plugins.
+
+        The default implementation returns True, but this can be overridden in the implementing class if required.
+        """
+        from InvenTree.ready import isReadOnlyCommand
+
+        # Prevent plugin validation when importing or exporting data
+        return not isReadOnlyCommand()
+
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
         from plugin import PluginMixinEnum, registry
+
+        if not self.should_plugin_validate():
+            return
 
         deltas = self.get_field_deltas()
 
@@ -139,15 +153,16 @@ class PluginValidationMixin(DiffMixin):
         from InvenTree.exceptions import log_error
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                plugin.validate_model_deletion(self)
-            except ValidationError as e:
-                # Plugin might raise a ValidationError to prevent deletion
-                raise e
-            except Exception:
-                log_error('validate_model_deletion', plugin=plugin.slug)
-                continue
+        if self.should_plugin_validate():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    plugin.validate_model_deletion(self)
+                except ValidationError as e:
+                    # Plugin might raise a ValidationError to prevent deletion
+                    raise e
+                except Exception:
+                    log_error('validate_model_deletion', plugin=plugin.slug)
+                    continue
 
         super().delete(*args, **kwargs)
 
@@ -1234,6 +1249,25 @@ class InvenTreeNotesMixin(models.Model):
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
+
+
+class InvenTreeTagsMixin(models.Model):
+    """A mixin class for adding tag functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - tags : A text field for storing comma-separated tags
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    tags = TaggableManager(blank=True)
 
 
 class InvenTreeBarcodeMixin(models.Model):

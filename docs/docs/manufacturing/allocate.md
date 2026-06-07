@@ -80,7 +80,16 @@ The *Deallocate Stock* button can be used to remove all allocations of untracked
 
 ## Automatic Stock Allocation
 
-To speed up the allocation process, the *Auto Allocate* button can be used to allocate untracked stock items to the build. Automatic allocation of stock items does not work in every situation, as a number of criteria must be met.
+To speed up the allocation process, the *Auto Allocate* button can be used to automatically allocate stock items to the build.
+
+!!! info "Background Task"
+    Auto-allocation runs as a background task. The UI will display a progress indicator while the task is running.
+
+#### Selecting Lines to Allocate
+
+By default, auto-allocation processes **all eligible BOM line items** in the build order. To restrict allocation to a subset of lines, select the desired rows in the allocation table before pressing the button — the dialog will indicate how many lines are selected.
+
+#### Auto Allocation Options
 
 The *Automatic Allocation* dialog is presented as shown below:
 
@@ -90,12 +99,16 @@ The *Automatic Allocation* dialog is presented as shown below:
 
 Select the master location where stock items are to be allocated from. Leave this input blank to allocate stock items from any available location.
 
+**Exclude Location**
+
+Exclude stock from a specific location (and all of its sub-locations). Useful for reserving stock in a particular area.
+
 **Interchangeable Stock**
 
 Set this option to *True* to signal that stock items can be used interchangeably. This means that in the case where multiple stock items are available, the auto-allocation routine does not care which stock item it uses.
 
 !!! warning "Take Care"
-    If the *Interchangeable Stock* option is enabled, and there are multiple stock items available, the results of the automatic allocation algorithm may somewhat unexpected.
+    If the *Interchangeable Stock* option is enabled, and there are multiple stock items available, the results of the automatic allocation algorithm may be somewhat unexpected.
 
 !!! info "Example"
     Let's say that we have 5 reels of our *C_100nF_0603* capacitor, each with 4,000 parts available. If we do not mind which of these reels the stock should be taken from, we enable the *Interchangeable Stock* option in the dialog above. In this case, the stock will be allocated from one of these reels, and eventually subtracted from stock when the build is completed.
@@ -103,6 +116,32 @@ Set this option to *True* to signal that stock items can be used interchangeably
 **Substitute Stock**
 
 Set this option to *True* to allow substitute parts (as specified by the BOM) to be allocated, if the primary parts are not available.
+
+**Optional Items**
+
+Set this option to *True* to include optional BOM line items in the auto-allocation. By default, optional items are not automatically allocated.
+
+**Item Type**
+
+Controls which category of BOM line items is considered for auto-allocation:
+
+| Option | Description |
+| --- | --- |
+| Untracked Items | Only untracked (non-serialized) BOM lines are allocated *(default)* |
+| Tracked Items | Only tracked BOM lines are allocated |
+| All Items | Both tracked and untracked BOM lines are allocated |
+
+**Stock Priority**
+
+Controls the order in which matching stock items are consumed:
+
+| Option | Description |
+| --- | --- |
+| Oldest stock first (FIFO) | Stock items updated least recently are consumed first *(default)* |
+| Newest stock first (LIFO) | Stock items updated most recently are consumed first |
+| Smallest quantity first | Stock items with the lowest available quantity are consumed first |
+| Largest quantity first | Stock items with the highest available quantity are consumed first |
+| Soonest expiry date first | Stock items expiring earliest are consumed first; items with no expiry date are used last |
 
 ## Allocating Tracked Stock
 

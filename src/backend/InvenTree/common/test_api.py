@@ -4,7 +4,11 @@ import io
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+
+from PIL import Image
+from taggit.models import Tag
 
 import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -789,3 +793,377 @@ class AttachmentAPITests(InvenTreeAPITestCase):
         for att in attachments:
             # Ensure that the file associated with each attachment has been removed
             self.assertFalse(default_storage.exists(att.attachment.path))
+
+
+class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
+    """Tests for thumbnail generation when uploading attachments via the API."""
+
+    def setUp(self):
+        """Set up a Part instance and required roles."""
+        from part.models import Part
+
+        super().setUp()
+        self.assignRole('part.add')
+        self.assignRole('part.delete')
+        self.part = Part.objects.create(
+            name='Thumbnail Test Part', description='Part for thumbnail testing'
+        )
+
+    def _make_image_file(self, name='test.png', size=(100, 100), color='red'):
+        """Return a SimpleUploadedFile containing a valid PNG image."""
+        buf = io.BytesIO()
+        Image.new('RGB', size, color=color).save(buf, format='PNG')
+        return SimpleUploadedFile(name, buf.getvalue(), content_type='image/png')
+
+    def _upload_attachment(self, file_obj, expected_code=201):
+        """Upload a file attachment against the test part and return the response."""
+        return self.post(
+            reverse('api-attachment-list'),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'attachment': file_obj,
+            },
+            format='multipart',
+            expected_code=expected_code,
+        )
+
+    def test_thumbnail_valid_image(self):
+        """Uploading a valid image file should set is_image=True and generate a thumbnail."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file())
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.is_image)
+        self.assertTrue(att.thumbnail)
+        self.assertTrue(default_storage.exists(att.thumbnail.name))
+
+    def test_thumbnail_invalid_image(self):
+        """Uploading a file with an image extension but invalid image data should not create a thumbnail."""
+        from common.models import Attachment
+
+        bad_file = SimpleUploadedFile(
+            'corrupt.png', b'this is not image data', content_type='image/png'
+        )
+        response = self._upload_attachment(bad_file)
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_thumbnail_non_image_file(self):
+        """Uploading a non-image file should leave is_image=False with no thumbnail."""
+        from common.models import Attachment
+
+        txt_file = SimpleUploadedFile(
+            'document.txt', b'Hello, InvenTree!', content_type='text/plain'
+        )
+        response = self._upload_attachment(txt_file)
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_thumbnail_large_image(self):
+        """A large image attachment should produce a thumbnail no larger than THUMBNAIL_SIZE on each side."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file(size=(1000, 1000)))
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.is_image)
+        self.assertTrue(att.thumbnail)
+
+        thumb_data = default_storage.open(att.thumbnail.name).read()
+        thumb_img = Image.open(io.BytesIO(thumb_data))
+        self.assertLessEqual(thumb_img.width, Attachment.THUMBNAIL_SIZE)
+        self.assertLessEqual(thumb_img.height, Attachment.THUMBNAIL_SIZE)
+
+    def test_thumbnail_deleted_with_attachment(self):
+        """Deleting an attachment via the API should also remove its thumbnail from storage."""
+        from common.models import Attachment
+
+        response = self._upload_attachment(self._make_image_file())
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertTrue(att.thumbnail)
+        thumb_name = att.thumbnail.name
+        att_name = att.attachment.name
+
+        self.assertTrue(default_storage.exists(att_name))
+        self.assertTrue(default_storage.exists(thumb_name))
+
+        self.delete(
+            reverse('api-attachment-detail', kwargs={'pk': att.pk}), expected_code=204
+        )
+
+        self.assertFalse(default_storage.exists(att_name))
+        self.assertFalse(default_storage.exists(thumb_name))
+
+    def test_thumbnail_zero_byte_file(self):
+        """Uploading a zero-byte file should be rejected by Django's file validation before reaching thumbnail logic."""
+        empty_file = SimpleUploadedFile('empty.png', b'', content_type='image/png')
+        # Django's FileField rejects empty uploads at the serializer/validation layer
+        response = self._upload_attachment(empty_file, expected_code=400)
+        self.assertIn('attachment', response.data)
+
+    def test_thumbnail_link_attachment(self):
+        """An attachment created with an external link (no file) should not generate a thumbnail."""
+        from common.models import Attachment
+
+        response = self.post(
+            reverse('api-attachment-list'),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'link': 'https://example.com/some/resource',
+            },
+            format='multipart',
+            expected_code=201,
+        )
+
+        att = Attachment.objects.get(pk=response.data['pk'])
+
+        self.assertFalse(att.is_image)
+        self.assertFalse(att.thumbnail)
+
+    def test_is_image_filter(self):
+        """The is_image filter on the attachment list endpoint should return only matching attachments."""
+        url = reverse('api-attachment-list')
+        base_filters = {'model_type': 'part', 'model_id': self.part.pk}
+
+        # Upload one valid image and three non-image attachments
+        self._upload_attachment(self._make_image_file('img1.png'))
+        self._upload_attachment(
+            SimpleUploadedFile(
+                'corrupt.png', b'not image data', content_type='image/png'
+            )
+        )
+        self._upload_attachment(
+            SimpleUploadedFile('doc.txt', b'hello', content_type='text/plain')
+        )
+        self.post(
+            url,
+            data={**base_filters, 'link': 'https://example.com/resource'},
+            format='multipart',
+            expected_code=201,
+        )
+
+        all_attachments = self.get(url, base_filters, expected_code=200).data
+        self.assertEqual(len(all_attachments), 4)
+
+        # is_image=true → only the valid image
+        images = self.get(
+            url, {**base_filters, 'is_image': 'true'}, expected_code=200
+        ).data
+        self.assertEqual(len(images), 1)
+        self.assertTrue(images[0]['is_image'])
+
+        # is_image=false → the three non-image attachments
+        non_images = self.get(
+            url, {**base_filters, 'is_image': 'false'}, expected_code=200
+        ).data
+        self.assertEqual(len(non_images), 3)
+        self.assertTrue(all(not a['is_image'] for a in non_images))
+
+    def test_upload_exceeds_size_limit(self):
+        """Uploading a file that exceeds INVENTREE_UPLOAD_MAX_SIZE should be rejected with a 400 error."""
+        from common.settings import get_global_setting, set_global_setting
+
+        original_limit = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE')
+        # Use a 1 MB ceiling so the test file stays small and fast
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        limit_bytes = 1 * 1024 * 1024
+
+        try:
+            # File exactly at the limit — validator uses >, so this must be accepted
+            self._upload_attachment(
+                SimpleUploadedFile(
+                    'at_limit.txt', b'\x00' * limit_bytes, content_type='text/plain'
+                ),
+                expected_code=201,
+            )
+
+            # File one byte over the limit — must be rejected
+            response = self._upload_attachment(
+                SimpleUploadedFile(
+                    'over_limit.txt',
+                    b'\x00' * (limit_bytes + 1),
+                    content_type='text/plain',
+                ),
+                expected_code=400,
+            )
+            self.assertIn('attachment', response.data)
+        finally:
+            set_global_setting(
+                'INVENTREE_UPLOAD_MAX_SIZE', original_limit, change_user=None
+            )
+
+
+class TagAPITests(InvenTreeAPITestCase):
+    """Tests for the Tag API endpoints and tag-based filtering."""
+
+    roles = 'all'
+
+    LIST_URL = 'api-tag-list'
+    DETAIL_URL = 'api-tag-detail'
+
+    def setUp(self):
+        """Create a small set of tagged objects for filter testing."""
+        super().setUp()
+
+        from part.models import Part
+
+        self.part_a = Part.objects.create(
+            name='Tagged Part A', description='Part with apple and banana tags'
+        )
+        self.part_b = Part.objects.create(
+            name='Tagged Part B', description='Part with apple tag only'
+        )
+        self.part_c = Part.objects.create(
+            name='Untagged Part C', description='Part with no tags'
+        )
+
+        self.part_a.tags.add('apple', 'banana')
+        self.part_b.tags.add('apple')
+
+    # ------------------------------------------------------------------
+    # Tag list / CRUD
+    # ------------------------------------------------------------------
+
+    def test_tag_list(self):
+        """Tag list endpoint should return all existing tags."""
+        url = reverse(self.LIST_URL)
+        response = self.get(url)
+
+        names = {t['name'] for t in response.data}
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_create(self):
+        """Staff users should be able to create tags via POST."""
+        url = reverse(self.LIST_URL)
+        n = Tag.objects.count()
+
+        response = self.post(url, {'name': 'cherry'}, expected_code=201)
+        self.assertEqual(response.data['name'], 'cherry')
+        self.assertEqual(Tag.objects.count(), n + 1)
+
+    def test_tag_create_non_staff(self):
+        """Non-staff users must not be able to create tags."""
+        self.user.is_staff = False
+        self.user.save()
+
+        url = reverse(self.LIST_URL)
+        self.post(url, {'name': 'forbidden'}, expected_code=403)
+
+    def test_tag_edit(self):
+        """Staff users should be able to rename a tag via PATCH."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        response = self.patch(url, {'name': 'blueberry'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'blueberry')
+
+        tag.refresh_from_db()
+        self.assertEqual(tag.name, 'blueberry')
+
+    def test_tag_delete(self):
+        """Staff users should be able to delete a tag."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        self.delete(url, expected_code=204)
+        self.assertFalse(Tag.objects.filter(name='banana').exists())
+
+    def test_tag_search(self):
+        """The list endpoint should support free-text search."""
+        url = reverse(self.LIST_URL)
+
+        response = self.get(url, data={'search': 'app'})
+        names = [t['name'] for t in response.data]
+        self.assertIn('apple', names)
+        self.assertNotIn('banana', names)
+
+    # ------------------------------------------------------------------
+    # Filter by model type
+    # ------------------------------------------------------------------
+
+    def test_tag_filter_model_type(self):
+        """Tags applied to a given model type should be returned when filtering by model_type."""
+        url = reverse(self.LIST_URL)
+
+        # Filter for tags applied to Part objects
+        response = self.get(url, data={'model_type': 'part.part'})
+        names = {t['name'] for t in response.data}
+
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_filter_model_type_unrelated(self):
+        """Filtering by a model type that has no tagged objects should return an empty list."""
+        url = reverse(self.LIST_URL)
+
+        # StockItem has no tagged objects in this test
+        response = self.get(url, data={'model_type': 'stock.stockitem'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_tag_filter_model_type_invalid(self):
+        """An unrecognised model_type value should return a 400 error."""
+        url = reverse(self.LIST_URL)
+        self.get(url, data={'model_type': 'notanapp.notamodel'}, expected_code=400)
+
+    # ------------------------------------------------------------------
+    # Filter Part list by tags
+    # ------------------------------------------------------------------
+
+    def test_part_filter_single_tag(self):
+        """Filtering parts by a single tag should return only parts with that tag."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+        self.assertNotIn(self.part_c.pk, pks)
+
+    def test_part_filter_multiple_tags_and(self):
+        """Filtering by comma-separated tags should return only parts that have ALL tags."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple,banana'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)  # only has 'apple'
+        self.assertNotIn(self.part_c.pk, pks)  # no tags at all
+
+    def test_part_filter_tag_case_insensitive(self):
+        """Tag filtering should be case-insensitive."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'APPLE'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+
+    def test_part_filter_nonexistent_tag(self):
+        """Filtering by a tag that no part has should return an empty result set."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'doesnotexist'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_part_filter_tag_whitespace(self):
+        """Whitespace around comma-separated tag names should be ignored."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': ' apple , banana '})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)

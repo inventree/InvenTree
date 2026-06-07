@@ -32,6 +32,7 @@ import {
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { IconPlus } from '@tabler/icons-react';
+import type { NavigateFunction } from 'react-router-dom';
 import { useApi } from '../../../contexts/ApiContext';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
@@ -50,11 +51,13 @@ export function RelatedModelField({
   controller,
   fieldName,
   definition,
+  navigate,
   limit = 10
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
+  navigate?: NavigateFunction | null;
   limit?: number;
 }>) {
   const api = useApi();

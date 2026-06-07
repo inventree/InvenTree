@@ -5,6 +5,7 @@ import {
   IconBox,
   IconBuildingFactory2,
   IconCurrencyDollar,
+  IconDeviceDesktop,
   IconFileAnalytics,
   IconFingerprint,
   IconList,
@@ -13,9 +14,10 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
+  IconTransfer,
   IconTruckDelivery
 } from '@tabler/icons-react';
-import { lazy, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { PluginPanelKey } from '@lib/enums/ModelType';
 import type { PanelType } from '@lib/types/Panel';
@@ -25,13 +27,9 @@ import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { Loadable } from '../../../functions/loading';
 import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
-
-const PluginSettingsGroup = Loadable(
-  lazy(() => import('./PluginSettingsGroup'))
-);
+import PluginSettingsGroup from './PluginSettingsGroup';
 
 /**
  * System settings page
@@ -57,9 +55,7 @@ export default function SystemSettings() {
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
                 'INVENTREE_RESTRICT_ABOUT',
-                'DISPLAY_FULL_NAMES',
-                'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON',
+                'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
             />
@@ -126,6 +122,21 @@ export default function SystemSettings() {
               'BARCODE_GENERATION_PLUGIN',
               'BARCODE_STORE_RESULTS',
               'BARCODE_RESULTS_MAX_NUM'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'display',
+        label: t`Display`,
+        icon: <IconDeviceDesktop />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
+              'WEEK_STARTS_ON',
+              'CALENDAR_HORIZON_MONTHS'
             ]}
           />
         )
@@ -214,6 +225,7 @@ export default function SystemSettings() {
                 'PART_ALLOW_DUPLICATE_IPN',
                 'PART_ALLOW_EDIT_IPN',
                 'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+                'PART_ENABLE_LOCKING',
                 'PART_ENABLE_REVISION',
                 'PART_REVISION_ASSEMBLY_ONLY',
                 'PART_SHOW_RELATED',
@@ -368,10 +380,26 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'transferorders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'TRANSFERORDER_ENABLED',
+              'TRANSFERORDER_REFERENCE_PATTERN',
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+            ]}
+          />
+        )
+      },
+      {
         name: 'plugins',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginSettingsGroup global={true} />
+        content: (
+          <PluginSettingsGroup global={true} includeBaseSettings={true} />
+        )
       }
     ];
   }, []);

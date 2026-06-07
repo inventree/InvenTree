@@ -32,6 +32,8 @@ Remove parts from a stock item record - for example taking parts from stock for 
 
 Count stock items (stocktake) to record the number of items in stock at a given point of time. The quantity for each part is pre-filled with the current quantity based on stock item history.
 
+An optional **Location** field allows all counted items to be moved to a new location in the same operation. If left blank, each item retains its current location.
+
 {{ image("stock/stock_count.png", "Stock Count") }}
 
 ### Merge Stock

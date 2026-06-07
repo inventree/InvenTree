@@ -12,7 +12,7 @@ from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, Part
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockStatus
 
 
@@ -155,7 +155,7 @@ class BuildTest(BuildAPITest):
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=400,
+            expected_code=404,
         )
 
         data = self.post(self.url, {}, expected_code=400).data
@@ -226,8 +226,8 @@ class BuildTest(BuildAPITest):
                 'location': 1,
                 'status': StockStatus.ATTENTION.value,
             },
-            expected_code=201,
-            max_query_count=400,
+            expected_code=200,
+            max_query_count=450,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -446,7 +446,7 @@ class BuildTest(BuildAPITest):
         self.post(
             delete_url,
             {'outputs': [{'output': output.pk} for output in outputs[1:3]]},
-            expected_code=201,
+            expected_code=200,
         )
 
         # Two build outputs have been removed
@@ -473,7 +473,7 @@ class BuildTest(BuildAPITest):
                 'outputs': [{'output': output.pk} for output in outputs[3:]],
                 'location': 4,
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # Check that the outputs have been completed
@@ -1353,15 +1353,16 @@ class BuildOutputCreateTest(BuildAPITest):
             url, data={'quantity': 5, 'serial_numbers': '1,2,3-5'}, expected_code=201
         )
 
-        # Build outputs have incdeased
+        # Build outputs have increased
         self.assertEqual(n_outputs + 5, build.output_count)
 
         # Stock items have increased
         self.assertEqual(n_items + 5, part.stock_items.count())
 
-        # Serial numbers have been created
+        # Serial numbers have been created, each with a creation_date
         for sn in range(1, 6):
             self.assertTrue(part.stock_items.filter(serial=sn).exists())
+            self.assertIsNotNone(part.stock_items.get(serial=sn).creation_date)
 
     def test_create_unserialized_output(self):
         """Create an unserialized build output via the API."""
@@ -1382,6 +1383,9 @@ class BuildOutputCreateTest(BuildAPITest):
 
         # Stock items have increased
         self.assertEqual(n_items + 1, part.stock_items.count())
+
+        # The new output must have a creation_date set
+        self.assertIsNotNone(part.stock_items.order_by('-pk').first().creation_date)
 
 
 class BuildOutputScrapTest(BuildAPITest):
@@ -1466,7 +1470,7 @@ class BuildOutputScrapTest(BuildAPITest):
                 'location': 1,
                 'notes': 'Should succeed',
             },
-            expected_code=201,
+            expected_code=200,
         )
 
         # There should still be three outputs associated with this build
@@ -1534,7 +1538,7 @@ class BuildOutputScrapTest(BuildAPITest):
 
         # Partially complete the output (with a valid quantity)
         data['outputs'][0]['quantity'] = 4
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         build.refresh_from_db()
         output.refresh_from_db()
@@ -1571,13 +1575,22 @@ class BuildOutputCancelTest(BuildAPITest):
         set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
         url = reverse('api-build-output-delete', kwargs={'pk': build.pk})
 
-        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=201)
+        self.post(url, data={'outputs': [{'output': output_ids[0]}]}, expected_code=200)
 
         # Prevent deletion of serialized stock items, and try again
         # Note that this should still succeed, independent of the global setting
         set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
 
-        self.post(url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=201)
+        response = self.post(
+            url, data={'outputs': [{'output': output_ids[1]}]}, expected_code=200
+        )
+
+        # Response should be the task info - the cancellation is performed asynchronously
+        self.assertIn('task_id', response.data)
+        self.assertFalse(response.data['exists'])
+        self.assertFalse(response.data['pending'])
+        self.assertTrue(response.data['complete'])
+        self.assertTrue(response.data['success'])
 
         # The outputs should have been scrapped
         self.assertEqual(build.build_outputs.count(), N)
@@ -1802,3 +1815,253 @@ class BuildConsumeTest(BuildAPITest):
 
         for line in self.build.build_lines.all():
             self.assertEqual(line.consumed, 100)
+
+
+class BuildCustomStatusTest(BuildAPITest):
+    """Tests for custom status values on Build orders."""
+
+    url = reverse('api-build-list')
+
+    def test_custom_status_query_count(self):
+        """Test that listing Build orders with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving 'status_text' for custom status values is O(1)
+        in database queries, not O(N) relative to the number of results.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import InvenTreeCustomUserStateModel
+
+        build_content_type = ContentType.objects.get_for_model(Build)
+
+        # 10 custom status values - different keys, labels, and logical_keys
+        logical_keys = [
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
+            BuildStatus.ON_HOLD.value,
+            BuildStatus.CANCELLED.value,
+            BuildStatus.COMPLETE.value,
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
+            BuildStatus.ON_HOLD.value,
+            BuildStatus.CANCELLED.value,
+            BuildStatus.COMPLETE.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=3000 + i,
+                name=f'BuildCustomStatus{i}',
+                label=f'Build Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=build_content_type,
+                reference_status='BuildStatus',
+            )
+            for i in range(10)
+        ]
+
+        part = Part.objects.filter(assembly=True).first()
+
+        # Build is an MPTT tree model; bulk_create requires tree fields to be
+        # populated manually. All new orders are root nodes (no parent) so each
+        # gets its own unique tree_id.
+        from django.db.models import Max
+
+        next_tree_id = (Build.objects.aggregate(m=Max('tree_id'))['m'] or 0) + 1
+
+        # Create 100 build orders, cycling through the 10 custom statuses
+        Build.objects.bulk_create([
+            Build(
+                part=part,
+                reference=f'BO-QTEST-{i}',
+                quantity=1,
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+                lft=1,
+                rght=2,
+                level=0,
+                tree_id=next_tree_id + i,
+            )
+            for i in range(100)
+        ])
+
+        # Lookup: custom_key -> custom_status_object, for quick per-row assertions
+        custom_lookup = {cs.key: cs for cs in custom_statuses}
+
+        # Query count must stay below the fixed threshold regardless of limit.
+        # An N+1 bug would push limit=50 or limit=100 well over the threshold.
+        for limit in [1, 10, 50, 100]:
+            response = self.get(
+                self.url, data={'limit': limit}, expected_code=200, max_query_count=50
+            )
+
+            for result in response.data['results']:
+                cs = custom_lookup.get(result['status_custom_key'])
+
+                if cs is None:
+                    # Build from fixtures - no custom status assigned
+                    continue
+
+                self.assertEqual(result['status'], cs.logical_key)
+                self.assertEqual(result['status_custom_key'], cs.key)
+                self.assertEqual(result['status_text'], cs.label)
+
+
+class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
+    """API integration tests for BuildAutoAllocate endpoint back-ports (stock_sort_by, build_lines)."""
+
+    fixtures = ['company', 'users']
+
+    roles = ['build.add', 'build.change']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create shared parts, locations and build data for all tests."""
+        super().setUpTestData()
+
+        cls.assembly = Part.objects.create(
+            name='AutoAlloc Assembly', description='', assembly=True
+        )
+        cls.component = Part.objects.create(
+            name='AutoAlloc Component', description='', component=True
+        )
+        cls.component_b = Part.objects.create(
+            name='AutoAlloc Component B', description='', component=True
+        )
+
+        cls.loc_a = StockLocation.objects.create(name='BuildShelf A')
+        cls.loc_b = StockLocation.objects.create(name='BuildShelf B')
+
+    def _next_ref(self):
+        """Return a valid Build reference using the system-generated next value."""
+        return Build.generate_batch_code()
+
+    def _make_build(self, quantity=10):
+        """Create a fresh Build with one untracked BOM line (component only)."""
+        build = Build.objects.create(
+            part=self.assembly,
+            reference=f'BO-{9000 + Build.objects.count():04d}',
+            quantity=quantity,
+        )
+        BomItem.objects.create(part=self.assembly, sub_part=self.component, quantity=1)
+        build.create_build_line_items()
+        return build
+
+    def _url(self, pk):
+        return reverse('api-build-auto-allocate', kwargs={'pk': pk})
+
+    def _create_build_two_lines(self, quantity=5):
+        """Create a Build with two untracked BOM lines (component + component_b)."""
+        build = Build.objects.create(
+            part=self.assembly,
+            reference=f'BO-{9000 + Build.objects.count():04d}',
+            quantity=quantity,
+        )
+        BomItem.objects.create(part=self.assembly, sub_part=self.component, quantity=1)
+        BomItem.objects.create(
+            part=self.assembly, sub_part=self.component_b, quantity=1
+        )
+        build.create_build_line_items()
+        return build
+
+    # ------------------------------------------------------------------
+    # Validation
+    # ------------------------------------------------------------------
+
+    def test_invalid_stock_sort_by_rejected(self):
+        """An unrecognised stock_sort_by value is rejected with 400."""
+        build = self._make_build()
+        self.post(
+            self._url(build.pk), {'stock_sort_by': 'not_valid'}, expected_code=400
+        )
+
+    # ------------------------------------------------------------------
+    # stock_sort_by behaviour
+    # ------------------------------------------------------------------
+
+    def test_stock_sort_by_quantity_asc(self):
+        """stock_sort_by=QUANTITY_ASC consumes the smallest lot first."""
+        build = self._make_build(quantity=15)
+        small = StockItem.objects.create(part=self.component, quantity=5)
+        StockItem.objects.create(part=self.component, quantity=100)
+
+        self.post(
+            self._url(build.pk),
+            {
+                'stock_sort_by': str(StockSortOrder.QUANTITY_ASC),
+                'interchangeable': True,
+            },
+            expected_code=200,
+        )
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+        self.assertTrue(any(a.stock_item == small and a.quantity == 5 for a in allocs))
+
+    def test_stock_sort_by_quantity_desc(self):
+        """stock_sort_by=QUANTITY_DESC consumes the largest lot first, covering requirement in one allocation."""
+        build = self._make_build(quantity=15)
+        StockItem.objects.create(part=self.component, quantity=5)
+        large = StockItem.objects.create(part=self.component, quantity=100)
+
+        self.post(
+            self._url(build.pk),
+            {
+                'stock_sort_by': str(StockSortOrder.QUANTITY_DESC),
+                'interchangeable': True,
+            },
+            expected_code=200,
+        )
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().stock_item, large)
+        self.assertEqual(allocs.first().quantity, 15)
+
+    # ------------------------------------------------------------------
+    # build_lines filtering
+    # ------------------------------------------------------------------
+
+    def test_build_lines_subset_only_allocates_selected_lines(self):
+        """When build_lines is specified only those lines are allocated."""
+        build = self._create_build_two_lines()
+
+        StockItem.objects.create(part=self.component, quantity=50)
+        StockItem.objects.create(part=self.component_b, quantity=50)
+
+        line_a = build.build_lines.filter(bom_item__sub_part=self.component).first()
+
+        self.post(
+            self._url(build.pk),
+            {'build_lines': [line_a.pk], 'interchangeable': True},
+            expected_code=200,
+        )
+
+        alloc_a = BuildItem.objects.filter(
+            build_line__build=build, stock_item__part=self.component
+        )
+        alloc_b = BuildItem.objects.filter(
+            build_line__build=build, stock_item__part=self.component_b
+        )
+
+        self.assertTrue(alloc_a.exists())
+        self.assertFalse(alloc_b.exists())
+
+    def test_build_lines_empty_allocates_all(self):
+        """When build_lines is omitted, all untracked lines are allocated."""
+        build = self._create_build_two_lines()
+
+        StockItem.objects.create(part=self.component, quantity=50)
+        StockItem.objects.create(part=self.component_b, quantity=50)
+
+        self.post(self._url(build.pk), {'interchangeable': True}, expected_code=200)
+
+        alloc_a = BuildItem.objects.filter(
+            build_line__build=build, stock_item__part=self.component
+        )
+        alloc_b = BuildItem.objects.filter(
+            build_line__build=build, stock_item__part=self.component_b
+        )
+
+        self.assertTrue(alloc_a.exists())
+        self.assertTrue(alloc_b.exists())

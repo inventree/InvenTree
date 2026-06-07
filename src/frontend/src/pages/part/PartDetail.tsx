@@ -11,6 +11,7 @@ import {
   Stack,
   Text
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   IconBookmarks,
   IconBuilding,
@@ -23,12 +24,14 @@ import {
   IconListDetails,
   IconListTree,
   IconLock,
+  IconLockOpen,
   IconPackages,
   IconSearch,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
+  IconTransfer,
   IconTruckDelivery,
   IconTruckReturn,
   IconVersions
@@ -38,6 +41,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -100,6 +104,7 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
@@ -186,7 +191,8 @@ export default function PartDetail() {
     endpoint: ApiEndpoints.part_list,
     pk: id,
     params: {
-      path_detail: true
+      path_detail: true,
+      tags: true
     },
     refetchOnMount: true
   });
@@ -198,6 +204,11 @@ export default function PartDetail() {
       hasPrimaryKey: true,
       refetchOnMount: true
     });
+
+  const lockingEnabled = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_LOCKING'),
+    [globalSettings]
+  );
 
   const revisionsEnabled = useMemo(
     () => globalSettings.isSet('PART_ENABLE_REVISION'),
@@ -603,6 +614,7 @@ export default function PartDetail() {
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
+          <TagsList tags={part.tags} />
           {enableRevisionSelection && (
             <Paper p='sm' withBorder>
               <Stack gap='xs'>
@@ -771,6 +783,20 @@ export default function PartDetail() {
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
+        name: 'transfer_orders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        hidden:
+          part.virtual ||
+          !globalSettings.isSet('TRANSFERORDER_ENABLED') ||
+          !user.hasViewRole(UserRoles.transfer_order),
+        content: part.pk ? (
+          <TransferOrderTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
         name: 'stocktake',
         label: t`Stock History`,
         icon: <IconClipboardList />,
@@ -791,7 +817,12 @@ export default function PartDetail() {
         icon: <IconTestPipe />,
         hidden: !part.testable,
         content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+          <PartTestTemplateTable
+            partId={part?.pk}
+            partLocked={
+              globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked
+            }
+          />
         ) : (
           <Skeleton />
         )
@@ -819,7 +850,7 @@ export default function PartDetail() {
         icon: <IconListDetails />,
         content: (
           <>
-            {part.locked && (
+            {lockingEnabled && part.locked && (
               <Alert
                 title={t`Part is Locked`}
                 color='orange'
@@ -832,7 +863,7 @@ export default function PartDetail() {
             <ParameterTable
               modelType={ModelType.part}
               modelId={part?.pk}
-              allowEdit={part?.locked != true}
+              allowEdit={!lockingEnabled || part?.locked != true}
             />
           </>
         )
@@ -970,6 +1001,7 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -1132,8 +1164,35 @@ export default function PartDetail() {
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
-              part?.locked ? (
-                <IconLock aria-label='part-lock-icon' />
+              lockingEnabled ? (
+                <ActionIcon
+                  aria-label='part-lock-icon'
+                  variant='transparent'
+                  disabled={!user.hasChangeRole(UserRoles.part)}
+                  onClick={() => {
+                    const locking = !part.locked;
+                    api
+                      .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                        locked: locking
+                      })
+                      .then(() => {
+                        notifications.hide('part-lock');
+                        notifications.show({
+                          id: 'part-lock',
+                          message: locking ? t`Part locked` : t`Part unlocked`,
+                          color: 'green',
+                          icon: locking ? (
+                            <IconLock size='1rem' />
+                          ) : (
+                            <IconLockOpen size='1rem' />
+                          )
+                        });
+                        refreshInstance();
+                      });
+                  }}
+                >
+                  {part?.locked ? <IconLock /> : <IconLockOpen />}
+                </ActionIcon>
               ) : undefined
             }
             subtitle={part.description}

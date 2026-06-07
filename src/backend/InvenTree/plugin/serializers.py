@@ -283,9 +283,22 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 
     MODEL = PluginSetting
-    EXTRA_FIELDS = ['plugin']
+    EXTRA_FIELDS = ['plugin', 'read_only']
 
     plugin = serializers.CharField(source='plugin.key', read_only=True)
+
+    read_only = serializers.SerializerMethodField(
+        read_only=True,
+        help_text=_('Indicates if the setting is overridden by configuration'),
+        label=_('Override'),
+    )
+
+    def get_read_only(self, obj) -> bool:
+        """Return True if this plugin setting is locked by configuration."""
+        from common.settings import plugin_setting_overrides
+
+        overrides = plugin_setting_overrides(obj.plugin.key)
+        return obj.key in overrides
 
 
 class PluginUserSettingSerializer(GenericReferencedSettingSerializer):

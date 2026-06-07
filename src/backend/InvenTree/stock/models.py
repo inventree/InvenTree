@@ -23,7 +23,6 @@ import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from taggit.managers import TaggableManager
 
 import build.models
 import common.models
@@ -38,6 +37,7 @@ import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -47,6 +47,7 @@ from InvenTree.status_codes import (
     StockStatus,
     StockStatusGroups,
 )
+from order.status_codes import TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
@@ -124,6 +125,7 @@ class StockLocation(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.MetadataMixin,
@@ -146,8 +148,6 @@ class StockLocation(
 
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
-
-    tags = TaggableManager(blank=True)
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
@@ -398,11 +398,33 @@ class StockItemReportContext(report.mixins.BaseReportContext):
     test_templates: dict[str, PartModels.PartTestTemplate]
 
 
+class StockSortOrder(StringEnum):
+    """Enum of ORM sort fields available for stock auto-allocation."""
+
+    DATE_OLDEST = 'updated'
+    DATE_NEWEST = '-updated'
+    QUANTITY_ASC = 'quantity'
+    QUANTITY_DESC = '-quantity'
+    EXPIRY_SOONEST = 'expiry_date'
+
+
+STOCK_SORT_CHOICES = [
+    (StockSortOrder.DATE_OLDEST, _('Oldest stock first (FIFO)')),
+    (StockSortOrder.DATE_NEWEST, _('Newest stock first (LIFO)')),
+    (StockSortOrder.QUANTITY_ASC, _('Smallest quantity first')),
+    (StockSortOrder.QUANTITY_DESC, _('Largest quantity first')),
+    (StockSortOrder.EXPIRY_SOONEST, _('Soonest expiry date first')),
+]
+
+STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
+
+
 class StockItem(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
@@ -420,11 +442,11 @@ class StockItem(
         batch: Batch number for this StockItem
         serial: Unique serial number for this StockItem
         link: Optional URL to link to external resource
-        updated: Date that this stock item was last updated (auto)
+        creation_date: Date that this stock item was created (auto)
+        updated: Date that the quantity of this stock item was last updated (auto)
         expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
-        review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
         status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
@@ -596,8 +618,6 @@ class StockItem(
             'test_templates': self.part.getTestTemplateMap(),
         }
 
-    tags = TaggableManager(blank=True)
-
     # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
@@ -755,24 +775,24 @@ class StockItem(
 
         # First, let any plugins convert this serial number to an integer value
         # If a non-null value is returned (by any plugin) we will use that
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    serial_int = plugin.convert_serial_to_int(serial)
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'convert_serial_to_int', plugin=plugin.slug
+                    )
+                    serial_int = None
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                serial_int = plugin.convert_serial_to_int(serial)
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'convert_serial_to_int', plugin=plugin.slug
-                )
-                serial_int = None
-
-            # Save the first returned result
-            if serial_int is not None:
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-                serial_int = abs(serial_int)
-                serial_int = min(serial_int, clip)
-                # Return the first non-null value
-                return serial_int
+                # Save the first returned result
+                if serial_int is not None:
+                    # Ensure that it is clipped within a range allowed in the database schema
+                    clip = 0x7FFFFFFF
+                    serial_int = abs(serial_int)
+                    serial_int = min(serial_int, clip)
+                    # Return the first non-null value
+                    return serial_int
 
         # None of the plugins provided a valid integer value
         if serial not in [None, '']:
@@ -898,15 +918,16 @@ class StockItem(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                plugin.validate_batch_code(self.batch, self)
-            except ValidationError as exc:
-                raise ValidationError({'batch': exc.message})
-            except Exception:
-                InvenTree.exceptions.log_error(
-                    'validate_batch_code', plugin=plugin.slug
-                )
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    plugin.validate_batch_code(self.batch, self)
+                except ValidationError as exc:
+                    raise ValidationError({'batch': exc.message})
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        'validate_batch_code', plugin=plugin.slug
+                    )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
@@ -1204,7 +1225,14 @@ class StockItem(
         related_name='stocktake_stock',
     )
 
-    review_needed = models.BooleanField(default=False)
+    creation_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_('Creation Date'),
+        help_text=_('Date that this stock item was created'),
+    )
 
     delete_on_deplete = models.BooleanField(
         default=default_delete_on_deplete,
@@ -1535,7 +1563,7 @@ class StockItem(
             item.save(add_note=False)
 
     def is_allocated(self):
-        """Return True if this StockItem is allocated to a SalesOrder or a Build."""
+        """Return True if this StockItem is allocated to a SalesOrder, TransferOrder, or a Build."""
         return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
@@ -1595,12 +1623,48 @@ class StockItem(
 
         return total
 
+    def get_transfer_order_allocations(self, active=True, **kwargs):
+        """Return a queryset for TransferOrderAllocations against this StockItem, with optional filters.
+
+        Arguments:
+            active: Filter by 'active' status of the allocation
+        """
+        query = self.transfer_order_allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
+
+        if active is True:
+            query = query.filter(line__order__status__in=TransferOrderStatusGroups.OPEN)
+        elif active is False:
+            query = query.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return query
+
+    def transfer_order_allocation_count(self, active=True, **kwargs):
+        """Return the total quantity allocated to TransferOrders."""
+        query = self.get_transfer_order_allocations(active=active, **kwargs)
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
+
     def allocation_count(self):
         """Return the total quantity allocated to builds or orders."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
+        to = self.transfer_order_allocation_count()
 
-        return bo + so
+        return bo + so + to
 
     def unallocated_quantity(self):
         """Return the quantity of this StockItem which is *not* allocated."""
@@ -2330,6 +2394,10 @@ class StockItem(
 
         deltas = {'stockitem': self.pk}
 
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            deltas['transferorder'] = transferorder.pk
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2478,6 +2546,10 @@ class StockItem(
             )
             tracking_info['old_status_logical'] = old_status_logical
 
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            tracking_info['transferorder'] = transferorder.pk
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2546,6 +2618,7 @@ class StockItem(
         Keyword Arguments:
             notes: Optional notes for the stocktake
             status: Optionally adjust the stock status
+            location: Optionally set the stock location
         """
         try:
             count = Decimal(count)
@@ -2556,6 +2629,14 @@ class StockItem(
             return False
 
         tracking_info = {}
+
+        location = kwargs.pop('location', None)
+
+        if location and location != self.location:
+            old_location = self.location
+            self.location = location
+            tracking_info['location'] = location.pk
+            tracking_info['old_location'] = old_location.pk if old_location else None
 
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
@@ -2716,6 +2797,10 @@ class StockItem(
                 if field in kwargs:
                     setattr(self, field, kwargs[field])
                     deltas[field] = kwargs[field]
+
+            transferorder = kwargs.pop('transferorder', None)
+            if transferorder:
+                deltas['transferorder'] = transferorder.pk
 
             self.save(add_note=False)
 

@@ -87,7 +87,7 @@ nav:
     - Project Details:
       - Governance: project/governance.md
       - Project Security: security.md
-      - Resources: project/resources.md
+      - Sponsored Resources: project/sponsored_resources.md
       - Privacy: privacy.md
   - Concepts:
     - Terminology: concepts/terminology.md
@@ -96,10 +96,13 @@ nav:
     - Physical Units: concepts/units.md
     - Companies: concepts/company.md
     - Custom States: concepts/custom_states.md
+    - Data Export: concepts/data_export.md
+    - Data Import: concepts/data_import.md
     - Pricing: concepts/pricing.md
     - Project Codes: concepts/project_codes.md
     - Attachments: concepts/attachments.md
     - Parameters: concepts/parameters.md
+    - Tags: concepts/tags.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
@@ -145,6 +148,7 @@ nav:
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
+    - Transfer Orders: stock/transfer_order.md
   - Manufacturing:
     - Manufacturing: manufacturing/index.md
     - Bill of Materials: manufacturing/bom.md
@@ -185,8 +189,6 @@ nav:
       - Multi Factor Authentication: settings/MFA.md
       - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
-    - Export Data: settings/export.md
-    - Import Data: settings/import.md
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md

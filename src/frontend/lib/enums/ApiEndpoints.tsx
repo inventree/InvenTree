@@ -12,12 +12,13 @@ export enum ApiEndpoints {
   // User API endpoints
   user_list = 'user/',
   user_set_password = 'user/:id/set-password/',
-  user_me = 'user/me/',
-  user_profile = 'user/profile/',
-  user_roles = 'user/roles/',
-  user_token = 'user/token/',
   user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
+  // Individual user endpoints
+  user_me_profile = 'user/me/profile/',
+  user_me_roles = 'user/me/roles/',
+  user_me_token = 'user/me/token/',
+  user_me = 'user/me/',
 
   // User auth endpoints
   auth_base = '/auth/',
@@ -181,6 +182,7 @@ export enum ApiEndpoints {
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_allocate = 'order/so/:id/allocate/',
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+  sales_order_auto_allocate = 'order/so/:id/auto-allocate/',
 
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
@@ -197,6 +199,17 @@ export enum ApiEndpoints {
   return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
+
+  transfer_order_list = 'order/transfer-order/',
+  transfer_order_issue = 'order/transfer-order/:id/issue/',
+  transfer_order_hold = 'order/transfer-order/:id/hold/',
+  transfer_order_cancel = 'order/transfer-order/:id/cancel/',
+  transfer_order_complete = 'order/transfer-order/:id/complete/',
+  transfer_order_allocate = 'order/transfer-order/:id/allocate/',
+  transfer_order_allocate_serials = 'order/transfer-order/:id/allocate-serials/',
+
+  transfer_order_line_list = 'order/transfer-order-line/',
+  transfer_order_allocation_list = 'order/transfer-order-allocation/',
 
   // Template API endpoints
   label_list = 'label/template/',
@@ -246,6 +259,7 @@ export enum ApiEndpoints {
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
+  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'

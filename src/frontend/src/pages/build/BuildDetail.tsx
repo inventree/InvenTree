@@ -21,6 +21,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { TagsList } from '@lib/index';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -228,7 +229,8 @@ export default function BuildDetail() {
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
-      part_detail: true
+      part_detail: true,
+      tags: true
     },
     refetchOnMount: true
   });
@@ -331,7 +333,7 @@ export default function BuildDetail() {
         name: 'can_build',
         unit: build.part_detail?.units,
         label: t`Can Build`,
-        hidden: partRequirementsQuery.isFetching
+        hidden: partRequirements?.can_build === undefined
       },
       {
         type: 'progressbar',
@@ -438,28 +440,26 @@ export default function BuildDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            apiPath={ApiEndpoints.part_list}
-            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            pk={build.part}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={data} />
-          </Grid.Col>
-        </Grid>
+        <Stack gap='xs'>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.part}
+              apiPath={ApiEndpoints.part_list}
+              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+              pk={build.part}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <DetailsTable fields={tl} item={data} />
+            </Grid.Col>
+          </Grid>
+          <TagsList tags={build.tags} />
+        </Stack>
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [
-    build,
-    instanceQuery,
-    partRequirements,
-    partRequirementsQuery.isFetching
-  ]);
+  }, [build, instanceQuery, partRequirements, partRequirementsQuery]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -597,6 +597,7 @@ export default function BuildDetail() {
     build,
     id,
     user,
+    partRequirements,
     buildStatus,
     globalSettings,
     showChildBuilds,
@@ -616,6 +617,7 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

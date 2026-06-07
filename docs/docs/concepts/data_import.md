@@ -43,7 +43,7 @@ Importing data is a multi-step process, which is managed via an *import session*
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
 
-Import sessions can be managed from the [Admin Center](./admin.md#admin-center) page, which lists all available import sessions
+Import sessions can be managed from the [Admin Center](../settings/admin.md#admin-center) page, which lists all available import sessions
 
 ### Context Sensitive Importing
 
@@ -55,9 +55,9 @@ An import session can be initiated from a number of different contexts within th
 
 ### Admin Center
 
-Staff users can create an import session from within the [Admin Center](./admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
+Staff users can create an import session from within the [Admin Center](../settings/admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
 
-Users can quickly navigate to the data import managemement page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
+Users can quickly navigate to the data import management page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
 
 ### Data Tables
 
@@ -123,7 +123,7 @@ The basic outline of this process is:
 ### Create Import Session
 
 !!! note "Admin Center"
-    Updating existing records can only be performed when creating a new import session from the [Admin Center](./admin.md#admin-center).
+    Updating existing records can only be performed when creating a new import session from the [Admin Center](../settings/admin.md#admin-center).
 
 Create a new import session, and ensure that the *Update Existing Records* option is selected. This will allow the import session to update existing records in the database.
 

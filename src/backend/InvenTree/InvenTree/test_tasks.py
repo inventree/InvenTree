@@ -67,26 +67,72 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         # Run with string ref
         InvenTree.tasks.offload_task('InvenTree.test_tasks.get_result')
 
-        # Error runs
+        # The error-path tests below all use force_sync=True so that the sync
+        # resolution code is exercised regardless of whether background workers
+        # happen to be running in this environment.
+
         # Malformed taskname
         with self.assertWarnsMessage(
             UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"
         ):
-            InvenTree.tasks.offload_task('InvenTree')
+            InvenTree.tasks.offload_task('InvenTree', force_sync=True)
 
         # Non existent app
         with self.assertWarnsMessage(
             UserWarning,
             "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'",
         ):
-            InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
+            InvenTree.tasks.offload_task(
+                'InvenTreeABC.test_tasks.doesnotmatter', force_sync=True
+            )
 
         # Non existent function
         with self.assertWarnsMessage(
             UserWarning,
             "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'",
         ):
-            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
+            InvenTree.tasks.offload_task(
+                'InvenTree.test_tasks.doesnotexist', force_sync=True
+            )
+
+    def test_offloading_deep_path(self):
+        """Test that task paths with more than 3 components are resolved correctly.
+
+        Previously the sync fallback split on '.' requiring exactly 3 parts,
+        so a 4-part path raised ValueError and returned False with no warning.
+        Now rsplit('.', 1) is used, so any depth works.
+        """
+        # 4-part valid path: module = 'InvenTree.test_helpers.sample_tasks', func = 'get_result'
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_helpers.sample_tasks.get_result', force_sync=True
+        )
+
+        # 4-part path with a non-existent module — should warn cleanly rather than crash
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTreeABC.sub.tasks.doesnotmatter' not started - No module named 'InvenTreeABC.sub.tasks'",
+        ):
+            InvenTree.tasks.offload_task(
+                'InvenTreeABC.sub.tasks.doesnotmatter', force_sync=True
+            )
+
+    def test_offloading_no_eval_bypass(self):
+        """Verify that names in tasks.py scope cannot be resolved via an eval bypass.
+
+        The previous implementation fell back to eval(func) when getattr returned
+        None, evaluating the function name in the local scope of offload_task rather
+        than in the target module. This meant a Python builtin like 'eval', or any
+        name imported into tasks.py, could be invoked via a crafted taskname. The
+        replacement uses only getattr on the imported module and rejects anything
+        not found there.
+        """
+        # 'eval' is a Python builtin; it is not an attribute of InvenTree.test_tasks.
+        # Previously eval('eval') in tasks.py's scope would resolve it; now it fails.
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTree.test_tasks.eval' not started - No function named 'eval'",
+        ):
+            InvenTree.tasks.offload_task('InvenTree.test_tasks.eval', force_sync=True)
 
     def test_task_heartbeat(self):
         """Test the task heartbeat."""

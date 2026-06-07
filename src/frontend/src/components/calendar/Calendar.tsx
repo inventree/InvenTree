@@ -1,4 +1,8 @@
-import type { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
+import type {
+  CalendarOptions,
+  DatesSetArg,
+  EventContentArg
+} from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -15,6 +19,7 @@ import {
   Box,
   Button,
   Group,
+  HoverCard,
   Indicator,
   LoadingOverlay,
   Popover,
@@ -27,9 +32,16 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconDownload,
-  IconFilter
+  IconFilter,
+  IconRefresh
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
   defaultLocale,
@@ -44,6 +56,8 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  enableRefresh?: boolean;
+  eventTooltipContent?: (event: EventContentArg) => ReactNode;
   filters?: TableFilter[];
   isLoading?: boolean;
   state: CalendarState;
@@ -53,12 +67,26 @@ export default function Calendar({
   enableDownload,
   enableFilters = false,
   enableSearch,
+  enableRefresh = true,
+  eventTooltipContent,
   isLoading,
   filters,
   state,
   ...calendarProps
 }: Readonly<InvenTreeCalendarProps>) {
   const globalSettings = useGlobalSettingsState();
+
+  const horizonMonths = useMemo(
+    () =>
+      Number.parseInt(
+        globalSettings.getSetting('CALENDAR_HORIZON_MONTHS') ?? '12',
+        10
+      ),
+    [globalSettings]
+  );
+
+  // When the horizon is a single month, fall back to the standard month grid.
+  const isScrollView = horizonMonths > 1;
 
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
@@ -98,10 +126,15 @@ export default function Calendar({
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
       if (state.ref?.current) {
-        const api = state.ref.current.getApi();
+        // Show the starting month of the view (advance 15 days past any padding days)
+        const viewStart = new Date(dateInfo.start);
+        viewStart.setDate(viewStart.getDate() + 15);
+        const startMonthLabel = new Intl.DateTimeFormat(calendarLocale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(viewStart);
 
-        // Update calendar state
-        state.setMonthName(api.view.title);
+        state.setMonthName(startMonthLabel);
         state.setStartDate(dateInfo.start);
         state.setEndDate(dateInfo.end);
       }
@@ -109,7 +142,44 @@ export default function Calendar({
       // Pass the dates set to the parent component
       calendarProps.datesSet?.(dateInfo);
     },
-    [calendarProps.datesSet, state.ref, state.setMonthName]
+    [
+      calendarLocale,
+      calendarProps.datesSet,
+      state.ref,
+      state.setMonthName,
+      state.setStartDate,
+      state.setEndDate
+    ]
+  );
+
+  const wrappedEventContent = useCallback(
+    (arg: EventContentArg) => {
+      const inner =
+        typeof calendarProps.eventContent === 'function'
+          ? calendarProps.eventContent(arg, null)
+          : (calendarProps.eventContent ?? null);
+
+      if (!eventTooltipContent) return inner;
+
+      const tooltip = eventTooltipContent(arg);
+
+      if (!tooltip) return inner;
+
+      return (
+        <HoverCard
+          openDelay={300}
+          closeDelay={100}
+          shadow='md'
+          position='top-start'
+        >
+          <HoverCard.Target>
+            <div style={{ width: '100%', overflow: 'hidden' }}>{inner}</div>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>{tooltip}</HoverCard.Dropdown>
+        </HoverCard>
+      );
+    },
+    [calendarProps.eventContent, eventTooltipContent]
   );
 
   return (
@@ -171,6 +241,18 @@ export default function Calendar({
             {enableSearch && (
               <SearchInput searchCallback={state.setSearchTerm} />
             )}
+            {enableRefresh && (
+              <ActionIcon
+                variant='transparent'
+                aria-label='calendar-refresh'
+                disabled={isLoading}
+                onClick={() => state.query.refetch()}
+              >
+                <Tooltip label={t`Refresh calendar`} position='top-end'>
+                  <IconRefresh />
+                </Tooltip>
+              </ActionIcon>
+            )}
             {enableFilters && filters && filters.length > 0 && (
               <Indicator
                 size='xs'
@@ -206,7 +288,16 @@ export default function Calendar({
           <FullCalendar
             ref={state.ref}
             plugins={[dayGridPlugin, interactionPlugin]}
-            initialView='dayGridMonth'
+            initialView={isScrollView ? 'scrollMultiMonth' : 'dayGridMonth'}
+            {...(isScrollView && {
+              views: {
+                scrollMultiMonth: {
+                  type: 'dayGrid',
+                  duration: { months: horizonMonths }
+                }
+              },
+              height: 'calc(100vh - 160px)'
+            })}
             locales={allLocales}
             locale={calendarLocale}
             firstDay={Number.parseInt(
@@ -217,6 +308,7 @@ export default function Calendar({
             footerToolbar={false}
             {...calendarProps}
             datesSet={datesSet}
+            eventContent={wrappedEventContent}
           />
         </Box>
       </Stack>

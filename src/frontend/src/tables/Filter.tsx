@@ -308,7 +308,7 @@ export function UpdatedAfterFilter(): TableFilter {
   return {
     name: 'updated_after',
     label: t`Updated After`,
-    description: t`Show orders updated after this date`,
+    description: t`Show items updated after this date`,
     type: 'date'
   };
 }
@@ -317,7 +317,7 @@ export function UpdatedBeforeFilter(): TableFilter {
   return {
     name: 'updated_before',
     label: t`Updated Before`,
-    description: t`Show orders updated before this date`,
+    description: t`Show items updated before this date`,
     type: 'date'
   };
 }
@@ -397,6 +397,29 @@ export function ResponsibleFilter(): TableFilter {
     label: t`Responsible`,
     description: t`Filter by responsible owner`
   });
+}
+
+export function TagsFilter({
+  modelType
+}: {
+  modelType?: ModelType;
+}): TableFilter {
+  return {
+    name: 'tags',
+    label: t`Tags`,
+    description: t`Filter by tags`,
+    placeholder: t`Select tags`,
+    type: 'api',
+    multi: true,
+    apiUrl: apiUrl(ApiEndpoints.tag_list),
+    model: ModelType.tag,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: modelType ? { model_type: modelType } : undefined,
+    transform: (item: any) => ({
+      value: item.name.toString(),
+      label: item.name.toString()
+    })
+  };
 }
 
 export function UserFilter({

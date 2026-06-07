@@ -30,7 +30,7 @@ import {
   ProjectCodeFilter,
   ResponsibleFilter
 } from '../../tables/Filter';
-import { StatusRenderer } from '../render/StatusRenderer';
+import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
 /**
@@ -46,12 +46,14 @@ export default function OrderCalendar({
   model,
   role,
   params,
-  filters
+  filters,
+  tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
   const user = useUserState();
@@ -105,14 +107,19 @@ export default function OrderCalendar({
           order.start_date || order.issue_date || order.creation_date || today;
         const end: string = order.target_date || start;
 
+        const statusColor = getStatusColor(model, order.status);
+
         return {
+          order: order,
           id: order.pk,
           title: order.reference,
           description: order.description,
           start: start,
           end: end,
           startEditable: canEdit,
-          durationEditable: canEdit
+          durationEditable: canEdit,
+          backgroundColor: statusColor,
+          borderColor: statusColor
         };
       }) ?? []
     );
@@ -204,11 +211,13 @@ export default function OrderCalendar({
     <Calendar
       enableDownload
       enableFilters
+      enableRefresh
       enableSearch
       events={events}
       state={calendarState}
       filters={calendarFilters}
       editable={true}
+      eventTooltipContent={tooltip}
       eventContent={renderOrder}
       eventClick={onClickOrder}
       eventChange={onEditOrder}

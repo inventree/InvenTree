@@ -38,6 +38,7 @@ import { extractAvailableFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
+import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
@@ -255,14 +256,20 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
+    // Include all columns (even prop-hidden ones) so useDataTableColumns always
+    // has the full ordered list. This prevents dynamic columns (e.g. ones whose
+    // hidden flag depends on async data) from being treated as brand-new columns
+    // after load, which would place them after the ACTIONS column.
+    let cols: TableColumn[] = [...columns];
 
     cols = cols.map((col) => {
-      // If the column is *not* switchable, it is always visible
-      // Otherwise, check if it is "default hidden"
-
-      const hidden: boolean =
-        col.switchable == false
+      // Prop-level hidden takes priority (e.g. hidden: !hasTrackedItems).
+      // For switchable columns, visibility is driven by tableState.hiddenColumns.
+      // Non-switchable columns are always visible (unless hidden by props).
+      const propHidden: boolean = col.hidden === true;
+      const hidden: boolean = propHidden
+        ? true
+        : col.switchable == false
           ? false
           : (tableState.hiddenColumns?.includes(col.accessor) ?? false);
 
@@ -294,12 +301,55 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         };
       }
 
+      // col.filter can be:
+      //   string   → single filter name to look up in tableFilters
+      //   string[] → multiple filter names; all matches shown in one popover
+      //   function → direct mantine-datatable render function (e.g. parametric columns)
+      //   undefined → no column filter
+      const filterNames: string[] =
+        typeof col.filter === 'string'
+          ? [col.filter]
+          : Array.isArray(col.filter)
+            ? col.filter
+            : [];
+
+      const namedFilters: TableFilter[] =
+        filterNames.length > 0
+          ? filters.filter((f) => filterNames.includes(f.name))
+          : [];
+
+      const namedFiltersActive =
+        namedFilters.length > 0 &&
+        namedFilters.some((nf) =>
+          tableState.filterSet.activeFilters.some((af) => af.name === nf.name)
+        );
+
+      // Resolve the final filter prop:
+      //   named string(s) with matches → build popover render function
+      //   named string(s) with no match → undefined (suppress icon)
+      //   function → pass through unchanged (e.g. parametric columns)
+      const resolvedFilter =
+        namedFilters.length > 0
+          ? ({ close }: { close: () => void }) => (
+              <ColumnFilterPopover
+                filters={namedFilters}
+                filterSet={tableState.filterSet}
+                close={close}
+              />
+            )
+          : filterNames.length > 0
+            ? undefined
+            : col.filter;
+
       return {
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
         render: wrappedRender,
+        filter: resolvedFilter,
+        filtering: namedFilters.length > 0 ? namedFiltersActive : col.filtering,
+        propHidden: propHidden,
         cellsStyle: (record: any, index: number) => {
           const width = (col as any).minWidth ?? 100;
           return {
@@ -341,10 +391,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     return cols;
   }, [
     columns,
+    filters,
     fieldNames,
     tableProps.rowActions,
     tableState.hiddenColumns,
-    tableState.selectedRecords
+    tableState.selectedRecords,
+    tableState.filterSet.activeFilters
   ]);
 
   // Callback when column visibility is toggled
@@ -382,11 +434,17 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     getInitialValueInEffect: false
   });
 
-  // Reset column ordering and custom widths when the component is mounted
+  // Reset column ordering when the column set changes (columns added/removed).
   // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
   useEffect(() => {
-    tableColumns.setColumnsOrder(dataColumns.map((col: any) => col.accessor));
-  }, [tableColumnNames]);
+    const savedOrder = tableColumns.columnsOrder.join(',');
+
+    if (savedOrder != tableColumnNames) {
+      // This is covering the edge case where the column order is not updated automatically
+      tableColumns.resetColumnsOrder();
+      tableColumns.setColumnsOrder(tableColumnNames.split(','));
+    }
+  }, [tableColumnNames, tableColumns.columnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -813,6 +871,14 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     );
   }, [tableProps.onCellClick, tableProps.onRowClick, tableProps.modelType]);
 
+  // When sticky headers are enabled, we adjust the maximum viewport height,
+  // based on the number of records being displayed (up to a maximum of 80vh)
+  const autoHeight = useMemo(() => {
+    const rows = Math.min(80, 6 * Math.max(tableState.records.length, 3));
+
+    return `${rows}vh`;
+  }, [tableState.records]);
+
   return (
     <>
       <Stack gap='xs'>
@@ -838,7 +904,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
                 stickyHeader: stickyTableHeader ? 'top' : undefined
               }}
               height={
-                tableProps.height ?? (stickyTableHeader ? '80vh' : undefined)
+                tableProps.height ??
+                (stickyTableHeader ? autoHeight : undefined)
               }
               withTableBorder={!tableProps.noHeader}
               withColumnBorders

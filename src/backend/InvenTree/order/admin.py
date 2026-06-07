@@ -170,3 +170,41 @@ class ReturnOrderLineItemAdmin(admin.ModelAdmin):
 @admin.register(models.ReturnOrderExtraLine)
 class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the ReturnOrderExtraLine model."""
+
+
+class TransferOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the TransferOrderLineItem model."""
+
+    autocomplete_fields = ['part']
+
+    model = models.TransferOrderLineItem
+    extra = 0
+
+
+@admin.register(models.TransferOrder)
+class TransferOrderAdmin(admin.ModelAdmin):
+    """Admin class for the TransferOrder model."""
+
+    exclude = ['reference_int', 'address', 'contact']
+
+    list_display = (
+        'reference',
+        'status',
+        'description',
+        'take_from',
+        'destination',
+        'consume',
+        'creation_date',
+    )
+
+    search_fields = ['reference', 'description']
+
+    inlines = [TransferOrderLineItemInlineAdmin]
+
+    autocomplete_fields = [
+        'created_by',
+        'take_from',
+        'destination',
+        'project_code',
+        'responsible',
+    ]

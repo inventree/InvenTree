@@ -28,7 +28,7 @@ jobs:
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # pin@v1.1.0
+        uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # pin@v1.3.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -227,7 +227,7 @@ jobs:
             INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
-      - name: Publish to go.packager.io
+      - name: Publish to go.packager.io - current release channel
         uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
         with:
           target: ${{ matrix.target }}
@@ -235,10 +235,18 @@ jobs:
           repository: inventree/InvenTree
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
+      - name: Publish to go.packager.io - stable release channel
+        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        with:
+          target: ${{ matrix.target }}
+          token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
+          repository: inventree/InvenTree
+          channel: stable
+          file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
         run: gh release upload ${REF} ${PACKAGE_PATH}#${PACKAGE_NAME}
         env:
           REF: ${{ github.ref_name }}
           PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
-          PACKAGE_NAME: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          PACKAGE_NAME: ${{ matrix.target }}-${{ steps.setup.outputs.version }}.tar.gz
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

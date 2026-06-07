@@ -6,14 +6,16 @@ import {
   IconTable,
   IconTools
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import type { EventContentArg } from '@fullcalendar/core';
 import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { TableFilter } from '@lib/types/Filters';
 import type { PanelType } from '@lib/types/Panel';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
@@ -34,12 +36,21 @@ function BuildOrderCalendar() {
     });
   }, [globalSettings]);
 
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.part,
+      instanceLookup: 'part_detail'
+    });
+  }, []);
+
   return (
     <OrderCalendar
       model={ModelType.build}
       role={UserRoles.build}
-      params={{ outstanding: true }}
+      params={{ outstanding: true, part_detail: true }}
       filters={calendarFilters}
+      tooltip={renderTooltip}
     />
   );
 }

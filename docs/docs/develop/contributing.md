@@ -60,15 +60,17 @@ invoke dev.setup-dev
 InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/version-control/what-are-gitlab-flow-best-practices/) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
 
 There are nominally 5 active branches:
-- `master` - The main development branch
-- `stable` - The latest stable release
-- `next-breaking` - The next breaking release (e.g. 2.0, 3.0) with all deprecated features removed
-- `l10n` - Translation branch: Source to Crowdin
-- `l10_crowdin` - Translation branch: Source from Crowdin
-- `y.y.x` - Release branch for the currently supported version (e.g. `0.5.x`)
 
-All other branches are removed periodically by maintainers or core team members. This includes old release branches.
-Do not use them as base for feature development or forks as patches from them might not be accepted without rebasing.
+| Branch | Description |
+| --- | --- |
+| `master` | The main development branch |
+| `stable` | The latest stable release |
+| `next-breaking` | The next breaking release (e.g. 2.0, 3.0) with all deprecated features removed |
+| `l10n` | Translation branch: Source to Crowdin |
+| `l10_crowdin` | Translation branch: Source from Crowdin |
+| `y.y.x` | Release branch for the currently supported version (e.g. `0.5.x`) |
+
+All other branches are removed periodically by maintainers or core team members. This includes old release branches. Do not use them as base for feature development or forks as patches from them might not be accepted without rebasing.
 
 ### Version Numbering
 

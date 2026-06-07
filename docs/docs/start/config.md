@@ -256,6 +256,9 @@ The following database options can be configured:
 {{ configsetting("INVENTREE_DB_PASSWORD") }} Database password (if required) |
 {{ configsetting("INVENTREE_DB_HOST") }} Database host address (if required) |
 {{ configsetting("INVENTREE_DB_PORT") }} Database host port (if required) |
+{{ configsetting("INVENTREE_DB_CONN_MAX_AGE") }} Database connection max age (s) |
+{{ configsetting("INVENTREE_DB_CONN_HEALTH_CHECKS") }} Enable database connection health checks |
+
 {{ configsetting("INVENTREE_DB_OPTIONS") }} Additional database options (as a JSON object) |
 
 !!! tip "Database Password"
@@ -266,11 +269,12 @@ The following database options can be configured:
 If running with a PostgreSQL database backend, the following additional options are available:
 
 {{ configtable() }}
-{{ configsetting("INVENTREE_DB_TIMEOUT", default="2") }} Database connection timeout (s) |
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | `INVENTREE_DB_TCP_KEEPALIVES` | database.tcp_keepalives | 1 | TCP keepalive |
-| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 1 | Idle TCP keepalive |
-| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 1| TCP keepalive interval |
+| `INVENTREE_DB_TCP_KEEPALIVES_IDLE` | database.tcp_keepalives_idle | 5 | Idle TCP keepalive |
+| `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 5 | TCP keepalive interval |
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
+| `INVENTREE_DB_TCP_USER_TIMEOUT` | database.tcp_user_timeout | 2000 | TCP user timeout (ms) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### MySQL Settings
@@ -278,6 +282,7 @@ If running with a PostgreSQL database backend, the following additional options 
 If running with a MySQL database backend, the following additional options are available:
 
 {{ configtable() }}
+{{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
@@ -549,6 +554,15 @@ To override global settings, provide a "dictionary" of settings overrides in the
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_GLOBAL_SETTINGS") }} JSON object containing global settings overrides |
+
+## Override Plugin Settings
+
+If you have plugins installed which require configuration, you can provide plugin settings overrides in the configuration file, or via an environment variable.
+
+{{ configtable() }}
+{{ configsetting("INVENTREE_PLUGIN_SETTINGS") }} JSON object containing plugin settings overrides |
+
+Note that plugin settings overrides require knowledge of the plugin "slug" and the particular settings which are being overridden. You should refer to the plugin documentation for more information on available settings. If plugin overrides are specified, but no matching plugin is found, the overrides will be ignored.
 
 ## Other Settings
 

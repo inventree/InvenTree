@@ -1,8 +1,43 @@
+import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
-import { expect, test } from 'playwright/test';
+import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { navigate } from './helpers';
+import { navigate, openDetailAction } from './helpers';
 import { doCachedLogin } from './login';
+
+// Test hover form action in related fields
+test('Forms - Hover', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/purchaseorders'
+  });
+
+  // Patch user settings to ensure we can see "extra model info" on hover
+  const api = await createApi({
+    username: stevenuser.username,
+    password: stevenuser.testcred
+  });
+
+  const response = await api.patch('settings/user/SHOW_EXTRA_MODEL_INFO/', {
+    data: {
+      value: 'true'
+    }
+  });
+
+  expect(response.status()).toBe(200);
+
+  await page
+    .getByRole('button', { name: 'action-button-add-purchase-' })
+    .click();
+  await page.getByLabel('related-field-supplier').fill('mou');
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+  await page.getByRole('option', { name: 'Mouser Electronics' }).hover();
+
+  // Check for hover info
+  await page.getByText('Company[ID: 2]').waitFor();
+  await page.getByRole('link', { name: 'View details' }).waitFor();
+});
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -49,8 +84,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Edit the resulting stock item
-  await page.getByLabel('action-menu-stock-item-actions').click();
-  await page.getByLabel('action-menu-stock-item-actions-edit').click();
+  await openDetailAction(page, 'stock-item', 'edit');
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
 

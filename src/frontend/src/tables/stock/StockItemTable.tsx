@@ -32,6 +32,8 @@ import {
 } from '../ColumnRenderers';
 import {
   BatchFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasBatchCodeFilter,
   InStockFilter,
   IncludeVariantsFilter,
@@ -41,7 +43,10 @@ import {
   SerialGTEFilter,
   SerialLTEFilter,
   StatusFilterOptions,
-  SupplierFilter
+  SupplierFilter,
+  TagsFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -58,7 +63,8 @@ function stockItemTableColumns({
   return [
     PartColumn({
       accessor: 'part',
-      part: 'part_detail'
+      part: 'part_detail',
+      filter: ['active']
     }),
     IPNColumn({}),
     {
@@ -74,13 +80,21 @@ function stockItemTableColumns({
       accessor: '',
       title: t`Stock`,
       sortable: true,
-      ordering: 'stock'
+      ordering: 'stock',
+      filter: [
+        'available',
+        'allocated',
+        'consumed',
+        'installed',
+        'sent_to_customer'
+      ]
     }),
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: ['has_batch_code', 'batch']
     },
     LocationColumn({
       hidden: !showLocation,
@@ -143,21 +157,29 @@ function stockItemTableColumns({
       sortable: true,
       defaultVisible: false
     },
-
+    DateColumn({
+      title: t`Created`,
+      accessor: 'creation_date',
+      sortable: true,
+      filter: ['created_before', 'created_after']
+    }),
+    DateColumn({
+      title: t`Last Updated`,
+      accessor: 'updated',
+      filter: ['updated_before', 'updated_after']
+    }),
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
-      defaultVisible: false
-    }),
-    DateColumn({
-      title: t`Last Updated`,
-      accessor: 'updated'
+      defaultVisible: false,
+      filter: ['stale', 'expiry_before', 'expiry_after']
     }),
     DateColumn({
       accessor: 'stocktake_date',
       title: t`Stocktake Date`,
-      sortable: true
+      sortable: true,
+      filter: ['has_stocktake', 'stocktake_before', 'stocktake_after']
     })
   ];
 }
@@ -273,18 +295,10 @@ function stockItemTableFilters({
       type: 'date',
       active: enableExpiry
     },
-    {
-      name: 'updated_before',
-      label: t`Updated Before`,
-      description: t`Show items updated before this date`,
-      type: 'date'
-    },
-    {
-      name: 'updated_after',
-      label: t`Updated After`,
-      description: t`Show items updated after this date`,
-      type: 'date'
-    },
+    UpdatedBeforeFilter(),
+    UpdatedAfterFilter(),
+    CreatedBeforeFilter(),
+    CreatedAfterFilter(),
     {
       name: 'stocktake_before',
       label: t`Stocktake Before`,
@@ -298,10 +312,16 @@ function stockItemTableFilters({
       type: 'date'
     },
     {
+      name: 'has_stocktake',
+      label: t`Has Stocktake Date`,
+      description: t`Show items which have a stocktake date`
+    },
+    {
       name: 'external',
       label: t`External Location`,
       description: t`Show items in an external location`
-    }
+    },
+    TagsFilter({ modelType: ModelType.stockitem })
   ];
 }
 

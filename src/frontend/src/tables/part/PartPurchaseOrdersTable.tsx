@@ -29,6 +29,7 @@ export default function PartPurchaseOrdersTable({
         ordering: 'order',
         sortable: true,
         switchable: false,
+        filter: ['pending', 'received'],
         title: t`Purchase Order`
       }),
       StatusColumn({
@@ -36,6 +37,7 @@ export default function PartPurchaseOrdersTable({
         sortable: true,
         ordering: 'status',
         title: t`Status`,
+        filter: 'order_status',
         model: ModelType.purchaseorder
       }),
       {

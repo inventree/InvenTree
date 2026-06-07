@@ -104,7 +104,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
 
     // Fetch role data
     await api
-      .get(apiUrl(ApiEndpoints.user_roles))
+      .get(apiUrl(ApiEndpoints.user_me_roles))
       .then((response) => {
         if (response.status == 200) {
           const user: UserProps = get().user as UserProps;

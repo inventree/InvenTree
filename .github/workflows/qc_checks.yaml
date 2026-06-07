@@ -117,7 +117,7 @@ jobs:
           python-version: ${{ env.python_version }}
           cache: "pip"
       - name: Run pre commit hook Checks
-        uses: j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3 # pin@v2
+        uses: j178/prek-action@bdca6f102f98e2b4c7029491a53dfd366469e33d # pin@v2
       - name: Check Version
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
@@ -165,7 +165,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
+        uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225 # pin@v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@6147a58e5d1249a12f42fc864ab791d571a30015 # pin@main
+        uses: oasdiff/oasdiff-action/diff@50e6a3413e5aa9c3ae4d8393c34745be44288b46 # pin@main
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -415,7 +415,7 @@ jobs:
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -597,7 +597,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -664,118 +664,6 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-  web_ui:
-    name: Tests - Web UI
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    needs: ["code-style", "paths-filter"]
-    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_DB: inventree
-          POSTGRES_USER: inventree_user
-          POSTGRES_PASSWORD: inventree_password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U testuser"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      INVENTREE_DB_ENGINE: postgresql
-      INVENTREE_DB_NAME: inventree
-      INVENTREE_DB_HOST: "127.0.0.1"
-      INVENTREE_DB_PORT: 5432
-      INVENTREE_DB_USER: inventree_user
-      INVENTREE_DB_PASSWORD: inventree_password
-      INVENTREE_DEBUG: true
-      INVENTREE_PLUGINS_ENABLED: false
-      VITE_COVERAGE_BUILD: true
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
-        with:
-          persist-credentials: false
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-          update: true
-          apt-dependency: gettext postgresql-client libpq-dev
-          pip-dependency: psycopg2
-      - name: Set up test data
-        run: |
-          invoke dev.setup-test -iv
-          invoke int.rebuild-thumbnails
-      - name: Install dependencies
-        run: |
-          invoke int.frontend-compile --extract
-          cd src/frontend && npx playwright install --with-deps
-      - name: Run Playwright tests
-        id: tests
-        run: |
-          cd src/frontend
-          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
-          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
-          invoke static
-          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" npx nyc playwright test --project=customization
-          npx nyc playwright test --project=chromium --project=firefox
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
-        with:
-          name: playwright-report
-          path: src/frontend/playwright-report/
-          retention-days: 14
-      - name: Report coverage
-        run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # pin@v6.0.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: inventree/InvenTree
-          flags: web
-      - name: Upload bundler info
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          cd src/frontend
-          yarn install
-          yarn run build
-
-  web_ui_build:
-    name: Build - Web UI
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
-        with:
-          persist-credentials: false
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-      - name: Install dependencies
-        run: cd src/frontend && yarn install
-      - name: Build frontend
-        run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
-      - name: Write version file - SHA
-        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
-      - name: Zip frontend
-        run: |
-          cd src/backend/InvenTree/web/static
-          zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
-        with:
-          name: frontend-build
-          path: src/backend/InvenTree/web/static/web
-          include-hidden-files: true
-
   zizmor:
     name: Security [Zizmor]
     runs-on: ubuntu-24.04
@@ -790,4 +678,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6

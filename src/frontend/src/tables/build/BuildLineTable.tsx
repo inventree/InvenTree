@@ -321,6 +321,7 @@ export default function BuildLineTable({
         ordering: 'part',
         sortable: true,
         switchable: false,
+        filter: ['assembly', 'testable', 'tracked'],
         render: (record: any) => {
           const hasAllocatedItems = record.allocatedQuantity > 0;
 
@@ -355,12 +356,14 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
+        filter: 'optional',
         hidden: hasOutput,
         defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
+        filter: 'consumable',
         hidden: hasOutput,
         defaultVisible: false
       }),
@@ -380,6 +383,7 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
+        filter: 'tracked',
         hidden: hasOutput,
         defaultVisible: false
       }),
@@ -456,6 +460,7 @@ export default function BuildLineTable({
       {
         accessor: 'available_stock',
         sortable: true,
+        filter: 'available',
         switchable: false,
         render: renderAvailableColumn
       },
@@ -480,12 +485,14 @@ export default function BuildLineTable({
       DecimalColumn({
         accessor: 'on_order',
         defaultVisible: false,
+        filter: 'on_order',
         sortable: true
       }),
       {
         accessor: 'allocated',
         switchable: false,
         sortable: true,
+        filter: 'allocated',
         hidden: !isActive,
         minWidth: 125,
         render: (record: any) => {
@@ -531,11 +538,15 @@ export default function BuildLineTable({
       {
         accessor: 'consumed',
         sortable: true,
+        filter: 'consumed',
         hidden: !!output?.pk,
         minWidth: 125,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            <Text
+              size='sm'
+              style={{ fontStyle: 'italic' }}
+            >{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
@@ -570,6 +581,9 @@ export default function BuildLineTable({
   });
 
   const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+  const [autoAllocateInitialData, setAutoAllocateInitialData] = useState<
+    Record<string, any>
+  >({});
 
   useBackgroundTask({
     taskId: allocateTaskId,
@@ -579,6 +593,24 @@ export default function BuildLineTable({
       table.refreshTable();
     }
   });
+
+  const autoAllocatePreFormContent = useMemo(() => {
+    const n = table.selectedRecords.length;
+    if (n > 0) {
+      return (
+        <Alert color='blue' title={t`Auto Allocate Stock`}>
+          <Text>
+            {t`Auto-allocating stock for`} {n} {t`selected line item(s)`}
+          </Text>
+        </Alert>
+      );
+    }
+    return (
+      <Alert color='green' title={t`Auto Allocate Stock`}>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
+      </Alert>
+    );
+  }, [table.selectedRecords]);
 
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
@@ -591,17 +623,18 @@ export default function BuildLineTable({
       location: build.take_from,
       interchangeable: true,
       substitutes: true,
-      optional_items: false
+      optional_items: false,
+      ...autoAllocateInitialData
     },
     successMessage: null,
     onFormSuccess: (response: any) => {
-      setAllocateTaskId(response.task_id);
+      if (response.task_id) {
+        setAllocateTaskId(response.task_id);
+      } else {
+        table.refreshTable();
+      }
     },
-    preFormContent: (
-      <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
-      </Alert>
-    )
+    preFormContent: autoAllocatePreFormContent
   });
 
   const allocateStock = useAllocateStockToBuildForm({
@@ -837,6 +870,9 @@ export default function BuildLineTable({
         hidden={!visible || hasOutput}
         color='blue'
         onClick={() => {
+          setAutoAllocateInitialData({
+            build_lines: table.selectedRecords.map((r) => r.pk)
+          });
           autoAllocateStock.open();
         }}
       />,

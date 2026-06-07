@@ -6,6 +6,7 @@ import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
+import type { NavigateFunction } from 'react-router-dom';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
@@ -16,6 +17,7 @@ import { NestedObjectField } from './NestedObjectField';
 import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TagsField from './TagsField';
 import TextField from './TextField';
 
 /**
@@ -26,6 +28,7 @@ export function ApiFormField({
   definition,
   control,
   hideLabels,
+  navigate,
   url,
   setFields,
   onKeyDown
@@ -34,6 +37,7 @@ export function ApiFormField({
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
+  navigate?: NavigateFunction | null;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
   onKeyDown?: (value: any) => void;
@@ -119,9 +123,10 @@ export function ApiFormField({
       case 'related field':
         return (
           <RelatedModelField
-            controller={controller}
             definition={fieldDefinition}
+            controller={controller}
             fieldName={fieldName}
+            navigate={navigate}
           />
         );
       case 'email':
@@ -244,6 +249,10 @@ export function ApiFormField({
             fieldName={fieldName}
             control={controller}
           />
+        );
+      case 'tags':
+        return (
+          <TagsField controller={controller} definition={fieldDefinition} />
         );
       default:
         return (

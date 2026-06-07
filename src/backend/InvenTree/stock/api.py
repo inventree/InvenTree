@@ -53,11 +53,12 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
     ReturnOrderSerializer,
     SalesOrderSerializer,
+    TransferOrderSerializer,
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -372,6 +373,8 @@ class StockLocationFilter(FilterSet):
 
         return queryset
 
+    tags = common.filters.TagsFilter(label=_('Tags'))
+
 
 class StockLocationMixin(SerializerContextMixin):
     """Mixin class for StockLocation API endpoints."""
@@ -430,11 +433,15 @@ class StockLocationDetail(
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
+        serializer = StockSerializers.LocationDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         delete_stock_items = InvenTree.helpers.str2bool(
-            request.data.get('delete_stock_items', False)
+            serializer.validated_data.get('delete_stock_items', False)
         )
+
         delete_sub_locations = InvenTree.helpers.str2bool(
-            request.data.get('delete_sub_locations', False)
+            serializer.validated_data.get('delete_sub_locations', False)
         )
 
         return super().destroy(
@@ -668,13 +675,17 @@ class StockFilter(FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
-            # Filter StockItem with either build allocations or sales order allocations
+            # Filter StockItem with either build allocations or transfer order allocations or sales order allocations
             return queryset.filter(
-                Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)
+                Q(sales_order_allocations__isnull=False)
+                | Q(transfer_order_allocations__isnull=False)
+                | Q(allocations__isnull=False)
             ).distinct()
-        # Filter StockItem without build allocations or sales order allocations
+        # Filter StockItem without build allocations or transfer order allocations or sales order allocations
         return queryset.filter(
-            Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True)
+            Q(sales_order_allocations__isnull=True)
+            & Q(transfer_order_allocations__isnull=True)
+            & Q(allocations__isnull=True)
         )
 
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
@@ -907,7 +918,14 @@ class StockFilter(FilterSet):
             | Q(supplier_part__manufacturer_part__manufacturer=company)
         ).distinct()
 
-    # Update date filters
+    created_before = InvenTreeDateFilter(
+        label=_('Created before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created after'), field_name='creation_date', lookup_expr='gt'
+    )
+
     updated_before = InvenTreeDateFilter(
         label=_('Updated before'), field_name='updated', lookup_expr='lt'
     )
@@ -923,6 +941,16 @@ class StockFilter(FilterSet):
     stocktake_after = InvenTreeDateFilter(
         label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gt'
     )
+
+    has_stocktake = rest_filters.BooleanFilter(
+        label=_('Has Stocktake Date'), method='filter_has_stocktake'
+    )
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter by whether or not the StockItem has a stocktake date."""
+        if str2bool(value):
+            return queryset.exclude(stocktake_date=None)
+        return queryset.filter(stocktake_date=None)
 
     # Stock "expiry" filters
     expiry_before = InvenTreeDateFilter(
@@ -1014,6 +1042,8 @@ class StockFilter(FilterSet):
 
         children = loc_obj.getUniqueChildren()
         return queryset.filter(location__in=children)
+
+    tags = common.filters.TagsFilter(label=_('Tags'))
 
 
 class StockApiMixin(SerializerContextMixin):
@@ -1287,6 +1317,7 @@ class StockList(
         'part__IPN',
         'updated',
         'purchase_price',
+        'creation_date',
         'stocktake_date',
         'expiry_date',
         'packaging',
@@ -1580,6 +1611,7 @@ class StockTrackingList(
             'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
             'salesorder': (SalesOrder, SalesOrderSerializer),
             'returnorder': (ReturnOrder, ReturnOrderSerializer),
+            'transferorder': (TransferOrder, TransferOrderSerializer),
             'buildorder': (Build, BuildSerializer),
             'item': (StockItem, StockSerializers.StockItemSerializer),
             'stockitem': (StockItem, StockSerializers.StockItemSerializer),

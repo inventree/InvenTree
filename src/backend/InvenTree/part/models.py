@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-import decimal
 import hashlib
 import inspect
 import math
 import os
 import re
 from datetime import timedelta
-from decimal import Decimal, InvalidOperation
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import TypedDict, cast
 
 from django.conf import settings
@@ -33,7 +32,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
@@ -61,6 +59,7 @@ from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from stock import models as StockModels
 
@@ -465,6 +464,7 @@ class Part(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -520,8 +520,6 @@ class Part(
 
     objects = TreeManager()
 
-    tags = TaggableManager(blank=True)
-
     class Meta:
         """Metaclass defines extra model properties."""
 
@@ -570,13 +568,13 @@ class Part(
         }
 
     def check_parameter_delete(self, parameter):
-        """Custom delete check for Paramteter instances associated with this Part."""
-        if self.locked:
+        """Custom delete check for Parameter instances associated with this Part."""
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete parameters of a locked part'))
 
     def check_parameter_save(self, parameter):
         """Custom save check for Parameter instances associated with this Part."""
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot modify parameters of a locked part'))
 
     def delete(self, **kwargs):
@@ -587,7 +585,7 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
-        if self.locked:
+        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete this part as it is locked'))
 
         if self.active:
@@ -724,19 +722,21 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            # Run the name through each custom validator
-            # If the plugin returns 'True' we will skip any subsequent validation
+        # Skip plugin validation checks during read-only management commands
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                # Run the name through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
 
-            try:
-                result = plugin.validate_part_name(self.name, self)
-                if result:
-                    return
-            except ValidationError as exc:
-                if raise_error:
-                    raise ValidationError({'name': exc.message})
-            except Exception:
-                log_error('validate_part_name', plugin=plugin.slug)
+                try:
+                    result = plugin.validate_part_name(self.name, self)
+                    if result:
+                        return
+                except ValidationError as exc:
+                    if raise_error:
+                        raise ValidationError({'name': exc.message})
+                except Exception:
+                    log_error('validate_part_name', plugin=plugin.slug)
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -746,18 +746,20 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            try:
-                result = plugin.validate_part_ipn(self.IPN, self)
+        # Skip plugin validation checks during read-only management commands
+        if not InvenTree.ready.isReadOnlyCommand():
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                try:
+                    result = plugin.validate_part_ipn(self.IPN, self)
 
-                if result:
-                    # A "true" result force skips any subsequent checks
-                    break
-            except ValidationError as exc:
-                if raise_error:
-                    raise ValidationError({'IPN': exc.message})
-            except Exception:
-                log_error('validate_part_ipn', plugin=plugin.slug)
+                    if result:
+                        # A "true" result force skips any subsequent checks
+                        break
+                except ValidationError as exc:
+                    if raise_error:
+                        raise ValidationError({'IPN': exc.message})
+                except Exception:
+                    log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -835,40 +837,41 @@ class Part(
         Raises:
             ValidationError if serial number is invalid and raise_error = True
         """
-        serial = str(serial).strip()
-
-        # First, throw the serial number against each of the loaded validation plugins
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            # Run the serial number through each custom validator
-            # If the plugin returns 'True' we will skip any subsequent validation
+        serial = str(serial).strip()
 
-            try:
-                result = False
+        if not InvenTree.ready.isReadOnlyCommand():
+            # First, throw the serial number against each of the loaded validation plugins
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+                # Run the serial number through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
 
-                if hasattr(plugin, 'validate_serial_number'):
-                    signature = inspect.signature(plugin.validate_serial_number)
+                try:
+                    result = False
 
-                    if 'stock_item' in signature.parameters:
-                        # 2024-08-21: New method signature accepts a 'stock_item' parameter
-                        result = plugin.validate_serial_number(
-                            serial, self, stock_item=stock_item
-                        )
+                    if hasattr(plugin, 'validate_serial_number'):
+                        signature = inspect.signature(plugin.validate_serial_number)
+
+                        if 'stock_item' in signature.parameters:
+                            # 2024-08-21: New method signature accepts a 'stock_item' parameter
+                            result = plugin.validate_serial_number(
+                                serial, self, stock_item=stock_item
+                            )
+                        else:
+                            # Old method signature - does not accept a 'stock_item' parameter
+                            result = plugin.validate_serial_number(serial, self)
+
+                    if result is True:
+                        return True
+                except ValidationError as exc:
+                    if raise_error:
+                        # Re-throw the error
+                        raise exc
                     else:
-                        # Old method signature - does not accept a 'stock_item' parameter
-                        result = plugin.validate_serial_number(serial, self)
-
-                if result is True:
-                    return True
-            except ValidationError as exc:
-                if raise_error:
-                    # Re-throw the error
-                    raise exc
-                else:
-                    return False
-            except Exception:
-                log_error('validate_serial_number', plugin=plugin.slug)
+                        return False
+                except Exception:
+                    log_error('validate_serial_number', plugin=plugin.slug)
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -960,7 +963,7 @@ class Part(
         """
         from plugin import PluginMixinEnum, registry
 
-        if allow_plugins:
+        if allow_plugins and not InvenTree.ready.isReadOnlyCommand():
             # Check with plugin system
             # If any plugin returns a non-null result, that takes priority
             for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
@@ -1769,8 +1772,50 @@ class Part(
 
         return query['total']
 
+    def transfer_order_allocations(self, **kwargs):
+        """Return all transfer-order-allocation objects which allocate this part to a TransferOrder."""
+        include_variants = kwargs.get('include_variants', True)
+
+        queryset = OrderModels.TransferOrderAllocation.objects.all()
+
+        if include_variants:
+            # Include allocations for all variants
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(item__part__in=variants)
+        else:
+            # Only look at this part
+            queryset = queryset.filter(item__part=self)
+
+        # Default behaviour is to only return *pending* allocations
+        pending = kwargs.get('pending', True)
+
+        if pending is True:
+            # Look only for 'open' orders
+            queryset = queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+        elif pending is False:
+            # Look only for 'closed' orders
+            queryset = queryset.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return queryset
+
+    def transfer_order_allocation_count(self, **kwargs):
+        """Return the total quantity of this part allocated to transfer orders."""
+        query = self.transfer_order_allocations(**kwargs).aggregate(
+            total=Coalesce(
+                Sum('quantity', output_field=models.DecimalField()),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return query['total']
+
     def allocation_count(self, **kwargs):
-        """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
+        """Return the total quantity of stock allocated for this part, against build orders, sales orders, and transfer orders."""
         if self.id is None:
             # If this instance has not been saved, foreign-key lookups will fail
             return 0
@@ -1778,6 +1823,8 @@ class Part(
         return sum([
             self.build_order_allocation_count(**kwargs),
             self.sales_order_allocation_count(**kwargs),
+            # For now, stock allocated to a transfer order will not impact its availability
+            # self.transfer_order_allocation_count(**kwargs),
         ])
 
     def stock_entries(
@@ -2052,8 +2099,9 @@ class Part(
             'part', 'sub_part'
         )
 
-        for item in bom_items:
-            item.validate_hash(valid=valid)
+        if valid:
+            for item in bom_items:
+                item.validate_hash(valid=True)
 
         self.bom_validated = valid
         self.bom_checksum = self.get_bom_hash() if valid else ''
@@ -2233,8 +2281,8 @@ class Part(
                 logger.warning('WARNING: BomItem ID %s contains itself in BOM', item.pk)
                 continue
 
-            q = decimal.Decimal(quantity)
-            i = decimal.Decimal(item.quantity)
+            q = Decimal(quantity)
+            i = Decimal(item.quantity)
 
             prices = item.sub_part.get_price_range(
                 q * i, internal=internal, purchase=purchase
@@ -3934,14 +3982,18 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
                         'raw_amount': _('Quantity must be greater than zero')
                     })
 
-            self.quantity = Decimal(quantity.magnitude)
+            # Normalize the quantity, to maximum 5 decimal places
+            quantity = Decimal(quantity.magnitude)
 
         except ValidationError as e:
             raise ValidationError({'raw_amount': e.messages})
 
         # Ensure that the raw_amount is converted to a Decimal value
+        # and quantized to a maximum of 5 decimal places (to avoid floating point issues)
         try:
-            self.quantity = Decimal(self.quantity)
+            self.quantity = Decimal(quantity).quantize(
+                Decimal('0.00001'), rounding=ROUND_HALF_UP
+            )
         except InvalidOperation:
             msg = _('Invalid quantity provided')
             raise ValidationError({'quantity': msg, 'raw_amount': msg})
@@ -4017,7 +4069,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         Raises:
             ValidationError: If the assembly is locked
         """
-        # TODO: Perhaps control this with a global setting?
+        if not get_global_setting('PART_ENABLE_LOCKING'):
+            return
 
         if assembly.locked:
             raise ValidationError(_('BOM item cannot be modified - assembly is locked'))

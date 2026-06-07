@@ -428,6 +428,95 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         # Quantity should be pre-filled with the remaining quantity
         self.assertEqual(5, response.data['lineitem']['quantity'])
 
+    def test_receive_includes_no_match_false(self):
+        """Successful receive merges no_match=False from the plugin response."""
+        self.purchase_order1.place_order()
+        url = reverse('api-barcode-po-receive')
+
+        result = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=200)
+
+        self.assertIn('success', result.data)
+        self.assertIn('no_match', result.data)
+        self.assertFalse(result.data['no_match'])
+
+    def test_partial_match_po_found_no_supplier_part(self):
+        """Barcode references a known PO but the SKU has no matching supplier part."""
+        url = reverse('api-barcode-po-receive')
+
+        # '1K72991337' matches purchase_order1 via supplier_reference; SKU is unknown
+        result = self.post(
+            url, data={'barcode': DIGIKEY_BARCODE_PO_NO_PART}, expected_code=400
+        )
+
+        self.assertIn('error', result.data)
+        self.assertIn('Purchase order Found', result.data['error'])
+        self.assertIn('No supplier Part Match', result.data['error'])
+
+        self.assertIn('supplier_matches', result.data)
+        matches = result.data['supplier_matches']
+        self.assertIsNotNone(matches['purchase_order'])
+        # DRF's ValidationError converts None leaves to ErrorDetail('None')
+        self.assertEqual(str(matches['supplier_part']), 'None')
+        self.assertIsNotNone(matches['supplier'])
+        self.assertTrue(matches['no_match'])
+
+    def test_partial_match_supplier_part_found_no_po(self):
+        """Barcode references a known supplier part but the PO reference has no match."""
+        url = reverse('api-barcode-po-receive')
+
+        # 'P296-LM358BIDDFRCT-ND' matches the existing supplier part; PO ref is unknown
+        result = self.post(
+            url, data={'barcode': DIGIKEY_BARCODE_PART_NO_PO}, expected_code=400
+        )
+
+        self.assertIn('error', result.data)
+        self.assertIn('Supplier Part Found', result.data['error'])
+        self.assertIn('No Purchase Order Match', result.data['error'])
+
+        self.assertIn('supplier_matches', result.data)
+        matches = result.data['supplier_matches']
+        # DRF's ValidationError converts None leaves to ErrorDetail('None')
+        self.assertEqual(str(matches['purchase_order']), 'None')
+        self.assertIsNotNone(matches['supplier_part'])
+        self.assertIsNotNone(matches['supplier'])
+        self.assertTrue(matches['no_match'])
+
+    def test_no_supplier_plugin_error(self):
+        """Plugins that cannot resolve a supplier are listed in no_supplier_plugin_error."""
+        url = reverse('api-barcode-po-receive')
+
+        digikey_plugin = registry.get_plugin('digikeyplugin')
+        original_supplier_id = digikey_plugin.get_setting('SUPPLIER_ID')
+
+        # Use a non-existent PK so get_supplier() returns None
+        digikey_plugin.set_setting('SUPPLIER_ID', 99999)
+        if hasattr(digikey_plugin, '_supplier'):
+            del digikey_plugin._supplier
+
+        try:
+            result = self.post(
+                url, data={'barcode': DIGIKEY_BARCODE}, expected_code=400
+            )
+
+            self.assertIn('no_supplier_plugin_error', result.data)
+            self.assertIn('digikeyplugin', result.data['no_supplier_plugin_error'])
+        finally:
+            digikey_plugin.set_setting('SUPPLIER_ID', original_supplier_id)
+            if hasattr(digikey_plugin, '_supplier'):
+                del digikey_plugin._supplier
+
+    def test_no_supplier_matches_when_both_missing(self):
+        """When neither PO nor supplier part can be resolved, no supplier_matches is set."""
+        url = reverse('api-barcode-po-receive')
+
+        # Completely unknown barcode — no PO, no part, no supplier
+        result = self.post(
+            url, data={'barcode': 'COMPLETELY-UNKNOWN-BARCODE-XYZ'}, expected_code=400
+        )
+
+        self.assertIn('error', result.data)
+        self.assertNotIn('supplier_matches', result.data)
+
 
 DIGIKEY_BARCODE = (
     '[)>\x1e06\x1dP296-LM358BIDDFRCT-ND\x1d1PLM358BIDDFR\x1dK\x1d1K72991337\x1d'
@@ -476,3 +565,17 @@ TME_QRCODE = (
 )
 
 TME_DATAMATRIX_CODE = 'PWBP-302 1PMPNWBP-302 Q1 K19361337/1'
+
+# DigiKey barcode: '1K72991337' matches purchase_order1 via supplier_reference,
+# but 'PNONEXISTENT-SKU' has no matching supplier part in the test database.
+DIGIKEY_BARCODE_PO_NO_PART = (
+    '[)>\x1e06\x1dPNONEXISTENT-SKU-XXXX\x1d1PNONEXISTENT-MPN\x1dK\x1d1K72991337\x1d'
+    '10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK'
+)
+
+# DigiKey barcode: 'P296-LM358BIDDFRCT-ND' matches the existing supplier part,
+# but '1KBADORDER-XXXXX' matches no purchase order in the test database.
+DIGIKEY_BARCODE_PART_NO_PO = (
+    '[)>\x1e06\x1dP296-LM358BIDDFRCT-ND\x1d1PLM358BIDDFR\x1dK\x1d1KBADORDER-XXXXX\x1d'
+    '10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK'
+)

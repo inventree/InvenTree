@@ -353,6 +353,28 @@ class PartTest(TestCase):
 
         part.delete()
 
+    def test_delete_locking_disabled(self):
+        """Test that a locked part can be deleted when PART_ENABLE_LOCKING is disabled."""
+        part = Part.objects.create(
+            name='Locked Part Test',
+            description='Part for testing locking override',
+            active=False,
+        )
+
+        part.locked = True
+        part.save()
+
+        # With locking enabled (default), deletion of a locked part raises an error
+        with self.assertRaises(ValidationError):
+            part.delete()
+
+        # Disable locking globally — locked part should now be deletable
+        set_global_setting('PART_ENABLE_LOCKING', False)
+        part.delete()
+
+        # Re-enable for other tests
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
     def test_revisions(self):
         """Test the 'revision' and 'revision_of' field."""
         template = Part.objects.create(
