@@ -2,6 +2,32 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.5 - June 2026
+
+Fixes callback signature for `<LocalizedComponent>` to allow for an optional `loadLocale` function to be passed in, which is used to dynamically load locale messages for the plugin.
+
+### 1.4.4 - June 2026
+
+Fixes bundling issues associated with the `InventreeHmrPlugin` plugin function.
+
+### 1.4.3 - June 2026
+
+Expose the `InventreeHmrPlugin` on a different path (`@inventreedb/ui/vite`) to avoid vite bundling issues.
+
+### 1.4.2 - June 2026
+
+Fixes a bug in the `LocalizedComponent` function
+
+### 1.4.1 - June 2026
+
+### HMR Support
+
+Adds support for React Fast Refresh in plugin development. This allows for a much smoother development experience when working on UI plugins, as changes to React components will now trigger a component-level update rather than a full page reload.
+
+### Localized Components
+
+Exposes a new `LocalizedComponent` function, which can be used to create React components that are automatically localized using the InvenTree server's localization system.
+
 ### 1.4.0 - May 2026
 
 #### Version Numbering
