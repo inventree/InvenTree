@@ -71,7 +71,7 @@ async function loadPluginLocale(
 
 // A default locale loader which can be used if the plugin does not supply its own loader function
 // Note: This will return null, as the plugin is expected to supply its own loader function which can load the locale messages for the plugin
-const defaultLocaleLoader: LocaleLoader = async (locale) => null;
+const defaultLocaleLoader: LocaleLoader = async (_locale: string) => null;
 
 /**
  * Wrapper function for a plugin-defined component which needs to support dynamic locale loading.
