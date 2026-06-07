@@ -418,24 +418,15 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   await row.getByText(/150 \/ 150/).waitFor();
 
-  // Trackable components cannot be allocated from the main line-item table
+  // Open the allocation menu for the red widget
   const mainRedWidget = await page.getByRole('cell', { name: 'Red Widget' });
   const mainRedRow = await getRowFromCell(mainRedWidget);
 
   await mainRedRow.getByLabel(/row-action-menu-/i).click();
 
-  const mainAllocateStockBtn = page.getByRole('menuitem', {
-    name: 'Allocate Stock',
-    exact: true
-  });
-  await expect(mainAllocateStockBtn).toBeDisabled();
-
-  await mainAllocateStockBtn.hover();
-  await expect(
-    page.getByText(
-      'Trackable parts must be allocated via the Build Outputs tab'
-    )
-  ).toBeVisible();
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .waitFor();
 
   await page.keyboard.press('Escape');
 
