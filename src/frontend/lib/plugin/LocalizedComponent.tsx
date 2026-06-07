@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import type { I18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Skeleton } from '@mantine/core';
 import { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ async function tryLoadLocale(locale: string): Promise<any> {
  * Helper function to dynamically load frontend translations,
  * based on the provided locale.
  */
-async function loadPluginLocale(locale: string) {
+async function loadPluginLocale(i18n: I18n, locale: string) {
   let messages = null;
 
   // Find the most specific locale file possible, with fallbacks to less specific locales if necessary
@@ -61,9 +61,11 @@ async function loadPluginLocale(locale: string) {
  * This is primarily designed for usage by the InvenTree plugin creator tool
  */
 export default function LocalizedComponent({
+  i18n,
   locale,
   children
 }: {
+  i18n: I18n;
   locale: string;
   children: React.ReactNode;
 }) {
@@ -72,10 +74,10 @@ export default function LocalizedComponent({
   // Reload the component when the locale changes
   useEffect(() => {
     setLoaded(false);
-    loadPluginLocale(locale).then(() => {
+    loadPluginLocale(i18n, locale).then(() => {
       setLoaded(true);
     });
-  }, [locale]);
+  }, [i18n, locale]);
 
   return loaded ? (
     <I18nProvider i18n={i18n}>{children}</I18nProvider>

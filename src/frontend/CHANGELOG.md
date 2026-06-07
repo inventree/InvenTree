@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.4.2 - June 2026
+
+Fixes a bug in the `LocalizedComponent` function
+
 ### 1.4.1 - June 2026
 
 ### HMR Support
