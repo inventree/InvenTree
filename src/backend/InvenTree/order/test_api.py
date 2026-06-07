@@ -1555,7 +1555,7 @@ class SalesOrderTest(OrderTest):
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
-        self.filter({'overdue': False}, 5)
+        self.filter({'overdue': False}, 6)
 
         for pk in [1, 2]:
             order = models.SalesOrder.objects.get(pk=pk)
@@ -1563,7 +1563,7 @@ class SalesOrderTest(OrderTest):
             order.save()
 
         self.filter({'overdue': True}, 2)
-        self.filter({'overdue': False}, 3)
+        self.filter({'overdue': False}, 4)
 
     def test_so_detail(self):
         """Test the SalesOrder detail endpoint."""
