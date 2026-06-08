@@ -8,7 +8,8 @@ export default function GlobalPreviewDrawer() {
   const instance = usePreviewDrawerState((state) => state.instance);
   const closePreview = usePreviewDrawerState((state) => state.closePreview);
 
-  if (!isOpen || modelType === undefined || id === undefined) {
+  // Only skip rendering before the drawer has ever been opened
+  if (modelType === undefined || id === undefined) {
     return null;
   }
 

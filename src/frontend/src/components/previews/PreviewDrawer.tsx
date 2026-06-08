@@ -36,11 +36,16 @@ export default function PreviewDrawer({
   return (
     <Drawer
       position='right'
-      size='lg'
+      size='xl'
       title={<StylishText size='lg'>{`${modelInfo.label} #${id}`}</StylishText>}
       opened={opened}
       onClose={onClose}
       withCloseButton
+      transitionProps={{
+        transition: 'slide-left',
+        duration: 300,
+        timingFunction: 'ease'
+      }}
     >
       <Stack gap='xs'>
         {!instance && instanceQuery.isFetching ? (

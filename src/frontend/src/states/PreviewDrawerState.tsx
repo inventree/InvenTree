@@ -22,12 +22,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
     },
 
     closePreview: () => {
-      set({
-        modelType: undefined,
-        id: undefined,
-        instance: undefined,
-        isOpen: false
-      });
+      set({ isOpen: false });
     }
   })
 );

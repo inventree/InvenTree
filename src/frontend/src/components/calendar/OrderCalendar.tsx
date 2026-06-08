@@ -22,6 +22,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
 import {
   AssignedToMeFilter,
@@ -166,14 +167,18 @@ export default function OrderCalendar({
     }
   };
 
-  // Callback when PurchaseOrder is clicked
+  // Callback when an order is clicked - open preview drawer, or navigate on modifier click
   const onClickOrder = (info: EventClickArg) => {
-    if (!!info.event.id) {
+    if (!info.event.id) return;
+
+    if (info.jsEvent.ctrlKey || info.jsEvent.metaKey || info.jsEvent.shiftKey) {
       navigateToLink(
         getDetailUrl(model, info.event.id),
         navigate,
         info.jsEvent
       );
+    } else {
+      openGlobalPreview(model, Number.parseInt(info.event.id));
     }
   };
 
