@@ -47,12 +47,14 @@ export default function OrderCalendar({
   role,
   params,
   filters,
+  initialFilters,
   tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  initialFilters?: TableFilter[];
   tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
@@ -94,7 +96,8 @@ export default function OrderCalendar({
   const calendarState = useCalendar({
     endpoint: modelInfo.api_endpoint,
     name: model.toString(),
-    queryParams: params
+    queryParams: params,
+    initialFilters: initialFilters
   });
 
   // Build the events

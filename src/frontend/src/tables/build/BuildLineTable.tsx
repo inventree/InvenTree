@@ -1,3 +1,14 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
+import type { TableFilter } from '@lib/types/Filters';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
@@ -13,18 +24,6 @@ import {
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { formatDecimal } from '@lib/functions/Formatting';
-import useTable from '@lib/hooks/UseTable';
-import type { TableFilter } from '@lib/types/Filters';
-import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -769,7 +768,9 @@ export default function BuildLineTable({
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
         required > 0 &&
-        record.trackable == hasOutput;
+        (hasOutput ? trackable : true);
+
+      const disableAllocation = !hasOutput && trackable;
 
       // Can de-allocate
       const canDeallocate =
@@ -792,6 +793,10 @@ export default function BuildLineTable({
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
           hidden: !canAllocate,
+          disabled: disableAllocation,
+          tooltip: disableAllocation
+            ? t`Trackable parts must be allocated via the Build Outputs tab`
+            : t`Allocate Stock`,
           color: 'green',
           onClick: () => {
             setSelectedRows([record]);
