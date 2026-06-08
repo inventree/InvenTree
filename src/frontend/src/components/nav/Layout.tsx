@@ -143,6 +143,7 @@ export default function LayoutComponent() {
               shortcut={['mod+K']}
               nothingFound={t`Nothing found...`}
             />
+            /* TODO: register shortcut to hotkey list */
           )}
         </Flex>
         <GlobalImporterDrawer />
