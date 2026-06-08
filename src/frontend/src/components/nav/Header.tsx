@@ -197,7 +197,7 @@ export function Header() {
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
-            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton />}
+            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton hotkey />}
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton hotkey />}
             <Indicator
               radius='lg'
