@@ -69,6 +69,12 @@ export type ImporterDrawerContext = {
   sessionId: () => number | null;
 };
 
+export type PreviewDrawerContext = {
+  open: (modelType: ModelType, instance: any) => void;
+  close: () => void;
+  isOpen: () => boolean;
+};
+
 /**
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
@@ -90,6 +96,7 @@ export type ImporterDrawerContext = {
  * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
  * @param tables - A set of functions for rendering API tables
  * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
+ * @param preview - A set of functions for controlling the global preview drawer (see ../components/previews/GlobalPreviewDrawer.tsx)
  * @param model - The model type associated with the rendered component (if applicable)
  * @param id - The ID (primary key) of the model instance for the plugin (if applicable)
  * @param instance - The model instance data (if available)
@@ -125,6 +132,7 @@ export type InvenTreePluginContext = {
   };
   tables: InvenTreeTablesContext<any>;
   importer: ImporterDrawerContext;
+  preview: PreviewDrawerContext;
   model?: ModelType | string;
   id?: string | number | null;
   instance?: any;
