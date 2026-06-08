@@ -10,11 +10,7 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import {
-  useDisclosure,
-  useDocumentVisibility,
-  useHotkeys
-} from '@mantine/hooks';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
@@ -22,6 +18,7 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
@@ -60,15 +57,17 @@ export function Header() {
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
 
-  useHotkeys([
+  useInvenTreeHotkeys([
     [
       '/',
+      t`Open search`,
       () => {
         openSearchDrawer();
       }
     ],
     [
       'mod+/',
+      t`Open search`,
       () => {
         openSearchDrawer();
       }
