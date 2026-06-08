@@ -54,6 +54,12 @@ services:
         volumes:
             # Map 'data' volume such that postgres database is stored externally
             - ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}:/var/lib/postgresql/data/:z
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+            interval: 15s
+            timeout: 5s
+            retries: 10
+            start_period: 20s
         restart: unless-stopped
 
     # redis acts as database cache manager
@@ -66,6 +72,12 @@ services:
             - ${INVENTREE_CACHE_PORT:-6379}
         volumes:
             - ${INVENTREE_EXT_VOLUME}/redis:/data
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 15s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
         restart: always
 
     # InvenTree web server service
@@ -78,8 +90,10 @@ services:
         expose:
             - ${INVENTREE_WEB_PORT:-8000}
         depends_on:
-            - inventree-db
-            - inventree-cache
+            inventree-db:
+                condition: service_healthy
+            inventree-cache:
+                condition: service_healthy
         env_file:
             - .env
         environment:
@@ -87,6 +101,16 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'curl --silent --show-error --fail "http://localhost:$${INVENTREE_WEB_PORT:-8000}/api/system/health/" > /dev/null',
+                ]
+            interval: 20s
+            timeout: 5s
+            retries: 10
+            start_period: 60s
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -96,12 +120,23 @@ services:
         container_name: inventree-worker
         command: invoke worker
         depends_on:
-            - inventree-server
+            inventree-server:
+                condition: service_healthy
         env_file:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'python -c "import os; os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"InvenTree.settings\"); os.chdir(\"/home/inventree/src/backend/InvenTree\"); import django; django.setup(); from InvenTree.status import is_worker_running; raise SystemExit(0 if is_worker_running() else 1)"',
+                ]
+            interval: 60s
+            timeout: 10s
+            retries: 3
+            start_period: 180s
         restart: unless-stopped
 
     # caddy acts as reverse proxy and static file server
@@ -112,12 +147,25 @@ services:
         image: caddy:alpine
         restart: always
         depends_on:
-            - inventree-server
+            inventree-server:
+                condition: service_healthy
+            inventree-worker:
+                condition: service_healthy
         ports:
             - ${INVENTREE_HTTP_PORT:-80}:80
             - ${INVENTREE_HTTPS_PORT:-443}:443
         env_file:
             - .env
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'host=$$(printf "%s" "$${INVENTREE_SITE_URL:-}" | cut -d"," -f1 | sed -E "s#https?://##; s#/.*##"); if [ -n "$${host}" ]; then wget -qO- --header="Host: $${host}" http://127.0.0.1/api/system/health/; else wget -qO- http://127.0.0.1/api/system/health/; fi | grep -Eq "\"status\"[[:space:]]*:[[:space:]]*\"ok\""',
+                ]
+            interval: 20s
+            timeout: 5s
+            retries: 10
+            start_period: 20s
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
             - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z
