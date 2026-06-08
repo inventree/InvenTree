@@ -70,7 +70,7 @@ export type ImporterDrawerContext = {
 };
 
 export type PreviewDrawerContext = {
-  open: (modelType: ModelType, instance: any) => void;
+  open: (modelType: ModelType, id?: number, instance?: any) => void;
   close: () => void;
   isOpen: () => boolean;
 };

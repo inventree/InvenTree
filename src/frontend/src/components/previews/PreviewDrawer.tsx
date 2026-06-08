@@ -1,38 +1,53 @@
 import { t } from '@lingui/core/macro';
-import { Drawer, Stack, Text } from '@mantine/core';
+import { Drawer, Loader, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/index';
+import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
 
 export default function PreviewDrawer({
   modelType,
-  instance,
+  id,
+  instance: providedInstance,
   opened,
   onClose
 }: Readonly<{
-  modelType?: ModelType;
+  modelType: ModelType;
+  id: number;
   instance?: any;
   opened: boolean;
   onClose: () => void;
 }>) {
-  const modelInfo = getModelInfo(instance.model);
+  const modelInfo = getModelInfo(modelType);
+  const apiEndpoint = ModelInformationDict[modelType].api_endpoint;
+
+  const { instance: fetchedInstance, instanceQuery } = useInstance({
+    endpoint: apiEndpoint,
+    pk: id,
+    hasPrimaryKey: true,
+    defaultValue: {},
+    disabled: !!providedInstance
+  });
+
+  const instance = providedInstance ?? fetchedInstance;
 
   return (
     <Drawer
       position='right'
       size='lg'
-      title={
-        <StylishText size='lg'>
-          TODO - implement actual preview content
-        </StylishText>
-      }
+      title={<StylishText size='lg'>{`${modelInfo.label} #${id}`}</StylishText>}
       opened={opened}
       onClose={onClose}
       withCloseButton
     >
       <Stack gap='xs'>
-        <Text c='dimmed'>{t`Preview for ${modelInfo.label} #${instance.pk}`}</Text>
+        {!instance && instanceQuery.isFetching ? (
+          <Loader />
+        ) : (
+          <Text c='dimmed'>{t`Preview for ${modelInfo.label} #${id}`}</Text>
+        )}
       </Stack>
     </Drawer>
   );

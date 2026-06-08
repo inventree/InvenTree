@@ -4,16 +4,18 @@ import PreviewDrawer from './PreviewDrawer';
 export default function GlobalPreviewDrawer() {
   const isOpen = usePreviewDrawerState((state) => state.isOpen);
   const modelType = usePreviewDrawerState((state) => state.modelType);
+  const id = usePreviewDrawerState((state) => state.id);
   const instance = usePreviewDrawerState((state) => state.instance);
   const closePreview = usePreviewDrawerState((state) => state.closePreview);
 
-  if (!isOpen || instance === null) {
+  if (!isOpen || modelType === undefined || id === undefined) {
     return null;
   }
 
   return (
     <PreviewDrawer
       modelType={modelType}
+      id={id}
       instance={instance}
       opened={isOpen}
       onClose={closePreview}

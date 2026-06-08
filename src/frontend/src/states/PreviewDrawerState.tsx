@@ -4,28 +4,40 @@ import { create } from 'zustand';
 interface PreviewDrawerStateProps {
   isOpen: boolean;
   modelType?: ModelType;
+  id?: number;
   instance?: any;
-  openPreview: (modelType: ModelType, instance: any) => void;
+  openPreview: (modelType: ModelType, id: number, instance?: any) => void;
   closePreview: () => void;
 }
 
 export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
   (set) => ({
     isOpen: false,
-    instance: null,
+    modelType: undefined,
+    id: undefined,
+    instance: undefined,
 
-    openPreview: (modelType: ModelType, instance: any) => {
-      set({ modelType, instance, isOpen: true });
+    openPreview: (modelType: ModelType, id: number, instance?: any) => {
+      set({ modelType, id, instance, isOpen: true });
     },
 
     closePreview: () => {
-      set({ modelType: undefined, instance: null, isOpen: false });
+      set({
+        modelType: undefined,
+        id: undefined,
+        instance: undefined,
+        isOpen: false
+      });
     }
   })
 );
 
-export function openGlobalPreview(modelType: ModelType, instance: any) {
-  usePreviewDrawerState.getState().openPreview(modelType, instance);
+export function openGlobalPreview(
+  modelType: ModelType,
+  id?: number,
+  instance?: any
+) {
+  usePreviewDrawerState.getState().openPreview(modelType, id, instance);
 }
 
 export function closeGlobalPreview() {
