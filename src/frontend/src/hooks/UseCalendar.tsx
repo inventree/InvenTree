@@ -2,7 +2,7 @@ import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useFilterSet from '@lib/hooks/UseFilterSet';
-import type { FilterSetState } from '@lib/types/Filters';
+import type { FilterSetState, TableFilter } from '@lib/types/Filters';
 import type { UseModalReturn } from '@lib/types/Modals';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -54,15 +54,17 @@ export type CalendarState = {
 export default function useCalendar({
   name,
   endpoint,
-  queryParams
+  queryParams,
+  initialFilters
 }: {
   name: string;
   endpoint: ApiEndpoints;
   queryParams?: any;
+  initialFilters?: TableFilter[];
 }): CalendarState {
   const ref = useRef<FullCalendar>(null as any);
 
-  const filterSet = useFilterSet(`calendar-${name}`);
+  const filterSet = useFilterSet(`calendar-${name}`, initialFilters);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 

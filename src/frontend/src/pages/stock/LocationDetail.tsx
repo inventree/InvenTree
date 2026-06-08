@@ -70,8 +70,9 @@ function TransferOrderCalendar() {
     <OrderCalendar
       model={ModelType.transferorder}
       role={UserRoles.transfer_order}
-      params={{ outstanding: true }}
+      params={{}}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
     />
   );
 }
