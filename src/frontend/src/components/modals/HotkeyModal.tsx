@@ -8,13 +8,16 @@ export function HotkeyModal({
   id
 }: ContextModalProps<{ modalBody: string }>) {
   const hotkeys = useMemo(() => {
-    const keys = useLocalLibState.getState().hotkeys;
-    return Object.entries(keys).map(([hotkey, description]) => {
-      return {
-        key: hotkey,
-        dec: description
-      };
-    });
+    const keys = Object.entries(useLocalLibState.getState().hotkeys).map(
+      ([hotkey, description]) => {
+        return {
+          key: hotkey,
+          dec: description
+        };
+      }
+    );
+    keys.sort((a, b) => a.key.localeCompare(b.key));
+    return keys;
   }, [context]);
 
   const data = useMemo(() => {
