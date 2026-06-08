@@ -51,8 +51,9 @@ function PurchaseOrderCalendar() {
     <OrderCalendar
       model={ModelType.purchaseorder}
       role={UserRoles.purchase_order}
-      params={{ outstanding: true, supplier_detail: true }}
+      params={{ supplier_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );
