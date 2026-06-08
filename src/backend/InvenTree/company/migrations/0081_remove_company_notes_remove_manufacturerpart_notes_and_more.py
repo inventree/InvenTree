@@ -6,29 +6,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("order", "0119_transferorderlineitem_line_int"),
+        ("company", "0080_company_tags"),
         ("common", "0046_remove_notesimage_model_id_and_more")
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name="purchaseorder",
+            model_name="company",
             name="notes",
         ),
         migrations.RemoveField(
-            model_name="returnorder",
+            model_name="manufacturerpart",
             name="notes",
         ),
         migrations.RemoveField(
-            model_name="salesorder",
-            name="notes",
-        ),
-        migrations.RemoveField(
-            model_name="salesordershipment",
-            name="notes",
-        ),
-        migrations.RemoveField(
-            model_name="transferorder",
+            model_name="supplierpart",
             name="notes",
         ),
     ]
