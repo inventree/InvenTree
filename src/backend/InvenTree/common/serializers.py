@@ -1013,6 +1013,7 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
     """Serializer for a selection list."""
 
     _choices_validated: dict = {}
+    _choices_provided: bool = False
 
     class Meta:
         """Meta options for SelectionListSerializer."""
@@ -1049,11 +1050,11 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
 
     def is_valid(self, *, raise_exception=False):
         """Validate the selection list. Choices are validated separately."""
-        choices = (
-            self.initial_data.pop('choices')
-            if self.initial_data.get('choices') is not None
-            else []
+        self._choices_provided = (
+            'choices' in self.initial_data
+            and self.initial_data.get('choices') is not None
         )
+        choices = self.initial_data.pop('choices') if self._choices_provided else []
 
         # Validate the choices
         _choices_validated = []
@@ -1088,24 +1089,25 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
 
     def update(self, instance, validated_data):
         """Update an existing selection list. Save the choices separately."""
-        inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        existing_ids = {a.get('id') for a in self._choices_validated}
+        if self._choices_provided:
+            inst_mapping = {inst.id: inst for inst in instance.entries.all()}
+            existing_ids = {a.get('id') for a in self._choices_validated}
 
-        # Perform creations and updates.
-        ret = []
-        for data in self._choices_validated:
-            list_inst = data.get('list', None)
-            inst = inst_mapping.get(data.get('id'))
-            if inst is None:
-                if list_inst is None:
-                    data['list'] = instance
-                ret.append(SelectionEntrySerializer().create(data))
-            else:
-                ret.append(SelectionEntrySerializer().update(inst, data))
+            # Perform creations and updates.
+            ret = []
+            for data in self._choices_validated:
+                list_inst = data.get('list', None)
+                inst = inst_mapping.get(data.get('id'))
+                if inst is None:
+                    if list_inst is None:
+                        data['list'] = instance
+                    ret.append(SelectionEntrySerializer().create(data))
+                else:
+                    ret.append(SelectionEntrySerializer().update(inst, data))
 
-        # Perform deletions.
-        for entry_id in inst_mapping.keys() - existing_ids:
-            inst_mapping[entry_id].delete()
+            # Perform deletions.
+            for entry_id in inst_mapping.keys() - existing_ids:
+                inst_mapping[entry_id].delete()
 
         return super().update(instance, validated_data)
 
