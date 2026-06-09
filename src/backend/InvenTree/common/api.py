@@ -1207,28 +1207,24 @@ class IconList(ListAPI):
         return list(get_icon_packs().values())
 
 
-class SelectionListList(ListCreateAPI):
+class SelectionListMixin(OutputOptionsMixin):
+    """Mixin for SelectionList views."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class SelectionListList(SelectionListMixin, ListCreateAPI):
     """List view for SelectionList objects."""
 
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
-
-
-class SelectionListDetail(RetrieveUpdateDestroyAPI):
+class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionList object."""
-
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
 
 
 class EntryMixin:

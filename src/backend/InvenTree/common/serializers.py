@@ -1009,7 +1009,7 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
         return ret
 
 
-class SelectionListSerializer(InvenTreeModelSerializer):
+class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a selection list."""
 
     _choices_validated: dict = {}
@@ -1029,13 +1029,18 @@ class SelectionListSerializer(InvenTreeModelSerializer):
             'default',
             'created',
             'last_updated',
-            'choices',
             'entry_count',
+            'choices',
         ]
 
     default = SelectionEntrySerializer(read_only=True, allow_null=True, many=False)
-    choices = SelectionEntrySerializer(source='entries', many=True, required=False)
     entry_count = serializers.IntegerField(read_only=True)
+
+    choices = OptionalField(
+        serializer_class=SelectionEntrySerializer,
+        serializer_kwargs={'source': 'entries', 'many': True, 'required': False},
+        prefetch_fields=['entries'],
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
