@@ -33,7 +33,7 @@ import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
 import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
-import SelectionListTable from '../../../../tables/part/SelectionListTable';
+import SelectionListTable from '../../../../tables/settings/SelectionListTable';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
