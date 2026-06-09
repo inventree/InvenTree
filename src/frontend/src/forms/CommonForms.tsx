@@ -284,3 +284,14 @@ export function useParameterFields({
     user
   ]);
 }
+
+export function selectionListFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    active: {},
+    locked: {},
+    source_plugin: {},
+    source_string: {}
+  };
+}
