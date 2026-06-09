@@ -139,6 +139,8 @@ export {
   type TableStateExtraProps
 } from './hooks/UseTable';
 
+export { useInvenTreeHotkeys } from './functions/Events';
+
 export {
   type DrawerProps,
   DetailDrawer,

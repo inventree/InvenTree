@@ -1,8 +1,9 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
-import { useHotkeys } from '@mantine/hooks';
 
 import { StylishText } from '@lib/components/StylishText';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
+import { t } from '@lingui/core/macro';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
@@ -52,9 +53,11 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
-  useHotkeys([
+
+  useInvenTreeHotkeys([
     [
       'mod+E',
+      title ? t`Edit ${title}` : t`Edit`,
       (event) => {
         if (event.repeat) {
           return;

@@ -1,3 +1,4 @@
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import type { ModelType } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Tooltip } from '@mantine/core';
@@ -14,13 +15,27 @@ import BarcodeScanDialog, {
 export function ScanButton({
   modelType,
   callback,
-  onScanSuccess
+  onScanSuccess,
+  hotkey = false
 }: {
   modelType?: ModelType;
   callback?: BarcodeScanCallback;
   onScanSuccess?: BarcodeScanSuccessCallback;
+  hotkey?: boolean;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
+
+  if (hotkey) {
+    useInvenTreeHotkeys([
+      [
+        'mod+b',
+        t`Open barcode scanner`,
+        () => {
+          open();
+        }
+      ]
+    ]);
+  }
 
   return (
     <>

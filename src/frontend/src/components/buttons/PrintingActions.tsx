@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
@@ -33,6 +34,33 @@ export function PrintingActions({
   const globalSettings = useGlobalSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
+
+  useInvenTreeHotkeys([
+    [
+      'mod+P',
+      t`Open Print Report dialog`,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        if (enabled && !hidden) {
+          reportModal.open();
+        }
+      }
+    ],
+    [
+      'mod+L',
+      t`Open Print Label dialog`,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        if (enabled && !hidden) {
+          labelModal.open();
+        }
+      }
+    ]
+  ]);
 
   const defaultLabelPlugin = useMemo(
     () => userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
