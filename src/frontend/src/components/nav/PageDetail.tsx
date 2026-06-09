@@ -68,11 +68,7 @@ export function PageDetail({
       }
     ]
   ]);
-  // duplicate
   useActionHotkeys(actions);
-
-  // delete
-  // create
 
   const pageTitleString = useMemo(
     () =>
@@ -247,10 +243,6 @@ function extractHotkeys(actions: ReactNode[]) {
       const dropdownActions = action?.props?.actions as any[];
       dropdownActions.forEach((dropdownAction: any) => {
         if (dropdownAction.hotkey) {
-          console.log(
-            'useActionHotkeys dropdown action with hotkey',
-            dropdownAction
-          );
           calcActions.push({
             hotkey: dropdownAction.hotkey,
             name: dropdownAction.name,
@@ -261,11 +253,9 @@ function extractHotkeys(actions: ReactNode[]) {
     }
 
     // PrimaryActionButton - use the 'mod+A' hotkey if it is enabled
-    if (
-      !primaryActionHotkeyAdded &&
-      typeName === 'PrimaryActionButton' &&
-      action?.props?.hidden !== true
-    ) {
+    if (typeName === 'PrimaryActionButton' && action?.props?.hidden !== true) {
+      if (primaryActionHotkeyAdded) return;
+
       const hotkey = action?.props?.hotkey ?? 'mod+A';
       calcActions.push({
         hotkey,
