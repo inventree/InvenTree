@@ -1242,6 +1242,12 @@ class EntryMixin:
         queryset = queryset.prefetch_related('list')
         return queryset
 
+    def perform_destroy(self, instance):
+        """Prevent deletion of entries belonging to a locked selection list."""
+        if instance.list.locked:
+            raise PermissionDenied(_('Selection list is locked'))
+        super().perform_destroy(instance)
+
 
 class SelectionEntryList(EntryMixin, ListCreateAPI):
     """List view for SelectionEntry objects."""
