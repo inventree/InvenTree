@@ -139,6 +139,8 @@ export {
   type TableStateExtraProps
 } from './hooks/UseTable';
 
+export { useInvenTreeHotkeys } from './functions/Events';
+
 export {
   type DrawerProps,
   DetailDrawer,
@@ -153,3 +155,9 @@ export {
   useStoredTableState
 } from './states/StoredTableState';
 export { useLocalLibState } from './states/LocalLibState';
+
+// Plugin development utilities and hooks
+export {
+  default as LocalizedComponent,
+  type LocaleLoader
+} from './plugin/LocalizedComponent';

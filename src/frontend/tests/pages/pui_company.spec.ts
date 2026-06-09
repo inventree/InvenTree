@@ -5,12 +5,13 @@ import {
   clickOnParamFilter,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showParametricView
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
-test('Company', async ({ browser }) => {
+test('Company - Basic Tests', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'company/1/details');
@@ -42,8 +43,7 @@ test('Company', async ({ browser }) => {
   await loadTab(page, 'Notes');
 
   // Let's edit the company details
-  await page.getByLabel('action-menu-company-actions').click();
-  await page.getByLabel('action-menu-company-actions-edit').click();
+  await openDetailAction(page, 'company', 'edit');
 
   await page.getByLabel('text-field-name', { exact: true }).fill('');
   await page

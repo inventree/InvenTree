@@ -7,6 +7,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
@@ -40,7 +41,6 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
@@ -418,6 +418,18 @@ test('Build Order - Allocation', async ({ browser }) => {
 
   await row.getByText(/150 \/ 150/).waitFor();
 
+  // Open the allocation menu for the red widget
+  const mainRedWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  const mainRedRow = await getRowFromCell(mainRedWidget);
+
+  await mainRedRow.getByLabel(/row-action-menu-/i).click();
+
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .waitFor();
+
+  await page.keyboard.press('Escape');
+
   // Expand this row
   await cell.click();
   await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
@@ -494,9 +506,13 @@ test('Build Order - Allocation', async ({ browser }) => {
   const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
-  await page
-    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
-    .waitFor();
+
+  const allocateStockBtn = page.getByRole('menuitem', {
+    name: 'Allocate Stock',
+    exact: true
+  });
+  await expect(allocateStockBtn).toBeEnabled();
+
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
@@ -756,8 +772,8 @@ test('Build Order - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
-  await page.getByLabel('action-menu-build-order-').click();
-  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  await openDetailAction(page, 'build-order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(

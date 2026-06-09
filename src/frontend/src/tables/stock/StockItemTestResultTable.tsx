@@ -144,6 +144,7 @@ export default function StockItemTestResultTable({
           title: t`Test`,
           switchable: false,
           sortable: true,
+          filter: ['enabled', 'required'],
           render: (record: any) => {
             const enabled = record.enabled ?? record.template_detail?.enabled;
             const installed =
