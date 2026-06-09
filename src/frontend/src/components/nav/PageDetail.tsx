@@ -28,8 +28,6 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
-  duplicateAction?: () => void;
-  duplicateEnabled?: boolean;
 }
 
 /**
@@ -50,9 +48,7 @@ export function PageDetail({
   breadcrumbAction,
   actions,
   editAction,
-  editEnabled,
-  duplicateAction,
-  duplicateEnabled
+  editEnabled
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
@@ -73,20 +69,8 @@ export function PageDetail({
     ]
   ]);
   // duplicate
-  useInvenTreeHotkeys([
-    [
-      'mod+D',
-      t`Duplicate`,
-      (event) => {
-        if (event.repeat) {
-          return;
-        }
-        if (duplicateEnabled ?? true) {
-          duplicateAction?.();
-        }
-      }
-    ]
-  ]);
+  useActionHotkeys(actions);
+
   // delete
   // create
 
@@ -215,5 +199,56 @@ export function PageDetail({
         </Paper>
       </Stack>
     </>
+  );
+}
+
+function useActionHotkeys(actions: ReactNode[] = []) {
+  const hotkeys = useMemo(() => {
+    const calcActions = actions
+      .filter((action) => 'hotkey' in action && action.hotkey)
+      .map((action) => {
+        return {
+          hotkey: action.hotkey,
+          name: action.name,
+          onClick: action.onClick
+        };
+      })
+      .filter((action) => action !== null);
+    // now iterate over the dropdown actions
+    actions.forEach((action) => {
+      if (
+        action.type.name === 'ActionDropdown' ||
+        action.type.name === 'OptionsActionDropdown'
+      ) {
+        const dropdownActions = action.props.actions as any[];
+        dropdownActions.forEach((dropdownAction: any) => {
+          if (dropdownAction.hotkey) {
+            console.log(
+              'useActionHotkeys dropdown action with hotkey',
+              dropdownAction
+            );
+            calcActions.push({
+              hotkey: dropdownAction.hotkey,
+              name: dropdownAction.name,
+              onClick: dropdownAction.onClick
+            });
+          }
+        });
+      }
+    });
+    return calcActions;
+  }, [actions]);
+
+  useInvenTreeHotkeys(
+    hotkeys.map(({ hotkey, onClick, name }) => [
+      hotkey,
+      name,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        onClick();
+      }
+    ])
   );
 }

@@ -34,6 +34,7 @@ export type ActionDropdownItem = {
   hidden?: boolean;
   onClick: (event?: any) => void;
   indicator?: Omit<IndicatorProps, 'children'>;
+  hotkey?: string;
 };
 
 /**
@@ -287,6 +288,7 @@ export function DuplicateItemAction(
     ...props,
     icon: <IconCopy color='green' />,
     name: t`Duplicate`,
-    tooltip: props.tooltip ?? t`Duplicate item`
+    tooltip: props.tooltip ?? t`Duplicate item`,
+    hotkey: 'mod+D'
   };
 }

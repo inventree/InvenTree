@@ -812,8 +812,6 @@ export default function BuildDetail() {
             badges={buildBadges}
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
-            duplicateAction={duplicateBuild.open}
-            duplicateEnabled={user.hasAddRole(UserRoles.build)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
             lastCrumb={[

@@ -1216,8 +1216,6 @@ export default function PartDetail() {
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
-            duplicateAction={duplicatePart.open}
-            duplicateEnabled={user.hasAddRole(UserRoles.part)}
           />
           <PanelGroup
             pageKey='part'
