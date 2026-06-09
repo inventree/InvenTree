@@ -120,7 +120,7 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
 
 # Install frontend build dependencies
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash && \
-    bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION" && \
+    bash -c "source $HOME/.nvm/nvm.sh && nvm install $NODE_VERSION" && \
     corepack enable yarn && yarn config set network-timeout 600000 -g
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
