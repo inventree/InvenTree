@@ -98,7 +98,7 @@
         "react-grid-layout": "1.4.4",
         "react-hook-form": "^7.62.0",
         "react-is": "^19.2.4",
-        "react-router-dom": "^6.26.2",
+        "react-router-dom": "^6.30.4",
         "react-select": "^5.9.0",
         "react-simplemde-editor": "^5.2.0",
         "react-window": "1.8.11",
