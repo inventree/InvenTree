@@ -32,6 +32,8 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
+import SelectionListTable from '../../../../tables/part/SelectionListTable';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -68,8 +70,6 @@ const PluginManagementPanel = Loadable(
 const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
-
-const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -192,7 +192,14 @@ export default function AdminCenter() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <ParameterPanel />,
+        content: <ParameterTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
+        name: 'selection-lists',
+        label: t`Selection Lists`,
+        icon: <IconList />,
+        content: <SelectionListTable />,
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
@@ -272,6 +279,7 @@ export default function AdminCenter() {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
+          'selection-lists',
           'parameters',
           'category-parameters',
           'location-types',
