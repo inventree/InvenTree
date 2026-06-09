@@ -8,7 +8,7 @@ import { firstSpotlight, searchShortcutKey } from '../nav/Layout';
 /**
  * A button which opens the quick command modal
  */
-export function SpotlightButton(hotkey = false) {
+export function SpotlightButton({ hotkey = false }: { hotkey?: boolean }) {
   if (hotkey) {
     useLocalLibState
       .getState()
