@@ -18,6 +18,7 @@ ARG commit_hash=""
 ARG commit_date=""
 
 ARG data_dir="data"
+ARG NODE_VERSION=24
 
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -118,14 +119,9 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
     rm -rf /root/.cache/pip
 
 # Install frontend build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nodejs npm \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN npm install -g n yarn --ignore-scripts && \
-    yarn config set network-timeout 600000 -g
-RUN bash -c "n lts"
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash && \
+    export NVM_DIR="$HOME/.nvm" && source $HOME/.nvm/nvm.sh && \
+    nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
 # InvenTree production image:
