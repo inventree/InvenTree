@@ -295,3 +295,12 @@ export function selectionListFields(): ApiFormFieldSet {
     source_string: {}
   };
 }
+
+export function selectionEntryFields(): ApiFormFieldSet {
+  return {
+    value: {},
+    label: {},
+    description: {},
+    active: {}
+  };
+}
