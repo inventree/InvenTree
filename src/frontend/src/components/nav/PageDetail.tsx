@@ -221,22 +221,26 @@ function useActionHotkeys(actions: ReactNode[] = []) {
 
 function extractHotkeys(actions: ReactNode[]) {
   const calcActions = actions
-    .filter((action) => 'hotkey' in action && action.hotkey)
-    .map((action) => {
+    .filter(
+      (action) =>
+        action &&
+        typeof action === 'object' &&
+        'hotkey' in action &&
+        action.hotkey
+    )
+    .map((action: any) => {
       return {
-        hotkey: action.hotkey,
-        name: action.name,
-        onClick: action.onClick
+        hotkey: action?.hotkey,
+        name: action?.name,
+        onClick: action?.onClick
       };
     })
     .filter((action) => action !== null);
   // now iterate over the dropdown actions
-  actions.forEach((action) => {
-    if (
-      action.type.name === 'ActionDropdown' ||
-      action.type.name === 'OptionsActionDropdown'
-    ) {
-      const dropdownActions = action.props.actions as any[];
+  actions.forEach((action: any) => {
+    const typeName = action?.type?.name;
+    if (typeName === 'ActionDropdown' || typeName === 'OptionsActionDropdown') {
+      const dropdownActions = action?.props?.actions as any[];
       dropdownActions.forEach((dropdownAction: any) => {
         if (dropdownAction.hotkey) {
           console.log(
