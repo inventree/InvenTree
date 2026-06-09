@@ -236,9 +236,13 @@ function extractHotkeys(actions: ReactNode[]) {
       };
     })
     .filter((action) => action !== null);
-  // now iterate over the dropdown actions
+
+  let primaryActionHotkeyAdded = false;
+  // now iterate over the actions to extract more possible hotkeys
   actions.forEach((action: any) => {
     const typeName = action?.type?.name;
+
+    // dropdowns - nested actions
     if (typeName === 'ActionDropdown' || typeName === 'OptionsActionDropdown') {
       const dropdownActions = action?.props?.actions as any[];
       dropdownActions.forEach((dropdownAction: any) => {
@@ -254,6 +258,22 @@ function extractHotkeys(actions: ReactNode[]) {
           });
         }
       });
+    }
+
+    // PrimaryActionButton - use the 'mod+A' hotkey if it is enabled
+    if (
+      !primaryActionHotkeyAdded &&
+      typeName === 'PrimaryActionButton' &&
+      action?.props?.hidden !== true
+    ) {
+      const hotkey = action?.props?.hotkey ?? 'mod+A';
+      calcActions.push({
+        hotkey,
+        name:
+          action?.props?.tooltip ?? action?.props?.title ?? t`Primary Action`,
+        onClick: action?.props?.onClick
+      });
+      primaryActionHotkeyAdded = true;
     }
   });
   return calcActions;
