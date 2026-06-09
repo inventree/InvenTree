@@ -342,7 +342,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | note | Longer form note field |
 | base_cost | Base charge added to order independent of quantity e.g. "Reeling Fee" |
 | multiple | Multiple that the part is provided in |
-| lead_time | Supplier lead time |
 | packaging | packaging that the part is supplied in, e.g. "Reel" |
 | pretty_name | The IPN, supplier name, supplier SKU and (if not null) manufacturer string joined by `|`. Ex. `P00037 | Company | 000021` |
 | unit_pricing | The price for one unit. |
