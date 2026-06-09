@@ -55,6 +55,8 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
 export const [firstStore, firstSpotlight] = createSpotlight();
 
+export const searchShortcutKey = 'mod+K';
+
 export default function LayoutComponent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -141,7 +143,7 @@ export default function LayoutComponent() {
                 leftSection: <IconSearch size='1.2rem' />,
                 placeholder: t`Search...`
               }}
-              shortcut={['mod + K']}
+              shortcut={[searchShortcutKey]}
               nothingFound={t`Nothing found...`}
             />
           )}
