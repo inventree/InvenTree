@@ -1,12 +1,39 @@
 import { useLocalLibState } from '@lib/states/LocalLibState';
-import { Table } from '@mantine/core';
+import { Kbd, Table } from '@mantine/core';
+import { type UseOSReturnValue, useOs } from '@mantine/hooks';
 import type { ContextModalProps } from '@mantine/modals';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
+
+function modRenderer(value: string, os: UseOSReturnValue) {
+  if (os === 'macos') {
+    return value.replace('mod', '⌘');
+  }
+  return value.replace('mod', 'Ctrl');
+}
+
+function kbdRenderer(value: string, os: UseOSReturnValue) {
+  const parts = value.split('+');
+  if (parts.length > 1) {
+    return (
+      <>
+        {parts.map((part, idx) => (
+          <Fragment key={idx}>
+            <Kbd>{modRenderer(part, os)}</Kbd>
+            {idx < parts.length - 1 && ' + '}
+          </Fragment>
+        ))}
+      </>
+    );
+  }
+  return <Kbd>{modRenderer(value, os)}</Kbd>;
+}
 
 export function HotkeyModal({
   context,
   id
 }: ContextModalProps<{ modalBody: string }>) {
+  const os = useOs();
+
   const hotkeys = useMemo(() => {
     const keys = Object.entries(useLocalLibState.getState().hotkeys).map(
       ([hotkey, description]) => {
@@ -18,14 +45,13 @@ export function HotkeyModal({
     );
     keys.sort((a, b) => a.key.localeCompare(b.key));
     return keys;
-  }, [context]);
-
+  }, []);
   const data = useMemo(() => {
     return {
       head: ['Hotkey', 'Action'],
-      body: [...hotkeys.map((item) => [item.key, item.dec])]
+      body: [...hotkeys.map((item) => [kbdRenderer(item.key, os), item.dec])]
     };
-  }, [context, hotkeys]);
+  }, [os, hotkeys]);
 
   return (
     <Table
