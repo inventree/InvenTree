@@ -129,7 +129,11 @@ export default function SelectionListTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          onRowClick: (record) => {
+            setSelectedSelectionList(record.pk);
+            editSelectionList.open();
+          }
         }}
       />
     </>
