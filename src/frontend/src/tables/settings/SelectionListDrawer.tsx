@@ -47,6 +47,17 @@ function SelectionListEntriesTable({
     undefined
   );
 
+  // Construct the dynamic URL to edit (or delete) the selected entry
+  const selectedEntryUrl: string = useMemo(() => {
+    let url = apiUrl(ApiEndpoints.selectionentry_list, undefined, { id });
+
+    if (selectedEntry) {
+      url += `${selectedEntry}/`;
+    }
+
+    return url;
+  }, [id, selectedEntry]);
+
   const createEntry = useCreateApiFormModal({
     url: ApiEndpoints.selectionentry_list,
     pathParams: { id },
@@ -62,18 +73,14 @@ function SelectionListEntriesTable({
   });
 
   const editEntry = useEditApiFormModal({
-    url: ApiEndpoints.selectionentry_list,
-    pk: selectedEntry,
-    pathParams: { id },
+    url: selectedEntryUrl,
     title: t`Edit Selection Entry`,
     fields: entryFields,
     table: table
   });
 
   const deleteEntry = useDeleteApiFormModal({
-    url: ApiEndpoints.selectionentry_list,
-    pk: selectedEntry,
-    pathParams: { id },
+    url: selectedEntryUrl,
     title: t`Delete Selection Entry`,
     table: table
   });
@@ -98,13 +105,15 @@ function SelectionListEntriesTable({
       return [
         RowEditAction({
           onClick: () => {
-            setSelectedEntry(record.pk);
+            console.log('record:', record);
+            setSelectedEntry(record.id);
             editEntry.open();
           }
         }),
         RowDeleteAction({
           onClick: () => {
-            setSelectedEntry(record.pk);
+            console.log('record:', record);
+            setSelectedEntry(record.id);
             deleteEntry.open();
           }
         })
@@ -171,18 +180,23 @@ export default function SelectionListDrawer({
             <StylishText size='lg'>{t`Selection List Details`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <EditApiForm
-              props={{
-                url: ApiEndpoints.selectionlist_list,
-                pk: id,
-                fields: selectionFields,
-                onFormSuccess: () => {
-                  refreshTable();
-                  refreshInstance();
-                }
-              }}
-              id={`selection-list-drawer-${id}`}
-            />
+            <fieldset
+              disabled={instance.locked}
+              style={{ border: 'none', padding: 0, margin: 0 }}
+            >
+              <EditApiForm
+                props={{
+                  url: ApiEndpoints.selectionlist_list,
+                  pk: id,
+                  fields: selectionFields,
+                  onFormSuccess: () => {
+                    refreshTable();
+                    refreshInstance();
+                  }
+                }}
+                id={`selection-list-drawer-${id}`}
+              />
+            </fieldset>
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item key='entries' value='entries'>

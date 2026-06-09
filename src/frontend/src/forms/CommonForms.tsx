@@ -290,7 +290,6 @@ export function selectionListFields(): ApiFormFieldSet {
     name: {},
     description: {},
     active: {},
-    locked: {},
     source_plugin: {},
     source_string: {}
   };
