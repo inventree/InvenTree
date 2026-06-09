@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, LoadingOverlay, Stack } from '@mantine/core';
+import { Accordion, Alert, LoadingOverlay, Stack } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -9,12 +10,14 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconLock } from '@tabler/icons-react';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
   selectionEntryFields,
   selectionListFields
 } from '../../forms/CommonForms';
 import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -44,6 +47,20 @@ function SelectionListEntriesTable({
     undefined
   );
 
+  const createEntry = useCreateApiFormModal({
+    url: ApiEndpoints.selectionentry_list,
+    pathParams: { id },
+    title: t`Add Selection Entry`,
+    fields: {
+      ...entryFields,
+      list: {
+        value: id,
+        hidden: true
+      }
+    },
+    table: table
+  });
+
   const editEntry = useEditApiFormModal({
     url: ApiEndpoints.selectionentry_list,
     pk: selectedEntry,
@@ -60,6 +77,17 @@ function SelectionListEntriesTable({
     title: t`Delete Selection Entry`,
     table: table
   });
+
+  const tableActions = useMemo(() => {
+    if (locked) return [];
+    return [
+      <AddItemButton
+        key='add-entry'
+        onClick={() => createEntry.open()}
+        tooltip={t`Add Entry`}
+      />
+    ];
+  }, [locked, createEntry]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -87,6 +115,7 @@ function SelectionListEntriesTable({
 
   return (
     <>
+      {createEntry.modal}
       {editEntry.modal}
       {deleteEntry.modal}
       <InvenTreeTable
@@ -97,6 +126,7 @@ function SelectionListEntriesTable({
           enableSearch: true,
           enableSelection: !locked,
           enableBulkDelete: !locked,
+          tableActions: tableActions,
           rowActions: locked ? undefined : rowActions
         }}
       />
@@ -112,6 +142,7 @@ export default function SelectionListDrawer({
   refreshTable: () => void;
 }>) {
   const {
+    instance,
     refreshInstance,
     instanceQuery: { isFetching }
   } = useInstance({
@@ -129,6 +160,11 @@ export default function SelectionListDrawer({
 
   return (
     <Stack>
+      {instance.locked && (
+        <Alert color='red' icon={<IconLock />} title={t`Locked`}>
+          {t`This selection list is locked and cannot be edited.`}
+        </Alert>
+      )}
       <Accordion defaultValue={['details', 'entries']} multiple>
         <Accordion.Item key='details' value='details'>
           <Accordion.Control>
@@ -154,7 +190,10 @@ export default function SelectionListDrawer({
             <StylishText size='lg'>{t`Selection List Entries`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <SelectionListEntriesTable id={id} />
+            <SelectionListEntriesTable
+              id={id}
+              locked={instance?.locked ?? false}
+            />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
