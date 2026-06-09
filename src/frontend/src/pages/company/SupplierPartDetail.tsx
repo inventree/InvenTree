@@ -438,6 +438,8 @@ export default function SupplierPartDetail() {
             imageUrl={supplierPart?.part_detail?.thumbnail}
             editAction={editSupplierPart.open}
             editEnabled={user.hasChangePermission(ModelType.supplierpart)}
+            duplicateAction={duplicateSupplierPart.open}
+            duplicateEnabled={user.hasAddRole(UserRoles.purchase_order)}
           />
           <PanelGroup
             pageKey='supplierpart'

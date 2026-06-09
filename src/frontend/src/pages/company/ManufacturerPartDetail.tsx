@@ -308,6 +308,8 @@ export default function ManufacturerPartDetail() {
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
             editAction={editManufacturerPart.open}
             editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
+            duplicateAction={duplicateManufacturerPart.open}
+            duplicateEnabled={user.hasAddRole(UserRoles.purchase_order)}
           />
           <PanelGroup
             pageKey='manufacturerpart'

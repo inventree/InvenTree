@@ -28,6 +28,8 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
+  duplicateAction?: () => void;
+  duplicateEnabled?: boolean;
 }
 
 /**
@@ -48,7 +50,9 @@ export function PageDetail({
   breadcrumbAction,
   actions,
   editAction,
-  editEnabled
+  editEnabled,
+  duplicateAction,
+  duplicateEnabled
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
@@ -57,7 +61,7 @@ export function PageDetail({
   useInvenTreeHotkeys([
     [
       'mod+E',
-      title ? t`Edit ${title}` : t`Edit`,
+      t`Edit`,
       (event) => {
         if (event.repeat) {
           return;
@@ -68,6 +72,23 @@ export function PageDetail({
       }
     ]
   ]);
+  // duplicate
+  useInvenTreeHotkeys([
+    [
+      'mod+D',
+      t`Duplicate`,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        if (duplicateEnabled ?? true) {
+          duplicateAction?.();
+        }
+      }
+    ]
+  ]);
+  // delete
+  // create
 
   const pageTitleString = useMemo(
     () =>
