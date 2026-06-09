@@ -1039,7 +1039,7 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
 
     choices = OptionalField(
         serializer_class=SelectionEntrySerializer,
-        serializer_kwargs={'source': 'entries', 'many': True, 'required': False},
+        serializer_kwargs={'source': 'entries', 'many': True, 'read_only': True},
         prefetch_fields=['entries'],
     )
 
@@ -1047,69 +1047,6 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
     def annotate_queryset(queryset):
         """Add count of entries for each selection list."""
         return queryset.annotate(entry_count=Count('entries'))
-
-    def is_valid(self, *, raise_exception=False):
-        """Validate the selection list. Choices are validated separately."""
-        self._choices_provided = (
-            'choices' in self.initial_data
-            and self.initial_data.get('choices') is not None
-        )
-        choices = self.initial_data.pop('choices') if self._choices_provided else []
-
-        # Validate the choices
-        _choices_validated = []
-        db_entries = (
-            {a.id: a for a in self.instance.entries.all()} if self.instance else {}
-        )
-
-        for choice in choices:
-            current_inst = db_entries.get(choice.get('id'))
-            serializer = SelectionEntrySerializer(
-                instance=current_inst,
-                data={'list': current_inst.list.pk if current_inst else None, **choice},
-            )
-            serializer.is_valid(raise_exception=raise_exception)
-            _choices_validated.append({
-                **serializer.validated_data,
-                'id': choice.get('id'),
-            })
-        self._choices_validated = _choices_validated
-
-        return super().is_valid(raise_exception=raise_exception)
-
-    def create(self, validated_data):
-        """Create a new selection list. Save the choices separately."""
-        list_entry = common_models.SelectionList.objects.create(**validated_data)
-        for choice_data in self._choices_validated:
-            common_models.SelectionListEntry.objects.create(**{
-                **choice_data,
-                'list': list_entry,
-            })
-        return list_entry
-
-    def update(self, instance, validated_data):
-        """Update an existing selection list. Save the choices separately."""
-        if self._choices_provided:
-            inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-            existing_ids = {a.get('id') for a in self._choices_validated}
-
-            # Perform creations and updates.
-            ret = []
-            for data in self._choices_validated:
-                list_inst = data.get('list', None)
-                inst = inst_mapping.get(data.get('id'))
-                if inst is None:
-                    if list_inst is None:
-                        data['list'] = instance
-                    ret.append(SelectionEntrySerializer().create(data))
-                else:
-                    ret.append(SelectionEntrySerializer().update(inst, data))
-
-            # Perform deletions.
-            for entry_id in inst_mapping.keys() - existing_ids:
-                inst_mapping[entry_id].delete()
-
-        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
