@@ -6,7 +6,6 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { eventModified } from '@lib/functions/Navigation';
-import { useInvenTreeHotkeys } from '@lib/index';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
@@ -28,21 +27,6 @@ export type AdminButtonProps = {
 export default function AdminButton(props: Readonly<AdminButtonProps>) {
   const user = useUserState();
   const server = useServerApiState();
-
-  useInvenTreeHotkeys([
-    [
-      'mod+Shift+A',
-      t`Open in admin interface`,
-      (event) => {
-        if (event.repeat) {
-          return;
-        }
-        if (enabled) {
-          openAdmin(event);
-        }
-      }
-    ]
-  ]);
 
   const enabled: boolean = useMemo(() => {
     // Only users with superuser permission will see this button
