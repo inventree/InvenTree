@@ -776,6 +776,31 @@ class ReportPrintPermissionTest(InvenTreeAPITestCase):
         # Should now succeed
         self.post(url, data=post_data, expected_code=201)
 
+    def test_report_print_disabled_template(self):
+        """Printing against a disabled report template must be rejected."""
+        self.assignRole('purchase_order.view')
+        cache.clear()
+
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='purchaseorder'
+        ).first()
+        self.assertIsNotNone(template)
+
+        items = PurchaseOrder.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # Enabled template: should succeed
+        self.post(url, data=post_data, expected_code=201)
+
+        # Disable the template and retry: should be rejected
+        template.enabled = False
+        template.save()
+
+        self.post(url, data=post_data, expected_code=400)
+
 
 class LabelPrintPermissionTest(InvenTreeAPITestCase):
     """Test that the label print endpoint checks VIEW permission on the associated model type."""
