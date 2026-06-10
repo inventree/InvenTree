@@ -388,7 +388,7 @@ export function OwnerFilter({
     description: description,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.owner_list),
-    apiFilter: { active: true, ...apiFilter },
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.owner,
     modelRenderer: (instance: any) => instance.name
   };
