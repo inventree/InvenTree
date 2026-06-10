@@ -1027,7 +1027,11 @@ class PluginsRegistry:
         data = md5()
 
         # Hash for all loaded plugins
-        for slug, plug in self.plugins.items():
+        # Note: Sort by slug, so the hash is independent of discovery order.
+        # Different processes can discover the same plugins in a different
+        # order, and the hash must represent the registry *state*, not the
+        # iteration order of any particular process.
+        for slug, plug in sorted(self.plugins.items()):
             data.update(str(slug).encode())
             data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())

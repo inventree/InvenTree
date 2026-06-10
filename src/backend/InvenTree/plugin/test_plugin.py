@@ -538,6 +538,27 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             registry.registry_hash = 'abc'
             self.assertTrue(registry.check_reload())
 
+    def test_registry_hash_order_independence(self):
+        """Test that the registry hash does not depend on plugin iteration order.
+
+        Different processes (gunicorn workers, background worker, shell) can
+        discover the same set of plugins in a different order. If the hash
+        depends on iteration order, processes disagree about the hash for the
+        same registry state, and ping-pong each other into endless reloads
+        via check_reload.
+        """
+        original_plugins = registry.plugins
+
+        try:
+            hash_original = registry.calculate_plugin_hash()
+
+            # Simulate a process which discovered the same plugins in reverse order
+            registry.plugins = dict(reversed(list(original_plugins.items())))
+
+            self.assertEqual(hash_original, registry.calculate_plugin_hash())
+        finally:
+            registry.plugins = original_plugins
+
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
         from plugin.models import PluginConfig
