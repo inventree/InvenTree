@@ -120,6 +120,7 @@ export function BuildOrderTable({
       UserColumn({
         accessor: 'issued_by_detail',
         ordering: 'issued_by',
+        filter: 'issued_by',
         title: t`Issued By`
       }),
       ResponsibleColumn({}),
