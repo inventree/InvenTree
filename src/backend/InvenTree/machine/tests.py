@@ -171,6 +171,8 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock']
 
+    roles = ['part.view']
+
     def test_registration(self):
         """Test that the machine is correctly registered from the plugin."""
         PLG_KEY = 'label-printer-test-plugin'
