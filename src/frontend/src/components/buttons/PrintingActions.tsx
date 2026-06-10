@@ -11,11 +11,11 @@ import { api } from '../../App';
 import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
-import { useLocalState } from '../../states/LocalState';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({

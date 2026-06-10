@@ -66,6 +66,22 @@ test('Printing - Label Printing', async ({ browser }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
   await page.getByText('Process completed successfully').first().waitFor();
+
+  // Re-open print dialog to verify persistence (issue #12129)
+  await page
+    .getByLabel('Stock Items')
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page.getByLabel('action-menu-printing-actions-print-labels').click();
+
+  // Verify the values are persisted/remembered
+  await expect(page.getByLabel('related-field-template')).toHaveValue(
+    'InvenTree Stock Item Label'
+  );
+  await expect(page.getByLabel('related-field-plugin')).toHaveValue(
+    'InvenTreeLabel provides'
+  );
+
   await page.context().close();
 });
 
