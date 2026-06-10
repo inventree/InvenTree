@@ -549,6 +549,9 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         """
         original_plugins = registry.plugins
 
+        # Reversing a dict with fewer than 2 entries would not change anything
+        self.assertGreater(len(original_plugins), 1)
+
         try:
             hash_original = registry.calculate_plugin_hash()
 

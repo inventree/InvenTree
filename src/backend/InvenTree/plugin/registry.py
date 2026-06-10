@@ -1031,7 +1031,7 @@ class PluginsRegistry:
         # Different processes can discover the same plugins in a different
         # order, and the hash must represent the registry *state*, not the
         # iteration order of any particular process.
-        for slug, plug in sorted(self.plugins.items()):
+        for slug, plug in sorted(self.plugins.items(), key=lambda item: item[0]):
             data.update(str(slug).encode())
             data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
