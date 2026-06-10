@@ -159,6 +159,7 @@ export default function SalesOrderShipmentTable({
       {
         accessor: 'checked',
         title: t`Checked`,
+        filter: 'checked',
         switchable: true,
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.checked_by} />
@@ -168,12 +169,14 @@ export default function SalesOrderShipmentTable({
         title: t`Shipped`,
         switchable: true,
         sortable: false,
+        filter: 'shipped',
         render: (record: any) => <YesNoButton value={!!record.shipment_date} />
       },
       {
         accessor: 'delivered',
         title: t`Delivered`,
         switchable: true,
+        filter: 'delivered',
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.delivery_date} />
       },

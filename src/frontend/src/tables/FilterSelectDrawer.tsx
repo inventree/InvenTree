@@ -182,15 +182,17 @@ function MultiApiFilterElement({
   );
 }
 
-function FilterElement({
+export function FilterElement({
   filterName,
   filterProps,
   valueOptions,
+  brief = false,
   onValueChange
 }: {
   filterName: string;
   filterProps: TableFilter;
   valueOptions: TableFilterChoice[];
+  brief?: boolean;
   onValueChange: (value: string | null, displayValue?: any) => void;
 }) {
   const setDateValue = useCallback(
@@ -226,7 +228,7 @@ function FilterElement({
             filters: filterProps.apiFilter,
             placeholder: t`Select filter value`,
             model: filterProps.model,
-            label: t`Select filter value`,
+            label: brief ? undefined : t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
               if (filterProps.transform) {
                 const choice = filterProps.transform(instance);
@@ -244,9 +246,10 @@ function FilterElement({
     case 'text':
       return (
         <TextInput
-          label={t`Value`}
+          label={brief ? undefined : t`Value`}
           value={textValue}
           placeholder={t`Enter filter value`}
+          aria-label={`text-filter-${filterName}`}
           rightSection={
             <ActionIcon
               aria-label='apply-text-filter'
@@ -256,8 +259,10 @@ function FilterElement({
               <IconCheck />
             </ActionIcon>
           }
-          onChange={(e) => setTextValue(e.currentTarget.value)}
-          onKeyDown={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTextValue(e.currentTarget.value)
+          }
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === 'Enter') {
               onValueChange(textValue);
             }
@@ -267,9 +272,11 @@ function FilterElement({
     case 'date':
       return (
         <DateInput
-          label={t`Value`}
+          aria-label={`date-filter-${filterName}`}
+          label={brief ? undefined : t`Value`}
           placeholder={t`Select date value`}
           onChange={setDateValue}
+          popoverProps={{ withinPortal: false }}
         />
       );
     case 'choice':
@@ -278,8 +285,9 @@ function FilterElement({
       return (
         <Select
           data={valueOptions}
+          aria-label={`choice-filter-${filterName}`}
           searchable={filterProps.type == 'choice'}
-          label={t`Value`}
+          label={brief ? undefined : t`Value`}
           withScrollArea={false}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => onValueChange(value)}
@@ -287,6 +295,13 @@ function FilterElement({
         />
       );
   }
+}
+
+function getFilterType(filter: TableFilter): TableFilterType {
+  if (filter.type) return filter.type;
+  if (filter.apiUrl && filter.model) return 'api';
+  if (filter.choices || filter.choiceFunction) return 'choice';
+  return 'boolean';
 }
 
 function FilterAddGroup({
@@ -330,19 +345,6 @@ function FilterAddGroup({
 
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
-
-  // Determine the filter "type" - if it is not supplied
-  const getFilterType = (filter: TableFilter): TableFilterType => {
-    if (filter.type) {
-      return filter.type;
-    } else if (filter.apiUrl && filter.model) {
-      return 'api';
-    } else if (filter.choices || filter.choiceFunction) {
-      return 'choice';
-    } else {
-      return 'boolean';
-    }
-  };
 
   // Extract filter definition
   const filterProps: TableFilter | undefined = useMemo(() => {
@@ -478,6 +480,127 @@ function SavedFilterSets({
   );
 }
 
+/*
+ * Renders a single filter's title, active-value badge, remove button, and
+ * value-picker. Used as a building block inside ColumnFilterPopover.
+ */
+function FilterSection({
+  filter,
+  filterSet,
+  closeOnApply,
+  close
+}: Readonly<{
+  filter: TableFilter;
+  filterSet: FilterSetState;
+  closeOnApply: boolean;
+  close: () => void;
+}>) {
+  const activeFilter = useMemo(
+    () => filterSet.activeFilters.find((f) => f.name === filter.name),
+    [filter.name, filterSet.activeFilters]
+  );
+
+  const filterProps = useMemo(
+    () => ({ ...filter, type: getFilterType(filter) }),
+    [filter]
+  );
+
+  const valueOptions = useMemo(
+    () => getTableFilterOptions(filterProps),
+    [filterProps]
+  );
+
+  const onValueChange = useCallback(
+    (value: string | null, displayValue?: any) => {
+      if (!value) return;
+      const newFilter: TableFilter = {
+        ...filterProps,
+        value,
+        displayValue:
+          displayValue ?? valueOptions.find((v) => v.value === value)?.label
+      };
+      const others = filterSet.activeFilters.filter(
+        (f) => f.name !== filter.name
+      );
+      filterSet.setActiveFilters([...others, newFilter]);
+      if (closeOnApply) close();
+    },
+    [filter.name, filterProps, filterSet, valueOptions, closeOnApply, close]
+  );
+
+  const removeFilter = useCallback(() => {
+    filterSet.setActiveFilters(
+      filterSet.activeFilters.filter((f) => f.name !== filter.name)
+    );
+    close();
+  }, [filter.name, filterSet, close]);
+
+  return (
+    <Stack gap='xs'>
+      <Text size='sm' fw={600}>
+        {filter.label ?? filter.name}
+      </Text>
+      {activeFilter ? (
+        <Group justify='space-between' wrap='nowrap'>
+          <Badge color='blue'>
+            {activeFilter.displayValue ?? activeFilter.value}
+          </Badge>
+          <ActionIcon
+            color='red'
+            variant='transparent'
+            size='sm'
+            onClick={removeFilter}
+          >
+            <IconX />
+          </ActionIcon>
+        </Group>
+      ) : (
+        <FilterElement
+          filterName={filter.name}
+          filterProps={filterProps}
+          valueOptions={valueOptions}
+          brief={true}
+          onValueChange={onValueChange}
+        />
+      )}
+    </Stack>
+  );
+}
+
+/*
+ * Popover content rendered when the user clicks a column's inline filter icon.
+ * Renders one FilterSection per matched filter, each with its own title, active
+ * value, and value-picker. Auto-closes on apply only when there is a single
+ * filter (e.g. date-range columns stay open so both bounds can be set at once).
+ */
+export function ColumnFilterPopover({
+  filters,
+  filterSet,
+  close
+}: Readonly<{
+  filters: TableFilter[];
+  filterSet: FilterSetState;
+  close: () => void;
+}>) {
+  const closeOnApply = filters.length === 1;
+
+  return (
+    <Stack gap={5} p={3} miw={250}>
+      {filters.map((filter, index) => (
+        <Stack gap='xs' key={filter.name}>
+          {index > 0 && <Divider />}
+          <FilterSection
+            filter={filter}
+            filterSet={filterSet}
+            closeOnApply={closeOnApply}
+            close={close}
+          />
+        </Stack>
+      ))}
+    </Stack>
+  );
+}
+
 export function FilterSelectDrawer({
   title,
   availableFilters,
@@ -584,8 +707,10 @@ export function FilterSelectDrawer({
                   aria-label='filter-group-name'
                   placeholder={t`Group name`}
                   value={saveName}
-                  onChange={(e) => setSaveName(e.currentTarget.value)}
-                  onKeyDown={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSaveName(e.currentTarget.value)
+                  }
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') confirmSave();
                     if (e.key === 'Escape') setSaving(false);
                   }}

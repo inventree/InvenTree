@@ -37,6 +37,7 @@ import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
+  BooleanColumn,
   CategoryColumn,
   DefaultLocationColumn,
   DescriptionColumn,
@@ -55,7 +56,8 @@ function partTableColumns(): TableColumn[] {
   return [
     PartColumn({
       part: '',
-      accessor: 'name'
+      accessor: 'name',
+      filter: ['active', 'locked', 'starred']
     }),
     IPNColumn({
       accessor: 'IPN'
@@ -67,7 +69,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'units',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: 'has_units'
     },
     DescriptionColumn({}),
     CategoryColumn({
@@ -79,7 +82,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'total_in_stock',
       sortable: true,
-
+      filter: ['has_stock', 'low_stock', 'high_stock'],
       render: (record) => {
         if (record.virtual) {
           return (
@@ -197,10 +200,19 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      filter: 'has_pricing',
       defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
+    BooleanColumn({
+      accessor: 'assembly',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'virtual',
+      defaultVisible: false
+    }),
     LinkColumn({})
   ];
 }

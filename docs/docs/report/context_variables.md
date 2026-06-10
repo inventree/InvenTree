@@ -256,7 +256,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | expiry_date | Expiry date of the [StockItem](#stock-item) (optional) |
 | stocktake_date | Date of last stocktake for this item |
 | stocktake_user | User that performed the most recent stocktake |
-| review_needed | Flag if [StockItem](#stock-item) needs review |
 | delete_on_deplete | If True, [StockItem](#stock-item) will be deleted when the stock level gets to zero |
 | status | Status of this [StockItem](#stock-item) (ref: InvenTree.status_codes.StockStatus) |
 | status_label | Textual representation of the status e.g. "OK" |
@@ -342,7 +341,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | note | Longer form note field |
 | base_cost | Base charge added to order independent of quantity e.g. "Reeling Fee" |
 | multiple | Multiple that the part is provided in |
-| lead_time | Supplier lead time |
 | packaging | packaging that the part is supplied in, e.g. "Reel" |
 | pretty_name | The IPN, supplier name, supplier SKU and (if not null) manufacturer string joined by `|`. Ex. `P00037 | Company | 000021` |
 | unit_pricing | The price for one unit. |

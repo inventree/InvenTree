@@ -621,7 +621,6 @@ class SupplierPart(
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
         multiple: Multiple that the part is provided in
-        lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_quantity: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
         pack_quantity_native: Pack quantity, converted to "native" units of the referenced part

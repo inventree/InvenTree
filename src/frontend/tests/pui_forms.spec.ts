@@ -2,7 +2,7 @@ import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
 import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { navigate } from './helpers';
+import { navigate, openDetailAction } from './helpers';
 import { doCachedLogin } from './login';
 
 // Test hover form action in related fields
@@ -84,8 +84,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Edit the resulting stock item
-  await page.getByLabel('action-menu-stock-item-actions').click();
-  await page.getByLabel('action-menu-stock-item-actions-edit').click();
+  await openDetailAction(page, 'stock-item', 'edit');
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
 

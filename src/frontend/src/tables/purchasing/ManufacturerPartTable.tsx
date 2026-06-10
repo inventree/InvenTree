@@ -86,12 +86,14 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: !!partId
+        switchable: !!partId,
+        filter: 'part_active'
       }),
       IPNColumn({}),
       {
         accessor: 'manufacturer',
         sortable: true,
+        filter: 'manufacturer_active',
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
         )

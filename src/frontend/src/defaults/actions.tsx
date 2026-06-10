@@ -9,12 +9,14 @@ import {
   IconSettings,
   IconTags,
   IconUserBolt,
-  IconUserCog
+  IconUserCog,
+  IconUsers
 } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType, UserRoles } from '@lib/index';
+import { ModelType, StylishText, UserRoles } from '@lib/index';
+import { Trans } from '@lingui/react/macro';
 import { openContextModal } from '@mantine/modals';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,10 +25,23 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
-export function openQrModal(navigate: NavigateFunction) {
+function openQrModal(navigate: NavigateFunction) {
   return openContextModal({
     modal: 'qr',
     innerProps: { navigate: navigate }
+  });
+}
+
+function openHotkeys() {
+  return openContextModal({
+    modal: 'hotkey',
+    title: (
+      <StylishText size='xl'>
+        <Trans>Hotkeys</Trans>
+      </StylishText>
+    ),
+    size: 'xl',
+    innerProps: {}
   });
 }
 
@@ -91,6 +106,13 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Go to your user settings`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
+      },
+      {
+        id: 'hotkeys',
+        label: t`Hotkeys`,
+        description: t`View a list of available hotkeys`,
+        onClick: () => openHotkeys(),
+        leftSection: <IconSettings size='1.2rem' />
       }
     ];
 
@@ -190,6 +212,16 @@ export function getActions(navigate: NavigateFunction) {
         description: t`View error logs for this instance`,
         onClick: () => navigate('/settings/admin/errors'),
         leftSection: <IconReport size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.user) &&
+      _actions.push({
+        id: 'users',
+        label: t`Users`,
+        description: t`Manage user accounts`,
+        onClick: () => navigate('/settings/admin/user'),
+        leftSection: <IconUsers size='1.2rem' />
       });
 
     staff &&

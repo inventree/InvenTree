@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "1.4.0",
+    "version": "1.4.6",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -11,7 +11,8 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js"
+        ".": "./dist/index.js",
+        "./vite": "./dist/plugin/InventreeHmrPlugin.js"
     },
     "files": [
         "dist",

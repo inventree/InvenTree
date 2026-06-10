@@ -49,8 +49,9 @@ function SalesOrderCalendar() {
     <OrderCalendar
       model={ModelType.salesorder}
       role={UserRoles.sales_order}
-      params={{ outstanding: true, customer_detail: true }}
+      params={{ customer_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );
@@ -73,8 +74,9 @@ const ReturnOrderCalendar = () => {
     <OrderCalendar
       model={ModelType.returnorder}
       role={UserRoles.return_order}
-      params={{ outstanding: true, customer_detail: true }}
+      params={{ customer_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );
