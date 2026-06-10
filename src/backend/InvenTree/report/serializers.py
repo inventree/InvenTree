@@ -110,7 +110,7 @@ class ReportPrintSerializer(serializers.Serializer):
         fields = ['template', 'items']
 
     template = serializers.PrimaryKeyRelatedField(
-        queryset=report.models.ReportTemplate.objects.all(),
+        queryset=report.models.ReportTemplate.objects.filter(enabled=True),
         many=False,
         required=True,
         allow_null=False,
@@ -151,7 +151,7 @@ class LabelPrintSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
     template = serializers.PrimaryKeyRelatedField(
-        queryset=report.models.LabelTemplate.objects.all(),
+        queryset=report.models.LabelTemplate.objects.filter(enabled=True),
         many=False,
         required=True,
         allow_null=False,
