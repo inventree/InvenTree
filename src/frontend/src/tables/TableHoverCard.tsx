@@ -24,7 +24,8 @@ export function TableHoverCard({
   icon, // The icon to display
   iconColor, // The icon color
   position, // The position of the hovercard
-  zIndex // Optional z-index for the hovercard
+  zIndex, // Optional z-index for the hovercard
+  minWidth // Optional minimum width for the dropdown
 }: Readonly<{
   value: any;
   extra?: ReactNode;
@@ -33,6 +34,7 @@ export function TableHoverCard({
   iconColor?: string;
   position?: FloatingPosition;
   zIndex?: string | number;
+  minWidth?: number;
 }>) {
   const extraItems: ReactNode = useMemo(() => {
     if (Array.isArray(extra)) {
@@ -74,7 +76,7 @@ export function TableHoverCard({
           />
         </Group>
       </HoverCard.Target>
-      <HoverCard.Dropdown>
+      <HoverCard.Dropdown style={minWidth ? { minWidth } : undefined}>
         <Stack gap='xs'>
           <Group gap='xs' justify='left'>
             <InvenTreeIcon
