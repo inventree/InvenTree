@@ -31,7 +31,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
 
   useInvenTreeHotkeys([
     [
-      'mod+shift+a',
+      'mod+Shift+A',
       t`Open in admin interface`,
       (event) => {
         if (event.repeat) {
