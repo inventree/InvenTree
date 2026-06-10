@@ -123,7 +123,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g n yarn --ignore-scripts && \
+RUN npm install -g n@10.2.0 yarn --ignore-scripts && \
     yarn config set network-timeout 600000 -g
 RUN bash -c "n lts"
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
