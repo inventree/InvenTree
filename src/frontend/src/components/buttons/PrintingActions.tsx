@@ -15,6 +15,7 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
+import { useLocalState } from '../../states/LocalState';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -32,6 +33,11 @@ export function PrintingActions({
 }) {
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
+  const localState = useLocalState();
+
+  const lastUsedPrinting = useMemo(() => {
+    return modelType ? localState.lastUsedPrinting[modelType] : undefined;
+  }, [localState.lastUsedPrinting, modelType]);
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
@@ -118,6 +124,7 @@ export function PrintingActions({
     fields.template = {
       ...fields.template,
       autoFill: true,
+      value: lastUsedPrinting?.template,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -158,15 +165,21 @@ export function PrintingActions({
     onOpen: () => {
       setLabelDialogOpen(true);
       setItemIdList(items);
+      setPluginKey(lastUsedPrinting?.plugin ?? null);
     },
     onClose: () => {
       setLabelDialogOpen(false);
-      setPluginKey('');
     },
     submitText: t`Print`,
     successMessage: null,
-    onFormSuccess: (response: any) => {
-      setPluginKey('');
+    onFormSuccess: (response: any, form: any) => {
+      if (modelType) {
+        const values = form?.getValues?.();
+        localState.setLastUsedPrinting(modelType, {
+          plugin: values?.plugin || undefined,
+          template: values?.template ? Number(values.template) : undefined
+        });
+      }
       setLabelId(response.pk);
     }
   });
