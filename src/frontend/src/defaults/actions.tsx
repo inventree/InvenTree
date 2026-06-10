@@ -9,7 +9,8 @@ import {
   IconSettings,
   IconTags,
   IconUserBolt,
-  IconUserCog
+  IconUserCog,
+  IconUsers
 } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
@@ -211,6 +212,16 @@ export function getActions(navigate: NavigateFunction) {
         description: t`View error logs for this instance`,
         onClick: () => navigate('/settings/admin/errors'),
         leftSection: <IconReport size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.user) &&
+      _actions.push({
+        id: 'users',
+        label: t`Users`,
+        description: t`Manage user accounts`,
+        onClick: () => navigate('/settings/admin/user'),
+        leftSection: <IconUsers size='1.2rem' />
       });
 
     staff &&
