@@ -374,11 +374,13 @@ export function ProjectCodeFilter(): TableFilter {
 export function OwnerFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name: string;
   label: string;
   description: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name,
@@ -386,6 +388,7 @@ export function OwnerFilter({
     description: description,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.owner_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.owner,
     modelRenderer: (instance: any) => instance.name
   };
@@ -425,11 +428,13 @@ export function TagsFilter({
 export function UserFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name?: string;
   label?: string;
   description?: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name ?? 'user',
@@ -437,6 +442,7 @@ export function UserFilter({
     description: description ?? t`Filter by user`,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.user_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.user,
     modelRenderer: (instance: any) => instance.username
   };
