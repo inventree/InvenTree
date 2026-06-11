@@ -176,7 +176,7 @@ export function PrintingActions({
       if (modelType) {
         const values = form?.getValues?.();
         localState.setLastUsedPrinting(modelType, {
-          plugin: values?.plugin || undefined,
+          plugin: pluginKey || undefined,
           template: values?.template ? Number(values.template) : undefined
         });
       }

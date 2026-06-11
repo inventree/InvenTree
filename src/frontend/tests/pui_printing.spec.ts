@@ -74,13 +74,14 @@ test('Printing - Label Printing', async ({ browser }) => {
     .click();
   await page.getByLabel('action-menu-printing-actions-print-labels').click();
 
-  // Verify the values are persisted/remembered
-  await expect(page.getByLabel('related-field-template')).toHaveValue(
-    'InvenTree Stock Item Label'
-  );
-  await expect(page.getByLabel('related-field-plugin')).toHaveValue(
-    'InvenTreeLabel provides'
-  );
+  // Wait for the dialog to fully load
+  await page.getByLabel('related-field-template').waitFor();
+
+  // Verify the last-used template is preselected (visible text in react-select)
+  await page.getByText('InvenTree Stock Item Label').waitFor();
+
+  // Verify the last-used plugin is preselected
+  await page.getByText('InvenTreeLabel provides').waitFor();
 
   await page.context().close();
 });
