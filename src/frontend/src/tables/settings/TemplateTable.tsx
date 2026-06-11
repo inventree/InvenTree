@@ -233,6 +233,7 @@ export function TemplateTable({
       },
       {
         accessor: 'model_type',
+        filter: 'model_type',
         sortable: true,
         switchable: false
       },
