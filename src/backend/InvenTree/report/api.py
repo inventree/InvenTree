@@ -7,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
 import django_filters.rest_framework.filters as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -16,10 +16,11 @@ import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
+import users.permissions
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
 from InvenTree.api import meta_path
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
@@ -79,7 +80,7 @@ class ReportFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.ReportTemplate
-        fields = ['landscape']
+        fields = ['landscape', 'merge', 'attach_to_model', 'enabled', 'model_type']
 
 
 class LabelFilter(ReportFilterBase):
@@ -89,7 +90,7 @@ class LabelFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.LabelTemplate
-        fields = []
+        fields = ['enabled']
 
 
 class LabelPrint(GenericAPIView):
@@ -161,6 +162,14 @@ class LabelPrint(GenericAPIView):
 
         template = serializer.validated_data['template']
 
+        model_class = template.get_model()
+        if model_class and not users.permissions.check_user_permission(
+            request.user, model_class, 'view'
+        ):
+            raise PermissionDenied(
+                _('You do not have permission to view this model type')
+            )
+
         if template.width <= 0 or template.height <= 0:
             raise ValidationError({'template': _('Invalid label dimensions')})
 
@@ -174,7 +183,7 @@ class LabelPrint(GenericAPIView):
 
         plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
-        instances = template.get_model().objects.filter(pk__in=items)
+        instances = model_class.objects.filter(pk__in=items)
 
         # Sort the instances by the order of the provided items
         instances = sorted(instances, key=lambda item: items.index(item.pk))
@@ -236,9 +245,9 @@ class LabelTemplateList(TemplatePermissionMixin, LabelTemplateMixin, ListCreateA
     """API endpoint for viewing list of LabelTemplate objects."""
 
     filterset_class = LabelFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
-    ordering_fields = ['name', 'enabled']
+    ordering_fields = ['name', 'enabled', 'width', 'height']
 
 
 class LabelTemplateDetail(
@@ -261,9 +270,18 @@ class ReportPrint(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         template = serializer.validated_data['template']
+
+        model_class = template.get_model()
+        if model_class and not users.permissions.check_user_permission(
+            request.user, model_class, 'view'
+        ):
+            raise PermissionDenied(
+                _('You do not have permission to view this model type')
+            )
+
         items = serializer.validated_data['items']
 
-        instances = template.get_model().objects.filter(pk__in=items)
+        instances = model_class.objects.filter(pk__in=items)
 
         # Sort the instances by the order of the provided items
         instances = sorted(instances, key=lambda item: items.index(item.pk))
@@ -322,7 +340,7 @@ class ReportTemplateList(TemplatePermissionMixin, ReportTemplateMixin, ListCreat
     """API endpoint for viewing list of ReportTemplate objects."""
 
     filterset_class = ReportFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'enabled']
 
