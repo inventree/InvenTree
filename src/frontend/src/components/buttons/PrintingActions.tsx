@@ -154,7 +154,14 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [defaultLabelPlugin, pluginKey, printingFields.data, itemIdList]);
+  }, [
+    defaultLabelPlugin,
+    pluginKey,
+    printingFields.data,
+    itemIdList,
+    lastUsedPrinting,
+    modelType
+  ]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),

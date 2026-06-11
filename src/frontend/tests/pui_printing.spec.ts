@@ -65,7 +65,11 @@ test('Printing - Label Printing', async ({ browser }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Process completed successfully').first().waitFor();
+  const successMessage = page
+    .getByText('Process completed successfully')
+    .first();
+  await successMessage.waitFor();
+  await successMessage.waitFor({ state: 'hidden' });
 
   // Re-open print dialog to verify persistence (issue #12129)
   await page
@@ -74,14 +78,28 @@ test('Printing - Label Printing', async ({ browser }) => {
     .click();
   await page.getByLabel('action-menu-printing-actions-print-labels').click();
 
-  // Wait for the dialog to fully load
-  await page.getByLabel('related-field-template').waitFor();
+  const labelDialog = page.getByRole('dialog', { name: 'Print Label' });
 
-  // Verify the last-used template is preselected (visible text in react-select)
-  await page.getByText('InvenTree Stock Item Label').waitFor();
+  // Wait for the dialog to fully load
+  await labelDialog.getByLabel('related-field-template').waitFor();
+  await labelDialog.getByLabel('related-field-plugin').waitFor();
+
+  // Verify the last-used template is preselected
+  await expect(labelDialog).toContainText('InvenTree Stock Item Label');
 
   // Verify the last-used plugin is preselected
-  await page.getByText('InvenTreeLabel provides').waitFor();
+  await expect(labelDialog).toContainText(/\bInvenTreeLabel\b/);
+
+  // Submit again without re-selecting template or plugin
+  const printResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/label/print/') &&
+      response.request().method() === 'POST' &&
+      response.ok()
+  );
+  await labelDialog.getByRole('button', { name: 'Print', exact: true }).click();
+
+  await printResponse;
 
   await page.context().close();
 });
