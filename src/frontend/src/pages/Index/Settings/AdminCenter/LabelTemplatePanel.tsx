@@ -10,8 +10,12 @@ function LabelTemplateTable() {
         templateEndpoint: ApiEndpoints.label_list,
         printingEndpoint: ApiEndpoints.label_print,
         additionalFormFields: {
-          width: {},
-          height: {}
+          width: {
+            sortable: true
+          },
+          height: {
+            sortable: true
+          }
         }
       }}
     />

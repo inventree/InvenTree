@@ -17,7 +17,7 @@ from build.models import Build
 from common.models import Attachment
 from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
-from order.models import ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
@@ -729,6 +729,140 @@ class TestReportTest(PrintTestMixins, ReportTest):
         for enabled in [True, False]:
             set_global_setting('REPORT_DEBUG_MODE', enabled)
             self.run_print_test(SalesOrder, 'salesorder', label=False)
+
+
+class ReportPrintPermissionTest(InvenTreeAPITestCase):
+    """Test that the report print endpoint checks VIEW permission on the associated model type."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+    ]
+
+    superuser = False
+    roles = []
+
+    def setUp(self):
+        """Setup for permission tests."""
+        cache.clear()
+        apps.get_app_config('report').create_default_reports()
+        return super().setUp()
+
+    def test_report_print_model_permission(self):
+        """A user without VIEW permission on the model type must receive 403; granting the role allows printing."""
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='purchaseorder'
+        ).first()
+        self.assertIsNotNone(template)
+
+        items = PurchaseOrder.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # No roles assigned: expect permission denied
+        self.post(url, data=post_data, expected_code=403)
+
+        # Grant view access to purchase orders
+        self.assignRole('purchase_order.view')
+        cache.clear()
+
+        # Should now succeed
+        self.post(url, data=post_data, expected_code=201)
+
+    def test_report_print_disabled_template(self):
+        """Printing against a disabled report template must be rejected."""
+        self.assignRole('purchase_order.view')
+        cache.clear()
+
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='purchaseorder'
+        ).first()
+        self.assertIsNotNone(template)
+
+        items = PurchaseOrder.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # Enabled template: should succeed
+        self.post(url, data=post_data, expected_code=201)
+
+        # Disable the template and retry: should be rejected
+        template.enabled = False
+        template.save()
+
+        self.post(url, data=post_data, expected_code=400)
+
+
+class LabelPrintPermissionTest(InvenTreeAPITestCase):
+    """Test that the label print endpoint checks VIEW permission on the associated model type."""
+
+    fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
+
+    superuser = False
+    roles = []
+
+    def setUp(self):
+        """Setup for permission tests."""
+        cache.clear()
+        apps.get_app_config('report').create_default_labels()
+        return super().setUp()
+
+    def test_label_print_model_permission(self):
+        """A user without VIEW permission on the model type must receive 403; granting the role allows printing."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        self.assertIsNotNone(template)
+        self.assertGreater(template.width, 0)
+        self.assertGreater(template.height, 0)
+
+        items = Part.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # No roles assigned: expect permission denied
+        self.post(url, data=post_data, expected_code=403)
+
+        # Grant view access to parts
+        self.assignRole('part.view')
+        cache.clear()
+
+        # Should now succeed
+        self.post(url, data=post_data, expected_code=201)
+
+    def test_label_print_disabled_template(self):
+        """Printing against a disabled label template must be rejected."""
+        self.assignRole('part.view')
+        cache.clear()
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        self.assertIsNotNone(template)
+        self.assertGreater(template.width, 0)
+        self.assertGreater(template.height, 0)
+
+        items = Part.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # Enabled template: should succeed
+        self.post(url, data=post_data, expected_code=201)
+
+        # Disable the template and retry: should be rejected
+        template.enabled = False
+        template.save()
+
+        self.post(url, data=post_data, expected_code=400)
 
 
 class AdminTest(AdminTestCase):

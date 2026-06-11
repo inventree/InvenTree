@@ -1,15 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 502
+INVENTREE_API_VERSION = 504
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v502 -> 2026-06-06 : https://github.com/inventree/InvenTree/pull/11971
+v504 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v503 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/12155
+    - Adds additional filtering and sorting options to the LabelTemplate API endpoint
+    - Adds additional filtering and sorting options to the ReportTemplate API endpoint
+
+v502 -> 2026-06-10 : https://github.com/inventree/InvenTree/pull/12142
+    - Prevents users from printing reports or labels against models for which they do not have adequate permissions. This change improves the security of the system by ensuring that users cannot access or print reports or labels for models they do not have permission to view.
 
 v501 -> 2026-06-05 : https://github.com/inventree/InvenTree/pull/12093
     - Adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
