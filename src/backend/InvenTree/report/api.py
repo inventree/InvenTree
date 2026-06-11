@@ -21,7 +21,7 @@ import users.permissions
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
 from InvenTree.api import meta_path
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
@@ -91,7 +91,7 @@ class LabelFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.LabelTemplate
-        fields = []
+        fields = ['enabled']
 
 
 class LabelPrint(GenericAPIView):
@@ -246,9 +246,9 @@ class LabelTemplateList(TemplatePermissionMixin, LabelTemplateMixin, ListCreateA
     """API endpoint for viewing list of LabelTemplate objects."""
 
     filterset_class = LabelFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
-    ordering_fields = ['name', 'enabled']
+    ordering_fields = ['name', 'enabled', 'width', 'height']
 
 
 class LabelTemplateDetail(
