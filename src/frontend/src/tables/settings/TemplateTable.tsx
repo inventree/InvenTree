@@ -18,7 +18,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { identifierString } from '@lib/functions/Conversion';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import {
   CodeEditor,
@@ -68,11 +68,19 @@ export type TemplateI = {
   template: string;
 };
 
+// Additional field props to control the column behaviour in the template table
+interface TemplateFormFieldType extends ApiFormFieldType {
+  sortable?: boolean;
+  switchable?: boolean;
+}
+
+type TemplateFormFieldSet = Record<string, TemplateFormFieldType>;
+
 export interface TemplateProps {
   modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
-  additionalFormFields?: ApiFormFieldSet;
+  additionalFormFields?: TemplateFormFieldSet;
 }
 
 export function TemplateDrawer({
@@ -277,10 +285,10 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
-        ...field,
-        title: field.label,
         sortable: false,
         switchable: true,
+        title: field.label,
+        ...field,
         render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
