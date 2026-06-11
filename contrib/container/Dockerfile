@@ -120,9 +120,9 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
 
 # Install frontend build dependencies
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash && \
-    export NVM_DIR="$HOME/.nvm" && source $HOME/.nvm/nvm.sh && \
-    nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g
-RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
+    bash -c "export NVM_DIR="$HOME/.nvm" && source $HOME/.nvm/nvm.sh && \
+    nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g"
+RUN bash -c "source $HOME/.nvm/nvm.sh && cd '${INVENTREE_HOME}' && invoke int.frontend-compile --extract"
 
 # InvenTree production image:
 # - Copies required files from local directory
