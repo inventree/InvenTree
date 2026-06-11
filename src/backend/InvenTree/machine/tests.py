@@ -297,6 +297,14 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
         self.assertIn('is not a valid choice', str(response.data['machine']))
 
+    def test_location_invalid_pk(self):
+        """Test that location property returns None for an invalid PK without raising."""
+        machine = self.create_machine()
+
+        machine.set_setting('LOCATION', 'M', 999999)
+
+        self.assertIsNone(machine.location)
+
 
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""

@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
+  IconDevicesPc,
   IconLink,
   IconPlug,
   IconPointer,
@@ -232,6 +233,16 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Manage InvenTree plugins`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
+      _actions.push({
+        id: 'machine-management',
+        label: t`Machines`,
+        description: t`Manage machines and machine types`,
+        onClick: () => navigate('/settings/admin/machine'),
+        leftSection: <IconDevicesPc size='1.2rem' />
       });
 
     staff &&
