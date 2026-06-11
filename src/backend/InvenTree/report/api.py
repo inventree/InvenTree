@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
 import django_filters.rest_framework.filters as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
@@ -21,7 +20,7 @@ import users.permissions
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
 from InvenTree.api import meta_path
-from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
@@ -81,7 +80,7 @@ class ReportFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.ReportTemplate
-        fields = ['landscape']
+        fields = ['landscape', 'merge', 'attach_to_model', 'enabled', 'model_type']
 
 
 class LabelFilter(ReportFilterBase):
@@ -341,7 +340,7 @@ class ReportTemplateList(TemplatePermissionMixin, ReportTemplateMixin, ListCreat
     """API endpoint for viewing list of ReportTemplate objects."""
 
     filterset_class = ReportFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'enabled']
 

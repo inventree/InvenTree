@@ -19,7 +19,7 @@ import { identifierString } from '@lib/functions/Conversion';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
+import type { TableColumn, TableColumnFilterType } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
@@ -72,6 +72,7 @@ export type TemplateI = {
 interface TemplateFormFieldType extends ApiFormFieldType {
   sortable?: boolean;
   switchable?: boolean;
+  filter?: TableColumnFilterType;
 }
 
 type TemplateFormFieldSet = Record<string, TemplateFormFieldType>;
@@ -80,6 +81,7 @@ export interface TemplateProps {
   modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
+  additionalFilters?: TableFilter[];
   additionalFormFields?: TemplateFormFieldSet;
 }
 
@@ -400,6 +402,7 @@ export function TemplateTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
+      ...(templateProps.additionalFilters || []),
       {
         name: 'enabled',
         label: t`Enabled`,
@@ -413,7 +416,7 @@ export function TemplateTable({
         choices: modelTypeFilters.choices
       }
     ];
-  }, [modelTypeFilters.choices]);
+  }, [templateProps.additionalFilters, modelTypeFilters.choices]);
 
   return (
     <>
