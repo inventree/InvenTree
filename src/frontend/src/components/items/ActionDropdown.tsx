@@ -259,7 +259,7 @@ export function DeleteItemAction(
     icon: <IconTrash color='red' />,
     name: t`Delete`,
     tooltip: props.tooltip ?? t`Delete item`,
-    hotkey: 'mod+Q'
+    hotkey: 'mod+X'
   };
 }
 
@@ -280,7 +280,7 @@ export function CancelItemAction(
     icon: <InvenTreeIcon icon='cancel' iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
     tooltip: props.tooltip ?? t`Cancel`,
-    hotkey: 'mod+Q'
+    hotkey: 'mod+X'
   };
 }
 
