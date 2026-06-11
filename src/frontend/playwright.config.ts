@@ -47,7 +47,7 @@ export default defineConfig({
         ['html', { open: 'never' }],
         ['blob'],
         ['github'],
-        ['@flakiness/playwright', { flakinessProject: 'matmair/InvenTree' }]
+        ['@flakiness/playwright', { flakinessProject: 'InvenTree/InvenTree' }]
       ]
     : 'list',
 
