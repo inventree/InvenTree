@@ -88,7 +88,7 @@ test('Printing - Label Printing', async ({ browser }) => {
   await expect(labelDialog).toContainText('InvenTree Stock Item Label');
 
   // Verify the last-used plugin is preselected
-  await expect(labelDialog).toContainText(/\bInvenTreeLabel\b/);
+  await expect(labelDialog).toContainText('InvenTreeLabel');
 
   // Submit again without re-selecting template or plugin
   const printResponse = page.waitForResponse(
