@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 503
+INVENTREE_API_VERSION = 504
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v503 -> 2026-06-10 : https://github.com/inventree/InvenTree/pull/11982
+v504 -> 2026-06-12 : https://github.com/inventree/InvenTree/pull/11982
    - An order's "status_custom_key" can be updated via PATCH API endpoint
+
+v503 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/12155
+    - Adds additional filtering and sorting options to the LabelTemplate API endpoint
+    - Adds additional filtering and sorting options to the ReportTemplate API endpoint
 
 v502 -> 2026-06-10 : https://github.com/inventree/InvenTree/pull/12142
     - Prevents users from printing reports or labels against models for which they do not have adequate permissions. This change improves the security of the system by ensuring that users cannot access or print reports or labels for models they do not have permission to view.
