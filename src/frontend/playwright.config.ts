@@ -43,7 +43,12 @@ export default defineConfig({
   retries: MAX_RETRIES,
   workers: MAX_WORKERS,
   reporter: IS_CI
-    ? [['html', { open: 'never' }], ['blob'], ['github']]
+    ? [
+        ['html', { open: 'never' }],
+        ['blob'],
+        ['github'],
+        ['@flakiness/playwright', { flakinessProject: 'InvenTree/InvenTree' }]
+      ]
     : 'list',
 
   /* Configure projects for major browsers */
