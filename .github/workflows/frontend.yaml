@@ -115,7 +115,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    permissions:
+      contents: read # Required for actions/checkout
+      id-token: write # Required for GitHub OIDC
     env:
       VITE_COVERAGE: false
 
