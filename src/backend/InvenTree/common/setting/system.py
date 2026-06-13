@@ -677,6 +677,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPORT_FETCH_URLS': {
+        'name': _('Report URL Fetching'),
+        'description': _('Allow fetching of remote URLs when generating reports'),
+        'default': False,
+        'validator': True,
+    },
     'REPORT_LOG_ERRORS': {
         'name': _('Log Report Errors'),
         'description': _('Log errors which occur when generating reports'),
