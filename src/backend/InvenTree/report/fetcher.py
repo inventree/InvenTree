@@ -9,18 +9,7 @@ logger = logging.getLogger('inventree')
 
 
 class InvenTreeURLFetcher(URLFetcher):
-    """WeasyPrint URL fetcher restricted to safe origins.
-
-    Permitted:
-    - ``data:`` URIs — self-contained, no network access.
-    - ``http`` / ``https`` to the InvenTree server's own origin only (prevents SSRF).
-
-    Blocked:
-    - ``file://`` — all media and static assets must be inlined as ``data:`` URIs
-      before the HTML reaches WeasyPrint; see the ``asset`` and ``uploaded_image``
-      template tags.
-    - All other schemes.
-    """
+    """WeasyPrint URL fetcher restricted to safe origins."""
 
     def fetch(self, url, headers=None):
         """Validate *url* before delegating to the parent fetcher."""
