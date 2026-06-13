@@ -16,7 +16,7 @@ django-mailbox                          # Email scraping
 django-markdownify                      # Markdown rendering
 django-money                            # Django app for currency management
 django-mptt                             # Modified Preorder Tree Traversal
-django-redis>=5.0.0                     # Redis integration
+django-redis>=7.0.0                     # Redis integration
 django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
 django-sesame                           # Magic link authentication
