@@ -239,7 +239,7 @@ Report templates are powerful by design — they have access to the full Django 
 
 When WeasyPrint renders a template to PDF it can make outbound requests to load images, stylesheets, and fonts referenced in the HTML. InvenTree restricts this through a custom URL fetcher with the following rules:
 
-| URL type | Behavior |
+| URL Type | Behavior |
 |---|---|
 | `data:` URIs | Always permitted — self-contained, no network access |
 | `file://` | Always blocked — assets and images must be inlined as `data:` URIs before reaching WeasyPrint |
