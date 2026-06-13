@@ -3029,11 +3029,6 @@ class Note(
 
         self.cleanup_images()
 
-    def delete(self):
-        """Perform custom delete checks before deleting a Parameter instance."""
-        self.check_delete()
-        super().delete()
-
     def clean(self):
         """Clean / validate the note before saving to the database."""
         if self.content:
@@ -3126,6 +3121,11 @@ class Note(
 
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_delete(self)
+
+    def delete(self, *args, **kwargs):
+        """Perform custom delete checks before deleting a Note instance."""
+        self.check_delete()
+        super().delete(*args, **kwargs)
 
     def cleanup_images(self):
         """Remove any images which are no longer referenced in the note content."""
