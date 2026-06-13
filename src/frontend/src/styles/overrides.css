@@ -3,6 +3,14 @@
   padding: 0.35em 0;
 }
 
+/* Alternating month backgrounds in the multi-month scroll calendar view */
+[data-mantine-color-scheme='light'] .fc-day-month-odd:not(.fc-day-today) {
+  background-color: var(--mantine-color-gray-1);
+}
+[data-mantine-color-scheme='dark'] .fc-day-month-odd:not(.fc-day-today) {
+  background-color: var(--mantine-color-dark-4);
+}
+
 /* mantine-datatable overrides */
 .mantine-datatable-pointer-cursor,
 .mantine-datatable-context-menu-cursor {
