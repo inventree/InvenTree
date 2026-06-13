@@ -895,11 +895,7 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         if not target_model_class.check_related_permission('change', user):
             raise PermissionDenied(permission_error_msg)
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save()
-
-        return instance
+        return super().save(updated_by=user, **kwargs)
 
     # Note: The choices are overridden at run-time on class initialization
     model_type = ContentTypeField(
