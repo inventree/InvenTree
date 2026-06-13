@@ -702,23 +702,24 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
 
         Arguments:
             other: The other model instance to copy notes from
-            **kwargs: Additional keyword arguments to pass to the Note constructor
         """
         import common.models
 
-        notes = []
-
         content_type = ContentType.objects.get_for_model(self.__class__)
 
-        for note in other.notes.all():
-            note.pk = None
-            note.model_id = self.pk
-            note.model_type = content_type
+        # Sort so primary note is saved last — Note.save() promotes the last
+        # note saved with primary=True, which correctly mirrors the source.
+        source_notes = sorted(other.notes.all(), key=lambda n: n.primary)
 
-            notes.append(note)
-
-        if len(notes) > 0:
-            common.models.Note.objects.bulk_create(notes, batch_size=250)
+        for source_note in source_notes:
+            common.models.Note(
+                model_type=content_type,
+                model_id=self.pk,
+                primary=source_note.primary,
+                title=source_note.title,
+                description=source_note.description,
+                content=source_note.content,
+            ).save()
 
     @property
     def primary_note(self):
