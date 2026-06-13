@@ -3000,21 +3000,34 @@ class Note(
         verbose_name = _('Note')
         verbose_name_plural = _('Notes')
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['model_type', 'model_id'],
+                condition=models.Q(primary=True),
+                name='unique_primary_note_per_model',
+            )
+        ]
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the Parameter model."""
         return reverse('api-note-list')
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         """Perform custom save checks before saving a Note instance."""
         self.check_save()
 
-        others = Note.objects.filter(
-            model_type=self.model_type, model_id=self.model_id
-        ).exclude(pk=self.pk)
+        # Lock sibling notes to serialize concurrent primary-flag updates
+        siblings = (
+            Note.objects
+            .select_for_update()
+            .filter(model_type=self.model_type, model_id=self.model_id)
+            .exclude(pk=self.pk)
+        )
 
         # If this is the *only* note for this model instance, then set it as the primary note
-        if not others.exists():
+        if not siblings.exists():
             self.primary = True
 
         self.clean()
@@ -3023,9 +3036,7 @@ class Note(
 
         # Once this note is saved, mark other notes as non-primary
         if self.primary:
-            Note.objects.filter(
-                model_type=self.model_type, model_id=self.model_id
-            ).exclude(pk=self.pk).update(primary=False)
+            siblings.update(primary=False)
 
         self.cleanup_images()
 

@@ -121,4 +121,13 @@ class Migration(migrations.Migration):
                 related_name='images',
             ),
         ),
+        # Add constraint to ensure that only one 'primary' note exists per model instance
+        migrations.AddConstraint(
+            model_name="note",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("primary", True)),
+                fields=("model_type", "model_id"),
+                name="unique_primary_note_per_model",
+            ),
+        ),
     ]
