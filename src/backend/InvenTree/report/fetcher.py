@@ -1,11 +1,11 @@
 """WeasyPrint URL fetcher with security restrictions for report generation."""
 
-import logging
 from urllib.parse import urlparse
 
+import structlog
 from weasyprint.urls import URLFetcher
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeURLFetcher(URLFetcher):
