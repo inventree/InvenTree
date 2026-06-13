@@ -33,6 +33,12 @@ interface LocalStateProps {
   setLayouts: (layouts: any, noPatch?: boolean) => void;
   showSampleDashboard: boolean;
   setShowSampleDashboard: (value: boolean) => void;
+  // printing
+  lastUsedPrinting: Record<string, { plugin?: string; template?: number }>;
+  setLastUsedPrinting: (
+    modelType: string,
+    values: { plugin?: string; template?: number }
+  ) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
@@ -121,6 +127,25 @@ export const useLocalState = create<LocalStateProps>()(
       showSampleDashboard: true,
       setShowSampleDashboard: (value) => {
         set({ showSampleDashboard: value });
+      },
+      // printing
+      lastUsedPrinting: {},
+      setLastUsedPrinting: (modelType, values) => {
+        const current = get().lastUsedPrinting[modelType] || {};
+        if (
+          current.plugin !== values.plugin ||
+          current.template !== values.template
+        ) {
+          set({
+            lastUsedPrinting: {
+              ...get().lastUsedPrinting,
+              [modelType]: {
+                ...current,
+                ...values
+              }
+            }
+          });
+        }
       },
       // panels
       lastUsedPanels: {},
