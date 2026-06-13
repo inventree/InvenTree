@@ -2,12 +2,14 @@
 
 import os
 from io import StringIO
+from unittest.mock import patch
 
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.test import TestCase
 from django.urls import reverse
 
 from pypdf import PdfReader
@@ -871,3 +873,97 @@ class AdminTest(AdminTestCase):
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=ReportTemplate)
+
+
+class URLFetcherE2ETest(ReportTest):
+    """End-to-end test: the URL fetcher blocks malicious URLs during a real PDF render.
+
+    Extends ReportTest so that fixtures, auth, and default report templates are all
+    available.  The print task runs synchronously in test mode (no workers), so the
+    render completes inline and log output is captured within the same request.
+    """
+
+    def test_file_url_blocked_in_render(self):
+        """A template embedding a file:// URL must still produce a PDF, but the URL must be blocked and logged."""
+        from io import StringIO
+
+        # Upload a minimal report template that embeds a malicious file:// reference.
+        html = (
+            '<html><body>'
+            '<img src="file:///etc/passwd">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'security_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'Security Test',
+                'description': 'Tests that file:// URLs are blocked during rendering',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        # Render the template.  WeasyPrint catches the ValueError from our fetcher and
+        # continues, so the PDF is still generated — the blocked resource is just skipped.
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        # A PDF output should have been produced despite the blocked resource.
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        # The fetcher must have logged a warning identifying the blocked URL.
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'blocked file://' in msg and '/etc/passwd' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a blocked file:// warning in the log output'
+        )
+
+
+class URLFetcherTest(TestCase):
+    """Tests for InvenTreeURLFetcher security restrictions."""
+
+    def setUp(self):
+        """Import fetcher for each test."""
+        from report.fetcher import InvenTreeURLFetcher
+
+        self.fetcher = InvenTreeURLFetcher()
+
+    def test_file_url_blocked(self):
+        """file:// URLs must always be rejected regardless of path."""
+        for url in [
+            'file:///etc/passwd',
+            'file:///proc/self/environ',
+            f'file://{settings.MEDIA_ROOT}/report/assets/anything.png',
+            f'file://{settings.STATIC_ROOT}/some/font.ttf',
+        ]:
+            with self.assertRaises(ValueError, msg=f'Expected block for {url}'):
+                self.fetcher.fetch(url)
+
+    def test_unknown_scheme_blocked(self):
+        """Non-http/data/file schemes must be rejected."""
+        for url in ['ftp://example.com/file.txt', 'javascript://x']:
+            with self.assertRaises(ValueError, msg=f'Expected block for {url}'):
+                self.fetcher.fetch(url)
+
+    def test_data_uri_allowed(self):
+        """data: URIs must always be permitted."""
+        with patch('weasyprint.urls.URLFetcher.fetch', return_value={}):
+            self.fetcher.fetch('data:image/png;base64,abc123')
+            self.fetcher.fetch('data:text/css;base64,abc123')
