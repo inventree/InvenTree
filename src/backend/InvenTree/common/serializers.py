@@ -1042,6 +1042,7 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
         serializer_class=SelectionEntrySerializer,
         serializer_kwargs={'source': 'entries', 'many': True, 'read_only': True},
         prefetch_fields=['entries'],
+        default_include=True,
     )
 
     @staticmethod
