@@ -11,6 +11,7 @@ import {
   IconList,
   IconListDetails,
   IconMail,
+  IconNotes,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -70,6 +71,8 @@ const MachineManagementPanel = Loadable(
 );
 
 const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
+
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -196,6 +199,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
+        name: 'notes',
+        label: t`Note Templates`,
+        icon: <IconNotes />,
+        content: <NoteTemplatePanel />,
+        hidden: !user.isStaff()
+      },
+      {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
@@ -274,6 +284,7 @@ export default function AdminCenter() {
         panelIDs: [
           'parameters',
           'category-parameters',
+          'notes',
           'location-types',
           'stocktake'
         ]

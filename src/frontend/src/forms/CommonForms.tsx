@@ -285,6 +285,24 @@ export function useParameterFields({
   ]);
 }
 
+export function useNoteTemplateFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      template: {
+        hidden: true,
+        value: true
+      },
+      model_type: {
+        label: t`Model Type`,
+        description: t`Limit this template to a specific model type, or leave blank for all models`,
+        required: false
+      },
+      title: {},
+      description: {}
+    };
+  }, []);
+}
+
 export function useNoteFields({
   modelType,
   modelId
@@ -292,6 +310,27 @@ export function useNoteFields({
   modelType: ModelType;
   modelId: number;
 }): ApiFormFieldSet {
+  const api = useApi();
+
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+
+  const fetchTemplate = useCallback(
+    (pk: number | null) => {
+      if (!pk) return;
+      api
+        .get(apiUrl(ApiEndpoints.note_list, pk))
+        .then((response) => {
+          setTitle(response.data.title ?? '');
+          setDescription(response.data.description ?? '');
+          setContent(response.data.content ?? '');
+        })
+        .catch(() => {});
+    },
+    [api]
+  );
+
   return useMemo(() => {
     return {
       model_type: {
@@ -302,9 +341,34 @@ export function useNoteFields({
         hidden: true,
         value: modelId
       },
-      title: {},
-      description: {},
-      primary: {}
+      template_source: {
+        field_type: 'related field',
+        label: t`From Template`,
+        description: t`Optionally pre-fill this note from an existing template`,
+        api_url: apiUrl(ApiEndpoints.note_list),
+        filters: {
+          template: true,
+          model_type: modelType
+        },
+        pk_field: 'pk',
+        render_description_field: 'description',
+        required: false,
+        onValueChange: (value: any) => fetchTemplate(value),
+        value: null
+      },
+      title: {
+        value: title,
+        onValueChange: (value: any) => setTitle(value)
+      },
+      description: {
+        value: description,
+        onValueChange: (value: any) => setDescription(value)
+      },
+      primary: {},
+      content: {
+        hidden: true,
+        value: content
+      }
     };
-  }, [modelType, modelId]);
+  }, [modelType, modelId, title, description, content, fetchTemplate]);
 }

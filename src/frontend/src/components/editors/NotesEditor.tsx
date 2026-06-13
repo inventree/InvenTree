@@ -57,7 +57,7 @@ import {
 } from '@tabler/icons-react';
 import { useShallow } from 'zustand/react/shallow';
 import { formatDate } from '../../defaults/formatters';
-import { useNoteFields } from '../../forms/CommonForms';
+import { useNoteFields, useNoteTemplateFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -111,10 +111,12 @@ function NoteInfoHover({ note }: { note: any }) {
 export default function NotesEditor({
   modelType,
   modelId,
+  templateMode = false,
   setDirtyCallback
 }: Readonly<{
-  modelType: ModelType;
-  modelId: number;
+  modelType?: ModelType;
+  modelId?: number;
+  templateMode?: boolean;
   setDirtyCallback?: (dirty: boolean) => void;
 }>) {
   const api = useApi();
@@ -173,23 +175,22 @@ export default function NotesEditor({
     onUpdate: () => setIsDirty(true)
   });
 
-  // Fetch the available notes for the given model type and ID
+  // Fetch the available notes for the given model type and ID (or all templates)
   const notesQuery = useQuery({
-    queryKey: ['notes', modelType, modelId],
+    queryKey: ['notes', modelType, modelId, templateMode],
     queryFn: async () => {
+      const params: Record<string, any> = templateMode
+        ? { template: true }
+        : { model_id: modelId, model_type: modelType };
+
       return api
-        .get(apiUrl(ApiEndpoints.note_list), {
-          params: {
-            model_id: modelId,
-            model_type: modelType
-          }
-        })
+        .get(apiUrl(ApiEndpoints.note_list), { params })
         .then((response) => response.data ?? []);
     },
     staleTime: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
-    enabled: !!modelId && !!modelType
+    enabled: templateMode ? true : !!modelId && !!modelType
   });
 
   const [selectedNote, setSelectedNote] = useState<any>(undefined);
@@ -244,11 +245,15 @@ export default function NotesEditor({
 
   const canEdit: boolean = useMemo(
     () =>
-      user.hasChangePermission(modelType) &&
+      (templateMode
+        ? user.isStaff()
+        : modelType
+          ? user.hasChangePermission(modelType)
+          : false) &&
       notesQuery.isFetched &&
       notesQuery.isSuccess &&
       !!notesQuery.data,
-    [user, modelType, notesQuery]
+    [user, modelType, templateMode, notesQuery]
   );
 
   const isInTable = useEditorState({
@@ -271,11 +276,16 @@ export default function NotesEditor({
     return notesQuery.data && notesQuery.data.length > 0;
   }, [notesQuery.data]);
 
-  const noteFields = useNoteFields({ modelType: modelType, modelId: modelId });
+  const noteFields = useNoteFields({
+    modelType: modelType!,
+    modelId: modelId!
+  });
+  const noteTemplateFields = useNoteTemplateFields();
+  const activeFields = templateMode ? noteTemplateFields : noteFields;
 
   const createNote = useCreateApiFormModal({
-    title: t`Add Note`,
-    fields: noteFields,
+    title: templateMode ? t`Add Note Template` : t`Add Note`,
+    fields: activeFields,
     url: apiUrl(ApiEndpoints.note_list),
     method: 'POST',
     successMessage: null,
@@ -287,7 +297,7 @@ export default function NotesEditor({
   });
 
   const deleteNote = useDeleteApiFormModal({
-    title: t`Delete Note`,
+    title: templateMode ? t`Delete Note Template` : t`Delete Note`,
     url: apiUrl(ApiEndpoints.note_list),
     pk: selectedNoteId,
     onFormSuccess: () => {
@@ -297,8 +307,8 @@ export default function NotesEditor({
   });
 
   const editNote = useEditApiFormModal({
-    title: t`Edit Note`,
-    fields: noteFields,
+    title: templateMode ? t`Edit Note Template` : t`Edit Note`,
+    fields: activeFields,
     url: apiUrl(ApiEndpoints.note_list),
     pk: selectedNoteId,
     onFormSuccess: (response: any) => {
@@ -442,9 +452,7 @@ export default function NotesEditor({
                         tooltip={t`Note Actions`}
                         actions={[
                           EditItemAction({
-                            hidden:
-                              !selectedNote ||
-                              !user.hasChangePermission(modelType),
+                            hidden: !selectedNote || !canEdit,
                             onClick: () => {
                               editNote.open();
                             }
@@ -452,7 +460,11 @@ export default function NotesEditor({
                           DeleteItemAction({
                             hidden:
                               !selectedNote ||
-                              !user.hasDeletePermission(modelType),
+                              !(templateMode
+                                ? user.isStaff()
+                                : modelType
+                                  ? user.hasDeletePermission(modelType)
+                                  : false),
                             onClick: () => {
                               deleteNote.open();
                             }
@@ -626,7 +638,7 @@ export default function NotesEditor({
                 </RichTextEditor>
               ) : (
                 <Alert title={t`Notes`} icon={<IconInfoCircle />}>
-                  {t`There are no notes yet for this item.`}
+                  {t`There are no notes here yet.`}
                 </Alert>
               )}
             </Paper>
