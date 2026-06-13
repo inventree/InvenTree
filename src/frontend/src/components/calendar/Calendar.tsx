@@ -1,6 +1,7 @@
 import type {
   CalendarOptions,
   DatesSetArg,
+  DayCellContentArg,
   EventContentArg
 } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
@@ -182,6 +183,25 @@ export default function Calendar({
     [calendarProps.eventContent, eventTooltipContent]
   );
 
+  const monthDayCellClassNames = useCallback(
+    (arg: DayCellContentArg): string[] => {
+      const monthClass =
+        arg.date.getMonth() % 2 === 0
+          ? 'fc-day-month-even'
+          : 'fc-day-month-odd';
+      const existing = calendarProps.dayCellClassNames;
+      if (!existing) return [monthClass];
+      if (typeof existing === 'function') {
+        const result = existing(arg);
+        const arr = Array.isArray(result) ? result : result ? [result] : [];
+        return [monthClass, ...arr];
+      }
+      if (Array.isArray(existing)) return [monthClass, ...existing];
+      return [monthClass, existing as string];
+    },
+    [calendarProps.dayCellClassNames]
+  );
+
   return (
     <>
       {state.exportModal.modal}
@@ -309,6 +329,11 @@ export default function Calendar({
             {...calendarProps}
             datesSet={datesSet}
             eventContent={wrappedEventContent}
+            dayCellClassNames={
+              isScrollView
+                ? monthDayCellClassNames
+                : calendarProps.dayCellClassNames
+            }
           />
         </Box>
       </Stack>

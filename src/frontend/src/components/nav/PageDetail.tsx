@@ -57,7 +57,7 @@ export function PageDetail({
   useInvenTreeHotkeys([
     [
       'mod+E',
-      title ? t`Edit ${title}` : t`Edit`,
+      t`Edit`,
       (event) => {
         if (event.repeat) {
           return;
@@ -68,6 +68,7 @@ export function PageDetail({
       }
     ]
   ]);
+  useActionHotkeys(actions);
 
   const pageTitleString = useMemo(
     () =>
@@ -195,4 +196,75 @@ export function PageDetail({
       </Stack>
     </>
   );
+}
+
+function useActionHotkeys(actions: ReactNode[] = []) {
+  const hotkeys = useMemo(() => extractHotkeys(actions), [actions]);
+
+  useInvenTreeHotkeys(
+    hotkeys.map(({ hotkey, onClick, name }) => [
+      hotkey,
+      name,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        onClick();
+      }
+    ])
+  );
+}
+
+function extractHotkeys(actions: ReactNode[]) {
+  const calcActions = actions
+    .filter(
+      (action) =>
+        action &&
+        typeof action === 'object' &&
+        'hotkey' in action &&
+        action.hotkey
+    )
+    .map((action: any) => {
+      return {
+        hotkey: action?.hotkey,
+        name: action?.name,
+        onClick: action?.onClick
+      };
+    })
+    .filter((action) => action !== null);
+
+  let primaryActionHotkeyAdded = false;
+  // now iterate over the actions to extract more possible hotkeys
+  actions.forEach((action: any) => {
+    const typeName = action?.type?.name;
+
+    // dropdowns - nested actions
+    if (typeName === 'ActionDropdown' || typeName === 'OptionsActionDropdown') {
+      const dropdownActions = action?.props?.actions as any[];
+      dropdownActions.forEach((dropdownAction: any) => {
+        if (dropdownAction.hotkey) {
+          calcActions.push({
+            hotkey: dropdownAction.hotkey,
+            name: dropdownAction.name,
+            onClick: dropdownAction.onClick
+          });
+        }
+      });
+    }
+
+    // PrimaryActionButton - use the 'mod+A' hotkey if it is enabled
+    if (typeName === 'PrimaryActionButton' && action?.props?.hidden !== true) {
+      if (primaryActionHotkeyAdded) return;
+
+      const hotkey = action?.props?.hotkey ?? 'mod+A';
+      calcActions.push({
+        hotkey,
+        name:
+          action?.props?.tooltip ?? action?.props?.title ?? t`Primary Action`,
+        onClick: action?.props?.onClick
+      });
+      primaryActionHotkeyAdded = true;
+    }
+  });
+  return calcActions;
 }

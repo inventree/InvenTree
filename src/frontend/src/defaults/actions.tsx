@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
+  IconDevicesPc,
   IconLink,
   IconPlug,
   IconPointer,
@@ -9,7 +10,8 @@ import {
   IconSettings,
   IconTags,
   IconUserBolt,
-  IconUserCog
+  IconUserCog,
+  IconUsers
 } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
@@ -214,6 +216,16 @@ export function getActions(navigate: NavigateFunction) {
       });
 
     staff &&
+      user?.hasViewPermission(ModelType.user) &&
+      _actions.push({
+        id: 'users',
+        label: t`Users`,
+        description: t`Manage user accounts`,
+        onClick: () => navigate('/settings/admin/user'),
+        leftSection: <IconUsers size='1.2rem' />
+      });
+
+    staff &&
       user?.hasViewPermission(ModelType.pluginconfig) &&
       _actions.push({
         id: 'plugin-settings',
@@ -221,6 +233,16 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Manage InvenTree plugins`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
+      _actions.push({
+        id: 'machine-management',
+        label: t`Machines`,
+        description: t`Manage machines and machine types`,
+        onClick: () => navigate('/settings/admin/machine'),
+        leftSection: <IconDevicesPc size='1.2rem' />
       });
 
     staff &&

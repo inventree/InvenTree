@@ -18,8 +18,8 @@ import { apiUrl } from '@lib/functions/Api';
 import { identifierString } from '@lib/functions/Conversion';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import type { TableColumn, TableColumnFilterType } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
@@ -68,11 +68,21 @@ export type TemplateI = {
   template: string;
 };
 
+// Additional field props to control the column behaviour in the template table
+interface TemplateFormFieldType extends ApiFormFieldType {
+  sortable?: boolean;
+  switchable?: boolean;
+  filter?: TableColumnFilterType;
+}
+
+type TemplateFormFieldSet = Record<string, TemplateFormFieldType>;
+
 export interface TemplateProps {
   modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
-  additionalFormFields?: ApiFormFieldSet;
+  additionalFilters?: TableFilter[];
+  additionalFormFields?: TemplateFormFieldSet;
 }
 
 export function TemplateDrawer({
@@ -233,6 +243,7 @@ export function TemplateTable({
       },
       {
         accessor: 'model_type',
+        filter: 'model_type',
         sortable: true,
         switchable: false
       },
@@ -276,10 +287,10 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
-        ...field,
-        title: field.label,
         sortable: false,
         switchable: true,
+        title: field.label,
+        ...field,
         render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
@@ -391,6 +402,7 @@ export function TemplateTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
+      ...(templateProps.additionalFilters || []),
       {
         name: 'enabled',
         label: t`Enabled`,
@@ -404,7 +416,7 @@ export function TemplateTable({
         choices: modelTypeFilters.choices
       }
     ];
-  }, [modelTypeFilters.choices]);
+  }, [templateProps.additionalFilters, modelTypeFilters.choices]);
 
   return (
     <>
