@@ -3178,15 +3178,11 @@ class Note(
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        help_text=_(
-            'Target model type for this note (null = applies to all model types)'
-        ),
+        help_text=_('Target model type for this note'),
     )
 
     model_id = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text=_('Target model instance ID for this note (null for templates)'),
+        null=True, blank=True, help_text=_('Target model instance ID for this note')
     )
 
     content_object = GenericForeignKey('model_type', 'model_id')

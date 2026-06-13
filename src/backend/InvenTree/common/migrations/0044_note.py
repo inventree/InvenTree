@@ -47,11 +47,15 @@ class Migration(migrations.Migration):
                         verbose_name="Updated",
                     ),
                 ),
-                ("model_id", models.PositiveIntegerField()),
+                ("model_id", models.PositiveIntegerField(
+                    blank=True,
+                    null=True,
+                    help_text="Target model instance ID for this note",
+                )),
                 (
                     "title",
                     models.CharField(
-                        help_text="Note title", max_length=100, verbose_name="Title"
+                        help_text="Note title", max_length=100, verbose_name="Title",
                     ),
                 ),
                 (
@@ -74,6 +78,17 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         to="contenttypes.contenttype",
+                        help_text="Target model type for this note",
+                        blank=True,
+                        null=True,
+                    ),
+                ),
+                (
+                    "template",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Is this note a template (not linked to a specific model instance)?",
+                        verbose_name="Template",
                     ),
                 ),
                 (
@@ -125,7 +140,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="note",
             constraint=models.UniqueConstraint(
-                condition=models.Q(("primary", True)),
+                condition=models.Q(("primary", True), ("template", False)),
                 fields=("model_type", "model_id"),
                 name="unique_primary_note_per_model",
             ),
