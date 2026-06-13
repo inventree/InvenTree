@@ -34,15 +34,22 @@ class InvenTreeURLFetcher(URLFetcher):
         raise ValueError(f"URL scheme '{scheme}' is not permitted in report templates")
 
     def _validate_http_url(self, url: str, parsed) -> None:
-        """Raise if the URL resolves to a private, loopback, or reserved IP address.
-
-        data: URIs have an empty netloc and are passed through without DNS resolution.
-        """
+        """Raise if HTTP/HTTPS fetching is disabled or the URL is an SSRF risk."""
+        from common.settings import get_global_setting
         from InvenTree.helpers_model import validate_url_no_ssrf
 
         if not parsed.netloc:
-            # data: URIs and other netloc-less forms — no IP to validate.
+            # data: URIs — self-contained, no network access required.
             return
+
+        if not get_global_setting('REPORT_FETCH_URLS', cache=False):
+            logger.warning(
+                "InvenTreeURLFetcher: blocked URL '%s': remote fetching is disabled (REPORT_FETCH_URLS=False)",
+                url,
+            )
+            raise ValueError(
+                f'Remote URL fetching is disabled in report templates: {url}'
+            )
 
         try:
             validate_url_no_ssrf(url)

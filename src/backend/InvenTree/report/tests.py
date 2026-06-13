@@ -987,6 +987,60 @@ class URLFetcherE2ETest(ReportTest):
             blocked_warnings, 'Expected a blocked SSRF URL warning in the log output'
         )
 
+    def test_fetch_urls_disabled_blocks_http(self):
+        """When REPORT_FETCH_URLS is False, any http/https URL in a template must be blocked."""
+        from io import StringIO
+
+        from common.settings import set_global_setting
+
+        # Use a publicly routable address so the test would reach the network if
+        # our guard were absent — we want to confirm it is stopped by the setting,
+        # not by a secondary SSRF IP check.
+        html = (
+            '<html><body>'
+            '<img src="https://example.com/image.png">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'fetch_disabled_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'Fetch Disabled Test',
+                'description': 'Tests that HTTP fetching is blocked when REPORT_FETCH_URLS=False',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        set_global_setting('REPORT_FETCH_URLS', False, change_user=None)
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'REPORT_FETCH_URLS' in msg and 'example.com' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a REPORT_FETCH_URLS warning in the log output'
+        )
+
 
 class URLFetcherTest(TestCase):
     """Tests for InvenTreeURLFetcher security restrictions."""
