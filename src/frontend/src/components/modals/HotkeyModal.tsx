@@ -45,7 +45,8 @@ export function HotkeyModal({
     );
     keys.sort((a, b) => a.key.localeCompare(b.key));
     return keys;
-  }, []);
+  }, [context, id]);
+
   const data = useMemo(() => {
     return {
       head: ['Hotkey', 'Action'],
