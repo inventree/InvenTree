@@ -935,6 +935,58 @@ class URLFetcherE2ETest(ReportTest):
             blocked_warnings, 'Expected a blocked file:// warning in the log output'
         )
 
+    def test_ssrf_url_blocked_in_render(self):
+        """A template embedding an HTTP URL to a private/reserved address must be blocked and logged."""
+        from io import StringIO
+
+        # 127.0.0.1 is loopback — validate_url_no_ssrf rejects it regardless of port.
+        html = (
+            '<html><body>'
+            '<img src="http://127.0.0.1/ssrf-probe">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'ssrf_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'SSRF Test',
+                'description': 'Tests that SSRF URLs are blocked during rendering',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        # Render the template.  WeasyPrint catches the ValueError from our fetcher and
+        # continues, so the PDF is still generated — the blocked resource is just skipped.
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        # A PDF output should have been produced despite the blocked resource.
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        # The fetcher must have logged a warning for the blocked SSRF attempt.
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'blocked URL' in msg and '127.0.0.1' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a blocked SSRF URL warning in the log output'
+        )
+
 
 class URLFetcherTest(TestCase):
     """Tests for InvenTreeURLFetcher security restrictions."""
