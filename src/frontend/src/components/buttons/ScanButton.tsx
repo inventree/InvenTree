@@ -28,7 +28,7 @@ export function ScanButton({
   if (hotkey) {
     useInvenTreeHotkeys([
       [
-        'mod+b',
+        'mod+Shift+B',
         t`Open barcode scanner`,
         () => {
           open();
