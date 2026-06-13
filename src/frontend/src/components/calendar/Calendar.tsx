@@ -168,8 +168,8 @@ export default function Calendar({
 
       return (
         <HoverCard
-          openDelay={300}
-          closeDelay={100}
+          openDelay={1000}
+          closeDelay={50}
           shadow='md'
           position='top-start'
         >
