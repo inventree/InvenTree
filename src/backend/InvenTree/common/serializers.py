@@ -22,7 +22,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeParameterMixin
+from InvenTree.models import InvenTreeNoteMixin, InvenTreeParameterMixin
 from InvenTree.serializers import (
     ContentTypeField,
     FilterableSerializerMixin,
@@ -870,7 +870,6 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     def save(self, **kwargs):
         """Save the Note instance."""
-        from InvenTree.models import InvenTreeNoteMixin
         from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
@@ -904,7 +903,7 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     # Note: The choices are overridden at run-time on class initialization
     model_type = ContentTypeField(
-        mixin_class=InvenTreeParameterMixin,
+        mixin_class=InvenTreeNoteMixin,
         choices=common.validators.note_model_options,
         label=_('Model Type'),
         default='',
