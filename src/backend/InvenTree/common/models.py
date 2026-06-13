@@ -3003,7 +3003,7 @@ class Note(
         constraints = [
             models.UniqueConstraint(
                 fields=['model_type', 'model_id'],
-                condition=models.Q(primary=True),
+                condition=models.Q(primary=True, template=False),
                 name='unique_primary_note_per_model',
             )
         ]
@@ -3018,30 +3018,45 @@ class Note(
         """Perform custom save checks before saving a Note instance."""
         self.check_save()
 
-        # Lock sibling notes to serialize concurrent primary-flag updates
-        siblings = (
-            Note.objects
-            .select_for_update()
-            .filter(model_type=self.model_type, model_id=self.model_id)
-            .exclude(pk=self.pk)
-        )
+        if not self.template:
+            # Lock sibling notes to serialize concurrent primary-flag updates
+            siblings = (
+                Note.objects
+                .select_for_update()
+                .filter(
+                    model_type=self.model_type, model_id=self.model_id, template=False
+                )
+                .exclude(pk=self.pk)
+            )
 
-        # If this is the *only* note for this model instance, then set it as the primary note
-        if not siblings.exists():
-            self.primary = True
+            # If this is the *only* note for this model instance, set it as primary
+            if not siblings.exists():
+                self.primary = True
 
-        self.clean()
+            self.clean()
+            super().save(*args, **kwargs)
 
-        super().save(*args, **kwargs)
-
-        # Once this note is saved, mark other notes as non-primary
-        if self.primary:
-            siblings.update(primary=False)
+            # Mark other notes as non-primary
+            if self.primary:
+                siblings.update(primary=False)
+        else:
+            # Templates skip primary-flag logic entirely
+            self.primary = False
+            self.clean()
+            super().save(*args, **kwargs)
 
         self.cleanup_images()
 
     def clean(self):
         """Clean / validate the note before saving to the database."""
+        from django.core.exceptions import ValidationError
+
+        if not self.template:
+            if not self.model_type:
+                raise ValidationError({'model_type': _('This field is required.')})
+            if self.model_id is None:
+                raise ValidationError({'model_id': _('This field is required.')})
+
         if self.content:
             attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
 
@@ -3113,6 +3128,9 @@ class Note(
         """Check if this note can be saved."""
         from InvenTree.models import InvenTreeNoteMixin
 
+        if self.template or not self.model_type:
+            return
+
         try:
             instance = self.content_object
         except InvenTree.models.InvenTreeModel.DoesNotExist:
@@ -3124,6 +3142,9 @@ class Note(
     def check_delete(self):
         """Check if this note can be deleted."""
         from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template or not self.model_type:
+            return
 
         try:
             instance = self.content_object
@@ -3144,9 +3165,29 @@ class Note(
             if image.image and image.image.url not in self.content:
                 image.delete()
 
-    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    template = models.BooleanField(
+        default=False,
+        verbose_name=_('Template'),
+        help_text=_(
+            'Is this note a template (not linked to a specific model instance)?'
+        ),
+    )
 
-    model_id = models.PositiveIntegerField()
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text=_(
+            'Target model type for this note (null = applies to all model types)'
+        ),
+    )
+
+    model_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text=_('Target model instance ID for this note (null for templates)'),
+    )
 
     content_object = GenericForeignKey('model_type', 'model_id')
 

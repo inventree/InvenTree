@@ -54,10 +54,9 @@ class SelectionListAdmin(admin.ModelAdmin):
 class NoteAdmin(admin.ModelAdmin):
     """Admin interface for Note objects."""
 
-    list_display = ('title', 'model_type', 'model_id')
-
-    list_filter = ('model_type',)
-    search_fields = ('title', 'description')
+    list_display = ('title', 'template', 'model_type', 'model_id', 'primary')
+    list_filter = ('template', 'model_type')
+    search_fields = ('title', 'description', 'content')
 
 
 @admin.register(common.models.Attachment)

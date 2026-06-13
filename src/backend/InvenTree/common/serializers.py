@@ -856,6 +856,7 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         model = common_models.Note
         fields = [
             'pk',
+            'template',
             'model_type',
             'model_id',
             'primary',
@@ -868,17 +869,48 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
         read_only_fields = ['updated', 'updated_by']
 
+    def validate(self, data):
+        """Validate note data — templates need no model_id; regular notes require both."""
+        data = super().validate(data)
+
+        is_template = data.get('template', getattr(self.instance, 'template', False))
+
+        if not is_template:
+            model_type = data.get('model_type') or getattr(
+                self.instance, 'model_type', None
+            )
+            model_id = data.get('model_id') or getattr(self.instance, 'model_id', None)
+
+            if not model_type:
+                raise serializers.ValidationError({
+                    'model_type': _('This field is required.')
+                })
+            if model_id is None:
+                raise serializers.ValidationError({
+                    'model_id': _('This field is required.')
+                })
+
+        return data
+
     def save(self, **kwargs):
         """Save the Note instance."""
         from users.permissions import check_user_permission
 
-        model_type = self.validated_data.get('model_type', None)
-
-        if model_type is None and self.instance:
-            model_type = self.instance.model_type
-
-        # Ensure that the user has permission to modify notes for the specified model
         user = self.context.get('request').user
+        is_template = self.validated_data.get(
+            'template', getattr(self.instance, 'template', False)
+        )
+
+        if is_template:
+            if not user.is_staff:
+                raise PermissionDenied(
+                    _('Only staff users can create or edit note templates')
+                )
+            return super().save(updated_by=user, **kwargs)
+
+        model_type = self.validated_data.get('model_type') or (
+            self.instance and self.instance.model_type
+        )
 
         target_model_class = model_type.model_class()
 
@@ -902,8 +934,9 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         mixin_class=InvenTreeNoteMixin,
         choices=common.validators.note_model_options,
         label=_('Model Type'),
-        default='',
-        allow_null=False,
+        default=None,
+        allow_null=True,
+        required=False,
     )
 
     updated_by_detail = OptionalField(

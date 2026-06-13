@@ -902,14 +902,16 @@ class NoteFilter(FilterSet):
         """Metaclass options for the filterset."""
 
         model = common.models.Note
-        fields = ['model_type', 'model_id', 'updated_by']
+        fields = ['model_type', 'model_id', 'updated_by', 'template']
+
+    template = rest_filters.BooleanFilter(label='Template')
 
     model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
 
     def filter_model_type(self, queryset, name, value):
-        """Filter queryset to include only Parameters of the given model type."""
+        """Filter queryset by model type, allowing null for global templates."""
         return common.filters.filter_content_type(
-            queryset, 'model_type', value, allow_null=False
+            queryset, 'model_type', value, allow_null=True
         )
 
 
@@ -932,9 +934,16 @@ class NoteList(NoteMixin, ListCreateAPI):
     filterset_class = NoteFilter
 
     ordering = '-primary'
-    ordering_fields = ['model_id', 'model_type', 'user', 'creation', 'primary']
-    search_fields = ['content', 'model_id', 'model_type', 'user__username']
-    unique_create_fields = ['model_type', 'model_id']
+    ordering_fields = [
+        'model_id',
+        'model_type',
+        'updated_by',
+        'updated',
+        'primary',
+        'template',
+        'title',
+    ]
+    search_fields = ['title', 'description', 'content']
 
 
 class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
