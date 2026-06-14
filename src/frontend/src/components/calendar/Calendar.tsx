@@ -303,7 +303,17 @@ export default function Calendar({
             )}
           </Group>
         </Group>
-        <Box pos='relative'>
+        <Box
+          pos='relative'
+          {...(isScrollView && {
+            style: {
+              height: 'calc(100vh - 160px)',
+              overflowY: 'scroll',
+              scrollbarGutter: 'stable',
+              paddingRight: '12px'
+            }
+          })}
+        >
           <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
@@ -316,7 +326,7 @@ export default function Calendar({
                   duration: { months: horizonMonths }
                 }
               },
-              height: 'calc(100vh - 160px)'
+              height: 'auto'
             })}
             locales={allLocales}
             locale={calendarLocale}
