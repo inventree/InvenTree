@@ -200,7 +200,7 @@ export default function NotesEditor({
       const note = notesQuery.data?.find((note: any) => note.pk === noteId);
       setSelectedNote(note);
 
-      if (editor) {
+      if (editor && !editor.isDestroyed) {
         // Pass emitUpdate:false to avoid triggering dirty state when loading content
         editor.commands.setContent(
           note ? DOMPurify.sanitize(note.content ?? '') : '',
