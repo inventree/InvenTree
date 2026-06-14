@@ -11,6 +11,7 @@ from PIL import Image
 from taggit.models import Tag
 
 import common.models
+from common.models import SelectionList, SelectionListEntry
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
@@ -1167,3 +1168,69 @@ class TagAPITests(InvenTreeAPITestCase):
 
         self.assertIn(self.part_a.pk, pks)
         self.assertNotIn(self.part_b.pk, pks)
+
+
+class SelectionListLockedTest(InvenTreeAPITestCase):
+    """Tests that a locked SelectionList rejects all entry mutations."""
+
+    def setUp(self):
+        """Create a locked SelectionList with one entry."""
+        super().setUp()
+
+        self.sel_list = SelectionList.objects.create(name='Locked List', locked=True)
+        self.entry = SelectionListEntry.objects.create(
+            list=self.sel_list, value='v1', label='Entry 1'
+        )
+
+        self.list_url = reverse(
+            'api-selectionlist-detail', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_list_url = reverse(
+            'api-selectionlistentry-list', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_detail_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'pk': self.sel_list.pk, 'entrypk': self.entry.pk},
+        )
+
+    def test_create_entry_locked(self):
+        """POST a new entry to a locked list should be rejected."""
+        response = self.post(
+            self.entry_list_url,
+            {'list': self.sel_list.pk, 'value': 'v2', 'label': 'Entry 2'},
+            expected_code=400,
+        )
+        self.assertIn('list', response.data)
+        self.assertIn('locked', str(response.data['list']).lower())
+
+    def test_update_entry_locked(self):
+        """PATCH an entry on a locked list should be rejected."""
+        response = self.patch(
+            self.entry_detail_url, {'label': 'Changed'}, expected_code=400
+        )
+        self.assertIn('list', response.data)
+        self.assertIn('locked', str(response.data['list']).lower())
+
+    def test_delete_entry_locked(self):
+        """DELETE an entry from a locked list should be rejected."""
+        self.delete(self.entry_detail_url, expected_code=403)
+        self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+    def test_patch_list_with_choices_locked(self):
+        """PATCH the list with a choices payload should be rejected when locked."""
+        response = self.patch(
+            self.list_url,
+            {'choices': [{'value': 'v2', 'label': 'New'}]},
+            expected_code=400,
+        )
+        self.assertIn('locked', response.data)
+
+    def test_patch_list_without_choices_preserves_entries(self):
+        """PATCH the list without choices should not touch entries (even when unlocked)."""
+        self.sel_list.locked = False
+        self.sel_list.save()
+
+        self.patch(self.list_url, {'name': 'Renamed List'}, expected_code=200)
+
+        # Entry must still exist — omitting choices must not delete entries
+        self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
