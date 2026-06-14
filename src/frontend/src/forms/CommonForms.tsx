@@ -345,13 +345,13 @@ export function useNoteFields({
         field_type: 'related field',
         label: t`From Template`,
         description: t`Optionally pre-fill this note from an existing template`,
+        model: ModelType.notetemplate,
         api_url: apiUrl(ApiEndpoints.note_list),
         filters: {
           template: true,
           model_type: modelType
         },
         pk_field: 'pk',
-        render_description_field: 'description',
         required: false,
         onValueChange: (value: any) => fetchTemplate(value),
         value: null
