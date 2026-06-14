@@ -77,6 +77,7 @@ test('Parts - Image Selection', async ({ browser }) => {
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-select-from-' })
@@ -94,6 +95,7 @@ test('Parts - Image Selection', async ({ browser }) => {
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-delete-image' })

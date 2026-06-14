@@ -36,6 +36,8 @@ from plugin.registry import registry
 
 try:
     from weasyprint import HTML
+
+    from report.fetcher import InvenTreeURLFetcher
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
     print("Unable to import 'weasyprint' module.")
@@ -277,7 +279,9 @@ class ReportTemplateBase(
             bytes: PDF data
         """
         html = self.render_as_string(instance, context=context, **kwargs)
-        pdf = HTML(string=html).write_pdf(pdf_forms=True)
+        pdf = HTML(string=html, url_fetcher=InvenTreeURLFetcher()).write_pdf(
+            pdf_forms=True
+        )
 
         return pdf
 

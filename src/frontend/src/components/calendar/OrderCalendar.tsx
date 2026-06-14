@@ -194,7 +194,7 @@ export default function OrderCalendar({
       }
 
       return (
-        <Group gap='xs' wrap='nowrap'>
+        <Group gap='xs' wrap='nowrap' style={{ paddingLeft: 5 }}>
           {order.overdue && (
             <ActionIcon
               color='orange-7'
