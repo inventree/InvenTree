@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 503
+INVENTREE_API_VERSION = 504
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v504 -> 2026-06-13 : https://github.com/inventree/InvenTree/pull/12139
+    - Adjustments to the SelectionList and SelectionListEntry API endpoints to support more efficient queries and data retrieval
 
 v503 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/12155
     - Adds additional filtering and sorting options to the LabelTemplate API endpoint

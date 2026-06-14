@@ -2,6 +2,7 @@
 
 import base64
 import logging
+import mimetypes
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -288,13 +289,21 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
         else:
             return None
 
-    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    # In debug mode, return a web URL to the asset file (rather than encoded data)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
         return default_storage.url(str(full_path))
 
-    storage_path = default_storage.path(str(full_path))
+    file_data = get_media_file_contents(full_path, raise_error=raise_error)
 
-    return f'file://{storage_path}'
+    if not file_data:
+        return None
+
+    mime_type, _encoding = mimetypes.guess_type(str(filename))
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
+    encoded = base64.b64encode(file_data).decode('ascii')
+    return f'data:{mime_type};base64,{encoded}'
 
 
 @register.simple_tag()
