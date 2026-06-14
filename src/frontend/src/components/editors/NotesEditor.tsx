@@ -681,13 +681,10 @@ export default function NotesEditor({
                     <Group gap='xs' wrap='nowrap' justify='space-between'>
                       <Text size='sm'>{note.title}</Text>
                       {note.primary && (
-                        <ActionIcon
-                          size='xs'
-                          color='yellow'
-                          variant='transparent'
-                        >
-                          <IconStar />
-                        </ActionIcon>
+                        <IconStar
+                          size={14}
+                          color='var(--mantine-color-yellow-6)'
+                        />
                       )}
                     </Group>
                   </Tabs.Tab>
