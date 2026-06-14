@@ -1207,28 +1207,24 @@ class IconList(ListAPI):
         return list(get_icon_packs().values())
 
 
-class SelectionListList(ListCreateAPI):
+class SelectionListMixin(OutputOptionsMixin):
+    """Mixin for SelectionList views."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class SelectionListList(SelectionListMixin, ListCreateAPI):
     """List view for SelectionList objects."""
 
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
-
-
-class SelectionListDetail(RetrieveUpdateDestroyAPI):
+class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionList object."""
-
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
 
 
 class EntryMixin:
@@ -1245,6 +1241,12 @@ class EntryMixin:
         queryset = super().get_queryset().filter(list=pk)
         queryset = queryset.prefetch_related('list')
         return queryset
+
+    def perform_destroy(self, instance):
+        """Prevent deletion of entries belonging to a locked selection list."""
+        if instance.list.locked:
+            raise PermissionDenied(_('Selection list is locked'))
+        super().perform_destroy(instance)
 
 
 class SelectionEntryList(EntryMixin, ListCreateAPI):
