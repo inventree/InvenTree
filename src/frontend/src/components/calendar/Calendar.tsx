@@ -41,6 +41,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -183,6 +184,40 @@ export default function Calendar({
     [calendarProps.eventContent, eventTooltipContent]
   );
 
+  const scrollBoxRef = useRef<HTMLDivElement>(null);
+
+  const updateMonthFromScroll = useCallback(() => {
+    if (!scrollBoxRef.current) return;
+    const container = scrollBoxRef.current;
+    const containerTop = container.getBoundingClientRect().top;
+
+    const cells = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        '.fc-daygrid-day[data-date$="-01"]'
+      )
+    );
+
+    let dateStr: string | null = null;
+    for (const cell of cells) {
+      if (cell.getBoundingClientRect().top <= containerTop + 1) {
+        dateStr = cell.getAttribute('data-date');
+      } else {
+        break;
+      }
+    }
+    if (!dateStr) dateStr = cells[0]?.getAttribute('data-date') ?? null;
+
+    if (dateStr) {
+      const date = new Date(`${dateStr}T12:00:00`);
+      state.setMonthName(
+        new Intl.DateTimeFormat(calendarLocale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(date)
+      );
+    }
+  }, [calendarLocale, state.setMonthName]);
+
   const monthDayCellClassNames = useCallback(
     (arg: DayCellContentArg): string[] => {
       const monthClass =
@@ -304,7 +339,9 @@ export default function Calendar({
           </Group>
         </Group>
         <Box
+          ref={scrollBoxRef}
           pos='relative'
+          onScroll={isScrollView ? updateMonthFromScroll : undefined}
           {...(isScrollView && {
             style: {
               height: 'calc(100vh - 160px)',
