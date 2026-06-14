@@ -1,5 +1,5 @@
 ---
-title: Report and LabelGeneration
+title: Report and Label Generation
 ---
 
 ## Custom Reports

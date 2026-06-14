@@ -144,6 +144,7 @@ Configuration of report generation:
 {{ globalsetting("REPORT_ENABLE") }}
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
+{{ globalsetting("REPORT_FETCH_URLS") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
 
 ### Label Printing
