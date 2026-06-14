@@ -372,3 +372,22 @@ export function useNoteFields({
     };
   }, [modelType, modelId, title, description, content, fetchTemplate]);
 }
+
+export function selectionListFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    active: {},
+    source_plugin: {},
+    source_string: {}
+  };
+}
+
+export function selectionEntryFields(): ApiFormFieldSet {
+  return {
+    value: {},
+    label: {},
+    description: {},
+    active: {}
+  };
+}

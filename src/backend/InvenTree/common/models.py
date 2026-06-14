@@ -1680,7 +1680,7 @@ class NotificationMessage(models.Model):
         ContentType, on_delete=models.CASCADE, related_name='notification_target'
     )
 
-    target_object_id = models.PositiveIntegerField()
+    target_object_id = models.CharField(max_length=255)
 
     target_object = GenericForeignKey('target_content_type', 'target_object_id')
 
@@ -1693,7 +1693,7 @@ class NotificationMessage(models.Model):
         blank=True,
     )
 
-    source_object_id = models.PositiveIntegerField(null=True, blank=True)
+    source_object_id = models.CharField(max_length=255, null=True, blank=True)
 
     source_object = GenericForeignKey('source_content_type', 'source_object_id')
 

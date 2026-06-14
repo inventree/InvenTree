@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 504
+INVENTREE_API_VERSION = 505
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v504 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/11971
+v505 -> 2026-06-16 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v504 -> 2026-06-13 : https://github.com/inventree/InvenTree/pull/12139
+    - Adjustments to the SelectionList and SelectionListEntry API endpoints to support more efficient queries and data retrieval
 
 v503 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/12155
     - Adds additional filtering and sorting options to the LabelTemplate API endpoint
