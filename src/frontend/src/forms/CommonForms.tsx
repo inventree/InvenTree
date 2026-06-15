@@ -176,34 +176,41 @@ export function useDynamicParameterValueField(resetDep?: any): {
     [selectionListId]
   );
 
-  const onTemplateValueChange = useCallback((value: any, record: any) => {
-    setSelectionListId(record?.selectionlist || null);
+  const onTemplateValueChange = useCallback(
+    (value: any, record: any) => {
+      setSelectionListId(record?.selectionlist || null);
+      setData('');
 
-    if (record?.checkbox) {
-      setChoices([]);
-      setFieldType('boolean');
-      setData('false');
-    } else if (record?.choices) {
-      const _choices: string[] = record.choices.split(',');
-
-      if (_choices.length > 0) {
-        setChoices(
-          _choices.map((choice) => ({
-            display_name: choice.trim(),
-            value: choice.trim()
-          }))
-        );
-        setFieldType('choice');
-      } else {
+      if (record?.checkbox) {
         setChoices([]);
+        setFieldType('boolean');
+        setData('false');
+      } else if (record?.choices) {
+        const _choices: string[] = record.choices.split(',');
+
+        if (_choices.length > 0) {
+          setChoices(
+            _choices.map((choice) => ({
+              display_name: choice.trim(),
+              value: choice.trim()
+            }))
+          );
+          setFieldType('choice');
+        } else {
+          setChoices([]);
+          setFieldType('string');
+          setData('');
+        }
+      } else if (record?.selectionlist) {
+        setFieldType('related field');
+        setData('');
+      } else {
         setFieldType('string');
+        setData('');
       }
-    } else if (record?.selectionlist) {
-      setFieldType('related field');
-    } else {
-      setFieldType('string');
-    }
-  }, []);
+    },
+    [setFieldType, setData, setChoices]
+  );
 
   const valueFieldConfig: ApiFormFieldType = useMemo(
     () => ({
