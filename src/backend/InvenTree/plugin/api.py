@@ -204,6 +204,7 @@ class PluginAdminDetail(RetrieveAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
