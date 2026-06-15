@@ -211,6 +211,54 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         for session in response.data:
             self.assertEqual(session['user'], self.user.pk)
 
+    def test_accept_fields_ownership(self):
+        """Test that accept_fields rejects requests for sessions owned by another user."""
+        other_user = User.objects.create_user(
+            username='other_accept', password='password'
+        )
+
+        f = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=other_user
+        )
+
+        url = reverse('api-import-session-accept-fields', kwargs={'pk': session.pk})
+
+        # Non-owner, non-staff should be denied
+        self.user.is_staff = False
+        self.user.save()
+        self.post(url, expected_code=403)
+
+        # Staff should be allowed (subject to model permission)
+        # Company is part of the purchase_order ruleset
+        self.user.is_staff = True
+        self.user.save()
+        self.assignRole('purchase_order.change')
+        self.post(url, expected_code=200)
+
+    def test_accept_rows_ownership(self):
+        """Test that accept_rows rejects requests for sessions owned by another user."""
+        other_user = User.objects.create_user(
+            username='other_accept_rows', password='password'
+        )
+
+        f = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=other_user
+        )
+        session.extract_columns()
+
+        url = reverse('api-import-session-accept-rows', kwargs={'pk': session.pk})
+
+        self.user.is_staff = False
+        self.user.save()
+        self.post(url, {'rows': []}, expected_code=403)
+
+        # Staff can reach the endpoint (rows list is empty so validation rejects with 400, not 403)
+        self.user.is_staff = True
+        self.user.save()
+        self.post(url, {'rows': []}, expected_code=400)
+
     def test_session_cleanup_on_complete(self):
         """Test that a completed import session deletes itself and all associated data."""
         url = reverse('api-importer-session-list')

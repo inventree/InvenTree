@@ -115,6 +115,10 @@ class DataImportSessionAcceptFields(APIView):
         """Accept the field mapping for a DataImportSession."""
         session = get_object_or_404(importer.models.DataImportSession, pk=pk)
 
+        # Check session ownership
+        if not request.user.is_staff and session.user != request.user:
+            raise PermissionDenied()
+
         # Check that the user has permission to accept the field mapping
         if model_class := session.model_class:
             if not check_user_permission(request.user, model_class, 'change'):
@@ -137,11 +141,17 @@ class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
         ctx = super().get_serializer_context()
 
         try:
-            ctx['session'] = importer.models.DataImportSession.objects.get(
+            session = importer.models.DataImportSession.objects.get(
                 pk=self.kwargs.get('pk', None)
             )
-        except Exception:
-            pass
+        except importer.models.DataImportSession.DoesNotExist:
+            session = None
+
+        if session:
+            user = self.request.user
+            if not user.is_staff and session.user != user:
+                raise PermissionDenied()
+            ctx['session'] = session
 
         ctx['request'] = self.request
         return ctx
