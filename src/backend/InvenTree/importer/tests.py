@@ -59,14 +59,20 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         self.assertEqual(session.rows.count(), 12)
 
         # Check that some data has been imported
-        for row in session.rows.all():
+        rows = list(session.rows.all())
+        self.assertEqual(len(rows), 12)
+
+        for row in rows:
             self.assertIsNotNone(row.data.get('name', None))
             self.assertTrue(row.valid)
 
             row.validate(commit=True)
             self.assertTrue(row.complete)
 
-        self.assertEqual(session.completed_row_count, 12)
+        # All rows accepted: rows and mappings are cleared, session is retained
+        session.refresh_from_db()
+        self.assertEqual(session.rows.count(), 0)
+        self.assertEqual(session.column_mappings.count(), 0)
 
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
@@ -204,6 +210,64 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 3)
         for session in response.data:
             self.assertEqual(session['user'], self.user.pk)
+
+    def test_session_cleanup_on_complete(self):
+        """Test that a completed import session deletes itself and all associated data."""
+        url = reverse('api-importer-session-list')
+        data_file = self.helper_file('part_categories.csv')
+
+        data = self.post(
+            url,
+            {'model_type': 'partcategory', 'data_file': data_file},
+            format='multipart',
+        ).data
+
+        session_id = data['pk']
+        session_pk = session_id
+
+        self.assignRole('part_category.add')
+        self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session_id}),
+            expected_code=200,
+        )
+
+        rows = self.get(
+            reverse('api-importer-row-list'), data={'session': session_id}
+        ).data
+        row_ids = [r['pk'] for r in rows]
+        self.assertGreater(len(row_ids), 0)
+
+        # Confirm rows and mappings exist before acceptance
+        self.assertTrue(DataImportRow.objects.filter(session_id=session_pk).exists())
+        self.assertTrue(
+            DataImportColumnMap.objects.filter(session_id=session_pk).exists()
+        )
+
+        # Accept all rows — this should trigger cleanup of rows and mappings
+        self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session_id}),
+            {'rows': row_ids},
+        )
+
+        # Rows and column mappings must be cleared
+        self.assertFalse(DataImportRow.objects.filter(session_id=session_pk).exists())
+        self.assertFalse(
+            DataImportColumnMap.objects.filter(session_id=session_pk).exists()
+        )
+
+        # Session itself is retained as an audit record with COMPLETE status
+        from importer.models import DataImportSession
+        from importer.status_codes import DataImportStatusCode
+
+        session_obj = DataImportSession.objects.get(pk=session_pk)
+        self.assertEqual(session_obj.status, DataImportStatusCode.COMPLETE.value)
+
+        detail = self.get(
+            reverse('api-import-session-detail', kwargs={'pk': session_id}),
+            expected_code=200,
+        ).data
+        self.assertEqual(detail['row_count'], 0)
+        self.assertEqual(detail['completed_row_count'], 0)
 
     def test_row_and_mapping_ownership(self):
         """Test that DataImportRow and DataImportColumnMap endpoints filter by session ownership."""
