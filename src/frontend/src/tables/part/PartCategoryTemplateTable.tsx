@@ -32,7 +32,7 @@ export default function PartCategoryTemplateTable({
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
-  const { onTemplateValueChange, valueFieldConfig } =
+  const { onTemplateValueChange, valueFieldConfig, reset } =
     useDynamicParameterValueField(categoryId);
 
   const formFields: ApiFormFieldSet = useMemo(() => {
@@ -54,6 +54,7 @@ export default function PartCategoryTemplateTable({
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 
@@ -62,6 +63,7 @@ export default function PartCategoryTemplateTable({
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 

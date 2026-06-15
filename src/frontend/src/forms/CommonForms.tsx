@@ -133,6 +133,7 @@ export function useParameterTemplateFields(): ApiFormFieldSet {
 export function useDynamicParameterValueField(resetDep?: any): {
   onTemplateValueChange: (value: any, record: any) => void;
   valueFieldConfig: ApiFormFieldType;
+  reset: () => void;
 } {
   const api = useApi();
 
@@ -143,12 +144,16 @@ export function useDynamicParameterValueField(resetDep?: any): {
   >('string');
   const [data, setData] = useState<string>('');
 
-  useEffect(() => {
+  const reset = useCallback(() => {
     setSelectionListId(null);
     setFieldType('string');
     setChoices([]);
     setData('');
-  }, [resetDep]);
+  }, []);
+
+  useEffect(() => {
+    reset();
+  }, [resetDep, reset]);
 
   const fetchSelectionEntry = useCallback(
     (value: any) => {
@@ -241,7 +246,7 @@ export function useDynamicParameterValueField(resetDep?: any): {
     [data, fieldType, choices, selectionListId, fetchSelectionEntry]
   );
 
-  return { onTemplateValueChange, valueFieldConfig };
+  return { onTemplateValueChange, valueFieldConfig, reset };
 }
 
 export function useParameterFields({
