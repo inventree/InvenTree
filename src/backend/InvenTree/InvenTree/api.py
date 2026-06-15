@@ -290,8 +290,6 @@ class InfoView(APIView):
             # Might be Token auth - check if so
             is_staff = self.check_auth_header(request)
 
-        authenticated = request.user.is_authenticated and not request.user.is_anonymous
-
         data = {
             'server': 'InvenTree',
             'id': InvenTree.version.inventree_identifier(),
@@ -316,8 +314,7 @@ class InfoView(APIView):
                     helpers.getCustomOption('disable_theme_storage')
                 ),
             },
-            # Following fields are only available to authenticated users
-            'active_plugins': plugins_info() if authenticated else None,
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
