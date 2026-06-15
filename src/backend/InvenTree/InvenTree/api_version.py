@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 505
+INVENTREE_API_VERSION = 506
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v506 -> 2026-06-15 : https://github.com/inventree/InvenTree/pull/12168
+    - Reduce permissions scope for a number of API endpoints, to improve security and ensure that users only have access to the data they need
 
 v505 -> 2026-06-15 : https://github.com/inventree/InvenTree/pull/12165
     - Allow parameters to be specified against the PartCategory model
