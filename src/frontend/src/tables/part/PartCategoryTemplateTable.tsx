@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -15,6 +15,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -160,6 +161,15 @@ export default function PartCategoryTemplateTable({
       {newTemplate.modal}
       {editTemplate.modal}
       {deleteTemplate.modal}
+      <Alert
+        color='blue'
+        icon={<IconInfoCircle />}
+        title={t`Part Category Parameters Templates`}
+      >
+        <Stack gap='xs'>
+          <Text>{t`Parts which are created within this category will inherit the default values specified here.`}</Text>
+        </Stack>
+      </Alert>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.category_parameter_list)}
         tableState={table}
