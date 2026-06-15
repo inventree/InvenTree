@@ -147,7 +147,29 @@ class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
         return ctx
 
 
-class DataImportColumnMappingList(DataImporterPermissionMixin, ListAPI):
+class DataImportSessionChildMixin(DataImporterPermissionMixin):
+    """Mixin for DataImportRow and DataImportColumnMap views.
+
+    Ensures users can only access objects that belong to an import session they own.
+    Staff users retain access to all objects.
+    """
+
+    def get_queryset(self):
+        """Return only objects whose session belongs to the requesting user."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        if user.is_staff:
+            return queryset
+
+        return queryset.filter(session__user=user)
+
+
+class DataImportColumnMappingList(DataImportSessionChildMixin, ListAPI):
     """API endpoint for accessing a list of DataImportColumnMap objects."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
@@ -158,14 +180,14 @@ class DataImportColumnMappingList(DataImporterPermissionMixin, ListAPI):
     filterset_fields = ['session']
 
 
-class DataImportColumnMappingDetail(DataImporterPermissionMixin, RetrieveUpdateAPI):
+class DataImportColumnMappingDetail(DataImportSessionChildMixin, RetrieveUpdateAPI):
     """Detail endpoint for a single DataImportColumnMap object."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
+class DataImportRowList(DataImportSessionChildMixin, BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()
@@ -180,7 +202,7 @@ class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
     ordering = 'row_index'
 
 
-class DataImportRowDetail(DataImporterPermissionMixin, RetrieveUpdateDestroyAPI):
+class DataImportRowDetail(DataImportSessionChildMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportRow object."""
 
     queryset = importer.models.DataImportRow.objects.all()
