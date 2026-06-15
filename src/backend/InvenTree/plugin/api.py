@@ -10,7 +10,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -174,7 +174,10 @@ class PluginDetail(RetrieveDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
-    permission_classes = [InvenTree.permissions.IsSuperuserOrReadOnlyOrScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsSuperuserOrReadOnlyOrScope,
+    ]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 

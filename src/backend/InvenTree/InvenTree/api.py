@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers, viewsets
+from rest_framework import permissions, serializers, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -290,6 +290,8 @@ class InfoView(APIView):
             # Might be Token auth - check if so
             is_staff = self.check_auth_header(request)
 
+        authenticated = request.user.is_authenticated and not request.user.is_anonymous
+
         data = {
             'server': 'InvenTree',
             'id': InvenTree.version.inventree_identifier(),
@@ -314,7 +316,8 @@ class InfoView(APIView):
                     helpers.getCustomOption('disable_theme_storage')
                 ),
             },
-            'active_plugins': plugins_info(),
+            # Following fields are only available to authenticated users
+            'active_plugins': plugins_info() if authenticated else None,
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
@@ -356,7 +359,10 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.AllowAnyOrReadScope,
+    ]
 
     def not_found(self, request):
         """Return a 404 error."""
