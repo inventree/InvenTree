@@ -68,6 +68,7 @@ logger = structlog.get_logger('inventree')
 
 class PartCategory(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.InvenTreeTree,
