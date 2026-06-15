@@ -295,7 +295,10 @@ class PluginSettingList(ListAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
 
     filter_backends = [DjangoFilterBackend]
 
@@ -368,7 +371,10 @@ class PluginAllSettingList(APIView):
     - GET: return all settings for a plugin config
     """
 
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
 
     @extend_schema(
         responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
@@ -396,6 +402,11 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
+
     def get_object(self):
         """Lookup the plugin setting object, based on the URL.
 
@@ -417,9 +428,6 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         return PluginSetting.get_setting_object(
             setting_key, plugin=plugin.plugin_config()
         )
-
-    # Staff permission required
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
 
 class PluginUserSettingList(APIView):
