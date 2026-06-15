@@ -344,14 +344,21 @@ class DataImportSession(models.Model):
         self.save()
 
     def check_complete(self) -> bool:
-        """Check if the import session is complete."""
+        """Check if the import session is complete.
+
+        When all rows have been accepted, the rows and column mappings are
+        deleted as they are no longer needed. The session itself is retained
+        as an audit record.
+        """
         if self.completed_row_count < self.row_count:
             return False
 
-        # Update the status of this session
         if self.status != DataImportStatusCode.COMPLETE.value:
             self.status = DataImportStatusCode.COMPLETE.value
             self.save()
+            # Clear staging data now that all rows have been imported
+            self.rows.all().delete()
+            self.column_mappings.all().delete()
 
         return True
 
