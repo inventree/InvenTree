@@ -15,6 +15,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -31,16 +32,21 @@ export default function PartCategoryTemplateTable({
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
+  const { onTemplateValueChange, valueFieldConfig } =
+    useDynamicParameterValueField(categoryId);
+
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
       category: {
         value: categoryId,
         disabled: categoryId !== undefined
       },
-      template: {},
-      default_value: {}
+      template: {
+        onValueChange: onTemplateValueChange
+      },
+      default_value: valueFieldConfig
     };
-  }, [categoryId]);
+  }, [categoryId, onTemplateValueChange, valueFieldConfig]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
