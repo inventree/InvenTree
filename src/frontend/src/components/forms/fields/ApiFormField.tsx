@@ -68,7 +68,7 @@ export function ApiFormField({
           : definition.value
       );
     }
-  }, [definition.value]);
+  }, [definition.value, definition.field_type]);
 
   const fieldDefinition: ApiFormFieldType = useMemo(() => {
     return {
