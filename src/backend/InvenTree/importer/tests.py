@@ -2,10 +2,11 @@
 
 import os
 
+from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
-from importer.models import DataImportRow, DataImportSession
+from importer.models import DataImportColumnMap, DataImportRow, DataImportSession
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 
 
@@ -203,6 +204,85 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 3)
         for session in response.data:
             self.assertEqual(session['user'], self.user.pk)
+
+    def test_row_and_mapping_ownership(self):
+        """Test that DataImportRow and DataImportColumnMap endpoints filter by session ownership."""
+        f = self.helper_file('companies.csv')
+
+        other_user = User.objects.create_user(
+            username='other_importer', password='password'
+        )
+
+        # Session owned by self.user
+        session_mine = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=self.user
+        )
+        session_mine.extract_columns()
+
+        # Session owned by another user
+        f2 = self.helper_file('companies.csv')
+        session_other = DataImportSession.objects.create(
+            data_file=f2, model_type='company', user=other_user
+        )
+        session_other.extract_columns()
+
+        row_list_url = reverse('api-importer-row-list')
+        mapping_list_url = reverse('api-importer-mapping-list')
+
+        # Non-staff: should only see rows/mappings from own session
+        self.user.is_staff = False
+        self.user.save()
+
+        rows = self.get(row_list_url).data
+        for row in rows:
+            self.assertEqual(row['session'], session_mine.pk)
+
+        mappings = self.get(mapping_list_url).data
+        for mapping in mappings:
+            self.assertEqual(mapping['session'], session_mine.pk)
+
+        # Detail endpoint: own session's row/mapping should be accessible
+        own_row = DataImportRow.objects.filter(session=session_mine).first()
+        other_row = DataImportRow.objects.filter(session=session_other).first()
+
+        if own_row:
+            self.get(
+                reverse('api-importer-row-detail', kwargs={'pk': own_row.pk}),
+                expected_code=200,
+            )
+        if other_row:
+            self.get(
+                reverse('api-importer-row-detail', kwargs={'pk': other_row.pk}),
+                expected_code=404,
+            )
+
+        own_mapping = DataImportColumnMap.objects.filter(session=session_mine).first()
+        other_mapping = DataImportColumnMap.objects.filter(
+            session=session_other
+        ).first()
+
+        if own_mapping:
+            self.get(
+                reverse('api-importer-mapping-detail', kwargs={'pk': own_mapping.pk}),
+                expected_code=200,
+            )
+        if other_mapping:
+            self.get(
+                reverse('api-importer-mapping-detail', kwargs={'pk': other_mapping.pk}),
+                expected_code=404,
+            )
+
+        # Staff user: should see rows/mappings from all sessions
+        self.user.is_staff = True
+        self.user.save()
+
+        all_row_pks = set(DataImportRow.objects.values_list('pk', flat=True))
+        response_rows = self.get(row_list_url).data
+        self.assertEqual({r['pk'] for r in response_rows}, all_row_pks)
+
+        all_mapping_pks = set(DataImportColumnMap.objects.values_list('pk', flat=True))
+        response_mappings = self.get(mapping_list_url).data
+        self.assertEqual({m['pk'] for m in response_mappings}, all_mapping_pks)
 
 
 class AdminTest(ImporterMixin, AdminTestCase):
