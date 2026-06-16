@@ -355,7 +355,13 @@ class DataImportSession(models.Model):
 
         if self.status != DataImportStatusCode.COMPLETE.value:
             self.status = DataImportStatusCode.COMPLETE.value
+
+            # persist historic count values for reporting purposes
+            self.completed_row_count_history = self.completed_row_count
+            self.row_count_history = self.row_count
+
             self.save()
+
             # Clear staging data now that all rows have been imported
             self.rows.all().delete()
             self.column_mappings.all().delete()
@@ -371,6 +377,14 @@ class DataImportSession(models.Model):
     def completed_row_count(self) -> int:
         """Return the number of completed rows for this session."""
         return self.rows.filter(complete=True).count()
+
+    # Historic values for reporting purposes
+    completed_row_count_history = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name=_('Completed Row Count History')
+    )
+    row_count_history = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name=_('Row Count History')
+    )
 
     def available_fields(self):
         """Returns information on the available fields.

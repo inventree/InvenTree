@@ -54,6 +54,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'field_filters',
             'row_count',
             'completed_row_count',
+            'completed_row_count_history',
+            'row_count_history',
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
