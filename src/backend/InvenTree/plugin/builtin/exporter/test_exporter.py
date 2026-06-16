@@ -60,7 +60,6 @@ class StocktakeExporterTest(InvenTreeAPITestCase):
                     'External Stock',
                     'Variant Stock',
                 ],
-                excluded_cols=['Active'],
             )
 
         # Finally, exclude pricing data entirely
