@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers, viewsets
+from rest_framework import permissions, serializers, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -356,7 +356,10 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.AllowAnyOrReadScope,
+    ]
 
     def not_found(self, request):
         """Return a 404 error."""

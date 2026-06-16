@@ -16,6 +16,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -32,16 +33,21 @@ export default function PartCategoryTemplateTable({
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
+  const { onTemplateValueChange, valueFieldConfig, reset } =
+    useDynamicParameterValueField(categoryId);
+
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
       category: {
         value: categoryId,
         disabled: categoryId !== undefined
       },
-      template: {},
-      default_value: {}
+      template: {
+        onValueChange: onTemplateValueChange
+      },
+      default_value: valueFieldConfig
     };
-  }, [categoryId]);
+  }, [categoryId, onTemplateValueChange, valueFieldConfig]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
@@ -49,6 +55,7 @@ export default function PartCategoryTemplateTable({
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 
@@ -57,6 +64,7 @@ export default function PartCategoryTemplateTable({
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 

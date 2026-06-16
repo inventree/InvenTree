@@ -1481,7 +1481,7 @@ class ObservabilityEndSerializer(serializers.Serializer):
 class ObservabilityEnd(CreateAPI):
     """Endpoint for observability tools."""
 
-    permission_classes = [AllowAnyOrReadScope]
+    permission_classes = [IsAuthenticated, AllowAnyOrReadScope]
     serializer_class = ObservabilityEndSerializer
 
     def create(self, request, *args, **kwargs):
