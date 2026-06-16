@@ -638,6 +638,7 @@ class DataImportRow(models.Model):
         default_values = self.default_values
 
         data = {}
+        extract_errors = {}
 
         self.related_field_map = {}
 
@@ -668,7 +669,11 @@ class DataImportRow(models.Model):
             elif field_type == 'date':
                 value = self.convert_date_field(value)
             elif field_type == 'related field':
-                value = self.lookup_related_field(field, value)
+                try:
+                    value = self.lookup_related_field(field, value)
+                except DjangoValidationError as exc:
+                    extract_errors[field] = exc.message
+                    continue
 
             # Use the default value, if provided
             if value is None and field in default_values:
@@ -709,6 +714,9 @@ class DataImportRow(models.Model):
             data[field] = value
 
         self.data = data
+
+        if extract_errors:
+            self.errors = extract_errors
 
         if commit:
             self.save()
@@ -796,8 +804,14 @@ class DataImportRow(models.Model):
             # We found a single valid match against the related model - return this value
             return valid_items.pop()
 
-        # We found either zero or multiple values matching against the related model
-        # Return the original value and let the serializer validation handle any errors against this field
+        if len(valid_items) > 1:
+            raise DjangoValidationError(
+                _(
+                    'Multiple matches found for value - please ensure the value is unique, or select a specific lookup field'
+                )
+            )
+
+        # No match found - return the original value and let the serializer validation handle it
         return value
 
     def serializer_data(self):
@@ -843,6 +857,10 @@ class DataImportRow(models.Model):
         if self.complete:
             # Row has already been completed
             return True
+
+        if self.errors:
+            # Errors were set during data extraction (e.g. ambiguous FK lookup)
+            return False
 
         if self.session.update_records:
             # Extract the ID field from the data
