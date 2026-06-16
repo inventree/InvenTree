@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 506
+INVENTREE_API_VERSION = 507
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v507 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
+    - Adds "completed_row_count_history" and "row_count_history" fields to the DataImportSession model, which store the historic count of completed rows and total rows for a data import session.
 
 v506 -> 2026-06-15 : https://github.com/inventree/InvenTree/pull/12168
     - Reduce permissions scope for a number of API endpoints, to improve security and ensure that users only have access to the data they need
