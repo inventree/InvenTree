@@ -123,6 +123,7 @@ export const test = baseTest.extend<{}, {}>({
         msg.text() !=
           'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
         !msg.text().includes('/this/does/not/exist.js') &&
+        !msg.text().includes('Error removing trace ID:') &&
         !url.includes('/this/does/not/exist.js') &&
         !url.includes('/api/user/me/') &&
         !url.includes('/api/user/me/token/') &&
