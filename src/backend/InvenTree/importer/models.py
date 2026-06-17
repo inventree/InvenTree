@@ -847,7 +847,7 @@ class DataImportRow(models.Model):
             else {}
         )
 
-        if lookup_field:
+        if lookup_field and type(lookup_field) is str:
             # A specific lookup field has been chosen by the user — query only that field
             try:
                 queryset = model.objects.filter(**{lookup_field: value}, **base_filters)
