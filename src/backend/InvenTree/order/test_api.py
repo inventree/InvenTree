@@ -2022,6 +2022,63 @@ class SalesOrderTest(OrderTest):
             reverse('api-so-detail', kwargs={'pk': 1}), ['customer_detail']
         )
 
+    def test_so_custom_status_query_count(self):
+        """Test that listing SalesOrders with custom statuses does not cause N+1 queries.
+
+        Ensures that resolving the 'status_text' field for custom status values
+        is O(1) in database queries, not O(N) relative to the number of results.
+        """
+        so_content_type = ContentType.objects.get_for_model(models.SalesOrder)
+
+        logical_keys = [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.IN_PROGRESS.value,
+            SalesOrderStatus.SHIPPED.value,
+            SalesOrderStatus.ON_HOLD.value,
+            SalesOrderStatus.COMPLETE.value,
+            SalesOrderStatus.CANCELLED.value,
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.IN_PROGRESS.value,
+            SalesOrderStatus.SHIPPED.value,
+            SalesOrderStatus.ON_HOLD.value,
+        ]
+
+        custom_statuses = [
+            InvenTreeCustomUserStateModel.objects.create(
+                key=2000 + i,
+                name=f'SoCustomStatus{i}',
+                label=f'SO Custom Status Label {i}',
+                color='secondary',
+                logical_key=logical_keys[i],
+                model=so_content_type,
+                reference_status='SalesOrderStatus',
+            )
+            for i in range(10)
+        ]
+
+        customer = Company.objects.filter(is_customer=True).first()
+        models.SalesOrder.objects.bulk_create([
+            models.SalesOrder(
+                customer=customer,
+                reference=f'SO-QTEST-{i}',
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(100)
+        ])
+
+        for limit in [1, 5, 10, 25, 50, 100]:
+            response = self.get(
+                self.LIST_URL,
+                data={'limit': limit},
+                expected_code=200,
+                max_query_count=50,
+            )
+
+            for result in response.data['results']:
+                self.assertIn('status_text', result)
+                self.assertIsNotNone(result['status_text'])
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
