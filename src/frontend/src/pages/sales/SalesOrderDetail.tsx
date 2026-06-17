@@ -605,7 +605,7 @@ export default function SalesOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status_custom_key}
+            status={order.status_custom_key || order.status}
             type={ModelType.salesorder}
             options={{ size: 'lg' }}
             key={order.pk}
