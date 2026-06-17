@@ -25,6 +25,7 @@ from pypdf import PdfWriter
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
+import InvenTree.ready
 import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
@@ -578,7 +579,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     raise ValidationError(msg)
                 except TemplateSyntaxError as e:
                     msg = _('Template syntax error')
-                    output.mark_failure(msg)
+                    output.mark_failure(str(e) or msg)
                     raise ValidationError(f'{msg}: {e!s}')
                 except ValidationError as e:
                     output.mark_failure(str(e))
@@ -617,7 +618,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         raise ValidationError(msg)
                     except TemplateSyntaxError as e:
                         msg = _('Template syntax error')
-                        output.mark_failure(error=_('Template syntax error'))
+                        output.mark_failure(error=str(e) or msg)
                         raise ValidationError(f'{msg}: {e!s}')
                     except ValidationError as e:
                         output.mark_failure(str(e))
@@ -641,7 +642,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         except Exception as exc:
             # Something went wrong during the report generation process
+            # Log the error, mark the output as failed, and move on
             log_report_error('ReportTemplate.print')
+
+            # If the error occurred in a worker thread, we do not want to raise an error,
+            # as this would cause the worker to retry the task indefinitely
+            if InvenTree.ready.isInWorkerThread():
+                return
 
             raise ValidationError({
                 'error': _('Error generating report'),
