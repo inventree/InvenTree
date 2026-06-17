@@ -184,7 +184,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.part_image(None)
 
         obj = Part.objects.create(name='test', description='test')
