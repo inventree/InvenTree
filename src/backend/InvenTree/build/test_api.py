@@ -11,7 +11,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import BomItem, Part
+from part.models import BomItem, BomItemSubstitute, Part
 from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockStatus
 
@@ -1624,6 +1624,175 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
+
+    def test_filter_available_allocated_consumed_mixed(self):
+        """Filter BuildLine objects with mixed allocated / consumed / stock states."""
+        assembly = Part.objects.create(
+            name='Available Filter Assembly',
+            description='Assembly for advanced available filter tests',
+            assembly=True,
+        )
+
+        components = [
+            Part.objects.create(
+                name=f'Available Filter Component {idx}',
+                description=f'Component {idx}',
+                component=True,
+            )
+            for idx in range(4)
+        ]
+
+        # The assembly uses 10x of each component
+        for component in components:
+            BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        # Create a new Build, requiring 100x of each component
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-9999',
+            quantity=10,
+            title='Available Filter Mixed',
+        )
+
+        lines = list(build.build_lines.order_by('pk'))
+        self.assertEqual(len(lines), 4)
+
+        # Build line quantity is 100 for each line (10 * build quantity 10)
+        for line in lines:
+            self.assertEqual(line.quantity, 100)
+
+        # Stock allocation baseline for each component
+        # Note: Quantity values will be updated later
+        stock_items = [
+            StockItem.objects.create(part=component, quantity=1)
+            for component in components
+        ]
+
+        # Line 0: AVAILABLE = True
+        # allocated = 30
+        # consumed = 0
+        # available = 70
+        BuildItem.objects.create(
+            build_line=lines[0], stock_item=stock_items[0], quantity=30
+        )
+
+        stock_items[0].quantity = 30 + 70
+        stock_items[0].save()
+
+        # Line 1: allocated 20 + consumed 30 + available stock 50 => available (100)
+        BuildItem.objects.create(
+            build_line=lines[1], stock_item=stock_items[1], quantity=20
+        )
+        lines[1].consumed = 30
+        lines[1].save()
+        stock_items[1].quantity = 20 + 50
+        stock_items[1].save()
+
+        # Line 2: allocated 0 + consumed 10 + available stock 50 => not available (60)
+        lines[2].consumed = 10
+        lines[2].save()
+        stock_items[2].quantity = 50
+        stock_items[2].save()
+
+        # Line 3: allocated 40 + consumed 0 + available stock 20 => not available (60)
+        BuildItem.objects.create(
+            build_line=lines[3], stock_item=stock_items[3], quantity=40
+        )
+        stock_items[3].quantity = 40 + 20
+        stock_items[3].save()
+
+        url = reverse('api-build-line-list')
+
+        response_true = self.get(url, {'build': build.pk, 'available': True})
+
+        response_false = self.get(url, {'build': build.pk, 'available': False})
+
+        true_ids = {item['pk'] for item in response_true.data}
+        false_ids = {item['pk'] for item in response_false.data}
+
+        self.assertSetEqual(true_ids, {lines[0].pk, lines[1].pk})
+        self.assertSetEqual(false_ids, {lines[2].pk, lines[3].pk})
+        self.assertSetEqual(true_ids | false_ids, {line.pk for line in lines})
+
+    def test_filter_available_substitute_and_variant_stock(self):
+        """Filter BuildLine objects where availability comes from substitute or variant stock."""
+        assembly = Part.objects.create(
+            name='Available Filter Sub/Var Assembly',
+            description='Assembly for substitute and variant availability tests',
+            assembly=True,
+        )
+
+        # Substitute path: line should pass via substitute stock
+        sub_master_ok = Part.objects.create(name='Sub Master OK', component=True)
+        sub_alt_ok = Part.objects.create(name='Sub Alt OK', component=True)
+
+        # Substitute path: line should fail (insufficient substitute stock)
+        sub_master_low = Part.objects.create(name='Sub Master Low', component=True)
+        sub_alt_low = Part.objects.create(name='Sub Alt Low', component=True)
+
+        # Variant path: line should pass via variant stock
+        var_parent_ok = Part.objects.create(
+            name='Variant Parent OK', component=True, is_template=True
+        )
+        var_child_ok = Part.objects.create(
+            name='Variant Child OK', component=True, variant_of=var_parent_ok
+        )
+
+        # Variant path: line should fail (insufficient variant stock)
+        var_parent_low = Part.objects.create(
+            name='Variant Parent Low', component=True, is_template=True
+        )
+        var_child_low = Part.objects.create(
+            name='Variant Child Low', component=True, variant_of=var_parent_low
+        )
+
+        bom_sub_ok = BomItem.objects.create(
+            part=assembly, sub_part=sub_master_ok, quantity=10, allow_variants=False
+        )
+        bom_sub_low = BomItem.objects.create(
+            part=assembly, sub_part=sub_master_low, quantity=10, allow_variants=False
+        )
+        bom_var_ok = BomItem.objects.create(
+            part=assembly, sub_part=var_parent_ok, quantity=10, allow_variants=True
+        )
+        bom_var_low = BomItem.objects.create(
+            part=assembly, sub_part=var_parent_low, quantity=10, allow_variants=True
+        )
+
+        BomItemSubstitute.objects.create(bom_item=bom_sub_ok, part=sub_alt_ok)
+        BomItemSubstitute.objects.create(bom_item=bom_sub_low, part=sub_alt_low)
+
+        # Build quantity 10 => each line requires 100 units
+        build = Build.objects.create(
+            part=assembly, reference='BO-0987', quantity=10, title='Available Sub/Var'
+        )
+
+        lines = list(build.build_lines.order_by('pk'))
+        self.assertEqual(len(lines), 4)
+
+        # Keep master parts at zero stock so only substitute/variant paths contribute
+        StockItem.objects.create(part=sub_alt_ok, quantity=100)
+        StockItem.objects.create(part=sub_alt_low, quantity=40)
+        StockItem.objects.create(part=var_child_ok, quantity=100)
+        StockItem.objects.create(part=var_child_low, quantity=40)
+
+        url = reverse('api-build-line-list')
+
+        response_true = self.get(url, {'build': build.pk, 'available': True})
+
+        response_false = self.get(url, {'build': build.pk, 'available': False})
+
+        pk_by_bom = {line.bom_item_id: line.pk for line in lines}
+
+        expected_true = {pk_by_bom[bom_sub_ok.pk], pk_by_bom[bom_var_ok.pk]}
+        expected_false = {pk_by_bom[bom_sub_low.pk], pk_by_bom[bom_var_low.pk]}
+
+        true_ids = {item['pk'] for item in response_true.data}
+        false_ids = {item['pk'] for item in response_false.data}
+
+        self.assertSetEqual(true_ids, expected_true)
+        self.assertSetEqual(false_ids, expected_false)
+        self.assertSetEqual(true_ids | false_ids, {line.pk for line in lines})
 
     def test_output_options(self):
         """Test output options  for the BuildLine endpoint."""
