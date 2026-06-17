@@ -80,6 +80,72 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
     def test_field_defaults(self):
         """Test default field values."""
 
+    def test_lookup_field_ambiguous_match(self):
+        """Test the behavior of lookup_related_field for ambiguous and pinned matches."""
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from part.models import Part, PartCategory
+
+        category = PartCategory.objects.create(
+            name='Test Category', description='Test category'
+        )
+
+        # Two parts which collide under different IMPORT_ID_FIELDS ('IPN' and 'name')
+        part_a = Part.objects.create(
+            category=category, name='Widget', description='desc', IPN='AMBIG-001'
+        )
+        Part.objects.create(
+            category=category, name='AMBIG-001', description='desc', IPN='WIDGET-002'
+        )
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        row = DataImportRow(session=session)
+        row.related_field_map = {}
+
+        # Auto-lookup (no pinned lookup field) raises, as the value matches two different parts
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', 'AMBIG-001')
+
+        # Pinning the lookup field to 'IPN' resolves the match unambiguously
+        result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='IPN')
+        self.assertEqual(result, part_a.pk)
+
+        # Pinning the lookup field to 'name' resolves to the *other* part
+        result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='name')
+        self.assertNotEqual(result, part_a.pk)
+
+    def test_lookup_field_validation(self):
+        """Test that DataImportColumnMap.clean() validates the lookup_field value."""
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        part_mapping = session.column_mappings.get(field='part')
+        quantity_mapping = session.column_mappings.get(field='quantity')
+
+        # Valid lookup field for a related (FK) field
+        part_mapping.lookup_field = 'IPN'
+        part_mapping.save()
+        part_mapping.refresh_from_db()
+        self.assertEqual(part_mapping.lookup_field, 'IPN')
+
+        # Invalid lookup field (not a valid IMPORT_ID_FIELDS option)
+        part_mapping.lookup_field = 'not_a_real_field'
+        with self.assertRaises(DjangoValidationError):
+            part_mapping.save()
+
+        # lookup_field cannot be set against a non-related field
+        quantity_mapping.lookup_field = 'IPN'
+        with self.assertRaises(DjangoValidationError):
+            quantity_mapping.save()
+
 
 class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
     """End-to-end tests for the importer API."""
@@ -180,6 +246,58 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
 
         # Check that there are new database records
         self.assertEqual(PartCategory.objects.count(), N + 4)
+
+    def test_column_mapping_lookup_field(self):
+        """Test that the 'lookup_field' option can be specified via the column-mapping API."""
+        f = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='stockitem', user=self.user
+        )
+
+        self.assignRole('stock.change')
+
+        # available_fields should expose the valid lookup field options for the 'part' FK field
+        session_detail = self.get(
+            reverse('api-import-session-detail', kwargs={'pk': session.pk})
+        ).data
+        part_field_info = session_detail['available_fields']['part']
+        self.assertIn('lookup_fields', part_field_info)
+        self.assertIn('IPN', part_field_info['lookup_fields'])
+        self.assertIn('name', part_field_info['lookup_fields'])
+        self.assertIn('pk', part_field_info['lookup_fields'])
+
+        part_mapping = session.column_mappings.get(field='part')
+        quantity_mapping = session.column_mappings.get(field='quantity')
+
+        mapping_url = reverse(
+            'api-importer-mapping-detail', kwargs={'pk': part_mapping.pk}
+        )
+
+        # Initially, no lookup field is set (defaults to 'auto')
+        data = self.get(mapping_url).data
+        self.assertIn(data['lookup_field'], [None, ''])
+
+        # Set a valid lookup field
+        data = self.patch(mapping_url, {'lookup_field': 'IPN'}, expected_code=200).data
+        self.assertEqual(data['lookup_field'], 'IPN')
+
+        # Confirm it persists
+        data = self.get(mapping_url).data
+        self.assertEqual(data['lookup_field'], 'IPN')
+
+        # An invalid lookup field is rejected
+        self.patch(mapping_url, {'lookup_field': 'not_a_real_field'}, expected_code=400)
+
+        # Clear the lookup field (revert to 'auto')
+        data = self.patch(mapping_url, {'lookup_field': None}, expected_code=200).data
+        self.assertIn(data['lookup_field'], [None, ''])
+
+        # lookup_field cannot be set against a non-related field
+        quantity_url = reverse(
+            'api-importer-mapping-detail', kwargs={'pk': quantity_mapping.pk}
+        )
+        self.patch(quantity_url, {'lookup_field': 'IPN'}, expected_code=400)
 
     def test_session_list(self):
         """Test API endpoint which details the list of import sessions."""
