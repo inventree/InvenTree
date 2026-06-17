@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-10 07:01+0000\n"
-"PO-Revision-Date: 2026-06-10 07:03\n"
+"POT-Creation-Date: 2026-06-14 02:13+0000\n"
+"PO-Revision-Date: 2026-06-14 02:16\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -272,15 +272,15 @@ msgstr "Pilihan tidak valid"
 #: common/models.py:2303 common/models.py:2428 common/models.py:2725
 #: common/serializers.py:672 generic/states/serializers.py:20
 #: machine/models.py:25 part/models.py:1105 plugin/models.py:54
-#: report/models.py:219 stock/models.py:87
+#: report/models.py:221 stock/models.py:87
 msgid "Name"
 msgstr "Nama"
 
 #: InvenTree/models.py:1045 build/models.py:265 common/models.py:180
 #: common/models.py:2435 common/models.py:2576 common/models.py:2740
 #: company/models.py:559 company/models.py:815 order/models.py:487
-#: order/models.py:2077 part/models.py:1128 report/models.py:225
-#: report/models.py:854 report/models.py:880
+#: order/models.py:2077 part/models.py:1128 report/models.py:227
+#: report/models.py:858 report/models.py:884
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:93
 msgid "Description"
@@ -1551,6 +1551,10 @@ msgstr ""
 msgid "User does not have permission to delete this attachment"
 msgstr ""
 
+#: common/api.py:1248 common/serializers.py:1009 common/serializers.py:1057
+msgid "Selection list is locked"
+msgstr ""
+
 #: common/currency.py:135
 msgid "Invalid currency code"
 msgstr ""
@@ -2168,7 +2172,7 @@ msgstr ""
 msgid "Selection list for this parameter"
 msgstr ""
 
-#: common/models.py:2770 part/models.py:3796 report/models.py:292
+#: common/models.py:2770 part/models.py:3796 report/models.py:296
 msgid "Enabled"
 msgstr "Aktif"
 
@@ -2200,8 +2204,8 @@ msgstr ""
 msgid "ID of the target model for this parameter"
 msgstr ""
 
-#: common/models.py:2979 common/setting/system.py:470 report/models.py:378
-#: report/models.py:699 report/serializers.py:117 report/serializers.py:158
+#: common/models.py:2979 common/setting/system.py:470 report/models.py:382
+#: report/models.py:703 report/serializers.py:117 report/serializers.py:158
 #: stock/serializers.py:246
 msgid "Template"
 msgstr ""
@@ -2519,8 +2523,8 @@ msgid "Filename"
 msgstr "Nama File"
 
 #: common/serializers.py:809 common/serializers.py:876
-#: common/serializers.py:952 importer/models.py:90 report/api.py:43
-#: report/models.py:298 report/serializers.py:71
+#: common/serializers.py:952 importer/models.py:90 report/api.py:42
+#: report/models.py:302 report/serializers.py:71
 msgid "Model Type"
 msgstr ""
 
@@ -2530,10 +2534,6 @@ msgstr ""
 
 #: common/serializers.py:933
 msgid "User does not have permission to create or edit parameters for this model"
-msgstr ""
-
-#: common/serializers.py:1008 common/serializers.py:1111
-msgid "Selection list is locked"
 msgstr ""
 
 #: common/setting/system.py:97
@@ -2668,9 +2668,9 @@ msgstr ""
 #: common/setting/system.py:320 common/setting/system.py:328
 #: common/setting/system.py:335 common/setting/system.py:344
 #: common/setting/system.py:353 common/setting/system.py:600
-#: common/setting/system.py:628 common/setting/system.py:747
-#: common/setting/system.py:1184 common/setting/system.py:1200
-#: common/setting/system.py:1217
+#: common/setting/system.py:628 common/setting/system.py:753
+#: common/setting/system.py:1190 common/setting/system.py:1206
+#: common/setting/system.py:1223
 msgid "days"
 msgstr "Hari"
 
@@ -3128,675 +3128,683 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
 #: common/setting/system.py:681
-msgid "Log Report Errors"
+msgid "Report URL Fetching"
 msgstr ""
 
 #: common/setting/system.py:682
+msgid "Allow fetching of remote URLs when generating reports"
+msgstr ""
+
+#: common/setting/system.py:687
+msgid "Log Report Errors"
+msgstr ""
+
+#: common/setting/system.py:688
 msgid "Log errors which occur when generating reports"
 msgstr ""
 
-#: common/setting/system.py:687 plugin/builtin/labels/label_sheet.py:29
-#: report/models.py:386
+#: common/setting/system.py:693 plugin/builtin/labels/label_sheet.py:30
+#: report/models.py:390
 msgid "Page Size"
 msgstr "Ukuran Halaman"
 
-#: common/setting/system.py:688
+#: common/setting/system.py:694
 msgid "Default page size for PDF reports"
 msgstr ""
 
-#: common/setting/system.py:693
+#: common/setting/system.py:699
 msgid "Enforce Parameter Units"
 msgstr ""
 
-#: common/setting/system.py:695
+#: common/setting/system.py:701
 msgid "If units are provided, parameter values must match the specified units"
 msgstr ""
 
-#: common/setting/system.py:701
+#: common/setting/system.py:707
 msgid "Globally Unique Serials"
 msgstr ""
 
-#: common/setting/system.py:702
+#: common/setting/system.py:708
 msgid "Serial numbers for stock items must be globally unique"
 msgstr ""
 
-#: common/setting/system.py:707
+#: common/setting/system.py:713
 msgid "Delete Depleted Stock"
 msgstr ""
 
-#: common/setting/system.py:708
+#: common/setting/system.py:714
 msgid "Determines default behavior when a stock item is depleted"
 msgstr ""
 
-#: common/setting/system.py:713
+#: common/setting/system.py:719
 msgid "Allow Edit Serial Number"
 msgstr ""
 
-#: common/setting/system.py:714
+#: common/setting/system.py:720
 msgid "Allow editing of serial number for stock items"
 msgstr ""
 
-#: common/setting/system.py:719
+#: common/setting/system.py:725
 msgid "Delete Serialized Stock"
 msgstr ""
 
-#: common/setting/system.py:720
+#: common/setting/system.py:726
 msgid "Allow deletion of stock items which have a serial number"
 msgstr ""
 
-#: common/setting/system.py:725
+#: common/setting/system.py:731
 msgid "Batch Code Template"
 msgstr ""
 
-#: common/setting/system.py:726
+#: common/setting/system.py:732
 msgid "Template for generating default batch codes for stock items"
 msgstr ""
 
-#: common/setting/system.py:730
+#: common/setting/system.py:736
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/setting/system.py:731
+#: common/setting/system.py:737
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/setting/system.py:736
+#: common/setting/system.py:742
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/setting/system.py:737
+#: common/setting/system.py:743
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/setting/system.py:742
+#: common/setting/system.py:748
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/setting/system.py:744
+#: common/setting/system.py:750
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/setting/system.py:751
+#: common/setting/system.py:757
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/setting/system.py:752
+#: common/setting/system.py:758
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/setting/system.py:757
+#: common/setting/system.py:763
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/setting/system.py:758
+#: common/setting/system.py:764
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/setting/system.py:763
+#: common/setting/system.py:769
 msgid "Stock Location Default Icon"
 msgstr ""
 
-#: common/setting/system.py:764
+#: common/setting/system.py:770
 msgid "Stock location default icon (empty means no icon)"
 msgstr ""
 
-#: common/setting/system.py:769
+#: common/setting/system.py:775
 msgid "Show Installed Stock Items"
 msgstr ""
 
-#: common/setting/system.py:770
+#: common/setting/system.py:776
 msgid "Display installed stock items in stock tables"
 msgstr ""
 
-#: common/setting/system.py:775
+#: common/setting/system.py:781
 msgid "Check BOM when installing items"
 msgstr ""
 
-#: common/setting/system.py:777
+#: common/setting/system.py:783
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr ""
 
-#: common/setting/system.py:783
+#: common/setting/system.py:789
 msgid "Allow Out of Stock Transfer"
 msgstr ""
 
-#: common/setting/system.py:785
+#: common/setting/system.py:791
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr ""
 
-#: common/setting/system.py:791
+#: common/setting/system.py:797
 msgid "Build Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:792
+#: common/setting/system.py:798
 msgid "Required pattern for generating Build Order reference field"
 msgstr ""
 
-#: common/setting/system.py:797 common/setting/system.py:865
-#: common/setting/system.py:885 common/setting/system.py:935
-#: common/setting/system.py:957
+#: common/setting/system.py:803 common/setting/system.py:871
+#: common/setting/system.py:891 common/setting/system.py:941
+#: common/setting/system.py:963
 msgid "Require Responsible Owner"
 msgstr ""
 
-#: common/setting/system.py:798 common/setting/system.py:866
-#: common/setting/system.py:886 common/setting/system.py:936
-#: common/setting/system.py:958
+#: common/setting/system.py:804 common/setting/system.py:872
+#: common/setting/system.py:892 common/setting/system.py:942
+#: common/setting/system.py:964
 msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
-#: common/setting/system.py:803
+#: common/setting/system.py:809
 msgid "Require Active Part"
 msgstr ""
 
-#: common/setting/system.py:804
+#: common/setting/system.py:810
 msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
-#: common/setting/system.py:809
+#: common/setting/system.py:815
 msgid "Require Locked Part"
 msgstr ""
 
-#: common/setting/system.py:810
+#: common/setting/system.py:816
 msgid "Prevent build order creation for unlocked parts"
 msgstr ""
 
-#: common/setting/system.py:815
+#: common/setting/system.py:821
 msgid "Require Valid BOM"
 msgstr ""
 
-#: common/setting/system.py:816
+#: common/setting/system.py:822
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
-#: common/setting/system.py:821
+#: common/setting/system.py:827
 msgid "Require Closed Child Orders"
 msgstr ""
 
-#: common/setting/system.py:823
+#: common/setting/system.py:829
 msgid "Prevent build order completion until all child orders are closed"
 msgstr ""
 
-#: common/setting/system.py:829
+#: common/setting/system.py:835
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:830
+#: common/setting/system.py:836
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:835
+#: common/setting/system.py:841
 msgid "Require External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:837
+#: common/setting/system.py:843
 msgid "Require an external build order when ordering assembled parts from an external supplier"
 msgstr ""
 
-#: common/setting/system.py:843
+#: common/setting/system.py:849
 msgid "Block Until Tests Pass"
 msgstr ""
 
-#: common/setting/system.py:845
+#: common/setting/system.py:851
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr ""
 
-#: common/setting/system.py:851
+#: common/setting/system.py:857
 msgid "Enable Return Orders"
 msgstr ""
 
-#: common/setting/system.py:852
+#: common/setting/system.py:858
 msgid "Enable return order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:857
+#: common/setting/system.py:863
 msgid "Return Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:859
+#: common/setting/system.py:865
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
-#: common/setting/system.py:871
+#: common/setting/system.py:877
 msgid "Edit Completed Return Orders"
 msgstr ""
 
-#: common/setting/system.py:873
+#: common/setting/system.py:879
 msgid "Allow editing of return orders after they have been completed"
 msgstr ""
 
-#: common/setting/system.py:879
+#: common/setting/system.py:885
 msgid "Sales Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:880
+#: common/setting/system.py:886
 msgid "Required pattern for generating Sales Order reference field"
 msgstr ""
 
-#: common/setting/system.py:891
+#: common/setting/system.py:897
 msgid "Sales Order Default Shipment"
 msgstr ""
 
-#: common/setting/system.py:892
+#: common/setting/system.py:898
 msgid "Enable creation of default shipment with sales orders"
 msgstr ""
 
-#: common/setting/system.py:897
+#: common/setting/system.py:903
 msgid "Edit Completed Sales Orders"
 msgstr ""
 
-#: common/setting/system.py:899
+#: common/setting/system.py:905
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
-#: common/setting/system.py:905
+#: common/setting/system.py:911
 msgid "Shipment Requires Checking"
 msgstr ""
 
-#: common/setting/system.py:907
+#: common/setting/system.py:913
 msgid "Prevent completion of shipments until items have been checked"
 msgstr ""
 
-#: common/setting/system.py:913
+#: common/setting/system.py:919
 msgid "Mark Shipped Orders as Complete"
 msgstr ""
 
-#: common/setting/system.py:915
+#: common/setting/system.py:921
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr ""
 
-#: common/setting/system.py:921
+#: common/setting/system.py:927
 msgid "Enable Transfer Orders"
 msgstr ""
 
-#: common/setting/system.py:922
+#: common/setting/system.py:928
 msgid "Enable transfer order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:927
+#: common/setting/system.py:933
 msgid "Transfer Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:929
+#: common/setting/system.py:935
 msgid "Required pattern for generating Transfer Order reference field"
 msgstr ""
 
-#: common/setting/system.py:941
+#: common/setting/system.py:947
 msgid "Block Incomplete Item Tests"
 msgstr ""
 
-#: common/setting/system.py:943
+#: common/setting/system.py:949
 msgid "Prevent allocation of stock items to sales orders if required item tests are incomplete"
 msgstr ""
 
-#: common/setting/system.py:949
+#: common/setting/system.py:955
 msgid "Purchase Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:951
+#: common/setting/system.py:957
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr ""
 
-#: common/setting/system.py:963
+#: common/setting/system.py:969
 msgid "Edit Completed Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:965
+#: common/setting/system.py:971
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr ""
 
-#: common/setting/system.py:971
+#: common/setting/system.py:977
 msgid "Convert Currency"
 msgstr ""
 
-#: common/setting/system.py:972
+#: common/setting/system.py:978
 msgid "Convert item value to base currency when receiving stock"
 msgstr ""
 
-#: common/setting/system.py:977
+#: common/setting/system.py:983
 msgid "Auto Complete Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:979
+#: common/setting/system.py:985
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr ""
 
-#: common/setting/system.py:986
+#: common/setting/system.py:992
 msgid "Enable password forgot"
 msgstr ""
 
-#: common/setting/system.py:987
+#: common/setting/system.py:993
 msgid "Enable password forgot function on the login pages"
 msgstr ""
 
-#: common/setting/system.py:992
+#: common/setting/system.py:998
 msgid "Enable registration"
 msgstr ""
 
-#: common/setting/system.py:993
+#: common/setting/system.py:999
 msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
-#: common/setting/system.py:998
+#: common/setting/system.py:1004
 msgid "Enable SSO"
 msgstr ""
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1005
 msgid "Enable SSO on the login pages"
 msgstr ""
 
-#: common/setting/system.py:1004
+#: common/setting/system.py:1010
 msgid "Enable SSO registration"
 msgstr ""
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1012
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr ""
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1018
 msgid "Enable SSO group sync"
 msgstr ""
 
-#: common/setting/system.py:1014
+#: common/setting/system.py:1020
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1026
 msgid "SSO group key"
 msgstr ""
 
-#: common/setting/system.py:1021
+#: common/setting/system.py:1027
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1032
 msgid "SSO group map"
 msgstr ""
 
-#: common/setting/system.py:1028
+#: common/setting/system.py:1034
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr ""
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1040
 msgid "Remove groups outside of SSO"
 msgstr ""
 
-#: common/setting/system.py:1036
+#: common/setting/system.py:1042
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr ""
 
-#: common/setting/system.py:1042
+#: common/setting/system.py:1048
 msgid "Email required"
 msgstr "Surel diperlukan"
 
-#: common/setting/system.py:1043
+#: common/setting/system.py:1049
 msgid "Require user to supply mail on signup"
 msgstr ""
 
-#: common/setting/system.py:1048
+#: common/setting/system.py:1054
 msgid "Auto-fill SSO users"
 msgstr ""
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1055
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
-#: common/setting/system.py:1054
+#: common/setting/system.py:1060
 msgid "Mail twice"
 msgstr ""
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1061
 msgid "On signup ask users twice for their mail"
 msgstr ""
 
-#: common/setting/system.py:1060
+#: common/setting/system.py:1066
 msgid "Password twice"
 msgstr ""
 
-#: common/setting/system.py:1061
+#: common/setting/system.py:1067
 msgid "On signup ask users twice for their password"
 msgstr ""
 
-#: common/setting/system.py:1066
+#: common/setting/system.py:1072
 msgid "Allowed domains"
 msgstr ""
 
-#: common/setting/system.py:1068
+#: common/setting/system.py:1074
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr ""
 
-#: common/setting/system.py:1074
+#: common/setting/system.py:1080
 msgid "Group on signup"
 msgstr ""
 
-#: common/setting/system.py:1076
+#: common/setting/system.py:1082
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr ""
 
-#: common/setting/system.py:1082
+#: common/setting/system.py:1088
 msgid "Enforce MFA"
 msgstr ""
 
-#: common/setting/system.py:1083
+#: common/setting/system.py:1089
 msgid "Users must use multifactor security."
 msgstr ""
 
-#: common/setting/system.py:1088
+#: common/setting/system.py:1094
 msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
 msgstr ""
 
-#: common/setting/system.py:1093
+#: common/setting/system.py:1099
 msgid "Check plugins on startup"
 msgstr ""
 
-#: common/setting/system.py:1095
+#: common/setting/system.py:1101
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr ""
 
-#: common/setting/system.py:1102
+#: common/setting/system.py:1108
 msgid "Check for plugin updates"
 msgstr ""
 
-#: common/setting/system.py:1103
+#: common/setting/system.py:1109
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr ""
 
-#: common/setting/system.py:1109
+#: common/setting/system.py:1115
 msgid "Enable URL integration"
 msgstr ""
 
-#: common/setting/system.py:1110
+#: common/setting/system.py:1116
 msgid "Enable plugins to add URL routes"
 msgstr ""
 
-#: common/setting/system.py:1116
+#: common/setting/system.py:1122
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/setting/system.py:1117
+#: common/setting/system.py:1123
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/setting/system.py:1123
+#: common/setting/system.py:1129
 msgid "Enable app integration"
 msgstr ""
 
-#: common/setting/system.py:1124
+#: common/setting/system.py:1130
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/setting/system.py:1130
+#: common/setting/system.py:1136
 msgid "Enable schedule integration"
 msgstr ""
 
-#: common/setting/system.py:1131
+#: common/setting/system.py:1137
 msgid "Enable plugins to run scheduled tasks"
 msgstr ""
 
-#: common/setting/system.py:1137
+#: common/setting/system.py:1143
 msgid "Enable event integration"
 msgstr ""
 
-#: common/setting/system.py:1138
+#: common/setting/system.py:1144
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/setting/system.py:1144
+#: common/setting/system.py:1150
 msgid "Enable interface integration"
 msgstr "Aktifkan Integrasi Antarmuka"
 
-#: common/setting/system.py:1145
+#: common/setting/system.py:1151
 msgid "Enable plugins to integrate into the user interface"
 msgstr ""
 
-#: common/setting/system.py:1151
+#: common/setting/system.py:1157
 msgid "Enable mail integration"
 msgstr ""
 
-#: common/setting/system.py:1152
+#: common/setting/system.py:1158
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr ""
 
-#: common/setting/system.py:1158
+#: common/setting/system.py:1164
 msgid "Enable project codes"
 msgstr ""
 
-#: common/setting/system.py:1159
+#: common/setting/system.py:1165
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/setting/system.py:1164
+#: common/setting/system.py:1170
 msgid "Enable Stocktake"
 msgstr ""
 
-#: common/setting/system.py:1166
+#: common/setting/system.py:1172
 msgid "Enable functionality for recording historical stock levels and value"
 msgstr ""
 
-#: common/setting/system.py:1172
+#: common/setting/system.py:1178
 msgid "Exclude External Locations"
 msgstr ""
 
-#: common/setting/system.py:1174
+#: common/setting/system.py:1180
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr ""
 
-#: common/setting/system.py:1180
+#: common/setting/system.py:1186
 msgid "Automatic Stocktake Period"
 msgstr ""
 
-#: common/setting/system.py:1181
+#: common/setting/system.py:1187
 msgid "Number of days between automatic stocktake recording"
 msgstr ""
 
-#: common/setting/system.py:1187
+#: common/setting/system.py:1193
 msgid "Delete Old Stocktake Entries"
 msgstr ""
 
-#: common/setting/system.py:1189
+#: common/setting/system.py:1195
 msgid "Delete stocktake entries older than the specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1195
+#: common/setting/system.py:1201
 msgid "Stocktake Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1197
+#: common/setting/system.py:1203
 msgid "Stocktake entries will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1204
+#: common/setting/system.py:1210
 msgid "Delete Old Stock Tracking Entries"
 msgstr ""
 
-#: common/setting/system.py:1206
+#: common/setting/system.py:1212
 msgid "Delete stock tracking entries older than the specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1212
+#: common/setting/system.py:1218
 msgid "Stock Tracking Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1214
+#: common/setting/system.py:1220
 msgid "Stock tracking entries will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1221
+#: common/setting/system.py:1227
 msgid "Display Users full names"
 msgstr ""
 
-#: common/setting/system.py:1222
+#: common/setting/system.py:1228
 msgid "Display Users full names instead of usernames"
 msgstr ""
 
-#: common/setting/system.py:1227
+#: common/setting/system.py:1233
 msgid "Display User Profiles"
 msgstr ""
 
-#: common/setting/system.py:1228
+#: common/setting/system.py:1234
 msgid "Display Users Profiles on their profile page"
 msgstr ""
 
-#: common/setting/system.py:1233
+#: common/setting/system.py:1239
 msgid "Week Starts On"
 msgstr ""
 
-#: common/setting/system.py:1234
+#: common/setting/system.py:1240
 msgid "Starting day of the week, for display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1237
+#: common/setting/system.py:1243
 msgid "Sunday"
 msgstr ""
 
-#: common/setting/system.py:1238
+#: common/setting/system.py:1244
 msgid "Monday"
 msgstr ""
 
-#: common/setting/system.py:1239
+#: common/setting/system.py:1245
 msgid "Tuesday"
 msgstr ""
 
-#: common/setting/system.py:1240
+#: common/setting/system.py:1246
 msgid "Wednesday"
 msgstr ""
 
-#: common/setting/system.py:1241
+#: common/setting/system.py:1247
 msgid "Thursday"
 msgstr ""
 
-#: common/setting/system.py:1242
+#: common/setting/system.py:1248
 msgid "Friday"
 msgstr ""
 
-#: common/setting/system.py:1243
+#: common/setting/system.py:1249
 msgid "Saturday"
 msgstr ""
 
-#: common/setting/system.py:1247
+#: common/setting/system.py:1253
 msgid "Calendar Horizon"
 msgstr ""
 
-#: common/setting/system.py:1249
+#: common/setting/system.py:1255
 msgid "Number of months into the future to display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1253
+#: common/setting/system.py:1259
 msgid "months"
 msgstr ""
 
-#: common/setting/system.py:1256
+#: common/setting/system.py:1262
 msgid "Enable Test Station Data"
 msgstr ""
 
-#: common/setting/system.py:1257
+#: common/setting/system.py:1263
 msgid "Enable test station data collection for test results"
 msgstr ""
 
-#: common/setting/system.py:1262
+#: common/setting/system.py:1268
 msgid "Enable Machine Ping"
 msgstr ""
 
-#: common/setting/system.py:1264
+#: common/setting/system.py:1270
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr ""
 
@@ -6301,7 +6309,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:1163 report/models.py:231
+#: part/models.py:1163 report/models.py:233
 msgid "Revision"
 msgstr ""
 
@@ -7529,7 +7537,7 @@ msgstr ""
 #: plugin/builtin/integration/part_notifications.py:21
 #: plugin/builtin/labels/inventree_label.py:27
 #: plugin/builtin/labels/inventree_machine.py:64
-#: plugin/builtin/labels/label_sheet.py:72
+#: plugin/builtin/labels/label_sheet.py:73
 #: plugin/builtin/suppliers/digikey.py:20 plugin/builtin/suppliers/lcsc.py:22
 #: plugin/builtin/suppliers/mouser.py:20 plugin/builtin/suppliers/tme.py:22
 msgid "InvenTree contributors"
@@ -7882,12 +7890,12 @@ msgid "Provides native support for printing PDF labels"
 msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:33
-#: plugin/builtin/labels/label_sheet.py:78
+#: plugin/builtin/labels/label_sheet.py:79
 msgid "Debug mode"
 msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:34
-#: plugin/builtin/labels/label_sheet.py:79
+#: plugin/builtin/labels/label_sheet.py:80
 msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr ""
 
@@ -7907,55 +7915,55 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:30
+#: plugin/builtin/labels/label_sheet.py:31
 msgid "Page size for the label sheet"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:35
+#: plugin/builtin/labels/label_sheet.py:36
 msgid "Skip Labels"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:36
+#: plugin/builtin/labels/label_sheet.py:37
 msgid "Skip this number of labels when printing label sheets"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:43
+#: plugin/builtin/labels/label_sheet.py:44
 msgid "Border"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:44
+#: plugin/builtin/labels/label_sheet.py:45
 msgid "Print a border around each label"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:49 report/models.py:392
+#: plugin/builtin/labels/label_sheet.py:50 report/models.py:396
 msgid "Landscape"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:50
+#: plugin/builtin/labels/label_sheet.py:51
 msgid "Print the label sheet in landscape mode"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:55
+#: plugin/builtin/labels/label_sheet.py:56
 msgid "Page Margin"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:56
+#: plugin/builtin/labels/label_sheet.py:57
 msgid "Margin around the page in mm"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:69
+#: plugin/builtin/labels/label_sheet.py:70
 msgid "InvenTree Label Sheet Printer"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:70
+#: plugin/builtin/labels/label_sheet.py:71
 msgid "Arrays multiple labels onto a single sheet"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:122
+#: plugin/builtin/labels/label_sheet.py:123
 msgid "Label is too large for page size"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:161
+#: plugin/builtin/labels/label_sheet.py:162
 msgid "No labels were generated"
 msgstr ""
 
@@ -8376,27 +8384,27 @@ msgstr ""
 msgid "The user for which this setting applies"
 msgstr ""
 
-#: report/api.py:46 report/serializers.py:125 report/serializers.py:175
+#: report/api.py:45 report/serializers.py:125 report/serializers.py:175
 msgid "Items"
 msgstr ""
 
-#: report/api.py:117
+#: report/api.py:116
 msgid "Plugin not found"
 msgstr ""
 
-#: report/api.py:119
+#: report/api.py:118
 msgid "Plugin does not support label printing"
 msgstr ""
 
-#: report/api.py:171 report/api.py:280
+#: report/api.py:170 report/api.py:279
 msgid "You do not have permission to view this model type"
 msgstr ""
 
-#: report/api.py:175
+#: report/api.py:174
 msgid "Invalid label dimensions"
 msgstr ""
 
-#: report/api.py:193 report/api.py:291
+#: report/api.py:192 report/api.py:290
 msgid "No valid items provided to template"
 msgstr ""
 
@@ -8416,136 +8424,136 @@ msgstr "Legal"
 msgid "Letter"
 msgstr "Letter"
 
-#: report/models.py:128
+#: report/models.py:130
 msgid "Template file with this name already exists"
 msgstr ""
 
-#: report/models.py:220
+#: report/models.py:222
 msgid "Template name"
 msgstr ""
 
-#: report/models.py:226
+#: report/models.py:228
 msgid "Template description"
 msgstr ""
 
-#: report/models.py:232
+#: report/models.py:234
 msgid "Revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:238
+#: report/models.py:240
 msgid "Attach to Model on Print"
 msgstr ""
 
-#: report/models.py:240
+#: report/models.py:242
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr ""
 
-#: report/models.py:286
+#: report/models.py:290
 msgid "Filename Pattern"
 msgstr ""
 
-#: report/models.py:287
+#: report/models.py:291
 msgid "Pattern for generating filenames"
 msgstr ""
 
-#: report/models.py:292
+#: report/models.py:296
 msgid "Template is enabled"
 msgstr ""
 
-#: report/models.py:299
+#: report/models.py:303
 msgid "Target model type for template"
 msgstr ""
 
-#: report/models.py:319
+#: report/models.py:323
 msgid "Filters"
 msgstr ""
 
-#: report/models.py:320
+#: report/models.py:324
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:379 report/models.py:700
+#: report/models.py:383 report/models.py:704
 msgid "Template file"
 msgstr ""
 
-#: report/models.py:387
+#: report/models.py:391
 msgid "Page size for PDF reports"
 msgstr ""
 
-#: report/models.py:393
+#: report/models.py:397
 msgid "Render report in landscape orientation"
 msgstr ""
 
-#: report/models.py:398
+#: report/models.py:402
 msgid "Merge"
 msgstr ""
 
-#: report/models.py:399
+#: report/models.py:403
 msgid "Render a single report against selected items"
 msgstr ""
 
-#: report/models.py:466
+#: report/models.py:470
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr ""
 
-#: report/models.py:576 report/models.py:615 report/models.py:616
+#: report/models.py:580 report/models.py:619 report/models.py:620
 msgid "Template syntax error"
 msgstr ""
 
-#: report/models.py:583 report/models.py:622
+#: report/models.py:587 report/models.py:626
 msgid "Error rendering report"
 msgstr ""
 
-#: report/models.py:643
+#: report/models.py:647
 msgid "Error generating report"
 msgstr ""
 
-#: report/models.py:674
+#: report/models.py:678
 msgid "Error merging report outputs"
 msgstr ""
 
-#: report/models.py:706
+#: report/models.py:710
 msgid "Width [mm]"
 msgstr ""
 
-#: report/models.py:707
+#: report/models.py:711
 msgid "Label width, specified in mm"
 msgstr ""
 
-#: report/models.py:713
+#: report/models.py:717
 msgid "Height [mm]"
 msgstr ""
 
-#: report/models.py:714
+#: report/models.py:718
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: report/models.py:828
+#: report/models.py:832
 msgid "Error printing labels"
 msgstr ""
 
-#: report/models.py:847
+#: report/models.py:851
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:848
+#: report/models.py:852
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:855
+#: report/models.py:859
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:873
+#: report/models.py:877
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:874
+#: report/models.py:878
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:881
+#: report/models.py:885
 msgid "Asset file description"
 msgstr ""
 
@@ -8701,31 +8709,31 @@ msgstr ""
 msgid "Transferred"
 msgstr ""
 
-#: report/templatetags/report.py:166
+#: report/templatetags/report.py:167
 msgid "Invalid media file path"
 msgstr ""
 
-#: report/templatetags/report.py:185
+#: report/templatetags/report.py:186
 msgid "Invalid static file path"
 msgstr ""
 
-#: report/templatetags/report.py:287
+#: report/templatetags/report.py:288
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:345 report/templatetags/report.py:461
+#: report/templatetags/report.py:354 report/templatetags/report.py:470
 msgid "Image file not found"
 msgstr ""
 
-#: report/templatetags/report.py:430
+#: report/templatetags/report.py:439
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:455
+#: report/templatetags/report.py:464
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:553
+#: report/templatetags/report.py:562
 msgid "company_image tag requires a Company instance"
 msgstr ""
 

@@ -17,18 +17,22 @@ export type InvenTreeHotkeyItem = [
   HotkeyItemOptions?
 ];
 
-export function useInvenTreeHotkeys(hotkeys: InvenTreeHotkeyItem[]) {
-  // Register the hotkeys using the Mantine hook
-  useHotkeys(
-    hotkeys.map(([key, _, handler, options]) => [key, handler, options])
-  );
-
-  // register to helper state to store hotkeys
-  // This allows us to display the hotkeys in the UI
-  const keyelems: [string, string][] = hotkeys.map(([key, description]) => [
+export function useInvenTreeHotkeys(_keys: InvenTreeHotkeyItem[]) {
+  const keyelems: [string, string][] = _keys.map(([key, description]) => [
     key,
     description
   ]);
+
+  const mappedHotkeys: [
+    string,
+    (event: KeyboardEvent) => void,
+    HotkeyItemOptions?
+  ][] = _keys.map(([key, _, handler, options]) => [key, handler, options]);
+  // Register the hotkeys using the Mantine hook
+  useHotkeys(mappedHotkeys);
+
+  // register to helper state to store hotkeys
+  // This allows us to display the hotkeys in the UI
   useEffect(() => {
     useLocalLibState.getState().addHotkeys(keyelems);
     return () =>

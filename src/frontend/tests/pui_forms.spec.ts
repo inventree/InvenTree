@@ -32,7 +32,7 @@ test('Forms - Hover', async ({ browser }) => {
   await page.getByLabel('related-field-supplier').fill('mou');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
-  await page.getByRole('option', { name: 'Mouser Electronics' }).hover();
+  await page.getByText('Mouser Electronics').first().hover();
 
   // Check for hover info
   await page.getByText('Company[ID: 2]').waitFor();

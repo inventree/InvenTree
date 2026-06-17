@@ -1,6 +1,7 @@
 import type {
   CalendarOptions,
   DatesSetArg,
+  DayCellContentArg,
   EventContentArg
 } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
@@ -40,6 +41,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -167,8 +169,8 @@ export default function Calendar({
 
       return (
         <HoverCard
-          openDelay={300}
-          closeDelay={100}
+          openDelay={1000}
+          closeDelay={50}
           shadow='md'
           position='top-start'
         >
@@ -180,6 +182,59 @@ export default function Calendar({
       );
     },
     [calendarProps.eventContent, eventTooltipContent]
+  );
+
+  const scrollBoxRef = useRef<HTMLDivElement>(null);
+
+  const updateMonthFromScroll = useCallback(() => {
+    if (!scrollBoxRef.current) return;
+    const container = scrollBoxRef.current;
+    const containerTop = container.getBoundingClientRect().top;
+
+    const cells = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        '.fc-daygrid-day[data-date$="-01"]'
+      )
+    );
+
+    let dateStr: string | null = null;
+    for (const cell of cells) {
+      if (cell.getBoundingClientRect().top <= containerTop + 1) {
+        dateStr = cell.getAttribute('data-date');
+      } else {
+        break;
+      }
+    }
+    if (!dateStr) dateStr = cells[0]?.getAttribute('data-date') ?? null;
+
+    if (dateStr) {
+      const date = new Date(`${dateStr}T12:00:00`);
+      state.setMonthName(
+        new Intl.DateTimeFormat(calendarLocale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(date)
+      );
+    }
+  }, [calendarLocale, state.setMonthName]);
+
+  const monthDayCellClassNames = useCallback(
+    (arg: DayCellContentArg): string[] => {
+      const monthClass =
+        arg.date.getMonth() % 2 === 0
+          ? 'fc-day-month-even'
+          : 'fc-day-month-odd';
+      const existing = calendarProps.dayCellClassNames;
+      if (!existing) return [monthClass];
+      if (typeof existing === 'function') {
+        const result = existing(arg);
+        const arr = Array.isArray(result) ? result : result ? [result] : [];
+        return [monthClass, ...arr];
+      }
+      if (Array.isArray(existing)) return [monthClass, ...existing];
+      return [monthClass, existing as string];
+    },
+    [calendarProps.dayCellClassNames]
   );
 
   return (
@@ -283,7 +338,19 @@ export default function Calendar({
             )}
           </Group>
         </Group>
-        <Box pos='relative'>
+        <Box
+          ref={scrollBoxRef}
+          pos='relative'
+          onScroll={isScrollView ? updateMonthFromScroll : undefined}
+          {...(isScrollView && {
+            style: {
+              height: 'calc(100vh - 160px)',
+              overflowY: 'scroll',
+              scrollbarGutter: 'stable',
+              paddingRight: '12px'
+            }
+          })}
+        >
           <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
@@ -296,7 +363,7 @@ export default function Calendar({
                   duration: { months: horizonMonths }
                 }
               },
-              height: 'calc(100vh - 160px)'
+              height: 'auto'
             })}
             locales={allLocales}
             locale={calendarLocale}
@@ -309,6 +376,11 @@ export default function Calendar({
             {...calendarProps}
             datesSet={datesSet}
             eventContent={wrappedEventContent}
+            dayCellClassNames={
+              isScrollView
+                ? monthDayCellClassNames
+                : calendarProps.dayCellClassNames
+            }
           />
         </Box>
       </Stack>

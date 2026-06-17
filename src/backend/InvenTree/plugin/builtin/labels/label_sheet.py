@@ -15,6 +15,7 @@ from common.models import DataOutput
 from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
+from report.fetcher import InvenTreeURLFetcher
 from report.models import LabelTemplate
 
 logger = structlog.get_logger('inventree')
@@ -168,7 +169,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             generated_file = ContentFile(html_data, 'labels.html')
         else:
             # Render HTML to PDF
-            html = weasyprint.HTML(string=html_data)
+            html = weasyprint.HTML(string=html_data, url_fetcher=InvenTreeURLFetcher())
             document = html.render().write_pdf()
             generated_file = ContentFile(document, 'labels.pdf')
 
