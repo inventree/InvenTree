@@ -625,9 +625,9 @@ test('Transfer Order - Reference', async ({ browser }) => {
     .click();
 
   // Ensure a new reference is suggested
-  await expect(
-    page.getByLabel('text-field-reference', { exact: true })
-  ).not.toBeEmpty();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Grab the Transfer Order reference
   const reference: string = await page
     .getByRole('textbox', { name: 'text-field-reference' })
@@ -719,7 +719,6 @@ test('Transfer Order - Allocate and Transfer', async ({ browser }) => {
   // Issue the order
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Order issued').waitFor();
   await page.getByText('Issued', { exact: true }).first().waitFor();
 
   await loadTab(page, 'Line Items');

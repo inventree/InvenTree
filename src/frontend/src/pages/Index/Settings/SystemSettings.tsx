@@ -5,6 +5,7 @@ import {
   IconBox,
   IconBuildingFactory2,
   IconCurrencyDollar,
+  IconDeviceDesktop,
   IconFileAnalytics,
   IconFingerprint,
   IconList,
@@ -54,9 +55,6 @@ export default function SystemSettings() {
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
                 'INVENTREE_RESTRICT_ABOUT',
-                'DISPLAY_FULL_NAMES',
-                'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON',
                 'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
@@ -129,6 +127,21 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'display',
+        label: t`Display`,
+        icon: <IconDeviceDesktop />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
+              'WEEK_STARTS_ON',
+              'CALENDAR_HORIZON_MONTHS'
+            ]}
+          />
+        )
+      },
+      {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
@@ -186,6 +199,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
+              'REPORT_FETCH_URLS',
               'REPORT_LOG_ERRORS',
               'LABEL_ENABLE',
               'LABEL_DPI'

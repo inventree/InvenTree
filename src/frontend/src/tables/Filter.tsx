@@ -374,11 +374,13 @@ export function ProjectCodeFilter(): TableFilter {
 export function OwnerFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name: string;
   label: string;
   description: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name,
@@ -386,6 +388,7 @@ export function OwnerFilter({
     description: description,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.owner_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.owner,
     modelRenderer: (instance: any) => instance.name
   };
@@ -399,14 +402,39 @@ export function ResponsibleFilter(): TableFilter {
   });
 }
 
+export function TagsFilter({
+  modelType
+}: {
+  modelType?: ModelType;
+}): TableFilter {
+  return {
+    name: 'tags',
+    label: t`Tags`,
+    description: t`Filter by tags`,
+    placeholder: t`Select tags`,
+    type: 'api',
+    multi: true,
+    apiUrl: apiUrl(ApiEndpoints.tag_list),
+    model: ModelType.tag,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: modelType ? { model_type: modelType } : undefined,
+    transform: (item: any) => ({
+      value: item.name.toString(),
+      label: item.name.toString()
+    })
+  };
+}
+
 export function UserFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name?: string;
   label?: string;
   description?: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name ?? 'user',
@@ -414,6 +442,7 @@ export function UserFilter({
     description: description ?? t`Filter by user`,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.user_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.user,
     modelRenderer: (instance: any) => instance.username
   };

@@ -3,6 +3,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { TableFilter } from '@lib/index';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
@@ -59,6 +60,22 @@ import StockLocationParametricTable from '../../tables/stock/StockLocationParame
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 import TransferOrderParametricTable from '../../tables/stock/TransferOrderParametricTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
+
+function TransferOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return [];
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.transferorder}
+      role={UserRoles.transfer_order}
+      params={{}}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+    />
+  );
+}
 
 export default function Stock() {
   const { id: _id } = useParams();
@@ -247,13 +264,7 @@ export default function Stock() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.transferorder}
-                role={UserRoles.transfer_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <TransferOrderCalendar />
           },
           {
             value: 'parametric',

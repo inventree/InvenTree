@@ -25,7 +25,6 @@ import type { TableColumn } from '@lib/types/Tables';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
-  useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields,
   useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
@@ -41,6 +40,7 @@ import {
   LinkColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
@@ -70,8 +70,6 @@ export default function SalesOrderShipmentTable({
     customerId: customerId,
     pending: !selectedShipment.shipment_date
   });
-
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -161,6 +159,7 @@ export default function SalesOrderShipmentTable({
       {
         accessor: 'checked',
         title: t`Checked`,
+        filter: 'checked',
         switchable: true,
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.checked_by} />
@@ -170,12 +169,14 @@ export default function SalesOrderShipmentTable({
         title: t`Shipped`,
         switchable: true,
         sortable: false,
+        filter: 'shipped',
         render: (record: any) => <YesNoButton value={!!record.shipment_date} />
       },
       {
         accessor: 'delivered',
         title: t`Delivered`,
         switchable: true,
+        filter: 'delivered',
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.delivery_date} />
       },
@@ -303,7 +304,8 @@ export default function SalesOrderShipmentTable({
         name: 'delivered',
         label: t`Delivered`,
         description: t`Show shipments which have been delivered`
-      }
+      },
+      TagsFilter({ modelType: ModelType.salesordershipment })
     ];
   }, []);
 

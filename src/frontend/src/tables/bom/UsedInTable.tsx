@@ -44,7 +44,8 @@ export function UsedInTable({
     return [
       PartColumn({
         title: t`Assembly`,
-        part: 'part_detail'
+        part: 'part_detail',
+        filter: ['part_active', 'part_locked']
       }),
       IPNColumn({
         sortable: true

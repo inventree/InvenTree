@@ -1458,19 +1458,21 @@ class SalesOrderTest(OrderTest):
     def test_so_list(self):
         """Test the SalesOrder list API endpoint."""
         # All orders
-        self.filter({}, 5)
+        self.filter({}, 6)
 
         # Filter by customer
         self.filter({'customer': 4}, 3)
-        self.filter({'customer': 5}, 2)
+        self.filter({'customer': 5}, 3)
 
         # Filter by outstanding
-        self.filter({'outstanding': True}, 3)
+        self.filter({'outstanding': True}, 4)
         self.filter({'outstanding': False}, 2)
 
         # Filter by status
-        self.filter({'status': SalesOrderStatus.PENDING.value}, 3)  # PENDING
-        self.filter({'status': SalesOrderStatus.SHIPPED.value}, 1)  # SHIPPED
+        self.filter({'status': SalesOrderStatus.PENDING.value}, 3)
+        self.filter({'status': SalesOrderStatus.SHIPPED.value}, 1)
+        self.filter({'status': SalesOrderStatus.COMPLETE.value}, 1)
+        self.filter({'status': SalesOrderStatus.CANCELLED.value}, 0)
         self.filter({'status': 99}, 0)  # Invalid
 
         # Filter by "reference"
@@ -1479,7 +1481,7 @@ class SalesOrderTest(OrderTest):
 
         # Filter by "assigned_to_me"
         self.filter({'assigned_to_me': 1}, 0)
-        self.filter({'assigned_to_me': 0}, 5)
+        self.filter({'assigned_to_me': 0}, 6)
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
@@ -1553,7 +1555,7 @@ class SalesOrderTest(OrderTest):
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
-        self.filter({'overdue': False}, 5)
+        self.filter({'overdue': False}, 6)
 
         for pk in [1, 2]:
             order = models.SalesOrder.objects.get(pk=pk)
@@ -1561,7 +1563,7 @@ class SalesOrderTest(OrderTest):
             order.save()
 
         self.filter({'overdue': True}, 2)
-        self.filter({'overdue': False}, 3)
+        self.filter({'overdue': False}, 4)
 
     def test_so_detail(self):
         """Test the SalesOrder detail endpoint."""

@@ -30,7 +30,7 @@ import {
   ProjectCodeFilter,
   ResponsibleFilter
 } from '../../tables/Filter';
-import { StatusRenderer } from '../render/StatusRenderer';
+import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import Calendar from './Calendar';
 
 /**
@@ -47,12 +47,14 @@ export default function OrderCalendar({
   role,
   params,
   filters,
+  initialFilters,
   tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  initialFilters?: TableFilter[];
   tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
@@ -94,7 +96,8 @@ export default function OrderCalendar({
   const calendarState = useCalendar({
     endpoint: modelInfo.api_endpoint,
     name: model.toString(),
-    queryParams: params
+    queryParams: params,
+    initialFilters: initialFilters
   });
 
   // Build the events
@@ -107,6 +110,8 @@ export default function OrderCalendar({
           order.start_date || order.issue_date || order.creation_date || today;
         const end: string = order.target_date || start;
 
+        const statusColor = getStatusColor(model, order.status);
+
         return {
           order: order,
           id: order.pk,
@@ -115,7 +120,9 @@ export default function OrderCalendar({
           start: start,
           end: end,
           startEditable: canEdit,
-          durationEditable: canEdit
+          durationEditable: canEdit,
+          backgroundColor: statusColor,
+          borderColor: statusColor
         };
       }) ?? []
     );
@@ -182,7 +189,7 @@ export default function OrderCalendar({
       }
 
       return (
-        <Group gap='xs' wrap='nowrap'>
+        <Group gap='xs' wrap='nowrap' style={{ paddingLeft: 5 }}>
           {order.overdue && (
             <ActionIcon
               color='orange-7'
@@ -207,6 +214,7 @@ export default function OrderCalendar({
     <Calendar
       enableDownload
       enableFilters
+      enableRefresh
       enableSearch
       events={events}
       state={calendarState}

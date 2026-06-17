@@ -17,6 +17,7 @@ import { NestedObjectField } from './NestedObjectField';
 import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TagsField from './TagsField';
 import TextField from './TextField';
 
 /**
@@ -67,7 +68,7 @@ export function ApiFormField({
           : definition.value
       );
     }
-  }, [definition.value]);
+  }, [definition.value, definition.field_type]);
 
   const fieldDefinition: ApiFormFieldType = useMemo(() => {
     return {
@@ -248,6 +249,10 @@ export function ApiFormField({
             fieldName={fieldName}
             control={controller}
           />
+        );
+      case 'tags':
+        return (
+          <TagsField controller={controller} definition={fieldDefinition} />
         );
       default:
         return (

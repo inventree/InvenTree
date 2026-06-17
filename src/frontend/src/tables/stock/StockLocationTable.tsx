@@ -97,6 +97,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'location_type',
         sortable: false,
+        filter: ['has_location_type', 'location_type'],
         render: (record: any) => record.location_type_detail?.name
       }
     ];

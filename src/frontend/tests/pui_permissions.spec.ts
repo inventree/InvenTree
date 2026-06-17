@@ -2,7 +2,7 @@
  * Tests for UI permissions checks
  */
 
-import test from '@playwright/test';
+import { test } from './baseFixtures';
 import { adminuser, readeruser } from './defaults';
 import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';

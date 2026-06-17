@@ -677,6 +677,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPORT_FETCH_URLS': {
+        'name': _('Report URL Fetching'),
+        'description': _('Allow fetching of remote URLs when generating reports'),
+        'default': False,
+        'validator': bool,
+    },
     'REPORT_LOG_ERRORS': {
         'name': _('Log Report Errors'),
         'description': _('Log errors which occur when generating reports'),
@@ -1250,6 +1256,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('5', _('Friday')),
             ('6', _('Saturday')),
         ],
+    },
+    'CALENDAR_HORIZON_MONTHS': {
+        'name': _('Calendar Horizon'),
+        'description': _(
+            'Number of months into the future to display in calendar views'
+        ),
+        'default': 12,
+        'validator': [int, MinValueValidator(1)],
+        'units': _('months'),
     },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import F, Q
+from django.db.models import F, OuterRef, Q, Subquery, Sum
+from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -16,6 +17,7 @@ from rest_framework.response import Response
 
 import build.models as build_models
 import build.serializers
+import common.filters
 import common.models
 import common.serializers
 import part.models as part_models
@@ -307,6 +309,8 @@ class BuildFilter(FilterSet):
 
         return queryset
 
+    tags = common.filters.TagsFilter()
+
 
 class BuildMixin:
     """Mixin class for Build API endpoints."""
@@ -517,8 +521,22 @@ class BuildLineFilter(FilterSet):
         - The quantity available for each BuildLine (including variants and substitutes)
         - The quantity allocated for each BuildLine
         """
-        flt = Q(
-            quantity__lte=F('allocated')
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(Subquery(allocated_subquery), 0)
+        )
+
+        # A query filter construct to determine the total quantity available for this BuildLine,
+        # taking into account any stock which is already allocated or consumed
+        available = (
+            F('allocated_quantity')
             + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
@@ -526,8 +544,9 @@ class BuildLineFilter(FilterSet):
         )
 
         if str2bool(value):
-            return queryset.filter(flt)
-        return queryset.exclude(flt)
+            return queryset.filter(quantity__lte=available)
+
+        return queryset.filter(quantity__gt=available)
 
     on_order = rest_filters.BooleanFilter(label=_('On Order'), method='filter_on_order')
 

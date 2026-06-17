@@ -36,6 +36,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from sql_util.utils import SubqueryCount
+from taggit.models import Tag
 
 import common.filters
 import common.models
@@ -504,6 +505,48 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
+class TagFilter(FilterSet):
+    """Custom filters for the TagList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = Tag
+        fields = []
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter to tags which have been applied to the given model type."""
+        ct = common.filters.determine_content_type(value)
+
+        if ct is None:
+            raise ValidationError({'model_type': f'Invalid model type: {value}'})
+
+        return queryset.filter(taggit_taggeditem_items__content_type=ct).distinct()
+
+
+class TagMixin:
+    """Mixin class for Tag views."""
+
+    serializer_class = common.serializers.TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [IsStaffOrReadOnlyScope]
+
+
+class TagList(TagMixin, ListCreateAPI):
+    """List view for all tags."""
+
+    filterset_class = TagFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+
+class TagDetail(TagMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a particular tag."""
+
+
 class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     """List view for custom units."""
 
@@ -744,6 +787,8 @@ class AttachmentFilter(FilterSet):
         if value:
             return queryset.exclude(attachment=None).exclude(attachment='')
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class AttachmentMixin:
@@ -1162,28 +1207,24 @@ class IconList(ListAPI):
         return list(get_icon_packs().values())
 
 
-class SelectionListList(ListCreateAPI):
+class SelectionListMixin(OutputOptionsMixin):
+    """Mixin for SelectionList views."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class SelectionListList(SelectionListMixin, ListCreateAPI):
     """List view for SelectionList objects."""
 
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
-
-
-class SelectionListDetail(RetrieveUpdateDestroyAPI):
+class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionList object."""
-
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-    def get_queryset(self):
-        """Override the queryset method to include entry count."""
-        return self.serializer_class.annotate_queryset(super().get_queryset())
 
 
 class EntryMixin:
@@ -1200,6 +1241,12 @@ class EntryMixin:
         queryset = super().get_queryset().filter(list=pk)
         queryset = queryset.prefetch_related('list')
         return queryset
+
+    def perform_destroy(self, instance):
+        """Prevent deletion of entries belonging to a locked selection list."""
+        if instance.list.locked:
+            raise PermissionDenied(_('Selection list is locked'))
+        super().perform_destroy(instance)
 
 
 class SelectionEntryList(EntryMixin, ListCreateAPI):
@@ -1358,6 +1405,7 @@ class ObservabilityEndSerializer(serializers.Serializer):
 class ObservabilityEnd(CreateAPI):
     """Endpoint for observability tools."""
 
+    # Note: This endpoint can be called anonymously, as it needs to function before the user is authenticated (e.g. during login)
     permission_classes = [AllowAnyOrReadScope]
     serializer_class = ObservabilityEndSerializer
 
@@ -1552,6 +1600,14 @@ common_api_urls = [
                 ]),
             ),
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
+        ]),
+    ),
+    # Tags (via django-taggit)
+    path(
+        'tag/',
+        include([
+            path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
+            path('', TagList.as_view(), name='api-tag-list'),
         ]),
     ),
     # Flags

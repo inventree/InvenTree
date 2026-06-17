@@ -9,6 +9,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showParametricView,
   showTableView
@@ -69,10 +70,14 @@ test('Parts - Tabs', async ({ browser }) => {
 test('Parts - Image Selection', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/911/details' });
 
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Select a new image from the available images
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-select-from-' })
@@ -90,6 +95,7 @@ test('Parts - Image Selection', async ({ browser }) => {
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-delete-image' })
@@ -1015,8 +1021,8 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   // Edit the category for multiple parts
   await page.getByLabel('Select record 1', { exact: true }).click();
   await page.getByLabel('Select record 2', { exact: true }).click();
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-set-category').click();
+
+  await openDetailAction(page, 'part', 'set-category');
 
   await page.getByLabel('related-field-category').fill('rnitu');
   await page.waitForTimeout(250);
@@ -1032,9 +1038,7 @@ test('Parts - Duplicate', async ({ browser }) => {
   });
 
   // Open "duplicate part" dialog
-  await page.getByLabel('action-menu-part-actions').click();
-
-  await page.getByLabel('action-menu-part-actions-duplicate').click();
+  await openDetailAction(page, 'part', 'duplicate');
 
   // Check for expected fields
   await page.getByText('Copy Image', { exact: true }).waitFor();

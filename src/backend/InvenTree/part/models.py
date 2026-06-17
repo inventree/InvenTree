@@ -32,7 +32,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
@@ -69,6 +68,7 @@ logger = structlog.get_logger('inventree')
 
 class PartCategory(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.InvenTreeTree,
@@ -465,6 +465,7 @@ class Part(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -519,8 +520,6 @@ class Part(
     IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
-
-    tags = TaggableManager(blank=True)
 
     class Meta:
         """Metaclass defines extra model properties."""

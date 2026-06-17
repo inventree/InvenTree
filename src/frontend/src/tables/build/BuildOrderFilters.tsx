@@ -22,6 +22,7 @@ import {
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
+  TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
 } from '../Filter';
@@ -43,18 +44,19 @@ export default function BuildOrderFilters({
     OrderStatusFilter({ model: ModelType.build }),
     OverdueFilter(),
     AssignedToMeFilter(),
-    CompletedBeforeFilter(),
-    CompletedAfterFilter(),
     ProjectCodeFilter(),
     HasProjectCodeFilter(),
     IssuedByFilter(),
     ResponsibleFilter(),
-    PartCategoryFilter()
+    PartCategoryFilter(),
+    TagsFilter({ modelType: ModelType.build })
   ];
 
   const dateFilters: TableFilter[] = [
     MinDateFilter(),
     MaxDateFilter(),
+    CompletedBeforeFilter(),
+    CompletedAfterFilter(),
     CreatedBeforeFilter(),
     CreatedAfterFilter(),
     TargetDateBeforeFilter(),

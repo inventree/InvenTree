@@ -17,7 +17,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
-from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
@@ -80,6 +79,7 @@ class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -487,6 +487,7 @@ class ManufacturerPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -559,8 +560,6 @@ class ManufacturerPart(
         help_text=_('Manufacturer part description'),
     )
 
-    tags = TaggableManager(blank=True)
-
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
         """Check if ManufacturerPart instance does not already exist then create it."""
@@ -603,6 +602,7 @@ class SupplierPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
@@ -621,7 +621,6 @@ class SupplierPart(
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
         multiple: Multiple that the part is provided in
-        lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_quantity: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
         pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
@@ -639,8 +638,6 @@ class SupplierPart(
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
-
-    tags = TaggableManager(blank=True)
 
     @staticmethod
     def get_api_url():

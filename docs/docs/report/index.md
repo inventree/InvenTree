@@ -230,3 +230,35 @@ And the snippet file `stock_row.html` may be written as follows:
 </tr>
 {% endraw %}
 ```
+
+## Security
+
+Report templates are powerful by design — they have access to the full Django template language and to model data across the InvenTree database. For this reason, **template upload is restricted to staff users only**.
+
+### URL Fetching
+
+When WeasyPrint renders a template to PDF it can make outbound requests to load images, stylesheets, and fonts referenced in the HTML. InvenTree restricts this through a custom URL fetcher with the following rules:
+
+| URL Type | Behavior |
+|---|---|
+| `data:` URIs | Always permitted — self-contained, no network access |
+| `file://` | Always blocked — assets and images must be inlined as `data:` URIs before reaching WeasyPrint |
+| `http` / `https` | Disabled by default, but can be blocked - see *Remote URL Fetching* below |
+| Any other scheme | Always blocked |
+
+HTTP redirects are also disabled: a URL that passes validation cannot redirect to an internal address.
+
+### Remote URL Fetching
+
+The **Report URL Fetching** system setting (`REPORT_FETCH_URLS`) controls whether `http://` and `https://` URLs in templates are permitted. It defaults to **disabled**.
+
+When enabled, URLs are still validated against private, loopback, link-local, and reserved IP ranges before the request is made, preventing templates from being used as a vector for [Server-Side Request Forgery (SSRF)](https://owasp.org/www-community/attacks/Server_Side_Request_Forgery) attacks against internal network services.
+
+!!! warning "Enable with care"
+    Enabling remote URL fetching allows report templates to trigger outbound HTTP requests from the InvenTree server. Only enable this if your templates genuinely require it, and ensure that templates are reviewed before deployment.
+
+### Asset Files
+
+Asset files uploaded through the admin interface are embedded directly into the rendered PDF as base64 `data:` URIs — they are read via the Django storage API and never loaded through WeasyPrint's URL fetcher. This means assets work correctly regardless of whether remote URL fetching is enabled, and also work with remote storage backends such as S3.
+
+There are various [helper functions](./helpers.md#report-assets) available to assist with embedding assets into templates.

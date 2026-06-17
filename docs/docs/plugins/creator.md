@@ -214,10 +214,10 @@ The frontend code for your plugin is located in the `frontend/src` directory. Yo
 
 Refer to the `./frontend/src/Panel.tsx` file as a starting point. This is where the custom panel for the part detail page is implemented. You can modify this file to change the content and behavior of the panel.
 
-While the `npm dev` server is running, any changes you make to the frontend code will be automatically reloaded allowing for rapid development and testing of your plugin's frontend features. This avoids the need to rebuild the frontend code every time you make a change.
+While the `npm dev` server is running, any changes to the frontend are reflected in the browser using React Fast Refresh, allowing for rapid development without rebuilding the frontend with every change.
 
 !!! info "Page Reload"
-    Due to the way the InvenTree frontend is structured, you will need to manually refresh the page in your browser to see changes to the frontend code. The development server will automatically reload the frontend code, but the InvenTree server needs to be aware of the changes.
+    All exports in plugin modules that export React components must start with a capital letter. Otherwise, React Fast Refresh will fall back to a full page reload instead of performing a component-level update. Additionally, any render functions referenced from Python must also be capitalized.
 
 ## Build Plugin
 

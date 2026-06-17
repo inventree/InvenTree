@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { TagsList } from '@lib/index';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
@@ -68,7 +69,8 @@ export default function SalesOrderShipmentDetail() {
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
     params: {
-      order_detail: true
+      order_detail: true,
+      tags: true
     }
   });
 
@@ -221,23 +223,26 @@ export default function SalesOrderShipmentDetail() {
     return (
       <>
         <ItemDetailsGrid>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.sales_order}
-              apiPath={ApiEndpoints.company_list}
-              src={customer?.image}
-              pk={customer?.pk}
-              imageActions={{
-                selectExisting: false,
-                downloadImage: false,
-                uploadFile: false,
-                deleteFile: false
-              }}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={data} />
-            </Grid.Col>
-          </Grid>
+          <Stack gap='xs'>
+            <Grid grow>
+              <DetailsImage
+                appRole={UserRoles.sales_order}
+                apiPath={ApiEndpoints.company_list}
+                src={customer?.image}
+                pk={customer?.pk}
+                imageActions={{
+                  selectExisting: false,
+                  downloadImage: false,
+                  uploadFile: false,
+                  deleteFile: false
+                }}
+              />
+              <Grid.Col span={{ base: 12, sm: 8 }}>
+                <DetailsTable fields={tl} item={data} />
+              </Grid.Col>
+            </Grid>
+            <TagsList tags={shipment.tags} />
+          </Stack>
           <DetailsTable fields={tr} item={data} />
           <DetailsTable fields={bl} item={data} />
           <DetailsTable fields={br} item={data} />
@@ -295,6 +300,7 @@ export default function SalesOrderShipmentDetail() {
     pk: shipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshShipment
   });
 

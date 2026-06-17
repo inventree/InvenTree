@@ -44,6 +44,7 @@ import {
   SerialLTEFilter,
   StatusFilterOptions,
   SupplierFilter,
+  TagsFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
 } from '../Filter';
@@ -62,7 +63,8 @@ function stockItemTableColumns({
   return [
     PartColumn({
       accessor: 'part',
-      part: 'part_detail'
+      part: 'part_detail',
+      filter: ['active']
     }),
     IPNColumn({}),
     {
@@ -78,13 +80,21 @@ function stockItemTableColumns({
       accessor: '',
       title: t`Stock`,
       sortable: true,
-      ordering: 'stock'
+      ordering: 'stock',
+      filter: [
+        'available',
+        'allocated',
+        'consumed',
+        'installed',
+        'sent_to_customer'
+      ]
     }),
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: ['has_batch_code', 'batch']
     },
     LocationColumn({
       hidden: !showLocation,
@@ -150,22 +160,26 @@ function stockItemTableColumns({
     DateColumn({
       title: t`Created`,
       accessor: 'creation_date',
-      sortable: true
+      sortable: true,
+      filter: ['created_before', 'created_after']
     }),
     DateColumn({
       title: t`Last Updated`,
-      accessor: 'updated'
+      accessor: 'updated',
+      filter: ['updated_before', 'updated_after']
     }),
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
-      defaultVisible: false
+      defaultVisible: false,
+      filter: ['stale', 'expiry_before', 'expiry_after']
     }),
     DateColumn({
       accessor: 'stocktake_date',
       title: t`Stocktake Date`,
-      sortable: true
+      sortable: true,
+      filter: ['has_stocktake', 'stocktake_before', 'stocktake_after']
     })
   ];
 }
@@ -306,7 +320,8 @@ function stockItemTableFilters({
       name: 'external',
       label: t`External Location`,
       description: t`Show items in an external location`
-    }
+    },
+    TagsFilter({ modelType: ModelType.stockitem })
   ];
 }
 

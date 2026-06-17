@@ -25,22 +25,22 @@ export function BooleanField({
 
   const { value } = field;
 
-  // Set default value if value is undefined
+  // Set default value if value is undefined or otherwise empty
   useEffect(() => {
-    if (value === undefined) {
+    if (value === undefined || value === null || value === '') {
       onChange(definition.default ?? false);
     }
   }, [value, definition]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
+    return isTrue(value ?? definition.default ?? false);
   }, [value]);
 
   return (
     <Switch
       {...definition}
-      defaultValue={definition.default ?? false}
+      defaultValue={undefined}
       checked={booleanValue}
       id={fieldId}
       aria-label={`boolean-field-${fieldName}`}

@@ -2,7 +2,7 @@ import type FullCalendar from '@fullcalendar/react';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useFilterSet from '@lib/hooks/UseFilterSet';
-import type { FilterSetState } from '@lib/types/Filters';
+import type { FilterSetState, TableFilter } from '@lib/types/Filters';
 import type { UseModalReturn } from '@lib/types/Modals';
 import type { DateValue } from '@mantine/dates';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -54,15 +54,17 @@ export type CalendarState = {
 export default function useCalendar({
   name,
   endpoint,
-  queryParams
+  queryParams,
+  initialFilters
 }: {
   name: string;
   endpoint: ApiEndpoints;
   queryParams?: any;
+  initialFilters?: TableFilter[];
 }): CalendarState {
   const ref = useRef<FullCalendar>(null as any);
 
-  const filterSet = useFilterSet(`calendar-${name}`);
+  const filterSet = useFilterSet(`calendar-${name}`, initialFilters);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -74,8 +76,6 @@ export default function useCalendar({
 
   // Generate a set of API query filters
   const queryFilters: Record<string, any> = useMemo(() => {
-    // Expand date range by one month, to ensure we capture all events
-
     let params = {
       ...(queryParams || {})
     };
@@ -91,9 +91,7 @@ export default function useCalendar({
       min_date: startDate
         ? dayjs(startDate).subtract(1, 'month').format('YYYY-MM-DD')
         : null,
-      max_date: endDate
-        ? dayjs(endDate).add(1, 'month').format('YYYY-MM-DD')
-        : null,
+      max_date: endDate ? dayjs(endDate).format('YYYY-MM-DD') : null,
       search: searchTerm
     };
 
@@ -102,7 +100,7 @@ export default function useCalendar({
 
   const query = useQuery({
     enabled: !!startDate && !!endDate,
-    queryKey: ['calendar', name, endpoint, queryFilters, startDate, endDate],
+    queryKey: ['calendar', name, endpoint, queryFilters],
     throwOnError: (error: any) => {
       showApiErrorMessage({
         error: error,
@@ -112,7 +110,6 @@ export default function useCalendar({
       return true;
     },
     queryFn: async () => {
-      // Fetch data from the API
       return api
         .get(apiUrl(endpoint), {
           params: queryFilters
@@ -123,14 +120,20 @@ export default function useCalendar({
     }
   });
 
-  // Navigate to the previous month
+  // Navigate to the previous month (move start date back by 1 month)
   const prevMonth = useCallback(() => {
-    ref.current?.getApi().prev();
+    const api = ref.current?.getApi();
+    if (api) {
+      api.gotoDate(dayjs(api.getDate()).subtract(1, 'month').toDate());
+    }
   }, [ref]);
 
-  // Navigate to the next month
+  // Navigate to the next month (move start date forward by 1 month)
   const nextMonth = useCallback(() => {
-    ref.current?.getApi().next();
+    const api = ref.current?.getApi();
+    if (api) {
+      api.gotoDate(dayjs(api.getDate()).add(1, 'month').toDate());
+    }
   }, [ref]);
 
   // Navigate to the current month

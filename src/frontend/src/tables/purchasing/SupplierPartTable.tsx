@@ -37,6 +37,7 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
+import { TagsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -60,7 +61,8 @@ export function SupplierPartTable({
       {
         name: 'active',
         value: 'true'
-      }
+      },
+      TagsFilter({ modelType: ModelType.supplierpart })
     ];
 
     if (!supplierId) {
@@ -91,11 +93,13 @@ export function SupplierPartTable({
     return [
       PartColumn({
         switchable: !!partId,
-        part: 'part_detail'
+        part: 'part_detail',
+        filter: ['part_active']
       }),
       IPNColumn({}),
       {
         accessor: 'supplier',
+        filter: 'supplier_active',
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.supplier_detail} />
@@ -177,6 +181,7 @@ export function SupplierPartTable({
         accessor: 'available',
         sortable: true,
         defaultVisible: false,
+        filter: 'has_stock',
         render: (record: any) => {
           const extra = [];
 
