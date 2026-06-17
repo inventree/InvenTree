@@ -223,7 +223,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           });
         })
         .catch((error) => {
-          const msg = error?.message;
+          const msg = error?.message || error?.toString();
 
           if (msg) {
             if (Array.isArray(msg)) {
