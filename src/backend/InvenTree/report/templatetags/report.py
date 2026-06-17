@@ -461,7 +461,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
         TypeError: If provided part is not a Part instance
     """
     if not part or not isinstance(part, Part):
-        raise TypeError(_('part_image tag requires a Part instance'))
+        raise ValidationError(_('part_image tag requires a Part instance'))
 
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
