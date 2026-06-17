@@ -903,4 +903,16 @@ test('Build Order - BOM Quantity', async ({ browser }) => {
     .locator('div');
   const row2 = await getRowFromCell(line);
   await row2.getByText('1,175').first().waitFor();
+
+  // Test table filtering against the "Required Parts" table
+  await clearTableFilters(page);
+  await page.getByText('1 - 7 / 7').waitFor();
+
+  // Filter by "available" stock
+  await setTableChoiceFilter(page, 'Available', 'Yes');
+  await page.getByText('1 - 3 / 3').waitFor();
+
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Available', 'No');
+  await page.getByText('1 - 4 / 4').waitFor();
 });

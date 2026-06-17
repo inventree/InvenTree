@@ -965,7 +965,7 @@ class Build(
 
         # Remove the build output from the database
         # This is a special case where serialized stock can be deleted,
-        # independedent of the global setting which normally prevents deletion of serialized stock items
+        # independent of the global setting which normally prevents deletion of serialized stock items
         output.delete(ignore_serial_check=True)
 
     @transaction.atomic
