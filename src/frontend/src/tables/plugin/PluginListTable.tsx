@@ -98,11 +98,13 @@ export default function PluginListTable() {
       BooleanColumn({
         accessor: 'is_builtin',
         sortable: false,
+        filter: 'builtin',
         title: t`Builtin`
       }),
       BooleanColumn({
         accessor: 'is_mandatory',
         sortable: false,
+        filter: 'mandatory',
         title: t`Mandatory`
       }),
       {
