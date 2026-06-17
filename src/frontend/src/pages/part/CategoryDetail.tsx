@@ -35,6 +35,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { partCategoryFields } from '../../forms/PartForms';
 import {
@@ -323,9 +324,14 @@ export default function CategoryDetail() {
           />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.partcategory,
+        model_id: category?.pk,
+        hidden: !id || !category.pk
+      }),
       {
         name: 'category_parameters',
-        label: t`Category Parameters`,
+        label: t`Parameter Templates`,
         icon: <IconListCheck />,
         hidden: !id || !category.pk,
         content: <PartCategoryTemplateTable categoryId={category?.pk} />

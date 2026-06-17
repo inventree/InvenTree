@@ -863,3 +863,48 @@ class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
                 self.assertFalse(
                     response.data['read_only'], msg=f'{key} should not be read_only'
                 )
+
+
+class PluginUnauthenticatedAccessTest(PluginMixin, InvenTreeAPITestCase):
+    """Ensure plugin API endpoints reject unauthenticated requests.
+
+    Tests the four endpoints hardened on the permissions-fix branch:
+      - PluginDetail           (api-plugin-detail)
+      - PluginSettingList      (api-plugin-setting-list)
+      - PluginAllSettingList   (api-plugin-settings)
+      - PluginSettingDetail    (api-plugin-setting-detail)
+    """
+
+    superuser = True
+    PLUGIN_SLUG = 'sample'
+    SETTING_KEY = 'API_KEY'
+
+    def setUp(self):
+        """Activate sample plugin, then log out to simulate an anonymous client."""
+        super().setUp()
+        from plugin.registry import registry
+
+        registry.set_plugin_state(self.PLUGIN_SLUG, True)
+        self.client.logout()
+
+    def test_plugin_detail_unauthenticated(self):
+        """GET /api/plugins/<slug>/ must return 401 for unauthenticated users."""
+        url = reverse('api-plugin-detail', kwargs={'plugin': self.PLUGIN_SLUG})
+        self.get(url, expected_code=401)
+
+    def test_plugin_setting_list_unauthenticated(self):
+        """GET /api/plugins/settings/ must return 401 for unauthenticated users."""
+        self.get(reverse('api-plugin-setting-list'), expected_code=401)
+
+    def test_plugin_all_settings_unauthenticated(self):
+        """GET /api/plugins/<slug>/settings/ must return 401 for unauthenticated users."""
+        url = reverse('api-plugin-settings', kwargs={'plugin': self.PLUGIN_SLUG})
+        self.get(url, expected_code=401)
+
+    def test_plugin_setting_detail_unauthenticated(self):
+        """GET /api/plugins/<slug>/settings/<key>/ must return 401 for unauthenticated users."""
+        url = reverse(
+            'api-plugin-setting-detail',
+            kwargs={'plugin': self.PLUGIN_SLUG, 'key': self.SETTING_KEY},
+        )
+        self.get(url, expected_code=401)

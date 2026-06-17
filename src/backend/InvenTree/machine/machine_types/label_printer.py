@@ -267,4 +267,4 @@ class LabelPrinterMachine(BaseMachineType):
         if not location_pk:
             return None
 
-        return StockLocation.objects.get(pk=location_pk)
+        return StockLocation.objects.filter(pk=location_pk).first()
