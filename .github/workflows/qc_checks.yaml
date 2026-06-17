@@ -44,7 +44,7 @@ jobs:
       submit-performance: ${{ steps.runner-perf.outputs.submit-performance }}
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
@@ -108,7 +108,7 @@ jobs:
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -130,7 +130,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -152,7 +152,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -190,7 +190,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@f30668f65075c93440bd59ce2de73ce9e78751f4 # pin@main
+        uses: oasdiff/oasdiff-action/diff@3530478ec30f84adedbfeb28f0d9527a290f50a9 # pin@main
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -275,7 +275,7 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         name: Checkout Code
         with:
           repository: inventree/schema
@@ -332,7 +332,7 @@ jobs:
       node_version: '>=24'
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -390,7 +390,7 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -415,7 +415,7 @@ jobs:
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # pin@v7.0.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -441,7 +441,7 @@ jobs:
       INVENTREE_AUTO_UPDATE: true
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -492,7 +492,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -541,7 +541,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -584,7 +584,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -597,7 +597,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # pin@v7.0.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -618,7 +618,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
         name: Checkout Code
@@ -674,7 +674,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
