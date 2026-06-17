@@ -543,7 +543,7 @@ export default function PurchaseOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status_custom_key}
+            status={order.status_custom_key || order.status}
             type={ModelType.purchaseorder}
             options={{ size: 'lg' }}
           />

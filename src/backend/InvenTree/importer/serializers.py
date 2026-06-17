@@ -62,6 +62,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'field_filters',
             'row_count',
             'completed_row_count',
+            'completed_row_count_history',
+            'row_count_history',
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
@@ -220,6 +222,8 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
             row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
+            # ensure current state is available
+            session.refresh_from_db()
             session.check_complete()
 
         return rows
