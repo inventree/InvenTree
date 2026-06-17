@@ -1405,7 +1405,8 @@ class ObservabilityEndSerializer(serializers.Serializer):
 class ObservabilityEnd(CreateAPI):
     """Endpoint for observability tools."""
 
-    permission_classes = [IsAuthenticated, AllowAnyOrReadScope]
+    # Note: This endpoint can be called anonymously, as it needs to function before the user is authenticated (e.g. during login)
+    permission_classes = [AllowAnyOrReadScope]
     serializer_class = ObservabilityEndSerializer
 
     def create(self, request, *args, **kwargs):
