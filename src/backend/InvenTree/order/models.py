@@ -590,6 +590,21 @@ class Order(
         """Return the Address associated with this order."""
         return self.address or self.company.primary_address
 
+    @property
+    def status_text(self):
+        """Return the text representation of the current status. This will consider any custom status."""
+        if self.get_custom_status() is not None:
+            from generic.states.custom import (
+                get_logical_value as get_custom_state_logical_value,
+            )
+
+            custom_status = get_custom_state_logical_value(
+                self.get_custom_status(), model=self._meta.model_name
+            )
+            return custom_status.label
+        else:
+            return self.status_class.label(self.get_status())
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -691,11 +706,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
-
-    @property
-    def status_text(self):
-        """Return the text representation of the status field."""
-        return PurchaseOrderStatus.text(self.status)
 
     supplier = models.ForeignKey(
         Company,
@@ -1442,11 +1452,6 @@ class SalesOrder(TotalPriceMixin, Order):
         verbose_name=_('Status'),
         help_text=_('Sales order status'),
     )
-
-    @property
-    def status_text(self) -> str:
-        """Return the text representation of the status field."""
-        return SalesOrderStatus.text(self.status)
 
     customer_reference = models.CharField(
         max_length=64,
