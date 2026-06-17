@@ -684,6 +684,12 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 log_report_error('ReportTemplate.print')
                 msg = _('Error merging report outputs')
                 output.mark_failure(error=msg)
+
+                # If the error occurred in a worker thread, we do not want to raise an error,
+                # as this would cause the worker to retry the task indefinitely
+                if InvenTree.ready.isInWorkerThread():
+                    return
+
                 raise ValidationError(msg)
 
         # Save the generated report to the database
