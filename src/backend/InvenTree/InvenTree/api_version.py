@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 508
+INVENTREE_API_VERSION = 509
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v508 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
+v509 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
     - Adds "completed_row_count_history" and "row_count_history" fields to the DataImportSession model, which store the historic count of completed rows and total rows for a data import session.
+
+v508 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/11982
+   - An order's "status_custom_key" can be updated via PATCH API endpoint
 
 v507 -> 2026-06-16 : https://github.com/inventree/InvenTree/pull/12180
     - Adds "lookup_field" parameter to the DataImportSessionSerializer, which allows for more flexible lookup of related objects during data import operations
