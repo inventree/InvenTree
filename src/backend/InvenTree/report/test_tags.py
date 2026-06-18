@@ -88,7 +88,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
-        self.assertEqual(asset, f'file://{settings.MEDIA_ROOT}/report/assets/test.txt')
+        # Non-debug mode returns a base64 data: URI (no file:// URLs)
+        self.assertIsNotNone(asset)
+        self.assertTrue(asset.startswith('data:text/plain;base64,'))
 
         # Test for attempted path traversal
         with self.assertRaises(ValidationError):

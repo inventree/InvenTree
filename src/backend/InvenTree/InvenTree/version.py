@@ -55,6 +55,10 @@ try:
     except (KeyError, IndexError):
         logger.warning('INVE-W1: Current branch could not be detected.')
         main_branch = None
+
+    if main_repo is not None:
+        main_repo.close()
+        main_repo = None
 except ImportError:
     logger.warning(
         'INVE-W2: Dulwich module not found, git information will not be available.'

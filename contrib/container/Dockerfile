@@ -9,8 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-# Base image last bumped 2026-03-20
-FROM python:3.14.5-slim-trixie@sha256:c845af9399020c7e562969a13689e929074a10fd057acd1b1fad06a2fb068e97 AS inventree_base
+# Base image last bumped 2026-06-16
+FROM python:3.14.6-slim-trixie@sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6500b1eff50061 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -18,6 +18,7 @@ ARG commit_hash=""
 ARG commit_date=""
 
 ARG data_dir="data"
+ARG NODE_VERSION=24
 
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -118,15 +119,10 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
     rm -rf /root/.cache/pip
 
 # Install frontend build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nodejs npm \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN npm install -g n yarn --ignore-scripts && \
-    yarn config set network-timeout 600000 -g
-RUN bash -c "n lts"
-RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash && \
+    bash -c "export NVM_DIR="$HOME/.nvm" && source $HOME/.nvm/nvm.sh && \
+    nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g"
+RUN bash -c "source $HOME/.nvm/nvm.sh && cd '${INVENTREE_HOME}' && invoke int.frontend-compile --extract"
 
 # InvenTree production image:
 # - Copies required files from local directory

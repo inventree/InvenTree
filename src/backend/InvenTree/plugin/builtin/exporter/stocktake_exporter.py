@@ -29,7 +29,13 @@ class PartStocktakeExportOptionsSerializer(serializers.Serializer):
     export_include_variant_items = serializers.BooleanField(
         default=False,
         label=_('Include Variant Items'),
-        help_text=_('Include part variant stock in pricing calculations'),
+        help_text=_('Include part variant stock in stocktake data'),
+    )
+
+    export_exclude_zero_stock_entries = serializers.BooleanField(
+        default=False,
+        label=_('Exclude Zero Stock Entries'),
+        help_text=_('Exclude parts with zero stock from the exported dataset'),
     )
 
 
@@ -43,7 +49,7 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
     SLUG = 'inventree-stocktake-exporter'
     TITLE = _('Part Stocktake Exporter')
     DESCRIPTION = _('Exporter for part stocktake data')
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
     AUTHOR = _('InvenTree contributors')
 
     ExportOptionsSerializer = PartStocktakeExportOptionsSerializer
@@ -78,6 +84,9 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
             'pk',
             'name',
             'IPN',
+            'active',
+            'component',
+            'assembly',
             'description',
             'category',
             'allocated_to_build_orders',
@@ -124,26 +133,36 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
         export_pricing_data = context.get('export_pricing_data', True)
         include_external_items = context.get('export_include_external_items', False)
         include_variant_items = context.get('export_include_variant_items', False)
+        exclude_zero_stock = context.get('export_exclude_zero_stock_entries', False)
 
         data = super().export_data(
             queryset, serializer_class, headers, context, output, **kwargs
         )
 
-        if export_pricing_data:
-            for row in data:
-                quantity = Decimal(row.get('total_in_stock', 0))
+        output_data = []
 
-                if not include_external_items:
-                    quantity -= Decimal(row.get('external_stock', 0))
+        for row in data:
+            quantity = Decimal(row.get('total_in_stock', 0))
 
-                if not include_variant_items:
-                    quantity -= Decimal(row.get('variant_stock', 0))
+            if not include_external_items:
+                quantity -= Decimal(row.get('external_stock', 0))
 
-                if quantity < 0:
-                    quantity = Decimal(0)
+            if not include_variant_items:
+                quantity -= Decimal(row.get('variant_stock', 0))
 
-                pricing_min = row.get('pricing_min', None)
-                pricing_max = row.get('pricing_max', None)
+            if quantity < 0:
+                quantity = Decimal(0)
+
+                if exclude_zero_stock:
+                    continue
+
+            if export_pricing_data:
+                pricing_min = row.get('pricing_min', None) or row.get(
+                    'pricing_max', None
+                )
+                pricing_max = row.get('pricing_max', None) or row.get(
+                    'pricing_min', None
+                )
 
                 if pricing_min is not None:
                     pricing_min = Decimal(pricing_min)
@@ -157,4 +176,6 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
                         pricing_max * quantity, rounding=10
                     )
 
-        return data
+            output_data.append(row)
+
+        return output_data
