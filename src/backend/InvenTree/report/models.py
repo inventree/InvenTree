@@ -649,6 +649,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             if InvenTree.ready.isInWorkerThread():
                 return
 
+            # Raise a ValidationError with the error message
+            # This will be caught by the caller and displayed to the user
             raise ValidationError({
                 'error': _('Error generating report'),
                 'detail': str(exc),
