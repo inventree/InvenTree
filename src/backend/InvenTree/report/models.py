@@ -582,7 +582,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     output.mark_failure(str(e) or msg)
                     raise ValidationError(f'{msg}: {e!s}')
                 except ValidationError as e:
-                    output.mark_failure(str(e))
+                    output.mark_failure(','.join(e.messages))
                     raise e
                 except Exception as e:
                     msg = _('Error rendering report')
@@ -621,7 +621,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         output.mark_failure(error=str(e) or msg)
                         raise ValidationError(f'{msg}: {e!s}')
                     except ValidationError as e:
-                        output.mark_failure(str(e))
+                        output.mark_failure(', '.join(e.messages))
                         raise e
                     except Exception as e:
                         msg = _('Error rendering report')
