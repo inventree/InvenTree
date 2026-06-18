@@ -783,7 +783,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status_custom_key}
+            status={build.status_custom_key || build.status}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />,
