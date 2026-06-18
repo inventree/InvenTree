@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-14 02:16\n"
+"PO-Revision-Date: 2026-06-17 22:14\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -56,7 +56,7 @@ msgstr "Düzenle"
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
 #: src/pages/Notifications.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:247
+#: src/tables/plugin/PluginListTable.tsx:249
 msgid "Delete"
 msgstr "Sil"
 
@@ -163,10 +163,10 @@ msgstr "Parça"
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
 #: src/pages/Index/Settings/SystemSettings.tsx:218
-#: src/pages/part/CategoryDetail.tsx:137
-#: src/pages/part/CategoryDetail.tsx:284
-#: src/pages/part/CategoryDetail.tsx:339
-#: src/pages/part/CategoryDetail.tsx:381
+#: src/pages/part/CategoryDetail.tsx:138
+#: src/pages/part/CategoryDetail.tsx:285
+#: src/pages/part/CategoryDetail.tsx:345
+#: src/pages/part/CategoryDetail.tsx:387
 #: src/pages/part/PartDetail.tsx:893
 msgid "Parts"
 msgstr "Parçalar"
@@ -194,11 +194,12 @@ msgid "Parameters"
 msgstr "Parametreler"
 
 #: lib/enums/ModelInformation.tsx:46
-#: src/tables/part/PartCategoryTemplateTable.tsx:87
+#: src/tables/part/PartCategoryTemplateTable.tsx:96
 msgid "Parameter Template"
 msgstr "Parametre Şablonu"
 
 #: lib/enums/ModelInformation.tsx:47
+#: src/pages/part/CategoryDetail.tsx:334
 msgid "Parameter Templates"
 msgstr "Parametre Şablonları"
 
@@ -241,15 +242,15 @@ msgid "Manufacturer Parts"
 msgstr "Üretici Parçaları"
 
 #: lib/enums/ModelInformation.tsx:80
-#: src/pages/part/CategoryDetail.tsx:381
+#: src/pages/part/CategoryDetail.tsx:387
 #: src/tables/Filter.tsx:496
 msgid "Part Category"
 msgstr "Parça Kategorisi"
 
 #: lib/enums/ModelInformation.tsx:81
 #: lib/enums/Roles.tsx:39
-#: src/pages/part/CategoryDetail.tsx:278
-#: src/pages/part/CategoryDetail.tsx:372
+#: src/pages/part/CategoryDetail.tsx:279
+#: src/pages/part/CategoryDetail.tsx:378
 #: src/pages/part/PartDetail.tsx:1154
 msgid "Part Categories"
 msgstr "Parça Kategorileri"
@@ -273,7 +274,7 @@ msgstr "Stok Kalemi"
 #: lib/enums/ModelInformation.tsx:90
 #: lib/enums/Roles.tsx:49
 #: src/pages/company/CompanyDetail.tsx:217
-#: src/pages/part/CategoryDetail.tsx:313
+#: src/pages/part/CategoryDetail.tsx:314
 #: src/pages/part/PartStockHistoryDetail.tsx:117
 #: src/pages/stock/LocationDetail.tsx:156
 #: src/pages/stock/LocationDetail.tsx:235
@@ -538,7 +539,7 @@ msgstr "Sahipler"
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:78
+#: src/tables/settings/ImportSessionTable.tsx:82
 #: src/tables/stock/StockTrackingTable.tsx:237
 #: src/tables/stock/StockTrackingTable.tsx:285
 msgid "User"
@@ -640,7 +641,7 @@ msgstr "Seçim Kayıtları"
 #: src/components/forms/fields/ApiFormField.tsx:259
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:215
-#: src/components/importer/ImporterColumnSelector.tsx:278
+#: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:211
@@ -1420,15 +1421,15 @@ msgstr "Stok Sayımı Raporu Oluştur"
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:37
 #: src/pages/part/PartStockHistoryDetail.tsx:108
 msgid "Generate"
-msgstr ""
+msgstr "Oluştur"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:64
 msgid "Stocktake"
-msgstr ""
+msgstr "Stok Sayımı"
 
 #: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:65
 msgid "Generate a new stocktake report"
-msgstr ""
+msgstr "Yeni bir stok sayımı raporu oluştur"
 
 #: src/components/details/Details.tsx:117
 #~ msgid "Email:"
@@ -1449,7 +1450,7 @@ msgstr "Süper Kullanıcı"
 #: src/tables/settings/UserTable.tsx:285
 #: src/tables/settings/UserTable.tsx:406
 msgid "Administrator"
-msgstr ""
+msgstr "Yönetici"
 
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
@@ -1494,11 +1495,11 @@ msgstr "Kaldır"
 
 #: src/components/details/DetailsImage.tsx:87
 msgid "Image removed"
-msgstr ""
+msgstr "Görsel silindi"
 
 #: src/components/details/DetailsImage.tsx:88
 msgid "The image has been removed successfully"
-msgstr ""
+msgstr "Görsel başarıyla silindi"
 
 #: src/components/details/DetailsImage.tsx:115
 #~ msgid "Drag and drop to upload"
@@ -1506,7 +1507,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:156
 msgid "Drag and drop to upload, or paste an image from the clipboard"
-msgstr ""
+msgstr "Yüklemek için sürükle ve bırak, veya panodan bir görsel yapıştır"
 
 #: src/components/details/DetailsImage.tsx:161
 msgid "Click to select file(s)"
@@ -1794,7 +1795,7 @@ msgstr "Bir veya daha fazla form alanında hatalar var"
 
 #: src/components/forms/ApiForm.tsx:751
 #: src/hooks/UseForm.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:210
+#: src/tables/plugin/PluginListTable.tsx:212
 msgid "Update"
 msgstr "Güncelle"
 
@@ -1970,7 +1971,7 @@ msgstr "Bu, eksik posta ayarlarıyla ilgili olabilir veya kasıtlı bir karar ol
 
 #: src/components/forms/DateTimeField.tsx:64
 msgid "Select date and time"
-msgstr ""
+msgstr "Tarih ve saati seç"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -1982,7 +1983,7 @@ msgstr "Sunucu"
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
-#: src/pages/part/CategoryDetail.tsx:93
+#: src/pages/part/CategoryDetail.tsx:94
 #: src/pages/part/PartDetail.tsx:305
 #: src/pages/stock/LocationDetail.tsx:117
 #: src/tables/machine/MachineTypeTable.tsx:67
@@ -2059,7 +2060,7 @@ msgstr "Sunucu"
 
 #: src/components/forms/InstanceOptions.tsx:131
 #: src/components/plugins/PluginDrawer.tsx:88
-#: src/tables/plugin/PluginListTable.tsx:127
+#: src/tables/plugin/PluginListTable.tsx:129
 msgid "Version"
 msgstr "Sürüm"
 
@@ -2162,7 +2163,7 @@ msgstr "Öge"
 
 #: src/components/forms/fields/RelatedModelField.tsx:591
 msgid "Create New {model}"
-msgstr ""
+msgstr "Yeni {model} Oluştur"
 
 #: src/components/forms/fields/TableField.tsx:46
 msgid "modelRenderer entry required for tables"
@@ -2243,7 +2244,7 @@ msgid "Processing Data"
 msgstr "Veri İşleniyor"
 
 #: src/components/importer/ImporterColumnSelector.tsx:56
-#: src/components/importer/ImporterColumnSelector.tsx:247
+#: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:401
@@ -2266,31 +2267,39 @@ msgstr "Sütun seçin veya bu alanı yok saymak için boş bırakın."
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:253
+#: src/components/importer/ImporterColumnSelector.tsx:202
+msgid "Auto"
+msgstr ""
+
+#: src/components/importer/ImporterColumnSelector.tsx:305
 msgid "Ignore this field"
 msgstr "Bu alanı yok say"
 
-#: src/components/importer/ImporterColumnSelector.tsx:267
+#: src/components/importer/ImporterColumnSelector.tsx:319
 msgid "Mapping data columns to database fields"
 msgstr "Veri sütunları veritabanı alanları ile eşleştiriliyor"
 
-#: src/components/importer/ImporterColumnSelector.tsx:272
+#: src/components/importer/ImporterColumnSelector.tsx:324
 msgid "Accept Column Mapping"
 msgstr "Sütun Eşleştirmesini Kabul Et"
 
-#: src/components/importer/ImporterColumnSelector.tsx:285
+#: src/components/importer/ImporterColumnSelector.tsx:337
 msgid "Database Field"
 msgstr "Veritabanı Alanı"
 
-#: src/components/importer/ImporterColumnSelector.tsx:286
+#: src/components/importer/ImporterColumnSelector.tsx:338
 msgid "Field Description"
 msgstr "Alan Açıklaması"
 
-#: src/components/importer/ImporterColumnSelector.tsx:287
+#: src/components/importer/ImporterColumnSelector.tsx:339
 msgid "Imported Column"
 msgstr "İçe Aktarılmış Sütun"
 
-#: src/components/importer/ImporterColumnSelector.tsx:288
+#: src/components/importer/ImporterColumnSelector.tsx:340
+msgid "Lookup Field"
+msgstr ""
+
+#: src/components/importer/ImporterColumnSelector.tsx:341
 msgid "Default Value"
 msgstr "Varsayılan Değer"
 
@@ -2304,7 +2313,7 @@ msgstr "Sütunları Eşleştir"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Rows"
-msgstr ""
+msgstr "Satırları İçe Aktar"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
@@ -2448,7 +2457,7 @@ msgstr "InvenTree Logo"
 
 #: src/components/items/LanguageSelect.tsx:44
 msgid "Default Language"
-msgstr ""
+msgstr "Varsayılan Dil"
 
 #: src/components/items/LanguageSelect.tsx:52
 #: src/components/items/LanguageToggle.tsx:21
@@ -2462,7 +2471,7 @@ msgstr "Dil Seç"
 
 #: src/components/items/OnlyStaff.tsx:11
 msgid "This information is only available for administrative users"
-msgstr ""
+msgstr "Bu bilgi yalnızca yönetici kullanıcılar için mevcuttur"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2719,7 +2728,7 @@ msgstr "Sağlıklı"
 
 #: src/components/modals/ServerInfoModal.tsx:93
 msgid "Issues detected"
-msgstr "Sorunlar saptandı"
+msgstr "Tespit edilen sorunlar"
 
 #: src/components/modals/ServerInfoModal.tsx:102
 #: src/components/nav/Alerts.tsx:127
@@ -2754,7 +2763,7 @@ msgstr "Uyarılar"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "No issues detected"
-msgstr ""
+msgstr "Herhangi bir sorun tespit edilmedi"
 
 #: src/components/nav/Alerts.tsx:122
 msgid "The server is running in debug mode."
@@ -2791,7 +2800,7 @@ msgstr "Hakkında daha fazlasını öğren {code}"
 #: src/components/nav/Header.tsx:63
 #: src/components/nav/Header.tsx:70
 msgid "Open search"
-msgstr ""
+msgstr "Aramayı aç"
 
 #: src/components/nav/Header.tsx:210
 #: src/components/nav/NavigationDrawer.tsx:134
@@ -2809,15 +2818,15 @@ msgstr "Bildirimler"
 
 #: src/components/nav/Header.tsx:232
 msgid "Superuser Mode"
-msgstr ""
+msgstr "Süper Kullanıcı Modu"
 
 #: src/components/nav/Header.tsx:232
 msgid "Admin Mode"
-msgstr ""
+msgstr "Yönetici Modu"
 
 #: src/components/nav/Header.tsx:238
 msgid "The current user has elevated privileges and should not be used for regular usage."
-msgstr ""
+msgstr "Mevcut kullanıcı, yüksek düzeyde ayrıcalıklara sahiptir ve normal kullanım amacıyla kullanılmamalıdır."
 
 #: src/components/nav/Layout.tsx:146
 msgid "Nothing found..."
@@ -2989,7 +2998,7 @@ msgstr "Bildirimleri yükleme hatası."
 
 #: src/components/nav/PageDetail.tsx:263
 msgid "Primary Action"
-msgstr ""
+msgstr "Birincil Eylem"
 
 #: src/components/nav/SearchDrawer.tsx:111
 msgid "No Overview Available"
@@ -3089,12 +3098,12 @@ msgstr "Eklenti Sağlandı"
 
 #: src/components/panels/PanelGroup.tsx:299
 msgid "You have unsaved changes, are you sure you want to navigate away from this panel?"
-msgstr ""
+msgstr "Kaydedilmemiş değişiklikleriniz var; bu panelden çıkmak istediğinizden emin misiniz?"
 
 #. placeholder {0}: panel.name
 #: src/components/panels/PanelGroup.tsx:349
 msgid "Navigate to panel {0}"
-msgstr ""
+msgstr "{0} paneline git"
 
 #: src/components/panels/PanelGroup.tsx:409
 msgid "Collapse panels"
@@ -3107,11 +3116,11 @@ msgstr "Panelleri genişlet"
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
 msgid "Locate Item"
-msgstr ""
+msgstr "Ögeyi Bul"
 
 #: src/components/plugins/LocateItemButton.tsx:70
 msgid "Item location requested"
-msgstr ""
+msgstr "Öge konumu istendi"
 
 #: src/components/plugins/PluginDrawer.tsx:47
 msgid "Plugin Inactive"
@@ -3131,7 +3140,7 @@ msgstr "Eklenti Bilgileri"
 #: src/pages/company/ManufacturerPartDetail.tsx:94
 #: src/pages/company/ManufacturerPartDetail.tsx:121
 #: src/pages/company/SupplierPartDetail.tsx:150
-#: src/pages/part/CategoryDetail.tsx:113
+#: src/pages/part/CategoryDetail.tsx:114
 #: src/pages/part/PartDetail.tsx:319
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:166
 #: src/pages/sales/ReturnOrderDetail.tsx:132
@@ -3142,7 +3151,7 @@ msgstr "Eklenti Bilgileri"
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:159
 #: src/tables/machine/MachineTypeTable.tsx:255
-#: src/tables/plugin/PluginListTable.tsx:110
+#: src/tables/plugin/PluginListTable.tsx:112
 msgid "Description"
 msgstr "Açıklama"
 
@@ -3172,7 +3181,7 @@ msgstr "Tarih"
 #: src/tables/part/PartTableFilters.tsx:13
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:422
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 #: src/tables/settings/ApiTokenTable.tsx:63
@@ -3183,7 +3192,7 @@ msgstr "Aktif"
 
 #: src/components/plugins/PluginDrawer.tsx:99
 #: src/pages/company/CompanyDetail.tsx:103
-#: src/tables/plugin/PluginListTable.tsx:140
+#: src/tables/plugin/PluginListTable.tsx:142
 msgid "Website"
 msgstr "Web Sitesi"
 
@@ -3198,8 +3207,8 @@ msgstr "Kurulum Yolu"
 #: src/components/plugins/PluginDrawer.tsx:124
 #: src/tables/machine/MachineTypeTable.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:291
-#: src/tables/plugin/PluginListTable.tsx:101
-#: src/tables/plugin/PluginListTable.tsx:425
+#: src/tables/plugin/PluginListTable.tsx:102
+#: src/tables/plugin/PluginListTable.tsx:427
 msgid "Builtin"
 msgstr "Dahili"
 
@@ -3241,23 +3250,23 @@ msgstr "Eklenti Ayarları"
 
 #: src/components/plugins/PluginUIFeature.tsx:104
 msgid "Error occurred while rendering the template editor."
-msgstr ""
+msgstr "Şablon düzenleyicisi yüklenirken hata oluştu."
 
 #: src/components/plugins/PluginUIFeature.tsx:121
 msgid "Error Loading Plugin Editor"
-msgstr ""
+msgstr "Eklenti Düzenleyici Yükleme Hatası"
 
 #: src/components/plugins/PluginUIFeature.tsx:159
 msgid "Error occurred while rendering the template preview."
-msgstr ""
+msgstr "Şablon önizlemesi oluşturulurken hata oluştu."
 
 #: src/components/plugins/PluginUIFeature.tsx:170
 msgid "Error Loading Plugin Preview"
-msgstr ""
+msgstr "Eklenti Önizleme Yükleme Hatası"
 
 #: src/components/plugins/RemoteComponent.tsx:50
 msgid "Error Loading Plugin Content"
-msgstr ""
+msgstr "Eklenti İçeriği Yükleme Hatası"
 
 #: src/components/plugins/RemoteComponent.tsx:111
 #~ msgid "Invalid source or function name"
@@ -3273,12 +3282,12 @@ msgstr ""
 
 #: src/components/render/Instance.tsx:209
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/components/render/Instance.tsx:225
 #: src/tables/InvenTreeTable.tsx:787
 msgid "View details"
-msgstr ""
+msgstr "Ayrıntıları görüntüle"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -3364,7 +3373,7 @@ msgstr "Ayrıntılar"
 #: src/tables/ColumnRenderers.tsx:414
 #: src/tables/ColumnRenderers.tsx:423
 #: src/tables/notifications/NotificationTable.tsx:32
-#: src/tables/part/PartCategoryTemplateTable.tsx:78
+#: src/tables/part/PartCategoryTemplateTable.tsx:87
 msgid "Category"
 msgstr "Kategori"
 
@@ -3486,7 +3495,7 @@ msgstr "Bir Sorun Bildir"
 
 #: src/components/settings/QuickAction.tsx:86
 msgid "Report a bug or request a feature on GitHub"
-msgstr ""
+msgstr "GitHub üzerinden bir hata bildirin veya bir özellik talebinde bulunun"
 
 #: src/components/settings/QuickAction.tsx:88
 msgid "Open Issue"
@@ -3498,7 +3507,7 @@ msgstr "Yeni Grup Ekle"
 
 #: src/components/settings/QuickAction.tsx:98
 msgid "Create a new group to manage your users"
-msgstr ""
+msgstr "Kullanıcılarınızı yönetmek için yeni bir grup oluşturun"
 
 #: src/components/settings/QuickAction.tsx:100
 msgid "New Group"
@@ -3530,11 +3539,11 @@ msgstr "Özel Durum Ekle"
 
 #: src/components/settings/QuickAction.tsx:122
 msgid "Create a new custom state for your workflow"
-msgstr ""
+msgstr "İş akışınız için yeni bir özel durum oluşturun"
 
 #: src/components/settings/SettingItem.tsx:33
 msgid "Do you want to proceed to change this setting?"
-msgstr ""
+msgstr "Bu ayarı değiştirmeye devam etmek istiyor musunuz?"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3543,7 +3552,7 @@ msgstr ""
 
 #: src/components/settings/SettingItem.tsx:221
 msgid "This setting requires confirmation"
-msgstr ""
+msgstr "Bu ayar doğrulama gerektirir"
 
 #: src/components/settings/SettingList.tsx:74
 msgid "Edit Setting"
@@ -3576,7 +3585,7 @@ msgstr "Ayar Yok"
 
 #: src/components/settings/SettingList.tsx:158
 msgid "There are no configurable settings available"
-msgstr ""
+msgstr "Yapılandırılabilir ayar bulunmamaktadır"
 
 #: src/components/settings/SettingList.tsx:197
 msgid "No settings specified"
@@ -3944,7 +3953,7 @@ msgstr "Tam eşleşme."
 
 #: src/components/wizards/ImportPartWizard.tsx:112
 msgid "Current part"
-msgstr ""
+msgstr "Şimdiki parça"
 
 #: src/components/wizards/ImportPartWizard.tsx:118
 msgid "Already Imported"
@@ -3973,7 +3982,7 @@ msgstr "Yükleniyor..."
 
 #: src/components/wizards/ImportPartWizard.tsx:223
 msgid "Error fetching suppliers"
-msgstr ""
+msgstr "Tedarikçiler alınırken hata oluştu"
 
 #: src/components/wizards/ImportPartWizard.tsx:224
 msgid "Select supplier"
@@ -3990,7 +3999,7 @@ msgstr "Bu bölümü içe aktar"
 
 #: src/components/wizards/ImportPartWizard.tsx:313
 msgid "Are you sure you want to import this part into the selected category now?"
-msgstr ""
+msgstr "Bu parçayı şimdi seçilen kategoriye aktarmak istediğinizden emin misiniz?"
 
 #: src/components/wizards/ImportPartWizard.tsx:326
 msgid "Import Now"
@@ -3998,11 +4007,11 @@ msgstr "Şimdi İçe Aktar"
 
 #: src/components/wizards/ImportPartWizard.tsx:372
 msgid "Select and edit the parameters you want to add to this part."
-msgstr ""
+msgstr "Bu parçaya eklemek istediğiniz parametreleri seçin ve düzenleyin."
 
 #: src/components/wizards/ImportPartWizard.tsx:379
 msgid "Default category parameters"
-msgstr ""
+msgstr "Varsayılan kategori parametreleri"
 
 #: src/components/wizards/ImportPartWizard.tsx:391
 msgid "Other parameters"
@@ -4010,7 +4019,7 @@ msgstr "Diğer parametreler"
 
 #: src/components/wizards/ImportPartWizard.tsx:446
 msgid "Add a new parameter"
-msgstr ""
+msgstr "Yen bir parametre ekle"
 
 #: src/components/wizards/ImportPartWizard.tsx:468
 msgid "Skip"
@@ -4018,11 +4027,11 @@ msgstr "Atla"
 
 #: src/components/wizards/ImportPartWizard.tsx:476
 msgid "Create Parameters"
-msgstr ""
+msgstr "Parametreler Oluştur"
 
 #: src/components/wizards/ImportPartWizard.tsx:493
 msgid "Create initial stock for the imported part."
-msgstr ""
+msgstr "İçe aktarılan parça için başlangıç stoku oluştur."
 
 #: src/components/wizards/ImportPartWizard.tsx:511
 msgid "Next"
@@ -4036,11 +4045,11 @@ msgstr "Parçayı Düzenle"
 
 #: src/components/wizards/ImportPartWizard.tsx:567
 msgid "Part imported successfully!"
-msgstr ""
+msgstr "Parça başarıyla içe aktarıldı!"
 
 #: src/components/wizards/ImportPartWizard.tsx:576
 msgid "Failed to import part: "
-msgstr ""
+msgstr "Parçayı içe aktarma başarısız oldu: "
 
 #: src/components/wizards/ImportPartWizard.tsx:641
 msgid "Are you sure, you want to import the supplier and manufacturer part into this part?"
@@ -4823,7 +4832,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:175
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
-#: src/tables/settings/ImportSessionTable.tsx:118
+#: src/tables/settings/ImportSessionTable.tsx:129
 #: src/tables/stock/StockItemTable.tsx:203
 #: src/tables/stock/StockTrackingTable.tsx:83
 msgid "Status"
@@ -4995,7 +5004,7 @@ msgstr ""
 
 #: src/forms/PartForms.tsx:110
 #: src/forms/PartForms.tsx:244
-#: src/pages/part/CategoryDetail.tsx:129
+#: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/PartDetail.tsx:536
 #: src/tables/part/PartCategoryTable.tsx:92
 #: src/tables/part/PartTableFilters.tsx:143
@@ -6999,7 +7008,6 @@ msgstr "Özel Birimler"
 #~ msgstr "Part Parameters"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:207
-#: src/pages/part/CategoryDetail.tsx:328
 msgid "Category Parameters"
 msgstr "Kategori Parametreleri"
 
@@ -7698,7 +7706,7 @@ msgstr "Siparişi iptal et"
 #~ msgstr "New Build Order"
 
 #: src/pages/build/BuildIndex.tsx:94
-#: src/pages/part/CategoryDetail.tsx:291
+#: src/pages/part/CategoryDetail.tsx:292
 #: src/pages/purchasing/PurchasingIndex.tsx:103
 #: src/pages/purchasing/PurchasingIndex.tsx:130
 #: src/pages/purchasing/PurchasingIndex.tsx:159
@@ -7721,7 +7729,7 @@ msgid "Calendar View"
 msgstr ""
 
 #: src/pages/build/BuildIndex.tsx:106
-#: src/pages/part/CategoryDetail.tsx:305
+#: src/pages/part/CategoryDetail.tsx:306
 #: src/pages/purchasing/PurchasingIndex.tsx:115
 #: src/pages/purchasing/PurchasingIndex.tsx:142
 #: src/pages/purchasing/PurchasingIndex.tsx:165
@@ -7982,7 +7990,7 @@ msgstr ""
 #~ msgid "Basic user"
 #~ msgstr "Basic user"
 
-#: src/pages/part/CategoryDetail.tsx:105
+#: src/pages/part/CategoryDetail.tsx:106
 #: src/pages/stock/LocationDetail.tsx:129
 #: src/tables/ColumnRenderers.tsx:336
 #: src/tables/settings/ErrorTable.tsx:63
@@ -7990,27 +7998,27 @@ msgstr ""
 msgid "Path"
 msgstr "Yol"
 
-#: src/pages/part/CategoryDetail.tsx:121
+#: src/pages/part/CategoryDetail.tsx:122
 msgid "Parent Category"
 msgstr "Üst Kategori"
 
-#: src/pages/part/CategoryDetail.tsx:144
-#: src/pages/part/CategoryDetail.tsx:278
+#: src/pages/part/CategoryDetail.tsx:145
+#: src/pages/part/CategoryDetail.tsx:279
 msgid "Subcategories"
 msgstr "Alt kategoriler"
 
-#: src/pages/part/CategoryDetail.tsx:151
+#: src/pages/part/CategoryDetail.tsx:152
 #: src/pages/stock/LocationDetail.tsx:169
 #: src/tables/part/PartCategoryTable.tsx:87
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
 msgstr "Yapısal"
 
-#: src/pages/part/CategoryDetail.tsx:157
+#: src/pages/part/CategoryDetail.tsx:158
 msgid "Parent default location"
 msgstr "Varsayılan üst konum"
 
-#: src/pages/part/CategoryDetail.tsx:164
+#: src/pages/part/CategoryDetail.tsx:165
 msgid "Default location"
 msgstr "Varsayılan konum"
 
@@ -8018,48 +8026,48 @@ msgstr "Varsayılan konum"
 #~ msgid "Top level part category"
 #~ msgstr "Top level part category"
 
-#: src/pages/part/CategoryDetail.tsx:181
-#: src/pages/part/CategoryDetail.tsx:249
+#: src/pages/part/CategoryDetail.tsx:182
+#: src/pages/part/CategoryDetail.tsx:250
 #: src/tables/part/PartCategoryTable.tsx:121
 msgid "Edit Part Category"
 msgstr "Parça Kategorisini Düzenle"
 
-#: src/pages/part/CategoryDetail.tsx:190
+#: src/pages/part/CategoryDetail.tsx:191
 msgid "Move items to parent category"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:194
+#: src/pages/part/CategoryDetail.tsx:195
 #: src/pages/stock/LocationDetail.tsx:316
 msgid "Delete items"
 msgstr "Ögeleri sil"
 
-#: src/pages/part/CategoryDetail.tsx:202
-#: src/pages/part/CategoryDetail.tsx:254
+#: src/pages/part/CategoryDetail.tsx:203
+#: src/pages/part/CategoryDetail.tsx:255
 msgid "Delete Part Category"
 msgstr "Parça Kategorisini Sil"
 
-#: src/pages/part/CategoryDetail.tsx:205
+#: src/pages/part/CategoryDetail.tsx:206
 msgid "Parts Action"
 msgstr "Parçalar Eylemi"
 
-#: src/pages/part/CategoryDetail.tsx:206
+#: src/pages/part/CategoryDetail.tsx:207
 msgid "Action for parts in this category"
 msgstr "Bu kategorideki parçalar için eylem"
 
-#: src/pages/part/CategoryDetail.tsx:212
+#: src/pages/part/CategoryDetail.tsx:213
 msgid "Child Categories Action"
 msgstr "Alt Kategoriler Eylemi"
 
-#: src/pages/part/CategoryDetail.tsx:213
+#: src/pages/part/CategoryDetail.tsx:214
 msgid "Action for child categories in this category"
 msgstr "Bu kategorinin alt kategorileri için eylem"
 
-#: src/pages/part/CategoryDetail.tsx:245
+#: src/pages/part/CategoryDetail.tsx:246
 #: src/tables/part/PartCategoryTable.tsx:142
 msgid "Category Actions"
 msgstr "Kategori Eylemleri"
 
-#: src/pages/part/CategoryDetail.tsx:271
+#: src/pages/part/CategoryDetail.tsx:272
 msgid "Category Details"
 msgstr "Kategori Ayrıntıları"
 
@@ -10030,7 +10038,7 @@ msgid "Are you sure you want to delete the selected items?"
 msgstr "Seçilen ögeleri silmek istediğinize emin misiniz?"
 
 #: src/tables/InvenTreeTableHeader.tsx:113
-#: src/tables/plugin/PluginListTable.tsx:320
+#: src/tables/plugin/PluginListTable.tsx:322
 msgid "This action cannot be undone"
 msgstr "Bu işlem geri alınamaz"
 
@@ -11065,7 +11073,7 @@ msgid "Show enabled templates"
 msgstr ""
 
 #: src/tables/general/ParameterTemplateTable.tsx:148
-#: src/tables/settings/ImportSessionTable.tsx:112
+#: src/tables/settings/ImportSessionTable.tsx:123
 #: src/tables/settings/TemplateTable.tsx:414
 msgid "Model Type"
 msgstr "Model Türü"
@@ -11402,22 +11410,30 @@ msgstr ""
 msgid "Add Part Category"
 msgstr "Parça Kategorisi Ekle"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:49
-#: src/tables/part/PartCategoryTemplateTable.tsx:143
+#: src/tables/part/PartCategoryTemplateTable.tsx:56
+#: src/tables/part/PartCategoryTemplateTable.tsx:152
 msgid "Add Category Parameter"
 msgstr "Kategori Parametresi Ekle"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:57
+#: src/tables/part/PartCategoryTemplateTable.tsx:65
 msgid "Edit Category Parameter"
 msgstr "Kategori Parametresini Düzenle"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:65
+#: src/tables/part/PartCategoryTemplateTable.tsx:74
 msgid "Delete Category Parameter"
 msgstr "Kategori Parametresini Sil"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
 #~ msgid "[{0}]"
 #~ msgstr "[{0}]"
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:167
+msgid "Part Category Parameters Templates"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:170
+msgid "Parts which are created within this category will inherit the default values specified here."
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:148
 #~ msgid "New Part Parameter"
@@ -11838,8 +11854,8 @@ msgstr "Eklenti"
 #~ msgid "An error occurred while fetching plugin details"
 #~ msgstr "An error occurred while fetching plugin details"
 
-#: src/tables/plugin/PluginListTable.tsx:106
-#: src/tables/plugin/PluginListTable.tsx:430
+#: src/tables/plugin/PluginListTable.tsx:108
+#: src/tables/plugin/PluginListTable.tsx:432
 msgid "Mandatory"
 msgstr ""
 
@@ -11847,7 +11863,7 @@ msgstr ""
 #~ msgid "Plugin with id {id} not found"
 #~ msgstr "Plugin with id {id} not found"
 
-#: src/tables/plugin/PluginListTable.tsx:120
+#: src/tables/plugin/PluginListTable.tsx:122
 msgid "Description not available"
 msgstr "Kullanılabilir açıklama yok"
 
@@ -11869,11 +11885,11 @@ msgstr "Kullanılabilir açıklama yok"
 #~ msgid "Reload"
 #~ msgstr "Reload"
 
-#: src/tables/plugin/PluginListTable.tsx:159
+#: src/tables/plugin/PluginListTable.tsx:161
 msgid "Confirm plugin activation"
 msgstr "Eklenti etkinleştirmesini onaylayın"
 
-#: src/tables/plugin/PluginListTable.tsx:160
+#: src/tables/plugin/PluginListTable.tsx:162
 msgid "Confirm plugin deactivation"
 msgstr "Eklentinin etkisizleştirilmesini onaylayın"
 
@@ -11881,15 +11897,15 @@ msgstr "Eklentinin etkisizleştirilmesini onaylayın"
 #~ msgid "Package information"
 #~ msgstr "Package information"
 
-#: src/tables/plugin/PluginListTable.tsx:165
+#: src/tables/plugin/PluginListTable.tsx:167
 msgid "The selected plugin will be activated"
 msgstr "Seçilen eklenti etkinleştirilecek"
 
-#: src/tables/plugin/PluginListTable.tsx:166
+#: src/tables/plugin/PluginListTable.tsx:168
 msgid "The selected plugin will be deactivated"
 msgstr "Seçilen eklenti etkisizleştirilecek"
 
-#: src/tables/plugin/PluginListTable.tsx:184
+#: src/tables/plugin/PluginListTable.tsx:186
 msgid "Deactivate"
 msgstr "Etkisizleştir"
 
@@ -11897,44 +11913,44 @@ msgstr "Etkisizleştir"
 #~ msgid "Plugin settings"
 #~ msgstr "Plugin settings"
 
-#: src/tables/plugin/PluginListTable.tsx:198
+#: src/tables/plugin/PluginListTable.tsx:200
 msgid "Activate"
 msgstr "Etkinleştir"
 
-#: src/tables/plugin/PluginListTable.tsx:199
+#: src/tables/plugin/PluginListTable.tsx:201
 msgid "Activate selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:211
+#: src/tables/plugin/PluginListTable.tsx:213
 msgid "Update selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:229
+#: src/tables/plugin/PluginListTable.tsx:231
 #: src/tables/stock/InstalledItemsTable.tsx:98
 msgid "Uninstall"
 msgstr "Kaldır"
 
-#: src/tables/plugin/PluginListTable.tsx:230
+#: src/tables/plugin/PluginListTable.tsx:232
 msgid "Uninstall selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:248
+#: src/tables/plugin/PluginListTable.tsx:250
 msgid "Delete selected plugin configuration"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:264
+#: src/tables/plugin/PluginListTable.tsx:266
 msgid "Activate Plugin"
 msgstr "Eklentiyi Etkinleştir"
 
-#: src/tables/plugin/PluginListTable.tsx:264
+#: src/tables/plugin/PluginListTable.tsx:266
 msgid "Deactivate Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:271
+#: src/tables/plugin/PluginListTable.tsx:273
 msgid "The plugin was activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:272
+#: src/tables/plugin/PluginListTable.tsx:274
 msgid "The plugin was deactivated"
 msgstr ""
 
@@ -11942,20 +11958,20 @@ msgstr ""
 #~ msgid "Install plugin"
 #~ msgstr "Install plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:285
-#: src/tables/plugin/PluginListTable.tsx:377
+#: src/tables/plugin/PluginListTable.tsx:287
+#: src/tables/plugin/PluginListTable.tsx:379
 msgid "Install Plugin"
 msgstr "Eklenti Kur"
 
-#: src/tables/plugin/PluginListTable.tsx:298
+#: src/tables/plugin/PluginListTable.tsx:300
 msgid "Install"
 msgstr "Kur"
 
-#: src/tables/plugin/PluginListTable.tsx:299
+#: src/tables/plugin/PluginListTable.tsx:301
 msgid "Plugin installed successfully"
 msgstr "Eklenti başarıyla yüklendi"
 
-#: src/tables/plugin/PluginListTable.tsx:304
+#: src/tables/plugin/PluginListTable.tsx:306
 msgid "Uninstall Plugin"
 msgstr "Eklentiyi Kaldır"
 
@@ -11963,31 +11979,31 @@ msgstr "Eklentiyi Kaldır"
 #~ msgid "This action cannot be undone."
 #~ msgstr "This action cannot be undone."
 
-#: src/tables/plugin/PluginListTable.tsx:316
+#: src/tables/plugin/PluginListTable.tsx:318
 msgid "Confirm plugin uninstall"
 msgstr "Eklentiyi kaldırmayı onaylayın"
 
-#: src/tables/plugin/PluginListTable.tsx:319
+#: src/tables/plugin/PluginListTable.tsx:321
 msgid "The selected plugin will be uninstalled."
 msgstr "Seçilen eklenti kaldırılacak."
 
-#: src/tables/plugin/PluginListTable.tsx:324
+#: src/tables/plugin/PluginListTable.tsx:326
 msgid "Plugin uninstalled successfully"
 msgstr "Eklenti başarıyla yüklendi"
 
-#: src/tables/plugin/PluginListTable.tsx:332
+#: src/tables/plugin/PluginListTable.tsx:334
 msgid "Delete Plugin"
 msgstr "Eklentiyi Sil"
 
-#: src/tables/plugin/PluginListTable.tsx:333
+#: src/tables/plugin/PluginListTable.tsx:335
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr "Bu eklenti yapılandırmasını silmek ilgili tüm ayar ve veriyi de kaldıracaktır. Bu eklentiyi silmek istediğinize emin misiniz?"
 
-#: src/tables/plugin/PluginListTable.tsx:346
+#: src/tables/plugin/PluginListTable.tsx:348
 msgid "Plugins reloaded"
 msgstr "Eklentiler yeniden yüklendi"
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:349
 msgid "Plugins were reloaded successfully"
 msgstr "Eklentiler başarıyla yeniden yüklendi"
 
@@ -11999,7 +12015,7 @@ msgstr "Eklentiler başarıyla yeniden yüklendi"
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:370
+#: src/tables/plugin/PluginListTable.tsx:372
 msgid "Reload Plugins"
 msgstr "Eklentileri Yeniden Yükle"
 
@@ -12015,7 +12031,7 @@ msgstr "Eklentileri Yeniden Yükle"
 #~ msgid "Plugin updated"
 #~ msgstr "Plugin updated"
 
-#: src/tables/plugin/PluginListTable.tsx:393
+#: src/tables/plugin/PluginListTable.tsx:395
 msgid "Plugin Detail"
 msgstr "Eklenti Ayrıntısı"
 
@@ -12023,11 +12039,11 @@ msgstr "Eklenti Ayrıntısı"
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:435
+#: src/tables/plugin/PluginListTable.tsx:437
 msgid "Sample"
 msgstr "Numune"
 
-#: src/tables/plugin/PluginListTable.tsx:440
+#: src/tables/plugin/PluginListTable.tsx:442
 #: src/tables/stock/StockItemTable.tsx:248
 msgid "Installed"
 msgstr "Kuruldu"
@@ -12660,29 +12676,29 @@ msgstr "Grubu Düzenle"
 msgid "Add Group"
 msgstr "Grup Ekle"
 
-#: src/tables/settings/ImportSessionTable.tsx:37
+#: src/tables/settings/ImportSessionTable.tsx:41
 msgid "Delete Import Session"
 msgstr "İçe Aktarma Oturununu Sil"
 
-#: src/tables/settings/ImportSessionTable.tsx:43
-#: src/tables/settings/ImportSessionTable.tsx:130
+#: src/tables/settings/ImportSessionTable.tsx:47
+#: src/tables/settings/ImportSessionTable.tsx:141
 msgid "Create Import Session"
 msgstr "İçe Aktarma Oturumu Oluştur"
 
-#: src/tables/settings/ImportSessionTable.tsx:73
+#: src/tables/settings/ImportSessionTable.tsx:77
 msgid "Uploaded"
 msgstr "Karşıya Yüklendi"
 
-#: src/tables/settings/ImportSessionTable.tsx:84
+#: src/tables/settings/ImportSessionTable.tsx:88
 msgid "Imported Rows"
 msgstr "İçe Aktarılan Satırlar"
 
-#: src/tables/settings/ImportSessionTable.tsx:113
+#: src/tables/settings/ImportSessionTable.tsx:124
 #: src/tables/settings/TemplateTable.tsx:415
 msgid "Filter by target model type"
 msgstr "Hedef modelin türüne göre süz"
 
-#: src/tables/settings/ImportSessionTable.tsx:119
+#: src/tables/settings/ImportSessionTable.tsx:130
 msgid "Filter by import session status"
 msgstr "İçe aktarma oturumu durumuna göre süz"
 
@@ -13365,7 +13381,7 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:25
 msgid "Mobile viewport detected"
-msgstr "Mobil görüntü alanı saptandı"
+msgstr "Mobil görüntü alanı algılandı"
 
 #: src/views/MobileAppView.tsx:25
 #~ msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."

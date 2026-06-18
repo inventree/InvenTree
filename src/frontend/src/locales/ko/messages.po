@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-14 02:16\n"
+"PO-Revision-Date: 2026-06-17 22:14\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -56,7 +56,7 @@ msgstr "편집"
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
 #: src/pages/Notifications.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:247
+#: src/tables/plugin/PluginListTable.tsx:249
 msgid "Delete"
 msgstr "삭제"
 
@@ -163,10 +163,10 @@ msgstr "부품"
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
 #: src/pages/Index/Settings/SystemSettings.tsx:218
-#: src/pages/part/CategoryDetail.tsx:137
-#: src/pages/part/CategoryDetail.tsx:284
-#: src/pages/part/CategoryDetail.tsx:339
-#: src/pages/part/CategoryDetail.tsx:381
+#: src/pages/part/CategoryDetail.tsx:138
+#: src/pages/part/CategoryDetail.tsx:285
+#: src/pages/part/CategoryDetail.tsx:345
+#: src/pages/part/CategoryDetail.tsx:387
 #: src/pages/part/PartDetail.tsx:893
 msgid "Parts"
 msgstr "부품"
@@ -194,11 +194,12 @@ msgid "Parameters"
 msgstr "매개변수"
 
 #: lib/enums/ModelInformation.tsx:46
-#: src/tables/part/PartCategoryTemplateTable.tsx:87
+#: src/tables/part/PartCategoryTemplateTable.tsx:96
 msgid "Parameter Template"
 msgstr "매개변수 템플릿"
 
 #: lib/enums/ModelInformation.tsx:47
+#: src/pages/part/CategoryDetail.tsx:334
 msgid "Parameter Templates"
 msgstr "매개변수 템플릿"
 
@@ -241,15 +242,15 @@ msgid "Manufacturer Parts"
 msgstr "제조업체 부품"
 
 #: lib/enums/ModelInformation.tsx:80
-#: src/pages/part/CategoryDetail.tsx:381
+#: src/pages/part/CategoryDetail.tsx:387
 #: src/tables/Filter.tsx:496
 msgid "Part Category"
 msgstr "부품 카테고리"
 
 #: lib/enums/ModelInformation.tsx:81
 #: lib/enums/Roles.tsx:39
-#: src/pages/part/CategoryDetail.tsx:278
-#: src/pages/part/CategoryDetail.tsx:372
+#: src/pages/part/CategoryDetail.tsx:279
+#: src/pages/part/CategoryDetail.tsx:378
 #: src/pages/part/PartDetail.tsx:1154
 msgid "Part Categories"
 msgstr "부품 카테고리 목록"
@@ -273,7 +274,7 @@ msgstr "재고 항목"
 #: lib/enums/ModelInformation.tsx:90
 #: lib/enums/Roles.tsx:49
 #: src/pages/company/CompanyDetail.tsx:217
-#: src/pages/part/CategoryDetail.tsx:313
+#: src/pages/part/CategoryDetail.tsx:314
 #: src/pages/part/PartStockHistoryDetail.tsx:117
 #: src/pages/stock/LocationDetail.tsx:156
 #: src/pages/stock/LocationDetail.tsx:235
@@ -538,7 +539,7 @@ msgstr "소유자 목록"
 #: src/tables/settings/ApiTokenTable.tsx:127
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
-#: src/tables/settings/ImportSessionTable.tsx:78
+#: src/tables/settings/ImportSessionTable.tsx:82
 #: src/tables/stock/StockTrackingTable.tsx:237
 #: src/tables/stock/StockTrackingTable.tsx:285
 msgid "User"
@@ -640,7 +641,7 @@ msgstr "선택 항목"
 #: src/components/forms/fields/ApiFormField.tsx:259
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:215
-#: src/components/importer/ImporterColumnSelector.tsx:278
+#: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:211
@@ -1794,7 +1795,7 @@ msgstr "하나 이상의 입력 필드에 오류가 있습니다"
 
 #: src/components/forms/ApiForm.tsx:751
 #: src/hooks/UseForm.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:210
+#: src/tables/plugin/PluginListTable.tsx:212
 msgid "Update"
 msgstr "업데이트"
 
@@ -1982,7 +1983,7 @@ msgstr "주인"
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
-#: src/pages/part/CategoryDetail.tsx:93
+#: src/pages/part/CategoryDetail.tsx:94
 #: src/pages/part/PartDetail.tsx:305
 #: src/pages/stock/LocationDetail.tsx:117
 #: src/tables/machine/MachineTypeTable.tsx:67
@@ -2059,7 +2060,7 @@ msgstr "섬기는 사람"
 
 #: src/components/forms/InstanceOptions.tsx:131
 #: src/components/plugins/PluginDrawer.tsx:88
-#: src/tables/plugin/PluginListTable.tsx:127
+#: src/tables/plugin/PluginListTable.tsx:129
 msgid "Version"
 msgstr "버전"
 
@@ -2243,7 +2244,7 @@ msgid "Processing Data"
 msgstr "데이터 처리"
 
 #: src/components/importer/ImporterColumnSelector.tsx:56
-#: src/components/importer/ImporterColumnSelector.tsx:247
+#: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
 #: src/functions/auth.tsx:401
@@ -2266,31 +2267,39 @@ msgstr "열을 선택하거나 이 필드를 무시하려면 비워 두세요"
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:253
+#: src/components/importer/ImporterColumnSelector.tsx:202
+msgid "Auto"
+msgstr ""
+
+#: src/components/importer/ImporterColumnSelector.tsx:305
 msgid "Ignore this field"
 msgstr "이 필드를 무시하세요"
 
-#: src/components/importer/ImporterColumnSelector.tsx:267
+#: src/components/importer/ImporterColumnSelector.tsx:319
 msgid "Mapping data columns to database fields"
 msgstr "데이터 열을 데이터베이스 필드에 매핑"
 
-#: src/components/importer/ImporterColumnSelector.tsx:272
+#: src/components/importer/ImporterColumnSelector.tsx:324
 msgid "Accept Column Mapping"
 msgstr "열 매핑 적용"
 
-#: src/components/importer/ImporterColumnSelector.tsx:285
+#: src/components/importer/ImporterColumnSelector.tsx:337
 msgid "Database Field"
 msgstr "데이터베이스 필드"
 
-#: src/components/importer/ImporterColumnSelector.tsx:286
+#: src/components/importer/ImporterColumnSelector.tsx:338
 msgid "Field Description"
 msgstr "필드 설명"
 
-#: src/components/importer/ImporterColumnSelector.tsx:287
+#: src/components/importer/ImporterColumnSelector.tsx:339
 msgid "Imported Column"
 msgstr "가져온 열"
 
-#: src/components/importer/ImporterColumnSelector.tsx:288
+#: src/components/importer/ImporterColumnSelector.tsx:340
+msgid "Lookup Field"
+msgstr ""
+
+#: src/components/importer/ImporterColumnSelector.tsx:341
 msgid "Default Value"
 msgstr "기본값"
 
@@ -3131,7 +3140,7 @@ msgstr "플러그인 정보"
 #: src/pages/company/ManufacturerPartDetail.tsx:94
 #: src/pages/company/ManufacturerPartDetail.tsx:121
 #: src/pages/company/SupplierPartDetail.tsx:150
-#: src/pages/part/CategoryDetail.tsx:113
+#: src/pages/part/CategoryDetail.tsx:114
 #: src/pages/part/PartDetail.tsx:319
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:166
 #: src/pages/sales/ReturnOrderDetail.tsx:132
@@ -3142,7 +3151,7 @@ msgstr "플러그인 정보"
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:159
 #: src/tables/machine/MachineTypeTable.tsx:255
-#: src/tables/plugin/PluginListTable.tsx:110
+#: src/tables/plugin/PluginListTable.tsx:112
 msgid "Description"
 msgstr "설명"
 
@@ -3172,7 +3181,7 @@ msgstr "날짜"
 #: src/tables/part/PartTableFilters.tsx:13
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:422
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 #: src/tables/settings/ApiTokenTable.tsx:63
@@ -3183,7 +3192,7 @@ msgstr "활동적인"
 
 #: src/components/plugins/PluginDrawer.tsx:99
 #: src/pages/company/CompanyDetail.tsx:103
-#: src/tables/plugin/PluginListTable.tsx:140
+#: src/tables/plugin/PluginListTable.tsx:142
 msgid "Website"
 msgstr "웹사이트"
 
@@ -3198,8 +3207,8 @@ msgstr "설치 경로"
 #: src/components/plugins/PluginDrawer.tsx:124
 #: src/tables/machine/MachineTypeTable.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:291
-#: src/tables/plugin/PluginListTable.tsx:101
-#: src/tables/plugin/PluginListTable.tsx:425
+#: src/tables/plugin/PluginListTable.tsx:102
+#: src/tables/plugin/PluginListTable.tsx:427
 msgid "Builtin"
 msgstr "내장"
 
@@ -3364,7 +3373,7 @@ msgstr "상세 정보"
 #: src/tables/ColumnRenderers.tsx:414
 #: src/tables/ColumnRenderers.tsx:423
 #: src/tables/notifications/NotificationTable.tsx:32
-#: src/tables/part/PartCategoryTemplateTable.tsx:78
+#: src/tables/part/PartCategoryTemplateTable.tsx:87
 msgid "Category"
 msgstr "카테고리"
 
@@ -4823,7 +4832,7 @@ msgstr "완료할 수량"
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:175
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
-#: src/tables/settings/ImportSessionTable.tsx:118
+#: src/tables/settings/ImportSessionTable.tsx:129
 #: src/tables/stock/StockItemTable.tsx:203
 #: src/tables/stock/StockTrackingTable.tsx:83
 msgid "Status"
@@ -4995,7 +5004,7 @@ msgstr "이 품목의 프로젝트 코드를 선택하세요."
 
 #: src/forms/PartForms.tsx:110
 #: src/forms/PartForms.tsx:244
-#: src/pages/part/CategoryDetail.tsx:129
+#: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/PartDetail.tsx:536
 #: src/tables/part/PartCategoryTable.tsx:92
 #: src/tables/part/PartTableFilters.tsx:143
@@ -6999,7 +7008,6 @@ msgstr "사용자 지정 단위"
 #~ msgstr "Part Parameters"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:207
-#: src/pages/part/CategoryDetail.tsx:328
 msgid "Category Parameters"
 msgstr "카테고리 파라미터"
 
@@ -7698,7 +7706,7 @@ msgstr "주문 취소"
 #~ msgstr "New Build Order"
 
 #: src/pages/build/BuildIndex.tsx:94
-#: src/pages/part/CategoryDetail.tsx:291
+#: src/pages/part/CategoryDetail.tsx:292
 #: src/pages/purchasing/PurchasingIndex.tsx:103
 #: src/pages/purchasing/PurchasingIndex.tsx:130
 #: src/pages/purchasing/PurchasingIndex.tsx:159
@@ -7721,7 +7729,7 @@ msgid "Calendar View"
 msgstr "캘린더 보기"
 
 #: src/pages/build/BuildIndex.tsx:106
-#: src/pages/part/CategoryDetail.tsx:305
+#: src/pages/part/CategoryDetail.tsx:306
 #: src/pages/purchasing/PurchasingIndex.tsx:115
 #: src/pages/purchasing/PurchasingIndex.tsx:142
 #: src/pages/purchasing/PurchasingIndex.tsx:165
@@ -7982,7 +7990,7 @@ msgstr "일반 사용자"
 #~ msgid "Basic user"
 #~ msgstr "Basic user"
 
-#: src/pages/part/CategoryDetail.tsx:105
+#: src/pages/part/CategoryDetail.tsx:106
 #: src/pages/stock/LocationDetail.tsx:129
 #: src/tables/ColumnRenderers.tsx:336
 #: src/tables/settings/ErrorTable.tsx:63
@@ -7990,27 +7998,27 @@ msgstr "일반 사용자"
 msgid "Path"
 msgstr "길"
 
-#: src/pages/part/CategoryDetail.tsx:121
+#: src/pages/part/CategoryDetail.tsx:122
 msgid "Parent Category"
 msgstr "상위 카테고리"
 
-#: src/pages/part/CategoryDetail.tsx:144
-#: src/pages/part/CategoryDetail.tsx:278
+#: src/pages/part/CategoryDetail.tsx:145
+#: src/pages/part/CategoryDetail.tsx:279
 msgid "Subcategories"
 msgstr "하위 카테고리"
 
-#: src/pages/part/CategoryDetail.tsx:151
+#: src/pages/part/CategoryDetail.tsx:152
 #: src/pages/stock/LocationDetail.tsx:169
 #: src/tables/part/PartCategoryTable.tsx:87
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
 msgstr "구조용"
 
-#: src/pages/part/CategoryDetail.tsx:157
+#: src/pages/part/CategoryDetail.tsx:158
 msgid "Parent default location"
 msgstr "상위 기본 위치"
 
-#: src/pages/part/CategoryDetail.tsx:164
+#: src/pages/part/CategoryDetail.tsx:165
 msgid "Default location"
 msgstr "기본 위치"
 
@@ -8018,48 +8026,48 @@ msgstr "기본 위치"
 #~ msgid "Top level part category"
 #~ msgstr "Top level part category"
 
-#: src/pages/part/CategoryDetail.tsx:181
-#: src/pages/part/CategoryDetail.tsx:249
+#: src/pages/part/CategoryDetail.tsx:182
+#: src/pages/part/CategoryDetail.tsx:250
 #: src/tables/part/PartCategoryTable.tsx:121
 msgid "Edit Part Category"
 msgstr "부품 카테고리 편집"
 
-#: src/pages/part/CategoryDetail.tsx:190
+#: src/pages/part/CategoryDetail.tsx:191
 msgid "Move items to parent category"
 msgstr "항목을 상위 카테고리로 이동"
 
-#: src/pages/part/CategoryDetail.tsx:194
+#: src/pages/part/CategoryDetail.tsx:195
 #: src/pages/stock/LocationDetail.tsx:316
 msgid "Delete items"
 msgstr "항목 삭제"
 
-#: src/pages/part/CategoryDetail.tsx:202
-#: src/pages/part/CategoryDetail.tsx:254
+#: src/pages/part/CategoryDetail.tsx:203
+#: src/pages/part/CategoryDetail.tsx:255
 msgid "Delete Part Category"
 msgstr "부품 카테고리 삭제"
 
-#: src/pages/part/CategoryDetail.tsx:205
+#: src/pages/part/CategoryDetail.tsx:206
 msgid "Parts Action"
 msgstr "부품 작업"
 
-#: src/pages/part/CategoryDetail.tsx:206
+#: src/pages/part/CategoryDetail.tsx:207
 msgid "Action for parts in this category"
 msgstr "이 카테고리의 부품에 대한 작업"
 
-#: src/pages/part/CategoryDetail.tsx:212
+#: src/pages/part/CategoryDetail.tsx:213
 msgid "Child Categories Action"
 msgstr "어린이 카테고리 액션"
 
-#: src/pages/part/CategoryDetail.tsx:213
+#: src/pages/part/CategoryDetail.tsx:214
 msgid "Action for child categories in this category"
 msgstr "이 카테고리의 하위 카테고리에 대한 조치"
 
-#: src/pages/part/CategoryDetail.tsx:245
+#: src/pages/part/CategoryDetail.tsx:246
 #: src/tables/part/PartCategoryTable.tsx:142
 msgid "Category Actions"
 msgstr "카테고리 조치"
 
-#: src/pages/part/CategoryDetail.tsx:271
+#: src/pages/part/CategoryDetail.tsx:272
 msgid "Category Details"
 msgstr "카테고리 상세 정보"
 
@@ -10030,7 +10038,7 @@ msgid "Are you sure you want to delete the selected items?"
 msgstr "선택한 항목을 삭제하시겠습니까?"
 
 #: src/tables/InvenTreeTableHeader.tsx:113
-#: src/tables/plugin/PluginListTable.tsx:320
+#: src/tables/plugin/PluginListTable.tsx:322
 msgid "This action cannot be undone"
 msgstr "이 작업은 취소할 수 없습니다."
 
@@ -11065,7 +11073,7 @@ msgid "Show enabled templates"
 msgstr "활성화된 템플릿 표시"
 
 #: src/tables/general/ParameterTemplateTable.tsx:148
-#: src/tables/settings/ImportSessionTable.tsx:112
+#: src/tables/settings/ImportSessionTable.tsx:123
 #: src/tables/settings/TemplateTable.tsx:414
 msgid "Model Type"
 msgstr "모델 유형"
@@ -11402,22 +11410,30 @@ msgstr "선택한 항목의 상위 카테고리 설정"
 msgid "Add Part Category"
 msgstr "부품 카테고리 추가"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:49
-#: src/tables/part/PartCategoryTemplateTable.tsx:143
+#: src/tables/part/PartCategoryTemplateTable.tsx:56
+#: src/tables/part/PartCategoryTemplateTable.tsx:152
 msgid "Add Category Parameter"
 msgstr "카테고리 매개변수 추가"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:57
+#: src/tables/part/PartCategoryTemplateTable.tsx:65
 msgid "Edit Category Parameter"
 msgstr "카테고리 매개변수 편집"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:65
+#: src/tables/part/PartCategoryTemplateTable.tsx:74
 msgid "Delete Category Parameter"
 msgstr "카테고리 매개변수 삭제"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
 #~ msgid "[{0}]"
 #~ msgstr "[{0}]"
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:167
+msgid "Part Category Parameters Templates"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:170
+msgid "Parts which are created within this category will inherit the default values specified here."
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:148
 #~ msgid "New Part Parameter"
@@ -11838,8 +11854,8 @@ msgstr "플러그인"
 #~ msgid "An error occurred while fetching plugin details"
 #~ msgstr "An error occurred while fetching plugin details"
 
-#: src/tables/plugin/PluginListTable.tsx:106
-#: src/tables/plugin/PluginListTable.tsx:430
+#: src/tables/plugin/PluginListTable.tsx:108
+#: src/tables/plugin/PluginListTable.tsx:432
 msgid "Mandatory"
 msgstr "필수적인"
 
@@ -11847,7 +11863,7 @@ msgstr "필수적인"
 #~ msgid "Plugin with id {id} not found"
 #~ msgstr "Plugin with id {id} not found"
 
-#: src/tables/plugin/PluginListTable.tsx:120
+#: src/tables/plugin/PluginListTable.tsx:122
 msgid "Description not available"
 msgstr "설명을 사용할 수 없습니다"
 
@@ -11869,11 +11885,11 @@ msgstr "설명을 사용할 수 없습니다"
 #~ msgid "Reload"
 #~ msgstr "Reload"
 
-#: src/tables/plugin/PluginListTable.tsx:159
+#: src/tables/plugin/PluginListTable.tsx:161
 msgid "Confirm plugin activation"
 msgstr "플러그인 활성화 확인"
 
-#: src/tables/plugin/PluginListTable.tsx:160
+#: src/tables/plugin/PluginListTable.tsx:162
 msgid "Confirm plugin deactivation"
 msgstr "플러그인 비활성화 확인"
 
@@ -11881,15 +11897,15 @@ msgstr "플러그인 비활성화 확인"
 #~ msgid "Package information"
 #~ msgstr "Package information"
 
-#: src/tables/plugin/PluginListTable.tsx:165
+#: src/tables/plugin/PluginListTable.tsx:167
 msgid "The selected plugin will be activated"
 msgstr "선택한 플러그인이 활성화됩니다"
 
-#: src/tables/plugin/PluginListTable.tsx:166
+#: src/tables/plugin/PluginListTable.tsx:168
 msgid "The selected plugin will be deactivated"
 msgstr "선택한 플러그인이 비활성화됩니다"
 
-#: src/tables/plugin/PluginListTable.tsx:184
+#: src/tables/plugin/PluginListTable.tsx:186
 msgid "Deactivate"
 msgstr "비활성화"
 
@@ -11897,44 +11913,44 @@ msgstr "비활성화"
 #~ msgid "Plugin settings"
 #~ msgstr "Plugin settings"
 
-#: src/tables/plugin/PluginListTable.tsx:198
+#: src/tables/plugin/PluginListTable.tsx:200
 msgid "Activate"
 msgstr "활성화"
 
-#: src/tables/plugin/PluginListTable.tsx:199
+#: src/tables/plugin/PluginListTable.tsx:201
 msgid "Activate selected plugin"
 msgstr "선택한 플러그인 활성화"
 
-#: src/tables/plugin/PluginListTable.tsx:211
+#: src/tables/plugin/PluginListTable.tsx:213
 msgid "Update selected plugin"
 msgstr "선택한 플러그인 업데이트"
 
-#: src/tables/plugin/PluginListTable.tsx:229
+#: src/tables/plugin/PluginListTable.tsx:231
 #: src/tables/stock/InstalledItemsTable.tsx:98
 msgid "Uninstall"
 msgstr "제거"
 
-#: src/tables/plugin/PluginListTable.tsx:230
+#: src/tables/plugin/PluginListTable.tsx:232
 msgid "Uninstall selected plugin"
 msgstr "선택한 플러그인 제거"
 
-#: src/tables/plugin/PluginListTable.tsx:248
+#: src/tables/plugin/PluginListTable.tsx:250
 msgid "Delete selected plugin configuration"
 msgstr "선택한 플러그인 설정 삭제"
 
-#: src/tables/plugin/PluginListTable.tsx:264
+#: src/tables/plugin/PluginListTable.tsx:266
 msgid "Activate Plugin"
 msgstr "플러그인 활성화"
 
-#: src/tables/plugin/PluginListTable.tsx:264
+#: src/tables/plugin/PluginListTable.tsx:266
 msgid "Deactivate Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:271
+#: src/tables/plugin/PluginListTable.tsx:273
 msgid "The plugin was activated"
 msgstr "플러그인이 활성화되었습니다"
 
-#: src/tables/plugin/PluginListTable.tsx:272
+#: src/tables/plugin/PluginListTable.tsx:274
 msgid "The plugin was deactivated"
 msgstr "플러그인이 비활성화되었습니다"
 
@@ -11942,20 +11958,20 @@ msgstr "플러그인이 비활성화되었습니다"
 #~ msgid "Install plugin"
 #~ msgstr "Install plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:285
-#: src/tables/plugin/PluginListTable.tsx:377
+#: src/tables/plugin/PluginListTable.tsx:287
+#: src/tables/plugin/PluginListTable.tsx:379
 msgid "Install Plugin"
 msgstr "플러그인 설치"
 
-#: src/tables/plugin/PluginListTable.tsx:298
+#: src/tables/plugin/PluginListTable.tsx:300
 msgid "Install"
 msgstr "설치하다"
 
-#: src/tables/plugin/PluginListTable.tsx:299
+#: src/tables/plugin/PluginListTable.tsx:301
 msgid "Plugin installed successfully"
 msgstr "플러그인이 성공적으로 설치되었습니다"
 
-#: src/tables/plugin/PluginListTable.tsx:304
+#: src/tables/plugin/PluginListTable.tsx:306
 msgid "Uninstall Plugin"
 msgstr "플러그인 제거"
 
@@ -11963,31 +11979,31 @@ msgstr "플러그인 제거"
 #~ msgid "This action cannot be undone."
 #~ msgstr "This action cannot be undone."
 
-#: src/tables/plugin/PluginListTable.tsx:316
+#: src/tables/plugin/PluginListTable.tsx:318
 msgid "Confirm plugin uninstall"
 msgstr "플러그인 제거 확인"
 
-#: src/tables/plugin/PluginListTable.tsx:319
+#: src/tables/plugin/PluginListTable.tsx:321
 msgid "The selected plugin will be uninstalled."
 msgstr "선택한 플러그인이 제거됩니다."
 
-#: src/tables/plugin/PluginListTable.tsx:324
+#: src/tables/plugin/PluginListTable.tsx:326
 msgid "Plugin uninstalled successfully"
 msgstr "플러그인이 성공적으로 제거되었습니다"
 
-#: src/tables/plugin/PluginListTable.tsx:332
+#: src/tables/plugin/PluginListTable.tsx:334
 msgid "Delete Plugin"
 msgstr "플러그인 삭제"
 
-#: src/tables/plugin/PluginListTable.tsx:333
+#: src/tables/plugin/PluginListTable.tsx:335
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr "이 플러그인 설정을 삭제하면 관련된 모든 설정과 데이터가 제거됩니다. 이 플러그인을 삭제하시겠습니까?"
 
-#: src/tables/plugin/PluginListTable.tsx:346
+#: src/tables/plugin/PluginListTable.tsx:348
 msgid "Plugins reloaded"
 msgstr "플러그인을 다시 불러왔습니다"
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:349
 msgid "Plugins were reloaded successfully"
 msgstr "플러그인이 성공적으로 다시 불러와졌습니다"
 
@@ -11999,7 +12015,7 @@ msgstr "플러그인이 성공적으로 다시 불러와졌습니다"
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:370
+#: src/tables/plugin/PluginListTable.tsx:372
 msgid "Reload Plugins"
 msgstr "플러그인 다시 불러오기"
 
@@ -12015,7 +12031,7 @@ msgstr "플러그인 다시 불러오기"
 #~ msgid "Plugin updated"
 #~ msgstr "Plugin updated"
 
-#: src/tables/plugin/PluginListTable.tsx:393
+#: src/tables/plugin/PluginListTable.tsx:395
 msgid "Plugin Detail"
 msgstr "플러그인 상세 정보"
 
@@ -12023,11 +12039,11 @@ msgstr "플러그인 상세 정보"
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:435
+#: src/tables/plugin/PluginListTable.tsx:437
 msgid "Sample"
 msgstr "견본"
 
-#: src/tables/plugin/PluginListTable.tsx:440
+#: src/tables/plugin/PluginListTable.tsx:442
 #: src/tables/stock/StockItemTable.tsx:248
 msgid "Installed"
 msgstr "설치됨"
@@ -12660,29 +12676,29 @@ msgstr "그룹 편집"
 msgid "Add Group"
 msgstr "그룹 추가"
 
-#: src/tables/settings/ImportSessionTable.tsx:37
+#: src/tables/settings/ImportSessionTable.tsx:41
 msgid "Delete Import Session"
 msgstr "가져오기 세션 삭제"
 
-#: src/tables/settings/ImportSessionTable.tsx:43
-#: src/tables/settings/ImportSessionTable.tsx:130
+#: src/tables/settings/ImportSessionTable.tsx:47
+#: src/tables/settings/ImportSessionTable.tsx:141
 msgid "Create Import Session"
 msgstr "가져오기 세션 생성"
 
-#: src/tables/settings/ImportSessionTable.tsx:73
+#: src/tables/settings/ImportSessionTable.tsx:77
 msgid "Uploaded"
 msgstr "업로드됨"
 
-#: src/tables/settings/ImportSessionTable.tsx:84
+#: src/tables/settings/ImportSessionTable.tsx:88
 msgid "Imported Rows"
 msgstr "가져온 행"
 
-#: src/tables/settings/ImportSessionTable.tsx:113
+#: src/tables/settings/ImportSessionTable.tsx:124
 #: src/tables/settings/TemplateTable.tsx:415
 msgid "Filter by target model type"
 msgstr "대상 모델 유형으로 필터링"
 
-#: src/tables/settings/ImportSessionTable.tsx:119
+#: src/tables/settings/ImportSessionTable.tsx:130
 msgid "Filter by import session status"
 msgstr "가져오기 세션 상태로 필터링"
 
