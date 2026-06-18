@@ -1603,8 +1603,8 @@ def worker(c, verbose: bool = False):
     manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
-@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 7)'})
-def worker_health(c, timeout: int = 7):
+@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 3)'})
+def worker_health(c, timeout: int = 3):
     """Check if the background worker is healthy by reading the heartbeat file.
 
     Exits 0 if the worker has run within the last TIMEOUT minutes, 1 otherwise.
