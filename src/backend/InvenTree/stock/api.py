@@ -1512,10 +1512,7 @@ class StockItemTestResultList(
         Also, check if an attachment was uploaded alongside the test result,
         and save it to the database if it were.
         """
-        # Capture the user information
-        test_result = serializer.save()
-        test_result.user = self.request.user
-        test_result.save()
+        serializer.save(user=self.request.user)
 
 
 class StockTrackingDetail(RetrieveAPI):
@@ -1663,32 +1660,6 @@ class StockTrackingList(
             return self.get_paginated_response(data)
 
         return Response(data)
-
-    def create(self, request, *args, **kwargs):
-        """Create a new StockItemTracking object.
-
-        Here we override the default 'create' implementation,
-        to save the user information associated with the request object.
-        """
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        # Record the user who created this Part object
-        item = serializer.save()
-        item.user = request.user
-        item.system = False
-
-        # quantity field cannot be explicitly adjusted  here
-        item.quantity = item.item.quantity
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     filter_backends = SEARCH_ORDER_FILTER
 

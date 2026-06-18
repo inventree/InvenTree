@@ -395,9 +395,7 @@ class BuildList(
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        build = serializer.save()
-        build.issued_by = request.user
-        build.save()
+        serializer.save(issued_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
