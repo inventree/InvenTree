@@ -1632,6 +1632,38 @@ def worker_health(c, timeout: int = 3):
     raise Exit(code=1)
 
 
+@task(
+    help={
+        'address': 'Server address to check (default: http://localhost:8000)',
+        'timeout': 'Request timeout in seconds (default: 5)',
+    }
+)
+def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
+    """Check if the web server is healthy by requesting /api/system/health/.
+
+    Exits 0 on HTTP 200, 1 otherwise.
+    No Django startup required.
+    """
+    import urllib.error
+    import urllib.request
+
+    url = f'{address.rstrip("/")}/api/system/health/'
+
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            if response.status == 200:
+                success(f'Server is healthy ({url})')
+                return
+            warning(f'Unexpected status {response.status} from {url}')
+    except urllib.error.URLError as e:
+        warning(f'Could not reach server at {url}: {e.reason}')
+    except Exception as e:
+        warning(f'Unexpected error checking {url}: {e}')
+
+    error('Server health check failed')
+    raise Exit(code=1)
+
+
 @task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
@@ -2487,6 +2519,7 @@ ns = Collection(
     wait,
     worker,
     worker_health,
+    server_health,
     monitor,
     build_docs,
 )
