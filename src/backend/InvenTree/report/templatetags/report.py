@@ -488,10 +488,12 @@ def parameter(
         A Parameter object, or the provided default value if not found
     """
     if instance is None or not isinstance(instance, Model):
-        raise ValueError('parameter tag requires a valid Model instance')
+        raise ValidationError('parameter tag requires a valid Model instance')
 
     if not hasattr(instance, 'parameters'):
-        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+        raise ValidationError(
+            "parameter tag requires a Model with 'parameters' attribute"
+        )
 
     parameters = instance.parameters_list.all().prefetch_related('template')
 
