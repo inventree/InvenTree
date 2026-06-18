@@ -3,6 +3,7 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -200,7 +201,10 @@ class RegistryStatusView(APIView):
     - GET: Provide status data for the machine registry
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsAdminOrReadScope,
+    ]
 
     serializer_class = MachineSerializers.MachineRegistryStatusSerializer
 
