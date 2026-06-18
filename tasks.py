@@ -1603,6 +1603,33 @@ def worker(c, verbose: bool = False):
     manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
+@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 7)'})
+def worker_health(c, timeout: int = 7):
+    """Check if the background worker is healthy by reading the heartbeat file.
+
+    Exits 0 if the worker has run within the last TIMEOUT minutes, 1 otherwise.
+    No Django startup or database access is required.
+    """
+    heartbeat_file = Path(tempfile.gettempdir()) / 'inventree_worker_heartbeat'
+
+    if heartbeat_file.exists():
+        try:
+            age_seconds = time.time() - float(heartbeat_file.read_text().strip())
+            if age_seconds < timeout * 60:
+                success('Worker is healthy')
+                return
+            warning(
+                f'Heartbeat file is stale ({int(age_seconds) // 60}m {int(age_seconds) % 60}s old)'
+            )
+        except Exception as e:
+            warning(f'Could not read heartbeat file: {e}')
+    else:
+        warning(f'Heartbeat file not found: {heartbeat_file}')
+
+    error('Worker health check failed')
+    raise Exit(code=1)
+
+
 @task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
@@ -2457,6 +2484,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    worker_health,
     monitor,
     build_docs,
 )

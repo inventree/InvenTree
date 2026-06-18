@@ -450,6 +450,18 @@ def heartbeat():
         logger.info('Could not perform heartbeat task - App registry not ready')
         return
 
+    # Write a timestamp file so that health checks can verify worker liveness
+    # without needing to start a full Django process.
+    import tempfile
+    from pathlib import Path
+
+    try:
+        Path(tempfile.gettempdir()).joinpath('inventree_worker_heartbeat').write_text(
+            str(timezone.now().timestamp())
+        )
+    except Exception:
+        pass
+
     threshold = timezone.now() - timedelta(minutes=30)
 
     # Delete heartbeat results more than half an hour old,
