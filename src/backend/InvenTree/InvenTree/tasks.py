@@ -438,12 +438,9 @@ def scheduled_task(
 
 
 @tracer.start_as_current_span('heartbeat')
-@scheduled_task(ScheduledTask.MINUTES, 5)
+@scheduled_task(ScheduledTask.MINUTES, 1)
 def heartbeat():
-    """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
-
-    (There is probably a less "hacky" way of achieving this)?
-    """
+    """Simple task which runs at 1 minute intervals, so we can determine that the background worker is actually running."""
     try:
         from django_q.models import OrmQ, Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -462,9 +459,9 @@ def heartbeat():
     except Exception:
         pass
 
-    threshold = timezone.now() - timedelta(minutes=30)
+    threshold = timezone.now() - timedelta(minutes=15)
 
-    # Delete heartbeat results more than half an hour old,
+    # Delete heartbeat results more than 15 minutes old,
     # otherwise they just create extra noise
     heartbeats = Success.objects.filter(
         func='InvenTree.tasks.heartbeat', started__lte=threshold

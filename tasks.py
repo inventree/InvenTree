@@ -1616,7 +1616,9 @@ def worker_health(c, timeout: int = 7):
         try:
             age_seconds = time.time() - float(heartbeat_file.read_text().strip())
             if age_seconds < timeout * 60:
-                success('Worker is healthy')
+                success(
+                    f'Worker is healthy (last heartbeat {int(age_seconds) // 60}m {int(age_seconds) % 60}s ago)'
+                )
                 return
             warning(
                 f'Heartbeat file is stale ({int(age_seconds) // 60}m {int(age_seconds) % 60}s old)'
