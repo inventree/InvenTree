@@ -1580,7 +1580,7 @@ class StockTrackingFilter(FilterSet):
 
 
 class StockTrackingList(
-    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin
 ):
     """API endpoint for list view of StockItemTracking objects.
 
@@ -1660,29 +1660,6 @@ class StockTrackingList(
             return self.get_paginated_response(data)
 
         return Response(data)
-
-    def create(self, request, *args, **kwargs):
-        """Create a new StockItemTracking object.
-
-        Here we override the default 'create' implementation,
-        to save the user information associated with the request object.
-        """
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        stock_item = serializer.validated_data['item']
-        deltas = dict(serializer.validated_data.get('deltas') or {})
-        deltas['quantity'] = float(stock_item.quantity)
-
-        serializer.save(user=request.user, deltas=deltas)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     filter_backends = SEARCH_ORDER_FILTER
 
