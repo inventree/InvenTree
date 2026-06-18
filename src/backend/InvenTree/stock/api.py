@@ -1512,10 +1512,7 @@ class StockItemTestResultList(
         Also, check if an attachment was uploaded alongside the test result,
         and save it to the database if it were.
         """
-        # Capture the user information
-        test_result = serializer.save()
-        test_result.user = self.request.user
-        test_result.save()
+        serializer.save(user=self.request.user)
 
 
 class StockTrackingDetail(RetrieveAPI):
@@ -1676,14 +1673,7 @@ class StockTrackingList(
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        # Record the user who created this Part object
-        item = serializer.save()
-        item.user = request.user
-        item.system = False
-
-        # quantity field cannot be explicitly adjusted  here
-        item.quantity = item.item.quantity
-        item.save()
+        serializer.save(user=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
