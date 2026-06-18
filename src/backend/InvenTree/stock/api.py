@@ -1580,7 +1580,7 @@ class StockTrackingFilter(FilterSet):
 
 
 class StockTrackingList(
-    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin
+    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
 ):
     """API endpoint for list view of StockItemTracking objects.
 
