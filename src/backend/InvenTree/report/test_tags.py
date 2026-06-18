@@ -502,11 +502,11 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.parameter(part, 'Template 1'), parameter)
 
         # Test with a null part
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(None, 'name')
 
         # Test with an invalid model type
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(parameter, 'name')
 
     def test_render_currency(self):
