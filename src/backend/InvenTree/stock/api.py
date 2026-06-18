@@ -1580,7 +1580,7 @@ class StockTrackingFilter(FilterSet):
 
 
 class StockTrackingList(
-    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
+    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
 ):
     """API endpoint for list view of StockItemTracking objects.
 
@@ -1673,7 +1673,11 @@ class StockTrackingList(
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.save(user=request.user)
+        stock_item = serializer.validated_data['item']
+        deltas = dict(serializer.validated_data.get('deltas') or {})
+        deltas['quantity'] = float(stock_item.quantity)
+
+        serializer.save(user=request.user, deltas=deltas)
 
         headers = self.get_success_headers(serializer.data)
         return Response(

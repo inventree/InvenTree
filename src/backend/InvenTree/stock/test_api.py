@@ -2891,6 +2891,25 @@ class StockTrackingTest(StockAPITestCase):
             assert_fnc=lambda x: x.data['results'][0],
         )
 
+    def test_create_manual_entry(self):
+        """Test that a manual stock tracking entry can be created via the API."""
+        url = self.get_url()
+        stock_item = StockItem.objects.first()
+
+        response = self.post(
+            url,
+            {'item': stock_item.pk, 'notes': 'Manual tracking entry'},
+            expected_code=201,
+        )
+
+        entry = StockItemTracking.objects.get(pk=response.data['pk'])
+
+        # user = request.user
+        self.assertEqual(entry.user, self.user)
+
+        # quantity = StockItem.quantity
+        self.assertEqual(float(entry.deltas['quantity']), float(stock_item.quantity))
+
 
 class StockAssignTest(StockAPITestCase):
     """Unit tests for the stock assignment API endpoint, where stock items are manually assigned to a customer."""
