@@ -143,7 +143,10 @@ class MachineRestart(APIView):
     - POST: restart machine by pk
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnlyScope,
+    ]
 
     @extend_schema(
         request=None, responses={200: MachineSerializers.MachineRestartSerializer()}
@@ -201,10 +204,7 @@ class RegistryStatusView(APIView):
     - GET: Provide status data for the machine registry
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-        InvenTree.permissions.IsStaffOrReadOnlyScope,
-    ]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     serializer_class = MachineSerializers.MachineRegistryStatusSerializer
 
