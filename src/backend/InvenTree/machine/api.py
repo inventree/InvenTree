@@ -203,7 +203,7 @@ class RegistryStatusView(APIView):
 
     permission_classes = [
         permissions.IsAuthenticated,
-        InvenTree.permissions.IsAdminOrReadScope,
+        InvenTree.permissions.IsStaffOrReadOnlyScope,
     ]
 
     serializer_class = MachineSerializers.MachineRegistryStatusSerializer
