@@ -15,7 +15,7 @@ from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 from InvenTree.unit_test import InvenTreeTestCase
-from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
+from part.models import Part
 from part.test_api import PartImageTestMixin
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
@@ -184,7 +184,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.part_image(None)
 
         obj = Part.objects.create(name='test', description='test')
@@ -502,11 +502,11 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.parameter(part, 'Template 1'), parameter)
 
         # Test with a null part
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(None, 'name')
 
         # Test with an invalid model type
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(parameter, 'name')
 
     def test_render_currency(self):

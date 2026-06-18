@@ -461,7 +461,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
         TypeError: If provided part is not a Part instance
     """
     if not part or not isinstance(part, Part):
-        raise TypeError(_('part_image tag requires a Part instance'))
+        raise ValidationError(_('part_image tag requires a Part instance'))
 
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
@@ -487,28 +487,22 @@ def parameter(
     Returns:
         A Parameter object, or the provided default value if not found
     """
-    if instance is None:
-        raise ValueError('parameter tag requires a valid Model instance')
+    if instance is None or not isinstance(instance, Model):
+        raise ValidationError('parameter tag requires a valid Model instance')
 
-    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
-        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+    if not hasattr(instance, 'parameters'):
+        raise ValidationError(
+            "parameter tag requires a Model with 'parameters' attribute"
+        )
+
+    parameters = instance.parameters_list.all().prefetch_related('template')
 
     # First try with exact match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name=parameter_name).first():
         return parameter
 
     # Next, try with case-insensitive match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name__iexact=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name__iexact=parameter_name).first():
         return parameter
 
     return None

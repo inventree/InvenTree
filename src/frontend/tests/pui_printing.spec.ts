@@ -1,7 +1,7 @@
 import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
-import { activateTableView, loadTab } from './helpers.js';
+import { activateTableView, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -206,4 +206,55 @@ test('Printing - Report Editing', async ({ browser }) => {
     plugin: 'sampleui',
     state: false
   });
+});
+
+// Test report printing with an intentionally broken template, to verify that errors are handled gracefully
+test('Printing - Broken Template', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'sales/sales-order/14/detail'
+  });
+
+  // Print report from the "sales order" detail page
+  await page
+    .getByRole('button', { name: 'action-menu-printing-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-reports'
+    })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'related-field-template' })
+    .fill('broken');
+  await page.getByText('Broken Sales Order Report').click();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
+
+  // Expected error message
+  await page
+    .getByText('parameter tag requires a valid Model instance')
+    .waitFor();
+
+  // Next, check error message from the template editor preview
+  await navigate(page, 'settings/admin/reports');
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('broken');
+  await page.getByRole('cell', { name: 'Broken Sales Order Report' }).click();
+
+  await page.getByLabel('split-button-preview-options-action').click();
+
+  await page
+    .getByLabel('split-button-preview-options-item-preview-save', {
+      exact: true
+    })
+    .click();
+
+  await page.getByRole('button', { name: 'Save & Reload' }).click();
+
+  // Expected error messages
+  await page.getByText('Error rendering template').waitFor();
+  await page
+    .getByText('parameter tag requires a valid Model instance')
+    .waitFor();
 });
