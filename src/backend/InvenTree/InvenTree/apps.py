@@ -188,13 +188,10 @@ class InvenTreeConfig(AppConfig):
     @ignore_ready_warning
     def add_heartbeat(self):
         """Ensure there is at least one background task in the queue."""
-        import django_q.models
-
         try:
-            if django_q.models.OrmQ.objects.count() == 0:
-                InvenTree.tasks.offload_task(
-                    InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
-                )
+            InvenTree.tasks.offload_task(
+                InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
+            )
         except AppRegistryNotReady:  # pragma: no cover
             pass
         except Exception:
