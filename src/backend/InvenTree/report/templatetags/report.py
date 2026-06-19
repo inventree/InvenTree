@@ -776,23 +776,25 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     return cast_to_type(result, cast)
 
 
-def _get_report_locale(override: Optional[str] = None) -> Optional[str]:
-    """Return the locale to use for report formatting.
+def _get_report_locale(override: Optional[str] = None) -> str:
+    """Return the locale to use for report formatting."""
+    locale = override or settings.LANGUAGE_CODE
 
-    Priority: explicit override > REPORT_LOCALE global setting > None (caller falls back to LANGUAGE_CODE).
-    """
-    if override:
-        return override
+    # Run a check to ensure that the locale is valid (i.e. can be used by babel)
+    try:
+        get_locale(locale)
+    except Exception:
+        raise ValidationError(
+            f'Invalid locale specified for report formatting: {locale}'
+        )
 
-    return get_global_setting('REPORT_LOCALE', cache=True) or settings.LANGUAGE_CODE
+    return locale
 
 
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
-    if 'locale' not in kwargs:
-        if locale := _get_report_locale():
-            kwargs['locale'] = locale
+    kwargs['locale'] = _get_report_locale(kwargs.get('locale'))
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 

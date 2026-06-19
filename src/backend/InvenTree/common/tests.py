@@ -620,24 +620,6 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         self.assertEqual(codes, 'AUD,USD,GBP')
 
-    def test_report_currency_locale(self):
-        """Test validation of the REPORT_LOCALE setting (locale string for report formatting)."""
-        url = reverse('api-global-setting-detail', kwargs={'key': 'REPORT_LOCALE'})
-
-        # Valid locale values are accepted
-        for valid in ['en-us', 'en-gb', 'en-au', 'de-de', 'fr-fr']:
-            response = self.patch(url, data={'value': valid}, expected_code=200)
-            self.assertEqual(response.data['value'], valid)
-
-        # Blank value is accepted (means "use system locale")
-        response = self.patch(url, data={'value': ''}, expected_code=200)
-        self.assertEqual(response.data['value'], '')
-
-        # Invalid locale values are rejected
-        for invalid in ['xx-zz', 'not-a-locale']:
-            response = self.patch(url, data={'value': invalid}, expected_code=400)
-            self.assertIn('Invalid locale value', str(response.data))
-
     def test_company_name(self):
         """Test a settings object lifecycle e2e."""
         setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')

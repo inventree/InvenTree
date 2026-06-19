@@ -410,7 +410,7 @@ For rendering date and datetime information, the following helper functions are 
 Both functions resolve their output using the following priority order:
 
 1. **`fmt=` argument** — a [strftime format string](https://docs.python.org/3/library/datetime.html#format-codes). When provided, this takes full priority and the `locale` argument is ignored.
-2. **`locale=` argument** (or the `REPORT_LOCALE` global setting) — when no `fmt` is given, Babel formats the value in a locale-aware *medium* style (e.g. `Jan 12, 2025` for `en-us`).
+2. **`locale=` argument** (or the default system locale setting) — when no `fmt` is given, Babel formats the value in a locale-aware *medium* style (e.g. `Jan 12, 2025` for `en-us`).
 3. **ISO 8601 fallback** — when neither `fmt` nor a locale is available, the value is returned in ISO format (e.g. `2025-01-12`).
 
 ### format_date
@@ -507,10 +507,7 @@ The locale controls how the currency symbol is rendered. Different locales produ
 The locale used by `render_currency` is resolved in the following priority order:
 
 1. **Explicit `locale=` argument** in the template tag — highest priority, always wins
-2. **`REPORT_LOCALE` global setting** — applied to all reports when set, with no per-tag argument needed
-3. **Server `LANGUAGE_CODE`** — the fallback when neither of the above is configured
-
-To apply a consistent locale across all reports without modifying every template, set the `REPORT_LOCALE` global setting (via *Settings → Reporting → Report Currency Locale*). Individual templates can still override it per-tag using the `locale=` argument.
+2. **Server `LANGUAGE_CODE`** — the fallback when neither of the above is configured
 
 #### Example
 
@@ -521,7 +518,7 @@ To apply a consistent locale across all reports without modifying every template
 <em>Line Item Unit Pricing:</em>
 <ul>
 {% for line in order.lines %}
-<!-- Locale resolved from REPORT_LOCALE setting, or server LANGUAGE_CODE -->
+<!-- Locale resolved from server LANGUAGE_CODE -->
 <li>{% render_currency line.price currency=order.supplier.currency %}</li>
 {% endfor %}
 </ul>
