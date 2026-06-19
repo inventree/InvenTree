@@ -310,19 +310,13 @@ class CategoryTree(TreeMixin, ListAPI):
 
     model_class = PartCategory
     queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
+    serializer_class = part_serializers.CategoryTreeSerializer
     filterset_class = CategoryTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Filter the queryset, and include all ancestors of matched items when searching."""
-        queryset = super().filter_queryset(queryset)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        queryset = part_serializers.CategoryTreeSerializer.annotate_queryset(queryset)
         return queryset
 
 

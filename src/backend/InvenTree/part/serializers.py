@@ -181,7 +181,7 @@ class CategorySerializer(
     parameters = common.filters.enable_parameters_filter()
 
 
-class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
+class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory tree."""
 
     class Meta:
