@@ -439,6 +439,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         ]
 
         for tz, fmt, expected in tests:
+            print(tz, fmt, expected)
             result = report_tags.format_datetime(time, tz, fmt)
             self.assertEqual(result, expected)
 
@@ -715,7 +716,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_format_date(self):
         """Test the format_date template tag."""
         dt = timezone.datetime(year=2024, month=3, day=13)
-        self.assertEqual(report_tags.format_date(dt), '2024-03-13')
+        self.assertEqual(report_tags.format_date(dt, locale='de-de'), '13.03.2024')
+        self.assertEqual(report_tags.format_date(dt, locale='en-us'), 'Mar 13, 2024')
+        self.assertEqual(report_tags.format_date(dt, locale='en-au'), '13 Mar 2024')
+        self.assertEqual(report_tags.format_date(dt, locale='fr-fr'), '13 mars 2024')
         self.assertEqual(report_tags.format_date(dt, fmt='%d-%m-%y'), '13-03-24')
 
         # Test with an invalid date

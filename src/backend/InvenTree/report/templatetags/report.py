@@ -1004,6 +1004,7 @@ def format_datetime(
             dt, format='medium', locale=get_locale(resolved_locale)
         )
 
+    # Final backup - return an ISO formatted string
     return dt.isoformat()
 
 

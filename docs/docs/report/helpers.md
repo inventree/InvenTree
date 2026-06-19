@@ -407,12 +407,45 @@ Common patterns:
 
 For rendering date and datetime information, the following helper functions are available:
 
+Both functions resolve their output using the following priority order:
+
+1. **`fmt=` argument** — a [strftime format string](https://docs.python.org/3/library/datetime.html#format-codes). When provided, this takes full priority and the `locale` argument is ignored.
+2. **`locale=` argument** (or the `REPORT_LOCALE` global setting) — when no `fmt` is given, Babel formats the value in a locale-aware *medium* style (e.g. `Jan 12, 2025` for `en-us`).
+3. **ISO 8601 fallback** — when neither `fmt` nor a locale is available, the value is returned in ISO format (e.g. `2025-01-12`).
+
 ### format_date
 
 ::: report.templatetags.report.format_date
     options:
         show_docstring_description: false
         show_source: False
+
+#### Examples
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- ISO fallback (no fmt, no locale) -->
+{% format_date my_date %}
+<!-- output: 2025-01-12 -->
+
+<!-- Explicit strftime format string — locale is ignored -->
+{% format_date my_date fmt="%d/%m/%Y" %}
+<!-- output: 12/01/2025 -->
+
+<!-- Locale-aware medium format -->
+{% format_date my_date locale='en-us' %}
+<!-- output: Jan 12, 2025 -->
+
+{% format_date my_date locale='de-de' %}
+<!-- output: 12.01.2025 -->
+
+<!-- Convert from a different timezone before formatting -->
+{% format_date my_date timezone="Australia/Sydney" locale='en-au' %}
+
+{% endraw %}
+```
 
 ### format_datetime
 
@@ -421,20 +454,30 @@ For rendering date and datetime information, the following helper functions are 
         show_docstring_description: false
         show_source: False
 
-### Date Formatting
-
-If not specified, these methods return a result which uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
-
-
-### Example
-
-A simple example of using the date formatting helper functions:
+#### Examples
 
 ```html
 {% raw %}
 {% load report %}
-Date: {% format_date my_date timezone="Australia/Sydney" %}
-Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
+
+<!-- ISO fallback (no fmt, no locale) -->
+{% format_datetime my_datetime %}
+<!-- output: 2025-01-12T14:30:00+00:00 -->
+
+<!-- Explicit strftime format — locale is ignored -->
+{% format_datetime my_datetime fmt="%d-%m-%Y %H:%M" %}
+<!-- output: 12-01-2025 14:30 -->
+
+<!-- Locale-aware medium format -->
+{% format_datetime my_datetime locale='en-us' %}
+<!-- output: Jan 12, 2025, 2:30:00 PM -->
+
+{% format_datetime my_datetime locale='de-de' %}
+<!-- output: 12.01.2025, 14:30:00 -->
+
+<!-- Convert to a specific timezone before formatting -->
+{% format_datetime my_datetime timezone="Australia/Sydney" locale='en-au' %}
+
 {% endraw %}
 ```
 
