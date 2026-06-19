@@ -609,6 +609,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.render_currency(m, fmt='0.0000', decimal_places=2), '1234.5600'
         )
 
+        # Test leading digits
+        m_small = Money(1.23, 'USD')
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=4, locale='en-us'), '$0,001.23'
+        )
+        # leading=1 is the default — no change
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=1, locale='en-us'), '$1.23'
+        )
+        # invalid leading falls back gracefully
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading='x', locale='en-us'), '$1.23'
+        )
+        # fmt takes priority over leading
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=6, fmt='#,##0.00'), '1.23'
+        )
+
     def test_render_currency_locale_override(self):
         """Explicit locale= kwarg takes priority over global setting and system locale."""
         m = Money(1234.56, 'USD')

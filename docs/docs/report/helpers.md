@@ -556,9 +556,28 @@ The locale is resolved in the following priority order:
 1. **Explicit `locale=` argument** — highest priority, always wins
 2. **Server `LANGUAGE_CODE`** — fallback
 
+#### Leading Digits
+
+The `leading` argument specifies the minimum number of digits to render before the decimal point (zero-padded). This works identically to `leading` in [`format_number`](#format_number):
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- default: no padding -->
+{% render_currency order.total_price currency='USD' %}
+<!-- output: $1.23 -->
+
+<!-- force at least 4 integer digits -->
+{% render_currency order.total_price currency='USD' leading=4 %}
+<!-- output: $0,001.23 -->
+
+{% endraw %}
+```
+
 #### Custom Format Strings
 
-The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (same syntax as [`format_number`](#custom-format-strings)). **When `fmt` is provided, it takes complete priority over `decimal_places` and `max_decimal_places`** — those arguments are ignored.
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (same syntax as [`format_number`](#custom-format-strings)). **When `fmt` is provided, it takes complete priority over `decimal_places`, `max_decimal_places`, and `leading`** — those arguments are ignored.
 
 The `locale`, `currency`, `multiplier`, and `include_symbol` arguments are still applied when `fmt` is set.
 

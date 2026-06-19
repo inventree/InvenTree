@@ -797,12 +797,13 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 
 @register.simple_tag
 def render_currency(
-    money,
+    money: Money | str | int | float | Decimal,
     decimal_places: Optional[int] = None,
     currency: Optional[str] = None,
     multiplier: Optional[Decimal] = None,
     max_decimal_places: Optional[int] = None,
     include_symbol: bool = True,
+    leading: Optional[int] = None,
     fmt: Optional[str] = None,
     locale: Optional[str] = None,
     **kwargs,
@@ -816,12 +817,14 @@ def render_currency(
         decimal_places: Minimum (forced) decimal places, e.g. decimal_places=2 gives '.00'. Defaults to the locale/currency standard.
         max_decimal_places: Maximum decimal places (optional digits beyond decimal_places), e.g. max_decimal_places=4 allows up to 4.
         include_symbol: If True, include the currency symbol in the output
-        fmt: Optional Babel number pattern string. When provided, takes priority over all decimal_places options.
+        leading: Minimum number of leading digits to render before the decimal point (default = 1)
+        fmt: Optional Babel number pattern string. When provided, takes priority over all other formatting options.
         locale: Optional locale override (e.g. 'en-us', 'de-de'). Defaults to server LANGUAGE_CODE.
     """
     if money in [None, '']:
         return '-'
 
+    # If the supplied value is *not* a Money instance, attempt to convert it into one
     if not isinstance(money, Money):
         try:
             money = Money(
@@ -829,9 +832,7 @@ def render_currency(
                 currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
             )
         except Exception:
-            raise ValidationError(
-                'render_currency: invalid money value: ' + repr(money)
-            )
+            raise ValidationError(f'render_currency: invalid money value - {money!r}')
 
     if currency is not None:
         try:
@@ -844,7 +845,7 @@ def render_currency(
             money *= Decimal(str(multiplier).strip())
         except Exception:
             raise ValidationError(
-                'render_currency: invalid multiplier value: ' + repr(multiplier)
+                f'render_currency: invalid multiplier value - {multiplier!r}'
             )
 
     locale = get_locale(locale)
@@ -869,6 +870,15 @@ def render_currency(
         max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     pattern.frac_prec = (decimal_places, max(decimal_places, max_decimal_places))
+
+    if leading is not None:
+        try:
+            leading = int(leading) or 0
+        except (ValueError, TypeError):
+            leading = 0
+        if leading > 0:
+            min_int, max_int = pattern.int_prec
+            pattern.int_prec = (max(leading, min_int), max(leading, max_int))
 
     return pattern.apply(
         money.amount,
