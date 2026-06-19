@@ -359,23 +359,41 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         for x in ['10.000000', '  10  ', 10.000000, 10]:
             self.assertEqual(fn(x), '10')
 
+        # Test with various formatting options
         self.assertEqual(fn(1234), '1234')
         self.assertEqual(fn(1234.5678, decimal_places=0), '1235')
+        self.assertEqual(fn(1234.5678, decimal_places=0, separator=True), '1,235')
         self.assertEqual(fn(1234.5678, decimal_places=1), '1234.6')
         self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
-        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
-        self.assertEqual(fn(-9999.5678, decimal_places=2, separator=','), '-9,999.57')
         self.assertEqual(
-            fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
+            fn(1234.5678, decimal_places=2, max_decimal_places=10), '1234.5678'
         )
+        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
+        self.assertEqual(fn(-9999.5678, decimal_places=2, locale='fr-fr'), '-9999,57')
+        self.assertEqual(
+            fn(-9999.5678, decimal_places=2, locale='fr-fr', separator=True),
+            '-9\u202f999,57',
+        )
+        self.assertEqual(
+            fn(9988776655.4321, integer=True, locale='de-de', separator=True),
+            '9.988.776.655',
+        )
+
+        # Test with 'min_digits' option
+        self.assertEqual(fn(5, min_digits=3), '005')
+        self.assertEqual(fn(123, min_digits=5), '00123')
+        self.assertEqual(fn(1234, min_digits=2, decimal_places=4), '1234.0000')
 
         # Test with multiplier
         self.assertEqual(fn(1000, multiplier=1.5), '1500')
 
         # Failure cases
         self.assertEqual(fn('abc'), 'abc')
-        self.assertEqual(fn(1234.456, decimal_places='a'), '1234.456')
-        self.assertEqual(fn(1234.456, leading='a'), '1234.456')
+        self.assertEqual(fn(1234.456, decimal_places='a'), '1234')
+        self.assertEqual(
+            fn(1234.456, decimal_places='a', separator=True, locale='en-au'), '1,234'
+        )
+        self.assertEqual(fn(1234.456, min_digits='a'), '1234.456')
 
     @override_settings(TIME_ZONE='America/New_York')
     def test_date_tags(self):

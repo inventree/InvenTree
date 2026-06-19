@@ -783,6 +783,7 @@ def _get_report_locale(override: Optional[str] = None) -> Optional[str]:
     """
     if override:
         return override
+
     return get_global_setting('REPORT_LOCALE', cache=True) or settings.LANGUAGE_CODE
 
 
@@ -889,74 +890,90 @@ def render_html_text(text: str, **kwargs):
 @register.simple_tag
 def format_number(
     number: int | float | Decimal,
-    decimal_places: Optional[int] = None,
     multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
-    leading: int = 0,
-    separator: Optional[str] = None,
+    separator: bool = False,
+    min_digits: Optional[int] = None,
+    decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    fmt: Optional[str] = None,
     locale: Optional[str] = None,
 ) -> str:
     """Render a number with optional formatting options.
 
     Arguments:
         number: The number to be formatted
-        decimal_places: Number of decimal places to render
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros (default = 0)
-        separator: Character to use as a thousands separator (default = None, ignored when locale is active)
+        separator: Boolean, whether to include a thousands separator
+        min_digits: Minimum number of digits to render (default = 1)
+        decimal_places: Number of decimal places to render (default = 0)
+        max_decimal_places: Maximum number of decimal places to render (default = 0)
+        separator:
+        fmt: Optional format string for the number - if provided, takes priority over 'decimal_places' and 'leading'
         locale: Optional locale override (e.g. 'en-us', 'de-de'). When set, babel controls decimal and thousands separators.
     """
     check_nulls('format_number', number)
 
+    # Check that the provided number is valid
     try:
         number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
+    number = float(number)
+
     if multiplier is not None:
-        number *= Decimal(str(multiplier).strip())
+        number *= multiplier
 
     if integer:
-        number = Decimal(int(number))
+        number = int(number)
 
-    if decimal_places is not None:
-        try:
-            decimal_places = int(decimal_places)
-            number = round(number, decimal_places)
-        except ValueError:
-            decimal_places = None
+    # Construct a formatting string for the number, based on the provided options
+    if not fmt:
+        fmt = '###,###,###,###,##0'  # Default format string - this will be modified based on the provided options
+
+        # The 'min_digits' option specifies the minimum number of digits to render (not including decimal places)
+        if min_digits is not None:
+            try:
+                min_digits = int(min_digits) or 0
+            except (ValueError, TypeError):
+                min_digits = 0
+
+            if min_digits > 1:
+                fmt = fmt[::-1].replace('#', '0', (min_digits - 1))[::-1]
+
+        if not bool(separator):
+            fmt = fmt.replace(',', '')
+
+        if decimal_places is not None or max_decimal_places is not None:
+            # Account for decimal places, if provided
+
+            try:
+                decimal_places = int(decimal_places) or 0
+            except (ValueError, TypeError):
+                decimal_places = 0
+
+            try:
+                max_decimal_places = int(max_decimal_places) or 0
+            except (ValueError, TypeError):
+                max_decimal_places = 0
+
+            fmt += '.' + '0' * decimal_places
+
+            if max_decimal_places > decimal_places:
+                fmt += '#' * (max_decimal_places - decimal_places)
+        elif not integer:
+            # No decimal places specified, allow any number of decimal places (up to the precision of the Decimal)
+            fmt += '.####################'
 
     resolved_locale = _get_report_locale(locale)
+    babel_locale = get_locale(resolved_locale)
 
-    if resolved_locale:
-        babel_locale = get_locale(resolved_locale)
-        fmt = '#,##0.' + '0' * decimal_places if decimal_places is not None else None
-        value = babel_format_decimal(number, format=fmt, locale=babel_locale)
-    else:
-        # Normalize the number (remove trailing zeroes), avoid scientific notation
-        value = Decimal(number)
-        value = (
-            value.quantize(Decimal(1))
-            if value == value.to_integral()
-            else value.normalize()
-        )
-
-        if separator:
-            value = f'{value:,}'
-            value = value.replace(',', separator)
-        else:
-            value = f'{value}'
-
-    if leading is not None:
-        try:
-            leading = int(leading)
-            value = '0' * leading + value
-        except ValueError:
-            pass
-
-    return value
+    return babel_format_decimal(
+        number, format=fmt, locale=babel_locale, numbering_system='latn'
+    )
 
 
 @register.simple_tag
