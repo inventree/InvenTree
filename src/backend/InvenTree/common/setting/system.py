@@ -672,9 +672,9 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'REPORT_LOCALE': {
-        'name': _('Report Locale'),
+        'name': _('Default Report Locale'),
         'description': _(
-            'Locale to use when rendering dates, numbers, and currency values in reports (e.g. en-US, de-DE). Leave blank to use the system locale setting.'
+            'Default locale to use when rendering dates, numbers, and currency values in reports (e.g. en-US, de-DE). Leave blank to use the system locale setting.'
         ),
         'default': '',
         'validator': common.validators.validate_locale,
