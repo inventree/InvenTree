@@ -260,6 +260,7 @@ def render_currency(
     min_decimal_places: Optional[int] = None,
     max_decimal_places: Optional[int] = None,
     include_symbol: bool = True,
+    locale: Optional[str] = None,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -271,6 +272,7 @@ def render_currency(
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
+        locale: Optional locale override (e.g. 'en-us', 'en-gb'). Controls symbol vs. code rendering. Defaults to server LANGUAGE_CODE.
     """
     if money in [None, '']:
         return '-'
@@ -327,7 +329,10 @@ def render_currency(
     decimal_places = min(decimal_places, max_decimal_places)
 
     return format_money(
-        money, decimal_places=decimal_places, include_symbol=include_symbol
+        money,
+        decimal_places=decimal_places,
+        include_symbol=include_symbol,
+        locale=locale,
     )
 
 
