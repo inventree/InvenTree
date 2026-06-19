@@ -422,13 +422,13 @@ django-silk==5.5.0 \
 django-slowtests==1.1.1 \
     --hash=sha256:3c6936d420c9df444ac03625b41d97de043c662bbde61fbcd33e4cd407d0c247
     # via -r src/backend/requirements-dev.in
-django-stubs==6.0.3 \
-    --hash=sha256:5fee22bcbbad59a78c727a820b6f4e68ff442ca76a922b7002e57c25dd7cb390 \
-    --hash=sha256:ee895f403c373608eeb50822f0733f9d9ec5ab12731d4ab58956053bb95fdd9e
+django-stubs==6.0.5 \
+    --hash=sha256:7742b8e60afc68a8545158e2bdb103376d5a092f7902c17f370920a9c08eb957 \
+    --hash=sha256:9fb9eede9b2fc47b36c3dc4a93652eb959dff45466ec4a580e4a22782192d746
     # via -r src/backend/requirements-dev.in
-django-stubs-ext==6.0.3 \
-    --hash=sha256:3307d42132bc295d5744de6276bc5fdf6896efc70f891e21c0ae8bdf529d2762 \
-    --hash=sha256:9e4105955419ae310d7da9cfd808e039d4dae3092c628f021057bb4f2c237f8f
+django-stubs-ext==6.0.5 \
+    --hash=sha256:1cc325e991303849bce70e19748981b225ef08b37256f263e113caf97cd3bcc0 \
+    --hash=sha256:a9932c8233d6dd4e34ae0b192026379c1a9be8f0b7c27aa1fa09ae215169773e
     # via django-stubs
 django-test-migrations==1.5.0 \
     --hash=sha256:1cbff04b1e82c5564a6f635284907b381cc11a2ff883adff46776d9126824f07 \
