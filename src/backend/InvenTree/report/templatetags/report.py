@@ -774,6 +774,9 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
+    if 'locale' not in kwargs:
+        if locale := get_global_setting('REPORT_CURRENCY_LOCALE', cache=True):
+            kwargs['locale'] = locale
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
