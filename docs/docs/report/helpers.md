@@ -487,15 +487,46 @@ Both functions resolve their output using the following priority order:
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
 
-::: InvenTree.helpers_model.render_currency
+::: report.templatetags.report.render_currency
     options:
         show_docstring_description: false
         show_source: False
 
+#### Decimal Places
+
+When no decimal place arguments are provided, the locale/currency standard is used (e.g. 2 places for USD, 0 for JPY).
+
+`decimal_places` and `max_decimal_places` work the same way as in [`format_number`](#format_number):
+
+| Argument | Effect |
+| --- | --- |
+| `decimal_places=N` | Forces exactly N decimal digits (zero-padded) |
+| `max_decimal_places=M` | Allows up to M decimal digits, suppressing trailing zeros beyond `decimal_places` |
+| Both set | Forced minimum of `decimal_places`, optional up to `max_decimal_places` |
+| Neither set | Locale/currency default (e.g. 2 for USD) |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- locale default for USD: 2 decimal places -->
+{% render_currency order.total_price currency='USD' %}
+<!-- output: $1,234.56 -->
+
+<!-- force 3 decimal places -->
+{% render_currency order.total_price currency='USD' decimal_places=3 %}
+<!-- output: $1,234.560 -->
+
+<!-- at least 2, up to 4 — trailing zeros beyond the value are suppressed -->
+{% render_currency order.total_price currency='USD' decimal_places=2 max_decimal_places=4 %}
+<!-- output: $1,234.5600 or $1,234.56 depending on the value -->
+
+{% endraw %}
+```
 
 #### Locale and Symbol Rendering
 
-The locale controls how the currency symbol is rendered. Different locales produce different output for the same currency value. For example, `USD 1234.56` with various locales:
+The locale controls how the currency symbol and separators are rendered. For example, `USD 1234.56` with various locales:
 
 | Locale | Output |
 | --- | --- |
@@ -504,10 +535,48 @@ The locale controls how the currency symbol is rendered. Different locales produ
 | `en-au` | `USD1,234.56` |
 | `de-de` | `1.234,56 $` |
 
-The locale used by `render_currency` is resolved in the following priority order:
+The locale is resolved in the following priority order:
 
-1. **Explicit `locale=` argument** in the template tag — highest priority, always wins
-2. **Server `LANGUAGE_CODE`** — the fallback when neither of the above is configured
+1. **Explicit `locale=` argument** — highest priority, always wins
+2. **Server `LANGUAGE_CODE`** — fallback
+
+#### Custom Format Strings
+
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (same syntax as [`format_number`](#custom-format-strings)). **When `fmt` is provided, it takes complete priority over `decimal_places` and `max_decimal_places`** — those arguments are ignored.
+
+The `locale`, `currency`, `multiplier`, and `include_symbol` arguments are still applied when `fmt` is set.
+
+To include the currency symbol in a `fmt` pattern, use the `¤` placeholder. Without it, no symbol appears regardless of `include_symbol`.
+
+| Pattern | Example output (en-us, USD) |
+| --- | --- |
+| `#,##0.00` | `1,234.56` (no symbol) |
+| `¤#,##0.00` | `$1,234.56` |
+| `¤#,##0.0000` | `$1,234.5600` |
+| `¤ #,##0.00` | `$ 1,234.56` |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- No symbol (no ¤ in pattern) -->
+{% render_currency order.total_price currency='USD' fmt='#,##0.00' %}
+<!-- output: 1,234.56 -->
+
+<!-- Symbol via ¤ placeholder -->
+{% render_currency order.total_price currency='USD' fmt='¤#,##0.0000' locale='en-us' %}
+<!-- output: $1,234.5600 -->
+
+<!-- fmt + locale: de-de separators -->
+{% render_currency order.total_price currency='USD' fmt='#,##0.00' locale='de-de' %}
+<!-- output: 1.234,56 -->
+
+<!-- fmt takes priority — decimal_places=2 is ignored -->
+{% render_currency order.total_price currency='USD' fmt='0.0000' decimal_places=2 %}
+<!-- output: 1234.5600 -->
+
+{% endraw %}
+```
 
 #### Example
 
@@ -518,14 +587,14 @@ The locale used by `render_currency` is resolved in the following priority order
 <em>Line Item Unit Pricing:</em>
 <ul>
 {% for line in order.lines %}
-<!-- Locale resolved from server LANGUAGE_CODE -->
 <li>{% render_currency line.price currency=order.supplier.currency %}</li>
 {% endfor %}
 </ul>
 
+<!-- Force 2 decimal places, convert to NZD -->
 Total Price: {% render_currency order.total_price currency='NZD' decimal_places=2 %}
 
-<!-- Per-tag override: forces US-style symbol regardless of setting or server locale -->
+<!-- US-style symbol, regardless of server locale -->
 Total Price: {% render_currency order.total_price currency='USD' locale='en-us' %}
 
 {% endraw %}
