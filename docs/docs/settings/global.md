@@ -142,7 +142,7 @@ Configuration of report generation:
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("REPORT_ENABLE") }}
-{{ globalsetting("REPORT_CURRENCY_LOCALE") }}
+{{ globalsetting("REPORT_LOCALE") }}
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_FETCH_URLS") }}

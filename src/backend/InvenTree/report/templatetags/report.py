@@ -11,6 +11,7 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
@@ -19,6 +20,9 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from babel.dates import format_date as babel_format_date
+from babel.dates import format_datetime as babel_format_datetime
+from babel.numbers import format_decimal as babel_format_decimal
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -32,6 +36,7 @@ import InvenTree.helpers_model
 import report.helpers
 from common.settings import get_global_setting
 from company.models import Company
+from InvenTree.format import get_locale
 from part.models import Part
 
 register = template.Library()
@@ -771,11 +776,21 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     return cast_to_type(result, cast)
 
 
+def _get_report_locale(override: Optional[str] = None) -> Optional[str]:
+    """Return the locale to use for report formatting.
+
+    Priority: explicit override > REPORT_LOCALE global setting > None (caller falls back to LANGUAGE_CODE).
+    """
+    if override:
+        return override
+    return get_global_setting('REPORT_LOCALE', cache=True) or settings.LANGUAGE_CODE
+
+
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
     if 'locale' not in kwargs:
-        if locale := get_global_setting('REPORT_CURRENCY_LOCALE', cache=True):
+        if locale := _get_report_locale():
             kwargs['locale'] = locale
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
@@ -879,6 +894,7 @@ def format_number(
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,
+    locale: Optional[str] = None,
 ) -> str:
     """Render a number with optional formatting options.
 
@@ -888,7 +904,8 @@ def format_number(
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
-        separator: Character to use as a thousands separator (default = None)
+        separator: Character to use as a thousands separator (default = None, ignored when locale is active)
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). When set, babel controls decimal and thousands separators.
     """
     check_nulls('format_number', number)
 
@@ -902,33 +919,35 @@ def format_number(
         number *= Decimal(str(multiplier).strip())
 
     if integer:
-        # Convert to integer
         number = Decimal(int(number))
-
-    # Normalize the number (remove trailing zeroes)
-    number = number.normalize()
 
     if decimal_places is not None:
         try:
             decimal_places = int(decimal_places)
             number = round(number, decimal_places)
         except ValueError:
-            pass
+            decimal_places = None
 
-    # Re-encode, and normalize again
-    # Ensure that the output never uses scientific notation
-    value = Decimal(number)
-    value = (
-        value.quantize(Decimal(1))
-        if value == value.to_integral()
-        else value.normalize()
-    )
+    resolved_locale = _get_report_locale(locale)
 
-    if separator:
-        value = f'{value:,}'
-        value = value.replace(',', separator)
+    if resolved_locale:
+        babel_locale = get_locale(resolved_locale)
+        fmt = '#,##0.' + '0' * decimal_places if decimal_places is not None else None
+        value = babel_format_decimal(number, format=fmt, locale=babel_locale)
     else:
-        value = f'{value}'
+        # Normalize the number (remove trailing zeroes), avoid scientific notation
+        value = Decimal(number)
+        value = (
+            value.quantize(Decimal(1))
+            if value == value.to_integral()
+            else value.normalize()
+        )
+
+        if separator:
+            value = f'{value:,}'
+            value = value.replace(',', separator)
+        else:
+            value = f'{value}'
 
     if leading is not None:
         try:
@@ -942,14 +961,18 @@ def format_number(
 
 @register.simple_tag
 def format_datetime(
-    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+    dt: datetime,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
 ):
     """Format a datetime object for display.
 
     Arguments:
         dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
     """
     check_nulls('format_datetime', dt)
 
@@ -957,18 +980,30 @@ def format_datetime(
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    resolved_locale = _get_report_locale(locale)
+    if resolved_locale:
+        return babel_format_datetime(
+            dt, format='medium', locale=get_locale(resolved_locale)
+        )
+
+    return dt.isoformat()
 
 
 @register.simple_tag
-def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
+def format_date(
+    dt: date,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+):
     """Format a date object for display.
 
     Arguments:
         dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
     """
     check_nulls('format_date', dt)
 
@@ -979,8 +1014,14 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    resolved_locale = _get_report_locale(locale)
+    if resolved_locale:
+        return babel_format_date(
+            dt, format='medium', locale=get_locale(resolved_locale)
+        )
+
+    return dt.isoformat()
 
 
 @register.simple_tag()

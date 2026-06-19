@@ -393,10 +393,10 @@ The locale controls how the currency symbol is rendered. Different locales produ
 The locale used by `render_currency` is resolved in the following priority order:
 
 1. **Explicit `locale=` argument** in the template tag — highest priority, always wins
-2. **`REPORT_CURRENCY_LOCALE` global setting** — applied to all reports when set, with no per-tag argument needed
+2. **`REPORT_LOCALE` global setting** — applied to all reports when set, with no per-tag argument needed
 3. **Server `LANGUAGE_CODE`** — the fallback when neither of the above is configured
 
-To apply a consistent locale across all reports without modifying every template, set the `REPORT_CURRENCY_LOCALE` global setting (via *Settings → Reporting → Report Currency Locale*). Individual templates can still override it per-tag using the `locale=` argument.
+To apply a consistent locale across all reports without modifying every template, set the `REPORT_LOCALE` global setting (via *Settings → Reporting → Report Currency Locale*). Individual templates can still override it per-tag using the `locale=` argument.
 
 #### Example
 
@@ -407,7 +407,7 @@ To apply a consistent locale across all reports without modifying every template
 <em>Line Item Unit Pricing:</em>
 <ul>
 {% for line in order.lines %}
-<!-- Locale resolved from REPORT_CURRENCY_LOCALE setting, or server LANGUAGE_CODE -->
+<!-- Locale resolved from REPORT_LOCALE setting, or server LANGUAGE_CODE -->
 <li>{% render_currency line.price currency=order.supplier.currency %}</li>
 {% endfor %}
 </ul>

@@ -184,6 +184,22 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     return result.group(name)
 
 
+def get_locale(locale: Optional[str] = None) -> Locale:
+    """Resolve and return a babel Locale.
+
+    Args:
+        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
+
+    Raises:
+        ValidationError: If the locale string is invalid.
+    """
+    language = locale or settings.LANGUAGE_CODE
+    try:
+        return Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale '{language}' - {e}")
+
+
 def format_money(
     money: Money,
     decimal_places: Optional[int] = None,
@@ -206,22 +222,18 @@ def format_money(
     Raises:
         ValueError: format string is incorrectly specified
     """
-    language = locale or settings.LANGUAGE_CODE
-    try:
-        locale = Locale.parse(translation.to_locale(language))
-    except (UnknownLocaleError, ValueError) as e:
-        raise ValidationError(f"format_money: Invalid locale '{language}' - {e}")
+    resolved_locale = get_locale(locale)
 
     if fmt:
         pattern = parse_pattern(fmt)
     else:
-        pattern = locale.currency_formats['standard']
+        pattern = resolved_locale.currency_formats['standard']
         if decimal_places is not None:
             pattern.frac_prec = (decimal_places, decimal_places)
 
     result = pattern.apply(
         money.amount,
-        locale,
+        resolved_locale,
         currency=money.currency.code if include_symbol else '',
         currency_digits=decimal_places is None,
         decimal_quantization=decimal_places is not None,

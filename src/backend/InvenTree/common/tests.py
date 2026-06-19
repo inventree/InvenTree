@@ -621,10 +621,8 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(codes, 'AUD,USD,GBP')
 
     def test_report_currency_locale(self):
-        """Test validation of the REPORT_CURRENCY_LOCALE setting."""
-        url = reverse(
-            'api-global-setting-detail', kwargs={'key': 'REPORT_CURRENCY_LOCALE'}
-        )
+        """Test validation of the REPORT_LOCALE setting (locale string for report formatting)."""
+        url = reverse('api-global-setting-detail', kwargs={'key': 'REPORT_LOCALE'})
 
         # Valid locale values are accepted
         for valid in ['en-us', 'en-gb', 'en-au', 'de-de', 'fr-fr']:
