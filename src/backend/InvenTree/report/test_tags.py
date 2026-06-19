@@ -565,48 +565,40 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
                 report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56'
             )
 
-        # Explicit locale overrides REPORT_CURRENCY_LOCALE global setting
-        InvenTreeSetting.set_setting(
-            'REPORT_CURRENCY_LOCALE', 'en-au', change_user=None
-        )
+        # Explicit locale overrides the REPORT_LOCALE global setting
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-au', change_user=None)
         self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
-        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
 
         # Invalid locale raises ValidationError regardless of other settings
         with self.assertRaises(ValidationError):
             report_tags.render_currency(m, locale='xx-zz')
 
     def test_render_currency_global_setting(self):
-        """render_currency uses REPORT_CURRENCY_LOCALE when no explicit locale= is passed."""
+        """render_currency uses REPORT_LOCALE when no explicit locale= is passed."""
         m = Money(1234.56, 'USD')
 
         # Ensure no global setting is active to start
-        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
 
-        InvenTreeSetting.set_setting(
-            'REPORT_CURRENCY_LOCALE', 'en-us', change_user=None
-        )
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-us', change_user=None)
         self.assertEqual(report_tags.render_currency(m), '$1,234.56')
 
-        InvenTreeSetting.set_setting(
-            'REPORT_CURRENCY_LOCALE', 'en-gb', change_user=None
-        )
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-gb', change_user=None)
         self.assertEqual(report_tags.render_currency(m), 'US$1,234.56')
 
-        InvenTreeSetting.set_setting(
-            'REPORT_CURRENCY_LOCALE', 'en-au', change_user=None
-        )
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-au', change_user=None)
         self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
 
         # Clear the setting
-        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
 
     def test_render_currency_system_locale(self):
         """render_currency falls back to system LANGUAGE_CODE when no locale is configured."""
         m = Money(1234.56, 'USD')
 
-        # Ensure REPORT_CURRENCY_LOCALE is not set
-        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+        # Ensure REPORT_LOCALE is not set
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
 
         with override_settings(LANGUAGE_CODE='en-us'):
             self.assertEqual(report_tags.render_currency(m), '$1,234.56')
@@ -688,14 +680,98 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_format_date(self):
         """Test the format_date template tag."""
-        # Test with a valid date
-        date = timezone.datetime(year=2024, month=3, day=13)
-        self.assertEqual(report_tags.format_date(date), '2024-03-13')
-        self.assertEqual(report_tags.format_date(date, fmt='%d-%m-%y'), '13-03-24')
+        dt = timezone.datetime(year=2024, month=3, day=13)
+        self.assertEqual(report_tags.format_date(dt), '2024-03-13')
+        self.assertEqual(report_tags.format_date(dt, fmt='%d-%m-%y'), '13-03-24')
 
         # Test with an invalid date
         self.assertEqual(report_tags.format_date('abc'), 'abc')
-        self.assertEqual(report_tags.format_date(date, fmt='a'), 'a')
+        self.assertEqual(report_tags.format_date(dt, fmt='a'), 'a')
+
+    def test_format_date_locale(self):
+        """Test that format_date renders locale-aware output."""
+        dt = timezone.datetime(year=2026, month=6, day=19)
+
+        # Explicit locale overrides
+        self.assertEqual(report_tags.format_date(dt, locale='en-us'), 'Jun 19, 2026')
+        self.assertEqual(report_tags.format_date(dt, locale='en-gb'), '19 Jun 2026')
+        self.assertEqual(report_tags.format_date(dt, locale='de-de'), '19.06.2026')
+        self.assertEqual(report_tags.format_date(dt, locale='fr-fr'), '19 juin 2026')
+
+        # Explicit fmt always wins over locale
+        self.assertEqual(
+            report_tags.format_date(dt, fmt='%Y-%m-%d', locale='de-de'), '2026-06-19'
+        )
+
+        # REPORT_LOCALE global setting is applied when no locale= arg
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
+        self.assertEqual(report_tags.format_date(dt), '19.06.2026')
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
+
+        # Falls back to ISO when no locale configured
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
+        self.assertEqual(report_tags.format_date(dt), '2026-06-19')
+
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.format_date(dt, locale='xx-zz')
+
+    def test_format_datetime_locale(self):
+        """Test that format_datetime renders locale-aware output."""
+        from zoneinfo import ZoneInfo
+
+        dt = timezone.datetime(2026, 6, 19, 15, 30, 0, tzinfo=ZoneInfo('UTC'))
+
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='en-us'), 'Jun 19, 2026, 3:30:00 PM'
+        )
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de'), '19.06.2026, 15:30:00'
+        )
+
+        # Explicit fmt still wins
+        self.assertEqual(
+            report_tags.format_datetime(dt, fmt='%Y-%m-%d', locale='de-de'),
+            '2026-06-19',
+        )
+
+        # REPORT_LOCALE global setting applied
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
+        self.assertEqual(report_tags.format_datetime(dt), '19.06.2026, 15:30:00')
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
+
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.format_datetime(dt, locale='xx-zz')
+
+    def test_format_number_locale(self):
+        """Test that format_number renders locale-aware output."""
+        # Explicit locale controls decimal and thousands separators
+        self.assertEqual(report_tags.format_number(1234.56, locale='en-us'), '1,234.56')
+        self.assertEqual(report_tags.format_number(1234.56, locale='de-de'), '1.234,56')
+        self.assertEqual(report_tags.format_number(1234.56, locale='fr-fr'), '1 234,56')
+
+        # decimal_places pinned via locale-aware format string
+        self.assertEqual(
+            report_tags.format_number(1234.5, decimal_places=2, locale='en-us'),
+            '1,234.50',
+        )
+        self.assertEqual(
+            report_tags.format_number(1234.5, decimal_places=2, locale='de-de'),
+            '1.234,50',
+        )
+
+        # REPORT_LOCALE global setting applied
+        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
+        self.assertEqual(report_tags.format_number(1234.56), '1.234,56')
+        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
+
+        # No locale: existing separator behaviour preserved
+        self.assertEqual(report_tags.format_number(1234.56, separator=','), '1,234.56')
+
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.format_number(1234.56, locale='xx-zz')
 
 
 class BarcodeTagTest(TestCase):
