@@ -170,7 +170,11 @@ export default function NavigationTree({
 
     if (!sourceNodes.length) return [];
 
-    for (const raw of sourceNodes) {
+    // Sort by level so parents are always inserted before their children,
+    // regardless of the order the API returns items (e.g. after ancestor union in search mode).
+    const sorted = [...sourceNodes].sort((a, b) => a.level - b.level);
+
+    for (const raw of sorted) {
       const node = {
         ...raw,
         children: [],
