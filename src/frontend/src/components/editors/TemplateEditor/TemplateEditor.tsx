@@ -223,7 +223,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           });
         })
         .catch((error) => {
-          const msg = error?.message;
+          const msg = error?.message || error?.toString();
 
           if (msg) {
             if (Array.isArray(msg)) {
@@ -272,7 +272,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   return (
     <Boundary label='TemplateEditor'>
       <Stack style={{ height: '100%', flex: '1' }}>
-        <Split style={{ gap: '10px' }}>
+        <Split visible style={{ flex: 1 }}>
           <Tabs
             value={editorValue}
             onChange={async (v) => {
@@ -282,7 +282,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             keepMounted={false}
             style={{
               minWidth: '300px',
-              flex: '1',
+              width: '50%',
               display: 'flex',
               flexDirection: 'column'
             }}
@@ -348,6 +348,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             keepMounted={false}
             style={{
               minWidth: '200px',
+              width: '50%',
               display: 'flex',
               flexDirection: 'column'
             }}
