@@ -2,17 +2,8 @@
 
 import re
 import string
-from typing import Optional
 
-from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-
-from babel import Locale
-from babel.core import UnknownLocaleError
-from babel.numbers import parse_pattern
-from djmoney.money import Money
 
 
 def parse_format_string(fmt_string: str) -> dict:
@@ -182,61 +173,3 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     # And return the value we are interested in
     # Note: This will raise an IndexError if the named group was not matched
     return result.group(name)
-
-
-def get_locale(locale: Optional[str] = None) -> Locale:
-    """Resolve and return a babel Locale.
-
-    Args:
-        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
-
-    Raises:
-        ValidationError: If the locale string is invalid.
-    """
-    language = locale or settings.LANGUAGE_CODE
-    try:
-        return Locale.parse(translation.to_locale(language))
-    except (UnknownLocaleError, ValueError) as e:
-        raise ValidationError(f"Invalid locale '{language}' - {e}")
-
-
-def format_money(
-    money: Money,
-    decimal_places: Optional[int] = None,
-    fmt: Optional[str] = None,
-    include_symbol: bool = True,
-    locale: Optional[str] = None,
-) -> str:
-    """Format money object according to the currently set local.
-
-    Args:
-        money (Money): The money object to format
-        decimal_places (int): Number of decimal places to use
-        fmt (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
-        include_symbol (bool): Whether to include the currency symbol in the formatted output
-        locale (str): Optional locale override (e.g. 'en-us', 'en-gb'). Defaults to the server LANGUAGE_CODE setting.
-
-    Returns:
-        str: The formatted string
-
-    Raises:
-        ValueError: format string is incorrectly specified
-    """
-    resolved_locale = get_locale(locale)
-
-    if fmt:
-        pattern = parse_pattern(fmt)
-    else:
-        pattern = resolved_locale.currency_formats['standard']
-        if decimal_places is not None:
-            pattern.frac_prec = (decimal_places, decimal_places)
-
-    result = pattern.apply(
-        money.amount,
-        resolved_locale,
-        currency=money.currency.code if include_symbol else '',
-        currency_digits=decimal_places is None,
-        decimal_quantization=decimal_places is not None,
-    )
-
-    return result

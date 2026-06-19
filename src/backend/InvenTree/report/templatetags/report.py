@@ -11,14 +11,18 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
+from django.utils import translation
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from babel import Locale
+from babel.core import UnknownLocaleError
 from babel.dates import format_date as babel_format_date
 from babel.dates import format_datetime as babel_format_datetime
 from babel.numbers import format_decimal as babel_format_decimal
@@ -36,13 +40,28 @@ import InvenTree.helpers_model
 import report.helpers
 from common.settings import get_global_setting
 from company.models import Company
-from InvenTree.format import get_locale
 from part.models import Part
 
 register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+def get_locale(locale: Optional[str] = None) -> Locale:
+    """Resolve and return a babel Locale.
+
+    Args:
+        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
+
+    Raises:
+        ValidationError: If the locale string is invalid.
+    """
+    language = locale or settings.LANGUAGE_CODE
+    try:
+        return Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale '{language}' - {e}")
 
 
 @register.simple_tag()
