@@ -4,8 +4,8 @@ import { type ReactNode, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
+import InvenTreeIcon from '../../assets/inventree.svg';
 import { useServerApiState } from '../../states/ServerApiState';
-import InvenTreeIcon from './inventree.svg';
 
 export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
   (props, ref) => {
