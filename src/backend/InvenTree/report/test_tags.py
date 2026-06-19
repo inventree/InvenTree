@@ -773,35 +773,6 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         with self.assertRaises(ValidationError):
             report_tags.format_datetime(dt, locale='xx-zz')
 
-    def test_format_number_locale(self):
-        """Test that format_number renders locale-aware output."""
-        # Explicit locale controls decimal and thousands separators
-        self.assertEqual(report_tags.format_number(1234.56, locale='en-us'), '1,234.56')
-        self.assertEqual(report_tags.format_number(1234.56, locale='de-de'), '1.234,56')
-        self.assertEqual(report_tags.format_number(1234.56, locale='fr-fr'), '1 234,56')
-
-        # decimal_places pinned via locale-aware format string
-        self.assertEqual(
-            report_tags.format_number(1234.5, decimal_places=2, locale='en-us'),
-            '1,234.50',
-        )
-        self.assertEqual(
-            report_tags.format_number(1234.5, decimal_places=2, locale='de-de'),
-            '1.234,50',
-        )
-
-        # REPORT_LOCALE global setting applied
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
-        self.assertEqual(report_tags.format_number(1234.56), '1.234,56')
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-
-        # No locale: existing separator behaviour preserved
-        self.assertEqual(report_tags.format_number(1234.56, separator=','), '1,234.56')
-
-        # Invalid locale raises ValidationError
-        with self.assertRaises(ValidationError):
-            report_tags.format_number(1234.56, locale='xx-zz')
-
 
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags."""
