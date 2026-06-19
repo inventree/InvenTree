@@ -409,9 +409,22 @@ For rendering date and datetime information, the following helper functions are 
 
 Both functions resolve their output using the following priority order:
 
-1. **`fmt=` argument** — a [strftime format string](https://docs.python.org/3/library/datetime.html#format-codes). When provided, this takes full priority and the `locale` argument is ignored.
-2. **`locale=` argument** (or the default system locale setting) — when no `fmt` is given, Babel formats the value in a locale-aware *medium* style (e.g. `Jan 12, 2025` for `en-us`).
-3. **ISO 8601 fallback** — when neither `fmt` nor a locale is available, the value is returned in ISO format (e.g. `2025-01-12`).
+1. **`fmt=` argument** — a [strftime format string](https://docs.python.org/3/library/datetime.html#format-codes). When provided, this takes full priority; `locale` and `date_format` are ignored.
+2. **`locale=` argument** — when no `fmt` is given, Babel formats the value using the style set by `date_format` (default `medium`).
+3. **Server `LANGUAGE_CODE`** — used as the locale when no `locale=` argument is supplied.
+
+#### Date Format Styles
+
+The `date_format` argument controls how Babel renders the date when locale-aware formatting is used. The four named styles are:
+
+| Style | `format_date` example (en-us, 2025-01-12) | `format_datetime` example (en-us, 2025-01-12 14:30) |
+| --- | --- | --- |
+| `full` | `Sunday, January 12, 2025` | `Sunday, January 12, 2025 at 2:30:00 PM UTC` |
+| `long` | `January 12, 2025` | `January 12, 2025 at 2:30:00 PM UTC` |
+| `medium` *(default)* | `Jan 12, 2025` | `Jan 12, 2025, 2:30:00 PM` |
+| `short` | `1/12/25` | `1/12/25, 2:30 PM` |
+
+The exact output varies by locale — the table above uses `en-us`.
 
 ### format_date
 
@@ -426,23 +439,25 @@ Both functions resolve their output using the following priority order:
 {% raw %}
 {% load report %}
 
-<!-- ISO fallback (no fmt, no locale) -->
+<!-- Default: medium style, locale from LANGUAGE_CODE -->
 {% format_date my_date %}
-<!-- output: 2025-01-12 -->
+<!-- output (en-us): Jan 12, 2025 -->
 
-<!-- Explicit strftime format string — locale is ignored -->
+<!-- Explicit strftime format string — locale and date_format are ignored -->
 {% format_date my_date fmt="%d/%m/%Y" %}
 <!-- output: 12/01/2025 -->
 
-<!-- Locale-aware medium format -->
+<!-- Locale-aware, default medium style -->
 {% format_date my_date locale='en-us' %}
 <!-- output: Jan 12, 2025 -->
 
-{% format_date my_date locale='de-de' %}
-<!-- output: 12.01.2025 -->
+<!-- Short style -->
+{% format_date my_date locale='en-us' date_format='short' %}
+<!-- output: 1/12/25 -->
 
-<!-- Convert from a different timezone before formatting -->
-{% format_date my_date timezone="Australia/Sydney" locale='en-au' %}
+<!-- Full style -->
+{% format_date my_date locale='en-us' date_format='full' %}
+<!-- output: Sunday, January 12, 2025 -->
 
 {% endraw %}
 ```
@@ -460,20 +475,21 @@ Both functions resolve their output using the following priority order:
 {% raw %}
 {% load report %}
 
-<!-- ISO fallback (no fmt, no locale) -->
+<!-- Default: medium style, locale from LANGUAGE_CODE -->
 {% format_datetime my_datetime %}
-<!-- output: 2025-01-12T14:30:00+00:00 -->
+<!-- output (en-us): Jan 12, 2025, 2:30:00 PM -->
 
-<!-- Explicit strftime format — locale is ignored -->
+<!-- Explicit strftime format — locale and date_format are ignored -->
 {% format_datetime my_datetime fmt="%d-%m-%Y %H:%M" %}
 <!-- output: 12-01-2025 14:30 -->
 
-<!-- Locale-aware medium format -->
+<!-- Locale-aware, default medium style -->
 {% format_datetime my_datetime locale='en-us' %}
 <!-- output: Jan 12, 2025, 2:30:00 PM -->
 
-{% format_datetime my_datetime locale='de-de' %}
-<!-- output: 12.01.2025, 14:30:00 -->
+<!-- Short style -->
+{% format_datetime my_datetime locale='de-de' date_format='short' %}
+<!-- output: 12.01.25, 14:30 -->
 
 <!-- Convert to a specific timezone before formatting -->
 {% format_datetime my_datetime timezone="Australia/Sydney" locale='en-au' %}

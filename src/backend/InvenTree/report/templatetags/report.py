@@ -982,6 +982,7 @@ def format_number(
     max_decimal_places: Optional[int] = None,
     fmt: Optional[str] = None,
     locale: Optional[str] = None,
+    **kwargs,
 ) -> str:
     """Render a number with optional formatting options.
 
@@ -1065,14 +1066,17 @@ def format_datetime(
     timezone: Optional[str] = None,
     fmt: Optional[str] = None,
     locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
 ):
     """Format a datetime object for display.
 
     Arguments:
         dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The strftime format string to use. When provided, takes priority over locale.
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
         locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_datetime', dt)
 
@@ -1081,10 +1085,7 @@ def format_datetime(
     if fmt:
         return dt.strftime(fmt)
 
-    return babel_format_datetime(dt, format='medium', locale=get_locale(locale))
-
-    # Final backup - return an ISO formatted string
-    return dt.isoformat()
+    return babel_format_datetime(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag
@@ -1093,14 +1094,17 @@ def format_date(
     timezone: Optional[str] = None,
     fmt: Optional[str] = None,
     locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
 ):
     """Format a date object for display.
 
     Arguments:
         dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The strftime format string to use. When provided, takes priority over locale.
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
         locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_date', dt)
 
@@ -1112,7 +1116,7 @@ def format_date(
     if fmt:
         return dt.strftime(fmt)
 
-    return babel_format_date(dt, format='medium', locale=get_locale(locale))
+    return babel_format_date(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag()

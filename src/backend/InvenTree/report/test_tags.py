@@ -730,6 +730,25 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         with override_settings(LANGUAGE_CODE='en-us'):
             self.assertEqual(report_tags.format_date(dt), 'Mar 13, 2024')
 
+        # date_format controls the Babel style
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='short'), '3/13/24'
+        )
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='long'),
+            'March 13, 2024',
+        )
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='full'),
+            'Wednesday, March 13, 2024',
+        )
+
+        # fmt= wins over date_format=
+        self.assertEqual(
+            report_tags.format_date(dt, fmt='%Y', locale='en-us', date_format='full'),
+            '2024',
+        )
+
         # Invalid locale raises ValidationError
         with self.assertRaises(ValidationError):
             report_tags.format_date(dt, locale='xx-zz')
@@ -757,6 +776,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Falls back to LANGUAGE_CODE when no locale= arg
         with override_settings(LANGUAGE_CODE='de-de'):
             self.assertEqual(report_tags.format_datetime(dt), '19.06.2026, 15:30:00')
+
+        # date_format controls the Babel style
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de', date_format='short'),
+            '19.06.26, 15:30',
+        )
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de', date_format='long'),
+            '19. Juni 2026 um 15:30:00 UTC',  # codespell:ignore "Juni"
+        )
+
+        # fmt= wins over date_format=
+        self.assertEqual(
+            report_tags.format_datetime(
+                dt, fmt='%H:%M', locale='en-us', date_format='full'
+            ),
+            '15:30',
+        )
 
         # Invalid locale raises ValidationError
         with self.assertRaises(ValidationError):
