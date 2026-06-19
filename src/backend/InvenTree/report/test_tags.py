@@ -547,6 +547,30 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
 
+        # Test locale override — different locales render USD differently
+        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
+        self.assertEqual(report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56')
+        self.assertEqual(report_tags.render_currency(m, locale='en-au'), 'USD1,234.56')
+
+    def test_render_currency_default_locale(self):
+        """Test that render_currency respects the server LANGUAGE_CODE setting."""
+        m = Money(1234.56, 'USD')
+
+        with override_settings(LANGUAGE_CODE='en-us'):
+            self.assertEqual(report_tags.render_currency(m), '$1,234.56')
+
+        with override_settings(LANGUAGE_CODE='en-gb'):
+            self.assertEqual(report_tags.render_currency(m), 'US$1,234.56')
+
+        with override_settings(LANGUAGE_CODE='en-au'):
+            self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
+
+        # Explicit locale= always wins over LANGUAGE_CODE
+        with override_settings(LANGUAGE_CODE='en-au'):
+            self.assertEqual(
+                report_tags.render_currency(m, locale='en-us'), '$1,234.56'
+            )
+
     def test_create_currency(self):
         """Test the create_currency template tag."""
         m = report_tags.create_currency(1000, 'USD')
