@@ -552,9 +552,61 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56')
         self.assertEqual(report_tags.render_currency(m, locale='en-au'), 'USD1,234.56')
 
-    def test_render_currency_default_locale(self):
-        """Test that render_currency respects the server LANGUAGE_CODE setting."""
+    def test_render_currency_locale_override(self):
+        """Explicit locale= kwarg takes priority over global setting and system locale."""
         m = Money(1234.56, 'USD')
+
+        # Explicit locale overrides system LANGUAGE_CODE
+        with override_settings(LANGUAGE_CODE='en-au'):
+            self.assertEqual(
+                report_tags.render_currency(m, locale='en-us'), '$1,234.56'
+            )
+            self.assertEqual(
+                report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56'
+            )
+
+        # Explicit locale overrides REPORT_CURRENCY_LOCALE global setting
+        InvenTreeSetting.set_setting(
+            'REPORT_CURRENCY_LOCALE', 'en-au', change_user=None
+        )
+        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
+        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+
+        # Invalid locale raises ValidationError regardless of other settings
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency(m, locale='xx-zz')
+
+    def test_render_currency_global_setting(self):
+        """render_currency uses REPORT_CURRENCY_LOCALE when no explicit locale= is passed."""
+        m = Money(1234.56, 'USD')
+
+        # Ensure no global setting is active to start
+        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+
+        InvenTreeSetting.set_setting(
+            'REPORT_CURRENCY_LOCALE', 'en-us', change_user=None
+        )
+        self.assertEqual(report_tags.render_currency(m), '$1,234.56')
+
+        InvenTreeSetting.set_setting(
+            'REPORT_CURRENCY_LOCALE', 'en-gb', change_user=None
+        )
+        self.assertEqual(report_tags.render_currency(m), 'US$1,234.56')
+
+        InvenTreeSetting.set_setting(
+            'REPORT_CURRENCY_LOCALE', 'en-au', change_user=None
+        )
+        self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
+
+        # Clear the setting
+        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
+
+    def test_render_currency_system_locale(self):
+        """render_currency falls back to system LANGUAGE_CODE when no locale is configured."""
+        m = Money(1234.56, 'USD')
+
+        # Ensure REPORT_CURRENCY_LOCALE is not set
+        InvenTreeSetting.set_setting('REPORT_CURRENCY_LOCALE', '', change_user=None)
 
         with override_settings(LANGUAGE_CODE='en-us'):
             self.assertEqual(report_tags.render_currency(m), '$1,234.56')
@@ -564,16 +616,6 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         with override_settings(LANGUAGE_CODE='en-au'):
             self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
-
-        # Explicit locale= always wins over LANGUAGE_CODE
-        with override_settings(LANGUAGE_CODE='en-au'):
-            self.assertEqual(
-                report_tags.render_currency(m, locale='en-us'), '$1,234.56'
-            )
-
-        # Invalid locale raises ValidationError
-        with self.assertRaises(ValidationError):
-            report_tags.render_currency(m, locale='xx-zz')
 
     def test_create_currency(self):
         """Test the create_currency template tag."""
