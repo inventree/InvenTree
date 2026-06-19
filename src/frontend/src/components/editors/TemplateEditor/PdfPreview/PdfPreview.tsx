@@ -68,9 +68,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
               api
                 .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
                 .then((response) => {
-                  if (response.data.error) {
+                  if (response.data.errors || response.data.error) {
                     clearInterval(interval);
-                    rej(response.data.error);
+                    rej(
+                      response.data.error ??
+                        response.data.errors?.error ??
+                        t`Process failed`
+                    );
                   }
 
                   if (response.data.complete) {

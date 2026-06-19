@@ -6,10 +6,15 @@ INVENTREE_API_VERSION = 510
 
 INVENTREE_API_TEXT = """
 
+<<<<<<< HEAD
 v510 -> 2026-06-18 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+=======
+v510 -> 2026-06-18 : https://github.com/inventree/InvenTree/pull/12197
+    - Require "staff" access permissions for the machine restart API endpoint
+>>>>>>> 6285a11a6538d9a4ff86e68b8d4f0af614f607bf
 
 v509 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
     - Adds "completed_row_count_history" and "row_count_history" fields to the DataImportSession model, which store the historic count of completed rows and total rows for a data import session.
