@@ -9,6 +9,7 @@ import {
   type RenderTreeNodePayload,
   Space,
   Stack,
+  Text,
   TextInput,
   Tree,
   type TreeNodeData,
@@ -176,7 +177,7 @@ export default function NavigationTree({
         label: (
           <Group gap='xs'>
             <ApiIcon name={raw.icon} />
-            {raw.name}
+            <Text>{raw.name}</Text>
           </Group>
         ),
         value: raw.pk.toString(),
@@ -216,7 +217,7 @@ export default function NavigationTree({
       // After fetching (or in search mode where all data is already present), use actual children.
       const hasChildren: boolean =
         !debouncedSearch && !isFetched
-          ? !!resolveItem(payload.node, childIdentifier ?? '')
+          ? !!(childIdentifier && resolveItem(payload.node, childIdentifier))
           : nodeInfo.children.length > 0;
 
       return (
