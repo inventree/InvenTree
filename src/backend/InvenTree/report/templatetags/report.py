@@ -895,7 +895,7 @@ def format_number(
     multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
     separator: bool = False,
-    min_digits: Optional[int] = None,
+    leading: Optional[int] = None,
     decimal_places: Optional[int] = None,
     max_decimal_places: Optional[int] = None,
     fmt: Optional[str] = None,
@@ -908,7 +908,7 @@ def format_number(
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
         separator: Boolean, whether to include a thousands separator
-        min_digits: Minimum number of digits to render (default = 1)
+        leading: Minimum number of leading digits to render (default = 1)
         decimal_places: Number of decimal places to render (default = 0)
         max_decimal_places: Maximum number of decimal places to render (default = 0)
         separator:
@@ -936,15 +936,15 @@ def format_number(
     if not fmt:
         fmt = '###,###,###,###,##0'  # Default format string - this will be modified based on the provided options
 
-        # The 'min_digits' option specifies the minimum number of digits to render (not including decimal places)
-        if min_digits is not None:
+        # The 'leading' option specifies the minimum number of leading digits to render (not including decimal places)
+        if leading is not None:
             try:
-                min_digits = int(min_digits) or 0
+                leading = int(leading) or 0
             except (ValueError, TypeError):
-                min_digits = 0
+                leading = 0
 
-            if min_digits > 1:
-                fmt = fmt[::-1].replace('#', '0', (min_digits - 1))[::-1]
+            if leading > 1:
+                fmt = fmt[::-1].replace('#', '0', (leading - 1))[::-1]
 
         if not bool(separator):
             fmt = fmt.replace(',', '')

@@ -379,10 +379,10 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             '9.988.776.655',
         )
 
-        # Test with 'min_digits' option
-        self.assertEqual(fn(5, min_digits=3), '005')
-        self.assertEqual(fn(123, min_digits=5), '00123')
-        self.assertEqual(fn(1234, min_digits=2, decimal_places=4), '1234.0000')
+        # Test with 'leading' option
+        self.assertEqual(fn(5, leading=3), '005')
+        self.assertEqual(fn(123, leading=5), '00123')
+        self.assertEqual(fn(1234, leading=2, decimal_places=4), '1234.0000')
 
         # Test with custom 'fmt' format string (takes priority over decimal_places / separator)
         self.assertEqual(fn(1234.5678, fmt='0.00'), '1234.57')
@@ -409,7 +409,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(
             fn(1234.456, decimal_places='a', separator=True, locale='en-au'), '1,234'
         )
-        self.assertEqual(fn(1234.456, min_digits='a'), '1234.456')
+        self.assertEqual(fn(1234.456, leading='a'), '1234.456')
 
     @override_settings(TIME_ZONE='America/New_York')
     def test_datetime_tags(self):
