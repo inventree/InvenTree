@@ -193,6 +193,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
             'name',
             'description',
             'parent',
+            'tree_id',
             'level',
             'icon',
             'structural',
