@@ -108,11 +108,19 @@ export default function NavigationTree({
         const nodeMap: Record<number, any> = {};
         for (const n of query.data) nodeMap[n.pk] = n;
 
-        // Walk from the selected node up to the root, expanding each ancestor
+        // Collect every ancestor pk into a single object, then apply in one
+        // setExpandedState call to avoid closure/batching issues with expand().
+        const toExpand: Record<string, boolean> = {};
         let current = nodeMap[selectedId];
         while (current?.parent) {
-          treeState.expand(current.parent.toString());
+          toExpand[current.parent.toString()] = true;
           current = nodeMap[current.parent];
+        }
+        if (Object.keys(toExpand).length) {
+          treeState.setExpandedState({
+            ...treeState.expandedState,
+            ...toExpand
+          });
         }
       }
     }
