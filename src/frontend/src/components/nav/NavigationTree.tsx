@@ -9,24 +9,29 @@ import {
   type RenderTreeNodePayload,
   Space,
   Stack,
+  TextInput,
   Tree,
   type TreeNodeData,
   useTree
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconChevronDown,
   IconChevronRight,
   IconExclamationCircle,
-  IconSitemap
+  IconSearch,
+  IconSitemap,
+  IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { resolveItem } from '@lib/functions/Conversion';
 import {
   eventModified,
   getDetailUrl,
@@ -45,6 +50,7 @@ export default function NavigationTree({
   onClose,
   selectedId,
   modelType,
+  childIdentifier,
   endpoint
 }: Readonly<{
   title: string;
@@ -52,25 +58,39 @@ export default function NavigationTree({
   onClose: () => void;
   selectedId?: number | null;
   modelType: ModelType;
+  childIdentifier: string;
   endpoint: ApiEndpoints;
 }>) {
   const api = useApi();
   const navigate = useNavigate();
   const treeState = useTree();
 
+  const [searchValue, setSearchValue] = useState('');
+  const [debouncedSearch] = useDebouncedValue(searchValue, 300);
+
   // Data query to fetch the tree data from server
   const query = useQuery({
     enabled: opened,
-    queryKey: [modelType, opened],
-    queryFn: async () =>
-      api
+    queryKey: [modelType, opened, debouncedSearch],
+    queryFn: async () => {
+      const params: Record<string, any> = { ordering: 'level' };
+      return api
         .get(apiUrl(endpoint), {
-          data: {
-            ordering: 'level'
+          params: {
+            search: debouncedSearch || undefined,
+            max_level: debouncedSearch ? undefined : 0
           }
         })
-        .then((response) => response.data ?? [])
+        .then((response) => response.data ?? []);
+    }
   });
+
+  // Expand all nodes when a search is active so ancestors are visible
+  useEffect(() => {
+    if (debouncedSearch) {
+      treeState.expandAllNodes();
+    }
+  }, [debouncedSearch, query.data]);
 
   const follow = useCallback(
     (node: TreeNodeData, event?: any) => {
@@ -143,7 +163,8 @@ export default function NavigationTree({
   const renderNode = useCallback(
     (payload: RenderTreeNodePayload) => {
       const hasChildren: boolean =
-        payload.hasChildren && (payload.node as any).children.length > 0;
+        (payload.hasChildren && (payload.node as any).children.length > 0) ||
+        resolveItem(payload.node, childIdentifier);
 
       return (
         <Group
@@ -182,7 +203,7 @@ export default function NavigationTree({
         </Group>
       );
     },
-    [treeState]
+    [treeState, childIdentifier, follow]
   );
 
   return (
@@ -208,6 +229,24 @@ export default function NavigationTree({
       }
     >
       <Stack gap='xs'>
+        <TextInput
+          placeholder={t`Search...`}
+          value={searchValue}
+          onChange={(event) => setSearchValue(event.currentTarget.value)}
+          leftSection={<IconSearch size={16} />}
+          rightSection={
+            searchValue ? (
+              <ActionIcon
+                size='sm'
+                variant='transparent'
+                onClick={() => setSearchValue('')}
+                aria-label={t`Clear search`}
+              >
+                <IconX size={14} />
+              </ActionIcon>
+            ) : null
+          }
+        />
         <Divider />
         <LoadingOverlay visible={query.isFetching || query.isLoading} />
         {query.isError ? (
