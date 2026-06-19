@@ -181,14 +181,25 @@ class CategorySerializer(
     parameters = common.filters.enable_parameters_filter()
 
 
-class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
+class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory tree."""
 
     class Meta:
         """Metaclass defining serializer fields."""
 
         model = PartCategory
-        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'pathstring',
+            'parent',
+            'tree_id',
+            'level',
+            'icon',
+            'structural',
+            'subcategories',
+        ]
 
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
