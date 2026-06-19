@@ -188,7 +188,16 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartCategory
-        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'parent',
+            'level',
+            'icon',
+            'structural',
+            'subcategories',
+        ]
 
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 

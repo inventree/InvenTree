@@ -284,11 +284,32 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         )
 
 
+class CategoryTreeFilter(FilterSet):
+    """Custom filterset class for the CategoryTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
 class CategoryTree(ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
+    filterset_class = CategoryTreeFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
