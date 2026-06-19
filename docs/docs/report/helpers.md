@@ -330,8 +330,8 @@ The helper function `format_number` allows for some common number formatting opt
 {% format_number 3.14159265359 decimal_places=5 %}
 <!-- output: 3.14159 -->
 
-<!-- Leading zeros with min_digits -->
-{% format_number 3.14159265359 decimal_places=5 min_digits=3 %}
+<!-- Leading zeros with 'leading' option -->
+{% format_number 3.14159265359 decimal_places=5 leading=3 %}
 <!-- output: 003.14159 -->
 
 <!-- Round to integer -->
@@ -359,7 +359,7 @@ The helper function `format_number` allows for some common number formatting opt
 
 #### Custom Format Strings
 
-The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (the same syntax used by [Babel](https://babel.pocoo.org/en/latest/numbers.html)). When `fmt` is provided it takes complete priority over the `decimal_places`, `max_decimal_places`, `min_digits`, and `separator` arguments — those arguments are silently ignored.
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (the same syntax used by [Babel](https://babel.pocoo.org/en/latest/numbers.html)). When `fmt` is provided it takes complete priority over the `decimal_places`, `max_decimal_places`, `leading`, and `separator` arguments — those arguments are silently ignored.
 
 The `integer` and `multiplier` arguments **are** still applied to the number before the format string is used.
 
