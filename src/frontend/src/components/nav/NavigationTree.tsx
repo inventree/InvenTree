@@ -286,22 +286,24 @@ export default function NavigationTree({
             }
           }}
         >
-          <Space w={15 * (payload.level - 1)} />
-          <ActionIcon
-            size='sm'
-            variant='transparent'
-            aria-label={`nav-tree-toggle-${payload.node.value}}`}
-          >
-            {isLoading ? (
-              <Loader size='xs' />
-            ) : hasChildren ? (
-              payload.expanded ? (
-                <IconChevronDown />
-              ) : (
-                <IconChevronRight />
-              )
-            ) : null}
-          </ActionIcon>
+          <Space w={25 * (payload.level - 1)} />
+          {(isLoading || hasChildren || payload.expanded) && (
+            <ActionIcon
+              size='sm'
+              variant='transparent'
+              aria-label={`nav-tree-toggle-${payload.node.value}}`}
+            >
+              {isLoading ? (
+                <Loader size='xs' />
+              ) : hasChildren ? (
+                payload.expanded ? (
+                  <IconChevronDown />
+                ) : (
+                  <IconChevronRight />
+                )
+              ) : null}
+            </ActionIcon>
+          )}
           <HoverCard
             width={260}
             shadow='md'
@@ -400,7 +402,13 @@ export default function NavigationTree({
             {t`No results found`}
           </Alert>
         ) : (
-          <Tree data={data} tree={treeState} renderNode={renderNode} />
+          <Tree
+            data={data}
+            tree={treeState}
+            renderNode={renderNode}
+            withLines
+            levelOffset={25}
+          />
         )}
       </Stack>
     </Drawer>
