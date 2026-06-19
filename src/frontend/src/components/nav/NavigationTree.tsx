@@ -142,6 +142,9 @@ export default function NavigationTree({
 
   const renderNode = useCallback(
     (payload: RenderTreeNodePayload) => {
+      const hasChildren: boolean =
+        payload.hasChildren && (payload.node as any).children.length > 0;
+
       return (
         <Group
           p={3}
@@ -161,7 +164,7 @@ export default function NavigationTree({
             variant='transparent'
             aria-label={`nav-tree-toggle-${payload.node.value}}`}
           >
-            {payload.hasChildren ? (
+            {hasChildren ? (
               payload.expanded ? (
                 <IconChevronDown />
               ) : (
