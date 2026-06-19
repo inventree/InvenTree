@@ -220,6 +220,8 @@ export default function NavigationTree({
           ? !!(childIdentifier && resolveItem(payload.node, childIdentifier))
           : nodeInfo.children.length > 0;
 
+      const isSelected = nodeInfo.selected === true;
+
       return (
         <Group
           p={3}
@@ -227,6 +229,8 @@ export default function NavigationTree({
           justify='left'
           key={payload.node.value}
           wrap='nowrap'
+          bg={isSelected ? 'var(--mantine-primary-color-light)' : undefined}
+          style={{ borderRadius: 'var(--mantine-radius-sm)' }}
           onClick={() => {
             if (!hasChildren) return;
             if (!debouncedSearch && !isFetched) {
