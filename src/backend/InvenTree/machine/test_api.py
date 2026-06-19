@@ -287,14 +287,23 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             active=True,
         )
 
+        restart_url = reverse('api-machine-restart', kwargs={'pk': machine.pk})
+
+        # Non-staff users must not be able to restart a machine
+        self.user.is_staff = False
+        self.user.save()
+        self.post(restart_url, expected_code=403)
+
+        # Restore staff access
+        self.user.is_staff = True
+        self.user.save()
+
         # verify machine status before restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))
         self.assertEqual(response.data['status_text'], '')
 
         # restart the machine
-        response = self.post(
-            reverse('api-machine-restart', kwargs={'pk': machine.pk}), expected_code=200
-        )
+        self.post(restart_url, expected_code=200)
 
         # verify machine status after restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))

@@ -21,6 +21,7 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
+    TreeMixin,
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -284,25 +285,38 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         )
 
 
-class CategoryTree(ListAPI):
+class CategoryTreeFilter(FilterSet):
+    """Custom filterset class for the CategoryTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['parent', 'tree_id', 'level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
+class CategoryTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
+    model_class = PartCategory
     queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['level', 'name', 'subcategories']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
+    serializer_class = part_serializers.CategoryTreeSerializer
+    filterset_class = CategoryTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        queryset = part_serializers.CategoryTreeSerializer.annotate_queryset(queryset)
         return queryset
 
 

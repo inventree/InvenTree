@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12204](https://github.com/inventree/InvenTree/pull/12204) adds new filtering options to PartCategoryTree and StockLocationTree API endpoints, allowing tree data to be fetched dynamically
 - [#12165](https://github.com/inventree/InvenTree/pull/12165) adds support for parameters against the PartCategory model
 - [#12103](https://github.com/inventree/InvenTree/pull/12103) adds column-based filtering to table views in the user interface. This extends the existing table filtering functionality by allowing users to apply filters directly to individual columns.
 - [#12093](https://github.com/inventree/InvenTree/pull/12093) adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#12197](https://github.com/inventree/InvenTree/pull/12197) requires staff permissions to restart machines via the API.
 - [#12142](https://github.com/inventree/InvenTree/pull/12142) prevents users from printing reports or labels against models for which they do not have adequate permissions. This change improves the security of the system by ensuring that users cannot access or print reports or labels for models they do not have permission to view.
 - [#11990](https://github.com/inventree/InvenTree/pull/11990) build output operations performed via the API now offload the work to a background task, and now return a task ID which can be used to monitor the progress of the task. This allows for better performance and responsiveness when performing build output operations, as the work is performed asynchronously in the background.
 - [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.

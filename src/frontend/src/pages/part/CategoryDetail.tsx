@@ -377,6 +377,7 @@ export default function CategoryDetail() {
             modelType={ModelType.partcategory}
             title={t`Part Categories`}
             endpoint={ApiEndpoints.category_tree}
+            childIdentifier='subcategories'
             opened={treeOpen}
             onClose={() => {
               setTreeOpen(false);
