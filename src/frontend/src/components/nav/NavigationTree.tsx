@@ -84,35 +84,53 @@ export default function NavigationTree({
   // Data query — browse mode loads root nodes only; search mode loads all matches + ancestors
   const query = useQuery({
     enabled: opened,
-    queryKey: [modelType, 'tree', opened, debouncedSearch],
+    queryKey: [modelType, 'tree', opened, debouncedSearch, selectedId],
     queryFn: async () =>
       api
         .get(apiUrl(endpoint), {
           params: {
             ordering: 'level',
             search: debouncedSearch || undefined,
-            max_level: debouncedSearch ? undefined : 0
+            max_level: debouncedSearch ? undefined : 0,
+            expand_to: debouncedSearch ? undefined : (selectedId ?? undefined)
           }
         })
         .then((response) => response.data ?? [])
   });
 
-  // When the browse-mode query settles, reset accumulated node list
+  // When the browse-mode query settles, reset accumulated node list and expand to selected node
   useEffect(() => {
     if (!debouncedSearch && query.data && !query.isFetching) {
       setAllNodes(query.data);
       setFetchedNodes(new Set());
+
+      if (selectedId) {
+        const nodeMap: Record<number, any> = {};
+        for (const n of query.data) nodeMap[n.pk] = n;
+
+        // Walk from the selected node up to the root, expanding each ancestor
+        let current = nodeMap[selectedId];
+        while (current?.parent) {
+          treeState.expand(current.parent.toString());
+          current = nodeMap[current.parent];
+        }
+      }
+    }
+  }, [debouncedSearch, query.data, query.isFetching, selectedId]);
+
+  // Collapse all nodes when the search term changes (switching modes).
+  // Intentionally omits query.data so it does NOT fire when browse results arrive —
+  // that would undo the ancestor expansion done in the sync effect above.
+  useEffect(() => {
+    treeState.collapseAllNodes();
+  }, [debouncedSearch]);
+
+  // Expand all nodes once search results have fully arrived
+  useEffect(() => {
+    if (debouncedSearch && !query.isFetching && query.data?.length) {
+      treeState.expandAllNodes();
     }
   }, [debouncedSearch, query.data, query.isFetching]);
-
-  // Expand all nodes when a search is active so ancestors are visible
-  useEffect(() => {
-    if (debouncedSearch) {
-      treeState.expandAllNodes();
-    } else {
-      treeState.collapseAllNodes();
-    }
-  }, [debouncedSearch, query.data]);
 
   // Fetch direct children of a node (browse mode only); no-op if already fetched
   const fetchChildren = useCallback(
@@ -280,7 +298,7 @@ export default function NavigationTree({
   return (
     <Drawer
       opened={opened}
-      size='md'
+      size='lg'
       position='left'
       onClose={onClose}
       withCloseButton={true}

@@ -331,12 +331,24 @@ class CategoryTree(ListAPI):
         """Filter the queryset, and include all ancestors of matched items when searching."""
         queryset = super().filter_queryset(queryset)
 
+        # If a search term is provided, include all ancestors of matched items in the results
         if self.request.query_params.get('search', '').strip():
             ancestors = PartCategory.objects.get_queryset_ancestors(
                 queryset, include_self=True
             )
             queryset = (queryset | ancestors).distinct()
             queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+
+        # If a specific ID is provided to "expand_to", include all ancestors of that item in the results
+        expand_to = self.request.query_params.get('expand_to')
+        if expand_to:
+            try:
+                target = PartCategory.objects.get(pk=int(expand_to))
+                ancestors = target.get_ancestors(include_self=True)
+                queryset = (queryset | ancestors).distinct()
+                queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+            except (PartCategory.DoesNotExist, ValueError):
+                pass
 
         return queryset
 
