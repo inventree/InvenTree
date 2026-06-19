@@ -290,14 +290,15 @@ class CategoryTree(ListAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    filter_backends = ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
+    search_fields = ['name', 'description']
     ordering_fields = ['level', 'name', 'subcategories']
 
     ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
 
     # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
+    ordering = ['level']
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
