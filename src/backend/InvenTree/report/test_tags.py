@@ -412,7 +412,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(fn(1234.456, min_digits='a'), '1234.456')
 
     @override_settings(TIME_ZONE='America/New_York')
-    def test_date_tags(self):
+    def test_datetime_tags(self):
         """Test for date formatting tags.
 
         - Source timezone is Australia/Sydney
@@ -428,19 +428,21 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             tzinfo=ZoneInfo('Australia/Sydney'),
         )
 
-        # Format a set of tests: timezone, format, expected
+        # Format a set of tests: timezone, format, locale, expected
         tests = [
-            (None, None, '2024-03-12T21:30:00-04:00'),
-            (None, '%d-%m-%y', '12-03-24'),
-            ('UTC', None, '2024-03-13T01:30:00+00:00'),
-            ('UTC', '%d-%B-%Y', '13-March-2024'),
-            ('Europe/Amsterdam', None, '2024-03-13T02:30:00+01:00'),
-            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 02:30'),
+            (None, None, 'en-us', 'Mar 12, 2024, 9:30:00 PM'),  # noqa: RUF001
+            (None, '%d-%m-%y', 'en-us', '12-03-24'),
+            ('UTC', None, 'en-us', 'Mar 13, 2024, 1:30:00 AM'),  # noqa: RUF001
+            ('UTC', '%d-%B-%Y', 'en-us', '13-March-2024'),
+            ('Europe/Amsterdam', None, 'de-de', '13.03.2024, 02:30:00'),
+            ('Europe/Amsterdam', '%y-%m-%d %H:%M', 'de-de', '24-03-13 02:30'),
         ]
 
-        for tz, fmt, expected in tests:
-            print(tz, fmt, expected)
-            result = report_tags.format_datetime(time, tz, fmt)
+        for tz, fmt, locale, expected in tests:
+            print(tz, fmt, locale, expected)
+            result = report_tags.format_datetime(
+                time, timezone=tz, fmt=fmt, locale=locale
+            )
             self.assertEqual(result, expected)
 
     def test_icon(self):
