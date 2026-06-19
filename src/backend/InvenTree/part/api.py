@@ -327,6 +327,19 @@ class CategoryTree(ListAPI):
         queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
         return queryset
 
+    def filter_queryset(self, queryset):
+        """Filter the queryset, and include all ancestors of matched items when searching."""
+        queryset = super().filter_queryset(queryset)
+
+        if self.request.query_params.get('search', '').strip():
+            ancestors = PartCategory.objects.get_queryset_ancestors(
+                queryset, include_self=True
+            )
+            queryset = (queryset | ancestors).distinct()
+            queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+
+        return queryset
+
 
 class CategoryParameterList(DataExportViewMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
