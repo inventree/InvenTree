@@ -14,6 +14,7 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part
 from part.test_api import PartImageTestMixin
@@ -556,21 +557,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.render_currency(m, decimal_places=3), '$1,234.560')
         self.assertEqual(
             report_tags.render_currency(
-                Money(1234, 'USD'), currency='EUR', min_decimal_places=3
+                Money(1234, 'USD'), currency='EUR', decimal_places=3
             ),
             '$1,234.000',
         )
+
+        set_global_setting('PRICING_DECIMAL_PLACES_MIN', 2)
+
         self.assertEqual(
             report_tags.render_currency(
                 Money(1234, 'USD'), currency='EUR', max_decimal_places=1
             ),
-            '$1,234.0',
+            '$1,234.00',
         )
 
         # Test with non-currency values
         self.assertEqual(
-            report_tags.render_currency(1234.45, currency='USD', decimal_places=2),
-            '$1,234.45',
+            report_tags.render_currency(1234.45, currency='USD', decimal_places=5),
+            '$1,234.45000',
         )
 
         # Test with an invalid amount
@@ -581,13 +585,29 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.render_currency(m, multiplier='quork')
 
         self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
-        self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
 
         # Test locale override — different locales render USD differently
         self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
         self.assertEqual(report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56')
         self.assertEqual(report_tags.render_currency(m, locale='en-au'), 'USD1,234.56')
+
+        # Test with custom fmt pattern
+        # Pattern without currency placeholder — no symbol in output
+        self.assertEqual(report_tags.render_currency(m, fmt='#,##0.00'), '1,234.56')
+        # Pattern with currency placeholder — symbol rendered per locale
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='¤#,##0.0000', locale='en-us'),
+            '$1,234.5600',
+        )
+        # fmt + locale: de-de uses dot thousands, comma decimal
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='#,##0.00', locale='de-de'), '1.234,56'
+        )
+        # fmt takes priority over decimal_places
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='0.0000', decimal_places=2), '1234.5600'
+        )
 
     def test_render_currency_locale_override(self):
         """Explicit locale= kwarg takes priority over global setting and system locale."""

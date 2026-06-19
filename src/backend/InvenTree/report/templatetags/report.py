@@ -11,7 +11,6 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
-from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
@@ -23,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from babel.dates import format_date as babel_format_date
 from babel.dates import format_datetime as babel_format_datetime
 from babel.numbers import format_decimal as babel_format_decimal
+from babel.numbers import parse_pattern
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -776,26 +776,89 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     return cast_to_type(result, cast)
 
 
-def _get_report_locale(override: Optional[str] = None) -> str:
-    """Return the locale to use for report formatting."""
-    locale = override or settings.LANGUAGE_CODE
+@register.simple_tag
+def render_currency(
+    money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
+) -> str:
+    """Render a currency / Money object to a formatted string.
 
-    # Run a check to ensure that the locale is valid (i.e. can be used by babel)
-    try:
-        get_locale(locale)
-    except Exception:
-        raise ValidationError(
-            f'Invalid locale specified for report formatting: {locale}'
+    Arguments:
+        money: The Money instance to be rendered
+        currency: Optionally convert to the specified currency before rendering
+        multiplier: Optional multiplier to apply to the amount before rendering
+        decimal_places: Minimum (forced) decimal places, e.g. decimal_places=2 gives '.00'. Defaults to the locale/currency standard.
+        max_decimal_places: Maximum decimal places (optional digits beyond decimal_places), e.g. max_decimal_places=4 allows up to 4.
+        include_symbol: If True, include the currency symbol in the output
+        fmt: Optional Babel number pattern string. When provided, takes priority over all decimal_places options.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Defaults to server LANGUAGE_CODE.
+    """
+    if money in [None, '']:
+        return '-'
+
+    if not isinstance(money, Money):
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(
+                'render_currency: invalid money value: ' + repr(money)
+            )
+
+    if currency is not None:
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                'render_currency: invalid multiplier value: ' + repr(multiplier)
+            )
+
+    locale = get_locale(locale)
+
+    # If a custom fmt pattern is applied, that overrides other formatting options
+    if fmt:
+        pattern = parse_pattern(fmt)
+        return pattern.apply(
+            money.amount,
+            locale,
+            currency=money.currency.code if include_symbol else '',
+            currency_digits=False,
+            decimal_quantization=True,
         )
 
-    return locale
+    pattern = locale.currency_formats['standard']
 
+    if decimal_places is None or not isinstance(decimal_places, (int, float)):
+        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
-@register.simple_tag
-def render_currency(money, **kwargs):
-    """Render a currency / Money object."""
-    kwargs['locale'] = _get_report_locale(kwargs.get('locale'))
-    return InvenTree.helpers_model.render_currency(money, **kwargs)
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
+        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
+
+    pattern.frac_prec = (decimal_places, max(decimal_places, max_decimal_places))
+
+    return pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code if include_symbol else '',
+        currency_digits=decimal_places is None and max_decimal_places is None,
+        decimal_quantization=decimal_places is not None
+        or max_decimal_places is not None,
+    )
 
 
 @register.simple_tag
@@ -970,8 +1033,7 @@ def format_number(
             # No decimal places specified, allow any number of decimal places (up to the precision of the Decimal)
             fmt += '.####################'
 
-    resolved_locale = _get_report_locale(locale)
-    babel_locale = get_locale(resolved_locale)
+    babel_locale = get_locale(locale)
 
     return babel_format_decimal(
         number, format=fmt, locale=babel_locale, numbering_system='latn'
@@ -1000,11 +1062,7 @@ def format_datetime(
     if fmt:
         return dt.strftime(fmt)
 
-    resolved_locale = _get_report_locale(locale)
-    if resolved_locale:
-        return babel_format_datetime(
-            dt, format='medium', locale=get_locale(resolved_locale)
-        )
+    return babel_format_datetime(dt, format='medium', locale=get_locale(locale))
 
     # Final backup - return an ISO formatted string
     return dt.isoformat()
@@ -1035,13 +1093,7 @@ def format_date(
     if fmt:
         return dt.strftime(fmt)
 
-    resolved_locale = _get_report_locale(locale)
-    if resolved_locale:
-        return babel_format_date(
-            dt, format='medium', locale=get_locale(resolved_locale)
-        )
-
-    return dt.isoformat()
+    return babel_format_date(dt, format='medium', locale=get_locale(locale))
 
 
 @register.simple_tag()
