@@ -323,7 +323,6 @@ class CategoryTree(TreeMixin, ListAPI):
         """Filter the queryset, and include all ancestors of matched items when searching."""
         queryset = super().filter_queryset(queryset)
         queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
-
         return queryset
 
 

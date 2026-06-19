@@ -5,6 +5,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Loader,
   LoadingOverlay,
   type RenderTreeNodePayload,
   Space,
@@ -71,14 +72,14 @@ export default function NavigationTree({
 
   // Accumulated flat node list for browse (lazy-load) mode
   const [allNodes, setAllNodes] = useState<any[]>([]);
-  // PKs of nodes whose children have already been fetched
-  const [fetchedNodes, setFetchedNodes] = useState<Set<number>>(new Set());
+  // PKs of nodes whose children are currently being fetched
+  const [loadingNodes, setLoadingNodes] = useState<Set<number>>(new Set());
 
-  // Reset everything when the drawer closes
+  // Reset everything when the drawer opens or closes
   useEffect(() => {
     setSearchValue('');
     setAllNodes([]);
-    setFetchedNodes(new Set());
+    setLoadingNodes(new Set());
   }, [opened]);
 
   // Data query — browse mode loads root nodes only; search mode loads all matches + ancestors
@@ -98,18 +99,18 @@ export default function NavigationTree({
         .then((response) => response.data ?? [])
   });
 
-  // When the browse-mode query settles, reset accumulated node list and expand to selected node
+  // When the browse-mode query settles, reset the node list and expand ancestors of the selection
   useEffect(() => {
     if (!debouncedSearch && query.data && !query.isFetching) {
       setAllNodes(query.data);
-      setFetchedNodes(new Set());
+      setLoadingNodes(new Set());
 
       if (selectedId) {
         const nodeMap: Record<number, any> = {};
         for (const n of query.data) nodeMap[n.pk] = n;
 
-        // Collect every ancestor pk into a single object, then apply in one
-        // setExpandedState call to avoid closure/batching issues with expand().
+        // Collect every ancestor pk, then apply in one setExpandedState call to
+        // avoid closure/batching issues that arise from calling expand() in a loop.
         const toExpand: Record<string, boolean> = {};
         let current = nodeMap[selectedId];
         while (current?.parent) {
@@ -128,7 +129,7 @@ export default function NavigationTree({
 
   // Collapse all nodes when the search term changes (switching modes).
   // Intentionally omits query.data so it does NOT fire when browse results arrive —
-  // that would undo the ancestor expansion done in the sync effect above.
+  // that would undo the ancestor expansion done above.
   useEffect(() => {
     treeState.collapseAllNodes();
   }, [debouncedSearch]);
@@ -140,14 +141,18 @@ export default function NavigationTree({
     }
   }, [debouncedSearch, query.data, query.isFetching]);
 
-  // Fetch direct children of a node (browse mode only); no-op if already fetched
+  // Fetch direct children of a node (browse mode only).
+  // Zeros out the childIdentifier count on success with no results so the node
+  // is treated as a leaf and won't be re-fetched on subsequent clicks.
   const fetchChildren = useCallback(
     async (nodeValue: string) => {
       const pk = Number.parseInt(nodeValue);
-      if (fetchedNodes.has(pk)) return;
+      if (loadingNodes.has(pk)) return;
 
       const nodeInfo = allNodes.find((n) => n.pk === pk);
       if (!nodeInfo) return;
+
+      setLoadingNodes((prev) => new Set([...prev, pk]));
 
       try {
         const response = await api.get(apiUrl(endpoint), {
@@ -158,16 +163,31 @@ export default function NavigationTree({
           }
         });
         const children: any[] = response.data ?? [];
+
         setAllNodes((prev) => {
+          if (children.length === 0 && childIdentifier) {
+            // No children returned — zero out the count so this node is treated
+            // as a leaf and won't trigger another fetch on the next click.
+            return prev.map((n) =>
+              n.pk === pk ? { ...n, [childIdentifier]: 0 } : n
+            );
+          }
           const existing = new Set(prev.map((n) => n.pk));
           return [...prev, ...children.filter((n) => !existing.has(n.pk))];
         });
+
+        if (children.length > 0) {
+          treeState.expand(nodeValue);
+        }
       } finally {
-        // Mark as fetched even on error so we don't retry on every click
-        setFetchedNodes((prev) => new Set([...prev, pk]));
+        setLoadingNodes((prev) => {
+          const next = new Set(prev);
+          next.delete(pk);
+          return next;
+        });
       }
     },
-    [fetchedNodes, allNodes, api, endpoint]
+    [loadingNodes, allNodes, api, endpoint, childIdentifier]
   );
 
   const follow = useCallback(
@@ -224,14 +244,6 @@ export default function NavigationTree({
       }
 
       nodes[pk] = node;
-
-      if (pk === selectedId) {
-        let p = nodes[node.parent];
-        while (p) {
-          p.expanded = true;
-          p = nodes[p.parent];
-        }
-      }
     }
 
     return tree;
@@ -241,14 +253,17 @@ export default function NavigationTree({
     (payload: RenderTreeNodePayload) => {
       const nodeInfo = payload.node as any;
       const pk = Number.parseInt(payload.node.value);
-      const isFetched = fetchedNodes.has(pk);
+      const isLoading = loadingNodes.has(pk);
 
-      // Before children are fetched, use the server-provided count (childIdentifier field).
-      // After fetching (or in search mode where all data is already present), use actual children.
-      const hasChildren: boolean =
-        !debouncedSearch && !isFetched
-          ? !!(childIdentifier && resolveItem(payload.node, childIdentifier))
-          : nodeInfo.children.length > 0;
+      // A node has children if they are already in the tree, or if the server-side
+      // count (childIdentifier) says so and they haven't been loaded yet.
+      const childrenLoaded = nodeInfo.children.length > 0;
+      const needsFetch =
+        !isLoading &&
+        !debouncedSearch &&
+        !childrenLoaded &&
+        !!(childIdentifier && resolveItem(payload.node, childIdentifier));
+      const hasChildren = childrenLoaded || needsFetch;
 
       const isSelected = nodeInfo.selected === true;
 
@@ -262,11 +277,12 @@ export default function NavigationTree({
           bg={isSelected ? 'var(--mantine-primary-color-light)' : undefined}
           style={{ borderRadius: 'var(--mantine-radius-sm)' }}
           onClick={() => {
-            if (!hasChildren) return;
-            if (!debouncedSearch && !isFetched) {
+            if (isLoading || !hasChildren) return;
+            if (needsFetch) {
               fetchChildren(payload.node.value);
+            } else {
+              treeState.toggleExpanded(payload.node.value);
             }
-            treeState.toggleExpanded(payload.node.value);
           }}
         >
           <Space w={10 * (payload.level - 1)} />
@@ -275,7 +291,9 @@ export default function NavigationTree({
             variant='transparent'
             aria-label={`nav-tree-toggle-${payload.node.value}}`}
           >
-            {hasChildren ? (
+            {isLoading ? (
+              <Loader size='xs' />
+            ) : hasChildren ? (
               payload.expanded ? (
                 <IconChevronDown />
               ) : (
@@ -297,7 +315,7 @@ export default function NavigationTree({
       treeState,
       childIdentifier,
       follow,
-      fetchedNodes,
+      loadingNodes,
       fetchChildren,
       debouncedSearch
     ]
