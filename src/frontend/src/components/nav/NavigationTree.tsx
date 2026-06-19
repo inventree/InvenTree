@@ -342,6 +342,10 @@ export default function NavigationTree({
           <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
             {t`Error loading navigation tree.`}
           </Alert>
+        ) : !query.isFetching && !query.isLoading && data.length === 0 ? (
+          <Alert color='blue' icon={<IconSearch />}>
+            {t`No results found`}
+          </Alert>
         ) : (
           <Tree data={data} tree={treeState} renderNode={renderNode} />
         )}
