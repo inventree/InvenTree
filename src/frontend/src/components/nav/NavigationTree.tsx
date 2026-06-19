@@ -271,7 +271,7 @@ export default function NavigationTree({
       return (
         <Group
           p={3}
-          gap='xs'
+          gap={5}
           justify='left'
           key={payload.node.value}
           wrap='nowrap'
@@ -286,7 +286,7 @@ export default function NavigationTree({
             }
           }}
         >
-          <Space w={10 * (payload.level - 1)} />
+          <Space w={15 * (payload.level - 1)} />
           <ActionIcon
             size='sm'
             variant='transparent'
