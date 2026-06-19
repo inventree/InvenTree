@@ -21,6 +21,7 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
+    TreeMixin,
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -304,22 +305,13 @@ class CategoryTreeFilter(FilterSet):
         return queryset.filter(level__lte=value)
 
 
-class CategoryTree(ListAPI):
+class CategoryTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
+    model_class = PartCategory
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
     filterset_class = CategoryTreeFilter
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['name', 'description']
-    ordering_fields = ['level', 'name', 'subcategories']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level']
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
@@ -330,25 +322,7 @@ class CategoryTree(ListAPI):
     def filter_queryset(self, queryset):
         """Filter the queryset, and include all ancestors of matched items when searching."""
         queryset = super().filter_queryset(queryset)
-
-        # If a search term is provided, include all ancestors of matched items in the results
-        if self.request.query_params.get('search', '').strip():
-            ancestors = PartCategory.objects.get_queryset_ancestors(
-                queryset, include_self=True
-            )
-            queryset = (queryset | ancestors).distinct()
-            queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
-
-        # If a specific ID is provided to "expand_to", include all ancestors of that item in the results
-        expand_to = self.request.query_params.get('expand_to')
-        if expand_to:
-            try:
-                target = PartCategory.objects.get(pk=int(expand_to))
-                ancestors = target.get_ancestors(include_self=True)
-                queryset = (queryset | ancestors).distinct()
-                queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
-            except (PartCategory.DoesNotExist, ValueError):
-                pass
+        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
 
         return queryset
 
