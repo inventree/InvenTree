@@ -58,7 +58,7 @@ export default function NavigationTree({
   onClose: () => void;
   selectedId?: number | null;
   modelType: ModelType;
-  childIdentifier: string;
+  childIdentifier?: string;
   endpoint: ApiEndpoints;
 }>) {
   const api = useApi();
@@ -68,29 +68,80 @@ export default function NavigationTree({
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch] = useDebouncedValue(searchValue, 300);
 
-  // Data query to fetch the tree data from server
+  // Accumulated flat node list for browse (lazy-load) mode
+  const [allNodes, setAllNodes] = useState<any[]>([]);
+  // PKs of nodes whose children have already been fetched
+  const [fetchedNodes, setFetchedNodes] = useState<Set<number>>(new Set());
+
+  // Reset everything when the drawer closes
+  useEffect(() => {
+    setSearchValue('');
+    setAllNodes([]);
+    setFetchedNodes(new Set());
+  }, [opened]);
+
+  // Data query — browse mode loads root nodes only; search mode loads all matches + ancestors
   const query = useQuery({
     enabled: opened,
-    queryKey: [modelType, opened, debouncedSearch],
-    queryFn: async () => {
-      const params: Record<string, any> = { ordering: 'level' };
-      return api
+    queryKey: [modelType, 'tree', opened, debouncedSearch],
+    queryFn: async () =>
+      api
         .get(apiUrl(endpoint), {
           params: {
+            ordering: 'level',
             search: debouncedSearch || undefined,
             max_level: debouncedSearch ? undefined : 0
           }
         })
-        .then((response) => response.data ?? []);
-    }
+        .then((response) => response.data ?? [])
   });
+
+  // When the browse-mode query settles, reset accumulated node list
+  useEffect(() => {
+    if (!debouncedSearch && query.data && !query.isFetching) {
+      setAllNodes(query.data);
+      setFetchedNodes(new Set());
+    }
+  }, [debouncedSearch, query.data, query.isFetching]);
 
   // Expand all nodes when a search is active so ancestors are visible
   useEffect(() => {
     if (debouncedSearch) {
       treeState.expandAllNodes();
+    } else {
+      treeState.collapseAllNodes();
     }
   }, [debouncedSearch, query.data]);
+
+  // Fetch direct children of a node (browse mode only); no-op if already fetched
+  const fetchChildren = useCallback(
+    async (nodeValue: string) => {
+      const pk = Number.parseInt(nodeValue);
+      if (fetchedNodes.has(pk)) return;
+
+      const nodeInfo = allNodes.find((n) => n.pk === pk);
+      if (!nodeInfo) return;
+
+      try {
+        const response = await api.get(apiUrl(endpoint), {
+          params: {
+            ordering: 'level',
+            parent: pk,
+            max_level: nodeInfo.level + 1
+          }
+        });
+        const children: any[] = response.data ?? [];
+        setAllNodes((prev) => {
+          const existing = new Set(prev.map((n) => n.pk));
+          return [...prev, ...children.filter((n) => !existing.has(n.pk))];
+        });
+      } finally {
+        // Mark as fetched even on error so we don't retry on every click
+        setFetchedNodes((prev) => new Set([...prev, pk]));
+      }
+    },
+    [fetchedNodes, allNodes, api, endpoint]
+  );
 
   const follow = useCallback(
     (node: TreeNodeData, event?: any) => {
@@ -105,66 +156,68 @@ export default function NavigationTree({
     [modelType, navigate]
   );
 
-  // Map returned query to a "tree" structure
-  const data: TreeNodeData[] = useMemo(() => {
-    /*
-     * Reconstruct the navigation tree from the provided data.
-     * It is required (and assumed) that the data is first sorted by level.
-     */
+  // In search mode use the query results directly; in browse mode use the accumulated lazy-load list
+  const sourceNodes: any[] = useMemo(
+    () => (debouncedSearch ? (query.data ?? []) : allNodes),
+    [debouncedSearch, query.data, allNodes]
+  );
 
+  // Map flat node list to a nested tree structure (parents must precede children)
+  const data: TreeNodeData[] = useMemo(() => {
     const nodes: Record<number, any> = {};
     const tree: TreeNodeData[] = [];
 
-    if (!query || !query?.data?.length) {
-      return [];
-    }
+    if (!sourceNodes.length) return [];
 
-    for (let ii = 0; ii < query.data.length; ii++) {
+    for (const raw of sourceNodes) {
       const node = {
-        ...query.data[ii],
+        ...raw,
         children: [],
         label: (
           <Group gap='xs'>
-            <ApiIcon name={query.data[ii].icon} />
-            {query.data[ii].name}
+            <ApiIcon name={raw.icon} />
+            {raw.name}
           </Group>
         ),
-        value: query.data[ii].pk.toString(),
-        selected: query.data[ii].pk === selectedId
+        value: raw.pk.toString(),
+        selected: raw.pk === selectedId
       };
 
       const pk: number = node.pk;
       const parent: number | null = node.parent;
 
       if (!parent) {
-        // This is a top level node
         tree.push(node);
       } else {
-        // This is *not* a top level node, so the parent *must* already exist
         nodes[parent]?.children.push(node);
       }
 
-      // Finally, add this node
       nodes[pk] = node;
 
       if (pk === selectedId) {
-        // Expand all parents
-        let parent = nodes[node.parent];
-        while (parent) {
-          parent.expanded = true;
-          parent = nodes[parent.parent];
+        let p = nodes[node.parent];
+        while (p) {
+          p.expanded = true;
+          p = nodes[p.parent];
         }
       }
     }
 
     return tree;
-  }, [selectedId, query.data]);
+  }, [selectedId, sourceNodes]);
 
   const renderNode = useCallback(
     (payload: RenderTreeNodePayload) => {
+      const nodeInfo = payload.node as any;
+      const pk = Number.parseInt(payload.node.value);
+      const isFetched = fetchedNodes.has(pk);
+
+      // Before children are fetched, use the server-provided count (childIdentifier field).
+      // After fetching (or in search mode where all data is already present), use actual children.
       const hasChildren: boolean =
-        (payload.hasChildren && (payload.node as any).children.length > 0) ||
-        resolveItem(payload.node, childIdentifier);
+        !debouncedSearch && !isFetched
+          ? !!resolveItem(payload.node, childIdentifier ?? '')
+          : nodeInfo.children.length > 0;
 
       return (
         <Group
@@ -174,9 +227,11 @@ export default function NavigationTree({
           key={payload.node.value}
           wrap='nowrap'
           onClick={() => {
-            if (payload.hasChildren) {
-              treeState.toggleExpanded(payload.node.value);
+            if (!hasChildren) return;
+            if (!debouncedSearch && !isFetched) {
+              fetchChildren(payload.node.value);
             }
+            treeState.toggleExpanded(payload.node.value);
           }}
         >
           <Space w={10 * (payload.level - 1)} />
@@ -203,7 +258,14 @@ export default function NavigationTree({
         </Group>
       );
     },
-    [treeState, childIdentifier, follow]
+    [
+      treeState,
+      childIdentifier,
+      follow,
+      fetchedNodes,
+      fetchChildren,
+      debouncedSearch
+    ]
   );
 
   return (
