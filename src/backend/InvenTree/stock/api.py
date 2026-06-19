@@ -33,11 +33,11 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
+    TreeMixin,
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    ORDER_FILTER,
     SEARCH_ORDER_FILTER,
     InvenTreeDateFilter,
     NumberOrNullFilter,
@@ -455,20 +455,33 @@ class StockLocationDetail(
         )
 
 
-class StockLocationTree(ListAPI):
+class LocationTreeFilter(FilterSet):
+    """Custom filterset class for the StockLocationTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = StockLocation
+        fields = ['parent', 'tree_id', 'level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
+class StockLocationTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of StockLocation objects, ready for rendering as a tree."""
 
+    model_class = StockLocation
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['level', 'name', 'sublocations']
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
+    filterset_class = LocationTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationTree endpoint."""
