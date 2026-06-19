@@ -384,6 +384,22 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(fn(123, min_digits=5), '00123')
         self.assertEqual(fn(1234, min_digits=2, decimal_places=4), '1234.0000')
 
+        # Test with custom 'fmt' format string (takes priority over decimal_places / separator)
+        self.assertEqual(fn(1234.5678, fmt='0.00'), '1234.57')
+        self.assertEqual(fn(1234.5678, fmt='#,##0.00'), '1,234.57')
+        self.assertEqual(fn(1234.5678, fmt='0.00', locale='de-de'), '1234,57')
+        self.assertEqual(fn(1234.5678, fmt='#,##0.00', locale='de-de'), '1.234,57')
+        # fmt bypasses decimal_places and separator options
+        self.assertEqual(
+            fn(1234.5678, fmt='0.00', decimal_places=4, separator=True), '1234.57'
+        )
+        # integer conversion still applies before fmt is used
+        self.assertEqual(
+            fn(9988776655.4321, fmt='#,##0', integer=True), '9,988,776,655'
+        )
+        # multiplier is applied before fmt is used
+        self.assertEqual(fn(100, fmt='0.00', multiplier=1.5), '150.00')
+
         # Test with multiplier
         self.assertEqual(fn(1000, multiplier=1.5), '1500')
 

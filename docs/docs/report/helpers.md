@@ -320,15 +320,86 @@ The helper function `format_number` allows for some common number formatting opt
         show_docstring_description: false
         show_source: False
 
-#### Example
+#### Examples
 
 ```html
 {% raw %}
 {% load report %}
-{% format_number 3.14159265359 decimal_places=5, leading=3 %}
-<!-- output: 0003.14159 -->
+
+<!-- Basic usage: strip trailing zeros -->
+{% format_number 3.14159265359 decimal_places=5 %}
+<!-- output: 3.14159 -->
+
+<!-- Leading zeros with min_digits -->
+{% format_number 3.14159265359 decimal_places=5 min_digits=3 %}
+<!-- output: 003.14159 -->
+
+<!-- Round to integer -->
 {% format_number 3.14159265359 integer=True %}
 <!-- output: 3 -->
+
+<!-- Thousands separator -->
+{% format_number 9988776.5 decimal_places=2 separator=True %}
+<!-- output: 9,988,776.50 -->
+
+<!-- Locale-aware formatting: decimal comma, dot thousands separator -->
+{% format_number 9988776.5 decimal_places=2 separator=True locale='de-de' %}
+<!-- output: 9.988.776,50 -->
+
+<!-- Scale a value with a multiplier before formatting -->
+{% format_number 0.175 multiplier=100 decimal_places=1 %}
+<!-- output: 17.5 -->
+
+<!-- Allow up to N significant decimal places, but suppress trailing zeros -->
+{% format_number 1234.5 decimal_places=2 max_decimal_places=6 %}
+<!-- output: 1234.5 -->
+
+{% endraw %}
+```
+
+#### Custom Format Strings
+
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (the same syntax used by [Babel](https://babel.pocoo.org/en/latest/numbers.html)). When `fmt` is provided it takes complete priority over the `decimal_places`, `max_decimal_places`, `min_digits`, and `separator` arguments — those arguments are silently ignored.
+
+The `integer` and `multiplier` arguments **are** still applied to the number before the format string is used.
+
+| Symbol | Meaning |
+| --- | --- |
+| `0` | Required digit — always rendered, even if zero |
+| `#` | Optional digit — suppressed when not significant |
+| `,` | Grouping separator (position defines group size) |
+| `.` | Decimal separator |
+
+Common patterns:
+
+| Pattern | Example output |
+| --- | --- |
+| `0` | `1235` |
+| `#,##0` | `1,235` |
+| `0.00` | `1234.57` |
+| `#,##0.00` | `1,234.57` |
+| `000` | `007` |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Two decimal places, no grouping -->
+{% format_number 1234.5678 fmt='0.00' %}
+<!-- output: 1234.57 -->
+
+<!-- Two decimal places with thousands separator -->
+{% format_number 1234.5678 fmt='#,##0.00' %}
+<!-- output: 1,234.57 -->
+
+<!-- Same pattern, German locale: dot thousands, comma decimal -->
+{% format_number 1234.5678 fmt='#,##0.00' locale='de-de' %}
+<!-- output: 1.234,57 -->
+
+<!-- Integer with thousands separator, large number -->
+{% format_number 9988776655.4321 fmt='#,##0' integer=True %}
+<!-- output: 9,988,776,655 -->
+
 {% endraw %}
 ```
 
