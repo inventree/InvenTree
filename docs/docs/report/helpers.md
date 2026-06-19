@@ -381,16 +381,22 @@ The helper function `render_currency` allows for simple rendering of currency da
 
 #### Locale and Symbol Rendering
 
-The `locale` parameter controls how the currency symbol is rendered. By default the server's `LANGUAGE_CODE` setting is used, but different locales produce different output for the same currency. For example, `USD` with various locales:
+The locale controls how the currency symbol is rendered. Different locales produce different output for the same currency value. For example, `USD 1234.56` with various locales:
 
 | Locale | Output |
 | --- | --- |
-| `en-us` | `$123.45` |
-| `en-gb` | `US$123.45` |
-| `en-au` | `USD123.45` |
-| `de-de` | `123,45 $` |
+| `en-us` | `$1,234.56` |
+| `en-gb` | `US$1,234.56` |
+| `en-au` | `USD1,234.56` |
+| `de-de` | `1.234,56 $` |
 
-If reports on your installation show the currency code instead of the expected symbol (e.g. `USD123.45` rather than `$123.45`), pass `locale='en-us'` explicitly to pin the output format regardless of the server's language setting.
+The locale used by `render_currency` is resolved in the following priority order:
+
+1. **Explicit `locale=` argument** in the template tag — highest priority, always wins
+2. **`REPORT_CURRENCY_LOCALE` global setting** — applied to all reports when set, with no per-tag argument needed
+3. **Server `LANGUAGE_CODE`** — the fallback when neither of the above is configured
+
+To apply a consistent locale across all reports without modifying every template, set the `REPORT_CURRENCY_LOCALE` global setting (via *Settings → Reporting → Report Currency Locale*). Individual templates can still override it per-tag using the `locale=` argument.
 
 #### Example
 
@@ -401,13 +407,14 @@ If reports on your installation show the currency code instead of the expected s
 <em>Line Item Unit Pricing:</em>
 <ul>
 {% for line in order.lines %}
+<!-- Locale resolved from REPORT_CURRENCY_LOCALE setting, or server LANGUAGE_CODE -->
 <li>{% render_currency line.price currency=order.supplier.currency %}</li>
 {% endfor %}
 </ul>
 
 Total Price: {% render_currency order.total_price currency='NZD' decimal_places=2 %}
 
-<!-- Force US-style symbol rendering regardless of server locale -->
+<!-- Per-tag override: forces US-style symbol regardless of setting or server locale -->
 Total Price: {% render_currency order.total_price currency='USD' locale='en-us' %}
 
 {% endraw %}
