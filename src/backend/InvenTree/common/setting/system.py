@@ -671,6 +671,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPORT_CURRENCY_LOCALE': {
+        'name': _('Report Currency Locale'),
+        'description': _(
+            'Locale to use when rendering currency values in reports (e.g. en-US, fr-FR). Leave blank to use the system locale setting.'
+        ),
+        'default': '',
+        'validator': common.validators.validate_locale,
+    },
     'REPORT_DEBUG_MODE': {
         'name': _('Debug Mode'),
         'description': _('Generate reports in debug mode (HTML output)'),

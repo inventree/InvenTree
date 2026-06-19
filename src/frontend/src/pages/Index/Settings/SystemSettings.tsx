@@ -197,6 +197,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'REPORT_ENABLE',
+              'REPORT_CURRENCY_LOCALE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
               'REPORT_FETCH_URLS',
