@@ -291,7 +291,7 @@ class CategoryTreeFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartCategory
-        fields = ['level']
+        fields = ['parent', 'tree_id', 'level']
 
     max_level = rest_filters.NumberFilter(
         label=_('Max Level'),
