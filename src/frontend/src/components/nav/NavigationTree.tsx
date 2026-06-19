@@ -5,6 +5,7 @@ import {
   Divider,
   Drawer,
   Group,
+  HoverCard,
   Loader,
   LoadingOverlay,
   type RenderTreeNodePayload,
@@ -301,13 +302,39 @@ export default function NavigationTree({
               )
             ) : null}
           </ActionIcon>
-          <Anchor
-            onClick={(event: any) => follow(payload.node, event)}
-            aria-label={`nav-tree-item-${payload.node.value}`}
-            c='var(--mantine-color-text)'
+          <HoverCard
+            width={260}
+            shadow='md'
+            withArrow
+            closeDelay={100}
+            openDelay={500}
+            position='top-end'
           >
-            {payload.node.label}
-          </Anchor>
+            <HoverCard.Target>
+              <Anchor
+                onClick={(event: any) => follow(payload.node, event)}
+                aria-label={`nav-tree-item-${payload.node.value}`}
+                c='var(--mantine-color-text)'
+              >
+                {payload.node.label}
+              </Anchor>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Stack gap={4}>
+                <Group gap='xs' wrap='nowrap'>
+                  {nodeInfo.icon && <ApiIcon name={nodeInfo.icon} />}
+                  <Text fw={600} size='sm'>
+                    {nodeInfo.name}
+                  </Text>
+                </Group>
+                {nodeInfo.description && (
+                  <Text size='sm' c='dimmed'>
+                    {nodeInfo.description}
+                  </Text>
+                )}
+              </Stack>
+            </HoverCard.Dropdown>
+          </HoverCard>
         </Group>
       );
     },
