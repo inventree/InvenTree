@@ -1074,6 +1074,7 @@ export default function StockDetail() {
               title={t`Stock Locations`}
               modelType={ModelType.stocklocation}
               endpoint={ApiEndpoints.stock_location_tree}
+              childIdentifier='sublocations'
               opened={treeOpen}
               onClose={() => setTreeOpen(false)}
               selectedId={stockitem?.location}

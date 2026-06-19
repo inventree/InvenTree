@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 510
+INVENTREE_API_VERSION = 511
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v511 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/12204
+    - Adds new filtering options to PartCategoryTree and StockLocationTree API endpoints
 
 v510 -> 2026-06-18 : https://github.com/inventree/InvenTree/pull/12197
     - Require "staff" access permissions for the machine restart API endpoint

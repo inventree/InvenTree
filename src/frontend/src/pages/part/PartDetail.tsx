@@ -1152,6 +1152,7 @@ export default function PartDetail() {
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree
               title={t`Part Categories`}
+              childIdentifier='subcategories'
               modelType={ModelType.partcategory}
               endpoint={ApiEndpoints.category_tree}
               opened={treeOpen}

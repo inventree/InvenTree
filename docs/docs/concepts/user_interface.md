@@ -91,6 +91,18 @@ Click on the navigation tree icon to expand the tree and view the available navi
 
 {{ image("concepts/ui_navigation_tree.png", "Navigation Tree") }}
 
+#### Searching
+
+The navigation tree includes a search bar at the top of the panel. Typing into the search bar filters the tree to show only entries that match the search query. When a search is active, all matching results are expanded and displayed in a flat list. Clearing the search field returns the tree to its normal browsing mode.
+
+#### Highlight Selected Entry
+
+The currently selected entry in the navigation tree is highlighted with a distinct background color, making it easy to identify the active page or section within the hierarchy.
+
+#### Auto-Expand to Selected Entry
+
+When the navigation tree is opened, it automatically expands to reveal the currently selected entry. All ancestor nodes in the hierarchy are expanded so the active entry is immediately visible, without requiring manual navigation through the tree.
+
 ## Dashboard
 
 The dashboard provides a customizable landing page for users when they log in to the system. The dashboard can be configured to display a variety of widgets and information panels, providing users with quick access to important data and actions.
