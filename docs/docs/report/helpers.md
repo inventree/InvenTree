@@ -379,6 +379,19 @@ The helper function `render_currency` allows for simple rendering of currency da
         show_source: False
 
 
+#### Locale and Symbol Rendering
+
+The `locale` parameter controls how the currency symbol is rendered. By default the server's `LANGUAGE_CODE` setting is used, but different locales produce different output for the same currency. For example, `USD` with various locales:
+
+| Locale | Output |
+| --- | --- |
+| `en-us` | `$123.45` |
+| `en-gb` | `US$123.45` |
+| `en-au` | `USD123.45` |
+| `de-de` | `123,45 $` |
+
+If reports on your installation show the currency code instead of the expected symbol (e.g. `USD123.45` rather than `$123.45`), pass `locale='en-us'` explicitly to pin the output format regardless of the server's language setting.
+
 #### Example
 
 ```html
@@ -393,6 +406,9 @@ The helper function `render_currency` allows for simple rendering of currency da
 </ul>
 
 Total Price: {% render_currency order.total_price currency='NZD' decimal_places=2 %}
+
+<!-- Force US-style symbol rendering regardless of server locale -->
+Total Price: {% render_currency order.total_price currency='USD' locale='en-us' %}
 
 {% endraw %}
 ```
