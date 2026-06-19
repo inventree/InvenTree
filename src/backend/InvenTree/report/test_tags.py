@@ -602,40 +602,13 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
                 report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56'
             )
 
-        # Explicit locale overrides the REPORT_LOCALE global setting
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-au', change_user=None)
-        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-
         # Invalid locale raises ValidationError regardless of other settings
         with self.assertRaises(ValidationError):
             report_tags.render_currency(m, locale='xx-zz')
 
-    def test_render_currency_global_setting(self):
-        """render_currency uses REPORT_LOCALE when no explicit locale= is passed."""
-        m = Money(1234.56, 'USD')
-
-        # Ensure no global setting is active to start
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-us', change_user=None)
-        self.assertEqual(report_tags.render_currency(m), '$1,234.56')
-
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-gb', change_user=None)
-        self.assertEqual(report_tags.render_currency(m), 'US$1,234.56')
-
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'en-au', change_user=None)
-        self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
-
-        # Clear the setting
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-
     def test_render_currency_system_locale(self):
-        """render_currency falls back to system LANGUAGE_CODE when no locale is configured."""
+        """render_currency uses system LANGUAGE_CODE when no explicit locale= is passed."""
         m = Money(1234.56, 'USD')
-
-        # Ensure REPORT_LOCALE is not set
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
 
         with override_settings(LANGUAGE_CODE='en-us'):
             self.assertEqual(report_tags.render_currency(m), '$1,234.56')
@@ -733,14 +706,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.format_date(dt, fmt='%Y-%m-%d', locale='de-de'), '2024-03-13'
         )
 
-        # REPORT_LOCALE global setting is applied when no locale= arg
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
-        self.assertEqual(report_tags.format_date(dt), '13.03.2024')
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-
-        # Falls back to ISO when no locale configured
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
-        self.assertEqual(report_tags.format_date(dt), 'Mar 13, 2024')
+        # Falls back to LANGUAGE_CODE when no locale= arg
+        with override_settings(LANGUAGE_CODE='en-us'):
+            self.assertEqual(report_tags.format_date(dt), 'Mar 13, 2024')
 
         # Invalid locale raises ValidationError
         with self.assertRaises(ValidationError):
@@ -766,10 +734,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             '2026-06-19',
         )
 
-        # REPORT_LOCALE global setting applied
-        InvenTreeSetting.set_setting('REPORT_LOCALE', 'de-de', change_user=None)
-        self.assertEqual(report_tags.format_datetime(dt), '19.06.2026, 15:30:00')
-        InvenTreeSetting.set_setting('REPORT_LOCALE', '', change_user=None)
+        # Falls back to LANGUAGE_CODE when no locale= arg
+        with override_settings(LANGUAGE_CODE='de-de'):
+            self.assertEqual(report_tags.format_datetime(dt), '19.06.2026, 15:30:00')
 
         # Invalid locale raises ValidationError
         with self.assertRaises(ValidationError):
