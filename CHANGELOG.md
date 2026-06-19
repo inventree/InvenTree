@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12208](https://github.com/inventree/InvenTree/pull/12208) adds custom locale support for currency rendering within reports.
 - [#12204](https://github.com/inventree/InvenTree/pull/12204) adds new filtering options to PartCategoryTree and StockLocationTree API endpoints, allowing tree data to be fetched dynamically
 - [#12165](https://github.com/inventree/InvenTree/pull/12165) adds support for parameters against the PartCategory model
 - [#12103](https://github.com/inventree/InvenTree/pull/12103) adds column-based filtering to table views in the user interface. This extends the existing table filtering functionality by allowing users to apply filters directly to individual columns.
