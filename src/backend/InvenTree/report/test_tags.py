@@ -571,6 +571,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
                 report_tags.render_currency(m, locale='en-us'), '$1,234.56'
             )
 
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency(m, locale='xx-zz')
+
+        with override_settings(LANGUAGE_CODE='xx-zz'):
+            with self.assertRaises(ValidationError):
+                report_tags.render_currency(m)
+
     def test_create_currency(self):
         """Test the create_currency template tag."""
         m = report_tags.create_currency(1000, 'USD')

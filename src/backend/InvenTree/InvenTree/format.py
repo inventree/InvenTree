@@ -5,10 +5,12 @@ import string
 from typing import Optional
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from babel import Locale
+from babel.core import UnknownLocaleError
 from babel.numbers import parse_pattern
 from djmoney.money import Money
 
@@ -205,7 +207,12 @@ def format_money(
         ValueError: format string is incorrectly specified
     """
     language = locale or settings.LANGUAGE_CODE
-    locale = Locale.parse(translation.to_locale(language))
+    try:
+        locale = Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(
+            f"format_money: {_('Invalid locale value')}: '{language}' - {e}"
+        )
 
     if fmt:
         pattern = parse_pattern(fmt)
