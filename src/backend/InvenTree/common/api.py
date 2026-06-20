@@ -479,9 +479,7 @@ class NotesImageList(ListCreateAPI):
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
-        image = serializer.save()
-        image.user = self.request.user
-        image.save()
+        serializer.save(user=self.request.user)
 
 
 class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
@@ -810,9 +808,7 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.upload_user = self.request.user
-        attachment.save()
+        serializer.save(upload_user=self.request.user)
 
     def validate_delete(self, queryset, request) -> None:
         """Ensure that the user has correct permissions for a bulk-delete.

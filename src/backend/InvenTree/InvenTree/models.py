@@ -568,7 +568,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             if 'parameters_list' in cache:
                 return cache['parameters_list']
 
-        return self.parameters_list.all()
+        return self.parameters_list.all().prefetch_related('template')
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.

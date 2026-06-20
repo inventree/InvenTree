@@ -114,9 +114,12 @@ class RegistrationMixin:
         """
         if registration_enabled(self.REGISTRATION_SETTING):
             return True
-        logger.warning(
-            f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
-        )
+        # Only warn when this is an actual signup submission, not when called as
+        # a feature-availability check during login or other auth flows.
+        if request and request.method == 'POST' and 'signup' in request.path:
+            logger.warning(
+                f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
+            )
         return False
 
     def clean_email(self, email):
