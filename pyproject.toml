@@ -115,7 +115,7 @@ invalid-return-type="ignore"  # 22 ##
 unknown-argument="ignore"  # 3  # need to wait for better django field stubs
 invalid-argument-type="ignore"  # 49
 no-matching-overload="ignore"  # 3  # need to wait for betterdjango field stubs
-possibly-unbound-attribute="ignore"  # 21
+# possibly-unbound-attribute="ignore"  # 21
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
