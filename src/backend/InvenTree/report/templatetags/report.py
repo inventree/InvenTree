@@ -1,6 +1,7 @@
 """Custom template tags for report generation."""
 
 import base64
+import copy
 import logging
 import mimetypes
 from datetime import date, datetime
@@ -861,7 +862,7 @@ def render_currency(
             decimal_quantization=True,
         )
 
-    pattern = locale.currency_formats['standard']
+    pattern = copy.copy(locale.currency_formats['standard'])
 
     if decimal_places is None or not isinstance(decimal_places, (int, float)):
         decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
