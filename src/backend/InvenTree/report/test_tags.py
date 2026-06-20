@@ -802,7 +802,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         )
         self.assertEqual(
             report_tags.format_datetime(dt, locale='de-de', date_format='long'),
-            '19. Juni 2026 um 15:30:00 UTC',  # codespell:ignore "Juni"
+            '19. Juni 2026, 15:30:00 UTC',  # codespell:ignore "Juni"
         )
 
         # fmt= wins over date_format=
