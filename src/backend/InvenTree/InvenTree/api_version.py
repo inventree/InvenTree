@@ -1,15 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 509
+INVENTREE_API_VERSION = 512
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v509 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12022
+v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
     - Adds optional "merge" field to each item in the Stock Transfer API endpoint
     - When merge is enabled, transferred stock is combined into compatible existing stock at the destination
     - Stock merge tracking entries now include an "added" delta field.
+
+v511 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/12204
+    - Adds new filtering options to PartCategoryTree and StockLocationTree API endpoints
+
+v510 -> 2026-06-18 : https://github.com/inventree/InvenTree/pull/12197
+    - Require "staff" access permissions for the machine restart API endpoint
+
+v509 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
+    - Adds "completed_row_count_history" and "row_count_history" fields to the DataImportSession model, which store the historic count of completed rows and total rows for a data import session.
 
 v508 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/11982
    - An order's "status_custom_key" can be updated via PATCH API endpoint

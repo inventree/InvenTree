@@ -1160,7 +1160,18 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = StockLocation
-        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'sublocations']
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'pathstring',
+            'parent',
+            'tree_id',
+            'level',
+            'icon',
+            'structural',
+            'sublocations',
+        ]
 
     sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
 
