@@ -145,6 +145,9 @@ ENV PATH=/root/.local/bin:$PATH
 COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 COPY --from=builder_stage /root/.local /root/.local
 
+# Compile Django backend translations during image build
+RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
+
 # Launch the production server
 CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
 
