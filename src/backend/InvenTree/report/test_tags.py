@@ -627,6 +627,29 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.render_currency(m_small, leading=6, fmt='#,##0.00'), '1.23'
         )
 
+        # Test include_symbol
+        # Default (True) — symbol present
+        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
+        # Explicit False — symbol suppressed
+        self.assertEqual(
+            report_tags.render_currency(m, include_symbol=False, locale='en-us'),
+            '1,234.56',
+        )
+        # include_symbol=False with fmt containing ¤ — ¤ renders as empty string
+        self.assertEqual(
+            report_tags.render_currency(
+                m, include_symbol=False, fmt='¤#,##0.00', locale='en-us'
+            ),
+            '1,234.56',
+        )
+        # include_symbol=False with fmt lacking ¤ — no symbol either way
+        self.assertEqual(
+            report_tags.render_currency(
+                m, include_symbol=False, fmt='#,##0.00', locale='en-us'
+            ),
+            '1,234.56',
+        )
+
     def test_render_currency_locale_override(self):
         """Explicit locale= kwarg takes priority over global setting and system locale."""
         m = Money(1234.56, 'USD')
