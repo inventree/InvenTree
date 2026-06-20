@@ -72,6 +72,7 @@ The following Django apps are defined in `src/backend/InvenTree/`:
 | `common/` | Shared models, settings, utilities |
 | `company/` | Suppliers, customers, manufacturers |
 | `data_exporter/` | Data export functionality |
+| `generic/` | Shared enums, events, and state machine utilities |
 | `importer/` | Data import functionality |
 | `InvenTree/` | Core configuration (settings, URLs, middleware) |
 | `machine/` | Support for external machines and devices |
@@ -81,6 +82,7 @@ The following Django apps are defined in `src/backend/InvenTree/`:
 | `report/` | Report templates and generation |
 | `plugin/` | Plugin system |
 | `users/` | User accounts and permissions |
+| `web/` | Serves the React frontend static build to Django |
 
 ### Frontend layout
 
@@ -106,6 +108,9 @@ invoke dev.setup-dev
 # Apply database migrations
 invoke migrate
 
+# Create an admin account (required to log in)
+invoke superuser
+
 # Terminal 1 — Django dev server (port 8000)
 invoke dev.server
 
@@ -117,6 +122,8 @@ invoke worker
 ```
 
 A VS Code Dev Container configuration is available at `.devcontainer/` and includes PostgreSQL 15 and Redis 7 sidecar services.
+
+To see all available tasks, run `invoke --list`.
 
 ## Running Backend Tests
 
@@ -212,8 +219,14 @@ yarn biome format .     # Format only
 - Server state fetching uses TanStack Query (React Query); avoid raw `useEffect` for data fetching.
 - Global UI state uses Zustand stores in `states/`.
 - UI components come from Mantine 9.x; use the Mantine component library before writing custom CSS.
-- Add i18n strings with Lingui (`t` macro / `Trans` component); run `invoke dev.translate` to extract new strings.
+- Add i18n strings with Lingui (`t` macro / `Trans` component); run `invoke int.frontend-trans` to extract from source and compile. (`invoke dev.translate` is for the full translation pipeline and is not intended for local use.)
 - Playwright tests live in `src/frontend/tests/`.
+
+### Dependencies
+
+**Python:** Add packages to `src/backend/requirements.in` (or `requirements-dev.in` for dev-only tools). The pre-commit hook runs `pip-compile` automatically on commit to regenerate `requirements.txt`. Never edit `requirements.txt` directly.
+
+**Frontend:** Add packages with `yarn add <package>` from `src/frontend/`.
 
 ### Migrations
 
