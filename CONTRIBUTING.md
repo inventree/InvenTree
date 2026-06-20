@@ -41,7 +41,7 @@ InvenTree/
 ├─ src/                                # Source for application
 │  ├─ backend/                         # Directory for backend parts
 │  │  ├─ InvenTree/                    # Source for backend
-│  │  ├─ requirements.txt             # Dependencies for backend
+│  │  ├─ requirements.txt              # Dependencies for backend
 │  │  ├─ package.json                  # Dependencies for backend HTML linting
 │  ├─ frontend/                        # Directory for frontend parts
 │  │  ├─ src/                          # Source for frontend
