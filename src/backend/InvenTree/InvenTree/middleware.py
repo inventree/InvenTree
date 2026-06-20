@@ -106,6 +106,32 @@ apps_mfa_bypass = [
 """App namespaces that bypass MFA enforcement - normal security model is still enforced."""
 
 
+def csrf_failure(request, reason=''):
+    """Custom CSRF failure handler.
+
+    Returns a JSON response for API/headless requests so the frontend can
+    provide a meaningful error message to the user
+    """
+    from django.views.csrf import csrf_failure as django_default
+
+    if (
+        request.path.startswith('/_allauth/')
+        or request.path.startswith('/api/')
+        or 'application/json' in request.headers.get('Accept', '')
+        or 'application/json' in request.headers.get('Content-Type', '')
+    ):
+        return JsonResponse(
+            {
+                'detail': _(
+                    'CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly.'
+                )
+            },
+            status=403,
+        )
+
+    return django_default(request, reason=reason)
+
+
 class AuthRequiredMiddleware:
     """Check for user to be authenticated."""
 
