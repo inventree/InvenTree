@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
@@ -122,15 +123,62 @@ export function ApiFormField({
   // Construct the individual field
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
-      case 'related field':
+      case 'location':
         return (
-          <RelatedModelField
-            definition={fieldDefinition}
+          <TreeField
             controller={controller}
+            definition={fieldDefinition}
             fieldName={fieldName}
-            navigate={navigate}
+            endpoint={ApiEndpoints.stock_location_tree}
+            childIdentifier='sublocations'
           />
         );
+      case 'category':
+        return (
+          <TreeField
+            controller={controller}
+            definition={fieldDefinition}
+            fieldName={fieldName}
+            endpoint={ApiEndpoints.category_tree}
+            childIdentifier='subcategories'
+          />
+        );
+      case 'related field':
+        // Redirect location or category fields to the appropriate tree field
+        if (
+          fieldDefinition.api_url == apiUrl(ApiEndpoints.stock_location_list)
+        ) {
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.stock_location_tree}
+              childIdentifier='sublocations'
+            />
+          );
+        } else if (
+          fieldDefinition.api_url == apiUrl(ApiEndpoints.category_list)
+        ) {
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.category_tree}
+              childIdentifier='subcategories'
+            />
+          );
+        } else {
+          return (
+            <RelatedModelField
+              definition={fieldDefinition}
+              controller={controller}
+              fieldName={fieldName}
+              navigate={navigate}
+            />
+          );
+        }
       case 'email':
       case 'url':
       case 'string':
@@ -255,26 +303,6 @@ export function ApiFormField({
       case 'tags':
         return (
           <TagsField controller={controller} definition={fieldDefinition} />
-        );
-      case 'location':
-        return (
-          <TreeField
-            controller={controller}
-            definition={fieldDefinition}
-            fieldName={fieldName}
-            endpoint={ApiEndpoints.stock_location_tree}
-            childIdentifier='sublocations'
-          />
-        );
-      case 'category':
-        return (
-          <TreeField
-            controller={controller}
-            definition={fieldDefinition}
-            fieldName={fieldName}
-            endpoint={ApiEndpoints.category_tree}
-            childIdentifier='subcategories'
-          />
         );
       default:
         return (
