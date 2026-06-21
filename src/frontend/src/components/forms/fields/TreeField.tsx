@@ -3,7 +3,7 @@ import { Group, Text, type TreeNodeData, TreeSelect } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -36,18 +36,44 @@ export function TreeField({
     fieldState: { error }
   } = controller;
 
+  // Keep the selected pk in sync with form state so we can always request
+  // the selected node (and its ancestors) for label hydration.
+  const selectedValue = useMemo(
+    () => (field.value != null ? Number(field.value) : null),
+    [field.value]
+  );
+
+  // Track dropdown state to separate server-side search text from the
+  // read-only display label shown when the field is closed.
+  const dropdownOpen = useRef(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Track the pk whose ancestor path was last auto-expanded.
+  const expandedForValue = useRef<number | null>(null);
+
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch] = useDebouncedValue(searchValue, 300);
   const [expandedValues, setExpandedValues] = useState<string[]>([]);
 
   const query = useQuery({
-    queryKey: ['tree-field', fieldName, endpoint, debouncedSearch],
+    queryKey: [
+      'tree-field',
+      fieldName,
+      endpoint,
+      debouncedSearch,
+      selectedValue
+    ],
     queryFn: () =>
       api
         .get(apiUrl(endpoint), {
           params: {
             ordering: 'level',
-            search: debouncedSearch || undefined
+            search: debouncedSearch || undefined,
+            // Include the selected node and its ancestors in the initial response
+            // so the node label is available before the user interacts with the field.
+            expand_to:
+              !debouncedSearch && !!selectedValue ? selectedValue : undefined,
+            max_level: !!selectedValue ? 0 : undefined
           }
         })
         .then((res) => res.data ?? [])
@@ -63,14 +89,38 @@ export function TreeField({
   }, [nodes]);
 
   // Expand all returned nodes when a search is active so users can see all matches.
-  // Collapse back to root when the search is cleared.
+  // On the first browse-mode load, expand the ancestors of the initial value so
+  // the tree shows the path to the currently-selected node.
   useEffect(() => {
     if (debouncedSearch) {
       setExpandedValues(nodes.map((n: any) => n.pk.toString()));
-    } else {
-      setExpandedValues([]);
+      return;
     }
-  }, [debouncedSearch, nodes]);
+
+    if (
+      selectedValue != null &&
+      expandedForValue.current !== selectedValue &&
+      nodes.length > 0
+    ) {
+      expandedForValue.current = selectedValue;
+      const map: Record<number, any> = {};
+      for (const n of nodes) map[n.pk] = n;
+      const toExpand: string[] = [];
+      let cur = map[selectedValue];
+      while (cur?.parent) {
+        toExpand.push(String(cur.parent));
+        cur = map[cur.parent];
+      }
+      setExpandedValues(toExpand);
+      return;
+    }
+
+    if (selectedValue == null) {
+      expandedForValue.current = null;
+    }
+
+    setExpandedValues([]);
+  }, [debouncedSearch, nodes, selectedValue]);
 
   // Convert the flat API response (sorted by level) into the nested TreeNodeData structure.
   // `children` is intentionally left undefined on leaf nodes: Mantine's flatten logic uses
@@ -99,9 +149,12 @@ export function TreeField({
           map[raw.parent].children = [];
         }
         map[raw.parent].children.push(node);
+      } else {
+        // Keep orphaned nodes visible so selected labels can still resolve
+        // if the API response omits an ancestor.
+        tree.push(node);
       }
     }
-
     return tree;
   }, [nodes, childIdentifier]);
 
@@ -119,18 +172,36 @@ export function TreeField({
     [field.value]
   );
 
+  const selectedLabel = useMemo(() => {
+    if (selectValue == null) return '';
+    return nodeMap[selectValue]?.name ?? selectValue;
+  }, [nodeMap, selectValue]);
+
+  const inputSearchValue = isDropdownOpen ? searchValue : selectedLabel;
+
   return (
     <TreeSelect
       data={treeData}
       value={selectValue}
+      searchValue={inputSearchValue}
       onChange={onChange}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
+      onSearchChange={(val) => {
+        if (dropdownOpen.current) setSearchValue(val);
+      }}
       searchable
       filter={() => true}
       clearable={!definition.required}
       expandedValues={expandedValues}
       onExpandedChange={setExpandedValues}
+      onDropdownOpen={() => {
+        dropdownOpen.current = true;
+        setIsDropdownOpen(true);
+      }}
+      onDropdownClose={() => {
+        dropdownOpen.current = false;
+        setIsDropdownOpen(false);
+        setSearchValue('');
+      }}
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder ?? t`Select...`}
