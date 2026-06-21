@@ -68,6 +68,7 @@ export function TreeField({
       api
         .get(apiUrl(endpoint), {
           params: {
+            ...definition.filters,
             ordering: 'level',
             search: debouncedSearch || undefined,
             // Include the selected node and its ancestors in the initial response
@@ -190,6 +191,7 @@ export function TreeField({
 
       const response = await api.get(apiUrl(endpoint), {
         params: {
+          ...definition.filters,
           ordering: 'level',
           parent: pk,
           max_level: (node.level ?? 0) + 1
