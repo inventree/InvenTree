@@ -1021,7 +1021,7 @@ def format_number(
     number = float(number)
 
     if multiplier is not None:
-        number *= multiplier
+        number *= float(multiplier)
 
     if integer:
         number = int(number)
