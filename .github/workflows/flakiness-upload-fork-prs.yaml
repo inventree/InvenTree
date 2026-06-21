@@ -1,0 +1,45 @@
+# Upload Flakiness.io reports for pull requests opened from forks.
+#
+# Fork PRs run with a read-only token and no OIDC access, so the
+# @flakiness/playwright reporter cannot upload during the "Frontend" workflow.
+# Instead, that workflow saves the report as a "flakiness-report-*" artifact.
+#
+# This trusted workflow runs in the base-repository context (where OIDC is
+# available via id-token: write), downloads those artifacts once the test run
+# completes, and uploads them to Flakiness.io.
+#
+# See https://docs.flakiness.io/ci/github-actions-open-source/
+
+name: Flakiness.io upload (fork PRs)
+
+on:
+  workflow_run:
+    # Must match the `name:` of the workflow that produces the artifacts.
+    workflows: ["Frontend"]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  upload:
+    name: Upload fork PR reports
+    runs-on: ubuntu-latest
+    # Only for completed PR runs that originated from a fork.
+    if: >-
+      (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure') &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name != github.event.workflow_run.repository.full_name
+    permissions:
+      actions: read # download artifacts from the triggering run
+      contents: read
+      id-token: write # Flakiness.io OIDC upload
+    steps:
+      - name: Download flakiness-report artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --pattern 'flakiness-report-*' --dir . \
+            || echo "No flakiness-report artifacts found for run $RUN_ID"
+      - name: Upload to Flakiness.io
+        run: find . -path '*/flakiness-report-*/report.json' -exec npx flakiness upload {} \;

@@ -170,6 +170,16 @@ jobs:
           name: playwright-report-firefox-${{ matrix.shard }}
           path: src/frontend/playwright-report/
           retention-days: 14
+      # Fork PRs cannot upload to Flakiness.io directly (no OIDC token / secrets).
+      # Save the report as an artifact for the trusted flakiness-upload-fork-prs.yaml workflow.
+      - name: Save Flakiness report (fork PRs)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+        with:
+          name: flakiness-report-firefox-${{ matrix.shard }}
+          path: src/frontend/flakiness-report/
+          if-no-files-found: ignore
+          retention-days: 1
 
   chromium:
     name: Tests [Chromium ${{ matrix.shard }} / 4]
@@ -257,6 +267,16 @@ jobs:
           path: src/frontend/.nyc_output/
           if-no-files-found: error
           include-hidden-files: true
+          retention-days: 1
+      # Fork PRs cannot upload to Flakiness.io directly (no OIDC token / secrets).
+      # Save the report as an artifact for the trusted flakiness-upload-fork-prs.yaml workflow.
+      - name: Save Flakiness report (fork PRs)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+        with:
+          name: flakiness-report-chromium-${{ matrix.shard }}
+          path: src/frontend/flakiness-report/
+          if-no-files-found: ignore
           retention-days: 1
 
   # Recombine the coverage reports from the 4 shards, and upload to Codecov
