@@ -432,6 +432,14 @@ export default function StockDetail() {
       },
       {
         type: 'text',
+        name: 'barcode_data',
+        icon: 'barcode',
+        label: t`Linked Barcode`,
+        copy: true,
+        hidden: !stockitem.barcode_data
+      },
+      {
+        type: 'text',
         name: 'updated',
         icon: 'calendar',
         label: t`Last Updated`
