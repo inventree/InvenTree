@@ -33,7 +33,7 @@ class DataExportMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)
+        self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)  # ty:ignore[unresolved-reference]
 
     def supports_export(
         self,

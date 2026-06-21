@@ -34,7 +34,7 @@ class LabelPrintingMixin:
     def __init__(self):  # pragma: no cover
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.LABELS, True, __class__)
+        self.add_mixin(PluginMixinEnum.LABELS, True, __class__)  # ty:ignore[unresolved-reference]
 
     BLOCKING_PRINT = True
 

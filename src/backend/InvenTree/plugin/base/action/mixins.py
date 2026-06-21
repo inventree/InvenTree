@@ -16,7 +16,7 @@ class ActionMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.ACTION, True, __class__)
+        self.add_mixin(PluginMixinEnum.ACTION, True, __class__)  # ty:ignore[unresolved-reference]
 
     def action_name(self):
         """Action name for this plugin.

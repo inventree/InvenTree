@@ -22,7 +22,7 @@ class UrlsMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.URLS, 'has_urls', __class__)
+        self.add_mixin(PluginMixinEnum.URLS, 'has_urls', __class__)  # ty:ignore[unresolved-reference]
         self.urls = self.setup_urls()
 
     @classmethod

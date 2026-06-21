@@ -583,7 +583,7 @@ class Order(
 
         This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
         """
-        raise NotImplementedError(f'company() method not implemented for {__class__}')
+        raise NotImplementedError(f'company() method not implemented for {__class__}')  # ty:ignore[unresolved-reference]
 
     @property
     def order_address(self):
@@ -608,7 +608,7 @@ class Order(
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
-        raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
+        raise NotImplementedError(f'get_status_class() not implemented for {__class__}')  # ty:ignore[unresolved-reference]
 
 
 class PurchaseOrder(TotalPriceMixin, Order):

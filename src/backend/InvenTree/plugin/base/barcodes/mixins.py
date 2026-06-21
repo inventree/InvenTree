@@ -35,7 +35,7 @@ class BarcodeMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.BARCODE, 'has_barcode', __class__)
+        self.add_mixin(PluginMixinEnum.BARCODE, 'has_barcode', __class__)  # ty:ignore[unresolved-reference]
 
     @property
     def has_barcode(self):
@@ -105,7 +105,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.SUPPLIER_BARCODE, True, __class__)
+        self.add_mixin(PluginMixinEnum.SUPPLIER_BARCODE, True, __class__)  # ty:ignore[unresolved-reference]
 
     def get_field_value(self, key, backup_value=None):
         """Return the value of a barcode field."""

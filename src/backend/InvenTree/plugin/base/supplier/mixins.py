@@ -28,7 +28,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.SUPPLIER, True, __class__)
+        self.add_mixin(PluginMixinEnum.SUPPLIER, True, __class__)  # ty:ignore[unresolved-reference]
 
         self.SETTINGS['SUPPLIER'] = {
             'name': 'Supplier',

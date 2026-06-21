@@ -73,7 +73,7 @@ class APICallMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.API_CALL, 'has_api_call', __class__)
+        self.add_mixin(PluginMixinEnum.API_CALL, 'has_api_call', __class__)  # ty:ignore[unresolved-reference]
 
     @property
     def has_api_call(self):

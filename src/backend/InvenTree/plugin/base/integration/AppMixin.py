@@ -27,7 +27,7 @@ class AppMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.APP, 'has_app', __class__)
+        self.add_mixin(PluginMixinEnum.APP, 'has_app', __class__)  # ty:ignore[unresolved-reference]
 
     @classmethod
     def _activate_mixin(

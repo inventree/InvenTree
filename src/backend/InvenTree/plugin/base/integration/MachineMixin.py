@@ -30,7 +30,7 @@ class MachineDriverMixin:
     def __init__(self):
         """Initialize the mixin and register it."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.MACHINE, True, __class__)
+        self.add_mixin(PluginMixinEnum.MACHINE, True, __class__)  # ty:ignore[unresolved-reference]
 
     def get_machine_types(self) -> list[BaseMachineType]:
         """Register custom machine types."""
