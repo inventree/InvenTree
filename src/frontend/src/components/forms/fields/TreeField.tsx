@@ -21,12 +21,14 @@ export function TreeField({
   controller,
   definition,
   fieldName,
-  endpoint
+  endpoint,
+  childIdentifier
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   endpoint: ApiEndpoints;
+  childIdentifier: string;
 }>) {
   const api = useApi();
   const {
@@ -71,30 +73,37 @@ export function TreeField({
   }, [debouncedSearch, nodes]);
 
   // Convert the flat API response (sorted by level) into the nested TreeNodeData structure.
+  // `children` is intentionally left undefined on leaf nodes: Mantine's flatten logic uses
+  // Array.isArray(node.children) to detect loaded children, so an empty [] would make every
+  // node look like a parent. Instead we set node.hasChildren from the server-side count field
+  // (childIdentifier) and only attach a children array when a child is actually encountered.
   const treeData: TreeNodeData[] = useMemo(() => {
-    const map: Record<number, TreeNodeData & { children: TreeNodeData[] }> = {};
+    const map: Record<number, any> = {};
     const tree: TreeNodeData[] = [];
 
     const sorted = [...nodes].sort((a, b) => a.level - b.level);
 
     for (const raw of sorted) {
-      const node = {
+      const node: any = {
         value: raw.pk.toString(),
         label: raw.name as string,
-        children: [] as TreeNodeData[]
+        hasChildren: (raw[childIdentifier] ?? 0) > 0
       };
 
       map[raw.pk] = node;
 
       if (!raw.parent) {
         tree.push(node);
-      } else {
-        map[raw.parent]?.children.push(node);
+      } else if (map[raw.parent]) {
+        if (!map[raw.parent].children) {
+          map[raw.parent].children = [];
+        }
+        map[raw.parent].children.push(node);
       }
     }
 
     return tree;
-  }, [nodes]);
+  }, [nodes, childIdentifier]);
 
   const onChange = useCallback(
     (val: string | null) => {

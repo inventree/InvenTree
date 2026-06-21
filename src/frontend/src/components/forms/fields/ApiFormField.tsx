@@ -263,6 +263,7 @@ export function ApiFormField({
             definition={fieldDefinition}
             fieldName={fieldName}
             endpoint={ApiEndpoints.stock_location_tree}
+            childIdentifier='sublocations'
           />
         );
       case 'category':
@@ -272,6 +273,7 @@ export function ApiFormField({
             definition={fieldDefinition}
             fieldName={fieldName}
             endpoint={ApiEndpoints.category_tree}
+            childIdentifier='subcategories'
           />
         );
       default:
