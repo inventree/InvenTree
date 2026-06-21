@@ -54,6 +54,7 @@ export function TreeField({
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch] = useDebouncedValue(searchValue, 300);
   const [expandedValues, setExpandedValues] = useState<string[]>([]);
+  const [nodes, setNodes] = useState<any[]>([]);
 
   const query = useQuery({
     queryKey: [
@@ -73,13 +74,15 @@ export function TreeField({
             // so the node label is available before the user interacts with the field.
             expand_to:
               !debouncedSearch && !!selectedValue ? selectedValue : undefined,
-            max_level: !!selectedValue ? 0 : undefined
+            max_level: !debouncedSearch && !!selectedValue ? 0 : undefined
           }
         })
         .then((res) => res.data ?? [])
   });
 
-  const nodes: any[] = useMemo(() => query.data ?? [], [query.data]);
+  useEffect(() => {
+    setNodes(query.data ?? []);
+  }, [query.data]);
 
   // O(1) lookup for raw node data inside renderNode
   const nodeMap = useMemo(() => {
@@ -118,8 +121,6 @@ export function TreeField({
     if (selectedValue == null) {
       expandedForValue.current = null;
     }
-
-    setExpandedValues([]);
   }, [debouncedSearch, nodes, selectedValue]);
 
   // Convert the flat API response (sorted by level) into the nested TreeNodeData structure.
@@ -178,6 +179,65 @@ export function TreeField({
   }, [nodeMap, selectValue]);
 
   const inputSearchValue = isDropdownOpen ? searchValue : selectedLabel;
+
+  const refreshChildren = useCallback(
+    async (nodeValue: string) => {
+      const pk = Number.parseInt(nodeValue, 10);
+      if (Number.isNaN(pk)) return;
+
+      const node = nodeMap[nodeValue];
+      if (!node) return;
+
+      const response = await api.get(apiUrl(endpoint), {
+        params: {
+          ordering: 'level',
+          parent: pk,
+          max_level: (node.level ?? 0) + 1
+        }
+      });
+
+      const children: any[] = response.data ?? [];
+
+      setNodes((prev) => {
+        const base = prev.filter((n) => n.parent !== pk);
+        const byPk = new Map<number, any>();
+
+        for (const n of base) {
+          byPk.set(n.pk, n);
+        }
+
+        for (const child of children) {
+          byPk.set(child.pk, child);
+        }
+
+        if (children.length === 0) {
+          const parentNode = byPk.get(pk);
+          if (parentNode) {
+            byPk.set(pk, { ...parentNode, [childIdentifier]: 0 });
+          }
+        }
+
+        return Array.from(byPk.values());
+      });
+    },
+    [api, endpoint, nodeMap, childIdentifier]
+  );
+
+  const toggleExpanded = useCallback(
+    (nodeValue: string) => {
+      setExpandedValues((prev) => {
+        const isExpanded = prev.includes(nodeValue);
+
+        if (!isExpanded) {
+          void refreshChildren(nodeValue);
+          return [...prev, nodeValue];
+        }
+
+        return prev.filter((v) => v !== nodeValue);
+      });
+    },
+    [refreshChildren]
+  );
 
   return (
     <TreeSelect
@@ -241,11 +301,7 @@ export function TreeField({
                   hasChildren
                     ? (event: any) => {
                         cancelEvent(event);
-                        setExpandedValues((prev) =>
-                          prev.includes(node.value)
-                            ? prev.filter((v) => v !== node.value)
-                            : [...prev, node.value]
-                        );
+                        toggleExpanded(node.value);
                       }
                     : undefined
                 }
@@ -254,11 +310,7 @@ export function TreeField({
                     ? (event: any) => {
                         if (event.key === 'Enter' || event.key === ' ') {
                           cancelEvent(event);
-                          setExpandedValues((prev) =>
-                            prev.includes(node.value)
-                              ? prev.filter((v) => v !== node.value)
-                              : [...prev, node.value]
-                          );
+                          toggleExpanded(node.value);
                         }
                       }
                     : undefined
