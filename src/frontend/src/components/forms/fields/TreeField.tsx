@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text, type TreeNodeData, TreeSelect } from '@mantine/core';
+import { type TreeNodeData, TreeSelect } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,7 +9,6 @@ import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
-import { ApiIcon } from '../../items/ApiIcon';
 
 /**
  * A form field that renders a hierarchical tree selector backed by a tree API endpoint.
@@ -51,15 +50,6 @@ export function TreeField({
   });
 
   const nodes: any[] = useMemo(() => query.data ?? [], [query.data]);
-
-  // O(1) lookup map for renderNode
-  const nodeMap = useMemo(() => {
-    const map: Record<string, any> = {};
-    for (const n of nodes) {
-      map[n.pk.toString()] = n;
-    }
-    return map;
-  }, [nodes]);
 
   // Expand all returned nodes when a search is active so users can see all matches.
   // Collapse back to root when the search is cleared.
@@ -123,7 +113,6 @@ export function TreeField({
       clearable={!definition.required}
       expandedValues={expandedValues}
       onExpandedChange={setExpandedValues}
-      expandOnClick
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder ?? t`Select...`}
@@ -135,17 +124,6 @@ export function TreeField({
       nothingFoundMessage={
         query.isFetching ? t`Loading...` : t`No results found`
       }
-      renderNode={({ node, selected }) => {
-        const raw = nodeMap[node.value];
-        return (
-          <Group gap='xs' wrap='nowrap'>
-            {raw?.icon && <ApiIcon name={raw.icon} />}
-            <Text size='sm' fw={selected ? 600 : undefined}>
-              {String(node.label)}
-            </Text>
-          </Group>
-        );
-      }}
     />
   );
 }
