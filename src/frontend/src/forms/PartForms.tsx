@@ -228,11 +228,13 @@ export function partCategoryFields({
     const fields: ApiFormFieldSet = {
       parent: {
         description: t`Parent part category`,
-        required: false
+        required: false,
+        field_type: 'category'
       },
       name: {},
       description: {},
       default_location: {
+        field_type: 'location',
         filters: {
           structural: false
         }

@@ -4,6 +4,7 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
@@ -19,6 +20,7 @@ import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
 import TagsField from './TagsField';
 import TextField from './TextField';
+import { TreeField } from './TreeField';
 
 /**
  * Render an individual form field
@@ -253,6 +255,24 @@ export function ApiFormField({
       case 'tags':
         return (
           <TagsField controller={controller} definition={fieldDefinition} />
+        );
+      case 'location':
+        return (
+          <TreeField
+            controller={controller}
+            definition={fieldDefinition}
+            fieldName={fieldName}
+            endpoint={ApiEndpoints.stock_location_tree}
+          />
+        );
+      case 'category':
+        return (
+          <TreeField
+            controller={controller}
+            definition={fieldDefinition}
+            fieldName={fieldName}
+            endpoint={ApiEndpoints.category_tree}
+          />
         );
       default:
         return (
