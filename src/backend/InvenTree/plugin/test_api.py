@@ -126,7 +126,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         ).data
         self.assertEqual(data['success'], 'Installed plugin successfully')
 
-        # valid (kindoff) - Pypi and onsense uri
+        # valid (kindoff) - Pypi and nonsense uri
         data = self.post(
             url,
             {'confirm': True, 'packagename': self.PKG_NAME, 'url': 'lol://example.com'},
