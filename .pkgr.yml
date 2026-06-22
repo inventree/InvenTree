@@ -37,4 +37,5 @@ dependencies:
   - "libffi7 | libffi8"
 targets:
   ubuntu-24.04: true
+  ubuntu-26.04: true
   debian-13: true
