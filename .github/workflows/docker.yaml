@@ -62,7 +62,7 @@ jobs:
       contents: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: "3.11"
+      python_version: 3.12
     runs-on: ubuntu-latest # in the future we can try to use alternative runners here
 
     steps:
@@ -134,7 +134,7 @@ jobs:
       contents: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: "3.11"
+      python_version: 3.12
     runs-on: ubuntu-latest # in the future we can try to use alternative runners here
 
     steps:
@@ -158,7 +158,7 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: "3.11"
+      python_version: 3.12
     runs-on: ubuntu-latest # in the future we can try to use alternative runners here
 
     steps:
