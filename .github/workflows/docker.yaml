@@ -84,6 +84,16 @@ jobs:
           docker run --rm inventree-test test -f /home/inventree/gunicorn.conf.py
           docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
+          # Check that backend translations were compiled into the image (a few representative languages)
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/de/LC_MESSAGES/django.mo
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/fr/LC_MESSAGES/django.mo
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/ru/LC_MESSAGES/django.mo
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/zh_Hans/LC_MESSAGES/django.mo
+          # Check that frontend translations (lingui) were compiled into the static build output (a few representative languages)
+          docker run --rm inventree-test grep -q '"src/locales/de/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
+          docker run --rm inventree-test grep -q '"src/locales/fr/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
+          docker run --rm inventree-test grep -q '"src/locales/ru/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
+          docker run --rm inventree-test grep -q '"src/locales/zh_Hans/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
