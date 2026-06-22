@@ -598,7 +598,7 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'compatible_units': [str(a) for a in unit.compatible_units()],  # ty:ignore[missing-argument]
             'isdimensionless': unit.dimensionless,
         }
 

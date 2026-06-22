@@ -851,6 +851,7 @@ valid_cookie_modes = ['lax', 'strict', 'none']
 COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
+CSRF_FAILURE_VIEW = 'InvenTree.middleware.csrf_failure'
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
 
