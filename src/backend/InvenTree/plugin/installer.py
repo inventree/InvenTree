@@ -240,7 +240,7 @@ def install_plugin(
         url: Optional URL to install from
         version: Optional version specifier
     """
-    if not user or not user.is_superuser:
+    if user and not user.is_superuser:
         raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
