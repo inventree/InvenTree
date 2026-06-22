@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@3530478ec30f84adedbfeb28f0d9527a290f50a9 # pin@main
+        uses: oasdiff/oasdiff-action/diff@5fbe96ede8d0c53aeadef122d7a0abb79152d493 # pin@main
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -363,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@9d332c4d90b43981c3e55ae8e38e68709996240f # pin@v4.17.0
+        uses: CodSpeedHQ/action@c145068895e045cc725ee76fcd2307624b65c3af # pin@v4.17.5
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -454,7 +454,7 @@ jobs:
         env:
           node_version: '>=24'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@9d332c4d90b43981c3e55ae8e38e68709996240f # pin@v4.17.0
+        uses: CodSpeedHQ/action@c145068895e045cc725ee76fcd2307624b65c3af # pin@v4.17.5
         with:
           mode: walltime
           run: inv dev.test --pytest
