@@ -40,7 +40,7 @@ def pip_command(*args) -> str:
     ret = subprocess.check_output(
         command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
     ).decode('utf-8')
-    if ret.startswith('No module named pip'):
+    if 'No module named pip' in ret:
         raise ValidationError(_('Pip is not installed in the current environment'))
     return ret
 
