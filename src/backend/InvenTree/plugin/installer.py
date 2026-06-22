@@ -29,7 +29,7 @@ def pip_command(*args) -> str:
     """
     python = sys.executable
 
-    command = [python, '-m', 'pip3']
+    command = [python, '-m', 'pip']
 
     command.extend(args)
 
