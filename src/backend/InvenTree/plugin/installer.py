@@ -19,7 +19,7 @@ from InvenTree.exceptions import log_error
 logger = structlog.get_logger('inventree')
 
 
-def pip_command(*args):
+def pip_command(*args) -> str:
     """Build and run a pip command using using the current python executable.
 
     Returns: The output of the pip command
@@ -29,7 +29,7 @@ def pip_command(*args):
     """
     python = sys.executable
 
-    command = [python, '-m', 'pip']
+    command = [python, '-m', 'pip3']
 
     command.extend(args)
 
@@ -37,9 +37,12 @@ def pip_command(*args):
 
     logger.info('Running pip command: %s', ' '.join(command))
 
-    return subprocess.check_output(
+    ret = subprocess.check_output(
         command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
-    )
+    ).decode('utf-8')
+    if ret.startswith('No module named pip'):
+        raise ValidationError(_('Pip is not installed in the current environment'))
+    return ret
 
 
 def handle_pip_error(error, path: str) -> list:
@@ -85,7 +88,7 @@ def get_install_info(packagename: str) -> dict:
     try:
         result = pip_command('show', packagename)
 
-        output = result.decode('utf-8').split('\n')
+        output = result.split('\n')
 
         for line in output:
             parts = line.split(':')
@@ -287,7 +290,7 @@ def install_plugin(
         result = pip_command(*cmd, package_ref)
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
-        ret['output'] = str(result, 'utf-8')
+        ret['output'] = result
 
         if packagename and (info := get_install_info(packagename)):
             if path := info.get('location'):
