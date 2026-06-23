@@ -79,7 +79,6 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
             try:
                 instance = model.objects.get(pk=int(pk))
-                user = getattr(self, 'user', None)
                 return self.format_matched_response(label, model, instance, user=user)
             except (ValueError, model.DoesNotExist):
                 pass
