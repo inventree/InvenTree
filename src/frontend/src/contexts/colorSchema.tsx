@@ -1,5 +1,4 @@
 import {
-  type MantineColorScheme,
   type MantineColorSchemeManager,
   isMantineColorScheme
 } from '@mantine/core';
@@ -29,7 +28,9 @@ export function localStorageColorSchemeManager({
         }
 
         // If no value, check the system preference
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemPrefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
         return systemPrefersDark ? 'dark' : 'light';
       } catch {
         return defaultValue;
