@@ -33,7 +33,6 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
-from InvenTree.users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
 
@@ -1338,6 +1337,8 @@ class InvenTreeBarcodeMixin(models.Model):
     def format_matched_response(self, user, **kwargs):
         """Format a standard response for a matched barcode."""
         # Check permission for this object
+        from users.permissions import check_user_permission
+
         if not check_user_permission(user, self, 'view'):
             raise PermissionDenied(
                 _('User does not have permission to view this object')
