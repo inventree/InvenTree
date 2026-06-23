@@ -154,6 +154,8 @@ class BarcodeView(CreateAPIView):
         for current_plugin in plugins:
             try:
                 result = current_plugin.scan(barcode, user=request.user, **kwargs)
+            except PermissionDenied as exc:
+                raise exc
             except Exception:
                 log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
