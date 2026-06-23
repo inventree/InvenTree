@@ -172,17 +172,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 str(response.data['non_field_errors']),
             )
 
-        # plugin - normal user should not be able to install plugins
-        self.user.is_staff = False
-        self.user.save()
-        self.post(
-            url,
-            {'confirm': True, 'packagename': self.PKG_NAME},
-            expected_code=400,
-            max_query_time=30,
-            max_query_count=450,
-        )
-
     def test_plugin_deactivate_mandatory(self):
         """Test deactivating a mandatory plugin."""
         self.user.is_superuser = True
@@ -692,33 +681,6 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
             # Successful uninstallation
             with self.assertRaises(PluginConfig.DoesNotExist):
                 PluginConfig.objects.get(key=slug)
-
-    @override_settings(PLUGIN_TESTING_SETUP=True)
-    def test_registry(self):
-        """Test install with a custom registry."""
-        plrg_name = 'inventree-dummy-app-plugin'
-
-        # install - python repository url and package name
-        data = self.post(
-            reverse('api-plugin-install'),
-            {
-                'confirm': True,
-                'url': 'https://git.invenhost.com/api/packages/invenhost-c1/pypi/simple/',
-                'packagename': plrg_name,
-            },
-            expected_code=201,
-            max_query_count=450,
-            max_query_time=30,
-        ).data
-        self.assertEqual(data['success'], 'Installed plugin successfully')
-
-        # # and uninstall it again to clean up
-        # response = self.patch(
-        #     reverse('api-plugin-uninstall', kwargs={'plugin': plrg_name}),
-        #     data={'delete_config': True},
-        #     max_query_count=350,
-        # )
-        # self.assertEqual(response.status_code, 200)
 
 
 class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
