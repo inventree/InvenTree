@@ -15,6 +15,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     """Tests for barcode api."""
 
     fixtures = ['category', 'part', 'location', 'stock']
+    roles = ['stock.view', 'stock_location.view', 'part.view']
 
     def setUp(self):
         """Setup for all tests."""
@@ -259,6 +260,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
     """Unit tests for the barcode endpoint for allocating items to a sales order."""
 
     fixtures = ['category', 'company', 'part', 'location', 'stock']
+    roles = ['stock.view']
 
     @classmethod
     def setUpTestData(cls):
