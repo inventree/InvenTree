@@ -1341,7 +1341,7 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if not check_user_permission(user, self, 'view'):
             raise PermissionDenied(
-                _('User does not have permission to view this object')
+                _('User does not have permission to view this model')
             )
 
         data = {'pk': self.pk}
