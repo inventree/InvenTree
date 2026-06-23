@@ -8,7 +8,7 @@ from typing import Any, Optional
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models, transaction
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
@@ -33,6 +33,7 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
+from InvenTree.users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
 
@@ -1334,8 +1335,14 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return generate_barcode(self)
 
-    def format_matched_response(self):
+    def format_matched_response(self, user, **kwargs):
         """Format a standard response for a matched barcode."""
+        # Check permission for this object
+        if not check_user_permission(user, self, 'view'):
+            raise PermissionDenied(
+                _('User does not have permission to view this object')
+            )
+
         data = {'pk': self.pk}
 
         if hasattr(self, 'get_api_url'):
