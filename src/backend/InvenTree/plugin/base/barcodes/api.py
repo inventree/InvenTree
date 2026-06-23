@@ -526,7 +526,7 @@ class BarcodePOReceive(BarcodeView):
             filter(lambda plugin: plugin.name == 'InvenTreeBarcode', plugins)
         )
 
-        if result := internal_barcode_plugin.scan(barcode):
+        if result := internal_barcode_plugin.scan(barcode, user=request.user, **kwargs):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
                 self.log_scan(request, response, False)
