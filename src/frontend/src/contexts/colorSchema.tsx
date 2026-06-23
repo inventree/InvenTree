@@ -1,5 +1,4 @@
 import {
-  type MantineColorScheme,
   type MantineColorSchemeManager,
   isMantineColorScheme
 } from '@mantine/core';
@@ -21,10 +20,18 @@ export function localStorageColorSchemeManager({
       }
 
       try {
-        return (
-          (window.localStorage.getItem(key) as MantineColorScheme) ||
-          defaultValue
-        );
+        const storedValue = window.localStorage.getItem(key);
+
+        // If a value exists in storage, return it
+        if (storedValue && isMantineColorScheme(storedValue)) {
+          return storedValue;
+        }
+
+        // If no value, check the system preference
+        const systemPrefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
+        return systemPrefersDark ? 'dark' : 'light';
       } catch {
         return defaultValue;
       }
