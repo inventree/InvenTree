@@ -2412,6 +2412,178 @@ class StocktakeTest(StockAPITestCase):
         self.assertIn('does not exist', str(response.data['location']))
 
 
+class StockTransferMergeTest(StockAPITestCase):
+    """Tests for optional merge-on-transfer behavior."""
+
+    def setUp(self):
+        """Set up stock items for merge transfer tests."""
+        super().setUp()
+
+        self.part = Part.objects.get(pk=1)
+        self.dest = StockLocation.objects.get(pk=2)
+        self.source_loc = StockLocation.objects.get(pk=5)
+        self.url = reverse('api-stock-transfer')
+
+        # Remove fixture stock at the destination so merge targets are deterministic
+        StockItem.objects.filter(part=self.part, location=self.dest).delete()
+
+    def test_transfer_without_merge_creates_separate_lot(self):
+        """Transfer without merge leaves multiple stock rows at destination."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': False}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
+
+    def test_transfer_with_merge_combines_lots(self):
+        """Transfer with merge combines into an existing compatible lot."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 1
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 150)
+        self.assertFalse(StockItem.objects.filter(pk=incoming.pk).exists())
+
+    def test_transfer_mixed_merge_per_item(self):
+        """Each transfer line can merge or move independently."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        merge_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=30
+        )
+        separate_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=20
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': merge_incoming.pk, 'quantity': 30, 'merge': True},
+                    {'pk': separate_incoming.pk, 'quantity': 20, 'merge': False},
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 130)
+        self.assertFalse(StockItem.objects.filter(pk=merge_incoming.pk).exists())
+        self.assertTrue(StockItem.objects.filter(pk=separate_incoming.pk).exists())
+
+    def test_transfer_merge_does_not_copy_source_tracking(self):
+        """Transfer merge keeps destination history and adds a single merge entry."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        incoming.add_tracking_entry(
+            StockHistoryCode.STOCK_UPDATE, self.user, notes='Source tracking entry'
+        )
+
+        incoming_pk = incoming.pk
+        tracking_count = existing.tracking_info.count()
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+
+        self.assertFalse(
+            existing.tracking_info.filter(notes='Source tracking entry').exists()
+        )
+        self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 150.0)
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+    def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
+        """Partial merge reuses split transfer deltas on the merge tracking entry."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=100
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 30, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 70)
+
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming.pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+        self.assertFalse(
+            incoming.tracking_info.filter(
+                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
+            ).exists()
+        )
+
+
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
 

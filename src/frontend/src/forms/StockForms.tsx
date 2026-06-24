@@ -33,8 +33,16 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+
 import dayjs from 'dayjs';
-import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  type JSX,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
@@ -566,6 +574,7 @@ function StockOperationsRow({
   add = false,
   setMax = false,
   merge = false,
+  transferMerge = false,
   returnStock = false,
   record
 }: {
@@ -575,6 +584,7 @@ function StockOperationsRow({
   add?: boolean;
   setMax?: boolean;
   merge?: boolean;
+  transferMerge?: boolean;
   returnStock?: boolean;
   record?: any;
 }) {
@@ -742,6 +752,17 @@ function StockOperationsRow({
                 variant={packagingOpen ? 'filled' : 'transparent'}
               />
             )}
+            {transferMerge && (
+              <ActionButton
+                size='sm'
+                icon={<InvenTreeIcon icon='merge' />}
+                tooltip={t`Merge into existing stock`}
+                onClick={() =>
+                  callChangeFn(props.idx, 'merge', !props.item?.merge)
+                }
+                variant={props.item?.merge ? 'filled' : 'transparent'}
+              />
+            )}
             <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
           </Flex>
         </Table.Td>
@@ -789,9 +810,10 @@ type StockAdjustmentItem = {
   batch?: string;
   status?: number | '' | null;
   packaging?: string;
+  merge?: boolean;
 };
 
-function mapAdjustmentItems(items: any[]) {
+function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
   const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
     return {
       pk: elem.pk,
@@ -799,6 +821,7 @@ function mapAdjustmentItems(items: any[]) {
       batch: elem.batch || undefined,
       status: elem.status || undefined,
       packaging: elem.packaging || undefined,
+      merge: elem.merge ?? mergeDefault ?? false,
       obj: elem
     };
   });
@@ -806,7 +829,10 @@ function mapAdjustmentItems(items: any[]) {
   return mappedItems;
 }
 
-function stockTransferFields(items: any[]): ApiFormFieldSet {
+function stockTransferFields(
+  items: any[],
+  mergeDefault = false
+): ApiFormFieldSet {
   if (!items) {
     return {};
   }
@@ -819,7 +845,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: mapAdjustmentItems(items, mergeDefault),
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -829,6 +855,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
             transfer
             changeStatus
             setMax
+            transferMerge
             key={record.pk}
             record={record}
           />
@@ -1379,9 +1406,20 @@ export function useRemoveStockItem(props: StockOperationProps) {
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
+  const globalSettings = useGlobalSettingsState();
+
+  const fieldGenerator = useCallback(
+    (items: any[]) =>
+      stockTransferFields(
+        items,
+        globalSettings.isSet('STOCK_MERGE_ON_TRANSFER')
+      ),
+    [globalSettings]
+  );
+
   return useStockOperationModal({
     ...props,
-    fieldGenerator: stockTransferFields,
+    fieldGenerator: fieldGenerator,
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
     successMessage: t`Stock transferred`,
