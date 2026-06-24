@@ -440,7 +440,6 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         ]
 
         for tz, fmt, locale, expected in tests:
-            print(tz, fmt, locale, expected)
             result = report_tags.format_datetime(
                 time, timezone=tz, fmt=fmt, locale=locale
             )
@@ -857,7 +856,7 @@ class BarcodeTagTest(TestCase):
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.barcode('')
 
     def test_qrcode(self):
@@ -877,7 +876,7 @@ class BarcodeTagTest(TestCase):
         self.assertEqual(len(qrcode), 309720)
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.qrcode('')
 
     def test_clean_barcode(self):
@@ -908,7 +907,7 @@ class BarcodeTagTest(TestCase):
         )
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.datamatrix('')
 
         # Failure cases with wrong args
