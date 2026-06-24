@@ -13,7 +13,7 @@ on:
     branches-ignore: ["l10*"]
 
 env:
-  python_version: 3.11
+  python_version: 3.12
   node_version: 24
   # The OS version must be set per job
   server_start_sleep: 60

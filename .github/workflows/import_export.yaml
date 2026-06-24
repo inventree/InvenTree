@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 env:
-  python_version: 3.11
+  python_version: 3.12
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
