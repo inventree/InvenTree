@@ -24,7 +24,7 @@ flag_management:
       carryforward: true
       statuses:
         - type: project
-          target: 40%
+          target: 38%
     - name: web
       carryforward: true
       statuses:

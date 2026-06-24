@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-17 22:14\n"
+"PO-Revision-Date: 2026-06-20 13:53\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -147,7 +147,7 @@ msgstr "아니요"
 #: src/forms/StockForms.tsx:1248
 #: src/forms/TransferOrderForms.tsx:234
 #: src/pages/build/BuildDetail.tsx:260
-#: src/pages/part/PartDetail.tsx:1165
+#: src/pages/part/PartDetail.tsx:1166
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/ColumnRenderers.tsx:93
 #: src/tables/build/BuildOrderParametricTable.tsx:29
@@ -166,7 +166,7 @@ msgstr "부품"
 #: src/pages/part/CategoryDetail.tsx:138
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:345
-#: src/pages/part/CategoryDetail.tsx:387
+#: src/pages/part/CategoryDetail.tsx:388
 #: src/pages/part/PartDetail.tsx:893
 msgid "Parts"
 msgstr "부품"
@@ -242,7 +242,7 @@ msgid "Manufacturer Parts"
 msgstr "제조업체 부품"
 
 #: lib/enums/ModelInformation.tsx:80
-#: src/pages/part/CategoryDetail.tsx:387
+#: src/pages/part/CategoryDetail.tsx:388
 #: src/tables/Filter.tsx:496
 msgid "Part Category"
 msgstr "부품 카테고리"
@@ -261,7 +261,7 @@ msgstr "부품 카테고리 목록"
 #: src/forms/BuildForms.tsx:848
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/TransferOrderForms.tsx:236
-#: src/pages/stock/StockDetail.tsx:1075
+#: src/pages/stock/StockDetail.tsx:1076
 #: src/tables/ColumnRenderers.tsx:132
 #: src/tables/part/PartTestResultTable.tsx:256
 #: src/tables/stock/InstalledItemsTable.tsx:66
@@ -283,7 +283,7 @@ msgstr "재고 품목"
 
 #: lib/enums/ModelInformation.tsx:99
 #: lib/enums/Roles.tsx:51
-#: src/pages/stock/LocationDetail.tsx:522
+#: src/pages/stock/LocationDetail.tsx:523
 msgid "Stock Location"
 msgstr "재고 위치"
 
@@ -644,14 +644,14 @@ msgstr "선택 항목"
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
-#: src/components/nav/NavigationTree.tsx:211
+#: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
 #: src/components/nav/SearchDrawer.tsx:588
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:83
-#: src/functions/auth.tsx:691
+#: src/functions/auth.tsx:693
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -723,6 +723,7 @@ msgstr "요청 시간이 초과되었습니다."
 
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:76
 msgid "Process failed"
 msgstr "프로세스 실패"
 
@@ -1391,11 +1392,11 @@ msgstr "슈퍼유저 권한 필요"
 msgid "This widget requires superuser permissions"
 msgstr "이 위젯에는 수퍼유저 권한이 필요합니다."
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:133
+#: src/components/dashboard/widgets/NewsWidget.tsx:135
 msgid "No News"
 msgstr "새 소식 없음"
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:134
+#: src/components/dashboard/widgets/NewsWidget.tsx:136
 msgid "There are no unread news items"
 msgstr "읽지 않은 뉴스 항목이 없습니다"
 
@@ -1655,7 +1656,7 @@ msgstr "암호"
 msgid "Error rendering preview"
 msgstr "미리보기 렌더링 오류"
 
-#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:120
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:124
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr "미리보기를 사용할 수 없습니다. \"미리보기 다시 불러오기\"를 클릭하세요"
 
@@ -1728,11 +1729,11 @@ msgstr "현재 템플릿을 저장하고 미리보기를 다시 로드하세요.
 #~ msgid "to preview"
 #~ msgstr "to preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:379
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:380
 msgid "Select instance to preview"
 msgstr "미리볼 인스턴스 선택"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:423
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:424
 msgid "Error rendering template"
 msgstr "템플릿 렌더링 오류"
 
@@ -1829,20 +1830,20 @@ msgstr "성공적으로 로그인되었습니다"
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
 #: src/functions/auth.tsx:133
-#: src/functions/auth.tsx:142
+#: src/functions/auth.tsx:144
 msgid "Login failed"
 msgstr "로그인 실패"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:354
+#: src/functions/auth.tsx:136
+#: src/functions/auth.tsx:356
 msgid "Check your input and try again."
 msgstr "입력 내용을 확인한 후 다시 시도하세요"
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:345
+#: src/functions/auth.tsx:347
 msgid "Mail delivery successful"
 msgstr "메일 전달 성공"
 
@@ -2128,6 +2129,7 @@ msgstr "분류되지 않음"
 
 #: src/components/forms/fields/IconField.tsx:211
 #: src/components/nav/Layout.tsx:143
+#: src/components/nav/NavigationTree.tsx:378
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "찾다..."
@@ -2153,6 +2155,7 @@ msgid "Loading"
 msgstr "불러오는 중"
 
 #: src/components/forms/fields/RelatedModelField.tsx:540
+#: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
 
@@ -2247,7 +2250,7 @@ msgstr "데이터 처리"
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:401
+#: src/functions/auth.tsx:403
 msgid "An error occurred"
 msgstr "오류가 발생했습니다"
 
@@ -2925,7 +2928,7 @@ msgstr "로그아웃"
 #: src/pages/Index/Settings/SystemSettings.tsx:260
 #: src/pages/part/PartDetail.tsx:663
 #: src/pages/stock/LocationDetail.tsx:481
-#: src/pages/stock/LocationDetail.tsx:522
+#: src/pages/stock/LocationDetail.tsx:523
 #: src/pages/stock/StockDetail.tsx:689
 #: src/pages/stock/TransferOrderDetail.tsx:536
 #: src/tables/stock/StockItemTable.tsx:81
@@ -2971,7 +2974,11 @@ msgstr "탐색"
 msgid "About"
 msgstr "에 대한"
 
-#: src/components/nav/NavigationTree.tsx:212
+#: src/components/nav/NavigationTree.tsx:388
+msgid "Clear search"
+msgstr ""
+
+#: src/components/nav/NavigationTree.tsx:399
 msgid "Error loading navigation tree."
 msgstr "탐색 트리를 불러오는 중 오류가 발생했습니다"
 
@@ -5539,7 +5546,7 @@ msgstr "내부 서버 오류"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:220
+#: src/functions/auth.tsx:222
 msgid "Logged Out"
 msgstr "로그아웃됨"
 
@@ -5552,96 +5559,96 @@ msgstr "이 브라우저에 충돌하는 세션이 있어 로그아웃되었습�
 #~ msgstr "Found an existing login - using it to log you in."
 
 #: src/functions/auth.tsx:143
-msgid "No response from server."
-msgstr "서버에서 응답이 없습니다"
-
-#: src/functions/auth.tsx:143
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:186
+#: src/functions/auth.tsx:145
+msgid "No response from server."
+msgstr "서버에서 응답이 없습니다"
+
+#: src/functions/auth.tsx:188
 msgid "MFA Login successful"
 msgstr "MFA 로그인 성공"
 
-#: src/functions/auth.tsx:187
+#: src/functions/auth.tsx:189
 msgid "MFA details were automatically provided in the browser"
 msgstr "MFA 세부 정보가 브라우저에 자동으로 제공되었습니다."
 
-#: src/functions/auth.tsx:221
+#: src/functions/auth.tsx:223
 msgid "Successfully logged out"
 msgstr "성공적으로 로그아웃되었습니다"
 
-#: src/functions/auth.tsx:288
+#: src/functions/auth.tsx:290
 msgid "Language changed"
 msgstr "언어가 변경됨"
 
-#: src/functions/auth.tsx:289
+#: src/functions/auth.tsx:291
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "현재 사용 언어가 프로필에 설정된 언어로 변경되었습니다"
 
-#: src/functions/auth.tsx:310
+#: src/functions/auth.tsx:312
 msgid "Theme changed"
 msgstr "테마가 변경됨"
 
-#: src/functions/auth.tsx:311
+#: src/functions/auth.tsx:313
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "현재 사용 테마가 프로필에 설정된 테마로 변경되었습니다"
 
-#: src/functions/auth.tsx:346
+#: src/functions/auth.tsx:348
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "받은편지함에서 재설정 링크를 확인하세요. 계정이 있는 경우에만 동작합니다. 스팸함도 확인하세요"
 
-#: src/functions/auth.tsx:353
-#: src/functions/auth.tsx:617
+#: src/functions/auth.tsx:355
+#: src/functions/auth.tsx:619
 msgid "Reset failed"
 msgstr "재설정 실패"
 
-#: src/functions/auth.tsx:380
+#: src/functions/auth.tsx:382
 msgid "Already logged in"
 msgstr "이미 로그인되어 있습니다."
 
-#: src/functions/auth.tsx:381
+#: src/functions/auth.tsx:383
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "이 브라우저에 대해 서버에 충돌하는 세션이 있습니다. 먼저 해당 세션에서 로그아웃하세요"
 
-#: src/functions/auth.tsx:437
+#: src/functions/auth.tsx:439
 msgid "Logged In"
 msgstr "로그인됨"
 
-#: src/functions/auth.tsx:438
+#: src/functions/auth.tsx:440
 msgid "Successfully logged in"
 msgstr "성공적으로 로그인되었습니다"
 
-#: src/functions/auth.tsx:572
+#: src/functions/auth.tsx:574
 msgid "Failed to set up MFA"
 msgstr "MFA 설정에 실패했습니다"
 
-#: src/functions/auth.tsx:591
+#: src/functions/auth.tsx:593
 msgid "MFA Setup successful"
 msgstr "MFA 설정 성공"
 
-#: src/functions/auth.tsx:592
+#: src/functions/auth.tsx:594
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "TOTP 기반 MFA가 성공적으로 설정되었습니다. 다시 로그인해야 합니다"
 
-#: src/functions/auth.tsx:607
+#: src/functions/auth.tsx:609
 msgid "Password set"
 msgstr "비밀번호가 설정되었습니다"
 
-#: src/functions/auth.tsx:608
-#: src/functions/auth.tsx:717
+#: src/functions/auth.tsx:610
+#: src/functions/auth.tsx:719
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "비밀번호가 성공적으로 설정되었습니다. 이제 새로운 비밀번호로 로그인하실 수 있습니다"
 
-#: src/functions/auth.tsx:682
+#: src/functions/auth.tsx:684
 msgid "Password could not be changed"
 msgstr "비밀번호를 변경할 수 없습니다."
 
-#: src/functions/auth.tsx:700
+#: src/functions/auth.tsx:702
 msgid "The two password fields didn’t match"
 msgstr "두 개의 비밀번호 필드가 일치하지 않습니다"
 
-#: src/functions/auth.tsx:716
+#: src/functions/auth.tsx:718
 msgid "Password Changed"
 msgstr "비밀번호가 변경되었습니다."
 
@@ -8347,11 +8354,11 @@ msgstr "시리얼 번호로 검색"
 msgid "Part Actions"
 msgstr "부품 작업"
 
-#: src/pages/part/PartDetail.tsx:1182
+#: src/pages/part/PartDetail.tsx:1183
 msgid "Part locked"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1182
+#: src/pages/part/PartDetail.tsx:1183
 msgid "Part unlocked"
 msgstr ""
 

@@ -11,6 +11,14 @@
   background-color: var(--mantine-color-dark-4);
 }
 
+/* Today highlight */
+[data-mantine-color-scheme='light'] .fc-day-today {
+  background-color: var(--mantine-color-blue-1) !important;
+}
+[data-mantine-color-scheme='dark'] .fc-day-today {
+  background-color: var(--mantine-color-blue-9) !important;
+}
+
 /* mantine-datatable overrides */
 .mantine-datatable-pointer-cursor,
 .mantine-datatable-context-menu-cursor {

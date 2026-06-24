@@ -42,7 +42,7 @@ class BarcodeMixin:
         """Does this plugin have everything needed to process a barcode."""
         return True
 
-    def scan(self, barcode_data):
+    def scan(self, barcode_data: str, user, **kwargs) -> dict | None:
         """Scan a barcode against this plugin.
 
         This method is explicitly called from the /scan/ API endpoint,
@@ -261,7 +261,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data: str) -> dict | None:
+    def scan(self, barcode_data: str, user, **kwargs) -> dict | None:
         """Perform a generic 'scan' operation on a supplier barcode.
 
         The supplier barcode may provide sufficient information to match against
@@ -297,7 +297,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         for k, v in matches.items():
             if v and hasattr(v, 'pk'):
                 has_match = True
-                data[k] = v.format_matched_response()
+                data[k] = v.format_matched_response(user=user)
 
         if not has_match:
             return None
