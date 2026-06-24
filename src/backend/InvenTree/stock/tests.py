@@ -729,6 +729,13 @@ class StockTest(StockTestBase):
         self.assertEqual(s1.quantity, 60)
         self.assertIsNone(s1.purchase_price)
 
+        merge_entry = s1.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 60.0)
+
         part.stock_items.all().delete()
 
         # Create some stock items with pricing information
