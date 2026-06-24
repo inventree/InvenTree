@@ -13,6 +13,7 @@ import {
   type InstanceRenderInterface,
   RenderInlineModel
 } from './Instance';
+import { StatusRenderer, getStatusCodes } from './StatusRenderer';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -107,6 +108,17 @@ export function RenderStockItem(
   const showLocation: boolean = props.extra?.show_location !== false;
   const location: any = props.instance?.location_detail;
 
+  // Only flag the built-in "Attention needed" and "Damaged" stock statuses (#10769)
+  const statusKey = instance?.status_custom_key ?? instance?.status;
+  const flaggedStatusNames = ['ATTENTION', 'DAMAGED'];
+  const statusCodes = getStatusCodes(ModelType.stockitem);
+  const showStatus =
+    !!statusCodes &&
+    Object.values(statusCodes.values).some(
+      (entry) =>
+        entry.key == statusKey && flaggedStatusNames.includes(entry.name)
+    );
+
   // Form the "secondary" text to display
   const secondary: ReactNode = (
     <Group gap='xs' style={{ paddingLeft: '5px' }}>
@@ -115,6 +127,9 @@ export function RenderStockItem(
       )}
       {instance.batch && (
         <InlineSecondaryBadge title={t`Batch`} text={instance.batch} />
+      )}
+      {showStatus && (
+        <StatusRenderer status={statusKey} type={ModelType.stockitem} />
       )}
     </Group>
   );
