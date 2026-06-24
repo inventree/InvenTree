@@ -38,6 +38,53 @@ test('Dashboard - Basic', async ({ browser }) => {
   await page.getByText('Overdue Sales Orders').waitFor();
   await page.getByText('Overdue Purchase Orders').waitFor();
 
+  // Enter edit mode and verify widgets can be dragged to new positions
+  await page.getByLabel('dashboard-menu').click();
+  await page.getByRole('menuitem', { name: 'Edit Layout' }).click();
+
+  const salesItem = page
+    .locator('.react-grid-item')
+    .filter({ hasText: 'Overdue Sales Orders' });
+  const purchaseItem = page
+    .locator('.react-grid-item')
+    .filter({ hasText: 'Overdue Purchase Orders' });
+
+  const salesBoxBefore = await salesItem.boundingBox();
+  const purchaseBoxBefore = await purchaseItem.boundingBox();
+  expect(salesBoxBefore).not.toBeNull();
+  expect(purchaseBoxBefore).not.toBeNull();
+
+  // Drag the sales widget toward the purchase widget
+  await salesItem.dragTo(purchaseItem);
+  await page.waitForTimeout(500);
+
+  // At least one of the two widgets should have moved
+  const salesBoxAfter = await salesItem.boundingBox();
+  const purchaseBoxAfter = await purchaseItem.boundingBox();
+  const totalDelta =
+    Math.abs((salesBoxAfter?.x ?? 0) - salesBoxBefore!.x) +
+    Math.abs((salesBoxAfter?.y ?? 0) - salesBoxBefore!.y) +
+    Math.abs((purchaseBoxAfter?.x ?? 0) - purchaseBoxBefore!.x) +
+    Math.abs((purchaseBoxAfter?.y ?? 0) - purchaseBoxBefore!.y);
+  expect(totalDelta).toBeGreaterThan(10);
+
+  // Drag the purchase widget to the right of the screen
+  const purchaseBoxMid = await purchaseItem.boundingBox();
+  expect(purchaseBoxMid).not.toBeNull();
+  const pStartX = purchaseBoxMid!.x + purchaseBoxMid!.width / 2;
+  const pStartY = purchaseBoxMid!.y + purchaseBoxMid!.height / 2;
+  await page.mouse.move(pStartX, pStartY);
+  await page.mouse.down();
+  await page.mouse.move(pStartX + 400, pStartY, { steps: 20 });
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+
+  const purchaseBoxRight = await purchaseItem.boundingBox();
+  expect(purchaseBoxRight!.x).toBeGreaterThan(purchaseBoxMid!.x);
+
+  // Accept the layout before the remove step
+  await page.getByLabel('dashboard-accept-layout').click();
+
   // Let's remove one of the widgets
   await page.getByLabel('dashboard-menu').click();
   await page.getByRole('menuitem', { name: 'Remove Widgets' }).click();
