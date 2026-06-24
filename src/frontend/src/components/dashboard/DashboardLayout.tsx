@@ -11,7 +11,11 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
+import {
+  ResponsiveGridLayout,
+  useContainerWidth,
+  verticalCompactor
+} from 'react-grid-layout';
 
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { useShallow } from 'zustand/react/shallow';
@@ -21,8 +25,6 @@ import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
-
-const ReactGridLayout = WidthProvider(Responsive);
 
 export default function DashboardLayout() {
   const user = useUserState();
@@ -129,9 +131,7 @@ export default function DashboardLayout() {
       const _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
-        _layouts[key] = _layouts[key].filter(
-          (item: Layout) => item.i !== widget
-        );
+        _layouts[key] = _layouts[key].filter((item: any) => item.i !== widget);
       });
 
       setLayouts(_layouts);
@@ -142,7 +142,7 @@ export default function DashboardLayout() {
   // When the layout is rendered, ensure that the widget attributes are observed
   const updateLayoutForWidget = useCallback(
     (layout: any[], widgets: any[], overrideSize: boolean) => {
-      return layout.map((item: Layout): Layout => {
+      return layout.map((item: any) => {
         // Find the matching widget
         const widget = widgets.find(
           (widget: DashboardWidgetProps) => widget.label === item.i
@@ -191,7 +191,7 @@ export default function DashboardLayout() {
         const reducedLayouts: any = {};
         // Reduce the layouts to exclude default attributes from the dataset
         Object.keys(newLayouts).forEach((key) => {
-          reducedLayouts[key] = newLayouts[key].map((item: Layout) => {
+          reducedLayouts[key] = newLayouts[key].map((item: any) => {
             return {
               ...item,
               moved: item.moved ? true : undefined,
@@ -316,26 +316,26 @@ export default function DashboardLayout() {
               {showSampleDashboard && (
                 <>
                   <Space h='lg' />
-                  {WidgetGrid(
-                    defaultLayouts,
-                    () => {},
-                    editing,
-                    defaultWidgets,
-                    removing,
-                    () => {}
-                  )}
+                  <WidgetGrid
+                    layouts={defaultLayouts}
+                    onLayoutChange={() => {}}
+                    editing={editing}
+                    widgets={defaultWidgets}
+                    removing={removing}
+                    removeWidget={() => {}}
+                  />
                 </>
               )}
             </>
           ) : (
-            WidgetGrid(
-              layouts,
-              onLayoutChange,
-              editing,
-              widgets,
-              removing,
-              removeWidget
-            )
+            <WidgetGrid
+              layouts={layouts}
+              onLayoutChange={onLayoutChange}
+              editing={editing}
+              widgets={widgets}
+              removing={removing}
+              removeWidget={removeWidget}
+            />
           )}
         </>
       ) : (
@@ -347,28 +347,38 @@ export default function DashboardLayout() {
   );
 }
 
-function WidgetGrid(
-  layouts: {},
-  onLayoutChange: (layout: any, newLayouts: any) => void,
-  editing: boolean,
-  widgets: DashboardWidgetProps[],
-  removing: boolean,
-  removeWidget: (widget: string) => void
-) {
+function WidgetGrid({
+  layouts,
+  onLayoutChange,
+  editing,
+  widgets,
+  removing,
+  removeWidget
+}: {
+  layouts: {};
+  onLayoutChange: (layout: any, newLayouts: any) => void;
+  editing: boolean;
+  widgets: DashboardWidgetProps[];
+  removing: boolean;
+  removeWidget: (widget: string) => void;
+}) {
+  const { width, containerRef } = useContainerWidth();
+
   return (
-    <ReactGridLayout
+    <ResponsiveGridLayout
+      innerRef={containerRef}
+      width={width}
       className='dashboard-layout'
       breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
       cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
       rowHeight={64}
       layouts={layouts}
       onLayoutChange={onLayoutChange}
-      compactType={'vertical'}
-      isDraggable={editing}
-      isResizable={editing}
+      compactor={verticalCompactor}
+      dragConfig={{ enabled: editing }}
+      resizeConfig={{ enabled: editing, handles: ['ne', 'se', 'sw', 'nw'] }}
       margin={[10, 10]}
       containerPadding={[0, 0]}
-      resizeHandles={['ne', 'se', 'sw', 'nw']}
     >
       {widgets.map((item: DashboardWidgetProps) => {
         return DashboardWidget({
@@ -380,6 +390,6 @@ function WidgetGrid(
           }
         });
       })}
-    </ReactGridLayout>
+    </ResponsiveGridLayout>
   );
 }
