@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import F, OuterRef, Q, Subquery, Sum
+from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
 from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -503,7 +503,9 @@ class BuildLineFilter(FilterSet):
         )
 
         queryset = queryset.alias(
-            allocated_quantity=Coalesce(Subquery(allocated_subquery), 0)
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
         )
 
         if str2bool(value):
@@ -542,7 +544,9 @@ class BuildLineFilter(FilterSet):
         )
 
         queryset = queryset.alias(
-            allocated_quantity=Coalesce(Subquery(allocated_subquery), 0)
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
         )
 
         # A query filter construct to determine the total quantity available for this BuildLine,
