@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
@@ -131,6 +132,8 @@ export function ApiFormField({
             fieldName={fieldName}
             endpoint={ApiEndpoints.stock_location_tree}
             childIdentifier='sublocations'
+            model={ModelType.stocklocation}
+            navigate={navigate}
           />
         );
       case 'category':
@@ -141,6 +144,8 @@ export function ApiFormField({
             fieldName={fieldName}
             endpoint={ApiEndpoints.category_tree}
             childIdentifier='subcategories'
+            model={ModelType.partcategory}
+            navigate={navigate}
           />
         );
       case 'related field':
@@ -155,6 +160,8 @@ export function ApiFormField({
               fieldName={fieldName}
               endpoint={ApiEndpoints.stock_location_tree}
               childIdentifier='sublocations'
+              model={ModelType.stocklocation}
+              navigate={navigate}
             />
           );
         } else if (
@@ -167,6 +174,8 @@ export function ApiFormField({
               fieldName={fieldName}
               endpoint={ApiEndpoints.category_tree}
               childIdentifier='subcategories'
+              model={ModelType.partcategory}
+              navigate={navigate}
             />
           );
         } else {
