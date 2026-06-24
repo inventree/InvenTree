@@ -14,6 +14,13 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     """Tests barcode parsing for all suppliers."""
 
     SCAN_URL = reverse('api-barcode-scan')
+    roles = [
+        'stock.view',
+        'stock_location.view',
+        'part.view',
+        'company.view',
+        'order.view',
+    ]
 
     @classmethod
     def setUpTestData(cls):
@@ -175,6 +182,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
 class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
     """Tests barcode scanning to receive a purchase order item."""
+
+    roles = ['stock.view', 'stock_location.view']
 
     def setUp(self):
         """Create supplier part and purchase_order."""
