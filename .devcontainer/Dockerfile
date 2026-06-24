@@ -3,7 +3,7 @@
 # In contrast with the "production" image (which is based on an Alpine image)
 # we use a Debian-based image for the devcontainer
 
-FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm@sha256:e754c29c4e3ffcf6c794c1020e36a0812341d88ec9569a34704b975fa89e8848
+FROM mcr.microsoft.com/devcontainers/python:3.12-trixie@sha256:5440cb68898d190ad6c6e8a4634ce89d0645bea47f9c8beb75612bb8e3983711
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
@@ -25,7 +25,7 @@ RUN chmod +x init.sh
 
 # Install required base packages
 RUN apt update && apt install -y \
-   python3.11-dev python3.11-venv \
+   python3.12-dev python3.12-venv \
    postgresql-client \
    libldap2-dev libsasl2-dev \
    libpango1.0-0 libcairo2 \
