@@ -11,6 +11,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
+import { ApiIcon } from '../../items/ApiIcon';
 
 /**
  * A form field that renders a hierarchical tree selector backed by a tree API endpoint.
@@ -330,6 +331,7 @@ export function TreeField({
                     <IconChevronRight size={14} />
                   ))}
               </span>
+              {raw?.icon && <ApiIcon name={raw.icon} size={14} />}
               <Text size='sm' fw={selected ? 600 : undefined}>
                 {raw?.name ?? String(node.label)}
               </Text>
