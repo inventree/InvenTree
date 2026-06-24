@@ -63,3 +63,9 @@ Currency exchange rates are updated periodically, using the configured currency 
 ## Pricing Settings
 
 Refer to the [global settings](../settings/global.md#pricing-and-currency) documentation for more information on available currency settings.
+
+## Rendering Currencies in Reports
+
+Currency values can be rendered in report templates using the [`render_currency`](../report/helpers.md#render_currency) helper function. This function formats a currency amount according to a locale, and supports currency conversion within the template.
+
+See the [report helpers documentation](../report/helpers.md#currency-formatting) for full details and examples.

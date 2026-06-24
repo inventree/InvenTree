@@ -1,6 +1,7 @@
 """Custom template tags for report generation."""
 
 import base64
+import copy
 import logging
 import mimetypes
 from datetime import date, datetime
@@ -11,14 +12,22 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
+from django.utils import translation
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from babel import Locale
+from babel.core import UnknownLocaleError
+from babel.dates import format_date as babel_format_date
+from babel.dates import format_datetime as babel_format_datetime
+from babel.numbers import format_decimal as babel_format_decimal
+from babel.numbers import parse_pattern
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -38,6 +47,22 @@ register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+def get_locale(locale: Optional[str] = None) -> Locale:
+    """Resolve and return a babel Locale.
+
+    Args:
+        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
+
+    Raises:
+        ValidationError: If the locale string is invalid.
+    """
+    language = locale or settings.LANGUAGE_CODE
+    try:
+        return Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale '{language}' - {e}")
 
 
 @register.simple_tag()
@@ -772,9 +797,98 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 
 
 @register.simple_tag
-def render_currency(money, **kwargs):
-    """Render a currency / Money object."""
-    return InvenTree.helpers_model.render_currency(money, **kwargs)
+def render_currency(
+    money: Money | str | int | float | Decimal,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
+    leading: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
+) -> str:
+    """Render a currency / Money object to a formatted string.
+
+    Arguments:
+        money: The Money instance to be rendered
+        currency: Optionally convert to the specified currency before rendering
+        multiplier: Optional multiplier to apply to the amount before rendering
+        decimal_places: Minimum (forced) decimal places, e.g. decimal_places=2 gives '.00'. Defaults to the locale/currency standard.
+        max_decimal_places: Maximum decimal places (optional digits beyond decimal_places), e.g. max_decimal_places=4 allows up to 4.
+        include_symbol: If True, include the currency symbol in the output
+        leading: Minimum number of leading digits to render before the decimal point (default = 1)
+        fmt: Optional Babel number pattern string. When provided, takes priority over all other formatting options.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Defaults to server LANGUAGE_CODE.
+    """
+    if money in [None, '']:
+        return '-'
+
+    # If the supplied value is *not* a Money instance, attempt to convert it into one
+    if not isinstance(money, Money):
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(f'render_currency: invalid money value - {money!r}')
+
+    if currency is not None:
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f'render_currency: invalid multiplier value - {multiplier!r}'
+            )
+
+    locale = get_locale(locale)
+
+    # If a custom fmt pattern is applied, that overrides other formatting options
+    if fmt:
+        pattern = parse_pattern(fmt)
+        return pattern.apply(
+            money.amount,
+            locale,
+            currency=money.currency.code if include_symbol else '',
+            currency_digits=False,
+            decimal_quantization=True,
+        )
+
+    pattern = copy.copy(locale.currency_formats['standard'])
+
+    if decimal_places is None or not isinstance(decimal_places, (int, float)):
+        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
+        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
+
+    pattern.frac_prec = (decimal_places, max(decimal_places, max_decimal_places))
+
+    if leading is not None:
+        try:
+            leading = int(leading) or 0
+        except (ValueError, TypeError):
+            leading = 0
+        if leading > 0:
+            min_int, max_int = pattern.int_prec
+            pattern.int_prec = (max(leading, min_int), max(leading, max_int))
+
+    return pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code if include_symbol else '',
+        currency_digits=decimal_places is None and max_decimal_places is None,
+        decimal_quantization=decimal_places is not None
+        or max_decimal_places is not None,
+    )
 
 
 @register.simple_tag
@@ -871,82 +985,109 @@ def render_html_text(text: str, **kwargs):
 @register.simple_tag
 def format_number(
     number: int | float | Decimal,
-    decimal_places: Optional[int] = None,
     multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
-    leading: int = 0,
-    separator: Optional[str] = None,
+    separator: bool = False,
+    leading: Optional[int] = None,
+    decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
 ) -> str:
     """Render a number with optional formatting options.
 
     Arguments:
         number: The number to be formatted
-        decimal_places: Number of decimal places to render
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros (default = 0)
-        separator: Character to use as a thousands separator (default = None)
+        separator: Boolean, whether to include a thousands separator
+        leading: Minimum number of leading digits to render (default = 1)
+        decimal_places: Number of decimal places to render (default = 0)
+        max_decimal_places: Maximum number of decimal places to render (default = 0)
+        separator:
+        fmt: Optional format string for the number - if provided, takes priority over 'decimal_places' and 'leading'
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). When set, babel controls decimal and thousands separators.
     """
     check_nulls('format_number', number)
 
+    # Check that the provided number is valid
     try:
         number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
+    number = float(number)
+
     if multiplier is not None:
-        number *= Decimal(str(multiplier).strip())
+        number *= float(multiplier)
 
     if integer:
-        # Convert to integer
-        number = Decimal(int(number))
+        number = int(number)
 
-    # Normalize the number (remove trailing zeroes)
-    number = number.normalize()
+    # Construct a formatting string for the number, based on the provided options
+    if not fmt:
+        fmt = '###,###,###,###,##0'  # Default format string - this will be modified based on the provided options
 
-    if decimal_places is not None:
-        try:
-            decimal_places = int(decimal_places)
-            number = round(number, decimal_places)
-        except ValueError:
-            pass
+        # The 'leading' option specifies the minimum number of leading digits to render (not including decimal places)
+        if leading is not None:
+            try:
+                leading = int(leading) or 0
+            except (ValueError, TypeError):
+                leading = 0
 
-    # Re-encode, and normalize again
-    # Ensure that the output never uses scientific notation
-    value = Decimal(number)
-    value = (
-        value.quantize(Decimal(1))
-        if value == value.to_integral()
-        else value.normalize()
+            if leading > 1:
+                fmt = fmt[::-1].replace('#', '0', (leading - 1))[::-1]
+
+        if not bool(separator):
+            fmt = fmt.replace(',', '')
+
+        if decimal_places is not None or max_decimal_places is not None:
+            # Account for decimal places, if provided
+
+            try:
+                decimal_places = int(decimal_places) or 0
+            except (ValueError, TypeError):
+                decimal_places = 0
+
+            try:
+                max_decimal_places = int(max_decimal_places) or 0
+            except (ValueError, TypeError):
+                max_decimal_places = 0
+
+            fmt += '.' + '0' * decimal_places
+
+            if max_decimal_places > decimal_places:
+                fmt += '#' * (max_decimal_places - decimal_places)
+        elif not integer:
+            # No decimal places specified, allow any number of decimal places (up to the precision of the Decimal)
+            fmt += '.####################'
+
+    babel_locale = get_locale(locale)
+
+    return babel_format_decimal(
+        number, format=fmt, locale=babel_locale, numbering_system='latn'
     )
-
-    if separator:
-        value = f'{value:,}'
-        value = value.replace(',', separator)
-    else:
-        value = f'{value}'
-
-    if leading is not None:
-        try:
-            leading = int(leading)
-            value = '0' * leading + value
-        except ValueError:
-            pass
-
-    return value
 
 
 @register.simple_tag
 def format_datetime(
-    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+    dt: datetime,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
 ):
     """Format a datetime object for display.
 
     Arguments:
         dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_datetime', dt)
 
@@ -954,18 +1095,27 @@ def format_datetime(
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_datetime(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag
-def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
+def format_date(
+    dt: date,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
+):
     """Format a date object for display.
 
     Arguments:
         dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_date', dt)
 
@@ -976,8 +1126,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_date(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag()

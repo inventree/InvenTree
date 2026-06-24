@@ -7,6 +7,7 @@ import warnings
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
+from sysconfig import get_path
 from typing import Optional
 
 from django.conf import settings
@@ -517,7 +518,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
         return InvenTree.helpers.pui_url('/settings/admin/plugin/')
 
-    # region package info
     @mark_final
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
@@ -527,10 +527,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @mark_final
     def is_editable(cls):
         """Returns if the current part is editable."""
-        from distutils.sysconfig import get_python_lib
-
         pkg_name = cls.__name__.split('.')[0]
-        dist_info = list(Path(get_python_lib()).glob(f'{pkg_name}-*.dist-info'))
+        py_lib = get_path('platlib')
+        dist_info = list(Path(py_lib).glob(f'{pkg_name}-*.dist-info'))
         return bool(len(dist_info) == 1)
 
     @classmethod
