@@ -170,10 +170,11 @@ export function TreeField({
   const onChange = useCallback(
     (val: string | null) => {
       const pk = val ? Number.parseInt(val, 10) : null;
+      const raw = val ? (nodeMap[val] ?? {}) : {};
       field.onChange(pk);
-      definition.onValueChange?.(pk);
+      definition.onValueChange?.(pk, raw);
     },
-    [field, definition]
+    [field, definition, nodeMap]
   );
 
   const selectValue = useMemo(
