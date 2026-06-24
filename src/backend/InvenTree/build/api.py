@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import F, OuterRef, Q, Subquery, Sum
+from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
 from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -494,9 +494,25 @@ class BuildLineFilter(FilterSet):
 
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated."""
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
+        )
+
         if str2bool(value):
-            return queryset.filter(allocated__gte=F('quantity') - F('consumed'))
-        return queryset.filter(allocated__lt=F('quantity') - F('consumed'))
+            return queryset.filter(
+                allocated_quantity__gte=F('quantity') - F('consumed')
+            )
+        return queryset.filter(allocated_quantity__lt=F('quantity') - F('consumed'))
 
     consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
 
@@ -528,7 +544,9 @@ class BuildLineFilter(FilterSet):
         )
 
         queryset = queryset.alias(
-            allocated_quantity=Coalesce(Subquery(allocated_subquery), 0)
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
         )
 
         # A query filter construct to determine the total quantity available for this BuildLine,
