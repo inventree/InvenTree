@@ -282,7 +282,7 @@ def postprocess_print_stats(result, generator, request, public):
     scopes = {}
     for path, details in rlt_dict.items():
         if details['oauth']:
-            for scope in details['oauth']:
+            for scope in list(details['oauth']):
                 if scope not in scopes:
                     scopes[scope] = []
                 scopes[scope].append(path)
@@ -343,7 +343,7 @@ def schema_for_view_output_options(view_class):
     return extended_view
 
 
-def exclude_from_schema(klass: type, alternative_path: str) -> type:
+def exclude_from_schema(klass: type[Any], alternative_path: str) -> type[Any]:
     """Decorator to exclude a view from the OpenAPI schema.
 
     This is used to hide legacy endpoints from the schema, while still retaining them for backwards compatibility.

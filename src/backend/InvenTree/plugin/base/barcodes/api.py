@@ -153,7 +153,9 @@ class BarcodeView(CreateAPIView):
 
         for current_plugin in plugins:
             try:
-                result = current_plugin.scan(barcode)
+                result = current_plugin.scan(barcode, user=request.user, **kwargs)
+            except PermissionDenied as exc:
+                raise exc
             except Exception:
                 log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
@@ -282,7 +284,7 @@ class BarcodeAssign(BarcodeView):
 
         # First check if the provided barcode matches an existing database entry
         if inventree_barcode_plugin:
-            result = inventree_barcode_plugin.scan(barcode)
+            result = inventree_barcode_plugin.scan(barcode, user=request.user, **kwargs)
 
             if result is not None:
                 result['error'] = _('Barcode matches existing item')
@@ -459,7 +461,9 @@ class BarcodePOAllocate(BarcodeView):
                     manufacturer_part=response.get('manufacturerpart', None),
                 )
                 response['success'] = _('Matched supplier part')
-                response['supplierpart'] = supplier_part.format_matched_response()
+                response['supplierpart'] = supplier_part.format_matched_response(
+                    user=request.user
+                )
             except ValidationError as e:
                 response['error'] = str(e)
 
@@ -524,7 +528,7 @@ class BarcodePOReceive(BarcodeView):
             filter(lambda plugin: plugin.name == 'InvenTreeBarcode', plugins)
         )
 
-        if result := internal_barcode_plugin.scan(barcode):
+        if result := internal_barcode_plugin.scan(barcode, user=request.user, **kwargs):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
                 self.log_scan(request, response, False)

@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  python_version: 3.11
+  python_version: 3.12
   node_version: 24
 
 permissions:
@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # pin@v2
+        uses: crowdin/github-action@52aa776766211d83d975df51f3b9c53c2f8ba35f # pin@v2
         with:
           upload_sources: true
           upload_translations: false

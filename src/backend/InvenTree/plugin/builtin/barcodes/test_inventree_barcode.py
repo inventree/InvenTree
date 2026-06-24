@@ -11,6 +11,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     """Tests for the integrated InvenTreeBarcode barcode plugin."""
 
     fixtures = ['category', 'part', 'location', 'stock', 'company', 'supplier_part']
+    roles = ['stock.view', 'stock_location.view', 'part.view']
 
     def setUp(self):
         """Set up the test case."""

@@ -325,7 +325,7 @@ ARG INVENTREE_TAG
 
 # prebuild stage - needs a lot of build dependencies
 # make sure, the alpine and python version matches the version used in the inventree base image
-FROM python:3.11-alpine3.18 as prebuild
+FROM python:3.12-alpine3.18 as prebuild
 
 # Install whatever development dependency is needed (e.g. cups-dev, gcc, the musl-dev build tools and the pip pycups package)
 RUN apk add --no-cache cups-dev gcc musl-dev && \
