@@ -585,15 +585,9 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                # On python 3.12 use new loader method
-                if sys.version_info < (3, 12):
-                    raw_module = _load_source(
-                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                    )
-                else:
-                    raw_module = SourceFileLoader(
-                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                    ).load_module()
+                raw_module = SourceFileLoader(
+                    plugin_dir, str(parent_obj.joinpath('__init__.py'))
+                ).load_module()
             else:
                 raw_module = importlib.import_module(plugin_dir)
 

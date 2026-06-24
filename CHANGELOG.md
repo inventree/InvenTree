@@ -5,7 +5,19 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - YYYY-MM-DD
+## Unreleased - xxxx.xx.xx
+
+### Breaking Changes
+
+- [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
+
+### Added
+
+### Changed
+
+### Removed
+
+## 1.4.0 - 2026-06-24
 
 ### Breaking Changes
 
