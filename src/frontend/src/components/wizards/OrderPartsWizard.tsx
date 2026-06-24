@@ -306,12 +306,17 @@ function SelectPartsStep({
                   placeholder: t`Select supplier part`,
                   required: true,
                   autoFill: true,
+                  autoFillFilters: {
+                    active: true,
+                    primary: true
+                  },
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
                     part: record.part.pk,
+                    ordering: '-primary',
                     active: true,
                     part_detail: true,
                     supplier_detail: true
