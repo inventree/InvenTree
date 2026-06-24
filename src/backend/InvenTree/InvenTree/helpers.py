@@ -5,7 +5,6 @@ import hashlib
 import inspect
 import io
 import json
-import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -295,7 +294,7 @@ def getLogoImage(as_file: bool = False, custom: bool = True, backup: bool = True
     return None
 
 
-def getSplashScreen(custom=True):
+def getSplashScreen(custom: bool = True):
     """Return the InvenTree splash screen, or a custom splash if available."""
     static_storage = StaticFilesStorage()
 
@@ -314,24 +313,6 @@ def getCustomOption(reference: str):
         reference: Reference key for the custom option
     """
     return settings.CUSTOMIZE.get(reference, None)
-
-
-def TestIfImageURL(url):
-    """Test if an image URL (or filename) looks like a valid image format.
-
-    Simply tests the extension against a set of allowed values
-    """
-    return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg',
-        '.jpeg',
-        '.j2k',
-        '.png',
-        '.bmp',
-        '.tif',
-        '.tiff',
-        '.webp',
-        '.gif',
-    ]
 
 
 def str2bool(text, test=True) -> bool:
