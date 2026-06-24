@@ -117,8 +117,7 @@ def plugins_file_hash():
 
     try:
         with pf.open('rb') as f:
-            # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
-            return hashlib.sha256(f.read()).hexdigest()
+            return hashlib.file_digest(f, 'sha256').hexdigest()
     except Exception:
         log_error('plugins_file_hash', scope='plugins')
         return None

@@ -14,8 +14,9 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
-from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
+from part.models import Part
 from part.test_api import PartImageTestMixin
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
@@ -184,7 +185,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.part_image(None)
 
         obj = Part.objects.create(name='test', description='test')
@@ -359,26 +360,60 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         for x in ['10.000000', '  10  ', 10.000000, 10]:
             self.assertEqual(fn(x), '10')
 
+        # Test with various formatting options
         self.assertEqual(fn(1234), '1234')
         self.assertEqual(fn(1234.5678, decimal_places=0), '1235')
+        self.assertEqual(fn(1234.5678, decimal_places=0, separator=True), '1,235')
         self.assertEqual(fn(1234.5678, decimal_places=1), '1234.6')
         self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
-        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
-        self.assertEqual(fn(-9999.5678, decimal_places=2, separator=','), '-9,999.57')
         self.assertEqual(
-            fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
+            fn(1234.5678, decimal_places=2, max_decimal_places=10), '1234.5678'
         )
+        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
+        self.assertEqual(fn(-9999.5678, decimal_places=2, locale='fr-fr'), '-9999,57')
+        self.assertEqual(
+            fn(-9999.5678, decimal_places=2, locale='fr-fr', separator=True),
+            '-9\u202f999,57',
+        )
+        self.assertEqual(
+            fn(9988776655.4321, integer=True, locale='de-de', separator=True),
+            '9.988.776.655',
+        )
+
+        # Test with 'leading' option
+        self.assertEqual(fn(5, leading=3), '005')
+        self.assertEqual(fn(123, leading=5), '00123')
+        self.assertEqual(fn(1234, leading=2, decimal_places=4), '1234.0000')
+
+        # Test with custom 'fmt' format string (takes priority over decimal_places / separator)
+        self.assertEqual(fn(1234.5678, fmt='0.00'), '1234.57')
+        self.assertEqual(fn(1234.5678, fmt='#,##0.00'), '1,234.57')
+        self.assertEqual(fn(1234.5678, fmt='0.00', locale='de-de'), '1234,57')
+        self.assertEqual(fn(1234.5678, fmt='#,##0.00', locale='de-de'), '1.234,57')
+        # fmt bypasses decimal_places and separator options
+        self.assertEqual(
+            fn(1234.5678, fmt='0.00', decimal_places=4, separator=True), '1234.57'
+        )
+        # integer conversion still applies before fmt is used
+        self.assertEqual(
+            fn(9988776655.4321, fmt='#,##0', integer=True), '9,988,776,655'
+        )
+        # multiplier is applied before fmt is used
+        self.assertEqual(fn(100, fmt='0.00', multiplier=1.5), '150.00')
 
         # Test with multiplier
         self.assertEqual(fn(1000, multiplier=1.5), '1500')
 
         # Failure cases
         self.assertEqual(fn('abc'), 'abc')
-        self.assertEqual(fn(1234.456, decimal_places='a'), '1234.456')
+        self.assertEqual(fn(1234.456, decimal_places='a'), '1234')
+        self.assertEqual(
+            fn(1234.456, decimal_places='a', separator=True, locale='en-au'), '1,234'
+        )
         self.assertEqual(fn(1234.456, leading='a'), '1234.456')
 
     @override_settings(TIME_ZONE='America/New_York')
-    def test_date_tags(self):
+    def test_datetime_tags(self):
         """Test for date formatting tags.
 
         - Source timezone is Australia/Sydney
@@ -394,18 +429,20 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             tzinfo=ZoneInfo('Australia/Sydney'),
         )
 
-        # Format a set of tests: timezone, format, expected
+        # Format a set of tests: timezone, format, locale, expected
         tests = [
-            (None, None, '2024-03-12T21:30:00-04:00'),
-            (None, '%d-%m-%y', '12-03-24'),
-            ('UTC', None, '2024-03-13T01:30:00+00:00'),
-            ('UTC', '%d-%B-%Y', '13-March-2024'),
-            ('Europe/Amsterdam', None, '2024-03-13T02:30:00+01:00'),
-            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 02:30'),
+            (None, None, 'en-us', 'Mar 12, 2024, 9:30:00 PM'),  # noqa: RUF001
+            (None, '%d-%m-%y', 'en-us', '12-03-24'),
+            ('UTC', None, 'en-us', 'Mar 13, 2024, 1:30:00 AM'),  # noqa: RUF001
+            ('UTC', '%d-%B-%Y', 'en-us', '13-March-2024'),
+            ('Europe/Amsterdam', None, 'de-de', '13.03.2024, 02:30:00'),
+            ('Europe/Amsterdam', '%y-%m-%d %H:%M', 'de-de', '24-03-13 02:30'),
         ]
 
-        for tz, fmt, expected in tests:
-            result = report_tags.format_datetime(time, tz, fmt)
+        for tz, fmt, locale, expected in tests:
+            result = report_tags.format_datetime(
+                time, timezone=tz, fmt=fmt, locale=locale
+            )
             self.assertEqual(result, expected)
 
     def test_icon(self):
@@ -502,11 +539,11 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.parameter(part, 'Template 1'), parameter)
 
         # Test with a null part
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(None, 'name')
 
         # Test with an invalid model type
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.parameter(parameter, 'name')
 
     def test_render_currency(self):
@@ -519,21 +556,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.render_currency(m, decimal_places=3), '$1,234.560')
         self.assertEqual(
             report_tags.render_currency(
-                Money(1234, 'USD'), currency='EUR', min_decimal_places=3
+                Money(1234, 'USD'), currency='EUR', decimal_places=3
             ),
             '$1,234.000',
         )
+
+        set_global_setting('PRICING_DECIMAL_PLACES_MIN', 2)
+
         self.assertEqual(
             report_tags.render_currency(
                 Money(1234, 'USD'), currency='EUR', max_decimal_places=1
             ),
-            '$1,234.0',
+            '$1,234.00',
         )
 
         # Test with non-currency values
         self.assertEqual(
-            report_tags.render_currency(1234.45, currency='USD', decimal_places=2),
-            '$1,234.45',
+            report_tags.render_currency(1234.45, currency='USD', decimal_places=5),
+            '$1,234.45000',
         )
 
         # Test with an invalid amount
@@ -544,8 +584,100 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.render_currency(m, multiplier='quork')
 
         self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
-        self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
+
+        # Test locale override — different locales render USD differently
+        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
+        self.assertEqual(report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56')
+        self.assertEqual(report_tags.render_currency(m, locale='en-au'), 'USD1,234.56')
+
+        # Test with custom fmt pattern
+        # Pattern without currency placeholder — no symbol in output
+        self.assertEqual(report_tags.render_currency(m, fmt='#,##0.00'), '1,234.56')
+        # Pattern with currency placeholder — symbol rendered per locale
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='¤#,##0.0000', locale='en-us'),
+            '$1,234.5600',
+        )
+        # fmt + locale: de-de uses dot thousands, comma decimal
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='#,##0.00', locale='de-de'), '1.234,56'
+        )
+        # fmt takes priority over decimal_places
+        self.assertEqual(
+            report_tags.render_currency(m, fmt='0.0000', decimal_places=2), '1234.5600'
+        )
+
+        # Test leading digits
+        m_small = Money(1.23, 'USD')
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=4, locale='en-us'), '$0,001.23'
+        )
+        # leading=1 is the default — no change
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=1, locale='en-us'), '$1.23'
+        )
+        # invalid leading falls back gracefully
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading='x', locale='en-us'), '$1.23'
+        )
+        # fmt takes priority over leading
+        self.assertEqual(
+            report_tags.render_currency(m_small, leading=6, fmt='#,##0.00'), '1.23'
+        )
+
+        # Test include_symbol
+        # Default (True) — symbol present
+        self.assertEqual(report_tags.render_currency(m, locale='en-us'), '$1,234.56')
+        # Explicit False — symbol suppressed
+        self.assertEqual(
+            report_tags.render_currency(m, include_symbol=False, locale='en-us'),
+            '1,234.56',
+        )
+        # include_symbol=False with fmt containing ¤ — ¤ renders as empty string
+        self.assertEqual(
+            report_tags.render_currency(
+                m, include_symbol=False, fmt='¤#,##0.00', locale='en-us'
+            ),
+            '1,234.56',
+        )
+        # include_symbol=False with fmt lacking ¤ — no symbol either way
+        self.assertEqual(
+            report_tags.render_currency(
+                m, include_symbol=False, fmt='#,##0.00', locale='en-us'
+            ),
+            '1,234.56',
+        )
+
+    def test_render_currency_locale_override(self):
+        """Explicit locale= kwarg takes priority over global setting and system locale."""
+        m = Money(1234.56, 'USD')
+
+        # Explicit locale overrides system LANGUAGE_CODE
+        with override_settings(LANGUAGE_CODE='en-au'):
+            self.assertEqual(
+                report_tags.render_currency(m, locale='en-us'), '$1,234.56'
+            )
+            self.assertEqual(
+                report_tags.render_currency(m, locale='en-gb'), 'US$1,234.56'
+            )
+
+        # Invalid locale raises ValidationError regardless of other settings
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency(m, locale='xx-zz')
+
+    def test_render_currency_system_locale(self):
+        """render_currency uses system LANGUAGE_CODE when no explicit locale= is passed."""
+        m = Money(1234.56, 'USD')
+
+        with override_settings(LANGUAGE_CODE='en-us'):
+            self.assertEqual(report_tags.render_currency(m), '$1,234.56')
+
+        with override_settings(LANGUAGE_CODE='en-gb'):
+            self.assertEqual(report_tags.render_currency(m), 'US$1,234.56')
+
+        with override_settings(LANGUAGE_CODE='en-au'):
+            self.assertEqual(report_tags.render_currency(m), 'USD1,234.56')
 
     def test_create_currency(self):
         """Test the create_currency template tag."""
@@ -618,14 +750,94 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_format_date(self):
         """Test the format_date template tag."""
-        # Test with a valid date
-        date = timezone.datetime(year=2024, month=3, day=13)
-        self.assertEqual(report_tags.format_date(date), '2024-03-13')
-        self.assertEqual(report_tags.format_date(date, fmt='%d-%m-%y'), '13-03-24')
+        dt = timezone.datetime(year=2024, month=3, day=13)
+        self.assertEqual(report_tags.format_date(dt, locale='de-de'), '13.03.2024')
+        self.assertEqual(report_tags.format_date(dt, locale='en-us'), 'Mar 13, 2024')
+        self.assertEqual(report_tags.format_date(dt, locale='en-au'), '13 Mar 2024')
+        self.assertEqual(report_tags.format_date(dt, locale='fr-fr'), '13 mars 2024')
+        self.assertEqual(report_tags.format_date(dt, fmt='%d-%m-%y'), '13-03-24')
 
         # Test with an invalid date
         self.assertEqual(report_tags.format_date('abc'), 'abc')
-        self.assertEqual(report_tags.format_date(date, fmt='a'), 'a')
+        self.assertEqual(report_tags.format_date(dt, fmt='a'), 'a')
+
+        # Explicit fmt always wins over locale
+        self.assertEqual(
+            report_tags.format_date(dt, fmt='%Y-%m-%d', locale='de-de'), '2024-03-13'
+        )
+
+        # Falls back to LANGUAGE_CODE when no locale= arg
+        with override_settings(LANGUAGE_CODE='en-us'):
+            self.assertEqual(report_tags.format_date(dt), 'Mar 13, 2024')
+
+        # date_format controls the Babel style
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='short'), '3/13/24'
+        )
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='long'),
+            'March 13, 2024',
+        )
+        self.assertEqual(
+            report_tags.format_date(dt, locale='en-us', date_format='full'),
+            'Wednesday, March 13, 2024',
+        )
+
+        # fmt= wins over date_format=
+        self.assertEqual(
+            report_tags.format_date(dt, fmt='%Y', locale='en-us', date_format='full'),
+            '2024',
+        )
+
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.format_date(dt, locale='xx-zz')
+
+    def test_format_datetime(self):
+        """Test that format_datetime renders locale-aware output."""
+        from zoneinfo import ZoneInfo
+
+        dt = timezone.datetime(2026, 6, 19, 15, 30, 0, tzinfo=ZoneInfo('UTC'))
+
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='en-us'),
+            'Jun 19, 2026, 3:30:00 PM',  # noqa: RUF001
+        )
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de'), '19.06.2026, 15:30:00'
+        )
+
+        # Explicit fmt still wins
+        self.assertEqual(
+            report_tags.format_datetime(dt, fmt='%Y-%m-%d', locale='de-de'),
+            '2026-06-19',
+        )
+
+        # Falls back to LANGUAGE_CODE when no locale= arg
+        with override_settings(LANGUAGE_CODE='de-de'):
+            self.assertEqual(report_tags.format_datetime(dt), '19.06.2026, 15:30:00')
+
+        # date_format controls the Babel style
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de', date_format='short'),
+            '19.06.26, 15:30',
+        )
+        self.assertEqual(
+            report_tags.format_datetime(dt, locale='de-de', date_format='long'),
+            '19. Juni 2026, 15:30:00 UTC',  # codespell:ignore "Juni"
+        )
+
+        # fmt= wins over date_format=
+        self.assertEqual(
+            report_tags.format_datetime(
+                dt, fmt='%H:%M', locale='en-us', date_format='full'
+            ),
+            '15:30',
+        )
+
+        # Invalid locale raises ValidationError
+        with self.assertRaises(ValidationError):
+            report_tags.format_datetime(dt, locale='xx-zz')
 
 
 class BarcodeTagTest(TestCase):
@@ -644,7 +856,7 @@ class BarcodeTagTest(TestCase):
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.barcode('')
 
     def test_qrcode(self):
@@ -664,7 +876,7 @@ class BarcodeTagTest(TestCase):
         self.assertEqual(len(qrcode), 309720)
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.qrcode('')
 
     def test_clean_barcode(self):
@@ -695,7 +907,7 @@ class BarcodeTagTest(TestCase):
         )
 
         # Test empty tag
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             barcode_tags.datamatrix('')
 
         # Failure cases with wrong args

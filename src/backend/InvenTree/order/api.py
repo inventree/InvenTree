@@ -103,9 +103,7 @@ class OrderCreateMixin:
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
+        serializer.save(created_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(

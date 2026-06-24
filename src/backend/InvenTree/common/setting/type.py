@@ -1,19 +1,7 @@
 """Types for settings."""
 
-import sys
 from collections.abc import Callable
-from typing import Any, TypedDict
-
-if sys.version_info >= (3, 11):
-    from typing import NotRequired  # pragma: no cover
-else:
-
-    class NotRequired:  # pragma: no cover
-        """NotRequired type helper is only supported with Python 3.11+."""
-
-        def __class_getitem__(cls, item):
-            """Return the item."""
-            return item
+from typing import Any, NotRequired, TypedDict
 
 
 class SettingsKeyType(TypedDict, total=False):
