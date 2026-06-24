@@ -307,7 +307,7 @@ class InfoView(APIView):
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
             'customize': {
-                'logo': helpers.getLogoImage(),
+                'logo': helpers.getLogoImage(backup=False),
                 'splash': helpers.getSplashScreen(),
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),

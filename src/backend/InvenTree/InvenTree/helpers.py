@@ -262,8 +262,14 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
+def getLogoImage(as_file: bool = False, custom: bool = True, backup: bool = True):
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: Return a file path instead of a URL (default = False)
+        custom: Use a custom logo if available (default = True)
+        backup: Use a backup logo if available (default = True)
+    """
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
@@ -279,11 +285,14 @@ def getLogoImage(as_file=False, custom=True):
                 return f'file://{storage.path(settings.CUSTOM_LOGO)}'
             return storage.url(settings.CUSTOM_LOGO)
 
-    # If we have got to this point, return the default logo
-    if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
-    return getStaticUrl('img/inventree.png')
+    # If we have got to this point, return the default logo (if requested)
+    if backup:
+        if as_file:
+            path = settings.STATIC_ROOT.joinpath('img/inventree.png')
+            return f'file://{path}'
+        return getStaticUrl('img/inventree.png')
+
+    return None
 
 
 def getSplashScreen(custom=True):
