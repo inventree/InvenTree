@@ -113,6 +113,9 @@ invalid-return-type="ignore"  # 44 ##
 invalid-argument-type="ignore"  # 49
 no-matching-overload="ignore"  # 10  # need to wait for betterdjango field stubs
 
+# warn about unused ignore comments
+unused-ignore-comment = "error"
+
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"
