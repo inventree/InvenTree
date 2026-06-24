@@ -146,7 +146,7 @@ export function ApiFormField({
       case 'related field':
         // Redirect location or category fields to the appropriate tree field
         if (
-          fieldDefinition.api_url == apiUrl(ApiEndpoints.stock_location_list)
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.stock_location_list)
         ) {
           return (
             <TreeField
@@ -158,7 +158,7 @@ export function ApiFormField({
             />
           );
         } else if (
-          fieldDefinition.api_url == apiUrl(ApiEndpoints.category_list)
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.category_list)
         ) {
           return (
             <TreeField

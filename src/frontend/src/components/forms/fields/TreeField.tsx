@@ -57,10 +57,15 @@ export function TreeField({
   const [nodes, setNodes] = useState<any[]>([]);
 
   const query = useQuery({
+    enabled:
+      !definition.disabled &&
+      !definition.hidden &&
+      (isDropdownOpen || selectedValue != null),
     queryKey: [
       'tree-field',
       fieldName,
       endpoint,
+      isDropdownOpen,
       debouncedSearch,
       selectedValue
     ],
@@ -73,9 +78,10 @@ export function TreeField({
             search: debouncedSearch || undefined,
             // Include the selected node and its ancestors in the initial response
             // so the node label is available before the user interacts with the field.
-            expand_to:
-              !debouncedSearch && !!selectedValue ? selectedValue : undefined,
-            max_level: !debouncedSearch && !!selectedValue ? 0 : undefined
+            max_level: debouncedSearch ? undefined : 0,
+            expand_to: debouncedSearch
+              ? undefined
+              : (selectedValue ?? undefined)
           }
         })
         .then((res) => res.data ?? [])
@@ -162,7 +168,7 @@ export function TreeField({
 
   const onChange = useCallback(
     (val: string | null) => {
-      const pk = val ? Number.parseInt(val) : null;
+      const pk = val ? Number.parseInt(val, 10) : null;
       field.onChange(pk);
       definition.onValueChange?.(pk);
     },
@@ -244,6 +250,7 @@ export function TreeField({
   return (
     <TreeSelect
       data={treeData}
+      aria-label={`tree-field-${fieldName}`}
       value={selectValue}
       searchValue={inputSearchValue}
       onChange={onChange}
@@ -296,8 +303,6 @@ export function TreeField({
                   flexShrink: 0,
                   cursor: hasChildren ? 'pointer' : 'default'
                 }}
-                role={hasChildren ? 'button' : undefined}
-                tabIndex={hasChildren ? -1 : undefined}
                 aria-label={expanded ? t`Collapse` : t`Expand`}
                 onClick={
                   hasChildren
