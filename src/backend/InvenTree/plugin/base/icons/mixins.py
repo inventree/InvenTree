@@ -20,7 +20,7 @@ class IconPackMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.ICON_PACK, True, __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin(PluginMixinEnum.ICON_PACK, True, __class__)
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
@@ -31,5 +31,5 @@ class IconPackMixin:
     def icon_packs(self) -> list[IconPack]:
         """Return a list of custom icon packs."""
         raise MixinNotImplementedError(
-            f"{__class__} is missing the 'icon_packs' method"  # ty:ignore[unresolved-reference]
+            f"{__class__} is missing the 'icon_packs' method"
         )

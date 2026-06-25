@@ -48,7 +48,7 @@ class ValidationMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.VALIDATION, True, __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin(PluginMixinEnum.VALIDATION, True, __class__)
 
     def raise_error(self, message):
         """Raise a ValidationError with the given message."""

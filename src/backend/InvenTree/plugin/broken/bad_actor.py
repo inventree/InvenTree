@@ -11,7 +11,7 @@ class BadActorPlugin(InvenTreePlugin):
     def __init__(self, *args, **kwargs):
         """Initialize the plugin."""
         super().__init__(*args, **kwargs)
-        self.add_mixin('settings', 'has_settings', __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin('settings', 'has_settings', __class__)
 
     def plugin_slug(self) -> str:
         """Return the slug of this plugin."""

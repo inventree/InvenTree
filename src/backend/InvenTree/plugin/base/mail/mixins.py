@@ -36,4 +36,4 @@ class MailMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.MAIL, True, __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin(PluginMixinEnum.MAIL, True, __class__)

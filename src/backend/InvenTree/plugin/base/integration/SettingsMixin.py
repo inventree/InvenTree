@@ -38,7 +38,7 @@ class SettingsMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.SETTINGS, 'has_settings', __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin(PluginMixinEnum.SETTINGS, 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
         self.user_settings = getattr(self, 'USER_SETTINGS', {})
 

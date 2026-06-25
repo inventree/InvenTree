@@ -55,7 +55,7 @@ class ScheduleMixin:
 
         self.scheduled_tasks = []
 
-        self.add_mixin(PluginMixinEnum.SCHEDULE, 'has_scheduled_tasks', __class__)  # ty:ignore[unresolved-reference]
+        self.add_mixin(PluginMixinEnum.SCHEDULE, 'has_scheduled_tasks', __class__)
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
