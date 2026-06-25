@@ -1,15 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 512
+INVENTREE_API_VERSION = 513
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v512 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/11971
+v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
+    - Adds optional "merge" field to each item in the Stock Transfer API endpoint
+    - When merge is enabled, transferred stock is combined into compatible existing stock at the destination
+    - Stock merge tracking entries now include an "added" delta field.
 
 v511 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/12204
     - Adds new filtering options to PartCategoryTree and StockLocationTree API endpoints
