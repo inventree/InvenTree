@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 512
+INVENTREE_API_VERSION = 513
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/12250
+    - Adds "active" field to the ProjectCode model and API endpoints
 
 v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
     - Adds optional "merge" field to each item in the Stock Transfer API endpoint
