@@ -124,7 +124,8 @@ class BarcodeScanResultAdmin(admin.ModelAdmin):
 class ProjectCodeAdmin(admin.ModelAdmin):
     """Admin settings for ProjectCode."""
 
-    list_display = ('code', 'description')
+    list_display = ('code', 'description', 'active')
+    list_filter = ('active',)
 
     search_fields = ('code', 'description')
 

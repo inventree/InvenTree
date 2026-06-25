@@ -512,7 +512,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
-
+    filterset_fields = ['active']
     search_fields = ['code', 'description']
 
 

@@ -5,7 +5,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { t } from '@lingui/core/macro';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -13,6 +12,7 @@ import type {
 import { useApi } from '../contexts/ApiContext';
 import { useGlobalStatusState } from '../states/GlobalStatusState';
 import { useUserState } from '../states/UserState';
+import { ProjectCodeField } from './CommonFields';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {
@@ -20,7 +20,8 @@ export function projectCodeFields(): ApiFormFieldSet {
     description: {},
     responsible: {
       icon: <IconUsers />
-    }
+    },
+    active: {}
   };
 }
 
@@ -90,9 +91,7 @@ export function extraLineItemFields(): ApiFormFieldSet {
     quantity: {},
     price: {},
     price_currency: {},
-    project_code: {
-      description: t`Select project code for this line item`
-    },
+    project_code: ProjectCodeField(),
     notes: {},
     link: {}
   };
