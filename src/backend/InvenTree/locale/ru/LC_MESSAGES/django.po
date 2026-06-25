@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 00:46+0000\n"
-"PO-Revision-Date: 2026-06-24 00:49\n"
+"POT-Creation-Date: 2026-06-24 14:25+0000\n"
+"PO-Revision-Date: 2026-06-24 14:28\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -109,9 +109,9 @@ msgstr "Не верное десятичное значение"
 #: build/serializers.py:549 build/serializers.py:1744 company/models.py:824
 #: order/models.py:2039
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:3063 stock/models.py:3187 stock/serializers.py:749
+#: stock/models.py:3122 stock/models.py:3246 stock/serializers.py:749
 #: stock/serializers.py:925 stock/serializers.py:1067 stock/serializers.py:1451
-#: stock/serializers.py:1540 stock/serializers.py:1739
+#: stock/serializers.py:1540 stock/serializers.py:1748
 msgid "Notes"
 msgstr "Заметки"
 
@@ -550,13 +550,13 @@ msgstr "Статус заказа"
 msgid "Parent Build"
 msgstr "Родительский заказ на производство"
 
-#: build/api.py:87 build/api.py:1024 order/api.py:564 order/api.py:789
+#: build/api.py:87 build/api.py:1042 order/api.py:564 order/api.py:789
 #: order/api.py:1235 order/api.py:1546 order/api.py:1837 order/api.py:2027
 #: stock/api.py:593
 msgid "Include Variants"
 msgstr "Включая варианты"
 
-#: build/api.py:103 build/api.py:477 build/api.py:1038 build/models.py:283
+#: build/api.py:103 build/api.py:477 build/api.py:1056 build/models.py:283
 #: build/serializers.py:1169 build/serializers.py:1345
 #: build/serializers.py:1438 company/models.py:1034 company/serializers.py:426
 #: order/api.py:315 order/api.py:319 order/api.py:946 order/api.py:1248
@@ -692,52 +692,52 @@ msgstr "Невыполненные заказы"
 msgid "Allocated"
 msgstr "Зарезервировано"
 
-#: build/api.py:501 build/models.py:1741 build/serializers.py:1398
+#: build/api.py:517 build/models.py:1741 build/serializers.py:1398
 msgid "Consumed"
 msgstr "Потреблено"
 
-#: build/api.py:510 company/models.py:879 company/serializers.py:403
+#: build/api.py:526 company/models.py:879 company/serializers.py:403
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Доступно"
 
-#: build/api.py:549 build/serializers.py:1483 company/serializers.py:400
+#: build/api.py:567 build/serializers.py:1483 company/serializers.py:400
 #: order/serializers.py:1388 order/serializers.py:2741 part/serializers.py:900
 #: part/serializers.py:1228 part/serializers.py:1811
 msgid "On Order"
 msgstr "В заказе"
 
-#: build/api.py:702
+#: build/api.py:720
 msgid "Build not found"
 msgstr ""
 
-#: build/api.py:1061 build/models.py:120 order/models.py:2249
+#: build/api.py:1079 build/models.py:120 order/models.py:2249
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:94 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Заказ на производство"
 
-#: build/api.py:1075 build/api.py:1079 build/serializers.py:374
+#: build/api.py:1093 build/api.py:1097 build/serializers.py:374
 #: build/serializers.py:487 build/serializers.py:536 build/serializers.py:1219
 #: build/serializers.py:1225 order/api.py:1295 order/api.py:1300
 #: order/api.py:2079 order/api.py:2084 order/serializers.py:886
 #: order/serializers.py:1026 order/serializers.py:2314 part/serializers.py:1387
 #: stock/api.py:1028 stock/serializers.py:112 stock/serializers.py:622
 #: stock/serializers.py:742 stock/serializers.py:920 stock/serializers.py:1533
-#: stock/serializers.py:1768 stock/serializers.py:1872
-#: stock/serializers.py:1921 templates/email/stale_stock_notification.html:18
+#: stock/serializers.py:1777 stock/serializers.py:1881
+#: stock/serializers.py:1972 templates/email/stale_stock_notification.html:18
 #: users/models.py:545
 msgid "Location"
 msgstr "Расположение"
 
-#: build/api.py:1087 part/serializers.py:1412
+#: build/api.py:1105 part/serializers.py:1412
 msgid "Output"
 msgstr "Выход"
 
-#: build/api.py:1089
+#: build/api.py:1107
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Фильтрация по идентификатору исходящей складской позиции. Используйте 'null', чтобы найти несмонтированные элементы сборки."
 
@@ -1830,7 +1830,7 @@ msgstr "Определение"
 msgid "Unit definition"
 msgstr "Определение единицы измерения"
 
-#: common/models.py:1954 common/models.py:2106 stock/models.py:3182
+#: common/models.py:1954 common/models.py:2106 stock/models.py:3241
 #: stock/serializers.py:259
 msgid "Attachment"
 msgstr "Вложения"
@@ -1948,7 +1948,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Логическое состояние, соответствующее пользовательскому состоянию в бизнес-логике"
 
 #: common/models.py:2297 common/models.py:2564 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3174
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3233
 msgid "Value"
 msgstr "Значение"
 
@@ -2283,7 +2283,7 @@ msgid "Response data from the barcode scan"
 msgstr "Данные ответа от сканирования штрихкода"
 
 #: common/models.py:3073 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3168
+#: stock/models.py:3227
 msgid "Result"
 msgstr "Результат"
 
@@ -2673,8 +2673,8 @@ msgstr "Как часто обновлять курс валют (установ
 #: common/setting/system.py:335 common/setting/system.py:344
 #: common/setting/system.py:353 common/setting/system.py:600
 #: common/setting/system.py:628 common/setting/system.py:753
-#: common/setting/system.py:1190 common/setting/system.py:1206
-#: common/setting/system.py:1223
+#: common/setting/system.py:1198 common/setting/system.py:1214
+#: common/setting/system.py:1231
 msgid "days"
 msgstr "дней"
 
@@ -3277,538 +3277,546 @@ msgid "Allow stock items which are not in stock to be transferred between stock 
 msgstr "Разрешить перемещение товаров, которых нет на складе, между складами"
 
 #: common/setting/system.py:797
+msgid "Merge stock with existing stock on transfer by default"
+msgstr ""
+
+#: common/setting/system.py:799
+msgid "Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)"
+msgstr ""
+
+#: common/setting/system.py:805
 msgid "Build Order Reference Pattern"
 msgstr "Паттерн ссылки заказа на производство"
 
-#: common/setting/system.py:798
+#: common/setting/system.py:806
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Поле требуемого паттерна для создания ссылки заказа на производство"
 
-#: common/setting/system.py:803 common/setting/system.py:871
-#: common/setting/system.py:891 common/setting/system.py:941
-#: common/setting/system.py:963
+#: common/setting/system.py:811 common/setting/system.py:879
+#: common/setting/system.py:899 common/setting/system.py:949
+#: common/setting/system.py:971
 msgid "Require Responsible Owner"
 msgstr "Требуется ответственный владелец"
 
-#: common/setting/system.py:804 common/setting/system.py:872
-#: common/setting/system.py:892 common/setting/system.py:942
-#: common/setting/system.py:964
+#: common/setting/system.py:812 common/setting/system.py:880
+#: common/setting/system.py:900 common/setting/system.py:950
+#: common/setting/system.py:972
 msgid "A responsible owner must be assigned to each order"
 msgstr "Ответственный владелец должен быть назначен для каждого заказа"
 
-#: common/setting/system.py:809
+#: common/setting/system.py:817
 msgid "Require Active Part"
 msgstr "Требовать активную деталь"
 
-#: common/setting/system.py:810
+#: common/setting/system.py:818
 msgid "Prevent build order creation for inactive parts"
 msgstr "Запрещать создание заказов на сборку для неактивных деталей"
 
-#: common/setting/system.py:815
+#: common/setting/system.py:823
 msgid "Require Locked Part"
 msgstr "Требовать заблокированную деталь"
 
-#: common/setting/system.py:816
+#: common/setting/system.py:824
 msgid "Prevent build order creation for unlocked parts"
 msgstr "Запрещать создание заказов на сборку для разблокированных деталей"
 
-#: common/setting/system.py:821
+#: common/setting/system.py:829
 msgid "Require Valid BOM"
 msgstr "Требовать валидную спецификацию"
 
-#: common/setting/system.py:822
+#: common/setting/system.py:830
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "Запрещать создание заказов на сборку, пока спецификация не будет подтверждена"
 
-#: common/setting/system.py:827
+#: common/setting/system.py:835
 msgid "Require Closed Child Orders"
 msgstr "Требовать закрытия дочерних заказов"
 
-#: common/setting/system.py:829
+#: common/setting/system.py:837
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "Запрещать завершение заказа на сборку, пока не закрыты все дочерние заказы"
 
-#: common/setting/system.py:835
+#: common/setting/system.py:843
 msgid "External Build Orders"
 msgstr "Сторонний заказ на сборку"
 
-#: common/setting/system.py:836
+#: common/setting/system.py:844
 msgid "Enable external build order functionality"
 msgstr "Включить функциональность сторонних заказов на сборку"
 
-#: common/setting/system.py:841
+#: common/setting/system.py:849
 msgid "Require External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:843
+#: common/setting/system.py:851
 msgid "Require an external build order when ordering assembled parts from an external supplier"
 msgstr ""
 
-#: common/setting/system.py:849
+#: common/setting/system.py:857
 msgid "Block Until Tests Pass"
 msgstr "Блокировать до прохождения тестов"
 
-#: common/setting/system.py:851
+#: common/setting/system.py:859
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "Запретить вывод сборки до тех пор, пока не пройдут все необходимые тесты"
 
-#: common/setting/system.py:857
+#: common/setting/system.py:865
 msgid "Enable Return Orders"
 msgstr "Включить заказы на возврат"
 
-#: common/setting/system.py:858
+#: common/setting/system.py:866
 msgid "Enable return order functionality in the user interface"
 msgstr "Включите функцию заказа на возврат в пользовательском интерфейсе"
 
-#: common/setting/system.py:863
+#: common/setting/system.py:871
 msgid "Return Order Reference Pattern"
 msgstr "Шаблон заказа на возврат товара"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:873
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Необходимый шаблон для создания поля «Возврат заказа»"
 
-#: common/setting/system.py:877
+#: common/setting/system.py:885
 msgid "Edit Completed Return Orders"
 msgstr "Редактировать завершенные возвратные заказы"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:887
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Разрешить редактирование возвращенных заказов после их завершения"
 
-#: common/setting/system.py:885
+#: common/setting/system.py:893
 msgid "Sales Order Reference Pattern"
 msgstr "Шаблон заказа на возврат товара"
 
-#: common/setting/system.py:886
+#: common/setting/system.py:894
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Необходимый шаблон для создания поля «Возврат заказа»"
 
-#: common/setting/system.py:897
+#: common/setting/system.py:905
 msgid "Sales Order Default Shipment"
 msgstr "Отгрузка по умолчанию для заказа на продажу"
 
-#: common/setting/system.py:898
+#: common/setting/system.py:906
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Включить создание отгрузки по умолчанию для заказов на продажу"
 
-#: common/setting/system.py:903
+#: common/setting/system.py:911
 msgid "Edit Completed Sales Orders"
 msgstr "Редактирование завершённых заказов на продажу"
 
-#: common/setting/system.py:905
+#: common/setting/system.py:913
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Разрешить редактирование заказов на продажу после их отправки или завершения"
 
-#: common/setting/system.py:911
+#: common/setting/system.py:919
 msgid "Shipment Requires Checking"
 msgstr "Отгрузка требует проверки"
 
-#: common/setting/system.py:913
+#: common/setting/system.py:921
 msgid "Prevent completion of shipments until items have been checked"
 msgstr "Запрещать завершение отгрузок, пока товары не проверены"
 
-#: common/setting/system.py:919
+#: common/setting/system.py:927
 msgid "Mark Shipped Orders as Complete"
 msgstr "Отмечать отправленные заказы как завершённые"
 
-#: common/setting/system.py:921
+#: common/setting/system.py:929
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "Заказы на продажу, помеченные как отгруженные, будут автоматически завершены, минуя статус 'отгружено'"
 
-#: common/setting/system.py:927
+#: common/setting/system.py:935
 msgid "Enable Transfer Orders"
 msgstr ""
 
-#: common/setting/system.py:928
+#: common/setting/system.py:936
 msgid "Enable transfer order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:933
+#: common/setting/system.py:941
 msgid "Transfer Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:935
+#: common/setting/system.py:943
 msgid "Required pattern for generating Transfer Order reference field"
 msgstr ""
 
-#: common/setting/system.py:947
+#: common/setting/system.py:955
 msgid "Block Incomplete Item Tests"
 msgstr ""
 
-#: common/setting/system.py:949
+#: common/setting/system.py:957
 msgid "Prevent allocation of stock items to sales orders if required item tests are incomplete"
 msgstr ""
 
-#: common/setting/system.py:955
+#: common/setting/system.py:963
 msgid "Purchase Order Reference Pattern"
 msgstr "Шаблон ссылки заказа на закупку"
 
-#: common/setting/system.py:957
+#: common/setting/system.py:965
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Требуемый шаблон для генерации поля ссылки заказа на закупку"
 
-#: common/setting/system.py:969
+#: common/setting/system.py:977
 msgid "Edit Completed Purchase Orders"
 msgstr "Редактировать завершённые заказы на закупку"
 
-#: common/setting/system.py:971
+#: common/setting/system.py:979
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Разрешить редактирование заказов после их отправки или завершения"
 
-#: common/setting/system.py:977
+#: common/setting/system.py:985
 msgid "Convert Currency"
 msgstr "Конвертировать валюту"
 
-#: common/setting/system.py:978
+#: common/setting/system.py:986
 msgid "Convert item value to base currency when receiving stock"
 msgstr "Преобразовывать стоимость товара в базовую валюту при поступлении на склад"
 
-#: common/setting/system.py:983
+#: common/setting/system.py:991
 msgid "Auto Complete Purchase Orders"
 msgstr "Автоматически выполнять заказы на закупку"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:993
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Автоматически отмечать заказы на закупку как завершённые при получении всех позиций"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1000
 msgid "Enable password forgot"
 msgstr "Включить функцию восстановления пароля"
 
-#: common/setting/system.py:993
+#: common/setting/system.py:1001
 msgid "Enable password forgot function on the login pages"
 msgstr "Включить функцию восстановления пароля на странице входа"
 
-#: common/setting/system.py:998
+#: common/setting/system.py:1006
 msgid "Enable registration"
 msgstr "Разрешить регистрацию"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1007
 msgid "Enable self-registration for users on the login pages"
 msgstr "Включить самостоятельную регистрацию пользователей на странице входа"
 
-#: common/setting/system.py:1004
+#: common/setting/system.py:1012
 msgid "Enable SSO"
 msgstr "Включить SSO"
 
-#: common/setting/system.py:1005
+#: common/setting/system.py:1013
 msgid "Enable SSO on the login pages"
 msgstr "Включить SSO на странице входа"
 
-#: common/setting/system.py:1010
+#: common/setting/system.py:1018
 msgid "Enable SSO registration"
 msgstr "Включить регистрацию через SSO"
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1020
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Включить самостоятельную регистрацию пользователей через SSO на странице входа"
 
-#: common/setting/system.py:1018
+#: common/setting/system.py:1026
 msgid "Enable SSO group sync"
 msgstr "Включить синхронизацию групп через SSO"
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1028
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "Включить синхронизацию групп InvenTree с группами, предоставляемыми IdP"
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1034
 msgid "SSO group key"
 msgstr "Ключ группы SSO"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1035
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "Имя атрибута группы, предоставленного провайдером идентификации"
 
-#: common/setting/system.py:1032
+#: common/setting/system.py:1040
 msgid "SSO group map"
 msgstr "Отображение групп SSO"
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1042
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "Отображение от групп SSO к локальным группам InvenTree. Если локальная группа не существует, она будет создана."
 
-#: common/setting/system.py:1040
+#: common/setting/system.py:1048
 msgid "Remove groups outside of SSO"
 msgstr "Удалять группы вне SSO"
 
-#: common/setting/system.py:1042
+#: common/setting/system.py:1050
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "Удалять ли группы, назначенные пользователю, если они не поддерживаются провайдером идентификации. Отключение этой настройки может привести к проблемам безопасности"
 
-#: common/setting/system.py:1048
+#: common/setting/system.py:1056
 msgid "Email required"
 msgstr "Необходимо указать EMail"
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1057
 msgid "Require user to supply mail on signup"
 msgstr "Требовать электронную почту при регистрации"
 
-#: common/setting/system.py:1054
+#: common/setting/system.py:1062
 msgid "Auto-fill SSO users"
 msgstr "Автозаполнение пользователей SSO"
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1063
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Автоматически заполнять данные пользователя из аккаунта SSO"
 
-#: common/setting/system.py:1060
+#: common/setting/system.py:1068
 msgid "Mail twice"
 msgstr "Написать дважды"
 
-#: common/setting/system.py:1061
+#: common/setting/system.py:1069
 msgid "On signup ask users twice for their mail"
 msgstr "При регистрации дважды спрашивать адрес электронной почты"
 
-#: common/setting/system.py:1066
+#: common/setting/system.py:1074
 msgid "Password twice"
 msgstr "Пароль дважды"
 
-#: common/setting/system.py:1067
+#: common/setting/system.py:1075
 msgid "On signup ask users twice for their password"
 msgstr "При регистрации запросить пароль у пользователей дважды"
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1080
 msgid "Allowed domains"
 msgstr "Разрешенные домены"
 
-#: common/setting/system.py:1074
+#: common/setting/system.py:1082
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Ограничить регистрацию определёнными доменами (через запятую, начиная с @)"
 
-#: common/setting/system.py:1080
+#: common/setting/system.py:1088
 msgid "Group on signup"
 msgstr "Группа при новой регистрации"
 
-#: common/setting/system.py:1082
+#: common/setting/system.py:1090
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "Группа, на которую назначаются новые пользователи при регистрации. Если включена синхронизация группы SSO, эта группа задается только в том случае, если ни одна группа не может быть назначена через IdP."
 
-#: common/setting/system.py:1088
+#: common/setting/system.py:1096
 msgid "Enforce MFA"
 msgstr "Принудительное MFA"
 
-#: common/setting/system.py:1089
+#: common/setting/system.py:1097
 msgid "Users must use multifactor security."
 msgstr "Пользователи должны использовать многофакторную безопасность."
 
-#: common/setting/system.py:1094
+#: common/setting/system.py:1102
 msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
 msgstr "Включение этой настройки потребует от всех пользователей настройки многофакторной аутентификации. Все сессии будут отключены немедленно."
 
-#: common/setting/system.py:1099
+#: common/setting/system.py:1107
 msgid "Check plugins on startup"
 msgstr "Проверять плагины при запуске"
 
-#: common/setting/system.py:1101
+#: common/setting/system.py:1109
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Проверять, что все плагины установлены при запуске — включать в контейнерных средах"
 
-#: common/setting/system.py:1108
+#: common/setting/system.py:1116
 msgid "Check for plugin updates"
 msgstr "Проверка обновлений плагинов"
 
-#: common/setting/system.py:1109
+#: common/setting/system.py:1117
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "Включить периодическую проверку обновлений установленных плагинов"
 
-#: common/setting/system.py:1115
+#: common/setting/system.py:1123
 msgid "Enable URL integration"
 msgstr "Включить интеграцию URL"
 
-#: common/setting/system.py:1116
+#: common/setting/system.py:1124
 msgid "Enable plugins to add URL routes"
 msgstr "Разрешить плагинам добавлять маршруты URL"
 
-#: common/setting/system.py:1122
+#: common/setting/system.py:1130
 msgid "Enable navigation integration"
 msgstr "Включить интеграцию навигации"
 
-#: common/setting/system.py:1123
+#: common/setting/system.py:1131
 msgid "Enable plugins to integrate into navigation"
 msgstr "Разрешить плагинам интегрироваться в навигацию"
 
-#: common/setting/system.py:1129
+#: common/setting/system.py:1137
 msgid "Enable app integration"
 msgstr "Включить интеграцию приложений"
 
-#: common/setting/system.py:1130
+#: common/setting/system.py:1138
 msgid "Enable plugins to add apps"
 msgstr "Разрешить плагинам добавлять приложения"
 
-#: common/setting/system.py:1136
+#: common/setting/system.py:1144
 msgid "Enable schedule integration"
 msgstr "Включить интеграцию расписаний"
 
-#: common/setting/system.py:1137
+#: common/setting/system.py:1145
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Разрешить плагинам запускать запланированные задачи"
 
-#: common/setting/system.py:1143
+#: common/setting/system.py:1151
 msgid "Enable event integration"
 msgstr "Включить интеграцию событий"
 
-#: common/setting/system.py:1144
+#: common/setting/system.py:1152
 msgid "Enable plugins to respond to internal events"
 msgstr "Разрешить плагинам реагировать на внутренние события"
 
-#: common/setting/system.py:1150
+#: common/setting/system.py:1158
 msgid "Enable interface integration"
 msgstr "Включить интеграцию интерфейса"
 
-#: common/setting/system.py:1151
+#: common/setting/system.py:1159
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Разрешить плагинам интегрироваться в пользовательский интерфейс"
 
-#: common/setting/system.py:1157
+#: common/setting/system.py:1165
 msgid "Enable mail integration"
 msgstr "Включить интеграцию почты"
 
-#: common/setting/system.py:1158
+#: common/setting/system.py:1166
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr "Разрешить плагинам обрабатывать исходящую и входящую почту"
 
-#: common/setting/system.py:1164
+#: common/setting/system.py:1172
 msgid "Enable project codes"
 msgstr "Включить коды проекта"
 
-#: common/setting/system.py:1165
+#: common/setting/system.py:1173
 msgid "Enable project codes for tracking projects"
 msgstr "Включить коды проекта для отслеживания проектов"
 
-#: common/setting/system.py:1170
+#: common/setting/system.py:1178
 msgid "Enable Stocktake"
 msgstr "Включить инвентаризацию"
 
-#: common/setting/system.py:1172
+#: common/setting/system.py:1180
 msgid "Enable functionality for recording historical stock levels and value"
 msgstr "Включить функцию записи истории уровней и стоимости запасов"
 
-#: common/setting/system.py:1178
+#: common/setting/system.py:1186
 msgid "Exclude External Locations"
 msgstr "Исключить сторонний склад"
 
-#: common/setting/system.py:1180
+#: common/setting/system.py:1188
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Исключить из инвентаризации единицы хранения на внешних складах"
 
-#: common/setting/system.py:1186
+#: common/setting/system.py:1194
 msgid "Automatic Stocktake Period"
 msgstr "Автоматический период инвентаризации"
 
-#: common/setting/system.py:1187
+#: common/setting/system.py:1195
 msgid "Number of days between automatic stocktake recording"
 msgstr "Кол-во дней между автоматических записей инвентаризации"
 
-#: common/setting/system.py:1193
+#: common/setting/system.py:1201
 msgid "Delete Old Stocktake Entries"
 msgstr "Удалять устаревшие записи инвентаризаций"
 
-#: common/setting/system.py:1195
+#: common/setting/system.py:1203
 msgid "Delete stocktake entries older than the specified number of days"
 msgstr "Удалять записи инвентаризаций старше N дней"
 
-#: common/setting/system.py:1201
+#: common/setting/system.py:1209
 msgid "Stocktake Deletion Interval"
 msgstr "Частота удаления записей инвентаризаций"
 
-#: common/setting/system.py:1203
+#: common/setting/system.py:1211
 msgid "Stocktake entries will be deleted after specified number of days"
 msgstr "Записи инвентаризации будут удалены после N дней"
 
-#: common/setting/system.py:1210
+#: common/setting/system.py:1218
 msgid "Delete Old Stock Tracking Entries"
 msgstr "Удалять старые записи истории запасов"
 
-#: common/setting/system.py:1212
+#: common/setting/system.py:1220
 msgid "Delete stock tracking entries older than the specified number of days"
 msgstr "Удалять записи истории запасов старше указанного количества дней"
 
-#: common/setting/system.py:1218
+#: common/setting/system.py:1226
 msgid "Stock Tracking Deletion Interval"
 msgstr "Интервал удаления истории запасов"
 
-#: common/setting/system.py:1220
+#: common/setting/system.py:1228
 msgid "Stock tracking entries will be deleted after specified number of days"
 msgstr "Записи истории запасов будут удалены через указанное количество дней"
 
-#: common/setting/system.py:1227
+#: common/setting/system.py:1235
 msgid "Display Users full names"
 msgstr "Показывать полные имена пользователей"
 
-#: common/setting/system.py:1228
+#: common/setting/system.py:1236
 msgid "Display Users full names instead of usernames"
 msgstr "Отображать полные имена пользователей вместо логинов"
 
-#: common/setting/system.py:1233
+#: common/setting/system.py:1241
 msgid "Display User Profiles"
 msgstr "Отображать профили пользователей"
 
-#: common/setting/system.py:1234
+#: common/setting/system.py:1242
 msgid "Display Users Profiles on their profile page"
 msgstr "Отображать профили пользователей на их странице профиля"
 
-#: common/setting/system.py:1239
+#: common/setting/system.py:1247
 msgid "Week Starts On"
 msgstr ""
 
-#: common/setting/system.py:1240
+#: common/setting/system.py:1248
 msgid "Starting day of the week, for display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1243
+#: common/setting/system.py:1251
 msgid "Sunday"
 msgstr ""
 
-#: common/setting/system.py:1244
+#: common/setting/system.py:1252
 msgid "Monday"
 msgstr ""
 
-#: common/setting/system.py:1245
+#: common/setting/system.py:1253
 msgid "Tuesday"
 msgstr ""
 
-#: common/setting/system.py:1246
+#: common/setting/system.py:1254
 msgid "Wednesday"
 msgstr ""
 
-#: common/setting/system.py:1247
+#: common/setting/system.py:1255
 msgid "Thursday"
 msgstr ""
 
-#: common/setting/system.py:1248
+#: common/setting/system.py:1256
 msgid "Friday"
 msgstr ""
 
-#: common/setting/system.py:1249
+#: common/setting/system.py:1257
 msgid "Saturday"
 msgstr ""
 
-#: common/setting/system.py:1253
+#: common/setting/system.py:1261
 msgid "Calendar Horizon"
 msgstr ""
 
-#: common/setting/system.py:1255
+#: common/setting/system.py:1263
 msgid "Number of months into the future to display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1259
+#: common/setting/system.py:1267
 msgid "months"
 msgstr ""
 
-#: common/setting/system.py:1262
+#: common/setting/system.py:1270
 msgid "Enable Test Station Data"
 msgstr "Добавлять данные об испытательном оборудовании"
 
-#: common/setting/system.py:1263
+#: common/setting/system.py:1271
 msgid "Enable test station data collection for test results"
 msgstr "Добавлять данные об испытательном оборудовании в результаты тестирования"
 
-#: common/setting/system.py:1268
+#: common/setting/system.py:1276
 msgid "Enable Machine Ping"
 msgstr "Включить пинг машин"
 
-#: common/setting/system.py:1270
+#: common/setting/system.py:1278
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr "Включить периодическую задачу пинга зарегистрированных машин для проверки их статуса"
 
@@ -6643,7 +6651,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Общий доступный запас на момент инвентаризации"
 
 #: part/models.py:3548 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3214
+#: stock/models.py:3273
 msgid "Date"
 msgstr "Дата"
 
@@ -8084,77 +8092,77 @@ msgstr "Предоставляет поддержку сканирования �
 msgid "The Supplier which acts as 'TME'"
 msgstr "Поставщик, который представляет 'TME'"
 
-#: plugin/installer.py:240 plugin/installer.py:344 plugin/serializers.py:169
+#: plugin/installer.py:239 plugin/installer.py:343 plugin/serializers.py:169
 #: plugin/serializers.py:275
 msgid "Only superuser accounts can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:243
+#: plugin/installer.py:242
 msgid "Plugin installation is disabled"
 msgstr "Установка плагинов отключена"
 
-#: plugin/installer.py:273
+#: plugin/installer.py:272
 msgid "No package name or URL provided for installation"
 msgstr ""
 
-#: plugin/installer.py:277
+#: plugin/installer.py:276
 msgid "Invalid characters in package name or URL"
 msgstr ""
 
-#: plugin/installer.py:287
+#: plugin/installer.py:286
 msgid "Installed plugin successfully"
 msgstr "Плагин успешно установлен"
 
-#: plugin/installer.py:292
+#: plugin/installer.py:291
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Плагин установлен в {path}"
 
-#: plugin/installer.py:318
+#: plugin/installer.py:317
 msgid "Plugin was not found in registry"
 msgstr "Плагин не найден в реестре"
 
-#: plugin/installer.py:321
+#: plugin/installer.py:320
 msgid "Plugin is not a packaged plugin"
 msgstr "Плагин не является упакованным"
 
-#: plugin/installer.py:324
+#: plugin/installer.py:323
 msgid "Plugin package name not found"
 msgstr "Имя пакета плагина не найдено"
 
-#: plugin/installer.py:327
+#: plugin/installer.py:326
 msgid "Only staff users can administer plugins"
 msgstr "Только пользователи с правами персонала могут управлять плагинами"
 
-#: plugin/installer.py:347
+#: plugin/installer.py:346
 msgid "Plugin uninstalling is disabled"
 msgstr "Удаление плагинов отключено"
 
-#: plugin/installer.py:351
+#: plugin/installer.py:350
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "Плагин нельзя удалить, так как он активен"
 
-#: plugin/installer.py:357
+#: plugin/installer.py:356
 msgid "Plugin cannot be uninstalled as it is mandatory"
 msgstr "Плагин нельзя удалить, так как он обязательный"
 
-#: plugin/installer.py:362
+#: plugin/installer.py:361
 msgid "Plugin cannot be uninstalled as it is a sample plugin"
 msgstr "Плагин нельзя удалить, так как он является образцом"
 
-#: plugin/installer.py:367
+#: plugin/installer.py:366
 msgid "Plugin cannot be uninstalled as it is a built-in plugin"
 msgstr "Плагин нельзя удалить, так как он встроенный"
 
-#: plugin/installer.py:371
+#: plugin/installer.py:370
 msgid "Plugin is not installed"
 msgstr "Плагин не установлен"
 
-#: plugin/installer.py:389
+#: plugin/installer.py:388
 msgid "Plugin installation not found"
 msgstr "Установка плагина не найдена"
 
-#: plugin/installer.py:405
+#: plugin/installer.py:404
 msgid "Uninstalled plugin successfully"
 msgstr "Плагин успешно удалён"
 
@@ -8206,21 +8214,21 @@ msgstr "Пакетный плагин"
 msgid "Plugin"
 msgstr "Плагин"
 
-#: plugin/plugin.py:388
+#: plugin/plugin.py:389
 msgid "No author found"
 msgstr "Автор не найден"
 
-#: plugin/registry.py:786
+#: plugin/registry.py:780
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Плагин '{p}' несовместим с текущей версией InvenTree {v}"
 
-#: plugin/registry.py:789
+#: plugin/registry.py:783
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Плагин требует как минимум версию {v}"
 
-#: plugin/registry.py:791
+#: plugin/registry.py:785
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Плагин требует не более версии {v}"
@@ -9218,7 +9226,7 @@ msgstr "Количество не соответствует серийным н
 msgid "Cannot assign stock to structural location"
 msgstr "Нельзя назначить запас в структурное местоположение"
 
-#: stock/models.py:2141 stock/models.py:3132
+#: stock/models.py:2141 stock/models.py:3191
 msgid "Test template does not exist"
 msgstr "Шаблон теста не существует"
 
@@ -9238,7 +9246,7 @@ msgstr "Складская позиция содержит другие дета
 msgid "Stock item has been assigned to a customer"
 msgstr "Складская позиция была назначена покупателю"
 
-#: stock/models.py:2172 stock/models.py:2358
+#: stock/models.py:2172 stock/models.py:2404
 msgid "Stock item is currently in production"
 msgstr "Складская позиция в производстве"
 
@@ -9262,71 +9270,71 @@ msgstr "Складские позиции должны ссылаться на �
 msgid "Stock status codes must match"
 msgstr "Коды статуса запаса должны совпадать"
 
-#: stock/models.py:2503
+#: stock/models.py:2558
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Складской элемент нельзя переместить, так как он отсутствует на складе"
 
-#: stock/models.py:3014
+#: stock/models.py:3073
 msgid "Stock Item Tracking"
 msgstr "Отслеживание складского элемента"
 
-#: stock/models.py:3064
+#: stock/models.py:3123
 msgid "Entry notes"
 msgstr "Заметки к записи"
 
-#: stock/models.py:3104
+#: stock/models.py:3163
 msgid "Stock Item Test Result"
 msgstr "Результат теста складского элемента"
 
-#: stock/models.py:3135
+#: stock/models.py:3194
 msgid "Value must be provided for this test"
 msgstr "Для этого теста должно быть указано значение"
 
-#: stock/models.py:3139
+#: stock/models.py:3198
 msgid "Attachment must be uploaded for this test"
 msgstr "Для этого теста требуется загрузить вложения"
 
-#: stock/models.py:3144
+#: stock/models.py:3203
 msgid "Invalid value for this test"
 msgstr "Недопустимое значение для этого теста"
 
-#: stock/models.py:3168
+#: stock/models.py:3227
 msgid "Test result"
 msgstr "Результат тестирования"
 
-#: stock/models.py:3175
+#: stock/models.py:3234
 msgid "Test output value"
 msgstr "Результат выполнения теста"
 
-#: stock/models.py:3183 stock/serializers.py:260
+#: stock/models.py:3242 stock/serializers.py:260
 msgid "Test result attachment"
 msgstr "Вложение с результатом теста"
 
-#: stock/models.py:3187
+#: stock/models.py:3246
 msgid "Test notes"
 msgstr "Заметки о тестировании"
 
-#: stock/models.py:3195
+#: stock/models.py:3254
 msgid "Test station"
 msgstr "Испытательное оборудование"
 
-#: stock/models.py:3196
+#: stock/models.py:3255
 msgid "The identifier of the test station where the test was performed"
 msgstr "Идентификатор испытательного оборудования, на котором выполнялось тестирование"
 
-#: stock/models.py:3202
+#: stock/models.py:3261
 msgid "Started"
 msgstr "Запущен"
 
-#: stock/models.py:3203
+#: stock/models.py:3262
 msgid "The timestamp of the test start"
 msgstr "Время начала тестирования"
 
-#: stock/models.py:3209
+#: stock/models.py:3268
 msgid "Finished"
 msgstr "Завершён"
 
-#: stock/models.py:3210
+#: stock/models.py:3269
 msgid "The timestamp of the test finish"
 msgstr "Время окончания тестирования"
 
@@ -9440,8 +9448,8 @@ msgstr "Складской элемент не предоставлен"
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Количество не должно превышать доступный запас ({q})"
 
-#: stock/serializers.py:743 stock/serializers.py:1534 stock/serializers.py:1873
-#: stock/serializers.py:1922
+#: stock/serializers.py:743 stock/serializers.py:1534 stock/serializers.py:1882
+#: stock/serializers.py:1973
 msgid "Destination stock location"
 msgstr "Целевое место хранения"
 
@@ -9565,7 +9573,7 @@ msgstr "Выбранная компания не является покупат
 msgid "Stock assignment notes"
 msgstr "Записи о назначенных запасах"
 
-#: stock/serializers.py:1462 stock/serializers.py:1750
+#: stock/serializers.py:1462 stock/serializers.py:1759
 msgid "A list of stock items must be provided"
 msgstr "Необходимо предоставить список складских позиций"
 
@@ -9613,27 +9621,31 @@ msgstr "Складской элемент уже на складе"
 msgid "Quantity must not be negative"
 msgstr "Количество не должно быть отрицательным"
 
-#: stock/serializers.py:1740
-msgid "Stock transaction notes"
-msgstr "Заметки об изменении склада"
-
-#: stock/serializers.py:1769
-msgid "Set stock location for counted items (optional)"
-msgstr ""
-
-#: stock/serializers.py:1928
+#: stock/serializers.py:1728 stock/serializers.py:1979
 msgid "Merge into existing stock"
 msgstr "Объединить с существующим запасом"
 
-#: stock/serializers.py:1929
+#: stock/serializers.py:1730
+msgid "Merge this item into existing stock at the destination if possible"
+msgstr ""
+
+#: stock/serializers.py:1749
+msgid "Stock transaction notes"
+msgstr "Заметки об изменении склада"
+
+#: stock/serializers.py:1778
+msgid "Set stock location for counted items (optional)"
+msgstr ""
+
+#: stock/serializers.py:1980
 msgid "Merge returned items into existing stock items if possible"
 msgstr "Объединять возвращённые элементы с существующими складскими элементами, если возможно"
 
-#: stock/serializers.py:1972
+#: stock/serializers.py:2023
 msgid "Next Serial Number"
 msgstr "Следующий серийный номер"
 
-#: stock/serializers.py:1978
+#: stock/serializers.py:2029
 msgid "Previous Serial Number"
 msgstr "Предыдущий серийный номер"
 
