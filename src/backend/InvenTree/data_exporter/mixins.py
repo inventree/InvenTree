@@ -99,6 +99,10 @@ class DataExportSerializerMixin:
                 fields.update(self.get_child_fields(name, field))
                 continue
 
+            # Skip 'many' fields (e.g. nested serializers)
+            if getattr(field, 'many', False):
+                continue
+
             fields[name] = field
 
         return fields
