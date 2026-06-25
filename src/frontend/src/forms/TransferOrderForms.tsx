@@ -10,7 +10,7 @@ import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
-import { TagsField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useTransferOrderFields({
   duplicateOrderId
@@ -23,7 +23,7 @@ export function useTransferOrderFields({
     const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
-      project_code: {},
+      project_code: ProjectCodeField(),
       start_date: {
         icon: <IconCalendar />
       },
@@ -91,9 +91,7 @@ export function useTransferOrderLineItemFields({
       },
       reference: {},
       quantity: {},
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
       link: {}

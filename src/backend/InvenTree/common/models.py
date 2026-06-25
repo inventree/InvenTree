@@ -181,6 +181,12 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Project description'),
     )
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this project code active?'),
+    )
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,

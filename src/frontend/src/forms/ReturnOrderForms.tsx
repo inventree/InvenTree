@@ -23,7 +23,7 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
-import { TagsField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useReturnOrderFields({
   duplicateOrderId
@@ -44,7 +44,7 @@ export function useReturnOrderFields({
         }
       },
       customer_reference: {},
-      project_code: {},
+      project_code: ProjectCodeField(),
       order_currency: {},
       start_date: {
         icon: <IconCalendar />
@@ -138,9 +138,7 @@ export function useReturnOrderLineItemFields({
       },
       price: {},
       price_currency: {},
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
       link: {}

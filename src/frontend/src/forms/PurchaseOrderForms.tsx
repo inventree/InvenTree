@@ -20,7 +20,6 @@ import {
   IconHash,
   IconInfoCircle,
   IconLink,
-  IconList,
   IconNotes,
   IconSitemap,
   IconUser,
@@ -57,7 +56,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { TagsField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -191,9 +190,7 @@ export function usePurchaseOrderLineItemFields({
         value: autoPricing,
         onValueChange: setAutoPricing
       },
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {
         icon: <IconCalendar />
       },
@@ -271,9 +268,7 @@ export function usePurchaseOrderFields({
         }
       },
       supplier_reference: {},
-      project_code: {
-        icon: <IconList />
-      },
+      project_code: ProjectCodeField(),
       order_currency: {
         icon: <IconCoins />
       },

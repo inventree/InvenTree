@@ -1752,6 +1752,22 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             str(response.data['code']),
         )
 
+    def test_filter_active(self):
+        """Test that the 'active' field can be filtered via the API."""
+        # Mark one code as inactive
+        code = ProjectCode.objects.first()
+        code.active = False
+        code.save()
+
+        active_count = ProjectCode.objects.filter(active=True).count()
+        inactive_count = ProjectCode.objects.filter(active=False).count()
+
+        response = self.get(self.url, data={'active': True}, expected_code=200)
+        self.assertEqual(len(response.data), active_count)
+
+        response = self.get(self.url, data={'active': False}, expected_code=200)
+        self.assertEqual(len(response.data), inactive_count)
+
     def test_write_access(self):
         """Test that non-staff users have read-only access."""
         # By default user has staff access, can create a new project code
