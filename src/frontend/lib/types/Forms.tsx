@@ -223,6 +223,6 @@ export type StockOperationProps = {
   items?: any[];
   pk?: number;
   filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
+  model: ModelType.stockitem | 'location' | 'category' | ModelType.part;
   refresh: () => void;
 };
