@@ -20,7 +20,8 @@ export function projectCodeFields(): ApiFormFieldSet {
     description: {},
     responsible: {
       icon: <IconUsers />
-    }
+    },
+    active: {}
   };
 }
 
