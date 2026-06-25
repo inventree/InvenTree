@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 00:46+0000\n"
-"PO-Revision-Date: 2026-06-24 00:49\n"
+"POT-Creation-Date: 2026-06-24 14:25+0000\n"
+"PO-Revision-Date: 2026-06-24 14:28\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -109,9 +109,9 @@ msgstr ""
 #: build/serializers.py:549 build/serializers.py:1744 company/models.py:824
 #: order/models.py:2039
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:3063 stock/models.py:3187 stock/serializers.py:749
+#: stock/models.py:3122 stock/models.py:3246 stock/serializers.py:749
 #: stock/serializers.py:925 stock/serializers.py:1067 stock/serializers.py:1451
-#: stock/serializers.py:1540 stock/serializers.py:1739
+#: stock/serializers.py:1540 stock/serializers.py:1748
 msgid "Notes"
 msgstr "Notater"
 
@@ -550,13 +550,13 @@ msgstr "Ordrestatus"
 msgid "Parent Build"
 msgstr "Overordnet produksjon"
 
-#: build/api.py:87 build/api.py:1024 order/api.py:564 order/api.py:789
+#: build/api.py:87 build/api.py:1042 order/api.py:564 order/api.py:789
 #: order/api.py:1235 order/api.py:1546 order/api.py:1837 order/api.py:2027
 #: stock/api.py:593
 msgid "Include Variants"
 msgstr ""
 
-#: build/api.py:103 build/api.py:477 build/api.py:1038 build/models.py:283
+#: build/api.py:103 build/api.py:477 build/api.py:1056 build/models.py:283
 #: build/serializers.py:1169 build/serializers.py:1345
 #: build/serializers.py:1438 company/models.py:1034 company/serializers.py:426
 #: order/api.py:315 order/api.py:319 order/api.py:946 order/api.py:1248
@@ -692,52 +692,52 @@ msgstr ""
 msgid "Allocated"
 msgstr "Tildelt"
 
-#: build/api.py:501 build/models.py:1741 build/serializers.py:1398
+#: build/api.py:517 build/models.py:1741 build/serializers.py:1398
 msgid "Consumed"
 msgstr ""
 
-#: build/api.py:510 company/models.py:879 company/serializers.py:403
+#: build/api.py:526 company/models.py:879 company/serializers.py:403
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Tilgjengelig"
 
-#: build/api.py:549 build/serializers.py:1483 company/serializers.py:400
+#: build/api.py:567 build/serializers.py:1483 company/serializers.py:400
 #: order/serializers.py:1388 order/serializers.py:2741 part/serializers.py:900
 #: part/serializers.py:1228 part/serializers.py:1811
 msgid "On Order"
 msgstr "I bestilling"
 
-#: build/api.py:702
+#: build/api.py:720
 msgid "Build not found"
 msgstr ""
 
-#: build/api.py:1061 build/models.py:120 order/models.py:2249
+#: build/api.py:1079 build/models.py:120 order/models.py:2249
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:94 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Produksjonsordre"
 
-#: build/api.py:1075 build/api.py:1079 build/serializers.py:374
+#: build/api.py:1093 build/api.py:1097 build/serializers.py:374
 #: build/serializers.py:487 build/serializers.py:536 build/serializers.py:1219
 #: build/serializers.py:1225 order/api.py:1295 order/api.py:1300
 #: order/api.py:2079 order/api.py:2084 order/serializers.py:886
 #: order/serializers.py:1026 order/serializers.py:2314 part/serializers.py:1387
 #: stock/api.py:1028 stock/serializers.py:112 stock/serializers.py:622
 #: stock/serializers.py:742 stock/serializers.py:920 stock/serializers.py:1533
-#: stock/serializers.py:1768 stock/serializers.py:1872
-#: stock/serializers.py:1921 templates/email/stale_stock_notification.html:18
+#: stock/serializers.py:1777 stock/serializers.py:1881
+#: stock/serializers.py:1972 templates/email/stale_stock_notification.html:18
 #: users/models.py:545
 msgid "Location"
 msgstr "Plassering"
 
-#: build/api.py:1087 part/serializers.py:1412
+#: build/api.py:1105 part/serializers.py:1412
 msgid "Output"
 msgstr ""
 
-#: build/api.py:1089
+#: build/api.py:1107
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr ""
 
@@ -1830,7 +1830,7 @@ msgstr "Definisjon"
 msgid "Unit definition"
 msgstr "Enhetsdefinisjon"
 
-#: common/models.py:1954 common/models.py:2106 stock/models.py:3182
+#: common/models.py:1954 common/models.py:2106 stock/models.py:3241
 #: stock/serializers.py:259
 msgid "Attachment"
 msgstr "Vedlegg"
@@ -1948,7 +1948,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
 #: common/models.py:2297 common/models.py:2564 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3174
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3233
 msgid "Value"
 msgstr "Verdi"
 
@@ -2283,7 +2283,7 @@ msgid "Response data from the barcode scan"
 msgstr ""
 
 #: common/models.py:3073 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3168
+#: stock/models.py:3227
 msgid "Result"
 msgstr "Resultat"
 
@@ -2673,8 +2673,8 @@ msgstr "Hvor ofte valutakurser skal oppdateres (sett til null for å deaktiverer
 #: common/setting/system.py:335 common/setting/system.py:344
 #: common/setting/system.py:353 common/setting/system.py:600
 #: common/setting/system.py:628 common/setting/system.py:753
-#: common/setting/system.py:1190 common/setting/system.py:1206
-#: common/setting/system.py:1223
+#: common/setting/system.py:1198 common/setting/system.py:1214
+#: common/setting/system.py:1231
 msgid "days"
 msgstr "dager"
 
@@ -3277,538 +3277,546 @@ msgid "Allow stock items which are not in stock to be transferred between stock 
 msgstr ""
 
 #: common/setting/system.py:797
+msgid "Merge stock with existing stock on transfer by default"
+msgstr ""
+
+#: common/setting/system.py:799
+msgid "Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)"
+msgstr ""
+
+#: common/setting/system.py:805
 msgid "Build Order Reference Pattern"
 msgstr "Produksjonsordre-referansemønster"
 
-#: common/setting/system.py:798
+#: common/setting/system.py:806
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Nødvendig mønster for å generere Produksjonsordre-referansefeltet"
 
-#: common/setting/system.py:803 common/setting/system.py:871
-#: common/setting/system.py:891 common/setting/system.py:941
-#: common/setting/system.py:963
+#: common/setting/system.py:811 common/setting/system.py:879
+#: common/setting/system.py:899 common/setting/system.py:949
+#: common/setting/system.py:971
 msgid "Require Responsible Owner"
 msgstr ""
 
-#: common/setting/system.py:804 common/setting/system.py:872
-#: common/setting/system.py:892 common/setting/system.py:942
-#: common/setting/system.py:964
+#: common/setting/system.py:812 common/setting/system.py:880
+#: common/setting/system.py:900 common/setting/system.py:950
+#: common/setting/system.py:972
 msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
-#: common/setting/system.py:809
+#: common/setting/system.py:817
 msgid "Require Active Part"
 msgstr ""
 
-#: common/setting/system.py:810
+#: common/setting/system.py:818
 msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
-#: common/setting/system.py:815
+#: common/setting/system.py:823
 msgid "Require Locked Part"
 msgstr ""
 
-#: common/setting/system.py:816
+#: common/setting/system.py:824
 msgid "Prevent build order creation for unlocked parts"
 msgstr ""
 
-#: common/setting/system.py:821
+#: common/setting/system.py:829
 msgid "Require Valid BOM"
 msgstr ""
 
-#: common/setting/system.py:822
+#: common/setting/system.py:830
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
-#: common/setting/system.py:827
+#: common/setting/system.py:835
 msgid "Require Closed Child Orders"
 msgstr ""
 
-#: common/setting/system.py:829
+#: common/setting/system.py:837
 msgid "Prevent build order completion until all child orders are closed"
 msgstr ""
 
-#: common/setting/system.py:835
+#: common/setting/system.py:843
 msgid "External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:836
+#: common/setting/system.py:844
 msgid "Enable external build order functionality"
 msgstr ""
 
-#: common/setting/system.py:841
+#: common/setting/system.py:849
 msgid "Require External Build Orders"
 msgstr ""
 
-#: common/setting/system.py:843
+#: common/setting/system.py:851
 msgid "Require an external build order when ordering assembled parts from an external supplier"
 msgstr ""
 
-#: common/setting/system.py:849
+#: common/setting/system.py:857
 msgid "Block Until Tests Pass"
 msgstr ""
 
-#: common/setting/system.py:851
+#: common/setting/system.py:859
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr ""
 
-#: common/setting/system.py:857
+#: common/setting/system.py:865
 msgid "Enable Return Orders"
 msgstr "Aktiver returordrer"
 
-#: common/setting/system.py:858
+#: common/setting/system.py:866
 msgid "Enable return order functionality in the user interface"
 msgstr "Aktiver returordrefunksjonalitet i brukergrensesnittet"
 
-#: common/setting/system.py:863
+#: common/setting/system.py:871
 msgid "Return Order Reference Pattern"
 msgstr "Returordre-referansemønster"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:873
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
-#: common/setting/system.py:877
+#: common/setting/system.py:885
 msgid "Edit Completed Return Orders"
 msgstr "Rediger fullførte returordrer"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:887
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Tillat redigering av returordrer etter de er fullført"
 
-#: common/setting/system.py:885
+#: common/setting/system.py:893
 msgid "Sales Order Reference Pattern"
 msgstr "Salgsordre-referansemønster"
 
-#: common/setting/system.py:886
+#: common/setting/system.py:894
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Påkrevd mønster for å generere salgsordrereferansefelt"
 
-#: common/setting/system.py:897
+#: common/setting/system.py:905
 msgid "Sales Order Default Shipment"
 msgstr "Salgsordre standard fraktmetode"
 
-#: common/setting/system.py:898
+#: common/setting/system.py:906
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Aktiver opprettelse av standard forsendelse med salgsordrer"
 
-#: common/setting/system.py:903
+#: common/setting/system.py:911
 msgid "Edit Completed Sales Orders"
 msgstr "Rediger fullførte salgsordrer"
 
-#: common/setting/system.py:905
+#: common/setting/system.py:913
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Tillat redigering av salgsordrer etter de har blitt sendt eller fullført"
 
-#: common/setting/system.py:911
+#: common/setting/system.py:919
 msgid "Shipment Requires Checking"
 msgstr ""
 
-#: common/setting/system.py:913
+#: common/setting/system.py:921
 msgid "Prevent completion of shipments until items have been checked"
 msgstr ""
 
-#: common/setting/system.py:919
+#: common/setting/system.py:927
 msgid "Mark Shipped Orders as Complete"
 msgstr ""
 
-#: common/setting/system.py:921
+#: common/setting/system.py:929
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr ""
 
-#: common/setting/system.py:927
+#: common/setting/system.py:935
 msgid "Enable Transfer Orders"
 msgstr ""
 
-#: common/setting/system.py:928
+#: common/setting/system.py:936
 msgid "Enable transfer order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:933
+#: common/setting/system.py:941
 msgid "Transfer Order Reference Pattern"
 msgstr ""
 
-#: common/setting/system.py:935
+#: common/setting/system.py:943
 msgid "Required pattern for generating Transfer Order reference field"
 msgstr ""
 
-#: common/setting/system.py:947
+#: common/setting/system.py:955
 msgid "Block Incomplete Item Tests"
 msgstr ""
 
-#: common/setting/system.py:949
+#: common/setting/system.py:957
 msgid "Prevent allocation of stock items to sales orders if required item tests are incomplete"
 msgstr ""
 
-#: common/setting/system.py:955
+#: common/setting/system.py:963
 msgid "Purchase Order Reference Pattern"
 msgstr "Referansemønster for innkjøpsordre"
 
-#: common/setting/system.py:957
+#: common/setting/system.py:965
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Obligatorisk mønster for generering av referansefelt for innkjøpsordre"
 
-#: common/setting/system.py:969
+#: common/setting/system.py:977
 msgid "Edit Completed Purchase Orders"
 msgstr "Rediger fullførte innkjøpsordre"
 
-#: common/setting/system.py:971
+#: common/setting/system.py:979
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Tillat redigering av innkjøpsordre etter at de har blitt sendt eller fullført"
 
-#: common/setting/system.py:977
+#: common/setting/system.py:985
 msgid "Convert Currency"
 msgstr ""
 
-#: common/setting/system.py:978
+#: common/setting/system.py:986
 msgid "Convert item value to base currency when receiving stock"
 msgstr ""
 
-#: common/setting/system.py:983
+#: common/setting/system.py:991
 msgid "Auto Complete Purchase Orders"
 msgstr "Autofullfør innkjøpsordrer"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:993
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Automatisk merk innkjøpsordre som fullført når alle ordrelinjer er mottatt"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1000
 msgid "Enable password forgot"
 msgstr "Aktiver passord glemt"
 
-#: common/setting/system.py:993
+#: common/setting/system.py:1001
 msgid "Enable password forgot function on the login pages"
 msgstr "Ativer funskjon for glemt passord på innloggingssidene"
 
-#: common/setting/system.py:998
+#: common/setting/system.py:1006
 msgid "Enable registration"
 msgstr "Aktiver registrering"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1007
 msgid "Enable self-registration for users on the login pages"
 msgstr "Aktiver egenregistrerting for brukerer på påloggingssidene"
 
-#: common/setting/system.py:1004
+#: common/setting/system.py:1012
 msgid "Enable SSO"
 msgstr "Aktiver SSO"
 
-#: common/setting/system.py:1005
+#: common/setting/system.py:1013
 msgid "Enable SSO on the login pages"
 msgstr "Aktiver SSO på innloggingssidene"
 
-#: common/setting/system.py:1010
+#: common/setting/system.py:1018
 msgid "Enable SSO registration"
 msgstr "Aktiver SSO-registrering"
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1020
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Aktiver selvregistrering via SSO for brukere på innloggingssiden"
 
-#: common/setting/system.py:1018
+#: common/setting/system.py:1026
 msgid "Enable SSO group sync"
 msgstr ""
 
-#: common/setting/system.py:1020
+#: common/setting/system.py:1028
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:1026
+#: common/setting/system.py:1034
 msgid "SSO group key"
 msgstr ""
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1035
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr ""
 
-#: common/setting/system.py:1032
+#: common/setting/system.py:1040
 msgid "SSO group map"
 msgstr ""
 
-#: common/setting/system.py:1034
+#: common/setting/system.py:1042
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr ""
 
-#: common/setting/system.py:1040
+#: common/setting/system.py:1048
 msgid "Remove groups outside of SSO"
 msgstr ""
 
-#: common/setting/system.py:1042
+#: common/setting/system.py:1050
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr ""
 
-#: common/setting/system.py:1048
+#: common/setting/system.py:1056
 msgid "Email required"
 msgstr "E-postadresse kreves"
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1057
 msgid "Require user to supply mail on signup"
 msgstr "Krevt at brukere angir e-post ved registrering"
 
-#: common/setting/system.py:1054
+#: common/setting/system.py:1062
 msgid "Auto-fill SSO users"
 msgstr "Auto-utfyll SSO-brukere"
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1063
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Fyll automatisk ut brukeropplysninger fra SSO-kontodata"
 
-#: common/setting/system.py:1060
+#: common/setting/system.py:1068
 msgid "Mail twice"
 msgstr "E-post to ganger"
 
-#: common/setting/system.py:1061
+#: common/setting/system.py:1069
 msgid "On signup ask users twice for their mail"
 msgstr "Spør brukeren om e-post to ganger ved registrering"
 
-#: common/setting/system.py:1066
+#: common/setting/system.py:1074
 msgid "Password twice"
 msgstr "Passord to ganger"
 
-#: common/setting/system.py:1067
+#: common/setting/system.py:1075
 msgid "On signup ask users twice for their password"
 msgstr "Spør brukeren om passord to ganger ved registrering"
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1080
 msgid "Allowed domains"
 msgstr "Tillatte domener"
 
-#: common/setting/system.py:1074
+#: common/setting/system.py:1082
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Begrens registrering til bestemte domener (kommaseparert, begynner med @)"
 
-#: common/setting/system.py:1080
+#: common/setting/system.py:1088
 msgid "Group on signup"
 msgstr "Gruppe ved registrering"
 
-#: common/setting/system.py:1082
+#: common/setting/system.py:1090
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr ""
 
-#: common/setting/system.py:1088
+#: common/setting/system.py:1096
 msgid "Enforce MFA"
 msgstr "Krev MFA"
 
-#: common/setting/system.py:1089
+#: common/setting/system.py:1097
 msgid "Users must use multifactor security."
 msgstr "Brukere må bruke flerfaktorsikkerhet."
 
-#: common/setting/system.py:1094
+#: common/setting/system.py:1102
 msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
 msgstr ""
 
-#: common/setting/system.py:1099
+#: common/setting/system.py:1107
 msgid "Check plugins on startup"
 msgstr "Sjekk utvidelser ved oppstart"
 
-#: common/setting/system.py:1101
+#: common/setting/system.py:1109
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Sjekk at alle utvidelser er installert ved oppstart - aktiver i containermiljøer"
 
-#: common/setting/system.py:1108
+#: common/setting/system.py:1116
 msgid "Check for plugin updates"
 msgstr ""
 
-#: common/setting/system.py:1109
+#: common/setting/system.py:1117
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr ""
 
-#: common/setting/system.py:1115
+#: common/setting/system.py:1123
 msgid "Enable URL integration"
 msgstr "Aktiver URL-integrasjon"
 
-#: common/setting/system.py:1116
+#: common/setting/system.py:1124
 msgid "Enable plugins to add URL routes"
 msgstr "Tillat utvidelser å legge til URL-ruter"
 
-#: common/setting/system.py:1122
+#: common/setting/system.py:1130
 msgid "Enable navigation integration"
 msgstr "Aktiver navigasjonsintegrasjon"
 
-#: common/setting/system.py:1123
+#: common/setting/system.py:1131
 msgid "Enable plugins to integrate into navigation"
 msgstr "Tillat utvidelser å integrere mot navigasjon"
 
-#: common/setting/system.py:1129
+#: common/setting/system.py:1137
 msgid "Enable app integration"
 msgstr "Aktiver app-integrasjon"
 
-#: common/setting/system.py:1130
+#: common/setting/system.py:1138
 msgid "Enable plugins to add apps"
 msgstr "Tillat utvidelser å legge til apper"
 
-#: common/setting/system.py:1136
+#: common/setting/system.py:1144
 msgid "Enable schedule integration"
 msgstr "Aktiver tidsplanintegrasjon"
 
-#: common/setting/system.py:1137
+#: common/setting/system.py:1145
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Tillat utvidelser å kjøre planlagte oppgaver"
 
-#: common/setting/system.py:1143
+#: common/setting/system.py:1151
 msgid "Enable event integration"
 msgstr "Aktiver hendelsesintegrasjon"
 
-#: common/setting/system.py:1144
+#: common/setting/system.py:1152
 msgid "Enable plugins to respond to internal events"
 msgstr "Tillat utvidelser å reagere på interne hendelser"
 
-#: common/setting/system.py:1150
+#: common/setting/system.py:1158
 msgid "Enable interface integration"
 msgstr ""
 
-#: common/setting/system.py:1151
+#: common/setting/system.py:1159
 msgid "Enable plugins to integrate into the user interface"
 msgstr ""
 
-#: common/setting/system.py:1157
+#: common/setting/system.py:1165
 msgid "Enable mail integration"
 msgstr ""
 
-#: common/setting/system.py:1158
+#: common/setting/system.py:1166
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr ""
 
-#: common/setting/system.py:1164
+#: common/setting/system.py:1172
 msgid "Enable project codes"
 msgstr ""
 
-#: common/setting/system.py:1165
+#: common/setting/system.py:1173
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/setting/system.py:1170
+#: common/setting/system.py:1178
 msgid "Enable Stocktake"
 msgstr ""
 
-#: common/setting/system.py:1172
+#: common/setting/system.py:1180
 msgid "Enable functionality for recording historical stock levels and value"
 msgstr ""
 
-#: common/setting/system.py:1178
+#: common/setting/system.py:1186
 msgid "Exclude External Locations"
 msgstr "Ekskluder eksterne plasseringer"
 
-#: common/setting/system.py:1180
+#: common/setting/system.py:1188
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr ""
 
-#: common/setting/system.py:1186
+#: common/setting/system.py:1194
 msgid "Automatic Stocktake Period"
 msgstr "Automatisk varetellingsperiode"
 
-#: common/setting/system.py:1187
+#: common/setting/system.py:1195
 msgid "Number of days between automatic stocktake recording"
 msgstr ""
 
-#: common/setting/system.py:1193
+#: common/setting/system.py:1201
 msgid "Delete Old Stocktake Entries"
 msgstr ""
 
-#: common/setting/system.py:1195
+#: common/setting/system.py:1203
 msgid "Delete stocktake entries older than the specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1201
+#: common/setting/system.py:1209
 msgid "Stocktake Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1203
+#: common/setting/system.py:1211
 msgid "Stocktake entries will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1210
+#: common/setting/system.py:1218
 msgid "Delete Old Stock Tracking Entries"
 msgstr ""
 
-#: common/setting/system.py:1212
+#: common/setting/system.py:1220
 msgid "Delete stock tracking entries older than the specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1218
+#: common/setting/system.py:1226
 msgid "Stock Tracking Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1220
+#: common/setting/system.py:1228
 msgid "Stock tracking entries will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1227
+#: common/setting/system.py:1235
 msgid "Display Users full names"
 msgstr "Vis brukernes fulle navn"
 
-#: common/setting/system.py:1228
+#: common/setting/system.py:1236
 msgid "Display Users full names instead of usernames"
 msgstr "Vis brukernes fulle navn istedet for brukernavn"
 
-#: common/setting/system.py:1233
+#: common/setting/system.py:1241
 msgid "Display User Profiles"
 msgstr ""
 
-#: common/setting/system.py:1234
+#: common/setting/system.py:1242
 msgid "Display Users Profiles on their profile page"
 msgstr ""
 
-#: common/setting/system.py:1239
+#: common/setting/system.py:1247
 msgid "Week Starts On"
 msgstr ""
 
-#: common/setting/system.py:1240
+#: common/setting/system.py:1248
 msgid "Starting day of the week, for display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1243
+#: common/setting/system.py:1251
 msgid "Sunday"
 msgstr ""
 
-#: common/setting/system.py:1244
+#: common/setting/system.py:1252
 msgid "Monday"
 msgstr ""
 
-#: common/setting/system.py:1245
+#: common/setting/system.py:1253
 msgid "Tuesday"
 msgstr ""
 
-#: common/setting/system.py:1246
+#: common/setting/system.py:1254
 msgid "Wednesday"
 msgstr ""
 
-#: common/setting/system.py:1247
+#: common/setting/system.py:1255
 msgid "Thursday"
 msgstr ""
 
-#: common/setting/system.py:1248
+#: common/setting/system.py:1256
 msgid "Friday"
 msgstr ""
 
-#: common/setting/system.py:1249
+#: common/setting/system.py:1257
 msgid "Saturday"
 msgstr ""
 
-#: common/setting/system.py:1253
+#: common/setting/system.py:1261
 msgid "Calendar Horizon"
 msgstr ""
 
-#: common/setting/system.py:1255
+#: common/setting/system.py:1263
 msgid "Number of months into the future to display in calendar views"
 msgstr ""
 
-#: common/setting/system.py:1259
+#: common/setting/system.py:1267
 msgid "months"
 msgstr ""
 
-#: common/setting/system.py:1262
+#: common/setting/system.py:1270
 msgid "Enable Test Station Data"
 msgstr ""
 
-#: common/setting/system.py:1263
+#: common/setting/system.py:1271
 msgid "Enable test station data collection for test results"
 msgstr ""
 
-#: common/setting/system.py:1268
+#: common/setting/system.py:1276
 msgid "Enable Machine Ping"
 msgstr ""
 
-#: common/setting/system.py:1270
+#: common/setting/system.py:1278
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr ""
 
@@ -6643,7 +6651,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Total tilgjengelig lagerbeholdning på tidspunkt for varetelling"
 
 #: part/models.py:3548 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3214
+#: stock/models.py:3273
 msgid "Date"
 msgstr "Dato"
 
@@ -8084,77 +8092,77 @@ msgstr "Gir støtte for å skanne TME-strekkoder"
 msgid "The Supplier which acts as 'TME'"
 msgstr "Leverandøren som fungerer som \"TME\""
 
-#: plugin/installer.py:240 plugin/installer.py:344 plugin/serializers.py:169
+#: plugin/installer.py:239 plugin/installer.py:343 plugin/serializers.py:169
 #: plugin/serializers.py:275
 msgid "Only superuser accounts can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:243
+#: plugin/installer.py:242
 msgid "Plugin installation is disabled"
 msgstr ""
 
-#: plugin/installer.py:273
+#: plugin/installer.py:272
 msgid "No package name or URL provided for installation"
 msgstr ""
 
-#: plugin/installer.py:277
+#: plugin/installer.py:276
 msgid "Invalid characters in package name or URL"
 msgstr ""
 
-#: plugin/installer.py:287
+#: plugin/installer.py:286
 msgid "Installed plugin successfully"
 msgstr "Installasjon av utvidelse vellykket"
 
-#: plugin/installer.py:292
+#: plugin/installer.py:291
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Installerte utvidelsen til {path}"
 
-#: plugin/installer.py:318
+#: plugin/installer.py:317
 msgid "Plugin was not found in registry"
 msgstr ""
 
-#: plugin/installer.py:321
+#: plugin/installer.py:320
 msgid "Plugin is not a packaged plugin"
 msgstr ""
 
-#: plugin/installer.py:324
+#: plugin/installer.py:323
 msgid "Plugin package name not found"
 msgstr ""
 
-#: plugin/installer.py:327
+#: plugin/installer.py:326
 msgid "Only staff users can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:347
+#: plugin/installer.py:346
 msgid "Plugin uninstalling is disabled"
 msgstr ""
 
-#: plugin/installer.py:351
+#: plugin/installer.py:350
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
-#: plugin/installer.py:357
+#: plugin/installer.py:356
 msgid "Plugin cannot be uninstalled as it is mandatory"
 msgstr ""
 
-#: plugin/installer.py:362
+#: plugin/installer.py:361
 msgid "Plugin cannot be uninstalled as it is a sample plugin"
 msgstr ""
 
-#: plugin/installer.py:367
+#: plugin/installer.py:366
 msgid "Plugin cannot be uninstalled as it is a built-in plugin"
 msgstr ""
 
-#: plugin/installer.py:371
+#: plugin/installer.py:370
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:389
+#: plugin/installer.py:388
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:405
+#: plugin/installer.py:404
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
@@ -8206,21 +8214,21 @@ msgstr ""
 msgid "Plugin"
 msgstr "Utvidelse"
 
-#: plugin/plugin.py:388
+#: plugin/plugin.py:389
 msgid "No author found"
 msgstr "Ingen forfatter funnet"
 
-#: plugin/registry.py:786
+#: plugin/registry.py:780
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Utvidensen '{p}' er ikke kompatibel med nåværende InvenTree-versjon {v}"
 
-#: plugin/registry.py:789
+#: plugin/registry.py:783
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Utvidelsen krever minst versjon {v}"
 
-#: plugin/registry.py:791
+#: plugin/registry.py:785
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Utvidelsen krever maks versjon {v}"
@@ -9218,7 +9226,7 @@ msgstr "Antallet stemmer ikke overens med serienumrene"
 msgid "Cannot assign stock to structural location"
 msgstr ""
 
-#: stock/models.py:2141 stock/models.py:3132
+#: stock/models.py:2141 stock/models.py:3191
 msgid "Test template does not exist"
 msgstr ""
 
@@ -9238,7 +9246,7 @@ msgstr "Lagervare inneholder andre artikler"
 msgid "Stock item has been assigned to a customer"
 msgstr "Lagervare har blitt tildelt til en kunde"
 
-#: stock/models.py:2172 stock/models.py:2358
+#: stock/models.py:2172 stock/models.py:2404
 msgid "Stock item is currently in production"
 msgstr "Lagervare er for tiden i produksjon"
 
@@ -9262,71 +9270,71 @@ msgstr "Lagervarer må referere til samme leverandørdel"
 msgid "Stock status codes must match"
 msgstr "Lagerstatuskoder må være like"
 
-#: stock/models.py:2503
+#: stock/models.py:2558
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Lagervare kan ikke flyttes fordi den ikke er på lager"
 
-#: stock/models.py:3014
+#: stock/models.py:3073
 msgid "Stock Item Tracking"
 msgstr ""
 
-#: stock/models.py:3064
+#: stock/models.py:3123
 msgid "Entry notes"
 msgstr "Oppføringsnotater"
 
-#: stock/models.py:3104
+#: stock/models.py:3163
 msgid "Stock Item Test Result"
 msgstr ""
 
-#: stock/models.py:3135
+#: stock/models.py:3194
 msgid "Value must be provided for this test"
 msgstr "Verdi må angis for denne testen"
 
-#: stock/models.py:3139
+#: stock/models.py:3198
 msgid "Attachment must be uploaded for this test"
 msgstr "Vedlegg må lastes opp for denne testen"
 
-#: stock/models.py:3144
+#: stock/models.py:3203
 msgid "Invalid value for this test"
 msgstr ""
 
-#: stock/models.py:3168
+#: stock/models.py:3227
 msgid "Test result"
 msgstr "Testresultat"
 
-#: stock/models.py:3175
+#: stock/models.py:3234
 msgid "Test output value"
 msgstr "Testens verdi"
 
-#: stock/models.py:3183 stock/serializers.py:260
+#: stock/models.py:3242 stock/serializers.py:260
 msgid "Test result attachment"
 msgstr "Vedlegg til testresultat"
 
-#: stock/models.py:3187
+#: stock/models.py:3246
 msgid "Test notes"
 msgstr "Testnotater"
 
-#: stock/models.py:3195
+#: stock/models.py:3254
 msgid "Test station"
 msgstr ""
 
-#: stock/models.py:3196
+#: stock/models.py:3255
 msgid "The identifier of the test station where the test was performed"
 msgstr ""
 
-#: stock/models.py:3202
+#: stock/models.py:3261
 msgid "Started"
 msgstr ""
 
-#: stock/models.py:3203
+#: stock/models.py:3262
 msgid "The timestamp of the test start"
 msgstr ""
 
-#: stock/models.py:3209
+#: stock/models.py:3268
 msgid "Finished"
 msgstr ""
 
-#: stock/models.py:3210
+#: stock/models.py:3269
 msgid "The timestamp of the test finish"
 msgstr ""
 
@@ -9440,8 +9448,8 @@ msgstr ""
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Antall kan ikke overstige tilgjengelig lagerbeholdning ({q})"
 
-#: stock/serializers.py:743 stock/serializers.py:1534 stock/serializers.py:1873
-#: stock/serializers.py:1922
+#: stock/serializers.py:743 stock/serializers.py:1534 stock/serializers.py:1882
+#: stock/serializers.py:1973
 msgid "Destination stock location"
 msgstr "Til Lagerplassering"
 
@@ -9565,7 +9573,7 @@ msgstr "Valgt firma er ikke en kunde"
 msgid "Stock assignment notes"
 msgstr "Lagervare-tildelignsnotater"
 
-#: stock/serializers.py:1462 stock/serializers.py:1750
+#: stock/serializers.py:1462 stock/serializers.py:1759
 msgid "A list of stock items must be provided"
 msgstr "En liste av lagervarer må oppgis"
 
@@ -9613,27 +9621,31 @@ msgstr ""
 msgid "Quantity must not be negative"
 msgstr ""
 
-#: stock/serializers.py:1740
-msgid "Stock transaction notes"
-msgstr "Lager transaksjonsnotater"
-
-#: stock/serializers.py:1769
-msgid "Set stock location for counted items (optional)"
-msgstr ""
-
-#: stock/serializers.py:1928
+#: stock/serializers.py:1728 stock/serializers.py:1979
 msgid "Merge into existing stock"
 msgstr ""
 
-#: stock/serializers.py:1929
+#: stock/serializers.py:1730
+msgid "Merge this item into existing stock at the destination if possible"
+msgstr ""
+
+#: stock/serializers.py:1749
+msgid "Stock transaction notes"
+msgstr "Lager transaksjonsnotater"
+
+#: stock/serializers.py:1778
+msgid "Set stock location for counted items (optional)"
+msgstr ""
+
+#: stock/serializers.py:1980
 msgid "Merge returned items into existing stock items if possible"
 msgstr ""
 
-#: stock/serializers.py:1972
+#: stock/serializers.py:2023
 msgid "Next Serial Number"
 msgstr ""
 
-#: stock/serializers.py:1978
+#: stock/serializers.py:2029
 msgid "Previous Serial Number"
 msgstr ""
 
