@@ -5,7 +5,6 @@ import {
   IconCircleCheck,
   IconInfoCircle,
   IconLink,
-  IconList,
   IconSitemap,
   IconTruckDelivery,
   IconUsersGroup
@@ -36,7 +35,7 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
-import { TagsField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
@@ -93,9 +92,7 @@ export function useBuildOrderFields({
       },
       title: {},
       quantity: {},
-      project_code: {
-        icon: <IconList />
-      },
+      project_code: ProjectCodeField(),
       priority: {},
       parent: {
         icon: <IconSitemap />,
