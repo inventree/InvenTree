@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
+from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -200,7 +201,7 @@ class DataImportSession(models.Model):
             related_field = model_class._meta.get_field(field_name)
             model = related_field.remote_field.model
             return model
-        except (AttributeError, models.FieldDoesNotExist):
+        except (AttributeError, FieldDoesNotExist):
             return None
 
     def extract_columns(self) -> None:
