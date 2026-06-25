@@ -34,6 +34,9 @@
         },
         {
             "pattern": "^https://dev.azure.com"
+        },
+        {
+            "pattern": "^https://itree.example.com/itree-admin/"
         }
     ]
 }
