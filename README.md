@@ -202,6 +202,7 @@ Find a full list of used third-party libraries in the license information dialog
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
   <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
   <a href="https://codspeed.io/inventree/InvenTree?utm_source=badge"><img src="https://img.shields.io/endpoint?url=https://codspeed.io/badge.json" alt="CodSpeed Badge"/></a>
+  <a href="https://flakiness.io/InvenTree/InvenTree"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fflakiness.io%2Fapi%2Fbadge%3Finput%3D%257B%2522badgeToken%2522%253A%2522badge-35mqq5Ht4uL3vGF8lR9P2D%2522%257D" alt="Flakiness Badge"/></a>
 </p>
 
 
