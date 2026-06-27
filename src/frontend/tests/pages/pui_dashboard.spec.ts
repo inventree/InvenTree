@@ -200,18 +200,15 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
     password: user.testcred
   });
 
-  (await api)
-    .patch('user/me/profile/', {
-      data: {
-        widgets: {
-          widgets: ['ovr-so'],
-          layouts: inflated
-        }
+  const resp = await (await api).patch('user/me/profile/', {
+    data: {
+      widgets: {
+        widgets: ['ovr-so'],
+        layouts: inflated
       }
-    })
-    .then((resp) => {
-      expect(resp.status()).toBe(200);
-    });
+    }
+  });
+  expect(resp.status()).toBe(200);
 
   await page.reload();
   await page.getByText('Overdue Sales Orders').waitFor();
