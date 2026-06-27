@@ -42,6 +42,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -661,34 +662,61 @@ function StockOperationsRow({
 
   const callChangeFn = useCallback(
     (identifier: number | string, key: string, value: any) => {
-      props.changeFn(identifier, key, value);
+      queueMicrotask(() => {
+        props.changeFn(identifier, key, value);
+      });
     },
     [props.changeFn]
   );
 
-  const [packagingOpen, packagingHandlers] = useDisclosure(false, {
-    onOpen: () => {
-      if (transfer) {
-        callChangeFn(rowId, 'packaging', record?.packaging || undefined);
-      }
-    },
-    onClose: () => {
-      if (transfer) {
-        callChangeFn(rowId, 'packaging', undefined);
-      }
-    }
-  });
+  const [packagingOpen, packagingHandlers] = useDisclosure(false);
+  const [statusOpen, statusHandlers] = useDisclosure(false);
+  const hasMountedPackagingRef = useRef(false);
+  const hasMountedStatusRef = useRef(false);
 
-  const [statusOpen, statusHandlers] = useDisclosure(false, {
-    onOpen: () => {
-      setStatus(record?.status_custom_key || record?.status || undefined);
-      props.changeFn(rowId, 'status', record?.status || undefined);
-    },
-    onClose: () => {
-      setStatus(undefined);
-      callChangeFn(rowId, 'status', undefined);
+  useEffect(() => {
+    if (!transfer) {
+      return;
     }
-  });
+
+    if (!hasMountedPackagingRef.current) {
+      hasMountedPackagingRef.current = true;
+      return;
+    }
+
+    callChangeFn(
+      rowId,
+      'packaging',
+      packagingOpen ? record?.packaging || undefined : undefined
+    );
+  }, [transfer, packagingOpen, rowId, record?.packaging, callChangeFn]);
+
+  useEffect(() => {
+    if (!changeStatus) {
+      return;
+    }
+
+    if (!hasMountedStatusRef.current) {
+      hasMountedStatusRef.current = true;
+      return;
+    }
+
+    if (statusOpen) {
+      setStatus(record?.status_custom_key || record?.status || undefined);
+      callChangeFn(rowId, 'status', record?.status || undefined);
+      return;
+    }
+
+    setStatus(undefined);
+    callChangeFn(rowId, 'status', undefined);
+  }, [
+    changeStatus,
+    statusOpen,
+    rowId,
+    record?.status,
+    record?.status_custom_key,
+    callChangeFn
+  ]);
 
   const stockString: string = useMemo(() => {
     if (!record) {
@@ -747,7 +775,7 @@ function StockOperationsRow({
                 value: quantity,
                 onValueChange: (value: any) => {
                   setQuantity(value);
-                  props.changeFn(rowId, 'quantity', value);
+                  callChangeFn(rowId, 'quantity', value);
                 }
               }}
               error={props.rowErrors?.quantity?.message}
@@ -814,7 +842,7 @@ function StockOperationsRow({
           visible={statusOpen}
           onValueChange={(value: any) => {
             setStatus(value);
-            props.changeFn(rowId, 'status', value || undefined);
+            callChangeFn(rowId, 'status', value || undefined);
           }}
           fieldName='status'
           fieldDefinition={{
@@ -830,7 +858,7 @@ function StockOperationsRow({
         <TableFieldExtraRow
           visible={transfer && packagingOpen}
           onValueChange={(value: any) => {
-            props.changeFn(rowId, 'packaging', value || undefined);
+            callChangeFn(rowId, 'packaging', value || undefined);
           }}
           fieldName='packaging'
           fieldDefinition={{
