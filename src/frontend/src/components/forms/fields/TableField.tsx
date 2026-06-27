@@ -8,6 +8,7 @@ import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { useWhyDidYouUpdate } from '../../../functions/debug';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 
@@ -16,7 +17,6 @@ export interface TableFieldRowProps {
   idx: number;
   rowId?: string | number;
   rowErrors: any;
-  control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number | string, key: string, value: any) => void;
   removeFn: (idx: number | string) => void;
 }
@@ -35,7 +35,6 @@ function TableFieldRow({
   rowId,
   errors,
   definition,
-  control,
   changeFn,
   removeFn
 }: Readonly<{
@@ -44,7 +43,6 @@ function TableFieldRow({
   rowId?: string | number;
   errors: any;
   definition: ApiFormFieldType;
-  control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number | string) => void;
 }>) {
@@ -66,7 +64,6 @@ function TableFieldRow({
     idx: idx,
     rowId: rowId,
     rowErrors: errors,
-    control: control,
     changeFn: changeFn,
     removeFn: removeFn
   });
@@ -111,11 +108,14 @@ export function TableField({
   const { value } = field;
 
   const valueRef = useRef(value);
+  const onChangeRef = useRef(field.onChange);
   const rowIndexByIdRef = useRef(new Map<string | number, number>());
 
-  useEffect(() => {
-    valueRef.current = value;
+  // Keep refs in sync with latest values without introducing them as deps
+  valueRef.current = value;
+  onChangeRef.current = field.onChange;
 
+  useEffect(() => {
     const nextRowIndexById = new Map<string | number, number>();
 
     value?.forEach((item: any, idx: number) => {
@@ -163,9 +163,9 @@ export function TableField({
         };
       }
 
-      field.onChange(nextValue);
+      onChangeRef.current(nextValue);
     },
-    [field.onChange, resolveRowIndex]
+    [resolveRowIndex]
   );
 
   const removeRow = useCallback(
@@ -185,9 +185,9 @@ export function TableField({
       const nextValue = [...currentValue];
       nextValue.splice(idx, 1);
 
-      field.onChange(nextValue);
+      onChangeRef.current(nextValue);
     },
-    [field.onChange, resolveRowIndex]
+    [resolveRowIndex]
   );
 
   // Extract errors associated with the current row
@@ -199,6 +199,12 @@ export function TableField({
     },
     [error]
   );
+
+  useWhyDidYouUpdate(`TableField-${fieldName}`, {
+    definition,
+    fieldName,
+    control
+  });
 
   return (
     <Table
@@ -234,7 +240,6 @@ export function TableField({
                 idx={idx}
                 rowId={rowId}
                 errors={rowErrors(idx)}
-                control={control}
                 definition={definition}
                 changeFn={onRowFieldChange}
                 removeFn={removeRow}
