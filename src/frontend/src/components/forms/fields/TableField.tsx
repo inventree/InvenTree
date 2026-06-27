@@ -98,18 +98,24 @@ export function TableField({
   } = control;
   const { value } = field;
 
-  const onRowFieldChange = (idx: number, key: string, value: any) => {
-    const val = field.value;
-    val[idx][key] = value;
+  const onRowFieldChange = useCallback(
+    (idx: number, key: string, value: any) => {
+      const val = field.value;
+      val[idx][key] = value;
 
-    field.onChange(val);
-  };
+      field.onChange(val);
+    },
+    [field.value, field.onChange]
+  );
 
-  const removeRow = (idx: number) => {
-    const val = field.value;
-    val.splice(idx, 1);
-    field.onChange(val);
-  };
+  const removeRow = useCallback(
+    (idx: number) => {
+      const val = field.value;
+      val.splice(idx, 1);
+      field.onChange(val);
+    },
+    [field.value, field.onChange]
+  );
 
   // Extract errors associated with the current row
   const rowErrors: any = useCallback(
