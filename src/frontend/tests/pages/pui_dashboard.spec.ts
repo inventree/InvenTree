@@ -16,6 +16,7 @@ test('Dashboard - Basic', async ({ browser }) => {
 
   // Reset dashboard widgets
   await resetDashboard(page);
+  await page.reload();
 
   await page.getByText('Use the menu to add widgets').waitFor();
 
@@ -162,7 +163,11 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: user
   });
+
   await resetDashboard(page);
+  await page.reload();
+
+  await page.getByText('Use the menu to add widgets').waitFor();
 
   // Add widget A; this also persists to the backend user profile.
   await page.getByLabel('dashboard-menu').click();
