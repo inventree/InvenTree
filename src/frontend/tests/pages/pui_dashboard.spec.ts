@@ -185,8 +185,13 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   const inflated: Record<string, any[]> = {};
   for (const bp of Object.keys(current)) {
     inflated[bp] = current[bp].map((it: any) => {
-      console.log('inflating it:', bp, it);
-      return it?.i === 'ovr-so' ? { ...it, w: TARGET_W, h: TARGET_H } : it;
+      if (it?.i == 'ovr-so') {
+        it['w'] = TARGET_W;
+        it['h'] = TARGET_H;
+      }
+
+      console.log('inflating it:', it?.i, '->', it);
+      return it;
     });
   }
 
