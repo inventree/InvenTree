@@ -2,8 +2,14 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
-import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+import {
+  type ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef
+} from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
@@ -84,23 +90,21 @@ export function TableFieldErrorWrapper({
   );
 }
 
-export function TableField({
+function TableFieldComponent({
   definition,
   fieldName,
-  control
+  value,
+  onChange,
+  error
 }: Readonly<{
   definition: ApiFormFieldType;
   fieldName: string;
-  control: UseControllerReturn<FieldValues, any>;
+  value: any;
+  onChange: (value: any) => void;
+  error?: any;
 }>) {
-  const {
-    field,
-    fieldState: { error }
-  } = control;
-  const { value } = field;
-
   const valueRef = useRef(value);
-  const onChangeRef = useRef(field.onChange);
+  const onChangeRef = useRef(onChange);
   const rowIndexByIdRef = useRef(new Map<string | number, number>());
   const generatedRowIdsRef = useRef(new WeakMap<object, string>());
   const generatedRowIdCounterRef = useRef(0);
@@ -133,7 +137,7 @@ export function TableField({
 
   // Keep refs in sync with latest values without introducing them as deps
   valueRef.current = value;
-  onChangeRef.current = field.onChange;
+  onChangeRef.current = onChange;
 
   useEffect(() => {
     const nextRowIndexById = new Map<string | number, number>();
@@ -223,14 +227,15 @@ export function TableField({
   useWhyDidYouUpdate(`TableField-${fieldName}`, {
     definition,
     fieldName,
-    control
+    value,
+    error
   });
 
   return (
     <Table
       highlightOnHover
       striped
-      aria-label={`table-field-${field.name}`}
+      aria-label={`table-field-${fieldName}`}
       style={{ width: '100%' }}
     >
       <Table.Thead>
@@ -296,7 +301,7 @@ export function TableField({
                   if (definition.addRow === undefined) return;
                   const ret = definition.addRow();
                   if (ret) {
-                    field.onChange([...(field.value ?? []), ret]);
+                    onChange([...(value ?? []), ret]);
                   }
                 }}
               />
@@ -307,6 +312,19 @@ export function TableField({
     </Table>
   );
 }
+
+export const TableField = memo(
+  TableFieldComponent,
+  (previousProps, nextProps) => {
+    return (
+      previousProps.definition === nextProps.definition &&
+      previousProps.fieldName === nextProps.fieldName &&
+      previousProps.value === nextProps.value &&
+      previousProps.onChange === nextProps.onChange &&
+      previousProps.error === nextProps.error
+    );
+  }
+);
 
 /*
  * Display an "extra" row below the main table row, for additional information.
