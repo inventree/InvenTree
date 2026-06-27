@@ -8,6 +8,7 @@ import {
   Group,
   HoverCard,
   Modal,
+  NumberInput,
   Table,
   TextInput
 } from '@mantine/core';
@@ -574,15 +575,26 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
-          <StandaloneField
-            fieldName='quantity'
-            fieldDefinition={{
-              field_type: 'number',
-              value: props.item.quantity,
-              onValueChange: (value) => {
-                props.changeFn(props.idx, 'quantity', value);
-                serialNumberGenerator.update({ quantity: value });
+          <NumberInput
+            radius='sm'
+            min={0}
+            step={1}
+            decimalScale={10}
+            value={props.item.quantity ?? ''}
+            onChange={(value: number | string) => {
+              let nextValue: number | '' = '';
+
+              if (typeof value === 'number') {
+                nextValue = Number.isFinite(value) ? value : '';
+              } else if (value.trim() !== '') {
+                const parsed = Number.parseFloat(value);
+                nextValue = Number.isFinite(parsed) ? parsed : '';
               }
+
+              props.changeFn(props.idx, 'quantity', nextValue);
+              serialNumberGenerator.update({
+                quantity: nextValue === '' ? undefined : nextValue
+              });
             }}
             error={props.rowErrors?.quantity?.message}
           />

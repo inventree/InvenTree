@@ -1,7 +1,7 @@
 import { ApiEndpoints, ModelType, ProgressBar, apiUrl } from '@lib/index';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Table } from '@mantine/core';
+import { NumberInput, Table } from '@mantine/core';
 import { IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -148,19 +148,6 @@ function TransferOrderAllocateLineRow({
     };
   }, [sourceLocation, record, props]);
 
-  // Statically defined field for selecting the allocation quantity
-  const quantityField: ApiFormFieldType = useMemo(() => {
-    return {
-      field_type: 'number',
-      name: 'quantity',
-      required: true,
-      value: props.item.quantity,
-      onValueChange: (value: any) => {
-        props.changeFn(props.idx, 'quantity', value);
-      }
-    };
-  }, [props]);
-
   return (
     <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
       <Table.Td>
@@ -181,9 +168,24 @@ function TransferOrderAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={quantityField}
+        <NumberInput
+          radius='sm'
+          min={0}
+          step={1}
+          decimalScale={10}
+          value={props.item.quantity ?? ''}
+          onChange={(value: number | string) => {
+            let nextValue: number | '' = '';
+
+            if (typeof value === 'number') {
+              nextValue = Number.isFinite(value) ? value : '';
+            } else if (value.trim() !== '') {
+              const parsed = Number.parseFloat(value);
+              nextValue = Number.isFinite(parsed) ? parsed : '';
+            }
+
+            props.changeFn(props.idx, 'quantity', nextValue);
+          }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>

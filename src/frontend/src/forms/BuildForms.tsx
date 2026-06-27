@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
+import {
+  Alert,
+  Divider,
+  Group,
+  List,
+  NumberInput,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
 import {
   IconCalendar,
   IconCircleCheck,
@@ -272,15 +281,22 @@ function BuildOutputFormRow({
 
     // Non-serialized output - quantity can be changed
     return (
-      <StandaloneField
-        fieldName='quantity'
-        fieldDefinition={{
-          field_type: 'number',
-          required: true,
-          value: props.item.quantity,
-          onValueChange: (value: any) => {
-            props.changeFn(props.idx, 'quantity', value);
+      <NumberInput
+        radius='sm'
+        step={1}
+        decimalScale={10}
+        value={props.item.quantity ?? ''}
+        onChange={(value: number | string) => {
+          let nextValue: number | '' = '';
+
+          if (typeof value === 'number') {
+            nextValue = Number.isFinite(value) ? value : '';
+          } else if (value.trim() !== '') {
+            const parsed = Number.parseFloat(value);
+            nextValue = Number.isFinite(parsed) ? parsed : '';
           }
+
+          props.changeFn(props.idx, 'quantity', nextValue);
         }}
         error={props.rowErrors?.quantity?.message}
       />
@@ -600,18 +616,6 @@ function BuildAllocateLineRow({
     };
   }, [record, props]);
 
-  const quantityField: ApiFormFieldType = useMemo(() => {
-    return {
-      field_type: 'number',
-      name: 'quantity',
-      required: true,
-      value: props.item.quantity,
-      onValueChange: (value: any) => {
-        props.changeFn(props.idx, 'quantity', value);
-      }
-    };
-  }, [props]);
-
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
@@ -636,9 +640,24 @@ function BuildAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={quantityField}
+        <NumberInput
+          radius='sm'
+          min={0}
+          step={1}
+          decimalScale={10}
+          value={props.item.quantity ?? ''}
+          onChange={(value: number | string) => {
+            let nextValue: number | '' = '';
+
+            if (typeof value === 'number') {
+              nextValue = Number.isFinite(value) ? value : '';
+            } else if (value.trim() !== '') {
+              const parsed = Number.parseFloat(value);
+              nextValue = Number.isFinite(parsed) ? parsed : '';
+            }
+
+            props.changeFn(props.idx, 'quantity', nextValue);
+          }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
@@ -803,15 +822,22 @@ function BuildConsumeItemRow({
       </Table.Td>
       <Table.Td>{record.quantity}</Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={{
-            field_type: 'number',
-            required: true,
-            value: props.item.quantity,
-            onValueChange: (value: any) => {
-              props.changeFn(props.idx, 'quantity', value);
+        <NumberInput
+          radius='sm'
+          step={1}
+          decimalScale={10}
+          value={props.item.quantity ?? ''}
+          onChange={(value: number | string) => {
+            let nextValue: number | '' = '';
+
+            if (typeof value === 'number') {
+              nextValue = Number.isFinite(value) ? value : '';
+            } else if (value.trim() !== '') {
+              const parsed = Number.parseFloat(value);
+              nextValue = Number.isFinite(parsed) ? parsed : '';
             }
+
+            props.changeFn(props.idx, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
