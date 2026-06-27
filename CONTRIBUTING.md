@@ -23,7 +23,6 @@ The InvenTree project is split into two main components: frontend and backend. T
 
 ```
 InvenTree/
-├─ .devops/                            # Files for Azure DevOps
 ├─ .github/                            # Files for GitHub
 │  ├─ actions/                         # Reused actions
 │  ├─ ISSUE_TEMPLATE/                  # Templates for issues and pull requests
