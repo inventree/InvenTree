@@ -1,7 +1,7 @@
 import { ApiEndpoints, StylishText } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Badge, Group, Stack, Text } from '@mantine/core';
+import { Accordion, Alert, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import {
@@ -45,9 +45,6 @@ function PluginSettingGroupItem({
       <Accordion.Control>
         <Group justify='space-between'>
           <Text size='lg'>{pluginName}</Text>
-          {!wasLoaded && (
-            <Badge color='blue' variant='filled' size='sm'>{t`Loading`}</Badge>
-          )}
           {pluginDescription && (
             <Text size='sm' style={{ paddingRight: 25 }}>
               {pluginDescription}
@@ -55,6 +52,7 @@ function PluginSettingGroupItem({
           )}
         </Group>
       </Accordion.Control>
+
       <Accordion.Panel>
         {global ? (
           <PluginSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
