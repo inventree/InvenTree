@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -14,15 +14,25 @@ import { StandaloneField } from '../StandaloneField';
 export interface TableFieldRowProps {
   item: any;
   idx: number;
+  rowId?: string | number;
   rowErrors: any;
   control: UseControllerReturn<FieldValues, any>;
-  changeFn: (idx: number, key: string, value: any) => void;
-  removeFn: (idx: number) => void;
+  changeFn: (idx: number | string, key: string, value: any) => void;
+  removeFn: (idx: number | string) => void;
+}
+
+function getRowIdentifier(item: any, idx: number): string | number {
+  if (item && typeof item === 'object') {
+    return item.pk ?? item.item ?? item.id ?? item.uuid ?? idx;
+  }
+
+  return item ?? idx;
 }
 
 function TableFieldRow({
   item,
   idx,
+  rowId,
   errors,
   definition,
   control,
@@ -31,11 +41,12 @@ function TableFieldRow({
 }: Readonly<{
   item: any;
   idx: number;
+  rowId?: string | number;
   errors: any;
   definition: ApiFormFieldType;
   control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
-  removeFn: (idx: number) => void;
+  removeFn: (idx: number | string) => void;
 }>) {
   // Table fields require render function
   if (!definition.modelRenderer) {
@@ -53,6 +64,7 @@ function TableFieldRow({
   return definition.modelRenderer({
     item: item,
     idx: idx,
+    rowId: rowId,
     rowErrors: errors,
     control: control,
     changeFn: changeFn,
@@ -98,23 +110,84 @@ export function TableField({
   } = control;
   const { value } = field;
 
-  const onRowFieldChange = useCallback(
-    (idx: number, key: string, value: any) => {
-      const val = field.value;
-      val[idx][key] = value;
+  const valueRef = useRef(value);
+  const rowIndexByIdRef = useRef(new Map<string | number, number>());
 
-      field.onChange(val);
+  useEffect(() => {
+    valueRef.current = value;
+
+    const nextRowIndexById = new Map<string | number, number>();
+
+    value?.forEach((item: any, idx: number) => {
+      nextRowIndexById.set(getRowIdentifier(item, idx), idx);
+    });
+
+    rowIndexByIdRef.current = nextRowIndexById;
+  }, [value]);
+
+  const resolveRowIndex = useCallback((identifier: number | string) => {
+    const mappedIndex = rowIndexByIdRef.current.get(identifier);
+
+    if (mappedIndex !== undefined) {
+      return mappedIndex;
+    }
+
+    if (typeof identifier === 'number' && identifier >= 0) {
+      return identifier;
+    }
+
+    return undefined;
+  }, []);
+
+  const onRowFieldChange = useCallback(
+    (identifier: number | string, key: string, rowValue: any) => {
+      const idx = resolveRowIndex(identifier);
+
+      if (idx === undefined) {
+        return;
+      }
+
+      const currentValue = valueRef.current;
+
+      if (!Array.isArray(currentValue) || currentValue[idx] === undefined) {
+        return;
+      }
+
+      const nextValue = [...currentValue];
+      const currentRow = nextValue[idx];
+
+      if (currentRow && typeof currentRow === 'object') {
+        nextValue[idx] = {
+          ...currentRow,
+          [key]: rowValue
+        };
+      }
+
+      field.onChange(nextValue);
     },
-    [field.value, field.onChange]
+    [field.onChange, resolveRowIndex]
   );
 
   const removeRow = useCallback(
-    (idx: number) => {
-      const val = field.value;
-      val.splice(idx, 1);
-      field.onChange(val);
+    (identifier: number | string) => {
+      const idx = resolveRowIndex(identifier);
+
+      if (idx === undefined) {
+        return;
+      }
+
+      const currentValue = valueRef.current;
+
+      if (!Array.isArray(currentValue)) {
+        return;
+      }
+
+      const nextValue = [...currentValue];
+      nextValue.splice(idx, 1);
+
+      field.onChange(nextValue);
     },
-    [field.value, field.onChange]
+    [field.onChange, resolveRowIndex]
   );
 
   // Extract errors associated with the current row
@@ -152,11 +225,14 @@ export function TableField({
       <Table.Tbody>
         {(value?.length ?? 0) > 0 ? (
           value.map((item: any, idx: number) => {
+            const rowId = getRowIdentifier(item, idx);
+
             return (
               <TableFieldRow
-                key={`table-row-${idx}`}
+                key={`table-row-${rowId}`}
                 item={item}
                 idx={idx}
+                rowId={rowId}
                 errors={rowErrors(idx)}
                 control={control}
                 definition={definition}
@@ -195,9 +271,7 @@ export function TableField({
                   if (definition.addRow === undefined) return;
                   const ret = definition.addRow();
                   if (ret) {
-                    const val = field.value;
-                    val.push(ret);
-                    field.onChange(val);
+                    field.onChange([...(field.value ?? []), ret]);
                   }
                 }}
               />
@@ -230,10 +304,16 @@ export function TableFieldExtraRow({
   emptyValue?: any;
   onValueChange: (value: any) => void;
 }) {
+  const hasMounted = useRef(false);
+
   // Callback whenever the visibility of the sub-field changes
+  // Skip the initial mount — the value was never set, nothing to reset
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
     if (!visible) {
-      // If the sub-field is hidden, reset the value to the "empty" value
       onValueChange(emptyValue);
     }
   }, [visible]);
