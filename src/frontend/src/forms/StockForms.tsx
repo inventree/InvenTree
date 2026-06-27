@@ -17,6 +17,7 @@ import {
   Flex,
   Group,
   List,
+  NumberInput,
   Skeleton,
   Stack,
   Table,
@@ -49,7 +50,6 @@ import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   TableFieldExtraRow,
   type TableFieldRowProps
@@ -765,15 +765,24 @@ function StockOperationsRow({
         </Table.Td>
         {!merge && (
           <Table.Td>
-            <StandaloneField
-              fieldName='quantity'
-              fieldDefinition={{
-                field_type: 'number',
-                value: quantity,
-                onValueChange: (value: any) => {
-                  setQuantity(value);
-                  callChangeFn(rowId, 'quantity', value);
+            <NumberInput
+              radius='sm'
+              min={0}
+              step={1}
+              decimalScale={10}
+              value={quantity ?? ''}
+              onChange={(value: number | string) => {
+                let nextValue: StockItemQuantity = '';
+
+                if (typeof value === 'number') {
+                  nextValue = Number.isFinite(value) ? value : '';
+                } else if (value.trim() !== '') {
+                  const parsed = Number.parseFloat(value);
+                  nextValue = Number.isFinite(parsed) ? parsed : '';
                 }
+
+                setQuantity(nextValue);
+                callChangeFn(rowId, 'quantity', nextValue);
               }}
               error={props.rowErrors?.quantity?.message}
             />
