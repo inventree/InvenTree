@@ -634,7 +634,7 @@ function StockOperationsRow({
   returnStock?: boolean;
   record?: any;
 }) {
-  const rowId = props.rowId ?? props.idx;
+  const rowId = props.rowId;
 
   useWhyDidYouUpdate(`StockOperationsRow-${rowId}`, props);
 
@@ -847,9 +847,20 @@ function StockOperationsRow({
 const MemoizedStockOperationsRow = memo(
   StockOperationsRow,
   (previousProps, nextProps) => {
+    const prevItem = previousProps.props.item;
+    const nextItem = nextProps.props.item;
+
+    const itemUnchanged =
+      prevItem === nextItem ||
+      (prevItem?.pk === nextItem?.pk &&
+        prevItem?.quantity === nextItem?.quantity &&
+        prevItem?.status === nextItem?.status &&
+        prevItem?.packaging === nextItem?.packaging &&
+        prevItem?.merge === nextItem?.merge);
+
     return (
       previousProps.props.rowId === nextProps.props.rowId &&
-      previousProps.props.item === nextProps.props.item &&
+      itemUnchanged &&
       previousProps.props.rowErrors === nextProps.props.rowErrors &&
       previousProps.props.changeFn === nextProps.props.changeFn &&
       previousProps.props.removeFn === nextProps.props.removeFn &&

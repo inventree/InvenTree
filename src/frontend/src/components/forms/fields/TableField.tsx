@@ -15,18 +15,10 @@ import { StandaloneField } from '../StandaloneField';
 export interface TableFieldRowProps {
   item: any;
   idx: number;
-  rowId?: string | number;
+  rowId: string | number;
   rowErrors: any;
   changeFn: (idx: number | string, key: string, value: any) => void;
   removeFn: (idx: number | string) => void;
-}
-
-function getRowIdentifier(item: any, idx: number): string | number {
-  if (item && typeof item === 'object') {
-    return item.pk ?? item.item ?? item.id ?? item.uuid ?? idx;
-  }
-
-  return item ?? idx;
 }
 
 function TableFieldRow({
@@ -40,7 +32,7 @@ function TableFieldRow({
 }: Readonly<{
   item: any;
   idx: number;
-  rowId?: string | number;
+  rowId: string | number;
   errors: any;
   definition: ApiFormFieldType;
   changeFn: (idx: number, key: string, value: any) => void;
@@ -110,6 +102,34 @@ export function TableField({
   const valueRef = useRef(value);
   const onChangeRef = useRef(field.onChange);
   const rowIndexByIdRef = useRef(new Map<string | number, number>());
+  const generatedRowIdsRef = useRef(new WeakMap<object, string>());
+  const generatedRowIdCounterRef = useRef(0);
+
+  const getRowIdentifier = useCallback(
+    (item: any, idx: number): string | number => {
+      if (item && typeof item === 'object') {
+        const intrinsicId = item.pk ?? item.item ?? item.id ?? item.uuid;
+
+        if (intrinsicId !== undefined && intrinsicId !== null) {
+          return intrinsicId;
+        }
+
+        const existingGeneratedId = generatedRowIdsRef.current.get(item);
+
+        if (existingGeneratedId) {
+          return existingGeneratedId;
+        }
+
+        generatedRowIdCounterRef.current += 1;
+        const generatedId = `table-row-generated-${generatedRowIdCounterRef.current}`;
+        generatedRowIdsRef.current.set(item, generatedId);
+        return generatedId;
+      }
+
+      return item ?? idx;
+    },
+    []
+  );
 
   // Keep refs in sync with latest values without introducing them as deps
   valueRef.current = value;
@@ -123,7 +143,7 @@ export function TableField({
     });
 
     rowIndexByIdRef.current = nextRowIndexById;
-  }, [value]);
+  }, [value, getRowIdentifier]);
 
   const resolveRowIndex = useCallback((identifier: number | string) => {
     const mappedIndex = rowIndexByIdRef.current.get(identifier);
