@@ -878,6 +878,7 @@ function StockOperationsRow({
   );
 }
 
+// Memoize each stock operations row, so that we don't re-render the entire table when a single row is updated
 const MemoizedStockOperationsRow = memo(
   StockOperationsRow,
   (previousProps, nextProps) => {
