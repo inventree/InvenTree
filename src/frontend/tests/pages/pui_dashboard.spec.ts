@@ -184,9 +184,10 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   const current = await readLayouts(page);
   const inflated: Record<string, any[]> = {};
   for (const bp of Object.keys(current)) {
-    inflated[bp] = current[bp].map((it: any) =>
-      it?.i === 'ovr-so' ? { ...it, w: TARGET_W, h: TARGET_H } : it
-    );
+    inflated[bp] = current[bp].map((it: any) => {
+      console.log('inflating it:', bp, it);
+      return it?.i === 'ovr-so' ? { ...it, w: TARGET_W, h: TARGET_H } : it;
+    });
   }
 
   const api = createApi({
