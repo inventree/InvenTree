@@ -706,9 +706,26 @@ export function useAllocateStockToBuildForm({
   lineItems: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  useWhyDidYouUpdate('useAllocateStockToBuildForm', {
+    buildId,
+    output,
+    outputId,
+    build,
+    lineItems
+  });
+
   const [sourceLocation, setSourceLocation] = useState<number | undefined>(
     undefined
   );
+
+  // Memoize the line items once to avoid re-rendering
+  const buildLines = useMemo(() => {
+    return lineItems.map((item) => {
+      return {
+        ...item
+      };
+    });
+  }, [lineItems]);
 
   const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -726,7 +743,7 @@ export function useAllocateStockToBuildForm({
         modelRenderer: (row: TableFieldRowProps) => {
           // Find the matching record from the passed 'lineItems'
           const record =
-            lineItems.find((item) => item.pk == row.item.build_line) ?? {};
+            buildLines.find((item) => item.pk == row.item.build_line) ?? {};
           return (
             <BuildAllocateLineRow
               key={row.rowId}
