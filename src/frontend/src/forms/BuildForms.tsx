@@ -1052,6 +1052,7 @@ export function useConsumeBuildLinesForm({
     initialData: {
       lines: filteredLines.map((item) => {
         return {
+          id: item.pk,
           build_line: item.pk
         };
       })
