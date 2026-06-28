@@ -20,7 +20,6 @@ import { StandaloneField } from '../StandaloneField';
 
 export interface TableFieldRowProps {
   item: any;
-  idx: number;
   rowId: string | number;
   rowErrors: any;
   changeFn: (idx: number | string, key: string, value: any) => void;

@@ -266,6 +266,12 @@ function BuildOutputFormRow({
   record: any;
   withQuantityColumn?: boolean;
 }>) {
+  useWhyDidYouUpdate('BuildOutputFormRow', {
+    props,
+    record,
+    withQuantityColumn
+  });
+
   const stockItemColumn = useMemo(() => {
     if (record.serial) {
       return `# ${record.serial}`;
@@ -327,7 +333,7 @@ function BuildOutputFormRow({
           />{' '}
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
         </Table.Td>
       </Table.Tr>
     </>
@@ -361,6 +367,7 @@ export function useCompleteBuildOutputsForm({
   const buildOutputs = useMemo(() => {
     return outputs.map((output: any) => {
       return {
+        id: output.pk,
         output: output.pk,
         quantity: output.quantity
       };
@@ -375,7 +382,7 @@ export function useCompleteBuildOutputsForm({
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow props={row} record={record} key={row.rowId} />
           );
         },
         headers: [
@@ -443,6 +450,7 @@ export function useScrapBuildOutputsForm({
   const buildOutputs = useMemo(() => {
     return outputs.map((output: any) => {
       return {
+        id: output.pk,
         output: output.pk,
         quantity: output.quantity
       };
@@ -457,7 +465,7 @@ export function useScrapBuildOutputsForm({
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow props={row} record={record} key={row.rowId} />
           );
         },
         headers: [
@@ -514,6 +522,7 @@ export function useCancelBuildOutputsForm({
   const buildOutputs = useMemo(() => {
     return outputs.map((output: any) => {
       return {
+        id: output.pk,
         output: output.pk
       };
     });
