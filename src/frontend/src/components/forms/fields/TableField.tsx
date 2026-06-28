@@ -67,28 +67,28 @@ function TableFieldRow({
 }
 
 // Memoize each table field row, so that we don't re-render the entire table when a single row is updated
-function areRowItemsEqual(previousItem: any, nextItem: any): boolean {
-  if (previousItem === nextItem) {
+function areShallowEqual(previousValue: any, nextValue: any): boolean {
+  if (previousValue === nextValue) {
     return true;
   }
 
-  if (!previousItem || !nextItem) {
+  if (!previousValue || !nextValue) {
     return false;
   }
 
-  if (typeof previousItem !== 'object' || typeof nextItem !== 'object') {
-    return previousItem === nextItem;
+  if (typeof previousValue !== 'object' || typeof nextValue !== 'object') {
+    return previousValue === nextValue;
   }
 
-  const previousKeys = Object.keys(previousItem);
-  const nextKeys = Object.keys(nextItem);
+  const previousKeys = Object.keys(previousValue);
+  const nextKeys = Object.keys(nextValue);
 
   if (previousKeys.length !== nextKeys.length) {
     return false;
   }
 
   for (const key of previousKeys) {
-    if (previousItem[key] !== nextItem[key]) {
+    if (previousValue[key] !== nextValue[key]) {
       return false;
     }
   }
@@ -101,8 +101,8 @@ const MemoizedTableFieldRow = memo(
   (previousProps, nextProps) => {
     return (
       previousProps.rowId === nextProps.rowId &&
-      areRowItemsEqual(previousProps.item, nextProps.item) &&
-      previousProps.rowErrors === nextProps.rowErrors &&
+      areShallowEqual(previousProps.item, nextProps.item) &&
+      areShallowEqual(previousProps.rowErrors, nextProps.rowErrors) &&
       previousProps.modelRenderer === nextProps.modelRenderer &&
       previousProps.changeFn === nextProps.changeFn &&
       previousProps.removeFn === nextProps.removeFn &&
