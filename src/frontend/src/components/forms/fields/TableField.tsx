@@ -30,23 +30,25 @@ export interface TableFieldRowProps {
 function TableFieldRow({
   item,
   rowId,
-  errors,
-  definition,
+  rowErrors,
+  modelRenderer,
+  columnCount,
   changeFn,
   removeFn
 }: Readonly<{
   item: any;
   rowId: string | number;
-  errors: any;
-  definition: ApiFormFieldType;
+  rowErrors: any;
+  modelRenderer?: ApiFormFieldType['modelRenderer'];
+  columnCount?: number;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number | string) => void;
 }>) {
   // Table fields require render function
-  if (!definition.modelRenderer) {
+  if (!modelRenderer) {
     return (
       <Table.Tr key='table-row-no-renderer'>
-        <Table.Td colSpan={definition.headers?.length}>
+        <Table.Td colSpan={columnCount}>
           <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
             {t`modelRenderer entry required for tables`}
           </Alert>
@@ -55,14 +57,59 @@ function TableFieldRow({
     );
   }
 
-  return definition.modelRenderer({
+  return modelRenderer({
     item: item,
     rowId: rowId,
-    rowErrors: errors,
+    rowErrors: rowErrors,
     changeFn: changeFn,
     removeFn: removeFn
   });
 }
+
+// Memoize each table field row, so that we don't re-render the entire table when a single row is updated
+function areRowItemsEqual(previousItem: any, nextItem: any): boolean {
+  if (previousItem === nextItem) {
+    return true;
+  }
+
+  if (!previousItem || !nextItem) {
+    return false;
+  }
+
+  if (typeof previousItem !== 'object' || typeof nextItem !== 'object') {
+    return previousItem === nextItem;
+  }
+
+  const previousKeys = Object.keys(previousItem);
+  const nextKeys = Object.keys(nextItem);
+
+  if (previousKeys.length !== nextKeys.length) {
+    return false;
+  }
+
+  for (const key of previousKeys) {
+    if (previousItem[key] !== nextItem[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const MemoizedTableFieldRow = memo(
+  TableFieldRow,
+  (previousProps, nextProps) => {
+    return (
+      previousProps.rowId === nextProps.rowId &&
+      areRowItemsEqual(previousProps.item, nextProps.item) &&
+      previousProps.rowErrors === nextProps.rowErrors &&
+      previousProps.modelRenderer === nextProps.modelRenderer &&
+      previousProps.changeFn === nextProps.changeFn &&
+      previousProps.removeFn === nextProps.removeFn &&
+      previousProps.columnCount === nextProps.columnCount
+    );
+  }
+);
 
 export function TableFieldErrorWrapper({
   props,
@@ -257,12 +304,13 @@ function TableFieldComponent({
             const rowId = getRowIdentifier(item, idx);
 
             return (
-              <TableFieldRow
+              <MemoizedTableFieldRow
                 key={`table-row-${rowId}`}
                 item={item}
                 rowId={rowId}
-                errors={rowErrors(idx)}
-                definition={definition}
+                rowErrors={rowErrors(idx)}
+                modelRenderer={definition.modelRenderer}
+                columnCount={definition.headers?.length}
                 changeFn={onRowFieldChange}
                 removeFn={removeRow}
               />
