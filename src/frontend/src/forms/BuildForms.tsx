@@ -18,7 +18,7 @@ import {
   IconTruckDelivery,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -37,6 +37,7 @@ import {
   RenderStockItem,
   RenderStockLocation
 } from '../components/render/Stock';
+import { useWhyDidYouUpdate } from '../functions/debug';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
@@ -807,6 +808,19 @@ function BuildConsumeItemRow({
   props: TableFieldRowProps;
   record: any;
 }) {
+  const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
+
+  const callChangeFn = useCallback(
+    (identifier: number | string, key: string, value: any) => {
+      queueMicrotask(() => {
+        props.changeFn(identifier, key, value);
+      });
+    },
+    [props.changeFn]
+  );
+
+  useWhyDidYouUpdate('BuildConsumeItemRow', { props, record, quantity });
+
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
@@ -824,9 +838,10 @@ function BuildConsumeItemRow({
       <Table.Td>
         <NumberInput
           radius='sm'
+          min={0}
           step={1}
           decimalScale={10}
-          value={props.item.quantity ?? ''}
+          value={quantity}
           onChange={(value: number | string) => {
             let nextValue: number | '' = '';
 
@@ -837,13 +852,14 @@ function BuildConsumeItemRow({
               nextValue = Number.isFinite(parsed) ? parsed : '';
             }
 
-            props.changeFn(props.idx, 'quantity', nextValue);
+            setQuantity(nextValue === '' ? 0 : nextValue);
+            callChangeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -879,7 +895,7 @@ export function useConsumeBuildItemsForm({
           );
 
           return (
-            <BuildConsumeItemRow key={row.idx} props={row} record={record} />
+            <BuildConsumeItemRow key={row.rowId} props={row} record={record} />
           );
         }
       },
@@ -898,6 +914,7 @@ export function useConsumeBuildItemsForm({
     initialData: {
       items: allocatedItems.map((item) => {
         return {
+          id: item.pk,
           build_item: item.pk,
           quantity: item.quantity
         };
@@ -942,7 +959,7 @@ function BuildConsumeLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );

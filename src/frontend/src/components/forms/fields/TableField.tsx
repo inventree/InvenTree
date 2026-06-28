@@ -29,7 +29,6 @@ export interface TableFieldRowProps {
 
 function TableFieldRow({
   item,
-  idx,
   rowId,
   errors,
   definition,
@@ -37,7 +36,6 @@ function TableFieldRow({
   removeFn
 }: Readonly<{
   item: any;
-  idx: number;
   rowId: string | number;
   errors: any;
   definition: ApiFormFieldType;
@@ -59,7 +57,6 @@ function TableFieldRow({
 
   return definition.modelRenderer({
     item: item,
-    idx: idx,
     rowId: rowId,
     rowErrors: errors,
     changeFn: changeFn,
@@ -127,6 +124,7 @@ function TableFieldComponent({
         generatedRowIdCounterRef.current += 1;
         const generatedId = `table-row-generated-${generatedRowIdCounterRef.current}`;
         generatedRowIdsRef.current.set(item, generatedId);
+
         return generatedId;
       }
 
@@ -243,7 +241,7 @@ function TableFieldComponent({
           {definition.headers?.map((header, index) => {
             return (
               <Table.Th
-                key={`table-header-${identifierString(header.title)}-${index}`}
+                key={`table-header-${identifierString(header.title)}`}
                 style={header.style}
               >
                 {header.title}
@@ -262,7 +260,6 @@ function TableFieldComponent({
               <TableFieldRow
                 key={`table-row-${rowId}`}
                 item={item}
-                idx={idx}
                 rowId={rowId}
                 errors={rowErrors(idx)}
                 definition={definition}
