@@ -285,7 +285,6 @@ export default function SalesOrderAllocationTable({
 
     return {
       items: stockItems,
-      model: ModelType.stockitem,
       refresh: table.refreshTable
     };
   }, [table.selectedRecords, table.refreshTable]);

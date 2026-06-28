@@ -797,7 +797,6 @@ export default function StockDetail() {
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: [stockitem],
-      model: ModelType.stockitem,
       refresh: () => {
         const location = stockitem?.location;
         refreshInstancePromise().then((response) => {

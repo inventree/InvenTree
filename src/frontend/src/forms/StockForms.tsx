@@ -579,7 +579,7 @@ function useStockItems({
     enabled: opened,
     queryKey: ['stockItems', filters],
     queryFn: async () => {
-      if (items) {
+      if (items !== undefined) {
         return Array.isArray(items) ? items : [items];
       }
 

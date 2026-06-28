@@ -513,7 +513,6 @@ export default function BuildOutputTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: table.refreshTable,
       filters: {}
     };
