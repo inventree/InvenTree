@@ -15,6 +15,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+import { RenderStockItem } from '../components/render/Stock';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
@@ -318,6 +319,9 @@ function SalesOrderAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      modelRenderer: ({ instance }: { instance: any }) => (
+        <RenderStockItem instance={instance} extra={{ show_status: true }} />
+      ),
       autoFill: true,
       filters: {
         available: true,

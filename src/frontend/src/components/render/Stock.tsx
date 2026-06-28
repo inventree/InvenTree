@@ -108,11 +108,11 @@ export function RenderStockItem(
   const showLocation: boolean = props.extra?.show_location !== false;
   const location: any = props.instance?.location_detail;
 
-  // Only flag the built-in "Attention needed" and "Damaged" stock statuses (#10769)
   const statusKey = instance?.status_custom_key ?? instance?.status;
   const flaggedStatusNames = ['ATTENTION', 'DAMAGED'];
   const statusCodes = getStatusCodes(ModelType.stockitem);
   const showStatus =
+    props.extra?.show_status === true &&
     !!statusCodes &&
     Object.values(statusCodes.values).some(
       (entry) =>
