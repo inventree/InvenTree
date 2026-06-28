@@ -559,51 +559,57 @@ function moveToDefault(
  * Memoize a list of stock items for use in a stock operations modal.
  * These items may be provided directly, or fetched from the API
  *
- * @param enabled - Whether to enable the query (if false, items must be provided directly)
+ * @param opened - Is the underlying modal opened or closed?
  * @param items - Optional list of stock items to use directly
  * @param category - Optional category ID to filter stock items
  * @param location - Optional location ID to filter stock items
  * @param part - Optional part ID to filter stock items
+ * @param filters - Optional additional filters to apply to the stock item query
  */
 function useStockItems({
-  enabled,
+  opened,
   items,
-  category,
-  location,
-  part
+  filters
 }: Readonly<{
-  enabled: boolean;
-  items?: any | any[];
-  category?: number | string;
-  location?: number | string;
-  part?: number | string;
+  opened: boolean;
+  items?: any[] | any;
+  filters?: { [key: string]: any };
 }>) {
   const query = useQuery({
-    enabled: enabled,
-    queryKey: ['stockItems', category, location, part],
+    enabled: opened,
+    queryKey: ['stockItems', filters],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
       }
 
-      if (!enabled) {
+      if (!opened) {
         return [];
       }
 
       // Fetch via the API
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
-      return api.get(url, {
-        params: {
-          category: category || undefined,
-          location: location || undefined,
-          part: part || undefined
-        }
-      });
+      return api
+        .get(url, {
+          params: {
+            ...filters,
+            part_detail: true,
+            location_detail: true,
+            cascade: false
+          }
+        })
+        .then((response) => response.data ?? []);
     }
   });
 
-  return useMemo(() => query.data ?? [], [query.data]);
+  return useMemo(() => {
+    if (!opened) {
+      return [];
+    }
+
+    return query.data ?? [];
+  }, [opened, query.data]);
 }
 
 type StockAdjustmentItemWithRecord = {
@@ -771,7 +777,10 @@ function StockOperationsRow({
     <div>{t`Loading...`}</div>
   ) : (
     <>
-      <Table.Tr>
+      <Table.Tr
+        aria-label={`stock-op-row-${rowId}`}
+        key={`stock-op-row-${rowId}`}
+      >
         <Table.Td>
           <Stack gap='xs'>
             <Flex gap='sm' align='center'>
@@ -936,6 +945,7 @@ type StockAdjustmentItem = {
 function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
   const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
     return {
+      id: elem.pk,
       pk: elem.pk,
       quantity: elem.quantity,
       batch: elem.batch || undefined,
@@ -1411,8 +1421,6 @@ type apiModalFunc = (props: ApiFormModalProps) => {
 
 function useStockOperationModal({
   items,
-  pk,
-  model,
   refresh,
   fieldGenerator,
   endpoint,
@@ -1423,9 +1431,7 @@ function useStockOperationModal({
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
-  pk?: number;
   filters?: any;
-  model: ModelType | string;
   refresh: () => void;
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
@@ -1434,51 +1440,19 @@ function useStockOperationModal({
   successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
-  const baseParams: any = {
-    part_detail: true,
-    location_detail: true,
-    cascade: false
-  };
-
-  const params = useMemo(() => {
-    const query_params: any = {
-      ...baseParams,
-      ...(filters ?? {})
-    };
-
-    query_params[model] =
-      pk === undefined && model === 'location' ? 'null' : pk;
-
-    return query_params;
-  }, [baseParams, filters, model, pk]);
-
   const [opened, setOpened] = useState<boolean>(false);
 
-  const { data } = useQuery({
-    queryKey: ['stockitems', opened, model, pk, items, params],
-    queryFn: async () => {
-      if (items) {
-        // If a list of items is provided, use that directly
-        return Array.isArray(items) ? items : [items];
-      }
-
-      if (!pk || !opened) {
-        return [];
-      }
-
-      const url = apiUrl(ApiEndpoints.stock_item_list);
-
-      return api
-        .get(url, {
-          params: params
-        })
-        .then((response) => response.data ?? []);
-    }
+  const stockItems = useStockItems({
+    opened: opened,
+    items: items,
+    filters: filters
   });
 
-  const fields = useMemo(() => {
-    return fieldGenerator(data);
-  }, [data]);
+  // Rebuild the "fields" object
+  const fields = useMemo(
+    () => fieldGenerator(stockItems),
+    [fieldGenerator, stockItems]
+  );
 
   return modalFunc({
     url: endpoint,
