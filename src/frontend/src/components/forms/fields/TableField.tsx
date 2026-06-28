@@ -363,9 +363,9 @@ export const TableField = memo(
     return (
       previousProps.definition === nextProps.definition &&
       previousProps.fieldName === nextProps.fieldName &&
-      previousProps.value === nextProps.value &&
-      previousProps.onChange === nextProps.onChange &&
-      previousProps.error === nextProps.error
+      areShallowEqual(previousProps.value, nextProps.value) &&
+      areShallowEqual(previousProps.error, nextProps.error) &&
+      previousProps.onChange === nextProps.onChange
     );
   }
 );

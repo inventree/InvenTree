@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { useWhyDidYouUpdate } from '../functions/debug';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
@@ -110,6 +111,16 @@ function TransferOrderAllocateLineRow({
   record: any;
   sourceLocation?: number | null;
 }>) {
+  useWhyDidYouUpdate('TransferOrderAllocateLineRow', {
+    props,
+    record,
+    sourceLocation
+  });
+
+  const [quantity, setQuantity] = useState<number | ''>(
+    props.item?.quantity ?? ''
+  );
+
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {
@@ -128,28 +139,29 @@ function TransferOrderAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
           const available = instance.quantity - instance.allocated;
           const required = record.quantity - record.allocated;
 
-          let quantity = props.item?.quantity ?? 0;
+          let q = props.item?.quantity ?? 0;
 
-          quantity = Math.max(quantity, required);
-          quantity = Math.min(quantity, available);
+          q = Math.max(q, required);
+          q = Math.min(q, available);
 
-          if (quantity != props.item.quantity) {
-            props.changeFn(props.idx, 'quantity', quantity);
+          if (q != quantity) {
+            setQuantity(q);
+            props.changeFn(props.rowId, 'quantity', q);
           }
         }
       }
     };
-  }, [sourceLocation, record, props]);
+  }, [sourceLocation, record, quantity]);
 
   return (
-    <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
+    <Table.Tr key={`table-row-${props.rowId}`}>
       <Table.Td>
         <RenderPartColumn part={record.part_detail} />
       </Table.Td>
@@ -173,7 +185,7 @@ function TransferOrderAllocateLineRow({
           min={0}
           step={1}
           decimalScale={10}
-          value={props.item.quantity ?? ''}
+          value={quantity}
           onChange={(value: number | string) => {
             let nextValue: number | '' = '';
 
@@ -184,13 +196,14 @@ function TransferOrderAllocateLineRow({
               nextValue = Number.isFinite(parsed) ? parsed : '';
             }
 
-            props.changeFn(props.idx, 'quantity', nextValue);
+            setQuantity(nextValue);
+            props.changeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -211,6 +224,17 @@ export function useAllocateToTransferOrderForm({
     sourceLocationId || null
   );
 
+  // Memoize the line items to prevent re-rendering
+  const lines = useMemo(() => {
+    return lineItems.map((item) => {
+      console.log('line:', item);
+      return {
+        id: item.pk,
+        ...item
+      };
+    });
+  }, [lineItems]);
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
       // Non-submitted field to select the source location
@@ -229,7 +253,7 @@ export function useAllocateToTransferOrderForm({
       },
       items: {
         field_type: 'table',
-        value: [],
+        value: lineItems,
         headers: [
           { title: t`Part`, style: { minWidth: '200px' } },
           { title: t`Allocated`, style: { minWidth: '200px' } },
@@ -239,11 +263,11 @@ export function useAllocateToTransferOrderForm({
         ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =
-            lineItems.find((item) => item.pk == row.item.line_item) ?? {};
+            lines.find((item) => item.pk == row.item.line_item) ?? {};
 
           return (
             <TransferOrderAllocateLineRow
-              key={`table-row-${row.idx}-${record.pk}`}
+              key={row.rowId}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -265,6 +289,7 @@ export function useAllocateToTransferOrderForm({
     initialData: {
       items: lineItems.map((item) => {
         return {
+          id: item.pk,
           line_item: item.pk,
           quantity: 0,
           stock_item: null
