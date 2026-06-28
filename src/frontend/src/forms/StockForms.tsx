@@ -944,7 +944,7 @@ function stockTransferFields(
             changeStatus
             setMax
             transferMerge
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -989,7 +989,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={record.pk}
+            key={row.rowId}
             record={record}
             transfer
             returnStock
@@ -1058,7 +1058,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
             setMax
             changeStatus
             add
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -1191,7 +1191,7 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item}
+            key={row.rowId}
             merge
             record={records[row.item]}
           />
@@ -1258,7 +1258,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item.item}
+            key={row.rowId}
             merge
             changeStatus
             record={records[row.item.item]}
@@ -1307,7 +1307,7 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item.item}
+            key={row.rowId}
             merge
             record={records[row.item.item]}
           />
@@ -1351,7 +1351,7 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={record.pk}
+            key={row.rowId}
             merge
             record={record}
           />
