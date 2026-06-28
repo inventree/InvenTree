@@ -26,6 +26,7 @@ import type {
 } from '@lib/types/Forms';
 import dayjs from 'dayjs';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { useWhyDidYouUpdate } from '../functions/debug';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
@@ -310,6 +311,12 @@ function SalesOrderAllocateLineRow({
   record: any;
   sourceLocation?: number | null;
 }>) {
+  useWhyDidYouUpdate('SalesOrderAllocateLineRow', {
+    props,
+    record,
+    sourceLocation
+  });
+
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {
@@ -328,28 +335,33 @@ function SalesOrderAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
           const available = instance.quantity - instance.allocated;
           const required = record.quantity - record.allocated;
 
-          let quantity = props.item?.quantity ?? 0;
+          let q = props.item?.quantity ?? 0;
 
-          quantity = Math.max(quantity, required);
-          quantity = Math.min(quantity, available);
+          q = Math.max(q, required);
+          q = Math.min(q, available);
 
-          if (quantity != props.item.quantity) {
-            props.changeFn(props.idx, 'quantity', quantity);
+          if (q != props.item?.quantity) {
+            setQuantity(q);
+            props.changeFn(props.rowId, 'quantity', q);
           }
         }
       }
     };
   }, [sourceLocation, record, props]);
 
+  const [quantity, setQuantity] = useState<number | ''>(
+    props.item?.quantity ?? ''
+  );
+
   return (
-    <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
+    <Table.Tr key={`table-row-${props.rowId}-${record.pk}`}>
       <Table.Td>
         <RenderPartColumn part={record.part_detail} />
       </Table.Td>
@@ -373,7 +385,7 @@ function SalesOrderAllocateLineRow({
           min={0}
           step={1}
           decimalScale={10}
-          value={props.item.quantity ?? ''}
+          value={quantity}
           onChange={(value: number | string) => {
             let nextValue: number | '' = '';
 
@@ -384,13 +396,14 @@ function SalesOrderAllocateLineRow({
               nextValue = Number.isFinite(parsed) ? parsed : '';
             }
 
-            props.changeFn(props.idx, 'quantity', nextValue);
+            setQuantity(nextValue);
+            props.changeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -445,7 +458,7 @@ export function useAllocateToSalesOrderForm({
 
           return (
             <SalesOrderAllocateLineRow
-              key={`table-row-${row.idx}-${record.pk}`}
+              key={row.rowId}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -476,6 +489,7 @@ export function useAllocateToSalesOrderForm({
     initialData: {
       items: lineItems.map((item) => {
         return {
+          id: item.pk,
           line_item: item.pk,
           quantity: 0,
           stock_item: null

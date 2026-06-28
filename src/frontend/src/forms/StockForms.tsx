@@ -39,7 +39,6 @@ import dayjs from 'dayjs';
 import {
   type JSX,
   Suspense,
-  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -57,6 +56,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
+import { useWhyDidYouUpdate } from '../functions/debug';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -636,6 +636,18 @@ function StockOperationsRow({
 }) {
   const rowId = props.rowId;
 
+  useWhyDidYouUpdate('StockOperationsRow', {
+    props,
+    transfer,
+    changeStatus,
+    add,
+    setMax,
+    merge,
+    transferMerge,
+    returnStock,
+    record
+  });
+
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
       StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
@@ -878,39 +890,6 @@ function StockOperationsRow({
   );
 }
 
-// Memoize each stock operations row, so that we don't re-render the entire table when a single row is updated
-const MemoizedStockOperationsRow = memo(
-  StockOperationsRow,
-  (previousProps, nextProps) => {
-    const prevItem = previousProps.props.item;
-    const nextItem = nextProps.props.item;
-
-    const itemUnchanged =
-      prevItem === nextItem ||
-      (prevItem?.pk === nextItem?.pk &&
-        prevItem?.quantity === nextItem?.quantity &&
-        prevItem?.status === nextItem?.status &&
-        prevItem?.packaging === nextItem?.packaging &&
-        prevItem?.merge === nextItem?.merge);
-
-    return (
-      previousProps.props.rowId === nextProps.props.rowId &&
-      itemUnchanged &&
-      previousProps.props.rowErrors === nextProps.props.rowErrors &&
-      previousProps.props.changeFn === nextProps.props.changeFn &&
-      previousProps.props.removeFn === nextProps.props.removeFn &&
-      previousProps.record === nextProps.record &&
-      previousProps.transfer === nextProps.transfer &&
-      previousProps.changeStatus === nextProps.changeStatus &&
-      previousProps.add === nextProps.add &&
-      previousProps.setMax === nextProps.setMax &&
-      previousProps.merge === nextProps.merge &&
-      previousProps.transferMerge === nextProps.transferMerge &&
-      previousProps.returnStock === nextProps.returnStock
-    );
-  }
-);
-
 type StockItemQuantity = number | '' | undefined;
 
 type StockAdjustmentItem = {
@@ -959,7 +938,7 @@ function stockTransferFields(
         const record = records[row.item.pk];
 
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             transfer
             changeStatus
@@ -1008,7 +987,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item.pk];
 
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             key={record.pk}
             record={record}
@@ -1074,7 +1053,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item.pk];
 
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             setMax
             changeStatus
@@ -1121,11 +1100,11 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item.pk];
 
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             changeStatus
             props={row}
             add
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -1146,16 +1125,14 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
 }
 
 function stockCountFields(items: any[]): ApiFormFieldSet {
-  if (!items) {
-    return {};
-  }
+  const records = Object.fromEntries(
+    items?.map((item) => [item.pk, item]) ?? []
+  );
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
-
-  const initialValue = mapAdjustmentItems(items);
+  const initialValue = items ? mapAdjustmentItems(items) : [];
 
   // Extract all location values from the items
-  const locations = [...new Set(items.map((item) => item.location))];
+  const locations = [...new Set(items?.map((item) => item.location))];
 
   const fields: ApiFormFieldSet = {
     items: {
@@ -1163,11 +1140,11 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
       value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             changeStatus
-            key={row.item.pk}
-            record={records[row.item.pk]}
+            key={row.rowId}
+            record={records[row.item?.pk]}
           />
         );
       },
@@ -1212,7 +1189,7 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
       }),
       modelRenderer: (row: TableFieldRowProps) => {
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             key={row.item}
             merge
@@ -1279,7 +1256,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       }),
       modelRenderer: (row: TableFieldRowProps) => {
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             key={row.item.item}
             merge
@@ -1328,7 +1305,7 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
       }),
       modelRenderer: (row: TableFieldRowProps) => {
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             key={row.item.item}
             merge
@@ -1372,7 +1349,7 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item];
 
         return (
-          <MemoizedStockOperationsRow
+          <StockOperationsRow
             props={row}
             key={record.pk}
             merge

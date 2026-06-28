@@ -227,7 +227,6 @@ export function useAllocateToTransferOrderForm({
   // Memoize the line items to prevent re-rendering
   const lines = useMemo(() => {
     return lineItems.map((item) => {
-      console.log('line:', item);
       return {
         id: item.pk,
         ...item
