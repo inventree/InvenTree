@@ -303,7 +303,7 @@ function BuildOutputFormRow({
             nextValue = Number.isFinite(parsed) ? parsed : '';
           }
 
-          props.changeFn(props.idx, 'quantity', nextValue);
+          props.changeFn(props.rowId, 'quantity', nextValue);
         }}
         error={props.rowErrors?.quantity?.message}
       />
@@ -823,6 +823,7 @@ export function useAllocateStockToBuildForm({
         })
         .map((item) => {
           return {
+            id: item.pk,
             build_line: item.pk,
             stock_item: undefined,
             quantity: Math.max(
@@ -1033,7 +1034,7 @@ export function useConsumeBuildLinesForm({
           );
 
           return (
-            <BuildConsumeLineRow key={row.idx} props={row} record={record} />
+            <BuildConsumeLineRow key={row.rowId} props={row} record={record} />
           );
         }
       },
