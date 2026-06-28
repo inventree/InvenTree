@@ -555,19 +555,60 @@ function moveToDefault(
   });
 }
 
+/*
+ * Memoize a list of stock items for use in a stock operations modal.
+ * These items may be provided directly, or fetched from the API
+ *
+ * @param enabled - Whether to enable the query (if false, items must be provided directly)
+ * @param items - Optional list of stock items to use directly
+ * @param category - Optional category ID to filter stock items
+ * @param location - Optional location ID to filter stock items
+ * @param part - Optional part ID to filter stock items
+ */
+function useStockItems({
+  enabled,
+  items,
+  category,
+  location,
+  part
+}: Readonly<{
+  enabled: boolean;
+  items?: any | any[];
+  category?: number | string;
+  location?: number | string;
+  part?: number | string;
+}>) {
+  const query = useQuery({
+    enabled: enabled,
+    queryKey: ['stockItems', category, location, part],
+    queryFn: async () => {
+      if (items) {
+        return Array.isArray(items) ? items : [items];
+      }
+
+      if (!enabled) {
+        return [];
+      }
+
+      // Fetch via the API
+      const url = apiUrl(ApiEndpoints.stock_item_list);
+
+      return api.get(url, {
+        params: {
+          category: category || undefined,
+          location: location || undefined,
+          part: part || undefined
+        }
+      });
+    }
+  });
+
+  return useMemo(() => query.data ?? [], [query.data]);
+}
+
 type StockAdjustmentItemWithRecord = {
   obj: any;
 } & StockAdjustmentItem;
-
-type TableFieldRefreshFn = (idx: number) => void;
-type TableFieldChangeFn = (idx: number, key: string, value: any) => void;
-
-type StockRow = {
-  item: StockAdjustmentItemWithRecord;
-  idx: number;
-  changeFn: TableFieldChangeFn;
-  removeFn: TableFieldRefreshFn;
-};
 
 function ReturnStockMoveButton({
   record,
