@@ -665,19 +665,6 @@ function StockOperationsRow({
 
   const [status, setStatus] = useState<number | undefined>(undefined);
 
-  const removeAndRefresh = useCallback(() => {
-    props.removeFn(rowId);
-  }, [props.removeFn, rowId]);
-
-  const callChangeFn = useCallback(
-    (identifier: number | string, key: string, value: any) => {
-      queueMicrotask(() => {
-        props.changeFn(identifier, key, value);
-      });
-    },
-    [props.changeFn]
-  );
-
   const [packagingOpen, packagingHandlers] = useDisclosure(false);
   const [statusOpen, statusHandlers] = useDisclosure(false);
   const hasMountedPackagingRef = useRef(false);
@@ -693,12 +680,12 @@ function StockOperationsRow({
       return;
     }
 
-    callChangeFn(
+    props.changeFn(
       rowId,
       'packaging',
       packagingOpen ? record?.packaging || undefined : undefined
     );
-  }, [transfer, packagingOpen, rowId, record?.packaging, callChangeFn]);
+  }, [transfer, packagingOpen, rowId, record?.packaging, props.changeFn]);
 
   useEffect(() => {
     if (!changeStatus) {
@@ -712,19 +699,19 @@ function StockOperationsRow({
 
     if (statusOpen) {
       setStatus(record?.status_custom_key || record?.status || undefined);
-      callChangeFn(rowId, 'status', record?.status || undefined);
+      props.changeFn(rowId, 'status', record?.status || undefined);
       return;
     }
 
     setStatus(undefined);
-    callChangeFn(rowId, 'status', undefined);
+    props.changeFn(rowId, 'status', undefined);
   }, [
     changeStatus,
     statusOpen,
     rowId,
     record?.status,
     record?.status_custom_key,
-    callChangeFn
+    props.changeFn
   ]);
 
   const stockString: string = useMemo(() => {
@@ -794,7 +781,7 @@ function StockOperationsRow({
                 }
 
                 setQuantity(nextValue);
-                callChangeFn(rowId, 'quantity', nextValue);
+                props.changeFn(rowId, 'quantity', nextValue);
               }}
               error={props.rowErrors?.quantity?.message}
             />
@@ -807,13 +794,15 @@ function StockOperationsRow({
                 <ReturnStockMoveButton
                   record={record}
                   quantity={props.item.quantity}
-                  onRemove={removeAndRefresh}
+                  onRemove={() => props.removeFn(rowId)}
                   returnStock={returnStock}
                 />
               ) : (
                 <ActionButton
                   onClick={() =>
-                    moveToDefault(record, props.item.quantity, removeAndRefresh)
+                    moveToDefault(record, props.item.quantity, () =>
+                      props.removeFn(rowId)
+                    )
                   }
                   icon={<InvenTreeIcon icon='default_location' />}
                   tooltip={t`Move to default location`}
@@ -847,7 +836,9 @@ function StockOperationsRow({
                 size='sm'
                 icon={<InvenTreeIcon icon='merge' />}
                 tooltip={t`Merge into existing stock`}
-                onClick={() => callChangeFn(rowId, 'merge', !props.item?.merge)}
+                onClick={() =>
+                  props.changeFn(rowId, 'merge', !props.item?.merge)
+                }
                 variant={props.item?.merge ? 'filled' : 'transparent'}
               />
             )}
@@ -860,7 +851,7 @@ function StockOperationsRow({
           visible={statusOpen}
           onValueChange={(value: any) => {
             setStatus(value);
-            callChangeFn(rowId, 'status', value || undefined);
+            props.changeFn(rowId, 'status', value || undefined);
           }}
           fieldName='status'
           fieldDefinition={{
@@ -876,7 +867,7 @@ function StockOperationsRow({
         <TableFieldExtraRow
           visible={transfer && packagingOpen}
           onValueChange={(value: any) => {
-            callChangeFn(rowId, 'packaging', value || undefined);
+            props.changeFn(rowId, 'packaging', value || undefined);
           }}
           fieldName='packaging'
           fieldDefinition={{
