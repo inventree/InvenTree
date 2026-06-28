@@ -23,6 +23,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.filters
 import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
@@ -493,7 +494,7 @@ class BulkCreateMixin:
             if unique_create_fields := getattr(self, 'unique_create_fields', None):
                 existing = collections.defaultdict(list)
                 for idx, item in enumerate(data):
-                    key = tuple(item[v] for v in list(unique_create_fields))  # type: ignore[not-subscriptable]
+                    key = tuple(item[v] for v in list(unique_create_fields))  # ty: ignore[not-subscriptable]
                     existing[key].append(idx)
 
                 unique_errors = [[] for _ in range(len(data))]
@@ -963,3 +964,43 @@ def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):
             lookup_field_ref=lookup_field_ref,
         ),
     )
+
+
+class TreeMixin:
+    """A mixin class for supporting tree-structured data in the API."""
+
+    # Any API view which inherits from this mixin must define a 'model_class' attribute
+    model_class = None
+
+    filter_backends = InvenTree.filters.SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['level', 'name', 'subcategories']
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
+    ordering = ['level']
+
+    def filter_queryset(self, queryset):
+        """Filter the queryset, and provide extra support for tree-structured data."""
+        queryset = super().filter_queryset(queryset)
+
+        # If a search term is provided, include all ancestors of matched items in the results
+        if self.request.query_params.get('search', '').strip():
+            ancestors = self.model_class.objects.get_queryset_ancestors(
+                queryset, include_self=True
+            )
+            queryset = queryset | ancestors
+
+        # If a specific ID is provided to "expand_to", include all ancestors and siblings
+        if expand_to := self.request.query_params.get('expand_to'):
+            try:
+                target = self.model_class.objects.get(pk=int(expand_to))
+                target_ancestors = target.get_ancestors(include_self=True)
+                queryset = queryset | target_ancestors
+
+                # We also want to include the "sibling" nodes of the expanded item
+                siblings = target.get_siblings(include_self=True)
+                queryset = queryset | siblings
+
+            except (self.model_class.DoesNotExist, ValueError):
+                pass
+
+        return queryset.distinct()

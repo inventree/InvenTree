@@ -5,7 +5,21 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - YYYY-MM-DD
+## Unreleased - xxxx.xx.xx
+
+### Breaking Changes
+
+- [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
+
+### Added
+
+- [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
+
+### Changed
+
+### Removed
+
+## 1.4.0 - 2026-06-24
 
 ### Breaking Changes
 
@@ -16,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12208](https://github.com/inventree/InvenTree/pull/12208) adds custom locale support for rendering currencies, dates and numbers within reports. This allows users to specify a custom locale for report rendering, which can be used to control the formatting of dates, numbers and currency values in the generated reports.
+- [#12204](https://github.com/inventree/InvenTree/pull/12204) adds new filtering options to PartCategoryTree and StockLocationTree API endpoints, allowing tree data to be fetched dynamically
 - [#12165](https://github.com/inventree/InvenTree/pull/12165) adds support for parameters against the PartCategory model
 - [#12103](https://github.com/inventree/InvenTree/pull/12103) adds column-based filtering to table views in the user interface. This extends the existing table filtering functionality by allowing users to apply filters directly to individual columns.
 - [#12093](https://github.com/inventree/InvenTree/pull/12093) adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)

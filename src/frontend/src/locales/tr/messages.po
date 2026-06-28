@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-17 22:14\n"
+"PO-Revision-Date: 2026-06-24 14:28\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -79,12 +79,12 @@ msgstr "Vazgeç"
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
 #: src/forms/PurchaseOrderForms.tsx:919
-#: src/forms/StockForms.tsx:843
-#: src/forms/StockForms.tsx:891
-#: src/forms/StockForms.tsx:957
-#: src/forms/StockForms.tsx:1003
-#: src/forms/StockForms.tsx:1044
-#: src/forms/StockForms.tsx:1160
+#: src/forms/StockForms.tsx:870
+#: src/forms/StockForms.tsx:918
+#: src/forms/StockForms.tsx:984
+#: src/forms/StockForms.tsx:1030
+#: src/forms/StockForms.tsx:1071
+#: src/forms/StockForms.tsx:1187
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
 msgid "Actions"
 msgstr "Eylemler"
@@ -135,19 +135,19 @@ msgstr "Hayır"
 #: src/forms/PurchaseOrderForms.tsx:915
 #: src/forms/ReturnOrderForms.tsx:246
 #: src/forms/SalesOrderForms.tsx:436
-#: src/forms/StockForms.tsx:370
-#: src/forms/StockForms.tsx:838
-#: src/forms/StockForms.tsx:886
-#: src/forms/StockForms.tsx:952
-#: src/forms/StockForms.tsx:998
-#: src/forms/StockForms.tsx:1039
-#: src/forms/StockForms.tsx:1088
-#: src/forms/StockForms.tsx:1156
-#: src/forms/StockForms.tsx:1204
-#: src/forms/StockForms.tsx:1248
+#: src/forms/StockForms.tsx:378
+#: src/forms/StockForms.tsx:865
+#: src/forms/StockForms.tsx:913
+#: src/forms/StockForms.tsx:979
+#: src/forms/StockForms.tsx:1025
+#: src/forms/StockForms.tsx:1066
+#: src/forms/StockForms.tsx:1115
+#: src/forms/StockForms.tsx:1183
+#: src/forms/StockForms.tsx:1231
+#: src/forms/StockForms.tsx:1275
 #: src/forms/TransferOrderForms.tsx:234
 #: src/pages/build/BuildDetail.tsx:260
-#: src/pages/part/PartDetail.tsx:1165
+#: src/pages/part/PartDetail.tsx:1166
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/ColumnRenderers.tsx:93
 #: src/tables/build/BuildOrderParametricTable.tsx:29
@@ -166,7 +166,7 @@ msgstr "Parça"
 #: src/pages/part/CategoryDetail.tsx:138
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:345
-#: src/pages/part/CategoryDetail.tsx:387
+#: src/pages/part/CategoryDetail.tsx:388
 #: src/pages/part/PartDetail.tsx:893
 msgid "Parts"
 msgstr "Parçalar"
@@ -242,7 +242,7 @@ msgid "Manufacturer Parts"
 msgstr "Üretici Parçaları"
 
 #: lib/enums/ModelInformation.tsx:80
-#: src/pages/part/CategoryDetail.tsx:387
+#: src/pages/part/CategoryDetail.tsx:388
 #: src/tables/Filter.tsx:496
 msgid "Part Category"
 msgstr "Parça Kategorisi"
@@ -261,7 +261,7 @@ msgstr "Parça Kategorileri"
 #: src/forms/BuildForms.tsx:848
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/TransferOrderForms.tsx:236
-#: src/pages/stock/StockDetail.tsx:1075
+#: src/pages/stock/StockDetail.tsx:1076
 #: src/tables/ColumnRenderers.tsx:132
 #: src/tables/part/PartTestResultTable.tsx:256
 #: src/tables/stock/InstalledItemsTable.tsx:66
@@ -283,7 +283,7 @@ msgstr "Stok Kalemleri"
 
 #: lib/enums/ModelInformation.tsx:99
 #: lib/enums/Roles.tsx:51
-#: src/pages/stock/LocationDetail.tsx:522
+#: src/pages/stock/LocationDetail.tsx:523
 msgid "Stock Location"
 msgstr "Stok Konumu"
 
@@ -328,7 +328,7 @@ msgstr "Üretim Emri"
 #: lib/enums/ModelInformation.tsx:122
 #: lib/enums/Roles.tsx:35
 #: src/defaults/actions.tsx:184
-#: src/pages/Index/Settings/SystemSettings.tsx:315
+#: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/build/BuildIndex.tsx:87
 #: src/pages/part/PartDetail.tsx:780
 #: src/pages/sales/SalesOrderDetail.tsx:437
@@ -386,7 +386,7 @@ msgid "Project Codes"
 msgstr "Proje Kodları"
 
 #: lib/enums/ModelInformation.tsx:160
-#: src/components/wizards/OrderPartsWizard.tsx:341
+#: src/components/wizards/OrderPartsWizard.tsx:346
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:577
 #: src/pages/stock/StockDetail.tsx:363
@@ -399,7 +399,7 @@ msgstr "Satın Alma Siparişi"
 #: lib/enums/ModelInformation.tsx:161
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:342
+#: src/pages/Index/Settings/SystemSettings.tsx:343
 #: src/pages/company/CompanyDetail.tsx:210
 #: src/pages/company/SupplierPartDetail.tsx:274
 #: src/pages/part/PartDetail.tsx:751
@@ -432,7 +432,7 @@ msgstr "Satış Siparişi"
 #: lib/enums/ModelInformation.tsx:177
 #: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:143
-#: src/pages/Index/Settings/SystemSettings.tsx:360
+#: src/pages/Index/Settings/SystemSettings.tsx:361
 #: src/pages/company/CompanyDetail.tsx:230
 #: src/pages/part/PartDetail.tsx:763
 #: src/pages/sales/SalesIndex.tsx:107
@@ -457,7 +457,7 @@ msgstr "İade Emri"
 #: lib/enums/ModelInformation.tsx:197
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:165
-#: src/pages/Index/Settings/SystemSettings.tsx:372
+#: src/pages/Index/Settings/SystemSettings.tsx:373
 #: src/pages/company/CompanyDetail.tsx:237
 #: src/pages/part/PartDetail.tsx:770
 #: src/pages/sales/SalesIndex.tsx:147
@@ -482,7 +482,7 @@ msgstr "Aktarım Emri"
 #: lib/enums/ModelInformation.tsx:213
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:154
-#: src/pages/Index/Settings/SystemSettings.tsx:385
+#: src/pages/Index/Settings/SystemSettings.tsx:386
 #: src/pages/part/PartDetail.tsx:787
 #: src/pages/stock/LocationDetail.tsx:249
 msgid "Transfer Orders"
@@ -644,14 +644,14 @@ msgstr "Seçim Kayıtları"
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
-#: src/components/nav/NavigationTree.tsx:211
+#: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
 #: src/components/nav/SearchDrawer.tsx:588
 #: src/components/settings/SettingList.tsx:145
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:83
-#: src/functions/auth.tsx:691
+#: src/functions/auth.tsx:693
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -723,6 +723,7 @@ msgstr "İstek zaman aşımı"
 
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:76
 msgid "Process failed"
 msgstr "İşlem başarısız"
 
@@ -1391,11 +1392,11 @@ msgstr "Süper Kullanıcı Gerekir"
 msgid "This widget requires superuser permissions"
 msgstr "Bu kart süper kullanıcı izinleri gerektirir"
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:133
+#: src/components/dashboard/widgets/NewsWidget.tsx:135
 msgid "No News"
 msgstr "Haber yok"
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:134
+#: src/components/dashboard/widgets/NewsWidget.tsx:136
 msgid "There are no unread news items"
 msgstr "Burada okunmamış haber yok"
 
@@ -1476,7 +1477,7 @@ msgid "Remove the associated image from this item?"
 msgstr "Bu ögeyle ilişkilendirilmiş görsel kaldırılsın mı?"
 
 #: src/components/details/DetailsImage.tsx:82
-#: src/forms/StockForms.tsx:956
+#: src/forms/StockForms.tsx:983
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
@@ -1655,7 +1656,7 @@ msgstr "Kod"
 msgid "Error rendering preview"
 msgstr "Önizleme görüntüleme hatası"
 
-#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:120
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:124
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr "Önizleme kullanılamıyor, \"Önizlemeyi Yeniden Yükle\"'ye tıklayın."
 
@@ -1728,11 +1729,11 @@ msgstr "Mevcut şablonu kaydet ve önizlemeyi yeniden yükle"
 #~ msgid "to preview"
 #~ msgstr "to preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:379
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:380
 msgid "Select instance to preview"
 msgstr "Önizlenecek örneği seçin"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:423
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:424
 msgid "Error rendering template"
 msgstr "Şablonu işleme hatası"
 
@@ -1829,20 +1830,20 @@ msgstr "Başarıyla giriş yapıldı"
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
 #: src/functions/auth.tsx:133
-#: src/functions/auth.tsx:142
+#: src/functions/auth.tsx:144
 msgid "Login failed"
 msgstr "Giriş başarısız"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:134
-#: src/functions/auth.tsx:354
+#: src/functions/auth.tsx:136
+#: src/functions/auth.tsx:356
 msgid "Check your input and try again."
 msgstr "Lütfen bilgilerinizi kontrol edin ve yeniden giriş yapın."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:345
+#: src/functions/auth.tsx:347
 msgid "Mail delivery successful"
 msgstr "E-posta teslimi başarılı"
 
@@ -2075,7 +2076,7 @@ msgstr "API Sürümü"
 #: src/defaults/actions.tsx:232
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:233
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:399
+#: src/pages/Index/Settings/SystemSettings.tsx:400
 msgid "Plugins"
 msgstr "Eklentiler"
 
@@ -2128,6 +2129,7 @@ msgstr "Kategorisiz"
 
 #: src/components/forms/fields/IconField.tsx:211
 #: src/components/nav/Layout.tsx:143
+#: src/components/nav/NavigationTree.tsx:378
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "Ara..."
@@ -2153,6 +2155,7 @@ msgid "Loading"
 msgstr "Yükleniyor"
 
 #: src/components/forms/fields/RelatedModelField.tsx:540
+#: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "Hiçbir şey bulunamadı"
 
@@ -2247,7 +2250,7 @@ msgstr "Veri İşleniyor"
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:401
+#: src/functions/auth.tsx:403
 msgid "An error occurred"
 msgstr "Bir hata oluştu"
 
@@ -2269,7 +2272,7 @@ msgstr "Sütun seçin veya bu alanı yok saymak için boş bırakın."
 
 #: src/components/importer/ImporterColumnSelector.tsx:202
 msgid "Auto"
-msgstr ""
+msgstr "Otomatik"
 
 #: src/components/importer/ImporterColumnSelector.tsx:305
 msgid "Ignore this field"
@@ -2297,7 +2300,7 @@ msgstr "İçe Aktarılmış Sütun"
 
 #: src/components/importer/ImporterColumnSelector.tsx:340
 msgid "Lookup Field"
-msgstr ""
+msgstr "Arama Alanı"
 
 #: src/components/importer/ImporterColumnSelector.tsx:341
 msgid "Default Value"
@@ -2516,7 +2519,7 @@ msgid "Change"
 msgstr "Değiştir"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:1002
+#: src/forms/StockForms.tsx:1029
 #: src/tables/stock/StockItemTestResultTable.tsx:369
 msgid "Add"
 msgstr "Ekle"
@@ -2871,8 +2874,8 @@ msgstr "Kullanıcı Ayarları"
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:193
-#: src/pages/Index/Settings/SystemSettings.tsx:418
-#: src/pages/Index/Settings/SystemSettings.tsx:423
+#: src/pages/Index/Settings/SystemSettings.tsx:419
+#: src/pages/Index/Settings/SystemSettings.tsx:424
 msgid "System Settings"
 msgstr "Sistem Ayarları"
 
@@ -2921,11 +2924,11 @@ msgstr "Çıkış"
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
-#: src/forms/StockForms.tsx:841
+#: src/forms/StockForms.tsx:868
 #: src/pages/Index/Settings/SystemSettings.tsx:260
 #: src/pages/part/PartDetail.tsx:663
 #: src/pages/stock/LocationDetail.tsx:481
-#: src/pages/stock/LocationDetail.tsx:522
+#: src/pages/stock/LocationDetail.tsx:523
 #: src/pages/stock/StockDetail.tsx:689
 #: src/pages/stock/TransferOrderDetail.tsx:536
 #: src/tables/stock/StockItemTable.tsx:81
@@ -2934,7 +2937,7 @@ msgstr "Stok"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:57
-#: src/pages/Index/Settings/SystemSettings.tsx:310
+#: src/pages/Index/Settings/SystemSettings.tsx:311
 #: src/pages/build/BuildDetail.tsx:816
 #: src/pages/build/BuildIndex.tsx:121
 msgid "Manufacturing"
@@ -2942,7 +2945,7 @@ msgstr "Üretim"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:63
-#: src/pages/Index/Settings/SystemSettings.tsx:338
+#: src/pages/Index/Settings/SystemSettings.tsx:339
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:274
 #: src/pages/company/SupplierDetail.tsx:9
@@ -2954,7 +2957,7 @@ msgstr "Satın Alma"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:69
-#: src/pages/Index/Settings/SystemSettings.tsx:355
+#: src/pages/Index/Settings/SystemSettings.tsx:356
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:575
 #: src/pages/sales/SalesIndex.tsx:211
@@ -2971,7 +2974,11 @@ msgstr "Gezinme"
 msgid "About"
 msgstr "Hakkında"
 
-#: src/components/nav/NavigationTree.tsx:212
+#: src/components/nav/NavigationTree.tsx:388
+msgid "Clear search"
+msgstr ""
+
+#: src/components/nav/NavigationTree.tsx:399
 msgid "Error loading navigation tree."
 msgstr "Navigasyon ağacını yükleme hatası."
 
@@ -3086,7 +3093,7 @@ msgid "Attachments"
 msgstr "Ekler"
 
 #: src/components/panels/NotesPanel.tsx:27
-#: src/forms/StockForms.tsx:911
+#: src/forms/StockForms.tsx:938
 #: src/tables/part/PartTestResultTable.tsx:214
 #: src/tables/stock/StockTrackingTable.tsx:279
 msgid "Notes"
@@ -3382,15 +3389,15 @@ msgstr "Kategori"
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:849
 #: src/forms/PurchaseOrderForms.tsx:709
-#: src/forms/StockForms.tsx:839
-#: src/forms/StockForms.tsx:887
-#: src/forms/StockForms.tsx:953
-#: src/forms/StockForms.tsx:999
-#: src/forms/StockForms.tsx:1040
-#: src/forms/StockForms.tsx:1089
-#: src/forms/StockForms.tsx:1157
-#: src/forms/StockForms.tsx:1205
-#: src/forms/StockForms.tsx:1249
+#: src/forms/StockForms.tsx:866
+#: src/forms/StockForms.tsx:914
+#: src/forms/StockForms.tsx:980
+#: src/forms/StockForms.tsx:1026
+#: src/forms/StockForms.tsx:1067
+#: src/forms/StockForms.tsx:1116
+#: src/forms/StockForms.tsx:1184
+#: src/forms/StockForms.tsx:1232
+#: src/forms/StockForms.tsx:1276
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:309
@@ -3411,7 +3418,7 @@ msgid "Serial Number"
 msgstr "Seri Numarası"
 
 #: src/components/render/Stock.tsx:104
-#: src/components/wizards/OrderPartsWizard.tsx:380
+#: src/components/wizards/OrderPartsWizard.tsx:385
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:266
 #: src/forms/BuildForms.tsx:687
@@ -3419,7 +3426,7 @@ msgstr "Seri Numarası"
 #: src/forms/PurchaseOrderForms.tsx:918
 #: src/forms/ReturnOrderForms.tsx:247
 #: src/forms/SalesOrderForms.tsx:439
-#: src/forms/StockForms.tsx:889
+#: src/forms/StockForms.tsx:916
 #: src/forms/TransferOrderForms.tsx:237
 #: src/pages/build/BuildIndex.tsx:47
 #: src/pages/part/PartStockHistoryDetail.tsx:61
@@ -3446,15 +3453,15 @@ msgstr "Miktar"
 #: src/forms/BuildForms.tsx:371
 #: src/forms/BuildForms.tsx:453
 #: src/forms/BuildForms.tsx:527
-#: src/forms/StockForms.tsx:840
-#: src/forms/StockForms.tsx:888
-#: src/forms/StockForms.tsx:954
-#: src/forms/StockForms.tsx:1000
-#: src/forms/StockForms.tsx:1041
-#: src/forms/StockForms.tsx:1090
-#: src/forms/StockForms.tsx:1158
-#: src/forms/StockForms.tsx:1206
-#: src/forms/StockForms.tsx:1250
+#: src/forms/StockForms.tsx:867
+#: src/forms/StockForms.tsx:915
+#: src/forms/StockForms.tsx:981
+#: src/forms/StockForms.tsx:1027
+#: src/forms/StockForms.tsx:1068
+#: src/forms/StockForms.tsx:1117
+#: src/forms/StockForms.tsx:1185
+#: src/forms/StockForms.tsx:1233
+#: src/forms/StockForms.tsx:1277
 #: src/tables/build/BuildLineTable.tsx:95
 msgid "Batch"
 msgstr "Parti"
@@ -3976,7 +3983,7 @@ msgid "Supplier"
 msgstr "Tedarikçi"
 
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:645
+#: src/forms/StockForms.tsx:655
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
@@ -4053,7 +4060,7 @@ msgstr "Parçayı içe aktarma başarısız oldu: "
 
 #: src/components/wizards/ImportPartWizard.tsx:641
 msgid "Are you sure, you want to import the supplier and manufacturer part into this part?"
-msgstr ""
+msgstr "Bu parçaya tedarikçi ve üretici bilgilerini aktarmak istediğinizden emin misiniz?"
 
 #: src/components/wizards/ImportPartWizard.tsx:655
 msgid "Import"
@@ -4061,28 +4068,28 @@ msgstr "İçe aktar"
 
 #: src/components/wizards/ImportPartWizard.tsx:692
 msgid "Parameters created successfully!"
-msgstr ""
+msgstr "Parametreler başarıyla oluşturuldu!"
 
 #: src/components/wizards/ImportPartWizard.tsx:720
 msgid "Failed to create parameters, please fix the errors and try again"
-msgstr ""
+msgstr "Parametreleri oluşturulamadı, lütfen hataları düzeltip yeniden deneyin"
 
 #. placeholder {0}: supplierPart?.supplier
 #: src/components/wizards/ImportPartWizard.tsx:740
 msgid "Part imported successfully from supplier {0}."
-msgstr ""
+msgstr "Parça, {0} tedarikçisinden başarıyla içe aktarıldı."
 
 #: src/components/wizards/ImportPartWizard.tsx:753
 msgid "Open Part"
-msgstr ""
+msgstr "Parçayı Aç"
 
 #: src/components/wizards/ImportPartWizard.tsx:760
 msgid "Open Supplier Part"
-msgstr ""
+msgstr "Tedarikçi Parçasını Aç"
 
 #: src/components/wizards/ImportPartWizard.tsx:767
 msgid "Open Manufacturer Part"
-msgstr ""
+msgstr "Üretici Parçasını Aç"
 
 #: src/components/wizards/ImportPartWizard.tsx:797
 #: src/tables/part/PartTable.tsx:499
@@ -4091,11 +4098,11 @@ msgstr ""
 
 #: src/components/wizards/ImportPartWizard.tsx:803
 msgid "Import Supplier Part"
-msgstr ""
+msgstr "Tedarikçi Parçası İçe Aktar"
 
 #: src/components/wizards/ImportPartWizard.tsx:805
 msgid "Search Supplier Part"
-msgstr ""
+msgstr "Tedarikçi Parçası Ara"
 
 #: src/components/wizards/ImportPartWizard.tsx:807
 msgid "Confirm import"
@@ -4107,28 +4114,28 @@ msgstr "Bitti"
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
 msgid "Error fetching part requirements"
-msgstr ""
+msgstr "Parça gereksinimleri alınırken hata oluştu"
 
 #: src/components/wizards/OrderPartsWizard.tsx:113
 msgid "Requirements"
-msgstr ""
+msgstr "Gereksinimler"
 
 #: src/components/wizards/OrderPartsWizard.tsx:117
 msgid "Build Requirements"
-msgstr ""
+msgstr "Üretim Gereksinimleri"
 
 #: src/components/wizards/OrderPartsWizard.tsx:123
 msgid "Sales Requirements"
-msgstr ""
+msgstr "Satış Gereksinimleri"
 
 #: src/components/wizards/OrderPartsWizard.tsx:129
-#: src/forms/StockForms.tsx:955
-#: src/forms/StockForms.tsx:1001
-#: src/forms/StockForms.tsx:1042
-#: src/forms/StockForms.tsx:1091
-#: src/forms/StockForms.tsx:1159
-#: src/forms/StockForms.tsx:1207
-#: src/forms/StockForms.tsx:1251
+#: src/forms/StockForms.tsx:982
+#: src/forms/StockForms.tsx:1028
+#: src/forms/StockForms.tsx:1069
+#: src/forms/StockForms.tsx:1118
+#: src/forms/StockForms.tsx:1186
+#: src/forms/StockForms.tsx:1234
+#: src/forms/StockForms.tsx:1278
 #: src/pages/company/SupplierPartDetail.tsx:195
 #: src/pages/company/SupplierPartDetail.tsx:392
 #: src/pages/part/PartDetail.tsx:395
@@ -4141,19 +4148,19 @@ msgstr "Stokta"
 #: src/components/wizards/OrderPartsWizard.tsx:146
 #: src/tables/build/BuildLineTable.tsx:409
 msgid "Required Quantity"
-msgstr ""
+msgstr "Gereken Miktar"
 
 #: src/components/wizards/OrderPartsWizard.tsx:205
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Yeni Satın Alma Siparişi"
 
 #: src/components/wizards/OrderPartsWizard.tsx:207
 msgid "Purchase order created"
-msgstr ""
+msgstr "Satın alma siparişi oluşturuldu"
 
 #: src/components/wizards/OrderPartsWizard.tsx:219
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Yeni Tedarikçi Parçası"
 
 #: src/components/wizards/OrderPartsWizard.tsx:221
 #: src/tables/purchasing/SupplierPartTable.tsx:218
@@ -4163,80 +4170,80 @@ msgstr "Tedarikçi parçası oluşturuldu"
 
 #: src/components/wizards/OrderPartsWizard.tsx:249
 msgid "Add to Purchase Order"
-msgstr ""
+msgstr "Satın Alma Siparişine Ekle"
 
 #: src/components/wizards/OrderPartsWizard.tsx:261
 msgid "Part added to purchase order"
-msgstr ""
+msgstr "Parça, satın alma siparişine eklendi"
 
 #: src/components/wizards/OrderPartsWizard.tsx:306
 msgid "Select supplier part"
-msgstr ""
+msgstr "Tedarikçi parçası seç"
 
-#: src/components/wizards/OrderPartsWizard.tsx:326
+#: src/components/wizards/OrderPartsWizard.tsx:331
 msgid "Copy supplier part number"
-msgstr ""
+msgstr "Tedarikçi parça numarasını kopyala"
 
-#: src/components/wizards/OrderPartsWizard.tsx:329
+#: src/components/wizards/OrderPartsWizard.tsx:334
 msgid "New supplier part"
-msgstr ""
+msgstr "Yeni tedarikçi parçası"
 
-#: src/components/wizards/OrderPartsWizard.tsx:353
+#: src/components/wizards/OrderPartsWizard.tsx:358
 msgid "Select purchase order"
-msgstr ""
+msgstr "Satın alma siparişi seç"
 
-#: src/components/wizards/OrderPartsWizard.tsx:367
+#: src/components/wizards/OrderPartsWizard.tsx:372
 msgid "New purchase order"
-msgstr ""
+msgstr "Yeni satın alma siparişi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:423
+#: src/components/wizards/OrderPartsWizard.tsx:428
 msgid "Add to selected purchase order"
-msgstr ""
+msgstr "Seçili satın alma siparişine ekle"
 
-#: src/components/wizards/OrderPartsWizard.tsx:440
-#: src/components/wizards/OrderPartsWizard.tsx:578
+#: src/components/wizards/OrderPartsWizard.tsx:445
+#: src/components/wizards/OrderPartsWizard.tsx:583
 msgid "No parts selected"
-msgstr ""
+msgstr "Hiç parça seçilmedi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:441
+#: src/components/wizards/OrderPartsWizard.tsx:446
 msgid "No purchaseable parts selected"
-msgstr ""
+msgstr "Hiç satın alınabilir parça seçilmedi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:477
+#: src/components/wizards/OrderPartsWizard.tsx:482
 msgid "Parts Added"
-msgstr ""
+msgstr "Parçalar Eklendi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:478
+#: src/components/wizards/OrderPartsWizard.tsx:483
 msgid "All selected parts added to a purchase order"
-msgstr ""
+msgstr "Seçilen tüm parçalar bir satın alma siparişine eklendi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:579
+#: src/components/wizards/OrderPartsWizard.tsx:584
 msgid "You must select at least one part to order"
-msgstr ""
+msgstr "Sipariş etmek için en az bir parça seçilmelidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:590
+#: src/components/wizards/OrderPartsWizard.tsx:595
 msgid "Supplier part is required"
-msgstr ""
+msgstr "Tedarikçi parçası gereklidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:594
+#: src/components/wizards/OrderPartsWizard.tsx:599
 msgid "Quantity is required"
-msgstr ""
+msgstr "Miktar gereklidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:607
+#: src/components/wizards/OrderPartsWizard.tsx:612
 msgid "Invalid part selection"
-msgstr ""
+msgstr "Geçersiz parça seçimi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:609
+#: src/components/wizards/OrderPartsWizard.tsx:614
 msgid "Please correct the errors in the selected parts"
-msgstr ""
+msgstr "Lütfen seçilen parçalardaki hataları düzeltin"
 
-#: src/components/wizards/OrderPartsWizard.tsx:620
+#: src/components/wizards/OrderPartsWizard.tsx:625
 #: src/tables/build/BuildLineTable.tsx:885
 #: src/tables/part/PartTable.tsx:417
 #: src/tables/sales/SalesOrderLineItemTable.tsx:417
 #: src/tables/stock/TransferOrderLineItemTable.tsx:330
 msgid "Order Parts"
-msgstr ""
+msgstr "Parçaları Sipariş Et"
 
 #: src/contexts/LanguageContext.tsx:22
 #~ msgid "Arabic"
@@ -4393,7 +4400,7 @@ msgstr ""
 #: src/defaults/actions.tsx:41
 #: src/defaults/actions.tsx:113
 msgid "Hotkeys"
-msgstr ""
+msgstr "Kısayol tuşları"
 
 #: src/defaults/actions.tsx:41
 #: src/defaults/links.tsx:118
@@ -4419,7 +4426,7 @@ msgstr "Sunucu Bilgisi"
 #: src/defaults/actions.tsx:86
 #: src/defaults/links.tsx:180
 msgid "About this InvenTree instance"
-msgstr ""
+msgstr "Bu InvenTree örneği hakkında"
 
 #: src/defaults/actions.tsx:92
 #: src/defaults/links.tsx:164
@@ -4441,47 +4448,47 @@ msgstr "Ana gezinme menüsünü aç"
 
 #: src/defaults/actions.tsx:107
 msgid "Go to your user settings"
-msgstr ""
+msgstr "Kullanıcı ayarlarınıza gidin"
 
 #: src/defaults/actions.tsx:114
 msgid "View a list of available hotkeys"
-msgstr ""
+msgstr "Kullanılabilir kısayol tuşlarının listesini görüntüle"
 
 #: src/defaults/actions.tsx:123
 msgid "Import Data"
-msgstr ""
+msgstr "Veri İçe Aktar"
 
 #: src/defaults/actions.tsx:124
 msgid "Import data from a file"
-msgstr ""
+msgstr "Bir dosyadan veri içe aktar"
 
 #: src/defaults/actions.tsx:134
 msgid "Go to Purchase Orders"
-msgstr ""
+msgstr "Satın Alma Siparişlerine Git"
 
 #: src/defaults/actions.tsx:144
 msgid "Go to Sales Orders"
-msgstr ""
+msgstr "Satış Siparişlerine Git"
 
 #: src/defaults/actions.tsx:155
 msgid "Go to Transfer Orders"
-msgstr ""
+msgstr "Aktarım Emirlerine Git"
 
 #: src/defaults/actions.tsx:166
 msgid "Go to Return Orders"
-msgstr ""
+msgstr "İade Siparişlerine Git"
 
 #: src/defaults/actions.tsx:176
 msgid "Scan a barcode or QR code"
-msgstr ""
+msgstr "Bir barkod veya QR kodu tara"
 
 #: src/defaults/actions.tsx:185
 msgid "Go to Build Orders"
-msgstr ""
+msgstr "Üretim Emirlerine Git"
 
 #: src/defaults/actions.tsx:194
 msgid "Go to System Settings"
-msgstr ""
+msgstr "Sistem Ayarlarına Git"
 
 #: src/defaults/actions.tsx:203
 msgid "Go to the Admin Center"
@@ -4489,19 +4496,19 @@ msgstr "Yönetim Merkezine Git"
 
 #: src/defaults/actions.tsx:212
 msgid "Error Logs"
-msgstr ""
+msgstr "Hata Kayıtları"
 
 #: src/defaults/actions.tsx:213
 msgid "View error logs for this instance"
-msgstr ""
+msgstr "Bu örneğe ait hata günlüklerini görüntüle"
 
 #: src/defaults/actions.tsx:223
 msgid "Manage user accounts"
-msgstr ""
+msgstr "Kullanıcı hesaplarını yönet"
 
 #: src/defaults/actions.tsx:233
 msgid "Manage InvenTree plugins"
-msgstr ""
+msgstr "InvenTree eklentilerini yönet"
 
 #: src/defaults/actions.tsx:242
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:240
@@ -4512,15 +4519,15 @@ msgstr "Makineler"
 
 #: src/defaults/actions.tsx:243
 msgid "Manage machines and machine types"
-msgstr ""
+msgstr "Makineleri ve makine türlerini yönet"
 
 #: src/defaults/actions.tsx:253
 msgid "Manage report templates"
-msgstr ""
+msgstr "Rapor şablonlarını yönet"
 
 #: src/defaults/actions.tsx:263
 msgid "Manage label templates"
-msgstr ""
+msgstr "Etiket şablonlarını yönet"
 
 #: src/defaults/dashboardItems.tsx:29
 #~ msgid "Latest Parts"
@@ -4564,15 +4571,15 @@ msgstr ""
 
 #: src/defaults/defaultHostList.tsx:10
 msgid "Local Server"
-msgstr ""
+msgstr "Yerel Sunucu"
 
 #: src/defaults/defaultHostList.tsx:12
 msgid "InvenTree Demo"
-msgstr ""
+msgstr "InvenTree Demo"
 
 #: src/defaults/defaultHostList.tsx:14
 msgid "Current Server"
-msgstr ""
+msgstr "Mevcut Sunucu"
 
 #: src/defaults/links.tsx:17
 #~ msgid "GitHub"
@@ -4626,11 +4633,11 @@ msgstr "Sıkça sorulan sorular"
 
 #: src/defaults/links.tsx:125
 msgid "GitHub Repository"
-msgstr ""
+msgstr "Github Deposu"
 
 #: src/defaults/links.tsx:128
 msgid "InvenTree source code on GitHub"
-msgstr ""
+msgstr "InvenTree'nin Github'daki kaynak kodu"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
@@ -4643,11 +4650,11 @@ msgstr "Sistem Bilgisi"
 
 #: src/defaults/links.tsx:187
 msgid "Licenses for dependencies of the InvenTree software"
-msgstr ""
+msgstr "InvenTree yazılımının bağımlılıklarının lisansları"
 
 #: src/defaults/links.tsx:198
 msgid "About the InvenTree Project"
-msgstr ""
+msgstr "InvenTree Projesi Hakkında"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -4767,23 +4774,23 @@ msgstr ""
 
 #: src/forms/BomForms.tsx:43
 msgid "Required component quantity"
-msgstr ""
+msgstr "Gerekli bileşen miktarı"
 
 #: src/forms/BomForms.tsx:123
 msgid "Substitute Part"
-msgstr ""
+msgstr "Muadil Parça"
 
 #: src/forms/BomForms.tsx:140
 msgid "Edit BOM Substitutes"
-msgstr ""
+msgstr "BOM Muadillerini Düzenle"
 
 #: src/forms/BomForms.tsx:147
 msgid "Add Substitute"
-msgstr ""
+msgstr "Muadil Ekle"
 
 #: src/forms/BomForms.tsx:148
 msgid "Substitute added"
-msgstr ""
+msgstr "Muadil eklendi"
 
 #: src/forms/BuildForms.tsx:112
 #: src/forms/BuildForms.tsx:217
@@ -4806,7 +4813,7 @@ msgstr "Üretim Çıktısı"
 
 #: src/forms/BuildForms.tsx:370
 msgid "Quantity to Complete"
-msgstr ""
+msgstr "Tamamlanacak Miktar"
 
 #: src/forms/BuildForms.tsx:372
 #: src/forms/BuildForms.tsx:454
@@ -4814,7 +4821,7 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:834
 #: src/forms/ReturnOrderForms.tsx:201
 #: src/forms/ReturnOrderForms.tsx:248
-#: src/forms/StockForms.tsx:759
+#: src/forms/StockForms.tsx:780
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:282
 #: src/pages/core/UserDetail.tsx:151
@@ -4848,7 +4855,7 @@ msgstr "Üretim Çıktılarını Tamamla"
 
 #: src/forms/BuildForms.tsx:452
 msgid "Quantity to Scrap"
-msgstr ""
+msgstr "Hurdaya Ayrılacak Miktar"
 
 #: src/forms/BuildForms.tsx:470
 #~ msgid "Remove line"
@@ -4861,11 +4868,11 @@ msgstr "Üretim Çıktılarını Hurdaya Ayır"
 
 #: src/forms/BuildForms.tsx:477
 msgid "Selected build outputs will be completed, but marked as scrapped"
-msgstr ""
+msgstr "Seçili üretim çıktıları tamamlanacak, ancak hurda olarak işaretlenecektir"
 
 #: src/forms/BuildForms.tsx:479
 msgid "Allocated stock items will be consumed"
-msgstr ""
+msgstr "Tahsis edilen stok kalemleri tüketilecektir"
 
 #: src/forms/BuildForms.tsx:538
 #: src/forms/BuildForms.tsx:540
@@ -4874,11 +4881,11 @@ msgstr "Üretim Çıktılarını İptal Et"
 
 #: src/forms/BuildForms.tsx:542
 msgid "Selected build outputs will be removed"
-msgstr ""
+msgstr "Seçili üretim çıktıları kaldırılacaktır"
 
 #: src/forms/BuildForms.tsx:544
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "Tahsis edilen stok kalemleri stoka iade edilecektir"
 
 #: src/forms/BuildForms.tsx:684
 #: src/pages/build/BuildDetail.tsx:267
@@ -4921,7 +4928,7 @@ msgstr "Kaynak Konum"
 #: src/forms/SalesOrderForms.tsx:427
 #: src/forms/TransferOrderForms.tsx:225
 msgid "Select the source location for the stock allocation"
-msgstr ""
+msgstr "Stok tahsisi için kaynak konumu seç"
 
 #: src/forms/BuildForms.tsx:753
 #: src/forms/SalesOrderForms.tsx:468
@@ -4942,7 +4949,7 @@ msgstr "Stoku Tahsis Et"
 #: src/forms/SalesOrderForms.tsx:473
 #: src/forms/TransferOrderForms.tsx:263
 msgid "Stock items allocated"
-msgstr ""
+msgstr "Stok kalemleri tahsis edildi"
 
 #: src/forms/BuildForms.tsx:817
 #: src/forms/BuildForms.tsx:918
@@ -4963,13 +4970,13 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:934
 #: src/tables/stock/TransferOrderTable.tsx:56
 msgid "Consume Stock"
-msgstr ""
+msgstr "Stoku Tüket"
 
 #: src/forms/BuildForms.tsx:907
 #: src/tables/build/BuildLineTable.tsx:522
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
-msgstr ""
+msgstr "Tümüyle tüketildi"
 
 #: src/forms/BuildForms.tsx:952
 #: src/tables/build/BuildLineTable.tsx:192
@@ -4979,12 +4986,12 @@ msgstr "Tüketildi"
 
 #: src/forms/CommonFields.tsx:16
 msgid "Tags for this item"
-msgstr ""
+msgstr "Bu öge için etiketler"
 
 #: src/forms/CommonFields.tsx:17
 #: src/tables/Filter.tsx:414
 msgid "Select tags"
-msgstr ""
+msgstr "Etiketleri seç"
 
 #: src/forms/CommonForms.tsx:94
 #: src/forms/PurchaseOrderForms.tsx:195
@@ -4992,7 +4999,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:198
 #: src/forms/TransferOrderForms.tsx:95
 msgid "Select project code for this line item"
-msgstr ""
+msgstr "Bu satır ögesi için proje kodu seç"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -5013,7 +5020,7 @@ msgstr "Takip ediliyor"
 
 #: src/forms/PartForms.tsx:111
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Bu parçanın bildirmlerine abone ol"
 
 #: src/forms/PartForms.tsx:129
 #~ msgid "Part updated"
@@ -5025,7 +5032,7 @@ msgstr "Üst parça kategorisi"
 
 #: src/forms/PartForms.tsx:245
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Bu kategorinin bildirimlerine abone ol"
 
 #: src/forms/PurchaseOrderForms.tsx:421
 #~ msgid "Assign Batch Code{0}"
@@ -5070,7 +5077,7 @@ msgstr "Sanal Parça"
 
 #: src/forms/PurchaseOrderForms.tsx:566
 msgid "This part is virtual, no physical stock will be received."
-msgstr ""
+msgstr "Bu parça sanaldır; fiziksel stok teslim alınmayacaktır."
 
 #: src/forms/PurchaseOrderForms.tsx:566
 #~ msgid "Serial numbers"
@@ -5090,19 +5097,19 @@ msgstr "Parti Kodu Ata"
 
 #: src/forms/PurchaseOrderForms.tsx:620
 msgid "Assign Serial Numbers"
-msgstr ""
+msgstr "Seri Numaraları Ata"
 
 #: src/forms/PurchaseOrderForms.tsx:632
 msgid "Set Expiry Date"
 msgstr "Son Kullanma Tarihi Belirle"
 
 #: src/forms/PurchaseOrderForms.tsx:641
-#: src/forms/StockForms.tsx:740
+#: src/forms/StockForms.tsx:750
 msgid "Adjust Packaging"
 msgstr "Paketlemeyi Ayarla"
 
 #: src/forms/PurchaseOrderForms.tsx:650
-#: src/forms/StockForms.tsx:731
+#: src/forms/StockForms.tsx:741
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Durumu Değiştir"
@@ -5143,16 +5150,16 @@ msgstr "Parti Kodu"
 
 #: src/forms/PurchaseOrderForms.tsx:776
 msgid "Enter batch code for received items"
-msgstr ""
+msgstr "Teslim alınan ögeler için parti kodu gir"
 
 #: src/forms/PurchaseOrderForms.tsx:789
-#: src/forms/StockForms.tsx:224
+#: src/forms/StockForms.tsx:232
 msgid "Serial Numbers"
 msgstr "Seri Numaraları"
 
 #: src/forms/PurchaseOrderForms.tsx:790
 msgid "Enter serial numbers for received items"
-msgstr ""
+msgstr "Teslim alınan ögeler için seri numaraları gir"
 
 #: src/forms/PurchaseOrderForms.tsx:807
 #: src/pages/stock/StockDetail.tsx:393
@@ -5162,10 +5169,10 @@ msgstr "Son Kullanma Tarihi"
 
 #: src/forms/PurchaseOrderForms.tsx:808
 msgid "Enter an expiry date for received items"
-msgstr ""
+msgstr "Teslim alınan ögeler için bir geçerlilik tarihi gir"
 
 #: src/forms/PurchaseOrderForms.tsx:820
-#: src/forms/StockForms.tsx:775
+#: src/forms/StockForms.tsx:796
 #: src/pages/company/SupplierPartDetail.tsx:177
 #: src/pages/company/SupplierPartDetail.tsx:244
 #: src/pages/stock/StockDetail.tsx:430
@@ -5199,56 +5206,56 @@ msgstr "Kalemleri Teslim Al"
 
 #: src/forms/PurchaseOrderForms.tsx:940
 msgid "Items received"
-msgstr ""
+msgstr "Ögeler teslim alındı"
 
 #: src/forms/ReturnOrderForms.tsx:261
 msgid "Receive Items"
-msgstr ""
+msgstr "Ögeleri Teslim Al"
 
 #: src/forms/ReturnOrderForms.tsx:268
 msgid "Item received into stock"
-msgstr ""
+msgstr "Öge stoka teslim alındı"
 
 #. placeholder {0}: salePrice ? `; suggested: (${salePrice})` : '.'
 #: src/forms/SalesOrderForms.tsx:190
 msgid "Price based on part and quantity differs{0}"
-msgstr ""
+msgstr "Parça ve miktara göre fiyat farklılık gösterir{0}"
 
 #: src/forms/SalesOrderForms.tsx:221
 #: src/forms/SalesOrderForms.tsx:223
 #: src/tables/sales/SalesOrderShipmentTable.tsx:211
 msgid "Check Shipment"
-msgstr ""
+msgstr "Sevkiyatı Kontrol Et"
 
 #: src/forms/SalesOrderForms.tsx:224
 msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
-msgstr ""
+msgstr "Gönderiyi “kontrol edildi” olarak işaretlemek, bu gönderide yer alan tüm ürünlerin doğru olduğunu doğruladığınızı gösterir"
 
 #: src/forms/SalesOrderForms.tsx:234
 msgid "Shipment marked as checked"
-msgstr ""
+msgstr "Sevkiyat kontrol edildi olarak işaretlendi"
 
 #: src/forms/SalesOrderForms.tsx:249
 #: src/forms/SalesOrderForms.tsx:251
 #: src/tables/sales/SalesOrderShipmentTable.tsx:224
 msgid "Uncheck Shipment"
-msgstr ""
+msgstr "Sevkiyat Kontrolünü İptal Et"
 
 #: src/forms/SalesOrderForms.tsx:252
 msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
-msgstr ""
+msgstr "Sevkiyatı “kontrol edilmemiş” olarak işaretlemek, gönderinin daha fazla doğrulama gerektirdiğini gösterir"
 
 #: src/forms/SalesOrderForms.tsx:262
 msgid "Shipment marked as unchecked"
-msgstr ""
+msgstr "Sevkiyat kontrol edilmemiş olarak işaretlendi"
 
 #: src/forms/SalesOrderForms.tsx:280
 msgid "Completing shipment"
-msgstr ""
+msgstr "Sevkiyat tamamlanıyor"
 
 #: src/forms/SalesOrderForms.tsx:281
 msgid "Shipment completed successfully"
-msgstr ""
+msgstr "Sevkiyat başarıyla tamamlandı"
 
 #: src/forms/SalesOrderForms.tsx:288
 #: src/tables/sales/SalesOrderShipmentTable.tsx:234
@@ -5257,7 +5264,7 @@ msgstr "Gönderiyi Tamamla"
 
 #: src/forms/SalesOrderForms.tsx:534
 msgid "Leave blank to use the order address"
-msgstr ""
+msgstr "Sipariş adresini kullanmak için boş bırakın"
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -5267,220 +5274,221 @@ msgstr ""
 #~ msgid "Stock item updated"
 #~ msgstr "Stock item updated"
 
-#: src/forms/StockForms.tsx:202
+#: src/forms/StockForms.tsx:210
 msgid "Add given quantity as packs instead of individual items"
 msgstr "Verilen miktarı tekli ögeler yerine paketler olarak ekle"
 
-#: src/forms/StockForms.tsx:216
+#: src/forms/StockForms.tsx:224
 msgid "Enter initial quantity for this stock item"
 msgstr "Bu stok kalemi için başlangıç miktarını girin"
 
-#: src/forms/StockForms.tsx:226
+#: src/forms/StockForms.tsx:234
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Yeni stok için seri numaralarını girin (veya boş bırakın)"
 
-#: src/forms/StockForms.tsx:247
+#: src/forms/StockForms.tsx:255
 msgid "Stock Status"
 msgstr "Stok Durumu"
 
-#: src/forms/StockForms.tsx:326
+#: src/forms/StockForms.tsx:334
 #: src/pages/stock/StockDetail.tsx:754
 #: src/tables/stock/StockItemTable.tsx:426
 #: src/tables/stock/StockItemTable.tsx:475
 msgid "Add Stock Item"
 msgstr "Stok Kalemi Ekle"
 
-#: src/forms/StockForms.tsx:371
+#: src/forms/StockForms.tsx:379
 msgid "Select the part to install"
-msgstr ""
+msgstr "Takılacak parçayı seç"
 
-#: src/forms/StockForms.tsx:506
+#: src/forms/StockForms.tsx:514
 msgid "Confirm Stock Transfer"
 msgstr "Stok Transferini Onayla"
 
-#: src/forms/StockForms.tsx:707
+#: src/forms/StockForms.tsx:717
 msgid "Confirm Stock Return"
-msgstr ""
+msgstr "Stok İadesini Onayla"
 
-#: src/forms/StockForms.tsx:719
+#: src/forms/StockForms.tsx:729
 msgid "Move to default location"
 msgstr "Varsayılan konuma taşı"
 
-#: src/forms/StockForms.tsx:842
+#: src/forms/StockForms.tsx:759
+#: src/forms/StockForms.tsx:932
+msgid "Merge into existing stock"
+msgstr "Mevcut stokla birleştir"
+
+#: src/forms/StockForms.tsx:869
 msgid "Move"
 msgstr "Taşı"
 
-#: src/forms/StockForms.tsx:890
+#: src/forms/StockForms.tsx:917
 msgid "Return"
 msgstr "Geri Dön"
 
-#: src/forms/StockForms.tsx:905
-msgid "Merge into existing stock"
-msgstr ""
-
-#: src/forms/StockForms.tsx:906
+#: src/forms/StockForms.tsx:933
 msgid "Merge returned items into existing stock items if possible"
-msgstr ""
+msgstr "Mümkünse iade edilen kalemleri mevcut stok kalemleri ile birleştir"
 
-#: src/forms/StockForms.tsx:912
+#: src/forms/StockForms.tsx:939
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Stok işlem notları"
 
-#: src/forms/StockForms.tsx:1043
+#: src/forms/StockForms.tsx:1070
 #: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Say"
 
-#: src/forms/StockForms.tsx:1356
+#: src/forms/StockForms.tsx:1383
 #: src/hooks/UseStockAdjustActions.tsx:112
 msgid "Add Stock"
 msgstr "Stok Ekle"
 
-#: src/forms/StockForms.tsx:1357
+#: src/forms/StockForms.tsx:1384
 msgid "Stock added"
 msgstr "Stok Eklendi"
 
-#: src/forms/StockForms.tsx:1360
+#: src/forms/StockForms.tsx:1387
 msgid "Increase the quantity of the selected stock items by a given amount."
-msgstr ""
+msgstr "Seçilen stok kalemlerinin miktarını belirtilen miktarda artır."
 
-#: src/forms/StockForms.tsx:1371
+#: src/forms/StockForms.tsx:1398
 #: src/hooks/UseStockAdjustActions.tsx:122
 msgid "Remove Stock"
 msgstr "Stok Kaldır"
 
-#: src/forms/StockForms.tsx:1372
+#: src/forms/StockForms.tsx:1399
 msgid "Stock removed"
 msgstr "Stok Kaldırıldı"
 
-#: src/forms/StockForms.tsx:1375
+#: src/forms/StockForms.tsx:1402
 msgid "Decrease the quantity of the selected stock items by a given amount."
-msgstr ""
+msgstr "Seçilen stok kalemlerinin miktarını belirtilen miktarda azalt."
 
-#: src/forms/StockForms.tsx:1386
+#: src/forms/StockForms.tsx:1424
 #: src/hooks/UseStockAdjustActions.tsx:132
 msgid "Transfer Stock"
 msgstr "Stoku Aktar"
 
-#: src/forms/StockForms.tsx:1387
+#: src/forms/StockForms.tsx:1425
 msgid "Stock transferred"
 msgstr "Stok Transfer Edildi"
 
-#: src/forms/StockForms.tsx:1390
+#: src/forms/StockForms.tsx:1428
 msgid "Transfer selected items to the specified location."
-msgstr ""
+msgstr "Seçilen kalemleri belirtilen konuma aktar."
 
-#: src/forms/StockForms.tsx:1401
+#: src/forms/StockForms.tsx:1439
 #: src/hooks/UseStockAdjustActions.tsx:182
 msgid "Return Stock"
-msgstr ""
+msgstr "Stock İade Et"
 
-#: src/forms/StockForms.tsx:1402
+#: src/forms/StockForms.tsx:1440
 msgid "Stock returned"
-msgstr ""
+msgstr "Stok iade edildi"
 
-#: src/forms/StockForms.tsx:1405
+#: src/forms/StockForms.tsx:1443
 msgid "Return selected items into stock, to the specified location."
-msgstr ""
+msgstr "Seçilen kalemleri belirtilen konumdaki stoka iade et."
 
-#: src/forms/StockForms.tsx:1416
+#: src/forms/StockForms.tsx:1454
 #: src/hooks/UseStockAdjustActions.tsx:102
 msgid "Count Stock"
 msgstr "Stoku Say"
 
-#: src/forms/StockForms.tsx:1417
+#: src/forms/StockForms.tsx:1455
 msgid "Stock counted"
 msgstr "Stok Sayıldı"
 
-#: src/forms/StockForms.tsx:1420
+#: src/forms/StockForms.tsx:1458
 msgid "Count the selected stock items, and adjust the quantity accordingly."
-msgstr ""
+msgstr "Seçilen stok kalemlerini say ve miktarı ona göre ayarla."
 
-#: src/forms/StockForms.tsx:1431
+#: src/forms/StockForms.tsx:1469
 msgid "Change Stock Status"
 msgstr "Stok Durumunu Değiştir"
 
-#: src/forms/StockForms.tsx:1432
+#: src/forms/StockForms.tsx:1470
 msgid "Stock status changed"
 msgstr "Stok Durumu Değişti"
 
-#: src/forms/StockForms.tsx:1435
+#: src/forms/StockForms.tsx:1473
 msgid "Change the status of the selected stock items."
-msgstr ""
+msgstr "Seçilen stok kalemlerinin durumunu değiştir."
 
-#: src/forms/StockForms.tsx:1458
+#: src/forms/StockForms.tsx:1496
 #: src/hooks/UseStockAdjustActions.tsx:162
 msgid "Change Batch Code"
-msgstr ""
+msgstr "Parti Kodunu Değiştir"
 
-#: src/forms/StockForms.tsx:1461
+#: src/forms/StockForms.tsx:1499
 msgid "Change batch code for the selected stock items"
-msgstr ""
+msgstr "Seçilen stok kalemlerinin parti kodunu değiştir"
 
-#: src/forms/StockForms.tsx:1478
+#: src/forms/StockForms.tsx:1516
 #: src/hooks/UseStockAdjustActions.tsx:142
 msgid "Merge Stock"
 msgstr "Stoku Birleştir"
 
-#: src/forms/StockForms.tsx:1479
+#: src/forms/StockForms.tsx:1517
 msgid "Stock merged"
 msgstr "Stok Birleştirildi"
 
-#: src/forms/StockForms.tsx:1481
+#: src/forms/StockForms.tsx:1519
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Stok Kalemlerini Birleştir"
 
-#: src/forms/StockForms.tsx:1483
+#: src/forms/StockForms.tsx:1521
 msgid "Merge operation cannot be reversed"
-msgstr ""
+msgstr "Birleştirme işlemi geri alınamaz"
 
-#: src/forms/StockForms.tsx:1484
+#: src/forms/StockForms.tsx:1522
 msgid "Tracking information may be lost when merging items"
-msgstr ""
+msgstr "Kalemleri birleştirirken takip bilgileri kaybolabilir"
 
-#: src/forms/StockForms.tsx:1485
+#: src/forms/StockForms.tsx:1523
 msgid "Supplier information may be lost when merging items"
-msgstr ""
+msgstr "Kalemleri birleştirirken tedarikçi bilgileri kaybolabilir"
 
-#: src/forms/StockForms.tsx:1503
+#: src/forms/StockForms.tsx:1541
 msgid "Assign Stock to Customer"
 msgstr "Stoku Müşteriye Ata"
 
-#: src/forms/StockForms.tsx:1504
+#: src/forms/StockForms.tsx:1542
 msgid "Stock assigned to customer"
 msgstr "Stok Müşteriye Atandı"
 
-#: src/forms/StockForms.tsx:1514
+#: src/forms/StockForms.tsx:1552
 msgid "Delete Stock Items"
 msgstr "Stok Kalemlerini Sil"
 
-#: src/forms/StockForms.tsx:1515
+#: src/forms/StockForms.tsx:1553
 msgid "Stock deleted"
 msgstr "Stok Silindi"
 
-#: src/forms/StockForms.tsx:1518
+#: src/forms/StockForms.tsx:1556
 msgid "This operation will permanently delete the selected stock items."
-msgstr ""
+msgstr "Bu işlem seçilen stok kalemlerini kalıcı olarak silecektir."
 
-#: src/forms/StockForms.tsx:1527
+#: src/forms/StockForms.tsx:1565
 msgid "Parent stock location"
 msgstr "Üst stok konumu"
 
-#: src/forms/StockForms.tsx:1654
+#: src/forms/StockForms.tsx:1692
 msgid "Find Serial Number"
 msgstr "Seri Numarası Bul"
 
-#: src/forms/StockForms.tsx:1665
+#: src/forms/StockForms.tsx:1703
 msgid "No matching items"
 msgstr "Eşleşen ürün bulunamadı"
 
-#: src/forms/StockForms.tsx:1671
+#: src/forms/StockForms.tsx:1709
 msgid "Multiple matching items"
-msgstr ""
+msgstr "Birden fazla eşleşen öge"
 
-#: src/forms/StockForms.tsx:1680
+#: src/forms/StockForms.tsx:1718
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Sunucudan geçersiz yanıt"
 
 #: src/forms/selectionListFields.tsx:95
 #~ msgid "Entries"
@@ -5539,111 +5547,111 @@ msgstr "Dahili sunucu hatası"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:220
+#: src/functions/auth.tsx:222
 msgid "Logged Out"
 msgstr "Çıkış Yapıldı"
 
 #: src/functions/auth.tsx:125
 msgid "There was a conflicting session for this browser, which has been logged out."
-msgstr ""
+msgstr "Bu tarayıcı için çakışan bir oturum vardı; bu oturumdan çıkış yapıldı."
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
 #~ msgstr "Found an existing login - using it to log you in."
 
 #: src/functions/auth.tsx:143
-msgid "No response from server."
-msgstr "Sunucudan yanıt yok."
-
-#: src/functions/auth.tsx:143
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:186
+#: src/functions/auth.tsx:145
+msgid "No response from server."
+msgstr "Sunucudan yanıt yok."
+
+#: src/functions/auth.tsx:188
 msgid "MFA Login successful"
-msgstr ""
+msgstr "MFA girişi başarılı"
 
-#: src/functions/auth.tsx:187
+#: src/functions/auth.tsx:189
 msgid "MFA details were automatically provided in the browser"
-msgstr ""
+msgstr "MFA bilgileri tarayıcıda otomatik olarak girildi"
 
-#: src/functions/auth.tsx:221
+#: src/functions/auth.tsx:223
 msgid "Successfully logged out"
 msgstr "Başarıyla çıkış yapıldı"
 
-#: src/functions/auth.tsx:288
+#: src/functions/auth.tsx:290
 msgid "Language changed"
-msgstr ""
+msgstr "Dil değişti"
 
-#: src/functions/auth.tsx:289
+#: src/functions/auth.tsx:291
 msgid "Your active language has been changed to the one set in your profile"
-msgstr ""
+msgstr "Aktif diliniz, profilinizde ayarlanan dile değiştirildi"
 
-#: src/functions/auth.tsx:310
+#: src/functions/auth.tsx:312
 msgid "Theme changed"
 msgstr "Tema değişti"
 
-#: src/functions/auth.tsx:311
+#: src/functions/auth.tsx:313
 msgid "Your active theme has been changed to the one set in your profile"
-msgstr ""
+msgstr "Etkin temanız, profilinizde ayarlanan temaya değiştirildi"
 
-#: src/functions/auth.tsx:346
+#: src/functions/auth.tsx:348
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Bir sıfırlama bağlantısı için gelen kutunuzu veya spam kutunuzu yoklayın. Bu yalnızca bir hesabınız varsa çalışacaktır."
 
-#: src/functions/auth.tsx:353
-#: src/functions/auth.tsx:617
+#: src/functions/auth.tsx:355
+#: src/functions/auth.tsx:619
 msgid "Reset failed"
 msgstr "Sıfırlama başarısız"
 
-#: src/functions/auth.tsx:380
+#: src/functions/auth.tsx:382
 msgid "Already logged in"
 msgstr "Zaten giriş yapıldı"
 
-#: src/functions/auth.tsx:381
+#: src/functions/auth.tsx:383
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
-msgstr ""
+msgstr "Sunucuda bu tarayıcıya ait çakışan bir oturum bulunmaktadır. Lütfen önce o oturumdan çıkış yapın."
 
-#: src/functions/auth.tsx:437
+#: src/functions/auth.tsx:439
 msgid "Logged In"
 msgstr "Giriş Yapıldı"
 
-#: src/functions/auth.tsx:438
+#: src/functions/auth.tsx:440
 msgid "Successfully logged in"
 msgstr "Başarıyla giriş yapıldı"
 
-#: src/functions/auth.tsx:572
+#: src/functions/auth.tsx:574
 msgid "Failed to set up MFA"
-msgstr ""
+msgstr "MFA kurulamadı"
 
-#: src/functions/auth.tsx:591
+#: src/functions/auth.tsx:593
 msgid "MFA Setup successful"
-msgstr ""
+msgstr "MFA kurulumu başarılı"
 
-#: src/functions/auth.tsx:592
+#: src/functions/auth.tsx:594
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
-msgstr ""
+msgstr "TOTP yoluyla MFA başarıyla kuruldu; yeniden oturum açmanız gerekecektir."
 
-#: src/functions/auth.tsx:607
+#: src/functions/auth.tsx:609
 msgid "Password set"
 msgstr "Şifre belirlendi"
 
-#: src/functions/auth.tsx:608
-#: src/functions/auth.tsx:717
+#: src/functions/auth.tsx:610
+#: src/functions/auth.tsx:719
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "Şifreniz başarıyla değiştirildi. Artık yeni şifrenizle giriş yapabilirsiniz"
 
-#: src/functions/auth.tsx:682
+#: src/functions/auth.tsx:684
 msgid "Password could not be changed"
-msgstr ""
+msgstr "Şifre değiştirilemedi"
 
-#: src/functions/auth.tsx:700
+#: src/functions/auth.tsx:702
 msgid "The two password fields didn’t match"
-msgstr ""
+msgstr "Girilen iki parola aynı değil"
 
-#: src/functions/auth.tsx:716
+#: src/functions/auth.tsx:718
 msgid "Password Changed"
-msgstr ""
+msgstr "Şifre Değişti"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -5691,7 +5699,7 @@ msgstr "Ürünler Güncellendi"
 
 #: src/hooks/UseForm.tsx:149
 msgid "Update multiple items"
-msgstr ""
+msgstr "Birden çok ögeyi güncelle"
 
 #: src/hooks/UseForm.tsx:179
 msgid "Item Deleted"
@@ -5707,64 +5715,64 @@ msgstr "Bu ögeyi silmek istediğinize emin misiniz?"
 
 #: src/hooks/UseRemotePlugin.tsx:102
 msgid "Failed to load module: {moduleUrl}"
-msgstr ""
+msgstr "Modül yüklenemedi: {moduleUrl}"
 
 #. placeholder {0}: typeof func
 #: src/hooks/UseRemotePlugin.tsx:129
 msgid "Export {exportName} in {moduleUrl} is not a function (found type {0})."
-msgstr ""
+msgstr "{moduleUrl} modülündeki '{exportName}' dışa aktarımı bir fonksiyon değil (tespit edilen tür: {0})."
 
 #: src/hooks/UseRemotePlugin.tsx:131
 msgid "Plugin entrypoint {exportName} does not exist in {moduleUrl}."
-msgstr ""
+msgstr "{moduleUrl} içinde {exportName} adlı eklenti giriş noktası bulunmuyor."
 
 #: src/hooks/UseStockAdjustActions.tsx:104
 msgid "Count selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerini say"
 
 #: src/hooks/UseStockAdjustActions.tsx:114
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerine ekle"
 
 #: src/hooks/UseStockAdjustActions.tsx:124
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerinden kaldır"
 
 #: src/hooks/UseStockAdjustActions.tsx:134
 msgid "Transfer selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerini aktar"
 
 #: src/hooks/UseStockAdjustActions.tsx:144
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerini birleştir"
 
 #: src/hooks/UseStockAdjustActions.tsx:154
 msgid "Change status of selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerinin durumunu değiştir"
 
 #: src/hooks/UseStockAdjustActions.tsx:164
 msgid "Change batch code of selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerinin parti kodunu değiştir"
 
 #: src/hooks/UseStockAdjustActions.tsx:172
 msgid "Assign Stock"
-msgstr ""
+msgstr "Stok Ata"
 
 #: src/hooks/UseStockAdjustActions.tsx:174
 msgid "Assign selected stock items to a customer"
-msgstr ""
+msgstr "Seçili stok kalemlerini bir müşteriye ata"
 
 #: src/hooks/UseStockAdjustActions.tsx:184
 msgid "Return selected items into stock"
-msgstr ""
+msgstr "Seçili kalemleri stoka iade et"
 
 #: src/hooks/UseStockAdjustActions.tsx:192
 msgid "Delete Stock"
-msgstr ""
+msgstr "Stoku Sil"
 
 #: src/hooks/UseStockAdjustActions.tsx:194
 msgid "Delete selected stock items"
-msgstr ""
+msgstr "Seçili stok kalemlerini sil"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
 #: src/pages/part/PartDetail.tsx:1095
@@ -5774,39 +5782,39 @@ msgstr "Stok Eylemleri"
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
 msgid "Reset Password"
-msgstr ""
+msgstr "Şifreyi Sıfırla"
 
 #: src/pages/Auth/ChangePassword.tsx:46
 msgid "Current Password"
-msgstr ""
+msgstr "Mevcut Şifre"
 
 #: src/pages/Auth/ChangePassword.tsx:47
 msgid "Enter your current password"
-msgstr ""
+msgstr "Mevcut şifrenizi girin"
 
 #: src/pages/Auth/ChangePassword.tsx:53
 msgid "New Password"
-msgstr ""
+msgstr "Yeni Şifre"
 
 #: src/pages/Auth/ChangePassword.tsx:54
 msgid "Enter your new password"
-msgstr ""
+msgstr "Yeni şifrenizi girin"
 
 #: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm New Password"
-msgstr ""
+msgstr "Yeni Şifreyi Onayla"
 
 #: src/pages/Auth/ChangePassword.tsx:61
 msgid "Confirm your new password"
-msgstr ""
+msgstr "Yeni şifrenizi onaylayın"
 
 #: src/pages/Auth/ChangePassword.tsx:80
 msgid "Confirm"
-msgstr ""
+msgstr "Onayla"
 
 #: src/pages/Auth/Layout.tsx:59
 msgid "Log off"
-msgstr ""
+msgstr "Oturumu kapat"
 
 #: src/pages/Auth/LoggedIn.tsx:19
 msgid "Checking if you are already logged in"
@@ -5830,7 +5838,7 @@ msgstr "Giriş"
 
 #: src/pages/Auth/Login.tsx:113
 msgid "Logging you in"
-msgstr ""
+msgstr "Oturumunuz açılıyor"
 
 #: src/pages/Auth/Login.tsx:120
 msgid "Don't have an account?"
@@ -5852,36 +5860,36 @@ msgstr "Bir hesabınız yok mu?"
 #: src/pages/Auth/MFA.tsx:29
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
 msgid "Multi-Factor Authentication"
-msgstr ""
+msgstr "Çok Aşamalı Kimlik Doğrulama"
 
 #: src/pages/Auth/MFA.tsx:33
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
 msgid "TOTP Code"
-msgstr ""
+msgstr "TOTP Kodu"
 
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
-msgstr ""
+msgstr "Kodlarınızdan birini girin: {mfa_types}"
 
 #: src/pages/Auth/MFA.tsx:42
 msgid "Remember this device"
-msgstr ""
+msgstr "Bu cihazı hatırla"
 
 #: src/pages/Auth/MFA.tsx:44
 msgid "If enabled, you will not be asked for MFA on this device for 30 days."
-msgstr ""
+msgstr "Etkinleştirilirse, bu cihazda 30 gün boyunca MFA istenmeyecektir."
 
 #: src/pages/Auth/MFA.tsx:53
 msgid "Log in"
-msgstr ""
+msgstr "Oturum aç"
 
 #: src/pages/Auth/MFASetup.tsx:23
 msgid "MFA Setup Required"
-msgstr ""
+msgstr "MFA Kurulumu Gerekli"
 
 #: src/pages/Auth/MFASetup.tsx:34
 msgid "Add TOTP"
-msgstr ""
+msgstr "TOTP Ekle"
 
 #: src/pages/Auth/Register.tsx:23
 msgid "Go back to login"
@@ -5895,11 +5903,11 @@ msgstr "Giriş yapma ekranına geri dön"
 #: src/pages/Auth/ResetPassword.tsx:22
 #: src/pages/Auth/VerifyEmail.tsx:19
 msgid "Key invalid"
-msgstr ""
+msgstr "Anahtar geçersiz"
 
 #: src/pages/Auth/ResetPassword.tsx:23
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Yeni bir şifre belirlemek için geçerli bir anahtar sağlamanız gerekir. Bir sıfırlama bağlantısı için gelen kutunuzu kontrol edin."
 
 #: src/pages/Auth/ResetPassword.tsx:30
 #~ msgid "Token invalid"
@@ -5915,11 +5923,11 @@ msgstr "Yeni şifre belirle"
 
 #: src/pages/Auth/ResetPassword.tsx:35
 msgid "The desired new password"
-msgstr ""
+msgstr "İstenen yeni şifre"
 
 #: src/pages/Auth/ResetPassword.tsx:44
 msgid "Send Password"
-msgstr ""
+msgstr "Şifre Gönder"
 
 #: src/pages/Auth/Set-Password.tsx:49
 #~ msgid "No token provided"
@@ -5931,15 +5939,15 @@ msgstr ""
 
 #: src/pages/Auth/VerifyEmail.tsx:20
 msgid "You need to provide a valid key."
-msgstr ""
+msgstr "Geçerli bir anahtar girmeniz gerekmektedir."
 
 #: src/pages/Auth/VerifyEmail.tsx:28
 msgid "Verify Email"
-msgstr ""
+msgstr "E-Postayı Doğrula"
 
 #: src/pages/Auth/VerifyEmail.tsx:30
 msgid "Verify"
-msgstr ""
+msgstr "Doğrula"
 
 #. placeholder {0}: error.statusText
 #: src/pages/ErrorPage.tsx:16
@@ -6104,19 +6112,19 @@ msgstr "Beklenmeyen bir hata oluştu"
 
 #: src/pages/Index/Scan.tsx:63
 msgid "Item already scanned"
-msgstr ""
+msgstr "Ürün zaten taranmış"
 
 #: src/pages/Index/Scan.tsx:80
 msgid "API Error"
-msgstr ""
+msgstr "API Hatası"
 
 #: src/pages/Index/Scan.tsx:81
 msgid "Failed to fetch instance data"
-msgstr ""
+msgstr "Örnek verileri alınamadı"
 
 #: src/pages/Index/Scan.tsx:128
 msgid "Scan Error"
-msgstr ""
+msgstr "Tarama Hatası"
 
 #: src/pages/Index/Scan.tsx:160
 msgid "Selected elements are not known"
@@ -6128,7 +6136,7 @@ msgstr "Birden çok nesne türü seçildi"
 
 #: src/pages/Index/Scan.tsx:175
 msgid "Actions ... "
-msgstr ""
+msgstr "İşlemler ... "
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
@@ -6137,11 +6145,11 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:192
 #: src/pages/Index/Scan.tsx:196
 msgid "Barcode Scanning"
-msgstr ""
+msgstr "Barkod Tarama"
 
 #: src/pages/Index/Scan.tsx:205
 msgid "Barcode Input"
-msgstr ""
+msgstr "Barkod Girişi"
 
 #: src/pages/Index/Scan.tsx:212
 msgid "Action"
@@ -6149,11 +6157,11 @@ msgstr "Eylem"
 
 #: src/pages/Index/Scan.tsx:215
 msgid "No Items Selected"
-msgstr ""
+msgstr "Hiç Öge Seçilmedi"
 
 #: src/pages/Index/Scan.tsx:216
 msgid "Scan and select items to perform actions"
-msgstr ""
+msgstr "İşlem gerçekleştirmek için ögeleri tarayın ve seçin"
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
@@ -6170,7 +6178,7 @@ msgstr "{0} öge seçildi"
 
 #: src/pages/Index/Scan.tsx:233
 msgid "Scanned Items"
-msgstr ""
+msgstr "Taranan Ögeler"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
@@ -6272,7 +6280,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:33
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:113
 msgid "Edit Account Information"
-msgstr ""
+msgstr "Hesap Bilgilerini Düzenle"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 #~ msgid "User details updated"
@@ -6280,7 +6288,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account details updated"
-msgstr ""
+msgstr "Hesap bilgileri güncellendi"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 #~ msgid "User Actions"
@@ -6293,7 +6301,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:136
 msgid "Edit Profile Information"
-msgstr ""
+msgstr "Profil Bilgilerini Düzenle"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
@@ -6309,7 +6317,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:59
 msgid "Profile details updated"
-msgstr ""
+msgstr "Profil bilgileri güncellendi"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
@@ -6346,25 +6354,25 @@ msgstr "Adı Görüntüle"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
 #: src/pages/core/UserDetail.tsx:127
 msgid "Position"
-msgstr ""
+msgstr "Pozisyon"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:967
 msgid "Type"
-msgstr ""
+msgstr "Tür"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
 #: src/pages/core/UserDetail.tsx:143
 msgid "Organisation"
-msgstr ""
+msgstr "Kuruluş"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:92
 msgid "Primary Group"
-msgstr ""
+msgstr "Birincil Grup"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:104
 msgid "Account Details"
-msgstr ""
+msgstr "Hesap Bilgileri"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:107
 msgid "Account Actions"
@@ -6377,11 +6385,11 @@ msgstr "Hesabı Düzenle"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
 #: src/tables/settings/UserTable.tsx:323
 msgid "Change Password"
-msgstr ""
+msgstr "Şifreyi Değiştir"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:119
 msgid "Change User Password"
-msgstr ""
+msgstr "Kullanıcı Şifresini Değiştir"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:131
 msgid "Profile Details"
@@ -6389,7 +6397,7 @@ msgstr "Profil Ayrıntıları"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:134
 msgid "Edit Profile"
-msgstr ""
+msgstr "Profili Düzenle"
 
 #. placeholder {0}: item.label
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:153
@@ -6616,15 +6624,15 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:27
 msgid "Secret"
-msgstr ""
+msgstr "Sır"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:40
 msgid "One-Time Password"
-msgstr ""
+msgstr "Tek Kullanımlık Şifre"
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:41
 msgid "Enter the TOTP code to ensure it registered correctly"
-msgstr ""
+msgstr "Doğru şekilde kaydedildiğinden emin olmak için TOTP kodunu girin"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
@@ -6632,7 +6640,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 msgid "Email Addresses"
-msgstr ""
+msgstr "E-posta Adresleri"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
 msgid "Single Sign On"
@@ -7287,15 +7295,15 @@ msgstr "Fiyatlandırma"
 msgid "Part Creation"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:280
+#: src/pages/Index/Settings/SystemSettings.tsx:281
 msgid "Stock Expiry"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:289
+#: src/pages/Index/Settings/SystemSettings.tsx:290
 msgid "Part Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:299
+#: src/pages/Index/Settings/SystemSettings.tsx:300
 #: src/pages/part/PartStockHistoryDetail.tsx:296
 #: src/pages/stock/StockDetail.tsx:554
 msgid "Stock Tracking"
@@ -7305,7 +7313,7 @@ msgstr "Stok İzleme"
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:327
+#: src/pages/Index/Settings/SystemSettings.tsx:328
 msgid "External Build Orders"
 msgstr ""
 
@@ -8347,11 +8355,11 @@ msgstr "Seri numarasına göre ara"
 msgid "Part Actions"
 msgstr "Parça Eylemleri"
 
-#: src/pages/part/PartDetail.tsx:1182
+#: src/pages/part/PartDetail.tsx:1183
 msgid "Part locked"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:1182
+#: src/pages/part/PartDetail.tsx:1183
 msgid "Part unlocked"
 msgstr ""
 

@@ -13,8 +13,9 @@ on:
     branches-ignore: ["l10*"]
 
 env:
-  python_version: 3.11
+  python_version: 3.12
   node_version: 24
+  plugin_creator_version: 1.20.0
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -153,7 +154,7 @@ jobs:
         run: cd src/frontend && npx playwright install-deps
       - name: Install Sample Plugin
         run: |
-          pip install -U inventree-plugin-creator
+          pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
           create-inventree-plugin --default
           cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Run Playwright tests
@@ -195,6 +196,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    permissions:
+      contents: read # Required for actions/checkout
+      id-token: write # Required for GitHub OIDC
 
     env:
       COVERAGE: true
@@ -232,7 +236,7 @@ jobs:
         run: cd src/frontend && npx playwright install-deps
       - name: Install Sample Plugin
         run: |
-          pip install -U inventree-plugin-creator
+          pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
           create-inventree-plugin --default
           cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Playwright [${{ matrix.shard }} / 4]

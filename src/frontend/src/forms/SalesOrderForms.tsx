@@ -32,7 +32,7 @@ import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
-import { TagsField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -58,7 +58,7 @@ export function useSalesOrderFields({
         }
       },
       customer_reference: {},
-      project_code: {},
+      project_code: ProjectCodeField(),
       order_currency: {},
       start_date: {
         icon: <IconCalendar />
@@ -195,9 +195,7 @@ export function useSalesOrderLineItemFields({
         value: partCurrency,
         onValueChange: setPartCurrency
       },
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
       link: {}

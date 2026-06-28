@@ -131,7 +131,9 @@ export async function doBasicLogin(
           default:
             notifications.show({
               title: `${t`Login failed`} (${err.response.status})`,
-              message: t`Check your input and try again.`,
+              message:
+                err.response?.data?.detail ??
+                t`Check your input and try again.`,
               id: 'auth-login-error',
               color: 'red'
             });

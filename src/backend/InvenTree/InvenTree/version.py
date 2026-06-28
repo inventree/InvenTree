@@ -15,10 +15,10 @@ from datetime import timedelta as td
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.4.0 dev'
+INVENTREE_SW_VERSION = '1.5.0 dev'
 
 # Minimum supported Python version
-MIN_PYTHON_VERSION = (3, 11)
+MIN_PYTHON_VERSION = (3, 12)
 
 logger = logging.getLogger('inventree')
 
