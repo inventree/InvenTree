@@ -588,6 +588,15 @@ function BuildAllocateLineRow({
   record: any;
   sourceLocation: number | undefined;
 }>) {
+  useWhyDidYouUpdate('BuildAllocateLineRow', {
+    props,
+    output,
+    record,
+    sourceLocation
+  });
+
+  const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
+
   const stockField: ApiFormFieldType = useMemo(() => {
     return {
       field_type: 'related field',
@@ -608,7 +617,7 @@ function BuildAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
@@ -616,7 +625,7 @@ function BuildAllocateLineRow({
 
           if (available < props.item.quantity) {
             props.changeFn(
-              props.idx,
+              props.rowId,
               'quantity',
               Math.min(props.item.quantity, available)
             );
@@ -655,7 +664,7 @@ function BuildAllocateLineRow({
           min={0}
           step={1}
           decimalScale={10}
-          value={props.item.quantity ?? ''}
+          value={quantity}
           onChange={(value: number | string) => {
             let nextValue: number | '' = '';
 
@@ -666,13 +675,14 @@ function BuildAllocateLineRow({
               nextValue = Number.isFinite(parsed) ? parsed : '';
             }
 
-            props.changeFn(props.idx, 'quantity', nextValue);
+            setQuantity(nextValue === '' ? 0 : nextValue);
+            props.changeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -719,7 +729,7 @@ export function useAllocateStockToBuildForm({
             lineItems.find((item) => item.pk == row.item.build_line) ?? {};
           return (
             <BuildAllocateLineRow
-              key={row.idx}
+              key={row.rowId}
               output={output}
               props={row}
               record={record}
