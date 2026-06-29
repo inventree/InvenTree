@@ -9,6 +9,10 @@ export function useWhyDidYouUpdate(name: string, props: any) {
   const previousProps = useRef({});
 
   useEffect(() => {
+    console.error(
+      'useWhyDidYouUpdate should not be used in production code. It is intended for debugging purposes only.'
+    );
+
     if (previousProps.current) {
       const allKeys = Object.keys({ ...previousProps.current, ...props });
       const changedProps: any = {};
