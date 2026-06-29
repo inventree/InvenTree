@@ -1,12 +1,12 @@
 # Please keep this list sorted - if you pin a version provide a reason
 django<6.0                              # Django package
 blessed                                 # CLI for Q Monitor
-cryptography>=48.0.1                    # Core cryptographic functionality
+cryptography                            # Core cryptographic functionality
 django-anymail[amazon_ses,postal]       # Email backend for various providers
 django-allauth[mfa,socialaccount,saml,openid,headless]   # SSO for external providers via OpenID
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
-django-dbbackup>=5.0.0                  # Backup / restore of database and media files
+django-dbbackup                         # Backup / restore of database and media files
 django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
 django-flags                            # Feature flags
@@ -16,7 +16,7 @@ django-mailbox                          # Email scraping
 django-markdownify                      # Markdown rendering
 django-money                            # Django app for currency management
 django-mptt                             # Modified Preorder Tree Traversal
-django-redis>=7.0.0                     # Redis integration
+django-redis                     # Redis integration
 django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
 django-sesame                           # Magic link authentication
@@ -46,7 +46,7 @@ ppf.datamatrix                          # Data Matrix barcode generator
 pypdf                                   # PDF manipulation tools
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
-pyyaml>=6.0.1                           # YAML parsing
+pyyaml                                  # YAML parsing
 qrcode[pil]                             # QR code generator
 rapidfuzz                               # Fuzzy string matching
 sentry-sdk                              # Error reporting (optional)
@@ -69,6 +69,3 @@ opentelemetry-instrumentation-system_metrics
 opentelemetry-instrumentation-wsgi
 opentelemetry-instrumentation-psycopg
 opentelemetry-instrumentation-pymysql
-
-# Pins
-xmlsec==1.3.17

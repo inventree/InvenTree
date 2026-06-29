@@ -94,6 +94,13 @@ export function PartColumn(props: PartColumnProps): TableColumn {
     sortable: true,
     switchable: false,
     minWidth: '175px',
+    copyable: (record: any) => {
+      const part = resolveItem(
+        record,
+        props.part ?? props.accessor ?? 'part_detail'
+      );
+      return part?.full_name ?? part?.name ?? '';
+    },
     render: (record: any) => {
       const part = resolveItem(
         record,
@@ -156,7 +163,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         text = `# ${stock_item.serial}`;
       }
 
-      if (record.is_building) {
+      if (stock_item.is_building) {
         color = 'blue';
         extra.push(
           <Text
@@ -164,35 +171,35 @@ export function StockColumn(props: StockColumnProps): TableColumn {
             size='sm'
           >{t`This stock item is in production`}</Text>
         );
-      } else if (record.sales_order) {
+      } else if (stock_item.sales_order) {
         extra.push(
           <Text
             key='sales-order'
             size='sm'
           >{t`This stock item has been assigned to a sales order`}</Text>
         );
-      } else if (record.customer) {
+      } else if (stock_item.customer) {
         extra.push(
           <Text
             key='customer'
             size='sm'
           >{t`This stock item has been assigned to a customer`}</Text>
         );
-      } else if (record.belongs_to) {
+      } else if (stock_item.belongs_to) {
         extra.push(
           <Text
             key='belongs-to'
             size='sm'
           >{t`This stock item is installed in another stock item`}</Text>
         );
-      } else if (record.consumed_by) {
+      } else if (stock_item.consumed_by) {
         extra.push(
           <Text
             key='consumed-by'
             size='sm'
           >{t`This stock item has been consumed by a build order`}</Text>
         );
-      } else if (!record.in_stock) {
+      } else if (!stock_item.in_stock) {
         extra.push(
           <Text
             key='unavailable'
@@ -201,17 +208,17 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         );
       }
 
-      if (record.expired) {
+      if (stock_item.expired) {
         extra.push(
           <Text key='expired' size='sm'>{t`This stock item has expired`}</Text>
         );
-      } else if (record.stale) {
+      } else if (stock_item.stale) {
         extra.push(
           <Text key='stale' size='sm'>{t`This stock item is stale`}</Text>
         );
       }
 
-      if (record.in_stock) {
+      if (stock_item.in_stock) {
         if (allocated > 0) {
           if (allocated > quantity) {
             color = 'red';
@@ -267,7 +274,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
         }
       }
 
-      if (!record.in_stock) {
+      if (!stock_item.in_stock) {
         color = 'red';
       }
 
