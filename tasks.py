@@ -906,6 +906,23 @@ def backend_trans(c, verbose: bool = False):
     success('Backend translations compiled successfully')
 
 
+@task(help={'verbose': 'Print verbose output'})
+@state_logger('backend_compilemessages')
+def backend_compilemessages(c, verbose: bool = False):
+    """Compile backend Django translation files without loading InvenTree settings."""
+    info('Compiling backend translations...')
+
+    cmd = 'python3 -m django compilemessages'
+
+    if verbose:
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
+    run(c, cmd, manage_py_dir())
+    success('Backend translations compiled successfully')
+
+
 @task(
     help={
         'clean': 'Clean up old backup files',
@@ -2490,6 +2507,7 @@ internal = Collection(
     clear_generated,
     export_settings_definitions,
     export_definitions,
+    backend_compilemessages,
     frontend_build,
     frontend_check,
     frontend_compile,

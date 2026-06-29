@@ -491,7 +491,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
-
+    filterset_fields = ['active']
     search_fields = ['code', 'description']
 
 
@@ -577,7 +577,7 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'compatible_units': [str(a) for a in unit.compatible_units()],  # ty:ignore[missing-argument]
             'isdimensionless': unit.dimensionless,
         }
 

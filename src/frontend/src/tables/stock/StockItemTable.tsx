@@ -84,6 +84,7 @@ function stockItemTableColumns({
         'allocated',
         'consumed',
         'installed',
+        'in_stock',
         'sent_to_customer'
       ]
     }),
