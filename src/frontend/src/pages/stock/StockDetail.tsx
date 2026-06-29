@@ -431,20 +431,20 @@ export default function StockDetail() {
         hidden: !stockitem.packaging
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         icon: 'calendar',
         label: t`Created`,
         hidden: !stockitem.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'updated',
         icon: 'calendar',
         label: t`Last Updated`
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'stocktake_date',
         icon: 'calendar',
         label: t`Last Stocktake`,
