@@ -1016,6 +1016,7 @@ export function useConsumeBuildLinesForm({
     successMessage: null,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
+    size: '80%',
     initialData: {
       lines: filteredLines.map((item) => {
         return {
