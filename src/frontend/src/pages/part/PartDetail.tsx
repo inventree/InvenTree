@@ -218,7 +218,10 @@ export default function PartDetail() {
   // Fetch information on parts which are revisions of *this* part
   const partRevisionQuery = useQuery({
     refetchOnMount: true,
-    enabled: revisionsEnabled && !!part && !!part.revision_count,
+    enabled:
+      revisionsEnabled &&
+      !!part &&
+      (!!part.revision_count || !!part.revision_of),
     queryKey: ['part_revisions', part.pk, part.revision_count],
     queryFn: async () =>
       api
@@ -227,7 +230,23 @@ export default function PartDetail() {
             revision_of: part.pk
           }
         })
-        .then((response) => response.data)
+        .then(async (response) => {
+          let data = response.data;
+
+          // If the part is also a revision, fetch upstream revision information too
+          if (!!part.revision_of) {
+            await api
+              .get(apiUrl(ApiEndpoints.part_list), {
+                params: {
+                  revision_of: part.revision_of
+                }
+              })
+              .then((response) => {
+                data = [...data, ...response.data];
+              });
+          }
+          return data;
+        })
   });
 
   const partRevisionOptions: any[] = useMemo(() => {
