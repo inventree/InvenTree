@@ -7,7 +7,6 @@ import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { useWhyDidYouUpdate } from '../functions/debug';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
@@ -111,12 +110,6 @@ function TransferOrderAllocateLineRow({
   record: any;
   sourceLocation?: number | null;
 }>) {
-  useWhyDidYouUpdate('TransferOrderAllocateLineRow', {
-    props,
-    record,
-    sourceLocation
-  });
-
   const [quantity, setQuantity] = useState<number | ''>(
     props.item?.quantity ?? ''
   );

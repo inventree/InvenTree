@@ -26,7 +26,6 @@ import type {
 } from '@lib/types/Forms';
 import dayjs from 'dayjs';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { useWhyDidYouUpdate } from '../functions/debug';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
@@ -311,12 +310,6 @@ function SalesOrderAllocateLineRow({
   record: any;
   sourceLocation?: number | null;
 }>) {
-  useWhyDidYouUpdate('SalesOrderAllocateLineRow', {
-    props,
-    record,
-    sourceLocation
-  });
-
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {

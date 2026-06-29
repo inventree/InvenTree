@@ -56,7 +56,6 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
-import { useWhyDidYouUpdate } from '../functions/debug';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -678,18 +677,6 @@ function StockOperationsRow({
   record?: any;
 }) {
   const rowId = props.rowId;
-
-  useWhyDidYouUpdate('StockOperationsRow', {
-    props,
-    transfer,
-    changeStatus,
-    add,
-    setMax,
-    merge,
-    transferMerge,
-    returnStock,
-    record
-  });
 
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (

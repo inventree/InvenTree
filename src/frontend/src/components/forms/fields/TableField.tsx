@@ -14,7 +14,6 @@ import {
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
-import { useWhyDidYouUpdate } from '../../../functions/debug';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 
@@ -267,13 +266,6 @@ function TableFieldComponent({
     },
     [error]
   );
-
-  useWhyDidYouUpdate(`TableField-${fieldName}`, {
-    definition,
-    fieldName,
-    value,
-    error
-  });
 
   return (
     <Table

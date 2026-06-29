@@ -37,7 +37,6 @@ import {
   RenderStockItem,
   RenderStockLocation
 } from '../components/render/Stock';
-import { useWhyDidYouUpdate } from '../functions/debug';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
@@ -266,12 +265,6 @@ function BuildOutputFormRow({
   record: any;
   withQuantityColumn?: boolean;
 }>) {
-  useWhyDidYouUpdate('BuildOutputFormRow', {
-    props,
-    record,
-    withQuantityColumn
-  });
-
   const stockItemColumn = useMemo(() => {
     if (record.serial) {
       return `# ${record.serial}`;
@@ -588,13 +581,6 @@ function BuildAllocateLineRow({
   record: any;
   sourceLocation: number | undefined;
 }>) {
-  useWhyDidYouUpdate('BuildAllocateLineRow', {
-    props,
-    output,
-    record,
-    sourceLocation
-  });
-
   const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
 
   const stockField: ApiFormFieldType = useMemo(() => {
@@ -706,14 +692,6 @@ export function useAllocateStockToBuildForm({
   lineItems: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  useWhyDidYouUpdate('useAllocateStockToBuildForm', {
-    buildId,
-    output,
-    outputId,
-    build,
-    lineItems
-  });
-
   const [sourceLocation, setSourceLocation] = useState<number | undefined>(
     undefined
   );
@@ -855,8 +833,6 @@ function BuildConsumeItemRow({
     },
     [props.changeFn]
   );
-
-  useWhyDidYouUpdate('BuildConsumeItemRow', { props, record, quantity });
 
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
