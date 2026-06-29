@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -8,7 +7,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
@@ -381,8 +379,6 @@ export function StockItemTable({
     [settings]
   );
 
-  const navigate = useNavigate();
-
   const tableColumns = useMemo(
     () =>
       stockItemTableColumns({
@@ -433,11 +429,7 @@ export function StockItemTable({
     },
     follow: params.openNewStockItem ?? true,
     table: table,
-    onFormSuccess: (response: any) => {
-      // Returns a list that may contain multiple serialized stock items
-      // Navigate to the first result
-      navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
-    },
+    modelType: ModelType.stockitem,
     successMessage: t`Stock item created`,
     keepOpenOption: true
   });
