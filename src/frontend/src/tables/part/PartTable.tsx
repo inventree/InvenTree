@@ -181,7 +181,9 @@ function partTableColumns(): TableColumn[] {
           <TableHoverCard
             value={
               <Group gap='xs' justify='left' wrap='nowrap'>
-                <Text c={color}>{text}</Text>
+                <Text c={color} size='sm'>
+                  {text}
+                </Text>
                 {record.units && (
                   <Text size='xs' c={color}>
                     [{record.units}]

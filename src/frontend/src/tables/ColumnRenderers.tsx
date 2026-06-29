@@ -94,6 +94,13 @@ export function PartColumn(props: PartColumnProps): TableColumn {
     sortable: true,
     switchable: false,
     minWidth: '175px',
+    copyable: (record: any) => {
+      const part = resolveItem(
+        record,
+        props.part ?? props.accessor ?? 'part_detail'
+      );
+      return part?.full_name ?? part?.name ?? '';
+    },
     render: (record: any) => {
       const part = resolveItem(
         record,
