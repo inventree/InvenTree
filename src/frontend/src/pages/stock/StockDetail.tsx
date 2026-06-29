@@ -828,6 +828,8 @@ export default function StockDetail() {
     formProps: stockOperationProps,
     delete: false,
     changeBatch: false,
+    add: !stockitem.serial,
+    remove: !stockitem.serial,
     assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
     return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false

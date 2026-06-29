@@ -757,7 +757,9 @@ function StockOperationsRow({
   }, [record]);
 
   return !record ? (
-    <div>{t`Loading...`}</div>
+    <Table.Tr>
+      <Table.Td colSpan={6}>{t`Loading...`}</Table.Td>
+    </Table.Tr>
   ) : (
     <>
       <Table.Tr
@@ -1060,9 +1062,12 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial && item.quantity > 0);
 
-  const initialValue = mapAdjustmentItems(items).map((elem) => {
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
+
+  const initialValue = mapAdjustmentItems(validItems).map((elem) => {
     return {
       ...elem,
       quantity: 0
@@ -1107,9 +1112,12 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial);
 
-  const initialValue = mapAdjustmentItems(items).map((elem) => {
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
+
+  const initialValue = mapAdjustmentItems(validItems).map((elem) => {
     return {
       ...elem,
       quantity: 0
@@ -1243,19 +1251,22 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial);
+
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
 
   // Extract all non-null location values from the items
   const locationValues = [
     ...new Set(
-      items.filter((item) => item.location).map((item) => item.location)
+      validItems.filter((item) => item.location).map((item) => item.location)
     )
   ];
 
   // Extract all non-null default location values from the items
   const defaultLocationValues = [
     ...new Set(
-      items
+      validItems
         .filter((item) => item.part_detail?.default_location)
         .map((item) => item.part_detail?.default_location)
     )
@@ -1272,7 +1283,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: items.map((elem) => {
+      value: validItems.map((elem) => {
         return {
           item: elem.pk
         };
