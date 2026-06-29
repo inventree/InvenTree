@@ -432,16 +432,23 @@ export default function StockDetail() {
       },
       {
         type: 'text',
+        name: 'creation_date',
+        icon: 'calendar',
+        label: t`Created`,
+        hidden: !stockitem.creation_date
+      },
+      {
+        type: 'text',
         name: 'updated',
         icon: 'calendar',
         label: t`Last Updated`
       },
       {
         type: 'text',
-        name: 'stocktake',
+        name: 'stocktake_date',
         icon: 'calendar',
         label: t`Last Stocktake`,
-        hidden: !stockitem.stocktake
+        hidden: !stockitem.stocktake_date
       }
     ];
 
