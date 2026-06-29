@@ -577,6 +577,7 @@ function LineItemFormRow({
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
           <NumberInput
             radius='sm'
+            aria-label='number-field-quantity'
             min={0}
             step={1}
             decimalScale={10}

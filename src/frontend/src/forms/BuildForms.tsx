@@ -285,6 +285,7 @@ function BuildOutputFormRow({
         radius='sm'
         step={1}
         decimalScale={10}
+        aria-label='number-field-quantity'
         value={props.item.quantity ?? ''}
         onChange={(value: number | string) => {
           let nextValue: number | '' = '';
