@@ -304,6 +304,7 @@ export default function BuildLineTable({
             <Text
               c='red'
               style={{ fontStyle: 'italic' }}
+              size='sm'
             >{t`No stock available`}</Text>
           )
         }
@@ -447,7 +448,9 @@ export default function BuildLineTable({
               extra={extra}
               value={
                 <Group justify='space-between' wrap='nowrap'>
-                  <Text>{formatDecimal(record.requiredQuantity)}</Text>
+                  <Text size='sm'>
+                    {formatDecimal(record.requiredQuantity)}
+                  </Text>
                   {record?.part_detail?.units && (
                     <Text size='xs'>[{record.part_detail.units}]</Text>
                   )}
