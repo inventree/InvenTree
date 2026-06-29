@@ -215,7 +215,8 @@ export function TreeField({
 
   const selectedLabel = useMemo(() => {
     if (selectValue == null) return '';
-    return nodeMap[selectValue]?.name ?? selectValue;
+    const node = nodeMap[selectValue];
+    return node?.pathstring ?? node?.name ?? selectValue;
   }, [nodeMap, selectValue]);
 
   const inputSearchValue = isDropdownOpen ? searchValue : selectedLabel;
