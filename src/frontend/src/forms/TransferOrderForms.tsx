@@ -144,14 +144,12 @@ function TransferOrderAllocateLineRow({
           q = Math.max(q, required);
           q = Math.min(q, available);
 
-          if (q != quantity) {
-            setQuantity(q);
-            props.changeFn(props.rowId, 'quantity', q);
-          }
+          setQuantity(q);
+          props.changeFn(props.rowId, 'quantity', q);
         }
       }
     };
-  }, [sourceLocation, record, quantity]);
+  }, [sourceLocation, record, quantity, props.changeFn]);
 
   return (
     <Table.Tr key={`table-row-${props.rowId}`}>
@@ -175,6 +173,7 @@ function TransferOrderAllocateLineRow({
       <Table.Td>
         <NumberInput
           radius='sm'
+          aria-label='number-field-quantity'
           min={0}
           step={1}
           decimalScale={10}
@@ -189,7 +188,7 @@ function TransferOrderAllocateLineRow({
               nextValue = Number.isFinite(parsed) ? parsed : '';
             }
 
-            setQuantity(nextValue);
+            setQuantity(nextValue === '' ? 0 : nextValue);
             props.changeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
@@ -245,7 +244,7 @@ export function useAllocateToTransferOrderForm({
       },
       items: {
         field_type: 'table',
-        value: lineItems,
+        value: [],
         headers: [
           { title: t`Part`, style: { minWidth: '200px' } },
           { title: t`Allocated`, style: { minWidth: '200px' } },

@@ -230,6 +230,7 @@ function TableFieldComponent({
         };
       }
 
+      valueRef.current = nextValue;
       onChangeRef.current(nextValue);
     },
     [resolveRowIndex]
