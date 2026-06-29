@@ -455,6 +455,12 @@ export function ApiForm({
       }
     })
       .then((response) => {
+        const followPk = Array.isArray(response.data)
+          ? response.data.length === 1
+            ? response.data[0]?.pk
+            : undefined
+          : response.data?.pk;
+
         switch (response.status) {
           case 200:
           case 201:
@@ -469,12 +475,12 @@ export function ApiForm({
             if (
               props.follow &&
               props.modelType &&
-              response.data?.pk &&
+              followPk &&
               !keepOpenRef.current
             ) {
               // If we want to automatically follow the returned data
               if (!!navigate && !keepOpenRef.current) {
-                navigate(getDetailUrl(props.modelType, response.data?.pk));
+                navigate(getDetailUrl(props.modelType, followPk));
               }
             } else if (props.table) {
               // If we want to automatically update or reload a linked table
