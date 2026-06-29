@@ -612,10 +612,6 @@ function useStockItems({
   }, [opened, query.data]);
 }
 
-type StockAdjustmentItemWithRecord = {
-  obj: any;
-} & StockAdjustmentItem;
-
 function ReturnStockMoveButton({
   record,
   quantity,
@@ -951,8 +947,7 @@ function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
       batch: elem.batch || undefined,
       status: elem.status || undefined,
       packaging: elem.packaging || undefined,
-      merge: elem.merge ?? mergeDefault ?? false,
-      obj: elem
+      merge: elem.merge ?? mergeDefault ?? false
     };
   });
 
@@ -1292,8 +1287,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       field_type: 'table',
       value: items.map((elem) => {
         return {
-          item: elem.pk,
-          obj: elem
+          item: elem.pk
         };
       }),
       modelRenderer: (row: TableFieldRowProps) => {
@@ -1341,8 +1335,7 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
       field_type: 'table',
       value: items.map((elem) => {
         return {
-          item: elem.pk,
-          obj: elem
+          item: elem.pk
         };
       }),
       modelRenderer: (row: TableFieldRowProps) => {
