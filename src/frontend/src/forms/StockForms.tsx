@@ -928,7 +928,7 @@ type StockAdjustmentItem = {
 };
 
 function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
-  const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
+  const mappedItems: StockAdjustmentItem[] = items.map((elem) => {
     return {
       id: elem.pk,
       pk: elem.pk,
