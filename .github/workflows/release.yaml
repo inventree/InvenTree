@@ -20,7 +20,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # pin@v7.0.0
         with:
           persist-credentials: false
       - name: Version Check
@@ -45,7 +45,7 @@ jobs:
       artifact-metadata: write
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # pin@v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -115,7 +115,7 @@ jobs:
       INVENTREE_DEBUG: true
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # pin@v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -156,7 +156,7 @@ jobs:
           - debian:13
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # pin@v7.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -234,7 +234,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - current release channel
-        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
@@ -267,7 +267,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - stable release channel
-        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
