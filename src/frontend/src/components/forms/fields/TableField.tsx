@@ -21,8 +21,8 @@ export interface TableFieldRowProps {
   item: any;
   rowId: string | number;
   rowErrors: any;
-  changeFn: (idx: number | string, key: string, value: any) => void;
-  removeFn: (idx: number | string) => void;
+  changeFn: (rowId: number | string, key: string, value: any) => void;
+  removeFn: (rowId: number | string) => void;
 }
 
 function TableFieldRow({
@@ -39,8 +39,8 @@ function TableFieldRow({
   rowErrors: any;
   modelRenderer?: ApiFormFieldType['modelRenderer'];
   columnCount?: number;
-  changeFn: (idx: number, key: string, value: any) => void;
-  removeFn: (idx: number | string) => void;
+  changeFn: (rowId: number | string, key: string, value: any) => void;
+  removeFn: (rowId: number | string) => void;
 }>) {
   // Table fields require render function
   if (!modelRenderer) {
