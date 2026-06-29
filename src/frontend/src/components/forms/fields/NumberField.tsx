@@ -1,5 +1,5 @@
 import { NumberInput } from '@mantine/core';
-import { useId, useMemo } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import AutoFillRightSection, { AutoFillWarning } from './AutoFillRightSection';
 
@@ -14,7 +14,8 @@ export default function NumberField({
   placeholderAutofill,
   placeholderWarningCompare,
   placeholderWarning,
-  onChange
+  onChange,
+  selectAndFocus = false
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
@@ -23,8 +24,11 @@ export default function NumberField({
   placeholderWarningCompare?: number | string;
   placeholderWarning?: string;
   onChange: (value: any) => void;
+  selectAndFocus?: boolean;
 }>) {
   const fieldId = useId();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const {
     field,
     fieldState: { error }
@@ -59,6 +63,18 @@ export default function NumberField({
 
     return val;
   }, [definition.field_type, value]);
+
+  useEffect(() => {
+    if (!selectAndFocus) return;
+    if (!inputRef.current) return;
+
+    inputRef.current.focus();
+    requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (!el) return;
+      el.setSelectionRange(0, el.value.length);
+    });
+  }, [selectAndFocus]);
 
   const rightSection = useMemo(() => {
     if (
@@ -101,7 +117,10 @@ export default function NumberField({
     <NumberInput
       {...definition}
       radius={'sm'}
-      ref={field.ref}
+      ref={(node) => {
+        inputRef.current = node;
+        field.ref(node);
+      }}
       id={fieldId}
       aria-label={`number-field-${field.name}`}
       error={definition.error ?? error?.message}

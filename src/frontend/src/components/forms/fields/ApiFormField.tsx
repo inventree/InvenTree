@@ -31,7 +31,8 @@ export function ApiFormField({
   navigate,
   url,
   setFields,
-  onKeyDown
+  onKeyDown,
+  selectAndFocus = false
 }: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
@@ -41,6 +42,7 @@ export function ApiFormField({
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
   onKeyDown?: (value: any) => void;
+  selectAndFocus?: boolean;
 }>) {
   const fieldId = useId();
   const controller = useController({
@@ -196,6 +198,7 @@ export function ApiFormField({
             onChange={(value: any) => {
               onChange(value);
             }}
+            selectAndFocus={selectAndFocus}
           />
         );
       case 'choice':
