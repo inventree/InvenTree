@@ -18,7 +18,7 @@ import {
   IconTruckDelivery,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -825,15 +825,6 @@ function BuildConsumeItemRow({
 }) {
   const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
 
-  const callChangeFn = useCallback(
-    (identifier: number | string, key: string, value: any) => {
-      queueMicrotask(() => {
-        props.changeFn(identifier, key, value);
-      });
-    },
-    [props.changeFn]
-  );
-
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
@@ -866,7 +857,7 @@ function BuildConsumeItemRow({
             }
 
             setQuantity(nextValue === '' ? 0 : nextValue);
-            callChangeFn(props.rowId, 'quantity', nextValue);
+            props.changeFn(props.rowId, 'quantity', nextValue);
           }}
           error={props.rowErrors?.quantity?.message}
         />
