@@ -1,8 +1,20 @@
-import { Anchor, Divider, Drawer, LoadingOverlay, Stack } from '@mantine/core';
+import {
+  ActionIcon,
+  Anchor,
+  Divider,
+  Drawer,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Tooltip
+} from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { eventModified } from '@lib/functions/Navigation';
 import { type ModelType, getDetailUrl, navigateToLink } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { IconArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
@@ -73,7 +85,9 @@ export default function PreviewDrawer({
     (event: MouseEvent) => {
       if (!modelType || !id) return;
 
-      onClose();
+      if (!eventModified(event as any)) {
+        onClose();
+      }
       navigateToLink(getDetailUrl(modelType!, id!), navigate, event);
     },
     [modelType, id, navigate]
@@ -90,7 +104,14 @@ export default function PreviewDrawer({
               href={getDetailUrl(modelType!, id, true)}
               onClick={(e) => clickTitle(e)}
             >
-              <StylishText size='lg'>{previewComponent.title}</StylishText>
+              <Group gap='xs'>
+                <Tooltip label={t`View Details`} position='left'>
+                  <ActionIcon variant='transparent' size='lg'>
+                    <IconArrowRight />
+                  </ActionIcon>
+                </Tooltip>
+                <StylishText size='lg'>{previewComponent.title}</StylishText>
+              </Group>
             </Anchor>
           ) : (
             <StylishText size='lg'>{previewComponent.title}</StylishText>

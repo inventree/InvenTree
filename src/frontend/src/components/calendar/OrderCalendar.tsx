@@ -7,7 +7,11 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -171,7 +175,7 @@ export default function OrderCalendar({
   const onClickOrder = (info: EventClickArg) => {
     if (!info.event.id) return;
 
-    if (info.jsEvent.ctrlKey || info.jsEvent.metaKey || info.jsEvent.shiftKey) {
+    if (eventModified(event as any)) {
       navigateToLink(
         getDetailUrl(model, info.event.id),
         navigate,

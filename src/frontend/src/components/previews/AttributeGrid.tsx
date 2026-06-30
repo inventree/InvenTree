@@ -28,10 +28,10 @@ export function AttributeGrid({
         <Table.Tbody>
           {valid.map((item) => (
             <Table.Tr key={item.label}>
-              <Table.Td w='50%' fw='bold'>
+              <Table.Td w='30%' fw='bold'>
                 {item.label}
               </Table.Td>
-              <Table.Td w='50%'>{item.value}</Table.Td>
+              <Table.Td w='70%'>{item.value}</Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
