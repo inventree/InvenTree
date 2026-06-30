@@ -76,7 +76,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
     .waitFor();
 
   // Set location
-  await page.getByLabel('related-field-location').click();
+  await page.getByLabel('tree-field-location').fill('production');
   await page.getByText('Electronics production facility').click();
 
   // Create the stock item

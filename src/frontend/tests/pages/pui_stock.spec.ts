@@ -499,7 +499,8 @@ test('Stock - Tracking', async ({ browser }) => {
 
   // Navigate to the "stock tracking" tab
   await loadTab(page, 'Stock Tracking');
-  await page.getByText('- - Factory/Office Block/Room').first().waitFor();
+
+  await page.getByText('Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
 
