@@ -741,6 +741,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         const accessor = tableProps.modelField ?? 'pk';
         const pk = resolveItem(record, accessor);
 
+        console.log('row click:', tableProps.modelType, accessor, '->', pk);
+
         if (pk) {
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model

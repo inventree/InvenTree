@@ -1,10 +1,12 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { ReactNode } from 'react';
+import { ManufacturerPartPreviewComponent } from './models/ManufacturerPartPreview';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
 import { ReturnOrderPreviewComponent } from './models/ReturnOrderPreview';
 import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
 import { StockPreviewComponent } from './models/StockPreview';
+import { SupplierPartPreviewComponent } from './models/SupplierPartPreview';
 
 export interface PreviewType {
   preview: ReactNode;
@@ -37,6 +39,10 @@ export function getPreviewComponentForModel({
       return SalesOrderPreviewComponent({ instance, modelId });
     case ModelType.returnorder:
       return ReturnOrderPreviewComponent({ instance, modelId });
+    case ModelType.supplierpart:
+      return SupplierPartPreviewComponent({ instance, modelId });
+    case ModelType.manufacturerpart:
+      return ManufacturerPartPreviewComponent({ instance, modelId });
     default:
       return null;
   }
