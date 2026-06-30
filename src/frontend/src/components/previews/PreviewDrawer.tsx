@@ -1,22 +1,26 @@
-import { t } from '@lingui/core/macro';
-import { Drawer, Loader, Stack, Text } from '@mantine/core';
+import { Divider, Drawer, LoadingOverlay, Stack } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/index';
+import { useMemo } from 'react';
 import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
+import { type PreviewType, getPreviewComponentForModel } from './PreviewType';
+import { FallbackPreviewComponent } from './models/Fallback';
 
 export default function PreviewDrawer({
   modelType,
   id,
   instance: providedInstance,
+  filters,
   opened,
   onClose
 }: Readonly<{
   modelType: ModelType;
   id: number;
   instance?: any;
+  filters?: Record<string, any>;
   opened: boolean;
   onClose: () => void;
 }>) {
@@ -28,16 +32,36 @@ export default function PreviewDrawer({
     pk: id,
     hasPrimaryKey: true,
     defaultValue: {},
+    params: filters,
     disabled: !!providedInstance
   });
 
-  const instance = providedInstance ?? fetchedInstance;
+  const instance = useMemo(() => {
+    return providedInstance ?? fetchedInstance;
+  }, [providedInstance, fetchedInstance]);
+
+  const previewComponent: PreviewType = useMemo(() => {
+    const component: PreviewType | null = getPreviewComponentForModel({
+      modelType
+    });
+
+    if (component == null) {
+      return FallbackPreviewComponent({
+        modelInfo,
+        modelType,
+        modelId: id,
+        instance
+      });
+    }
+
+    return component;
+  }, [modelType]);
 
   return (
     <Drawer
       position='right'
       size='xl'
-      title={<StylishText size='lg'>{`${modelInfo.label} #${id}`}</StylishText>}
+      title={<StylishText size='lg'>{previewComponent.title}</StylishText>}
       opened={opened}
       onClose={onClose}
       withCloseButton
@@ -48,11 +72,9 @@ export default function PreviewDrawer({
       }}
     >
       <Stack gap='xs'>
-        {!instance && instanceQuery.isFetching ? (
-          <Loader />
-        ) : (
-          <Text c='dimmed'>{t`Preview for ${modelInfo.label} #${id}`}</Text>
-        )}
+        <Divider />
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        {previewComponent.preview}
       </Stack>
     </Drawer>
   );
