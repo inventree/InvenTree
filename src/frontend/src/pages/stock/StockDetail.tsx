@@ -275,7 +275,8 @@ export default function StockDetail() {
         name: 'available_stock',
         label: t`Available`,
         unit: part?.units,
-        icon: 'stock'
+        icon: 'stock',
+        hidden: stockitem.in_stock == false
       },
       {
         type: 'number',
@@ -804,7 +805,6 @@ export default function StockDetail() {
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: [stockitem],
-      model: ModelType.stockitem,
       refresh: () => {
         const location = stockitem?.location;
         refreshInstancePromise().then((response) => {
@@ -829,6 +829,8 @@ export default function StockDetail() {
     formProps: stockOperationProps,
     delete: false,
     changeBatch: false,
+    add: !stockitem.serial,
+    remove: !stockitem.serial,
     assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
     return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
