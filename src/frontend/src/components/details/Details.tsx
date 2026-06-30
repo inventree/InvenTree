@@ -280,7 +280,7 @@ function NumberValue(props: Readonly<FieldProps>) {
   const value = props?.field_value;
 
   // Convert to double
-  const numberValue = Number.parseFloat(value.toString());
+  const numberValue = Number.parseFloat(value?.toString() ?? '');
 
   if (value === null || value === undefined) {
     return <Text size='sm'>'---'</Text>;
