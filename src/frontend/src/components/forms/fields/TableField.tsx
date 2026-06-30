@@ -280,7 +280,7 @@ function TableFieldComponent({
           {definition.headers?.map((header, index) => {
             return (
               <Table.Th
-                key={`table-header-${identifierString(header.title)}`}
+                key={`table-header-${identifierString(header.title)}-${index}`}
                 style={header.style}
               >
                 {header.title}
