@@ -1,5 +1,7 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { ReactNode } from 'react';
+import { BuildOrderPreviewComponent } from './models/BuildOrderPreview';
+import { CompanyPreviewComponent } from './models/CompanyPreview';
 import { ManufacturerPartPreviewComponent } from './models/ManufacturerPartPreview';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
@@ -43,6 +45,10 @@ export function getPreviewComponentForModel({
       return SupplierPartPreviewComponent({ instance, modelId });
     case ModelType.manufacturerpart:
       return ManufacturerPartPreviewComponent({ instance, modelId });
+    case ModelType.company:
+      return CompanyPreviewComponent({ instance, modelId });
+    case ModelType.build:
+      return BuildOrderPreviewComponent({ instance, modelId });
     default:
       return null;
   }
