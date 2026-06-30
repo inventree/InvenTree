@@ -309,7 +309,10 @@ export default function BuildOutputTable({
               allocated += allocation.quantity;
             });
 
-          if (allocated >= item.bom_item_detail.quantity) {
+          if (
+            item.bom_item_detail?.quantity &&
+            allocated >= item.bom_item_detail.quantity
+          ) {
             fullyAllocatedCount += 1;
           }
         });
@@ -510,7 +513,6 @@ export default function BuildOutputTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: table.refreshTable,
       filters: {}
     };

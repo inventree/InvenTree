@@ -973,7 +973,7 @@ test('Parts - Notes', async ({ browser }) => {
   await page.keyboard.press('Control+E');
   await page.getByLabel('text-field-name', { exact: true }).waitFor();
   await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('related-field-category').waitFor();
+  await page.getByLabel('tree-field-category').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Enable notes editing
@@ -1024,10 +1024,8 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await openDetailAction(page, 'part', 'set-category');
 
-  await page.getByLabel('related-field-category').fill('rnitu');
-  await page.waitForTimeout(250);
-
-  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
+  await page.getByLabel('tree-field-category').fill('rnitu');
+  await page.getByText('Furniture and associated').click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });

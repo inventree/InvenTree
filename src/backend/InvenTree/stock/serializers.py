@@ -1770,13 +1770,22 @@ class StockCountSerializer(StockAdjustmentSerializer):
         fields = ['items', 'notes', 'location']
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=False,
         allow_null=True,
         label=_('Location'),
         help_text=_('Set stock location for counted items (optional)'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     def save(self):
         """Count stock."""
@@ -1874,13 +1883,22 @@ class StockTransferSerializer(StockAdjustmentSerializer):
     items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=True,
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination stock location'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     def save(self):
         """Transfer stock."""
@@ -1965,13 +1983,22 @@ class StockReturnSerializer(StockAdjustmentSerializer):
     )
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=True,
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination stock location'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     merge = serializers.BooleanField(
         default=False,

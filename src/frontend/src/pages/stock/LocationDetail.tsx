@@ -349,10 +349,9 @@ export default function Stock() {
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
-      pk: location.pk,
-      model: 'location',
       refresh: refreshInstance,
       filters: {
+        location: location.pk,
         in_stock: true
       }
     };
