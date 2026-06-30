@@ -2651,8 +2651,8 @@ class StockItem(
             )
             tracking_info['old_status_logical'] = old_status_logical
 
-        if self.updateQuantity(count):
-            tracking_info['quantity'] = float(count)
+        if self.serialized or self.updateQuantity(count):
+            tracking_info['quantity'] = 1 if self.serialized else float(count)
 
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
@@ -2672,12 +2672,12 @@ class StockItem(
                 deltas=tracking_info,
             )
 
-        trigger_event(
-            StockEvents.ITEM_COUNTED,
-            'stockitem.counted',
-            id=self.id,
-            quantity=float(self.quantity),
-        )
+            trigger_event(
+                StockEvents.ITEM_COUNTED,
+                'stockitem.counted',
+                id=self.id,
+                quantity=1 if self.serialized else float(self.quantity),
+            )
 
         return True
 
