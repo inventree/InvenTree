@@ -224,7 +224,6 @@ export default function TransferOrderAllocationTable({
 
     return {
       items: stockItems,
-      model: ModelType.stockitem,
       refresh: table.refreshTable
     };
   }, [table.selectedRecords, table.refreshTable]);

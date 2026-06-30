@@ -399,7 +399,6 @@ export function StockItemTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: () => {
         table.clearSelectedRecords();
         table.refreshTable();

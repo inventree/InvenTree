@@ -419,6 +419,7 @@ export function RelatedModelField({
       ...definition,
       addCreateFields: undefined,
       autoFill: undefined,
+      autoFillFilters: undefined,
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
