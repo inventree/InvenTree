@@ -681,10 +681,9 @@ export default function PartDetail() {
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
-      pk: part.pk,
-      model: ModelType.part,
       refresh: refreshInstance,
       filters: {
+        part: part.pk,
         in_stock: true
       }
     };
