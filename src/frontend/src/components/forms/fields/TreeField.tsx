@@ -458,7 +458,12 @@ export function TreeField({
                         ))}
                     </span>
                     {raw?.icon && <ApiIcon name={raw.icon} size={14} />}
-                    <Text size='sm' fw={selected ? 600 : undefined}>
+                    <Text
+                      size='sm'
+                      fw={selected ? 600 : undefined}
+                      fs={raw?.structural ? 'italic' : undefined}
+                      c={raw?.structural ? 'dimmed' : undefined}
+                    >
                       {raw?.name ?? String(node.label)}
                     </Text>
                   </Group>
