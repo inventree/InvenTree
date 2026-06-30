@@ -8,7 +8,7 @@ interface PreviewDrawerStateProps {
   instance?: any;
   openPreview: (
     modelType: ModelType,
-    id: number | string,
+    id: number | string | undefined,
     instance?: any
   ) => void;
   closePreview: () => void;
@@ -23,7 +23,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
 
     openPreview: (
       modelType: ModelType,
-      id: number | string,
+      id: number | string | undefined,
       instance?: any
     ) => {
       set({ modelType, id, instance, isOpen: true });
@@ -37,7 +37,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
 
 export function openGlobalPreview(
   modelType: ModelType,
-  id?: number,
+  id?: number | string | undefined,
   instance?: any
 ) {
   usePreviewDrawerState.getState().openPreview(modelType, id, instance);
