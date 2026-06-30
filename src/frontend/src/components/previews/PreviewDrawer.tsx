@@ -17,32 +17,38 @@ export default function PreviewDrawer({
   opened,
   onClose
 }: Readonly<{
-  modelType: ModelType;
-  id: number;
+  modelType?: ModelType;
+  id?: number | string;
   instance?: any;
   filters?: Record<string, any>;
   opened: boolean;
   onClose: () => void;
 }>) {
-  const modelInfo = getModelInfo(modelType);
-  const apiEndpoint = ModelInformationDict[modelType].api_endpoint;
+  const modelInfo = modelType ? getModelInfo(modelType) : null;
+  const apiEndpoint = modelType
+    ? ModelInformationDict[modelType].api_endpoint
+    : undefined;
 
   const { instance: fetchedInstance, instanceQuery } = useInstance({
-    endpoint: apiEndpoint,
+    endpoint: apiEndpoint!,
     pk: id,
     hasPrimaryKey: true,
     defaultValue: {},
     params: filters,
-    disabled: !!providedInstance
+    disabled: !!providedInstance || !modelType || !id
   });
 
   const instance = useMemo(() => {
     return providedInstance ?? fetchedInstance;
   }, [providedInstance, fetchedInstance]);
 
-  const previewComponent: PreviewType = useMemo(() => {
+  const previewComponent: PreviewType | null = useMemo(() => {
+    if (!modelType || !modelInfo || id == null) return null;
+
     const component: PreviewType | null = getPreviewComponentForModel({
-      modelType
+      modelType,
+      instance,
+      modelId: typeof id === 'string' ? Number(id) : id
     });
 
     if (component == null) {
@@ -55,13 +61,17 @@ export default function PreviewDrawer({
     }
 
     return component;
-  }, [modelType]);
+  }, [modelType, id, instance]);
 
   return (
     <Drawer
       position='right'
       size='xl'
-      title={<StylishText size='lg'>{previewComponent.title}</StylishText>}
+      title={
+        previewComponent ? (
+          <StylishText size='lg'>{previewComponent.title}</StylishText>
+        ) : null
+      }
       opened={opened}
       onClose={onClose}
       withCloseButton
@@ -72,9 +82,13 @@ export default function PreviewDrawer({
       }}
     >
       <Stack gap='xs'>
-        <Divider />
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        {previewComponent.preview}
+        {previewComponent && (
+          <>
+            <Divider />
+            <LoadingOverlay visible={instanceQuery.isFetching} />
+            {previewComponent.preview}
+          </>
+        )}
       </Stack>
     </Drawer>
   );
