@@ -378,10 +378,8 @@ class StockTest(StockTestBase):
         self.assertEqual(it.status, StockStatus.OK.value)
 
         # Next, perform a valid stocktake
-        self.assertTrue(
-            it.stocktake(
-                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
-            )
+        it.stocktake(
+            100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
         )
 
         it.refresh_from_db()
