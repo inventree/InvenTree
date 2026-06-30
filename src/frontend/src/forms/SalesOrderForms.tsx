@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, NumberInput, Table, Text } from '@mantine/core';
+import { Alert, Table, Text } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
@@ -25,7 +25,10 @@ import type {
   ApiFormFieldType
 } from '@lib/types/Forms';
 import dayjs from 'dayjs';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldQuantityInput,
+  type TableFieldRowProps
+} from '../components/forms/fields/TableField';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
@@ -373,25 +376,12 @@ function SalesOrderAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <NumberInput
-          radius='sm'
-          aria-label='number-field-quantity'
+        <TableFieldQuantityInput
           min={0}
-          step={1}
-          decimalScale={10}
           value={quantity}
-          onChange={(value: number | string) => {
-            let nextValue: number | '' = '';
-
-            if (typeof value === 'number') {
-              nextValue = Number.isFinite(value) ? value : '';
-            } else if (value.trim() !== '') {
-              const parsed = Number.parseFloat(value);
-              nextValue = Number.isFinite(parsed) ? parsed : '';
-            }
-
-            setQuantity(nextValue);
-            props.changeFn(props.rowId, 'quantity', nextValue);
+          onChange={(value) => {
+            setQuantity(value);
+            props.changeFn(props.rowId, 'quantity', value);
           }}
           error={props.rowErrors?.quantity?.message}
         />

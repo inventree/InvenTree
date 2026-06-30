@@ -17,7 +17,6 @@ import {
   Flex,
   Group,
   List,
-  NumberInput,
   Skeleton,
   Stack,
   Table,
@@ -51,6 +50,7 @@ import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import {
   TableFieldExtraRow,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -799,25 +799,12 @@ function StockOperationsRow({
         </Table.Td>
         {!merge && (
           <Table.Td>
-            <NumberInput
-              radius='sm'
-              aria-label='number-field-quantity'
+            <TableFieldQuantityInput
               min={0}
-              step={1}
-              decimalScale={10}
               value={quantity ?? ''}
-              onChange={(value: number | string) => {
-                let nextValue: StockItemQuantity = '';
-
-                if (typeof value === 'number') {
-                  nextValue = Number.isFinite(value) ? value : '';
-                } else if (value.trim() !== '') {
-                  const parsed = Number.parseFloat(value);
-                  nextValue = Number.isFinite(parsed) ? parsed : '';
-                }
-
-                setQuantity(nextValue);
-                props.changeFn(rowId, 'quantity', nextValue);
+              onChange={(value) => {
+                setQuantity(value);
+                props.changeFn(rowId, 'quantity', value);
               }}
               error={props.rowErrors?.quantity?.message}
             />

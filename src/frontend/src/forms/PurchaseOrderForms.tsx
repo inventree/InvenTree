@@ -8,7 +8,6 @@ import {
   Group,
   HoverCard,
   Modal,
-  NumberInput,
   Table,
   TextInput
 } from '@mantine/core';
@@ -46,6 +45,7 @@ import type {
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -575,26 +575,13 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
-          <NumberInput
-            radius='sm'
-            aria-label='number-field-quantity'
+          <TableFieldQuantityInput
             min={0}
-            step={1}
-            decimalScale={10}
             value={props.item.quantity ?? ''}
-            onChange={(value: number | string) => {
-              let nextValue: number | '' = '';
-
-              if (typeof value === 'number') {
-                nextValue = Number.isFinite(value) ? value : '';
-              } else if (value.trim() !== '') {
-                const parsed = Number.parseFloat(value);
-                nextValue = Number.isFinite(parsed) ? parsed : '';
-              }
-
-              props.changeFn(props.rowId, 'quantity', nextValue);
+            onChange={(value) => {
+              props.changeFn(props.rowId, 'quantity', value);
               serialNumberGenerator.update({
-                quantity: nextValue === '' ? undefined : nextValue
+                quantity: value === '' ? undefined : value
               });
             }}
             error={props.rowErrors?.quantity?.message}

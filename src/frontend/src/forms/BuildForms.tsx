@@ -1,14 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  Alert,
-  Divider,
-  Group,
-  List,
-  NumberInput,
-  Stack,
-  Table,
-  Text
-} from '@mantine/core';
+import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconCircleCheck,
@@ -30,6 +21,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { StatusRenderer } from '../components/render/StatusRenderer';
@@ -281,23 +273,10 @@ function BuildOutputFormRow({
 
     // Non-serialized output - quantity can be changed
     return (
-      <NumberInput
-        radius='sm'
-        step={1}
-        decimalScale={10}
-        aria-label='number-field-quantity'
+      <TableFieldQuantityInput
         value={props.item.quantity ?? ''}
-        onChange={(value: number | string) => {
-          let nextValue: number | '' = '';
-
-          if (typeof value === 'number') {
-            nextValue = Number.isFinite(value) ? value : '';
-          } else if (value.trim() !== '') {
-            const parsed = Number.parseFloat(value);
-            nextValue = Number.isFinite(parsed) ? parsed : '';
-          }
-
-          props.changeFn(props.rowId, 'quantity', nextValue);
+        onChange={(value) => {
+          props.changeFn(props.rowId, 'quantity', value);
         }}
         error={props.rowErrors?.quantity?.message}
       />
@@ -646,25 +625,12 @@ function BuildAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <NumberInput
-          radius='sm'
-          aria-label='number-field-quantity'
+        <TableFieldQuantityInput
           min={0}
-          step={1}
-          decimalScale={10}
           value={quantity}
-          onChange={(value: number | string) => {
-            let nextValue: number | '' = '';
-
-            if (typeof value === 'number') {
-              nextValue = Number.isFinite(value) ? value : '';
-            } else if (value.trim() !== '') {
-              const parsed = Number.parseFloat(value);
-              nextValue = Number.isFinite(parsed) ? parsed : '';
-            }
-
-            setQuantity(nextValue === '' ? 0 : nextValue);
-            props.changeFn(props.rowId, 'quantity', nextValue);
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
           }}
           error={props.rowErrors?.quantity?.message}
         />
@@ -843,24 +809,12 @@ function BuildConsumeItemRow({
       </Table.Td>
       <Table.Td>{record.quantity}</Table.Td>
       <Table.Td>
-        <NumberInput
-          radius='sm'
+        <TableFieldQuantityInput
           min={0}
-          step={1}
-          decimalScale={10}
           value={quantity}
-          onChange={(value: number | string) => {
-            let nextValue: number | '' = '';
-
-            if (typeof value === 'number') {
-              nextValue = Number.isFinite(value) ? value : '';
-            } else if (value.trim() !== '') {
-              const parsed = Number.parseFloat(value);
-              nextValue = Number.isFinite(parsed) ? parsed : '';
-            }
-
-            setQuantity(nextValue === '' ? 0 : nextValue);
-            props.changeFn(props.rowId, 'quantity', nextValue);
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
           }}
           error={props.rowErrors?.quantity?.message}
         />

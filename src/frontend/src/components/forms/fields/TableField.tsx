@@ -1,6 +1,14 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
+import {
+  Alert,
+  Container,
+  Group,
+  NumberInput,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import {
   type ReactNode,
@@ -426,5 +434,39 @@ export function TableFieldExtraRow({
         </Table.Td>
       </Table.Tr>
     )
+  );
+}
+
+export function TableFieldQuantityInput({
+  value,
+  onChange,
+  error,
+  min
+}: {
+  value: number | '';
+  onChange: (value: number | '') => void;
+  error?: string;
+  min?: number;
+}) {
+  return (
+    <NumberInput
+      radius='sm'
+      aria-label='number-field-quantity'
+      min={min}
+      step={1}
+      decimalScale={10}
+      value={value}
+      onChange={(v: number | string) => {
+        if (typeof v === 'number') {
+          onChange(Number.isFinite(v) ? v : '');
+        } else if (v.trim() !== '') {
+          const parsed = Number.parseFloat(v);
+          onChange(Number.isFinite(parsed) ? parsed : '');
+        } else {
+          onChange('');
+        }
+      }}
+      error={error}
+    />
   );
 }

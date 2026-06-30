@@ -1,12 +1,15 @@
 import { ApiEndpoints, ModelType, ProgressBar, apiUrl } from '@lib/index';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { NumberInput, Table } from '@mantine/core';
+import { Table } from '@mantine/core';
 import { IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldQuantityInput,
+  type TableFieldRowProps
+} from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
@@ -171,25 +174,12 @@ function TransferOrderAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <NumberInput
-          radius='sm'
-          aria-label='number-field-quantity'
+        <TableFieldQuantityInput
           min={0}
-          step={1}
-          decimalScale={10}
           value={quantity}
-          onChange={(value: number | string) => {
-            let nextValue: number | '' = '';
-
-            if (typeof value === 'number') {
-              nextValue = Number.isFinite(value) ? value : '';
-            } else if (value.trim() !== '') {
-              const parsed = Number.parseFloat(value);
-              nextValue = Number.isFinite(parsed) ? parsed : '';
-            }
-
-            setQuantity(nextValue === '' ? 0 : nextValue);
-            props.changeFn(props.rowId, 'quantity', nextValue);
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
           }}
           error={props.rowErrors?.quantity?.message}
         />
