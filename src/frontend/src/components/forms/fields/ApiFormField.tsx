@@ -4,6 +4,9 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
@@ -19,6 +22,7 @@ import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
 import TagsField from './TagsField';
 import TextField from './TextField';
+import { TreeField } from './TreeField';
 
 /**
  * Render an individual form field
@@ -121,14 +125,48 @@ export function ApiFormField({
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
       case 'related field':
-        return (
-          <RelatedModelField
-            definition={fieldDefinition}
-            controller={controller}
-            fieldName={fieldName}
-            navigate={navigate}
-          />
-        );
+        if (
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.stock_location_list)
+        ) {
+          // Redirect location fields to the appropriate tree field
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.stock_location_tree}
+              childIdentifier='sublocations'
+              genericPlaceholder={t`Select location`}
+              model={ModelType.stocklocation}
+              navigate={navigate}
+            />
+          );
+        } else if (
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.category_list)
+        ) {
+          // Redirect category fields to the appropriate tree field
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.category_tree}
+              childIdentifier='subcategories'
+              genericPlaceholder={t`Select category`}
+              model={ModelType.partcategory}
+              navigate={navigate}
+            />
+          );
+        } else {
+          return (
+            <RelatedModelField
+              definition={fieldDefinition}
+              controller={controller}
+              fieldName={fieldName}
+              navigate={navigate}
+            />
+          );
+        }
       case 'email':
       case 'url':
       case 'string':
