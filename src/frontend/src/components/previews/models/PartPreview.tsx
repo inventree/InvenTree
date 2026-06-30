@@ -9,19 +9,24 @@ import { t } from '@lingui/core/macro';
 import { Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useApi } from '../../../contexts/ApiContext';
+import { formatDate } from '../../../defaults/formatters';
 import { useInstance } from '../../../hooks/UseInstance';
 import { ApiImage } from '../../images/ApiImage';
+import { RenderPartCategory } from '../../render/Part';
+import { RenderUser } from '../../render/User';
 import { AttributeGrid, type AttributeRow } from '../AttributeGrid';
 import type { PreviewType } from '../PreviewType';
 
 function PartPreviewContent({ instance }: Readonly<{ instance: any }>) {
   const api = useApi();
 
+  // Fetch part requirements
   const { instance: requirements } = useInstance({
     endpoint: ApiEndpoints.part_requirements,
     pk: instance?.pk,
     hasPrimaryKey: true,
     disabled: !instance?.pk,
+    params: {},
     defaultValue: {}
   });
 
@@ -91,6 +96,25 @@ function PartPreviewContent({ instance }: Readonly<{ instance: any }>) {
       (param.template_detail?.units ? ` ${param.template_detail.units}` : '')
   }));
 
+  const infoItems: AttributeRow[] = [
+    {
+      label: t`Category`,
+      value: instance?.category_detail
+        ? RenderPartCategory({ instance: instance.category_detail, link: true })
+        : null
+    },
+    {
+      label: t`Creation Date`,
+      value: instance?.creation_date ? formatDate(instance.creation_date) : null
+    },
+    {
+      label: t`Created By`,
+      value: instance?.creation_user_detail
+        ? RenderUser({ instance: instance.creation_user_detail })
+        : null
+    }
+  ];
+
   return (
     <Stack gap='md'>
       {/* Headline: image + name / description / IPN / category */}
@@ -138,6 +162,7 @@ function PartPreviewContent({ instance }: Readonly<{ instance: any }>) {
 
       {instance?.tags?.length > 0 && <TagsList tags={instance.tags} />}
 
+      <AttributeGrid title={t`Part Information`} items={infoItems} />
       {!instance?.virtual && (
         <AttributeGrid title={t`Stock Information`} items={stockItems} />
       )}
