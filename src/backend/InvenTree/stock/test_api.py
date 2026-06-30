@@ -2289,6 +2289,32 @@ class StocktakeTest(StockAPITestCase):
             self.assertEqual(response.data['items'][0]['pk'], 1234)
             self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
 
+    def test_count_serialized(self):
+        """Test that counting a serialized stock item correctly updates stocktake_date."""
+        import datetime
+
+        # Fixture item pk=501 is a serialized item (serial=1)
+        item = StockItem.objects.get(pk=501)
+        self.assertTrue(item.serialized)
+        self.assertEqual(item.quantity, 1)
+
+        # Clear any existing stocktake date so we can verify it gets set
+        item.stocktake_date = None
+        item.save()
+
+        url = reverse('api-stock-count')
+
+        # Count the serialized item — quantity must be 1
+        data = {'items': [{'pk': item.pk, 'quantity': 1}]}
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['items'][0]['pk'], item.pk)
+        self.assertEqual(response.data['items'][0]['quantity'], '1.00000')
+
+        # stocktake_date must have been set to today
+        item.refresh_from_db()
+        self.assertEqual(item.stocktake_date, datetime.date.today())
+
     def test_transfer(self):
         """Test stock transfers."""
         stock_item = StockItem.objects.get(pk=1234)

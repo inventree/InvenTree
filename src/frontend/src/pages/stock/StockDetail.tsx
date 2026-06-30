@@ -275,7 +275,8 @@ export default function StockDetail() {
         name: 'available_stock',
         label: t`Available`,
         unit: part?.units,
-        icon: 'stock'
+        icon: 'stock',
+        hidden: stockitem.in_stock == false
       },
       {
         type: 'number',
