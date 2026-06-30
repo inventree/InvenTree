@@ -2663,7 +2663,7 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, **kwargs):
+    def stocktake(self, count, user, **kwargs) -> None:
         """Perform item stocktake.
 
         Arguments:
@@ -2678,7 +2678,7 @@ class StockItem(
         try:
             count = Decimal(count)
         except InvalidOperation:
-            return False
+            return
 
         if count < 0:
             return False
@@ -2729,12 +2729,9 @@ class StockItem(
 
             trigger_event(
                 StockEvents.ITEM_COUNTED,
-                'stockitem.counted',
                 id=self.id,
                 quantity=1 if self.serialized else float(self.quantity),
             )
-
-        return True
 
     @transaction.atomic
     def add_stock(self, quantity, user, **kwargs):

@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#12274](https://github.com/inventree/InvenTree/pull/12274) fixes a bug in rendering the "table field" component in frontend forms. Any plugins which make use of the "table field" component in their forms may be affected by this change, and will need to update their form definitions accordingly.
+
 ### Removed
 
 ## 1.4.0 - 2026-06-24

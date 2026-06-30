@@ -223,8 +223,6 @@ export interface BulkEditApiFormModalProps extends ApiFormModalProps {
 
 export type StockOperationProps = {
   items?: any[];
-  pk?: number;
   filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
   refresh: () => void;
 };

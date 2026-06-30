@@ -172,15 +172,6 @@ export default function ImporterDataSelector({
           description: fieldDef.help_text,
           filters: filters
         };
-
-        console.log('Defined Field:', field);
-        console.log({
-          ...fieldDef,
-          ...customField,
-          field_type: fieldDef.type,
-          description: fieldDef.help_text,
-          filters: filters
-        });
       }
     }
 

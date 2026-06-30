@@ -105,14 +105,12 @@ function SelectionListEntriesTable({
       return [
         RowEditAction({
           onClick: () => {
-            console.log('record:', record);
             setSelectedEntry(record.id);
             editEntry.open();
           }
         }),
         RowDeleteAction({
           onClick: () => {
-            console.log('record:', record);
             setSelectedEntry(record.id);
             deleteEntry.open();
           }

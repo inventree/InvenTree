@@ -310,7 +310,9 @@ export function ApiFormField({
           <TableField
             definition={fieldDefinition}
             fieldName={fieldName}
-            control={controller}
+            value={value}
+            onChange={field.onChange}
+            error={error}
           />
         );
       case 'tags':
