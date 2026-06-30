@@ -2728,10 +2728,7 @@ class StockItem(
             )
 
         trigger_event(
-            StockEvents.ITEM_COUNTED,
-            'stockitem.counted',
-            id=self.id,
-            quantity=float(self.quantity),
+            StockEvents.ITEM_COUNTED, id=self.id, quantity=float(self.quantity)
         )
 
         return True
