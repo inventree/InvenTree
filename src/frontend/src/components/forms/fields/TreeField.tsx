@@ -399,7 +399,11 @@ export function TreeField({
               setIsDropdownOpen(false);
               setSearchValue('');
             }}
-            placeholder={definition.placeholder ?? t`Select...`}
+            placeholder={
+              isDropdownOpen && selectedLabel
+                ? selectedLabel
+                : (definition.placeholder ?? t`Select...`)
+            }
             disabled={definition.disabled}
             comboboxProps={{ withinPortal: true }}
             maxDropdownHeight={300}
