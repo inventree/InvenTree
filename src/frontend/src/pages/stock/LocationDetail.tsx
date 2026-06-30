@@ -24,10 +24,7 @@ import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialo
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
+import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
@@ -185,10 +182,16 @@ export default function Stock() {
     ];
 
     return (
-      <ItemDetailsGrid>
-        {id && location?.pk && <DetailsTable item={location} fields={left} />}
-        {id && location?.pk && <DetailsTable item={location} fields={right} />}
-      </ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={
+          id && location?.pk
+            ? [
+                { item: location, fields: left },
+                { item: location, fields: right }
+              ]
+            : []
+        }
+      />
     );
   }, [location, instanceQuery]);
 

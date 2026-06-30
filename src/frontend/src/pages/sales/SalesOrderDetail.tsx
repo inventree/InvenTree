@@ -288,7 +288,13 @@ export default function SalesOrderDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { fields: tr, item: order },
+          { fields: bl, item: order },
+          { fields: br, item: order }
+        ]}
+      >
         <Stack gap='xs'>
           <Grid grow>
             <DetailsImage
@@ -303,9 +309,6 @@ export default function SalesOrderDetail() {
           </Grid>
           <TagsList tags={order.tags} />
         </Stack>
-        <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
   }, [order, orderCurrency, instanceQuery]);

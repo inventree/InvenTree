@@ -20,10 +20,7 @@ import type { PanelType } from '@lib/types/Panel';
 import { useLocalStorage } from '@mantine/hooks';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
+import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
@@ -169,10 +166,16 @@ export default function CategoryDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
-        {id && category?.pk && <DetailsTable item={category} fields={left} />}
-        {id && category?.pk && <DetailsTable item={category} fields={right} />}
-      </ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={
+          id && category?.pk
+            ? [
+                { item: category, fields: left },
+                { item: category, fields: right }
+              ]
+            : []
+        }
+      />
     );
   }, [category, instanceQuery]);
 

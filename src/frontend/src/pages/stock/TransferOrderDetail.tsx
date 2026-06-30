@@ -234,7 +234,13 @@ export default function TransferOrderDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { fields: tr, item: order },
+          { fields: bl, item: order },
+          { fields: br, item: order }
+        ]}
+      >
         <Stack gap='xs'>
           <Grid grow>
             {/* TODO: what image do we show for a Transfer Order? */}
@@ -250,9 +256,6 @@ export default function TransferOrderDetail() {
           </Grid>
           <TagsList tags={order.tags} />
         </Stack>
-        <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
   }, [order, instanceQuery]);

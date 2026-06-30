@@ -5,15 +5,15 @@ import { t } from '@lingui/core/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useApi } from '../../contexts/ApiContext';
-import { type DetailsField, DetailsTable } from './Details';
+import type { DetailsField, DetailsTableProps } from './Details';
 
-export function ParameterDetailsGrid({
+export function useParameterDetailsGrid({
   model_type,
   model_id
 }: Readonly<{
   model_type: ModelType;
   model_id: number | string | undefined;
-}>) {
+}>): DetailsTableProps {
   const api = useApi();
 
   const { data: parameters = [] } = useQuery({
@@ -45,14 +45,10 @@ export function ParameterDetailsGrid({
     return { fields, item };
   }, [parameters]);
 
-  if (fields.length === 0) return null;
-
-  return (
-    <DetailsTable
-      title={t`Parameters`}
-      fields={fields}
-      item={item}
-      showIcons={false}
-    />
-  );
+  return {
+    title: t`Parameters`,
+    fields: fields,
+    item: item,
+    showIcons: false
+  };
 }

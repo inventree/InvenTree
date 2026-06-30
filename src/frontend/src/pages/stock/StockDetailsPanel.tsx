@@ -377,7 +377,13 @@ export function StockDetailsPanel({
   return (
     <>
       {showSerialNav && findBySerialNumber.modal}
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { fields: tr, item: data },
+          { fields: bl, item: data },
+          { fields: br, item: data }
+        ]}
+      >
         <Stack gap='xs'>
           <Grid grow>
             <DetailsImage
@@ -401,9 +407,6 @@ export function StockDetailsPanel({
           </Grid>
           <TagsList tags={instance?.tags} />
         </Stack>
-        <DetailsTable fields={tr} item={data} />
-        <DetailsTable fields={bl} item={data} />
-        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     </>
   );

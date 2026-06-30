@@ -155,7 +155,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     ];
 
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid tables={[{ item: company, fields: tr }]}>
         <Stack gap='xs'>
           <Grid grow>
             <DetailsImage
@@ -176,7 +176,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           </Grid>
           <TagsList tags={company.tags} />
         </Stack>
-        <DetailsTable item={company} fields={tr} />
       </ItemDetailsGrid>
     );
   }, [company, instanceQuery]);

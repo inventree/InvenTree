@@ -529,17 +529,19 @@ export function DetailsTableField({
   );
 }
 
+export interface DetailsTableProps {
+  item: any;
+  fields: DetailsField[];
+  title?: string;
+  showIcons?: boolean;
+}
+
 export function DetailsTable({
   item,
   fields,
   title,
   showIcons = true
-}: Readonly<{
-  item: any;
-  fields: DetailsField[];
-  title?: string;
-  showIcons?: boolean;
-}>) {
+}: Readonly<DetailsTableProps>) {
   const visibleFields = useMemo(() => {
     return fields.filter((field) => !field.hidden);
   }, [fields]);

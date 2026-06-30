@@ -222,7 +222,13 @@ export default function SupplierPartDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { title: t`Supplier`, fields: bl, item: data },
+          { title: t`Packaging`, fields: br, item: data },
+          { title: t`Availability`, fields: tr, item: data }
+        ]}
+      >
         <Stack gap='xs'>
           <Grid grow>
             <DetailsImage
@@ -240,9 +246,6 @@ export default function SupplierPartDetail() {
           </Grid>
           <TagsList tags={supplierPart.tags} />
         </Stack>
-        <DetailsTable title={t`Supplier`} fields={bl} item={data} />
-        <DetailsTable title={t`Packaging`} fields={br} item={data} />
-        <DetailsTable title={t`Availability`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);

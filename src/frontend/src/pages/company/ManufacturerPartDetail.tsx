@@ -134,7 +134,9 @@ export default function ManufacturerPartDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[{ title: t`Manufacturer Details`, fields: tr, item: data }]}
+      >
         <Stack gap='xs'>
           <Grid grow>
             <DetailsImage
@@ -152,7 +154,6 @@ export default function ManufacturerPartDetail() {
           </Grid>
           <TagsList tags={manufacturerPart.tags} />
         </Stack>
-        <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [manufacturerPart, instanceQuery]);

@@ -14,7 +14,7 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { ParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
+import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { formatPriceRange } from '../../defaults/formatters';
 import { useInstance } from '../../hooks/UseInstance';
 
@@ -322,10 +322,22 @@ export function PartDetailsPanel({
     return fields;
   }, [instance, data.latest_serial_number]);
 
+  const parametersTable = useParameterDetailsGrid({
+    model_type: ModelType.part,
+    model_id: instance?.pk
+  });
+
   if (!instance?.pk) return <Skeleton />;
 
   return (
-    <ItemDetailsGrid>
+    <ItemDetailsGrid
+      tables={[
+        { fields: tr, item: data },
+        { fields: bl, item: data },
+        { fields: br, item: data },
+        parametersTable
+      ]}
+    >
       <Stack gap='xs'>
         <Grid grow>
           <DetailsImage
@@ -353,13 +365,6 @@ export function PartDetailsPanel({
         <TagsList tags={instance.tags} />
         {additionalContent}
       </Stack>
-      <DetailsTable fields={tr} item={data} />
-      <DetailsTable fields={bl} item={data} />
-      <DetailsTable fields={br} item={data} />
-      <ParameterDetailsGrid
-        model_type={ModelType.part}
-        model_id={instance.pk}
-      />
     </ItemDetailsGrid>
   );
 }
