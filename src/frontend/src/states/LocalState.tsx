@@ -181,6 +181,6 @@ export function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   if (uid) {
     api.patch(apiUrl(ApiEndpoints.user_me_profile), { [key]: val });
   } else {
-    console.log('user not logged in, not patching');
+    console.warn('user not logged in, not patching');
   }
 }
