@@ -1,4 +1,4 @@
-import { Divider, SimpleGrid, Text, Title } from '@mantine/core';
+import { Divider, Table, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 export interface AttributeRow {
@@ -23,18 +23,18 @@ export function AttributeGrid({
     <>
       <Divider />
       <Title order={4}>{title}</Title>
-      <SimpleGrid cols={2} spacing='xs'>
-        {valid.map((item) => (
-          <>
-            <Text key={`${item.label}-label`} fw={'bold'} size='sm'>
-              {item.label}
-            </Text>
-            <Text key={`${item.label}-value`} size='sm'>
-              {item.value}
-            </Text>
-          </>
-        ))}
-      </SimpleGrid>
+      <Table striped withRowBorders={false} fz='sm'>
+        <Table.Tbody>
+          {valid.map((item) => (
+            <Table.Tr key={item.label}>
+              <Table.Td w='50%' fw='bold'>
+                {item.label}
+              </Table.Td>
+              <Table.Td w='50%'>{item.value}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
     </>
   );
 }

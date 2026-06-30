@@ -81,7 +81,7 @@ function PartPreviewContent({ instance }: Readonly<{ instance: any }>) {
                 (instance?.units ? ` ${instance.units}` : '')
             }
           : null
-      ].filter(Boolean)
+      ].filter((x): x is NonNullable<typeof x> => x !== null)
     : [];
 
   const parameterItems: AttributeRow[] = parameters.map((param: any) => ({
