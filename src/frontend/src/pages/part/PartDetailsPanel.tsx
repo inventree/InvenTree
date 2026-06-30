@@ -14,6 +14,7 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { ParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { formatPriceRange } from '../../defaults/formatters';
 import { useInstance } from '../../hooks/UseInstance';
 
@@ -355,6 +356,10 @@ export function PartDetailsPanel({
       <DetailsTable fields={tr} item={data} />
       <DetailsTable fields={bl} item={data} />
       <DetailsTable fields={br} item={data} />
+      <ParameterDetailsGrid
+        model_type={ModelType.part}
+        model_id={instance.pk}
+      />
     </ItemDetailsGrid>
   );
 }
