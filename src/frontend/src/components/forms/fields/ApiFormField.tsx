@@ -124,37 +124,11 @@ export function ApiFormField({
   // Construct the individual field
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
-      case 'location':
-        return (
-          <TreeField
-            controller={controller}
-            definition={fieldDefinition}
-            fieldName={fieldName}
-            endpoint={ApiEndpoints.stock_location_tree}
-            childIdentifier='sublocations'
-            genericPlaceholder={t`Select location`}
-            model={ModelType.stocklocation}
-            navigate={navigate}
-          />
-        );
-      case 'category':
-        return (
-          <TreeField
-            controller={controller}
-            definition={fieldDefinition}
-            fieldName={fieldName}
-            endpoint={ApiEndpoints.category_tree}
-            childIdentifier='subcategories'
-            genericPlaceholder={t`Select category`}
-            model={ModelType.partcategory}
-            navigate={navigate}
-          />
-        );
       case 'related field':
-        // Redirect location or category fields to the appropriate tree field
         if (
           fieldDefinition.api_url === apiUrl(ApiEndpoints.stock_location_list)
         ) {
+          // Redirect location fields to the appropriate tree field
           return (
             <TreeField
               controller={controller}
@@ -170,6 +144,7 @@ export function ApiFormField({
         } else if (
           fieldDefinition.api_url === apiUrl(ApiEndpoints.category_list)
         ) {
+          // Redirect category fields to the appropriate tree field
           return (
             <TreeField
               controller={controller}
