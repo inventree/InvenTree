@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconCircleCheck,
@@ -13,18 +13,11 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { TagsList } from '@lib/index';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -37,9 +30,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
-import { RenderAddress } from '../../components/render/Company';
-import { RenderUser } from '../../components/render/User';
-import { formatDate } from '../../defaults/formatters';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
@@ -53,6 +43,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
+import { SalesOrderShipmentDetailsPanel } from './SalesOrderShipmentDetailsPanel';
 
 export default function SalesOrderShipmentDetail() {
   const { id } = useParams();
@@ -74,185 +65,8 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const { instance: customer, instanceQuery: customerQuery } = useInstance({
-    endpoint: ApiEndpoints.company_list,
-    pk: shipment.order_detail?.customer,
-    hasPrimaryKey: true
-  });
-
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
-
   const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
-
-  const detailsPanel = useMemo(() => {
-    if (shipmentQuery.isFetching || customerQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const data: any = {
-      ...shipment,
-      customer: customer?.pk,
-      customer_name: customer?.name,
-      customer_reference: shipment.order_detail?.customer_reference
-    };
-
-    // Top Left: Order / customer information
-    const tl: DetailsField[] = [
-      {
-        type: 'link',
-        model: ModelType.salesorder,
-        name: 'order',
-        label: t`Sales Order`,
-        icon: 'sales_orders',
-        model_field: 'reference'
-      },
-      {
-        type: 'link',
-        name: 'customer',
-        icon: 'customers',
-        label: t`Customer`,
-        model: ModelType.company,
-        model_field: 'name',
-        hidden: !data.customer
-      },
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !shipment.link
-      }
-    ];
-
-    // Top right: Shipment information
-    const tr: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'customer_reference',
-        icon: 'serial',
-        label: t`Customer Reference`,
-        hidden: !data.customer_reference,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'reference',
-        icon: 'serial',
-        label: t`Shipment Reference`,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'tracking_number',
-        label: t`Tracking Number`,
-        icon: 'trackable',
-        value_formatter: () => shipment.tracking_number || '---',
-        copy: !!shipment.tracking_number
-      },
-      {
-        type: 'text',
-        name: 'invoice_number',
-        label: t`Invoice Number`,
-        icon: 'serial',
-        value_formatter: () => shipment.invoice_number || '---',
-        copy: !!shipment.invoice_number
-      }
-    ];
-
-    const address: any =
-      shipment.shipment_address_detail || shipment.order_detail?.address_detail;
-
-    const bl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'address',
-        label: t`Shipping Address`,
-        icon: 'address',
-        value_formatter: () =>
-          address ? (
-            <RenderAddress
-              instance={
-                shipment.shipment_address_detail ||
-                shipment.order_detail?.address_detail
-              }
-            />
-          ) : (
-            <Text size='sm' c='red'>{t`Not specified`}</Text>
-          )
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'allocated_items',
-        icon: 'packages',
-        label: t`Allocated Items`
-      },
-      {
-        type: 'text',
-        name: 'checked_by',
-        label: t`Checked By`,
-        icon: 'check',
-        value_formatter: () =>
-          shipment.checked_by_detail ? (
-            <RenderUser instance={shipment.checked_by_detail} />
-          ) : (
-            <Text size='sm' c='red'>{t`Not checked`}</Text>
-          )
-      },
-      {
-        type: 'text',
-        name: 'shipment_date',
-        label: t`Shipment Date`,
-        icon: 'calendar',
-        value_formatter: () => formatDate(shipment.shipment_date),
-        hidden: !shipment.shipment_date
-      },
-      {
-        type: 'text',
-        name: 'delivery_date',
-        label: t`Delivery Date`,
-        icon: 'calendar',
-        value_formatter: () => formatDate(shipment.delivery_date),
-        hidden: !shipment.delivery_date
-      }
-    ];
-
-    return (
-      <>
-        <ItemDetailsGrid
-          tables={[
-            { fields: tr, item: data },
-            { fields: bl, item: data },
-            { fields: br, item: data }
-          ]}
-        >
-          <Stack gap='xs'>
-            <Grid grow>
-              <DetailsImage
-                appRole={UserRoles.sales_order}
-                apiPath={ApiEndpoints.company_list}
-                src={customer?.image}
-                pk={customer?.pk}
-                imageActions={{
-                  selectExisting: false,
-                  downloadImage: false,
-                  uploadFile: false,
-                  deleteFile: false
-                }}
-              />
-              <Grid.Col span={{ base: 12, sm: 8 }}>
-                <DetailsTable fields={tl} item={data} />
-              </Grid.Col>
-            </Grid>
-            <TagsList tags={shipment.tags} />
-          </Stack>
-        </ItemDetailsGrid>
-      </>
-    );
-  }, [shipment, shipmentQuery, customer, customerQuery]);
 
   const shipmentPanels: PanelType[] = useMemo(() => {
     return [
@@ -260,7 +74,12 @@ export default function SalesOrderShipmentDetail() {
         name: 'detail',
         label: t`Shipment Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <SalesOrderShipmentDetailsPanel
+            instance={shipment}
+            refreshInstance={refreshShipment}
+          />
+        )
       },
       {
         name: 'items',
@@ -291,7 +110,7 @@ export default function SalesOrderShipmentDetail() {
         has_note: !!shipment.notes
       })
     ];
-  }, [isPending, shipment, detailsPanel]);
+  }, [isPending, shipment]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending,
@@ -457,7 +276,7 @@ export default function SalesOrderShipmentDetail() {
               }
             ]}
             badges={shipmentBadges}
-            imageUrl={customer?.image}
+            imageUrl={shipment.order_detail?.customer_detail?.image}
             editAction={editShipment.open}
             editEnabled={user.hasChangePermission(ModelType.salesordershipment)}
             actions={shipmentActions}

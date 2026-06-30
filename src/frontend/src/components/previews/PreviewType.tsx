@@ -7,8 +7,10 @@ import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
 import { ReturnOrderPreviewComponent } from './models/ReturnOrderPreview';
 import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
+import { SalesOrderShipmentPreviewComponent } from './models/SalesOrderShipmentPreview';
 import { StockPreviewComponent } from './models/StockPreview';
 import { SupplierPartPreviewComponent } from './models/SupplierPartPreview';
+import { TransferOrderPreviewComponent } from './models/TransferOrderPreview';
 
 export interface PreviewType {
   preview: ReactNode;
@@ -49,6 +51,10 @@ export function getPreviewComponentForModel({
       return CompanyPreviewComponent({ instance, modelId });
     case ModelType.build:
       return BuildOrderPreviewComponent({ instance, modelId });
+    case ModelType.salesordershipment:
+      return SalesOrderShipmentPreviewComponent({ instance, modelId });
+    case ModelType.transferorder:
+      return TransferOrderPreviewComponent({ instance, modelId });
     default:
       return null;
   }
