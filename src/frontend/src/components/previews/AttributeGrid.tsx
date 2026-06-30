@@ -1,4 +1,5 @@
-import { Divider, Table, Title } from '@mantine/core';
+import { StylishText } from '@lib/components/StylishText';
+import { Divider, Table } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 export interface AttributeRow {
@@ -22,7 +23,7 @@ export function AttributeGrid({
   return (
     <>
       <Divider />
-      <Title order={4}>{title}</Title>
+      <StylishText size='md'>{title}</StylishText>
       <Table striped withRowBorders={false} fz='sm'>
         <Table.Tbody>
           {valid.map((item) => (

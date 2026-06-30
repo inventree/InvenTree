@@ -1,9 +1,10 @@
-import { Divider, Drawer, LoadingOverlay, Stack } from '@mantine/core';
+import { Anchor, Divider, Drawer, LoadingOverlay, Stack } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/index';
-import { useMemo } from 'react';
+import { type ModelType, getDetailUrl, navigateToLink } from '@lib/index';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
 import { type PreviewType, getPreviewComponentForModel } from './PreviewType';
@@ -26,6 +27,8 @@ export default function PreviewDrawer({
   opened: boolean;
   onClose: () => void;
 }>) {
+  const navigate = useNavigate();
+
   const modelInfo = modelType ? getModelInfo(modelType) : null;
   const apiEndpoint = modelType
     ? ModelInformationDict[modelType].api_endpoint
@@ -66,13 +69,32 @@ export default function PreviewDrawer({
     return component;
   }, [providedPreview, modelType, id, instance]);
 
+  const clickTitle = useCallback(
+    (event: MouseEvent) => {
+      if (!modelType || !id) return;
+
+      onClose();
+      navigateToLink(getDetailUrl(modelType!, id!), navigate, event);
+    },
+    [modelType, id, navigate]
+  );
+
   return (
     <Drawer
       position='right'
       size='xl'
       title={
         previewComponent ? (
-          <StylishText size='lg'>{previewComponent.title}</StylishText>
+          !!modelType && !!id ? (
+            <Anchor
+              href={getDetailUrl(modelType!, id, true)}
+              onClick={(e) => clickTitle(e)}
+            >
+              <StylishText size='lg'>{previewComponent.title}</StylishText>
+            </Anchor>
+          ) : (
+            <StylishText size='lg'>{previewComponent.title}</StylishText>
+          )
         ) : null
       }
       opened={opened}
