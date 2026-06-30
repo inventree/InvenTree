@@ -4,9 +4,13 @@ import { create } from 'zustand';
 interface PreviewDrawerStateProps {
   isOpen: boolean;
   modelType?: ModelType;
-  id?: number;
+  id?: number | string;
   instance?: any;
-  openPreview: (modelType: ModelType, id: number, instance?: any) => void;
+  openPreview: (
+    modelType: ModelType,
+    id: number | string,
+    instance?: any
+  ) => void;
   closePreview: () => void;
 }
 
@@ -17,7 +21,11 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
     id: undefined,
     instance: undefined,
 
-    openPreview: (modelType: ModelType, id: number, instance?: any) => {
+    openPreview: (
+      modelType: ModelType,
+      id: number | string,
+      instance?: any
+    ) => {
       set({ modelType, id, instance, isOpen: true });
     },
 
