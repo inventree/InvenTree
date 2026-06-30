@@ -47,6 +47,7 @@ export function TreeField({
   fieldName,
   endpoint,
   childIdentifier,
+  genericPlaceholder,
   model,
   navigate
 }: Readonly<{
@@ -55,6 +56,7 @@ export function TreeField({
   fieldName: string;
   endpoint: ApiEndpoints;
   childIdentifier: string;
+  genericPlaceholder?: string;
   model?: ModelType;
   navigate?: NavigateFunction | null;
 }>) {
@@ -402,7 +404,7 @@ export function TreeField({
             placeholder={
               isDropdownOpen && selectedLabel
                 ? selectedLabel
-                : (definition.placeholder ?? t`Select...`)
+                : (definition.placeholder ?? genericPlaceholder ?? t`Select...`)
             }
             disabled={definition.disabled}
             comboboxProps={{ withinPortal: true }}

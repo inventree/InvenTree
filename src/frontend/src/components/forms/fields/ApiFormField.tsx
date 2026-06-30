@@ -132,6 +132,7 @@ export function ApiFormField({
             fieldName={fieldName}
             endpoint={ApiEndpoints.stock_location_tree}
             childIdentifier='sublocations'
+            genericPlaceholder={t`Select location`}
             model={ModelType.stocklocation}
             navigate={navigate}
           />
@@ -144,6 +145,7 @@ export function ApiFormField({
             fieldName={fieldName}
             endpoint={ApiEndpoints.category_tree}
             childIdentifier='subcategories'
+            genericPlaceholder={t`Select category`}
             model={ModelType.partcategory}
             navigate={navigate}
           />
@@ -160,6 +162,7 @@ export function ApiFormField({
               fieldName={fieldName}
               endpoint={ApiEndpoints.stock_location_tree}
               childIdentifier='sublocations'
+              genericPlaceholder={t`Select location`}
               model={ModelType.stocklocation}
               navigate={navigate}
             />
@@ -174,6 +177,7 @@ export function ApiFormField({
               fieldName={fieldName}
               endpoint={ApiEndpoints.category_tree}
               childIdentifier='subcategories'
+              genericPlaceholder={t`Select category`}
               model={ModelType.partcategory}
               navigate={navigate}
             />
