@@ -14,6 +14,7 @@ export default function PreviewDrawer({
   id,
   instance: providedInstance,
   filters,
+  preview: providedPreview,
   opened,
   onClose
 }: Readonly<{
@@ -21,6 +22,7 @@ export default function PreviewDrawer({
   id?: number | string;
   instance?: any;
   filters?: Record<string, any>;
+  preview?: PreviewType;
   opened: boolean;
   onClose: () => void;
 }>) {
@@ -43,6 +45,7 @@ export default function PreviewDrawer({
   }, [providedInstance, fetchedInstance]);
 
   const previewComponent: PreviewType | null = useMemo(() => {
+    if (providedPreview) return providedPreview;
     if (!modelType || !modelInfo || id == null) return null;
 
     const component: PreviewType | null = getPreviewComponentForModel({
@@ -61,7 +64,7 @@ export default function PreviewDrawer({
     }
 
     return component;
-  }, [modelType, id, instance]);
+  }, [providedPreview, modelType, id, instance]);
 
   return (
     <Drawer

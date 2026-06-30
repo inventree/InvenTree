@@ -1,5 +1,6 @@
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import type { ReactNode } from 'react';
+import { PartPreviewComponent } from './models/PartPreview';
 
 export interface PreviewType {
   preview: ReactNode;
@@ -13,13 +14,18 @@ export type PreviewComponentProps = {
 export type PreviewComponent = (props: PreviewComponentProps) => PreviewType;
 
 export function getPreviewComponentForModel({
-  modelType
+  modelType,
+  instance,
+  modelId
 }: {
   modelType: ModelType;
+  instance: any;
+  modelId: number;
 }): PreviewType | null {
   switch (modelType) {
+    case ModelType.part:
+      return PartPreviewComponent({ instance, modelId });
     default:
-      // Return null to indicate that this model type is not supported
       return null;
   }
 }
