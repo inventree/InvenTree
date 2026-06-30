@@ -2,6 +2,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import type { ReactNode } from 'react';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
+import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
 import { StockPreviewComponent } from './models/StockPreview';
 
 export interface PreviewType {
@@ -31,6 +32,8 @@ export function getPreviewComponentForModel({
       return StockPreviewComponent({ instance, modelId });
     case ModelType.purchaseorder:
       return PurchaseOrderPreviewComponent({ instance, modelId });
+    case ModelType.salesorder:
+      return SalesOrderPreviewComponent({ instance, modelId });
     default:
       return null;
   }
