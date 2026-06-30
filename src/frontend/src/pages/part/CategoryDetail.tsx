@@ -86,10 +86,9 @@ export default function CategoryDetail() {
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
-      pk: category.pk,
-      model: 'category',
       refresh: refreshInstance,
       filters: {
+        category: category.pk,
         in_stock: true
       }
     };
