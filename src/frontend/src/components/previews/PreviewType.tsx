@@ -1,6 +1,7 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { ReactNode } from 'react';
 import { PartPreviewComponent } from './models/PartPreview';
+import { StockPreviewComponent } from './models/StockPreview';
 
 export interface PreviewType {
   preview: ReactNode;
@@ -25,6 +26,8 @@ export function getPreviewComponentForModel({
   switch (modelType) {
     case ModelType.part:
       return PartPreviewComponent({ instance, modelId });
+    case ModelType.stockitem:
+      return StockPreviewComponent({ instance, modelId });
     default:
       return null;
   }
