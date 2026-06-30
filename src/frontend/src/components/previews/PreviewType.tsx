@@ -3,11 +3,13 @@ import type { ReactNode } from 'react';
 import { BuildOrderPreviewComponent } from './models/BuildOrderPreview';
 import { CompanyPreviewComponent } from './models/CompanyPreview';
 import { ManufacturerPartPreviewComponent } from './models/ManufacturerPartPreview';
+import { PartCategoryPreviewComponent } from './models/PartCategoryPreview';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
 import { ReturnOrderPreviewComponent } from './models/ReturnOrderPreview';
 import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
 import { SalesOrderShipmentPreviewComponent } from './models/SalesOrderShipmentPreview';
+import { StockLocationPreviewComponent } from './models/StockLocationPreview';
 import { StockPreviewComponent } from './models/StockPreview';
 import { SupplierPartPreviewComponent } from './models/SupplierPartPreview';
 import { TransferOrderPreviewComponent } from './models/TransferOrderPreview';
@@ -55,6 +57,10 @@ export function getPreviewComponentForModel({
       return SalesOrderShipmentPreviewComponent({ instance, modelId });
     case ModelType.transferorder:
       return TransferOrderPreviewComponent({ instance, modelId });
+    case ModelType.stocklocation:
+      return StockLocationPreviewComponent({ instance, modelId });
+    case ModelType.partcategory:
+      return PartCategoryPreviewComponent({ instance, modelId });
     default:
       return null;
   }

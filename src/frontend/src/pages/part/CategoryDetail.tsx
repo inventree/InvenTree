@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { LoadingOverlay, Stack } from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
@@ -21,8 +21,6 @@ import type { PanelType } from '@lib/types/Panel';
 import { useLocalStorage } from '@mantine/hooks';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
-import type { DetailsField } from '../../components/details/Details';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
   EditItemAction,
@@ -49,6 +47,7 @@ import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import PartCategoryTemplateTable from '../../tables/part/PartCategoryTemplateTable';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { PartCategoryDetailsPanel } from './PartCategoryDetailsPanel';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -102,106 +101,6 @@ export default function CategoryDetail() {
     merge: false,
     assign: false
   });
-
-  const detailsPanel = useMemo(() => {
-    if (id && instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const left: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'name',
-        label: t`Name`,
-        copy: true,
-        value_formatter: () => (
-          <Group gap='xs'>
-            {category.icon && <ApiIcon name={category.icon} />}
-            {category.name}
-          </Group>
-        )
-      },
-      {
-        type: 'text',
-        name: 'pathstring',
-        label: t`Path`,
-        icon: 'sitemap',
-        copy: true,
-        hidden: !id
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'parent',
-        model_field: 'name',
-        icon: 'location',
-        label: t`Parent Category`,
-        model: ModelType.partcategory,
-        hidden: !category?.parent
-      },
-      {
-        type: 'boolean',
-        name: 'starred',
-        icon: 'notification',
-        label: t`Subscribed`
-      }
-    ];
-
-    const right: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'part_count',
-        label: t`Parts`,
-        icon: 'part',
-        value_formatter: () => category?.part_count || '0'
-      },
-      {
-        type: 'text',
-        name: 'subcategories',
-        label: t`Subcategories`,
-        icon: 'sitemap',
-        hidden: !category?.subcategories
-      },
-      {
-        type: 'boolean',
-        name: 'structural',
-        label: t`Structural`,
-        icon: 'sitemap'
-      },
-      {
-        type: 'link',
-        name: 'parent_default_location',
-        label: t`Parent default location`,
-        model: ModelType.stocklocation,
-        hidden: !category.parent_default_location || category.default_location
-      },
-      {
-        type: 'link',
-        name: 'default_location',
-        label: t`Default location`,
-        model: ModelType.stocklocation,
-        hidden: !category.default_location
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid
-        tables={
-          id && category?.pk
-            ? [
-                { item: category, fields: left },
-                { item: category, fields: right }
-              ]
-            : []
-        }
-      />
-    );
-  }, [category, instanceQuery]);
 
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
@@ -299,7 +198,7 @@ export default function CategoryDetail() {
         name: 'details',
         label: t`Category Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel,
+        content: <PartCategoryDetailsPanel instance={category} />,
         hidden: !id || !category?.pk
       },
       {
