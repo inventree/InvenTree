@@ -11,12 +11,17 @@ import {
 
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { eventModified } from '@lib/functions/Navigation';
-import { type ModelType, getDetailUrl, navigateToLink } from '@lib/index';
+import { cancelEvent } from '@lib/functions/Events';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import type { ModelType } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight } from '@tabler/icons-react';
 import type React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
@@ -81,6 +86,27 @@ export default function PreviewDrawer({
 
     return component;
   }, [providedPreview, modelType, id, instance]);
+
+  useEffect(() => {
+    if (!opened) return;
+    const handler = (event: MouseEvent) => {
+      const anchor = (event.target as HTMLElement).closest('a');
+      if (anchor && !eventModified(event as any)) {
+        if (anchor.origin === window.location.origin) {
+          // Same-origin: prevent browser navigation and route internally
+          const href = anchor.pathname + anchor.search + anchor.hash;
+          cancelEvent(event);
+          onClose();
+          navigateToLink(href, navigate, event as any);
+        } else {
+          // External link: let browser open it, just close the drawer
+          onClose();
+        }
+      }
+    };
+    document.addEventListener('click', handler, true);
+    return () => document.removeEventListener('click', handler, true);
+  }, [onClose, opened]);
 
   const clickTitle = useCallback(
     (
