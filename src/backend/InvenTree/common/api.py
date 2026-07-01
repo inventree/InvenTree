@@ -922,6 +922,31 @@ class NoteMixin:
     serializer_class = common.serializers.NoteSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Filter notes to those the requesting user has view permission for.
+
+        Template notes (no attached model) are always visible.
+        Regular notes are only visible when the user has 'view' permission
+        for the model type the note is linked to.
+        """
+        from InvenTree.models import InvenTreeNoteMixin
+        from users.permissions import check_user_permission
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        allowed_ct_ids = []
+        for ct in ContentType.objects.all():
+            model_class = ct.model_class()
+            if model_class and issubclass(model_class, InvenTreeNoteMixin):
+                if check_user_permission(user, model_class, 'view'):
+                    allowed_ct_ids.append(ct.pk)
+
+        return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
+
 
 class NoteList(NoteMixin, ListCreateAPI):
     """List API endpoint for Note objects."""
