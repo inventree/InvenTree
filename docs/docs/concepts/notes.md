@@ -96,3 +96,52 @@ To delete a note, open the actions menu in the note header and select **Delete N
 
 !!! danger "Permanent Action"
     Deleting a note is permanent and cannot be undone. Any images embedded in the note that are not referenced elsewhere will also be removed.
+
+## Note Templates
+
+Note templates are pre-defined notes that can be used as a starting point when adding a new note to any model instance. They allow administrators to standardize common note structures and reduce repetitive data entry.
+
+### Creating Notes from Templates
+
+When adding a new note to an object, an optional **From Template** field is available. Selecting a template pre-fills the **Title**, **Description**, and **Content** fields with the template's content. These fields can then be edited before saving.
+
+To create a note from a template:
+
+1. Navigate to the object's detail page and open the **Notes** tab
+2. Click the **Add Note** button
+3. In the **From Template** field, select an existing template from the dropdown
+4. The **Title**, **Description**, and **Content** fields are automatically populated from the template
+5. Edit any fields as needed
+6. Click **Submit** to save the note
+
+!!! info "Template Filters"
+    The template dropdown only shows templates that are applicable to the current model type, plus any templates that are not restricted to a specific model type.
+
+### Managing Note Templates
+
+Note templates are managed by staff users via the **Admin Center**.
+
+To access note templates:
+
+1. Navigate to **Settings** > **Admin Center**
+2. Select the **Note Templates** panel
+
+This panel provides the same rich-text editor interface used for regular notes. Templates created here are available to all users when adding notes across the system.
+
+#### Creating a Template
+
+1. In the **Note Templates** panel, click **Add Note Template**
+2. Enter a **Title** (required) and optional **Description**
+3. Optionally select a **Model Type** to restrict the template to a specific kind of object (e.g. *Part*, *Build Order*). Leave blank to make the template available for all model types
+4. Click **Submit**, then edit the template content in the editor
+
+#### Editing a Template
+
+Select a template from the sidebar, then use the same edit workflow as for regular notes: click the {{ icon("pencil") }} icon, make changes, and save with {{ icon("device-floppy") }} or **Ctrl+S** / **Cmd+S**.
+
+#### Deleting a Template
+
+Open the actions menu in the template header and select **Delete Note Template**.
+
+!!! note
+    Deleting a template does not affect any notes that were previously created from it.
