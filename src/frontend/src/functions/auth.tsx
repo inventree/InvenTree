@@ -129,11 +129,24 @@ export async function doBasicLogin(
             });
             break;
           default:
+            const data = err.response?.data ?? {};
+
+            let msg: string = t`Check your input and try again.`;
+
+            // Extract error message from response data
+            if (data?.detail) {
+              msg = data.detail;
+            } else if (data?.message) {
+              msg = data.message;
+            } else if (data?.error) {
+              msg = data.error;
+            } else if (data?.errors && Array.isArray(data.errors)) {
+              msg = data.errors[0]?.message ?? msg;
+            }
+
             notifications.show({
               title: `${t`Login failed`} (${err.response.status})`,
-              message:
-                err.response?.data?.detail ??
-                t`Check your input and try again.`,
+              message: msg,
               id: 'auth-login-error',
               color: 'red'
             });
