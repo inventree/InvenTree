@@ -223,6 +223,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
+    'ENABLE_PREVIEW_PANEL': {
+        'name': _('Enable Preview Panel'),
+        'description': _('Display a preview panel when selecting items in tables'),
+        'default': True,
+        'validator': bool,
+    },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Show Stock History'),
         'description': _('Display stock history information in the part detail page'),
