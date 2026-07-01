@@ -1,5 +1,6 @@
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified } from '@lib/functions/Navigation';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -8,9 +9,7 @@ import {
   UserRoles,
   YesNoButton,
   apiUrl,
-  formatDecimal,
-  getDetailUrl,
-  navigateToLink
+  formatDecimal
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
