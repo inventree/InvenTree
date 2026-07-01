@@ -2078,6 +2078,35 @@ class BuildConsumeTest(BuildAPITest):
         for line in self.build.build_lines.all():
             self.assertEqual(line.consumed, 100)
 
+    def test_query_probe_TEMP(self):
+        """Temporary: profile queries for the consume endpoint."""
+        import re
+        from collections import Counter
+
+        from django.db import connections
+        from django.test.utils import CaptureQueriesContext
+
+        self.allocate_stock()
+
+        url = reverse('api-build-consume', kwargs={'pk': self.build.pk})
+        data = {
+            'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
+        }
+
+        with CaptureQueriesContext(connections['default']) as ctx:
+            self.post(url, data, expected_code=200)
+
+        print('TOTAL QUERIES:', len(ctx.captured_queries))
+        counter = Counter()
+        for q in ctx.captured_queries:
+            sql = q['sql']
+            m = re.search(r'(SELECT|UPDATE|INSERT INTO|DELETE FROM)\s+"?(\w+)"?', sql)
+            key = (m.group(1), m.group(2)) if m else ('OTHER', sql[:40])
+            counter[key] += 1
+
+        for key, count in counter.most_common(30):
+            print(count, key)
+
 
 class BuildCustomStatusTest(BuildAPITest):
     """Tests for custom status values on Build orders."""

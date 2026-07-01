@@ -1,5 +1,6 @@
 """JSON serializers for Build API."""
 
+from collections.abc import Callable
 from decimal import Decimal
 from typing import Optional
 
@@ -262,7 +263,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
     """Build output with quantity field."""
 
     # Optional callable to validate the output field, if required
-    output_validator: Optional[callable] = None
+    output_validator: Optional[Callable] = None
 
     class Meta:
         """Serializer metaclass."""
