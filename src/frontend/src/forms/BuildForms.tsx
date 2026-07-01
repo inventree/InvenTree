@@ -568,6 +568,9 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      modelRenderer: ({ instance }: { instance: any }) => (
+        <RenderStockItem instance={instance} extra={{ show_status: true }} />
+      ),
       autoFill: !output || !!output?.serial,
       autoFillFilters: {
         serial: output?.serial

@@ -13,6 +13,7 @@ import {
   type InstanceRenderInterface,
   RenderInlineModel
 } from './Instance';
+import { StatusRenderer, getStatusCodes } from './StatusRenderer';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -102,6 +103,17 @@ export function RenderStockItem(
   const showLocation: boolean = props.extra?.show_location !== false;
   const location: any = props.instance?.location_detail;
 
+  const statusKey = instance?.status_custom_key ?? instance?.status;
+  const flaggedStatusNames = ['ATTENTION', 'DAMAGED'];
+  const statusCodes = getStatusCodes(ModelType.stockitem);
+  const showStatus =
+    props.extra?.show_status === true &&
+    !!statusCodes &&
+    Object.values(statusCodes.values).some(
+      (entry) =>
+        entry.key == statusKey && flaggedStatusNames.includes(entry.name)
+    );
+
   // Form the "secondary" text to display
   const secondary: ReactNode = (
     <Group gap='xs' style={{ paddingLeft: '5px' }}>
@@ -110,6 +122,9 @@ export function RenderStockItem(
       )}
       {instance.batch && (
         <InlineSecondaryBadge title={t`Batch`} text={instance.batch} />
+      )}
+      {showStatus && (
+        <StatusRenderer status={statusKey} type={ModelType.stockitem} />
       )}
     </Group>
   );
