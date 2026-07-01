@@ -9,3 +9,18 @@
 <p>{% trans "Click on the following link to view this order" %}: <a href='{{ link }}'>{{ link }}</a></p>
 {% endif %}
 {% endblock title %}
+
+{% block body %}
+<tr style="height: 3rem; border-bottom: 1px solid">
+    <th>{% trans "Part" %}</th>
+    <th>{% trans "Quantity" %}</th>
+    <th>{% trans "Location" %}</th>
+</tr>
+
+{% for item in stock_items %}
+<tr>
+    <td>{{ item.part.name }}</td>
+    <td>{{ item.quantity }}</td>
+    <td>{{ item.location.pathstring }}</td>
+</tr>
+{% endfor %}
