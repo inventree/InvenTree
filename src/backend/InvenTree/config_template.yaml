@@ -162,6 +162,11 @@ cors:
 
   # regex:
 
+# Throttling is applied to the API by default to make DoS attacks more difficult; these can be disabled by setting them to None.
+# throttle:
+#   anon: '20/minute'
+#   user: '60/second'
+
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 #media_root: '/home/inventree/data/media'
 
