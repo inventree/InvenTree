@@ -2435,7 +2435,10 @@ class StocktakeTest(StockAPITestCase):
             {'items': [{'pk': item_a.pk, 'quantity': 1}], 'location': structural.pk},
             expected_code=400,
         )
-        self.assertIn('does not exist', str(response.data['location']))
+        self.assertIn(
+            'Structural locations cannot be assigned stock items',
+            str(response.data['location']),
+        )
 
 
 class StockTransferMergeTest(StockAPITestCase):

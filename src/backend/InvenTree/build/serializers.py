@@ -1,6 +1,8 @@
 """JSON serializers for Build API."""
 
+from collections.abc import Callable
 from decimal import Decimal
+from typing import Optional
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
@@ -22,7 +24,6 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 import common.filters
-import common.settings
 import company.serializers
 import InvenTree.helpers
 import part.filters
@@ -51,6 +52,7 @@ from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
+from .validators import check_build_output
 
 
 class BuildSerializer(
@@ -257,10 +259,18 @@ class BuildOutputSerializer(serializers.Serializer):
 class BuildOutputQuantitySerializer(BuildOutputSerializer):
     """Build output with quantity field."""
 
+    # Optional callable to validate the output field, if required
+    output_validator: Optional[Callable] = None
+
     class Meta:
         """Serializer metaclass."""
 
         fields = [*BuildOutputSerializer.Meta.fields, 'quantity']
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the serializer."""
+        self.output_validator = kwargs.pop('output_validator', None)
+        super().__init__(*args, **kwargs)
 
     quantity = serializers.DecimalField(
         max_digits=15,
@@ -288,6 +298,10 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
                 raise ValidationError({
                     'quantity': _('Quantity cannot be greater than the output quantity')
                 })
+
+        if self.output_validator:
+            # Call the parent serializer's output validator, if provided
+            self.output_validator(output, quantity=quantity)
 
         return data
 
@@ -524,7 +538,9 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'notes',
         ]
 
-    outputs = BuildOutputQuantitySerializer(many=True, required=True)
+    outputs = BuildOutputQuantitySerializer(
+        many=True, required=True, output_validator=check_build_output
+    )
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -550,30 +566,6 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         super().validate(data)
 
         outputs = data.get('outputs', [])
-
-        if common.settings.prevent_build_output_complete_on_incompleted_tests():
-            errors = []
-            for output in outputs:
-                stock_item = output['output']
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serial = stock_item.serial
-
-                    if serial:
-                        errors.append(
-                            _(
-                                f'Build output {serial} has not passed all required tests'
-                            )
-                        )
-                    else:
-                        errors.append(
-                            _('Build output has not passed all required tests')
-                        )
-
-            if errors:
-                raise ValidationError(errors)
 
         if len(outputs) == 0:
             raise ValidationError(_('A list of build outputs must be provided'))
