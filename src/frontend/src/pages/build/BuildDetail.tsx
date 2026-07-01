@@ -10,6 +10,7 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconScan,
   IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
@@ -27,6 +28,7 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import {
   type DetailsField,
   DetailsTable
@@ -702,6 +704,72 @@ export default function BuildDetail() {
     fields: completeOrderFields
   });
 
+  // ---------------------------------------------------------------------------
+  // Scan-to-allocate: scan a stock item barcode to directly allocate it to
+  // this build order.  Resolves: https://github.com/inventree/InvenTree/issues/11278
+  //
+  // Flow:
+  //  1. operator scans stock item barcode
+  //  2. we verify the item's part is a required build-line component
+  //  3. we POST to build/:id/allocate/ with the specific stock item
+  //  4. in continuous mode the dialog stays open for rapid multi-scan
+  // ---------------------------------------------------------------------------
+  const scanAllocateItem = useBarcodeScanDialog({
+    title: t`Scan Component to Allocate`,
+    modelType: ModelType.stockitem,
+    // Continuous so operators can scan an entire batch in one session
+    continuous: true,
+    callback: async (barcode, response) => {
+      const stockItem = response?.stockitem?.instance;
+
+      if (!stockItem?.pk) {
+        return { error: t`Could not identify scanned stock item` };
+      }
+
+      // Check if this part has an outstanding un-allocated build line
+      let buildLineMatches: any = null;
+      try {
+        const lineResp = await api.get(apiUrl(ApiEndpoints.build_line_list), {
+          params: { build: build.pk, part: stockItem.part, allocated: false }
+        });
+        buildLineMatches = lineResp.data;
+      } catch {
+        return { error: t`Failed to look up build requirements` };
+      }
+
+      if (!buildLineMatches?.results?.length) {
+        return {
+          error: t`This component is not required (or is already fully allocated) in this build order`
+        };
+      }
+
+      const buildLine = buildLineMatches.results[0];
+      const qtyNeeded = (buildLine.quantity ?? 0) - (buildLine.allocated ?? 0);
+      const qtyToAllocate = Math.min(
+        stockItem.quantity ?? 0,
+        qtyNeeded > 0 ? qtyNeeded : stockItem.quantity ?? 0
+      );
+
+      try {
+        await api.post(apiUrl(ApiEndpoints.build_order_allocate, build.pk), {
+          items: [
+            {
+              stock_item: stockItem.pk,
+              quantity: qtyToAllocate
+            }
+          ]
+        });
+
+        return {
+          success: t`Allocated ${qtyToAllocate} × ${stockItem.part_detail?.name ?? barcode}`
+        };
+      } catch (err: any) {
+        const msg = err?.response?.data?.detail ?? err?.message ?? t`Allocation failed`;
+        return { error: msg };
+      }
+    }
+  });
+
   const buildActions = useMemo(() => {
     const canEdit = user.hasChangeRole(UserRoles.build);
 
@@ -737,6 +805,14 @@ export default function BuildDetail() {
         hidden={!canComplete}
         color='green'
         onClick={completeOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Scan to Allocate`}
+        icon={<IconScan size={16} />}
+        hidden={!canEdit || build.status == buildStatus.COMPLETE || build.status == buildStatus.CANCELLED}
+        color='teal'
+        onClick={scanAllocateItem.open}
+        tooltip={t`Scan a component barcode to allocate stock to this build order`}
       />,
       <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
@@ -804,6 +880,7 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
+      {scanAllocateItem.dialog}
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.build}>
         <Stack gap='xs'>
           <PageDetail
