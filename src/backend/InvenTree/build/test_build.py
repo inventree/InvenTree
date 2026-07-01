@@ -650,10 +650,14 @@ class BuildTest(BuildTestBase):
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None
         )
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as exc:
             self.build_w_tests_trackable.complete_build_output(
                 self.stockitem_with_required_test, None
             )
+
+        self.assertIn(
+            'Build output has not passed all required tests', str(exc.exception)
+        )
 
         # let's complete the required test and see if it could be saved
         StockItemTestResult.objects.create(
@@ -669,6 +673,59 @@ class BuildTest(BuildTestBase):
         # let's see if a non required test could be saved
         self.build_wo_tests_trackable.complete_build_output(
             self.stockitem_wo_required_test, None
+        )
+
+    def test_complete_output_still_in_production(self):
+        """Test that a build output cannot be completed if allocated stock is still in production."""
+        # Create a stock item of the tracked sub-part, which is itself still "in production"
+        sub_build = Build.objects.create(
+            reference=generate_next_build_reference(),
+            title='Building a sub-part',
+            part=self.sub_part_3,
+            quantity=2,
+            issued_by=get_user_model().objects.get(pk=1),
+        )
+
+        in_production = StockItem.objects.create(
+            part=self.sub_part_3, quantity=2, is_building=True, build=sub_build
+        )
+
+        self.allocate_stock(self.output_1, {in_production: 2})
+
+        with self.assertRaises(ValidationError) as exc:
+            self.build.complete_build_output(self.output_1, None)
+
+        self.assertIn(
+            'Allocated stock items are still in production', str(exc.exception)
+        )
+
+    def test_partial_complete_with_allocated_items(self):
+        """Test that a build output with tracked allocations cannot be partially completed."""
+        # Allocate tracked stock against output_1 (quantity=3)
+        self.allocate_stock(self.output_1, {self.stock_3_1: 6})
+
+        with self.assertRaises(ValidationError) as exc:
+            self.build.complete_build_output(self.output_1, None, quantity=1)
+
+        self.assertIn(
+            'Cannot partially complete a build output with allocated items',
+            str(exc.exception),
+        )
+
+    def test_complete_output_invalid_quantity(self):
+        """Test that invalid quantities are rejected when completing a build output directly."""
+        with self.assertRaises(ValidationError) as exc:
+            self.build.complete_build_output(self.output_1, None, quantity=0)
+
+        self.assertIn('Quantity must be greater than zero', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            self.build.complete_build_output(
+                self.output_1, None, quantity=self.output_1.quantity + 1
+            )
+
+        self.assertIn(
+            'Quantity cannot be greater than the output quantity', str(exc.exception)
         )
 
     def test_overdue_notification(self):

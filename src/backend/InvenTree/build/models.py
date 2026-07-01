@@ -37,10 +37,7 @@ from build.validators import (
     validate_build_order_reference,
 )
 from common.models import ProjectCode
-from common.settings import (
-    get_global_setting,
-    prevent_build_output_complete_on_incompleted_tests,
-)
+from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
@@ -1093,6 +1090,61 @@ class Build(
             },
         )
 
+    def can_complete_output(
+        self,
+        output: stock.models.StockItem,
+        quantity: Optional[decimal.Decimal] = None,
+        required_tests=None,
+    ) -> bool:
+        """Determine if the given build output can be completed.
+
+        Arguments:
+            output: The StockItem instance (build output) to check
+            quantity: The quantity to complete (defaults to entire output quantity)
+            required_tests: Optional list of required tests to check against (defaults to the part's required tests)
+
+        Returns:
+            True if the build output can be completed, False otherwise
+
+        Raises:
+            ValidationError: If the build output cannot be completed, with an appropriate message
+        """
+        prevent_incomplete = get_global_setting(
+            'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+        )
+
+        if prevent_incomplete and not output.passedAllRequiredTests(
+            required_tests=required_tests
+        ):
+            raise ValidationError(_('Build output has not passed all required tests'))
+
+        # Ensure that none of the allocated items are themselves still "in production"
+        allocated_items = output.items_to_install.all().filter(
+            stock_item__is_building=True
+        )
+
+        if allocated_items.exists():
+            raise ValidationError(_('Allocated stock items are still in production'))
+
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if output.items_to_install.exists():
+                raise ValidationError({
+                    'quantity': _(
+                        'Cannot partially complete a build output with allocated items'
+                    )
+                })
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
     @transaction.atomic
     def complete_build_output(
         self,
@@ -1118,51 +1170,19 @@ class Build(
         notes = kwargs.get('notes', '')
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
-        prevent_on_incomplete = kwargs.get(
-            'prevent_on_incomplete',
-            prevent_build_output_complete_on_incompleted_tests(),
+
+        self.can_complete_output(
+            output, quantity=quantity, required_tests=required_tests
         )
-
-        if prevent_on_incomplete and not output.passedAllRequiredTests(
-            required_tests=required_tests
-        ):
-            msg = _('Build output has not passed all required tests')
-
-            if serial := output.serial:
-                msg = _(f'Build output {serial} has not passed all required tests')
-
-            raise ValidationError(msg)
-
-        # List the allocated BuildItem objects for the given output
-        allocated_items = output.items_to_install.all()
-
-        # Ensure that none of the allocated items are themselves still "in production"
-        for build_item in allocated_items:
-            if build_item.stock_item.is_building:
-                raise ValidationError(
-                    _('Allocated stock items are still in production')
-                )
 
         # If a partial quantity is provided, split the stock output
         if quantity is not None and quantity != output.quantity:
-            # Cannot split a build output with allocated items
-            if allocated_items.count() > 0:
-                raise ValidationError(
-                    _('Cannot partially complete a build output with allocated items')
-                )
-
-            if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
-
-            if quantity > output.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity cannot be greater than the output quantity')
-                })
-
             # Split the stock item
             output = output.splitStock(quantity, user=user, allow_production=True)
+
+        allocated_items = output.items_to_install.all().select_related(
+            'stock_item', 'stock_item__part'
+        )
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item

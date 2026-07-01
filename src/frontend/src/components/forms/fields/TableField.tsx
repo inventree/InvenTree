@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  ActionIcon,
   Alert,
   Container,
   Group,
@@ -9,7 +10,10 @@ import {
   Table,
   Text
 } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import {
+  IconCornerDownRight,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import {
   type ReactNode,
   memo,
@@ -63,13 +67,33 @@ function TableFieldRow({
     );
   }
 
-  return modelRenderer({
-    item: item,
-    rowId: rowId,
-    rowErrors: rowErrors,
-    changeFn: changeFn,
-    removeFn: removeFn
-  });
+  const nonFieldErrors = rowErrors?.non_field_errors;
+
+  return (
+    <>
+      {modelRenderer({
+        item: item,
+        rowId: rowId,
+        rowErrors: rowErrors,
+        changeFn: changeFn,
+        removeFn: removeFn
+      })}
+      {nonFieldErrors && (
+        <Table.Tr key={`table-row-${rowId}-non-field-errors`}>
+          <Table.Td colSpan={columnCount}>
+            <Group gap='xs'>
+              <ActionIcon size='sm' variant='transparent' c='red'>
+                <IconCornerDownRight />
+              </ActionIcon>
+              <Text size='xs' c='red'>
+                {nonFieldErrors.message ?? nonFieldErrors}
+              </Text>
+            </Group>
+          </Table.Td>
+        </Table.Tr>
+      )}
+    </>
+  );
 }
 
 // Memoize each table field row, so that we don't re-render the entire table when a single row is updated
