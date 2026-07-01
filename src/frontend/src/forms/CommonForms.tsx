@@ -5,6 +5,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
