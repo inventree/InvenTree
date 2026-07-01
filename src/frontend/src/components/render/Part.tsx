@@ -128,12 +128,7 @@ export function RenderPartCategory(
     <RenderInlineModel
       {...props}
       tooltip={instance.pathstring}
-      prefix={
-        <>
-          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
-          {instance.icon && <ApiIcon name={instance.icon} />}
-        </>
-      }
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={category}
       suffix={suffix}
       url={

@@ -75,7 +75,7 @@ function BomItemSubstituteRow({
               api
                 .delete(apiUrl(ApiEndpoints.bom_substitute_list, record.pk))
                 .then(() => {
-                  props.removeFn(props.idx);
+                  props.removeFn(props.rowId);
                 })
                 .catch((err) => {
                   showApiErrorMessage({
@@ -116,7 +116,7 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
         modelRenderer: (row: TableFieldRowProps) => {
           const record = substitutes.find((r) => r.pk == row.item.pk);
           return record ? (
-            <BomItemSubstituteRow props={row} record={record} />
+            <BomItemSubstituteRow key={row.rowId} props={row} record={record} />
           ) : null;
         },
         headers: [

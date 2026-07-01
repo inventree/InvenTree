@@ -2663,7 +2663,7 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, **kwargs):
+    def stocktake(self, count, user, **kwargs) -> None:
         """Perform item stocktake.
 
         Arguments:
@@ -2678,7 +2678,7 @@ class StockItem(
         try:
             count = Decimal(count)
         except InvalidOperation:
-            return False
+            return
 
         if count < 0:
             return False
@@ -2706,8 +2706,8 @@ class StockItem(
             )
             tracking_info['old_status_logical'] = old_status_logical
 
-        if self.updateQuantity(count):
-            tracking_info['quantity'] = float(count)
+        if self.serialized or self.updateQuantity(count):
+            tracking_info['quantity'] = 1 if self.serialized else float(count)
 
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
@@ -2727,14 +2727,11 @@ class StockItem(
                 deltas=tracking_info,
             )
 
-        trigger_event(
-            StockEvents.ITEM_COUNTED,
-            'stockitem.counted',
-            id=self.id,
-            quantity=float(self.quantity),
-        )
-
-        return True
+            trigger_event(
+                StockEvents.ITEM_COUNTED,
+                id=self.id,
+                quantity=1 if self.serialized else float(self.quantity),
+            )
 
     @transaction.atomic
     def add_stock(self, quantity, user, **kwargs):
