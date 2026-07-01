@@ -15,6 +15,7 @@ import { eventModified } from '@lib/functions/Navigation';
 import { type ModelType, getDetailUrl, navigateToLink } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight } from '@tabler/icons-react';
+import type React from 'react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
@@ -82,13 +83,17 @@ export default function PreviewDrawer({
   }, [providedPreview, modelType, id, instance]);
 
   const clickTitle = useCallback(
-    (event: MouseEvent) => {
+    (
+      event: Parameters<
+        React.AnchorHTMLAttributes<HTMLAnchorElement>['onClick'] & {}
+      >[0]
+    ) => {
       if (!modelType || !id) return;
 
       if (!eventModified(event as any)) {
         onClose();
       }
-      navigateToLink(getDetailUrl(modelType!, id!), navigate, event);
+      navigateToLink(getDetailUrl(modelType!, id!), navigate, event as any);
     },
     [modelType, id, navigate]
   );
