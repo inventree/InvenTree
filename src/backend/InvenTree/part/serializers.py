@@ -407,67 +407,6 @@ class PartBriefSerializer(
     )
 
 
-class DuplicatePartSerializer(serializers.Serializer):
-    """Serializer for specifying options when duplicating a Part.
-
-    The fields in this serializer control how the Part is duplicated.
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = [
-            'part',
-            'copy_image',
-            'copy_bom',
-            'copy_parameters',
-            'copy_notes',
-            'copy_tests',
-        ]
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        label=_('Original Part'),
-        help_text=_('Select original part to duplicate'),
-        required=True,
-    )
-
-    copy_image = serializers.BooleanField(
-        label=_('Copy Image'),
-        help_text=_('Copy image from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_bom = serializers.BooleanField(
-        label=_('Copy BOM'),
-        help_text=_('Copy bill of materials from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_parameters = serializers.BooleanField(
-        label=_('Copy Parameters'),
-        help_text=_('Copy parameter data from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_notes = serializers.BooleanField(
-        label=_('Copy Notes'),
-        help_text=_('Copy notes from original part'),
-        required=False,
-        default=True,
-    )
-
-    copy_tests = serializers.BooleanField(
-        label=_('Copy Tests'),
-        help_text=_('Copy test templates from original part'),
-        required=False,
-        default=False,
-    )
-
-
 class InitialStockSerializer(serializers.Serializer):
     """Serializer for creating initial stock quantity."""
 
@@ -1007,11 +946,42 @@ class PartSerializer(
     )
 
     # Extra fields used only for creation of a new Part instance
-    duplicate = DuplicatePartSerializer(
+    duplicate = InvenTree.serializers.DuplicateOptionsSerializer(
+        Part.objects.all(),
         label=_('Duplicate Part'),
         help_text=_('Copy initial data from another Part'),
-        write_only=True,
-        required=False,
+        copy_fields=[
+            {
+                'name': 'copy_image',
+                'label': _('Copy Image'),
+                'help_text': _('Copy image from original part'),
+                'default': False,
+            },
+            {
+                'name': 'copy_bom',
+                'label': _('Copy BOM'),
+                'help_text': _('Copy bill of materials from original part'),
+                'default': False,
+            },
+            {
+                'name': 'copy_parameters',
+                'label': _('Copy Parameters'),
+                'help_text': _('Copy parameter data from original part'),
+                'default': False,
+            },
+            {
+                'name': 'copy_notes',
+                'label': _('Copy Notes'),
+                'help_text': _('Copy notes from original part'),
+                'default': True,
+            },
+            {
+                'name': 'copy_tests',
+                'label': _('Copy Tests'),
+                'help_text': _('Copy test templates from original part'),
+                'default': False,
+            },
+        ],
     )
 
     initial_stock = InitialStockSerializer(
@@ -1077,7 +1047,7 @@ class PartSerializer(
 
         # Copy data from original Part
         if duplicate:
-            original = duplicate['part']
+            original = duplicate['original']
 
             if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
