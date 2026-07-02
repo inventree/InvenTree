@@ -81,7 +81,14 @@ class ReturnOrderStatus(StatusCode):
 
     ON_HOLD = 25, _('On Hold'), ColorEnum.warning
 
+    # Waiting for parts to arrive before repair can continue
+    AWAITING_PARTS = 27, _('Awaiting Parts'), ColorEnum.warning
+
     COMPLETE = 30, _('Complete'), ColorEnum.success
+
+    # Item has been repaired and is ready to return to customer
+    READY_FOR_PICKUP = 35, _('Ready for Pickup'), ColorEnum.info
+
     CANCELLED = 40, _('Cancelled'), ColorEnum.danger
 
 
@@ -92,9 +99,13 @@ class ReturnOrderStatusGroups:
         ReturnOrderStatus.PENDING.value,
         ReturnOrderStatus.ON_HOLD.value,
         ReturnOrderStatus.IN_PROGRESS.value,
+        ReturnOrderStatus.AWAITING_PARTS.value,
     ]
 
-    COMPLETE = [ReturnOrderStatus.COMPLETE.value]
+    COMPLETE = [
+        ReturnOrderStatus.COMPLETE.value,
+        ReturnOrderStatus.READY_FOR_PICKUP.value,
+    ]
 
 
 class ReturnOrderLineStatus(StatusCode):

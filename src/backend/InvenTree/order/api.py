@@ -1713,6 +1713,18 @@ class ReturnOrderIssue(ReturnOrderContextMixin, CreateAPI):
     serializer_class = serializers.ReturnOrderIssueSerializer
 
 
+class ReturnOrderAwaitParts(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to mark a ReturnOrder as awaiting parts."""
+
+    serializer_class = serializers.ReturnOrderAwaitPartsSerializer
+
+
+class ReturnOrderMarkReady(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to mark a ReturnOrder as ready for pickup."""
+
+    serializer_class = serializers.ReturnOrderMarkReadySerializer
+
+
 class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
     """API endpoint to receive items against a ReturnOrder."""
 
@@ -2738,6 +2750,16 @@ order_api_urls = [
                         'issue/',
                         ReturnOrderIssue.as_view(),
                         name='api-return-order-issue',
+                    ),
+                    path(
+                        'await-parts/',
+                        ReturnOrderAwaitParts.as_view(),
+                        name='api-return-order-await-parts',
+                    ),
+                    path(
+                        'mark-ready/',
+                        ReturnOrderMarkReady.as_view(),
+                        name='api-return-order-mark-ready',
                     ),
                     path(
                         'receive/',

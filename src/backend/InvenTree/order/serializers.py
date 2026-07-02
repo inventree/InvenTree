@@ -2186,7 +2186,10 @@ class ReturnOrderSerializer(
             'customer',
             'customer_detail',
             'customer_reference',
+            'is_repair',
             'order_currency',
+            'technician',
+            'technician_detail',
             'total_price',
             'updated_at',
         ])
@@ -2232,6 +2235,10 @@ class ReturnOrderSerializer(
         prefetch_fields=['customer'],
     )
 
+    technician_detail = UserSerializer(
+        source='technician', read_only=True, allow_null=True
+    )
+
 
 class ReturnOrderHoldSerializer(OrderAdjustSerializer):
     """Serializers for holding a ReturnOrder."""
@@ -2263,6 +2270,22 @@ class ReturnOrderCompleteSerializer(OrderAdjustSerializer):
     def save(self):
         """Save the serializer to 'complete' the order."""
         self.order.complete_order()
+
+
+class ReturnOrderAwaitPartsSerializer(OrderAdjustSerializer):
+    """Serializer for marking a ReturnOrder as awaiting parts."""
+
+    def save(self):
+        """Save the serializer to mark the order as awaiting parts."""
+        self.order.await_parts_order()
+
+
+class ReturnOrderMarkReadySerializer(OrderAdjustSerializer):
+    """Serializer for marking a ReturnOrder as ready for pickup."""
+
+    def save(self):
+        """Save the serializer to mark the order as ready for pickup."""
+        self.order.mark_ready()
 
 
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -2381,6 +2404,8 @@ class ReturnOrderLineItemSerializer(
             'outcome',
             'price',
             'price_currency',
+            'repair_description',
+            'symptom',
             # Filterable detail fields
             'item_detail',
             'part_detail',

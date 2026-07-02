@@ -3031,6 +3031,22 @@ class ReturnOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed'),
     )
 
+    technician = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        verbose_name=_('Technician'),
+        help_text=_('User assigned to perform the repair'),
+    )
+
+    is_repair = models.BooleanField(
+        default=False,
+        verbose_name=_('Repair Order'),
+        help_text=_('Mark this order as a repair order'),
+    )
+
     # region state changes
     @property
     def is_pending(self):
@@ -3053,6 +3069,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return self.status in [
             ReturnOrderStatus.PENDING.value,
             ReturnOrderStatus.IN_PROGRESS.value,
+            ReturnOrderStatus.AWAITING_PARTS.value,
         ]
 
     def _action_hold(self, *args, **kwargs):
@@ -3087,7 +3104,11 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
-        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
+        if self.status in [
+            ReturnOrderStatus.IN_PROGRESS.value,
+            ReturnOrderStatus.AWAITING_PARTS.value,
+            ReturnOrderStatus.READY_FOR_PICKUP.value,
+        ]:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
             self.save()
@@ -3104,6 +3125,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return self.status in [
             ReturnOrderStatus.PENDING.value,
             ReturnOrderStatus.ON_HOLD.value,
+            ReturnOrderStatus.AWAITING_PARTS.value,
         ]
 
     def _action_place(self, *args, **kwargs):
@@ -3150,6 +3172,42 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Attempt to transition to CANCELLED status."""
         return self.handle_transition(
             self.status, ReturnOrderStatus.CANCELLED.value, self, self._action_cancel
+        )
+
+    def _action_await_parts(self, *args, **kwargs):
+        """Transition this order to AWAITING_PARTS status."""
+        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
+            self.status = ReturnOrderStatus.AWAITING_PARTS.value
+            self.save()
+
+            trigger_event(ReturnOrderEvents.HOLD, id=self.pk)
+
+    def _action_ready(self, *args, **kwargs):
+        """Transition this order to READY_FOR_PICKUP status."""
+        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
+            self.status = ReturnOrderStatus.READY_FOR_PICKUP.value
+            self.save()
+
+            trigger_event(ReturnOrderEvents.COMPLETED, id=self.pk)
+
+    @transaction.atomic
+    def await_parts_order(self):
+        """Attempt to transition to AWAITING_PARTS status."""
+        return self.handle_transition(
+            self.status,
+            ReturnOrderStatus.AWAITING_PARTS.value,
+            self,
+            self._action_await_parts,
+        )
+
+    @transaction.atomic
+    def mark_ready(self):
+        """Attempt to transition to READY_FOR_PICKUP status."""
+        return self.handle_transition(
+            self.status,
+            ReturnOrderStatus.READY_FOR_PICKUP.value,
+            self,
+            self._action_ready,
         )
 
     # endregion
@@ -3326,6 +3384,18 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
         blank=True,
         verbose_name=_('Price'),
         help_text=_('Cost associated with return or repair for this line item'),
+    )
+
+    symptom = models.TextField(
+        blank=True,
+        verbose_name=_('Symptom'),
+        help_text=_('Customer-reported issue or symptom'),
+    )
+
+    repair_description = models.TextField(
+        blank=True,
+        verbose_name=_('Repair Description'),
+        help_text=_('Description of the repair work performed'),
     )
 
 
