@@ -1626,7 +1626,7 @@ class Part(
         queryset = self.get_bom_items(include_virtual=False)
 
         # Ignore 'consumable' BOM items for this calculation
-        queryset = queryset.filter(consumable=False)
+        queryset = queryset.filter(BomItem.consumable_filter(consumable=False))
 
         # Annotate the queryset with the 'can_build' quantity
         queryset = part.filters.annotate_bom_item_can_build(queryset)
@@ -4294,6 +4294,35 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             return False
 
         return self.get_item_hash() == self.checksum
+
+    @property
+    def is_consumable(self) -> bool:
+        """Return True if this BOM line should be treated as consumable.
+
+        This is the case if either:
+        - The BOM line itself is marked as consumable
+        - The underlying part is marked as consumable
+        """
+        return self.consumable or self.sub_part.consumable
+
+    @staticmethod
+    def consumable_filter(consumable: bool = True, prefix: str = '') -> Q:
+        """Return a Q filter which selects BomItem objects based on "effective" consumable status.
+
+        A BomItem is considered "effectively consumable" if either the BOM line itself,
+        or the underlying part, is marked as consumable.
+
+        Arguments:
+            consumable: If True, return a filter which matches consumable BOM items.
+                        If False, return a filter which matches non-consumable BOM items.
+            prefix: Optional field lookup prefix, for use against querysets of a
+                    related model (e.g. 'bom_item__' when filtering a BuildLine queryset).
+        """
+        f = Q(**{f'{prefix}consumable': True}) | Q(**{
+            f'{prefix}sub_part__consumable': True
+        })
+
+        return f if consumable else ~f
 
     def clean(self):
         """Check validity of the BomItem model.
