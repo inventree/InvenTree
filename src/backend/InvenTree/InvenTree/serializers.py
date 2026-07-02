@@ -936,7 +936,7 @@ class DuplicateOptionsSerializer(serializers.Serializer):
             'copy_parameters',
             _('Copy Parameters'),
             _('Copy parameters from the original item'),
-            True,
+            False,
         ),
         (
             'copy_lines',
