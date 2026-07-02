@@ -13,7 +13,7 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-import { TagsField } from './CommonFields';
+import { DuplicateField, TagsField } from './CommonFields';
 
 /**
  * Field set for SupplierPart instance
@@ -98,15 +98,12 @@ export function useSupplierPartFields({
       },
       primary: {},
       active: {},
-      duplicate: {
-        children: {
-          original: {
-            value: duplicateSupplierPartId,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: duplicateSupplierPartId,
+        extraFields: {
           copy_parameters: {}
         }
-      }
+      })
     };
 
     if (!duplicateSupplierPartId) {
@@ -146,15 +143,12 @@ export function useManufacturerPartFields({
       description: {},
       tags: TagsField({}),
       link: {},
-      duplicate: {
-        children: {
-          original: {
-            value: duplicateManufacturerPartId,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: duplicateManufacturerPartId,
+        extraFields: {
           copy_parameters: {}
         }
-      }
+      })
     };
 
     if (!duplicateManufacturerPartId) {
@@ -194,15 +188,12 @@ export function companyFields({
     is_manufacturer: {},
     is_customer: {},
     active: {},
-    duplicate: {
-      children: {
-        original: {
-          value: duplicateCompanyId,
-          hidden: true
-        },
+    duplicate: DuplicateField({
+      originalId: duplicateCompanyId,
+      extraFields: {
         copy_parameters: {}
       }
-    }
+    })
   };
 
   if (!duplicateCompanyId) {

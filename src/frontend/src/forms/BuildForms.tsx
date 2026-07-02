@@ -36,7 +36,7 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
-import { ProjectCodeField, TagsField } from './CommonFields';
+import { DuplicateField, ProjectCodeField, TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
@@ -136,15 +136,12 @@ export function useBuildOrderFields({
         }
       },
       external: {},
-      duplicate: {
-        children: {
-          original: {
-            value: duplicateBuildId,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: duplicateBuildId,
+        extraFields: {
           copy_parameters: {}
         }
-      }
+      })
     };
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
