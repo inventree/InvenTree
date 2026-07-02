@@ -950,6 +950,7 @@ class PartSerializer(
         Part.objects.all(),
         label=_('Duplicate Part'),
         help_text=_('Copy initial data from another Part'),
+        copy_parameters=True,
         copy_fields=[
             {
                 'name': 'copy_image',
@@ -961,12 +962,6 @@ class PartSerializer(
                 'name': 'copy_bom',
                 'label': _('Copy BOM'),
                 'help_text': _('Copy bill of materials from original part'),
-                'default': False,
-            },
-            {
-                'name': 'copy_parameters',
-                'label': _('Copy Parameters'),
-                'help_text': _('Copy parameter data from original part'),
                 'default': False,
             },
             {
