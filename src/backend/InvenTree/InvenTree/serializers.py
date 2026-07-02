@@ -937,7 +937,19 @@ class DuplicateOptionsSerializer(serializers.Serializer):
             _('Copy Parameters'),
             _('Copy parameters from the original item'),
             True,
-        )
+        ),
+        (
+            'copy_lines',
+            _('Copy Lines'),
+            _('Copy line items from the original order'),
+            False,
+        ),
+        (
+            'copy_extra_lines',
+            _('Copy Extra Lines'),
+            _('Copy extra line items from the original order'),
+            False,
+        ),
     ]
 
     def __init__(
@@ -951,7 +963,9 @@ class DuplicateOptionsSerializer(serializers.Serializer):
 
         Arguments:
             queryset: Queryset used for the `original` PrimaryKeyRelatedField.
-            copy_parameters: boolean field to specify whether to copy parameters from the original instance.
+            copy_parameters: Include a field to specify whether to copy parameters from the original instance (default True).
+            copy_lines: Include a field to specify whether to copy line items from the original instance (default False).
+            copy_extra_lines: Include a field to specify whether to copy extra line items from the original instance (default False).
             copy_fields: Optional list of dicts, each describing one boolean copy toggle.
                 Keys:
                     name: (str, required)
