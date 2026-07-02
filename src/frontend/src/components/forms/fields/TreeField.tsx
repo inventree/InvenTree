@@ -24,7 +24,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl, navigateToLink } from '@lib/index';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
 import {

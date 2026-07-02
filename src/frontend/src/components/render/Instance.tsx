@@ -31,9 +31,9 @@ export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import {
   getBaseUrl,
   getDetailUrl,
-  navigateToLink,
-  shortenString
-} from '@lib/index';
+  navigateToLink
+} from '@lib/functions/Navigation';
+import { shortenString } from '@lib/functions/String';
 import { IconLink } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { usePluginState } from '../../states/PluginState';

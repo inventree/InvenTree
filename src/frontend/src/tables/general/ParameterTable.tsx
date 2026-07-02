@@ -1,9 +1,8 @@
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   ModelType,
-  RowDeleteAction,
-  RowEditAction,
   YesNoButton,
   apiUrl,
   formatDecimal
