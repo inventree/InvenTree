@@ -503,6 +503,7 @@ class Part(
         active: Is this part active? Parts are deactivated instead of being deleted
         locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
+        consumable: Is this part consumable, such as glue or a fastener?
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
@@ -1306,6 +1307,12 @@ class Part(
         default=part_settings.part_virtual_default,
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'),
+    )
+
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_('Is this part consumable, such as glue or a fastener?'),
     )
 
     bom_validated = models.BooleanField(
