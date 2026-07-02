@@ -564,9 +564,9 @@ export function SearchDrawer({
               multiple
               defaultValue={searchQueries.map((q) => q.model)}
             >
-              {queryResults.map((query, idx) => (
+              {queryResults.map((query) => (
                 <QueryResultGroup
-                  key={idx}
+                  key={query.model}
                   searchText={searchText}
                   query={query}
                   navigate={navigate}
