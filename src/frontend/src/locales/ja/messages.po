@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-30 09:32\n"
+"PO-Revision-Date: 2026-07-02 08:32\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -566,7 +566,7 @@ msgstr "グループ"
 #: src/pages/core/CoreIndex.tsx:28
 #: src/pages/core/GroupDetail.tsx:82
 #: src/pages/core/UserDetail.tsx:99
-#: src/tables/settings/UserTable.tsx:276
+#: src/tables/settings/UserTable.tsx:277
 msgid "Groups"
 msgstr "グループ"
 
@@ -639,8 +639,8 @@ msgstr "選択エントリ"
 #: src/components/dashboard/DashboardLayout.tsx:297
 #: src/components/editors/NotesEditor.tsx:81
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
-#: src/components/forms/fields/ApiFormField.tsx:261
-#: src/components/forms/fields/TableField.tsx:58
+#: src/components/forms/fields/ApiFormField.tsx:299
+#: src/components/forms/fields/TableField.tsx:62
 #: src/components/importer/ImportDataSelector.tsx:206
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
@@ -652,7 +652,7 @@ msgstr "選択エントリ"
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:83
-#: src/functions/auth.tsx:693
+#: src/functions/auth.tsx:706
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -670,7 +670,7 @@ msgid "Error"
 msgstr "エラー"
 
 #: lib/enums/ModelInformation.tsx:317
-#: src/tables/machine/MachineListTable.tsx:402
+#: src/tables/machine/MachineListTable.tsx:403
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
 msgstr "エラー"
@@ -1085,7 +1085,7 @@ msgstr "開始日"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:153
 #: src/tables/sales/SalesOrderLineItemTable.tsx:133
-#: src/tables/stock/TransferOrderLineItemTable.tsx:114
+#: src/tables/stock/TransferOrderLineItemTable.tsx:116
 msgid "Target Date"
 msgstr "終了日に達したら"
 
@@ -1441,7 +1441,7 @@ msgstr "新しい棚卸し明細を作成"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
 #: src/pages/core/UserDetail.tsx:93
 #: src/pages/core/UserDetail.tsx:203
-#: src/tables/settings/UserTable.tsx:411
+#: src/tables/settings/UserTable.tsx:412
 msgid "Superuser"
 msgstr "スーパーユーザー"
 
@@ -1449,8 +1449,8 @@ msgstr "スーパーユーザー"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
-#: src/tables/settings/UserTable.tsx:285
-#: src/tables/settings/UserTable.tsx:406
+#: src/tables/settings/UserTable.tsx:286
+#: src/tables/settings/UserTable.tsx:407
 msgid "Administrator"
 msgstr "管理者"
 
@@ -1530,6 +1530,7 @@ msgstr "アップロードエラー"
 
 #: src/components/details/DetailsImage.tsx:299
 #: src/components/forms/fields/AutoFillRightSection.tsx:34
+#: src/components/forms/fields/TreeField.tsx:312
 msgid "Clear"
 msgstr "クリア"
 
@@ -1830,21 +1831,21 @@ msgstr "ログイン成功"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
-#: src/functions/auth.tsx:133
-#: src/functions/auth.tsx:144
+#: src/functions/auth.tsx:148
+#: src/functions/auth.tsx:157
 msgid "Login failed"
 msgstr "ログインに失敗しました"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:136
-#: src/functions/auth.tsx:356
+#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:369
 msgid "Check your input and try again."
 msgstr "入力内容を確認し、もう一度やり直してください。"
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:347
+#: src/functions/auth.tsx:360
 msgid "Mail delivery successful"
 msgstr "メール送信成功"
 
@@ -1994,9 +1995,9 @@ msgstr "ホスト"
 #: src/tables/machine/MachineTypeTable.tsx:355
 #: src/tables/plugin/PluginErrorTable.tsx:35
 #: src/tables/settings/ApiTokenTable.tsx:58
-#: src/tables/settings/GroupTable.tsx:95
-#: src/tables/settings/GroupTable.tsx:148
-#: src/tables/settings/GroupTable.tsx:256
+#: src/tables/settings/GroupTable.tsx:96
+#: src/tables/settings/GroupTable.tsx:149
+#: src/tables/settings/GroupTable.tsx:257
 #: src/tables/settings/PendingTasksTable.tsx:37
 #: src/tables/stock/LocationTypesTable.tsx:74
 msgid "Name"
@@ -2082,8 +2083,8 @@ msgid "Plugins"
 msgstr "プラグイン"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:143
-#: src/tables/general/ParameterTemplateTable.tsx:178
+#: src/tables/general/ParameterTemplateTable.tsx:145
+#: src/tables/general/ParameterTemplateTable.tsx:180
 #: src/tables/part/PartTestTemplateTable.tsx:117
 #: src/tables/settings/TemplateTable.tsx:296
 #: src/tables/settings/TemplateTable.tsx:408
@@ -2108,7 +2109,17 @@ msgstr "中断"
 msgid "Running"
 msgstr "実行中"
 
-#: src/components/forms/fields/ApiFormField.tsx:215
+#: src/components/forms/fields/ApiFormField.tsx:139
+msgid "Select location"
+msgstr ""
+
+#: src/components/forms/fields/ApiFormField.tsx:155
+#: src/components/forms/fields/IconField.tsx:225
+#: src/components/wizards/ImportPartWizard.tsx:304
+msgid "Select category"
+msgstr "カテゴリを選択"
+
+#: src/components/forms/fields/ApiFormField.tsx:253
 msgid "Select file to upload"
 msgstr "アップロードするファイルを選択してください"
 
@@ -2135,11 +2146,6 @@ msgstr "未分類"
 msgid "Search..."
 msgstr "検索…"
 
-#: src/components/forms/fields/IconField.tsx:225
-#: src/components/wizards/ImportPartWizard.tsx:304
-msgid "Select category"
-msgstr "カテゴリを選択"
-
 #: src/components/forms/fields/IconField.tsx:234
 msgid "Select pack"
 msgstr "パック選択"
@@ -2156,6 +2162,7 @@ msgid "Loading"
 msgstr "読み込み中"
 
 #: src/components/forms/fields/RelatedModelField.tsx:541
+#: src/components/forms/fields/TreeField.tsx:413
 #: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "一致するものが見つかりませんでした"
@@ -2169,17 +2176,42 @@ msgstr "アイテム"
 msgid "Create New {model}"
 msgstr "新しい{model}を作成"
 
-#: src/components/forms/fields/TableField.tsx:59
+#: src/components/forms/fields/TableField.tsx:63
 msgid "modelRenderer entry required for tables"
 msgstr "テーブルに必要な modelRenderer エントリ"
 
-#: src/components/forms/fields/TableField.tsx:333
+#: src/components/forms/fields/TableField.tsx:357
 msgid "No entries available"
 msgstr "選択した機能に使用できるエントリはありません"
 
-#: src/components/forms/fields/TableField.tsx:344
+#: src/components/forms/fields/TableField.tsx:368
 msgid "Add new row"
 msgstr "新しい行を追加"
+
+#: src/components/forms/fields/TreeField.tsx:328
+#: src/components/render/Instance.tsx:225
+#: src/components/render/ModelHoverCard.tsx:73
+#: src/tables/InvenTreeTable.tsx:787
+msgid "View details"
+msgstr "詳細を見る"
+
+#: src/components/forms/fields/TreeField.tsx:407
+msgid "Select..."
+msgstr "選択…"
+
+#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/wizards/ImportPartWizard.tsx:221
+#: src/forms/StockForms.tsx:761
+msgid "Loading..."
+msgstr "読み込み中…"
+
+#: src/components/forms/fields/TreeField.tsx:439
+msgid "Collapse"
+msgstr ""
+
+#: src/components/forms/fields/TreeField.tsx:439
+msgid "Expand"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -2251,7 +2283,7 @@ msgstr "加工データ"
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:403
+#: src/functions/auth.tsx:416
 msgid "An error occurred"
 msgstr "エラーが発生しました"
 
@@ -2542,7 +2574,7 @@ msgid "No items"
 msgstr "項目なし"
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:102
+#: src/components/render/Stock.tsx:97
 #: src/pages/part/PartDetail.tsx:954
 #: src/pages/stock/StockDetail.tsx:276
 #: src/pages/stock/StockDetail.tsx:1020
@@ -3180,12 +3212,12 @@ msgstr "日付"
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
 #: src/pages/part/PartDetail.tsx:502
-#: src/tables/bom/UsedInTable.tsx:106
+#: src/tables/bom/UsedInTable.tsx:107
 #: src/tables/company/CompanyTable.tsx:68
 #: src/tables/company/CompanyTable.tsx:103
 #: src/tables/company/ParametricCompanyTable.tsx:19
-#: src/tables/machine/MachineListTable.tsx:384
-#: src/tables/machine/MachineListTable.tsx:799
+#: src/tables/machine/MachineListTable.tsx:385
+#: src/tables/machine/MachineListTable.tsx:800
 #: src/tables/part/PartTableFilters.tsx:13
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
@@ -3194,7 +3226,7 @@ msgstr "日付"
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 #: src/tables/settings/ApiTokenTable.tsx:63
 #: src/tables/settings/ProjectCodeTable.tsx:104
-#: src/tables/settings/UserTable.tsx:401
+#: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
 msgid "Active"
 msgstr "有効"
@@ -3290,13 +3322,9 @@ msgstr "プラグインコンテンツの読み込みエラー"
 #~ msgstr "Error occurred while loading plugin content"
 
 #: src/components/render/Instance.tsx:209
+#: src/components/render/ModelHoverCard.tsx:59
 msgid "ID"
 msgstr "ID"
-
-#: src/components/render/Instance.tsx:225
-#: src/tables/InvenTreeTable.tsx:787
-msgid "View details"
-msgstr "詳細を見る"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -3387,8 +3415,8 @@ msgid "Category"
 msgstr "カテゴリ"
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:114
-#: src/components/render/Stock.tsx:132
+#: src/components/render/Stock.tsx:109
+#: src/components/render/Stock.tsx:127
 #: src/forms/BuildForms.tsx:849
 #: src/forms/PurchaseOrderForms.tsx:704
 #: src/forms/StockForms.tsx:968
@@ -3410,7 +3438,7 @@ msgstr "カテゴリ"
 msgid "Location"
 msgstr "場所"
 
-#: src/components/render/Stock.tsx:99
+#: src/components/render/Stock.tsx:94
 #: src/pages/stock/StockDetail.tsx:209
 #: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/build/BuildOutputTable.tsx:109
@@ -3419,7 +3447,7 @@ msgstr "場所"
 msgid "Serial Number"
 msgstr "シリアル番号"
 
-#: src/components/render/Stock.tsx:104
+#: src/components/render/Stock.tsx:99
 #: src/components/wizards/OrderPartsWizard.tsx:385
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:264
@@ -3451,7 +3479,7 @@ msgstr "シリアル番号"
 msgid "Quantity"
 msgstr "数量"
 
-#: src/components/render/Stock.tsx:117
+#: src/components/render/Stock.tsx:112
 #: src/forms/BuildForms.tsx:365
 #: src/forms/BuildForms.tsx:448
 #: src/forms/BuildForms.tsx:523
@@ -3984,11 +4012,6 @@ msgstr "既にインポート済み"
 msgid "Supplier"
 msgstr "仕入先"
 
-#: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:761
-msgid "Loading..."
-msgstr "読み込み中…"
-
 #: src/components/wizards/ImportPartWizard.tsx:223
 msgid "Error fetching suppliers"
 msgstr "サプライヤーの取得中にエラーが発生しました"
@@ -4243,7 +4266,7 @@ msgstr "選択した部品の誤りを訂正してください。"
 #: src/tables/build/BuildLineTable.tsx:888
 #: src/tables/part/PartTable.tsx:419
 #: src/tables/sales/SalesOrderLineItemTable.tsx:417
-#: src/tables/stock/TransferOrderLineItemTable.tsx:330
+#: src/tables/stock/TransferOrderLineItemTable.tsx:332
 msgid "Order Parts"
 msgstr "パーツの注文"
 
@@ -4834,7 +4857,7 @@ msgstr "完了数量"
 #: src/pages/stock/TransferOrderDetail.tsx:131
 #: src/tables/Filter.tsx:352
 #: src/tables/build/BuildOutputTable.tsx:499
-#: src/tables/machine/MachineListTable.tsx:387
+#: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:39
 #: src/tables/part/PartTestResultTable.tsx:324
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:137
@@ -4898,7 +4921,7 @@ msgstr "割り当てられた在庫品は、在庫に戻されます。"
 #: src/tables/ColumnRenderers.tsx:125
 #: src/tables/part/RelatedPartTable.tsx:73
 #: src/tables/stock/TransferOrderAllocationTable.tsx:120
-#: src/tables/stock/TransferOrderLineItemTable.tsx:95
+#: src/tables/stock/TransferOrderLineItemTable.tsx:97
 msgid "IPN"
 msgstr "IPN"
 
@@ -4912,7 +4935,7 @@ msgstr "IPN"
 #: src/tables/build/BuildLineTable.tsx:187
 #: src/tables/sales/SalesOrderLineItemTable.tsx:389
 #: src/tables/stock/StockItemTable.tsx:213
-#: src/tables/stock/TransferOrderLineItemTable.tsx:490
+#: src/tables/stock/TransferOrderLineItemTable.tsx:492
 msgid "Allocated"
 msgstr "割り当てられた"
 
@@ -4942,8 +4965,8 @@ msgstr "在庫配分のソースの場所を選択します。"
 #: src/tables/build/BuildOutputTable.tsx:238
 #: src/tables/sales/SalesOrderLineItemTable.tsx:427
 #: src/tables/sales/SalesOrderLineItemTable.tsx:472
-#: src/tables/stock/TransferOrderLineItemTable.tsx:340
-#: src/tables/stock/TransferOrderLineItemTable.tsx:366
+#: src/tables/stock/TransferOrderLineItemTable.tsx:342
+#: src/tables/stock/TransferOrderLineItemTable.tsx:368
 msgid "Allocate Stock"
 msgstr "株式の割当"
 
@@ -5554,7 +5577,7 @@ msgstr "内部サーバーエラー"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:222
+#: src/functions/auth.tsx:235
 msgid "Logged Out"
 msgstr "ログアウト"
 
@@ -5570,93 +5593,93 @@ msgstr "このブラウザで競合するセッションがあったため、ロ
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:145
+#: src/functions/auth.tsx:158
 msgid "No response from server."
 msgstr "サーバーからの応答がありません。"
 
-#: src/functions/auth.tsx:188
+#: src/functions/auth.tsx:201
 msgid "MFA Login successful"
 msgstr "多要素認証ログインに成功しました"
 
-#: src/functions/auth.tsx:189
+#: src/functions/auth.tsx:202
 msgid "MFA details were automatically provided in the browser"
 msgstr "多要素認証の詳細情報はブラウザに自動的に記録されました"
 
-#: src/functions/auth.tsx:223
+#: src/functions/auth.tsx:236
 msgid "Successfully logged out"
 msgstr "ログアウトに成功しました"
 
-#: src/functions/auth.tsx:290
+#: src/functions/auth.tsx:303
 msgid "Language changed"
 msgstr "言語変更"
 
-#: src/functions/auth.tsx:291
+#: src/functions/auth.tsx:304
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "アクティブ言語がプロフィールで設定した言語に変更されました。"
 
-#: src/functions/auth.tsx:312
+#: src/functions/auth.tsx:325
 msgid "Theme changed"
 msgstr "テーマ変更"
 
-#: src/functions/auth.tsx:313
+#: src/functions/auth.tsx:326
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "アクティブなテーマがプロフィールで設定したものに変更されました。"
 
-#: src/functions/auth.tsx:348
+#: src/functions/auth.tsx:361
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "リセットのリンクを受信トレイでご確認ください。これはアカウントを持っている場合にのみ機能します。迷惑メールもチェックしてください。"
 
-#: src/functions/auth.tsx:355
-#: src/functions/auth.tsx:619
+#: src/functions/auth.tsx:368
+#: src/functions/auth.tsx:632
 msgid "Reset failed"
 msgstr "リセット失敗"
 
-#: src/functions/auth.tsx:382
+#: src/functions/auth.tsx:395
 msgid "Already logged in"
 msgstr "ログイン済み"
 
-#: src/functions/auth.tsx:383
+#: src/functions/auth.tsx:396
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "このブラウザのセッションがサーバー上で競合しています。まずそちらからログアウトしてください。"
 
-#: src/functions/auth.tsx:439
+#: src/functions/auth.tsx:452
 msgid "Logged In"
 msgstr "ログイン中"
 
-#: src/functions/auth.tsx:440
+#: src/functions/auth.tsx:453
 msgid "Successfully logged in"
 msgstr "ログインに成功しました"
 
-#: src/functions/auth.tsx:574
+#: src/functions/auth.tsx:587
 msgid "Failed to set up MFA"
 msgstr "MFAの設定に失敗しました"
 
-#: src/functions/auth.tsx:593
+#: src/functions/auth.tsx:606
 msgid "MFA Setup successful"
 msgstr "MFA の設定が正常に完了しました"
 
-#: src/functions/auth.tsx:594
+#: src/functions/auth.tsx:607
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "TOTP による MFA の設定が正常に完了しました。再度ログインする必要があります。"
 
-#: src/functions/auth.tsx:609
+#: src/functions/auth.tsx:622
 msgid "Password set"
 msgstr "パスワード設定"
 
-#: src/functions/auth.tsx:610
-#: src/functions/auth.tsx:719
+#: src/functions/auth.tsx:623
+#: src/functions/auth.tsx:732
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "パスワードは正常に設定されました。新しいパスワードでログインできます。"
 
-#: src/functions/auth.tsx:684
+#: src/functions/auth.tsx:697
 msgid "Password could not be changed"
 msgstr "パスワードを変更できませんでした"
 
-#: src/functions/auth.tsx:702
+#: src/functions/auth.tsx:715
 msgid "The two password fields didn’t match"
 msgstr "2つのパスワードフィールドが一致しませんでした"
 
-#: src/functions/auth.tsx:718
+#: src/functions/auth.tsx:731
 msgid "Password Changed"
 msgstr "パスワードが変更されました"
 
@@ -6390,7 +6413,7 @@ msgid "Edit Account"
 msgstr "アカウント編集"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
-#: src/tables/settings/UserTable.tsx:323
+#: src/tables/settings/UserTable.tsx:324
 msgid "Change Password"
 msgstr "パスワードの変更"
 
@@ -7105,7 +7128,7 @@ msgid "There are no machine registry errors"
 msgstr "マシンのレジストリエラーはありません。"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:122
-#: src/tables/machine/MachineListTable.tsx:502
+#: src/tables/machine/MachineListTable.tsx:503
 msgid "Machine Settings"
 msgstr "マシン設定"
 
@@ -7114,7 +7137,7 @@ msgstr "マシン設定"
 #~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
-#: src/tables/settings/UserTable.tsx:195
+#: src/tables/settings/UserTable.tsx:196
 msgid "Info"
 msgstr "情報"
 
@@ -7431,7 +7454,7 @@ msgstr "このアセンブリの部品表は検証されていません"
 #: src/pages/build/BuildDetail.tsx:275
 #: src/pages/part/PartDetail.tsx:360
 #: src/pages/stock/StockDetail.tsx:172
-#: src/tables/bom/UsedInTable.tsx:55
+#: src/tables/bom/UsedInTable.tsx:56
 #: src/tables/build/BuildOrderTable.tsx:66
 #: src/tables/stock/StockItemTable.tsx:70
 msgid "Revision"
@@ -7527,7 +7550,7 @@ msgstr "作成日"
 #: src/pages/build/BuildDetail.tsx:434
 #: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/sales/SalesOrderLineItemTable.tsx:394
-#: src/tables/stock/TransferOrderLineItemTable.tsx:495
+#: src/tables/stock/TransferOrderLineItemTable.tsx:497
 msgid "Completed"
 msgstr "完了"
 
@@ -7971,12 +7994,12 @@ msgstr "グループ名"
 
 #: src/pages/core/GroupDetail.tsx:52
 #: src/pages/core/GroupDetail.tsx:67
-#: src/tables/settings/GroupTable.tsx:85
+#: src/tables/settings/GroupTable.tsx:86
 msgid "Group Details"
 msgstr "グループの詳細"
 
 #: src/pages/core/GroupDetail.tsx:55
-#: src/tables/settings/GroupTable.tsx:112
+#: src/tables/settings/GroupTable.tsx:113
 msgid "Group Roles"
 msgstr "グループロール"
 
@@ -7994,7 +8017,7 @@ msgid "User Profile"
 msgstr "ユーザープロフィール"
 
 #: src/pages/core/UserDetail.tsx:188
-#: src/tables/settings/UserTable.tsx:164
+#: src/tables/settings/UserTable.tsx:165
 msgid "User Details"
 msgstr "ユーザー詳細"
 
@@ -8151,7 +8174,7 @@ msgstr "キーワード"
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTableFilters.tsx:137
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
-#: src/tables/stock/TransferOrderLineItemTable.tsx:118
+#: src/tables/stock/TransferOrderLineItemTable.tsx:120
 msgid "Available Stock"
 msgstr "在庫状況"
 
@@ -8159,7 +8182,7 @@ msgstr "在庫状況"
 #: src/tables/bom/BomTable.tsx:369
 #: src/tables/build/BuildLineTable.tsx:272
 #: src/tables/sales/SalesOrderLineItemTable.tsx:179
-#: src/tables/stock/TransferOrderLineItemTable.tsx:160
+#: src/tables/stock/TransferOrderLineItemTable.tsx:162
 msgid "On order"
 msgstr "注文中"
 
@@ -8184,7 +8207,7 @@ msgid "Maximum Stock"
 msgstr "最大在庫数"
 
 #: src/pages/part/PartDetail.tsx:507
-#: src/tables/bom/UsedInTable.tsx:96
+#: src/tables/bom/UsedInTable.tsx:97
 #: src/tables/part/PartTableFilters.tsx:19
 #: src/tables/settings/SelectionListDrawer.tsx:171
 msgid "Locked"
@@ -8561,13 +8584,13 @@ msgstr "バリアントを許可"
 
 #: src/pages/part/bom/BomCompare.tsx:36
 #: src/tables/bom/BomTable.tsx:488
-#: src/tables/bom/UsedInTable.tsx:91
+#: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "継承"
 
 #: src/pages/part/bom/BomCompare.tsx:37
 #: src/tables/bom/BomTable.tsx:498
-#: src/tables/bom/UsedInTable.tsx:101
+#: src/tables/bom/UsedInTable.tsx:102
 #: src/tables/build/BuildLineTable.tsx:207
 msgid "Optional"
 msgstr "オプション"
@@ -8664,7 +8687,7 @@ msgstr "合計金額"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
-#: src/tables/bom/UsedInTable.tsx:65
+#: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/part/PartTableFilters.tsx:43
 msgid "Component"
 msgstr "コンポーネント"
@@ -8781,7 +8804,7 @@ msgstr "購入価格"
 #: src/pages/sales/ReturnOrderDetail.tsx:291
 #: src/pages/sales/SalesOrderDetail.tsx:282
 #: src/pages/stock/StockDetail.tsx:445
-#: src/tables/general/ParameterTable.tsx:102
+#: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:90
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
@@ -9606,7 +9629,7 @@ msgstr "このストックアイテムは部分的に配分されています。
 #: src/tables/ColumnRenderers.tsx:262
 #: src/tables/build/BuildLineTable.tsx:308
 #: src/tables/sales/SalesOrderLineItemTable.tsx:159
-#: src/tables/stock/TransferOrderLineItemTable.tsx:140
+#: src/tables/stock/TransferOrderLineItemTable.tsx:142
 msgid "No stock available"
 msgstr "在庫なし"
 
@@ -9618,7 +9641,7 @@ msgstr "この在庫はなくなりました"
 #: src/tables/bom/BomTable.tsx:386
 #: src/tables/part/PartTable.tsx:194
 #: src/tables/sales/SalesOrderLineItemTable.tsx:188
-#: src/tables/stock/TransferOrderLineItemTable.tsx:169
+#: src/tables/stock/TransferOrderLineItemTable.tsx:171
 msgid "Stock Information"
 msgstr "株式情報"
 
@@ -10120,9 +10143,9 @@ msgstr "代替品"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:140
 #: src/tables/sales/SalesOrderLineItemTable.tsx:198
 #: src/tables/sales/SalesOrderLineItemTable.tsx:215
-#: src/tables/stock/TransferOrderLineItemTable.tsx:121
-#: src/tables/stock/TransferOrderLineItemTable.tsx:180
-#: src/tables/stock/TransferOrderLineItemTable.tsx:198
+#: src/tables/stock/TransferOrderLineItemTable.tsx:123
+#: src/tables/stock/TransferOrderLineItemTable.tsx:182
+#: src/tables/stock/TransferOrderLineItemTable.tsx:200
 msgid "Virtual part"
 msgstr "仮想部品"
 
@@ -10164,7 +10187,7 @@ msgstr "代用株を含む"
 #: src/tables/bom/BomTable.tsx:360
 #: src/tables/build/BuildLineTable.tsx:254
 #: src/tables/sales/SalesOrderLineItemTable.tsx:165
-#: src/tables/stock/TransferOrderLineItemTable.tsx:146
+#: src/tables/stock/TransferOrderLineItemTable.tsx:148
 msgid "Includes variant stock"
 msgstr "バリアントストック付き"
 
@@ -10230,7 +10253,7 @@ msgid "Show validated items"
 msgstr "有効な項目を表示"
 
 #: src/tables/bom/BomTable.tsx:489
-#: src/tables/bom/UsedInTable.tsx:92
+#: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "継承された項目を表示"
 
@@ -10239,7 +10262,7 @@ msgid "Show items which allow variant substitution"
 msgstr "バリアント置換が可能な項目を表示"
 
 #: src/tables/bom/BomTable.tsx:499
-#: src/tables/bom/UsedInTable.tsx:102
+#: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "オプション項目の表示"
 
@@ -10270,12 +10293,12 @@ msgid "BOM item created"
 msgstr "BOMアイテムの作成"
 
 #: src/tables/bom/BomTable.tsx:554
-#: src/tables/bom/UsedInTable.tsx:122
+#: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "BOMアイテムの編集"
 
 #: src/tables/bom/BomTable.tsx:556
-#: src/tables/bom/UsedInTable.tsx:126
+#: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "BOMアイテム更新"
 
@@ -10316,7 +10339,7 @@ msgid "Add a single BOM item"
 msgstr "BOMに1つの部品を追加する"
 
 #: src/tables/bom/BomTable.tsx:670
-#: src/tables/general/ParameterTable.tsx:204
+#: src/tables/general/ParameterTable.tsx:203
 #: src/tables/part/PartTable.tsx:443
 msgid "Import from File"
 msgstr "ファイルからインポート"
@@ -10337,7 +10360,7 @@ msgstr "BOM編集を完了"
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "部品がロックされているため、部品表を編集できません。"
 
-#: src/tables/bom/UsedInTable.tsx:46
+#: src/tables/bom/UsedInTable.tsx:47
 #: src/tables/build/BuildLineTable.tsx:212
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
 #: src/tables/part/PartTableFilters.tsx:25
@@ -10345,47 +10368,47 @@ msgstr "部品がロックされているため、部品表を編集できませ
 msgid "Assembly"
 msgstr "アセンブリ"
 
-#: src/tables/bom/UsedInTable.tsx:97
+#: src/tables/bom/UsedInTable.tsx:98
 msgid "Show locked assemblies"
 msgstr "ロックされたアセンブリを表示"
 
-#: src/tables/bom/UsedInTable.tsx:107
+#: src/tables/bom/UsedInTable.tsx:108
 msgid "Show active assemblies"
 msgstr "アクティブなアセンブリの表示"
 
-#: src/tables/bom/UsedInTable.tsx:111
+#: src/tables/bom/UsedInTable.tsx:112
 #: src/tables/part/PartTableFilters.tsx:55
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "追跡可能"
 
-#: src/tables/bom/UsedInTable.tsx:112
+#: src/tables/bom/UsedInTable.tsx:113
 msgid "Show trackable assemblies"
 msgstr "追跡可能なアセンブリの表示"
 
-#: src/tables/bom/UsedInTable.tsx:160
-#: src/tables/bom/UsedInTable.tsx:167
-#: src/tables/bom/UsedInTable.tsx:204
+#: src/tables/bom/UsedInTable.tsx:161
+#: src/tables/bom/UsedInTable.tsx:168
+#: src/tables/bom/UsedInTable.tsx:205
 msgid "Replace Component"
 msgstr "コンポーネント品を置換"
 
-#: src/tables/bom/UsedInTable.tsx:161
+#: src/tables/bom/UsedInTable.tsx:162
 msgid "Replace"
 msgstr "置換"
 
-#: src/tables/bom/UsedInTable.tsx:170
+#: src/tables/bom/UsedInTable.tsx:171
 msgid "This action cannot be easily undone, so please ensure you have selected the correct assemblies."
 msgstr "この操作は簡単に元に戻せないため、正しいアセンブリを選択していることを確認してください"
 
-#: src/tables/bom/UsedInTable.tsx:173
+#: src/tables/bom/UsedInTable.tsx:174
 msgid "The selected assemblies will be updated with the new component."
 msgstr "選択したアセンブリは新しい部品で更新されます"
 
-#: src/tables/bom/UsedInTable.tsx:178
+#: src/tables/bom/UsedInTable.tsx:179
 msgid "No valid items selected"
 msgstr "有効な在庫品が選択されていません"
 
-#: src/tables/bom/UsedInTable.tsx:180
+#: src/tables/bom/UsedInTable.tsx:181
 msgid "Please select one or more valid assemblies to replace the component."
 msgstr "コンポーネント品を置き換えるには、有効なアセンブリを1つ以上選択してください"
 
@@ -10521,7 +10544,7 @@ msgstr "未納入在庫品を表示する"
 
 #: src/tables/build/BuildLineTable.tsx:263
 #: src/tables/sales/SalesOrderLineItemTable.tsx:171
-#: src/tables/stock/TransferOrderLineItemTable.tsx:152
+#: src/tables/stock/TransferOrderLineItemTable.tsx:154
 msgid "In production"
 msgstr "生産中"
 
@@ -10548,7 +10571,7 @@ msgstr "全数引き当て済み"
 
 #: src/tables/build/BuildLineTable.tsx:578
 #: src/tables/sales/SalesOrderLineItemTable.tsx:312
-#: src/tables/stock/TransferOrderLineItemTable.tsx:248
+#: src/tables/stock/TransferOrderLineItemTable.tsx:250
 msgid "Create Build Order"
 msgstr "ビルドオーダーの作成"
 
@@ -10624,7 +10647,7 @@ msgstr "ビルドストック"
 
 #: src/tables/build/BuildLineTable.tsx:854
 #: src/tables/sales/SalesOrderLineItemTable.tsx:553
-#: src/tables/stock/TransferOrderLineItemTable.tsx:447
+#: src/tables/stock/TransferOrderLineItemTable.tsx:449
 msgid "View Part"
 msgstr "部品を見る"
 
@@ -10962,8 +10985,8 @@ msgstr "アイテムを見る"
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:186
 #: src/tables/sales/SalesOrderLineItemTable.tsx:251
 #: src/tables/sales/SalesOrderLineItemTable.tsx:404
-#: src/tables/stock/TransferOrderLineItemTable.tsx:263
-#: src/tables/stock/TransferOrderLineItemTable.tsx:317
+#: src/tables/stock/TransferOrderLineItemTable.tsx:265
+#: src/tables/stock/TransferOrderLineItemTable.tsx:319
 msgid "Add Line Item"
 msgstr "項目追加"
 
@@ -10971,7 +10994,7 @@ msgstr "項目追加"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:320
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:270
-#: src/tables/stock/TransferOrderLineItemTable.tsx:280
+#: src/tables/stock/TransferOrderLineItemTable.tsx:282
 msgid "Edit Line Item"
 msgstr "ラインアイテムの編集"
 
@@ -10979,7 +11002,7 @@ msgstr "ラインアイテムの編集"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:329
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
 #: src/tables/sales/SalesOrderLineItemTable.tsx:279
-#: src/tables/stock/TransferOrderLineItemTable.tsx:289
+#: src/tables/stock/TransferOrderLineItemTable.tsx:291
 msgid "Delete Line Item"
 msgstr "行削除"
 
@@ -10987,115 +11010,115 @@ msgstr "行削除"
 msgid "Add Extra Line Item"
 msgstr "追加項目"
 
-#: src/tables/general/ParameterTable.tsx:89
+#: src/tables/general/ParameterTable.tsx:88
 msgid "Internal Units"
 msgstr "内部ユニット"
 
-#: src/tables/general/ParameterTable.tsx:110
-#: src/tables/general/ParameterTable.tsx:125
+#: src/tables/general/ParameterTable.tsx:109
+#: src/tables/general/ParameterTable.tsx:124
 #: src/tables/general/ParametricDataTable.tsx:99
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "更新済み -  "
 
-#: src/tables/general/ParameterTable.tsx:120
+#: src/tables/general/ParameterTable.tsx:119
 msgid "Show parameters for enabled templates"
 msgstr "有効なテンプレートのパラメータを表示します"
 
-#: src/tables/general/ParameterTable.tsx:126
+#: src/tables/general/ParameterTable.tsx:125
 msgid "Filter by user who last updated the parameter"
 msgstr "パラメーターを最後に更新したユーザーで絞り込みます"
 
-#: src/tables/general/ParameterTable.tsx:151
+#: src/tables/general/ParameterTable.tsx:150
 msgid "Import Parameters"
 msgstr "パラメーターインポート"
 
-#: src/tables/general/ParameterTable.tsx:162
+#: src/tables/general/ParameterTable.tsx:161
 #: src/tables/general/ParametricDataTable.tsx:303
 #: src/tables/general/ParametricDataTable.tsx:434
 msgid "Add Parameter"
 msgstr "パラメータ追加"
 
-#: src/tables/general/ParameterTable.tsx:173
-#: src/tables/general/ParameterTable.tsx:220
+#: src/tables/general/ParameterTable.tsx:172
+#: src/tables/general/ParameterTable.tsx:219
 #: src/tables/general/ParametricDataTable.tsx:327
 msgid "Edit Parameter"
 msgstr "パラメータの編集"
 
-#: src/tables/general/ParameterTable.tsx:181
-#: src/tables/general/ParameterTable.tsx:228
+#: src/tables/general/ParameterTable.tsx:180
+#: src/tables/general/ParameterTable.tsx:227
 msgid "Delete Parameter"
 msgstr "パラメータの削除"
 
-#: src/tables/general/ParameterTable.tsx:189
+#: src/tables/general/ParameterTable.tsx:188
 msgid "Add Parameters"
 msgstr "パラメーターを追加します"
 
-#: src/tables/general/ParameterTable.tsx:195
+#: src/tables/general/ParameterTable.tsx:194
 msgid "Create Parameter"
 msgstr "パラメーターを作成します"
 
-#: src/tables/general/ParameterTable.tsx:197
+#: src/tables/general/ParameterTable.tsx:196
 msgid "Create a new parameter"
 msgstr "新しいパラメーターを作成します"
 
-#: src/tables/general/ParameterTable.tsx:206
+#: src/tables/general/ParameterTable.tsx:205
 msgid "Import parameters from a file"
 msgstr "ファイルからパラメーターをインポートします"
 
-#: src/tables/general/ParameterTemplateTable.tsx:38
-#: src/tables/general/ParameterTemplateTable.tsx:187
+#: src/tables/general/ParameterTemplateTable.tsx:40
+#: src/tables/general/ParameterTemplateTable.tsx:189
 msgid "Add Parameter Template"
 msgstr "パラメータテンプレートの追加"
 
-#: src/tables/general/ParameterTemplateTable.tsx:54
+#: src/tables/general/ParameterTemplateTable.tsx:56
 msgid "Duplicate Parameter Template"
 msgstr "重複パラメーターテンプレート"
 
-#: src/tables/general/ParameterTemplateTable.tsx:68
+#: src/tables/general/ParameterTemplateTable.tsx:70
 msgid "Delete Parameter Template"
 msgstr "パラメータテンプレートの削除"
 
-#: src/tables/general/ParameterTemplateTable.tsx:75
+#: src/tables/general/ParameterTemplateTable.tsx:77
 msgid "Edit Parameter Template"
 msgstr "パラメータテンプレートの編集"
 
-#: src/tables/general/ParameterTemplateTable.tsx:128
+#: src/tables/general/ParameterTemplateTable.tsx:130
 msgid "Checkbox"
 msgstr "チェックボックス"
 
-#: src/tables/general/ParameterTemplateTable.tsx:129
+#: src/tables/general/ParameterTemplateTable.tsx:131
 msgid "Show checkbox templates"
 msgstr "チェックボックステンプレートを表示"
 
-#: src/tables/general/ParameterTemplateTable.tsx:133
+#: src/tables/general/ParameterTemplateTable.tsx:135
 msgid "Has choices"
 msgstr "選択肢があります"
 
-#: src/tables/general/ParameterTemplateTable.tsx:134
+#: src/tables/general/ParameterTemplateTable.tsx:136
 msgid "Show templates with choices"
 msgstr "選択肢のあるテンプレートを表示"
 
-#: src/tables/general/ParameterTemplateTable.tsx:138
+#: src/tables/general/ParameterTemplateTable.tsx:140
 #: src/tables/part/PartTableFilters.tsx:61
 msgid "Has Units"
 msgstr "ユニット"
 
-#: src/tables/general/ParameterTemplateTable.tsx:139
+#: src/tables/general/ParameterTemplateTable.tsx:141
 msgid "Show templates with units"
 msgstr "単位付きテンプレートの表示"
 
-#: src/tables/general/ParameterTemplateTable.tsx:144
+#: src/tables/general/ParameterTemplateTable.tsx:146
 msgid "Show enabled templates"
 msgstr "有効なテンプレートを表示します"
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:150
 #: src/tables/settings/ImportSessionTable.tsx:123
 #: src/tables/settings/TemplateTable.tsx:414
 msgid "Model Type"
 msgstr "モデルタイプ"
 
-#: src/tables/general/ParameterTemplateTable.tsx:149
+#: src/tables/general/ParameterTemplateTable.tsx:151
 msgid "Filter by model type"
 msgstr "モデルタイプで絞り込みます"
 
@@ -11120,41 +11143,41 @@ msgstr "選択肢を選んでください"
 msgid "Enter a value"
 msgstr "値を入力してください"
 
-#: src/tables/machine/MachineListTable.tsx:133
+#: src/tables/machine/MachineListTable.tsx:134
 msgid "Machine restarted"
 msgstr "マシン再起動"
-
-#: src/tables/machine/MachineListTable.tsx:235
-#: src/tables/machine/MachineListTable.tsx:297
-#: src/tables/machine/MachineListTable.tsx:729
-msgid "Edit machine"
-msgstr "編集機"
 
 #: src/tables/machine/MachineListTable.tsx:235
 #~ msgid "Are you sure you want to remove the machine \"{0}\"?"
 #~ msgstr "Are you sure you want to remove the machine \"{0}\"?"
 
-#: src/tables/machine/MachineListTable.tsx:249
-#: src/tables/machine/MachineListTable.tsx:301
+#: src/tables/machine/MachineListTable.tsx:236
+#: src/tables/machine/MachineListTable.tsx:298
+#: src/tables/machine/MachineListTable.tsx:730
+msgid "Edit machine"
+msgstr "編集機"
+
+#: src/tables/machine/MachineListTable.tsx:250
+#: src/tables/machine/MachineListTable.tsx:302
 msgid "Delete machine"
 msgstr "マシンの削除"
 
-#: src/tables/machine/MachineListTable.tsx:250
-#: src/tables/machine/MachineListTable.tsx:692
+#: src/tables/machine/MachineListTable.tsx:251
+#: src/tables/machine/MachineListTable.tsx:693
 msgid "Machine successfully deleted."
 msgstr "マシンは正常に削除されました。"
 
-#: src/tables/machine/MachineListTable.tsx:255
-#: src/tables/machine/MachineListTable.tsx:697
+#: src/tables/machine/MachineListTable.tsx:256
+#: src/tables/machine/MachineListTable.tsx:698
 msgid "Are you sure you want to remove this machine?"
 msgstr "この機器を削除しても良いですか？"
 
-#: src/tables/machine/MachineListTable.tsx:285
+#: src/tables/machine/MachineListTable.tsx:286
 msgid "Machine"
 msgstr "マシン"
 
-#: src/tables/machine/MachineListTable.tsx:290
-#: src/tables/machine/MachineListTable.tsx:568
+#: src/tables/machine/MachineListTable.tsx:291
+#: src/tables/machine/MachineListTable.tsx:569
 msgid "Restart required"
 msgstr "再起動が必要"
 
@@ -11162,19 +11185,19 @@ msgstr "再起動が必要"
 #~ msgid "Machine information"
 #~ msgstr "Machine information"
 
-#: src/tables/machine/MachineListTable.tsx:294
+#: src/tables/machine/MachineListTable.tsx:295
 msgid "Machine Actions"
 msgstr "マシンアクション"
 
-#: src/tables/machine/MachineListTable.tsx:306
+#: src/tables/machine/MachineListTable.tsx:307
 msgid "Restart"
 msgstr "再実行"
 
-#: src/tables/machine/MachineListTable.tsx:308
+#: src/tables/machine/MachineListTable.tsx:309
 msgid "Restart machine"
 msgstr "マシンの再起動"
 
-#: src/tables/machine/MachineListTable.tsx:310
+#: src/tables/machine/MachineListTable.tsx:311
 msgid "manual restart required"
 msgstr "手動再起動が必要"
 
@@ -11182,29 +11205,29 @@ msgstr "手動再起動が必要"
 #~ msgid "Machine Information"
 #~ msgstr "Machine Information"
 
-#: src/tables/machine/MachineListTable.tsx:343
+#: src/tables/machine/MachineListTable.tsx:344
 msgid "General"
 msgstr "一般"
 
-#: src/tables/machine/MachineListTable.tsx:353
-#: src/tables/machine/MachineListTable.tsx:804
+#: src/tables/machine/MachineListTable.tsx:354
+#: src/tables/machine/MachineListTable.tsx:805
 msgid "Machine Type"
 msgstr "機種"
 
-#: src/tables/machine/MachineListTable.tsx:366
+#: src/tables/machine/MachineListTable.tsx:367
 msgid "Machine Driver"
 msgstr "マシンドライバー"
 
-#: src/tables/machine/MachineListTable.tsx:381
+#: src/tables/machine/MachineListTable.tsx:382
 msgid "Initialized"
 msgstr "初期化"
 
-#: src/tables/machine/MachineListTable.tsx:410
+#: src/tables/machine/MachineListTable.tsx:411
 #: src/tables/machine/MachineTypeTable.tsx:305
 msgid "No errors reported"
 msgstr "エラーなし"
 
-#: src/tables/machine/MachineListTable.tsx:431
+#: src/tables/machine/MachineListTable.tsx:432
 msgid "Properties"
 msgstr "プロパティ"
 
@@ -11212,7 +11235,7 @@ msgstr "プロパティ"
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:521
+#: src/tables/machine/MachineListTable.tsx:522
 msgid "Driver Settings"
 msgstr "ドライバーの設定"
 
@@ -11220,32 +11243,32 @@ msgstr "ドライバーの設定"
 #~ msgid "Machine detail"
 #~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:648
+#: src/tables/machine/MachineListTable.tsx:649
 msgid "Add Machine"
 msgstr "マシン追加"
 
-#: src/tables/machine/MachineListTable.tsx:691
-#: src/tables/machine/MachineListTable.tsx:736
+#: src/tables/machine/MachineListTable.tsx:692
+#: src/tables/machine/MachineListTable.tsx:737
 msgid "Delete Machine"
 msgstr "機器を削除します"
 
-#: src/tables/machine/MachineListTable.tsx:704
+#: src/tables/machine/MachineListTable.tsx:705
 msgid "Edit Machine"
 msgstr "機器情報を編集します"
 
-#: src/tables/machine/MachineListTable.tsx:718
+#: src/tables/machine/MachineListTable.tsx:719
 msgid "Restart Machine"
 msgstr "機器の再起動"
 
-#: src/tables/machine/MachineListTable.tsx:749
+#: src/tables/machine/MachineListTable.tsx:750
 msgid "Add machine"
 msgstr "マシン追加"
 
-#: src/tables/machine/MachineListTable.tsx:765
+#: src/tables/machine/MachineListTable.tsx:766
 msgid "Machine Detail"
 msgstr "マシン詳細"
 
-#: src/tables/machine/MachineListTable.tsx:813
+#: src/tables/machine/MachineListTable.tsx:814
 msgid "Driver"
 msgstr "ドライバー"
 
@@ -12287,7 +12310,7 @@ msgstr "出荷への割り当て"
 #~ msgstr "Allocate Serials"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:292
-#: src/tables/stock/TransferOrderLineItemTable.tsx:302
+#: src/tables/stock/TransferOrderLineItemTable.tsx:304
 msgid "Allocate Serial Numbers"
 msgstr "シリアル番号の割り当て"
 
@@ -12308,27 +12331,27 @@ msgid "All unallocated line items will be allocated"
 msgstr "未割当の行がすべて割り当てられます"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:390
-#: src/tables/stock/TransferOrderLineItemTable.tsx:491
+#: src/tables/stock/TransferOrderLineItemTable.tsx:493
 msgid "Show lines which are fully allocated"
 msgstr "完全に割り当てられた行を表示"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:395
-#: src/tables/stock/TransferOrderLineItemTable.tsx:496
+#: src/tables/stock/TransferOrderLineItemTable.tsx:498
 msgid "Show lines which are completed"
 msgstr "完了した行を表示"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:487
-#: src/tables/stock/TransferOrderLineItemTable.tsx:381
+#: src/tables/stock/TransferOrderLineItemTable.tsx:383
 msgid "Allocate serials"
 msgstr "シリアルの割り当て"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:505
-#: src/tables/stock/TransferOrderLineItemTable.tsx:399
+#: src/tables/stock/TransferOrderLineItemTable.tsx:401
 msgid "Build stock"
 msgstr "ビルドストック"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:523
-#: src/tables/stock/TransferOrderLineItemTable.tsx:417
+#: src/tables/stock/TransferOrderLineItemTable.tsx:419
 msgid "Order stock"
 msgstr "注文在庫"
 
@@ -12643,16 +12666,16 @@ msgstr "情報がありません"
 msgid "No error details are available for this task"
 msgstr "このタスクに関するエラーの詳細はありません。"
 
-#: src/tables/settings/GroupTable.tsx:71
+#: src/tables/settings/GroupTable.tsx:72
 msgid "Group with id {id} not found"
 msgstr "id {id} を持つグループが見つかりません。"
 
-#: src/tables/settings/GroupTable.tsx:73
+#: src/tables/settings/GroupTable.tsx:74
 msgid "An error occurred while fetching group details"
 msgstr "グループ詳細の取得中にエラーが発生しました"
 
-#: src/tables/settings/GroupTable.tsx:96
-#: src/tables/settings/GroupTable.tsx:257
+#: src/tables/settings/GroupTable.tsx:97
+#: src/tables/settings/GroupTable.tsx:258
 msgid "Name of the user group"
 msgstr "ユーザーグループ名"
 
@@ -12660,24 +12683,24 @@ msgstr "ユーザーグループ名"
 #~ msgid "Permission set"
 #~ msgstr "Permission set"
 
-#: src/tables/settings/GroupTable.tsx:170
-#: src/tables/settings/UserTable.tsx:316
+#: src/tables/settings/GroupTable.tsx:171
+#: src/tables/settings/UserTable.tsx:317
 msgid "Open Profile"
 msgstr "プロフィールを開く"
 
-#: src/tables/settings/GroupTable.tsx:185
+#: src/tables/settings/GroupTable.tsx:186
 msgid "Delete group"
 msgstr "グループの削除"
 
-#: src/tables/settings/GroupTable.tsx:186
+#: src/tables/settings/GroupTable.tsx:187
 msgid "Group deleted"
 msgstr "グループ削除"
 
-#: src/tables/settings/GroupTable.tsx:188
+#: src/tables/settings/GroupTable.tsx:189
 msgid "Are you sure you want to delete this group?"
 msgstr "本当にこのグループを削除してよいですか？"
 
-#: src/tables/settings/GroupTable.tsx:200
+#: src/tables/settings/GroupTable.tsx:201
 msgid "Add group"
 msgstr "グループ追加"
 
@@ -12685,11 +12708,11 @@ msgstr "グループ追加"
 #~ msgid "Edit group"
 #~ msgstr "Edit group"
 
-#: src/tables/settings/GroupTable.tsx:221
+#: src/tables/settings/GroupTable.tsx:222
 msgid "Edit Group"
 msgstr "グループを編集"
 
-#: src/tables/settings/GroupTable.tsx:253
+#: src/tables/settings/GroupTable.tsx:254
 msgid "Add Group"
 msgstr "グループを追加"
 
@@ -12869,23 +12892,23 @@ msgstr "有効なステータスによるフィルタリング"
 #~ msgid "Report Output"
 #~ msgstr "Report Output"
 
-#: src/tables/settings/UserTable.tsx:123
+#: src/tables/settings/UserTable.tsx:124
 msgid "Groups updated"
 msgstr "グループ更新完了"
 
-#: src/tables/settings/UserTable.tsx:124
+#: src/tables/settings/UserTable.tsx:125
 msgid "User groups updated successfully"
 msgstr "ユーザーグループが正常に更新されました"
 
-#: src/tables/settings/UserTable.tsx:131
+#: src/tables/settings/UserTable.tsx:132
 msgid "Error updating user groups"
 msgstr "ユーザーグループの更新エラー"
 
-#: src/tables/settings/UserTable.tsx:150
+#: src/tables/settings/UserTable.tsx:151
 msgid "User with id {id} not found"
 msgstr "id {id} のユーザが見つかりません"
 
-#: src/tables/settings/UserTable.tsx:152
+#: src/tables/settings/UserTable.tsx:153
 msgid "An error occurred while fetching user details"
 msgstr "ユーザー詳細の取得中にエラーが発生しました"
 
@@ -12893,39 +12916,39 @@ msgstr "ユーザー詳細の取得中にエラーが発生しました"
 #~ msgid "No groups"
 #~ msgstr "No groups"
 
-#: src/tables/settings/UserTable.tsx:178
+#: src/tables/settings/UserTable.tsx:179
 msgid "Is Active"
 msgstr "アクティブです"
 
-#: src/tables/settings/UserTable.tsx:179
+#: src/tables/settings/UserTable.tsx:180
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "このユーザーをアクティブとして扱うかどうかを指定します。アカウントを削除する代わりに、この選択を解除します。"
-
-#: src/tables/settings/UserTable.tsx:183
-msgid "Is Administrator"
-msgstr "管理者"
 
 #: src/tables/settings/UserTable.tsx:183
 #~ msgid "Is Staff"
 #~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:184
+msgid "Is Administrator"
+msgstr "管理者"
+
+#: src/tables/settings/UserTable.tsx:185
 msgid "Designates whether the user can log into the django admin site."
 msgstr "ユーザが django admin サイトにログインできるかどうかを指定します。"
 
-#: src/tables/settings/UserTable.tsx:188
+#: src/tables/settings/UserTable.tsx:189
 msgid "Is Superuser"
 msgstr "スーパーユーザー"
 
-#: src/tables/settings/UserTable.tsx:189
+#: src/tables/settings/UserTable.tsx:190
 msgid "Designates that this user has all permissions without explicitly assigning them."
 msgstr "このユーザが明示的に権限を割り当てなくても、すべての権限を持つことを指定します。"
 
-#: src/tables/settings/UserTable.tsx:199
+#: src/tables/settings/UserTable.tsx:200
 msgid "You cannot edit the rights for the currently logged-in user."
 msgstr "現在ログインしているユーザーの権利は編集できません。"
 
-#: src/tables/settings/UserTable.tsx:218
+#: src/tables/settings/UserTable.tsx:219
 msgid "User Groups"
 msgstr "ユーザーグループ"
 
@@ -12933,39 +12956,39 @@ msgstr "ユーザーグループ"
 #~ msgid "Edit user"
 #~ msgstr "Edit user"
 
-#: src/tables/settings/UserTable.tsx:333
+#: src/tables/settings/UserTable.tsx:334
 msgid "Lock user"
 msgstr "ユーザーをロックします"
 
-#: src/tables/settings/UserTable.tsx:343
+#: src/tables/settings/UserTable.tsx:344
 msgid "Unlock user"
 msgstr "ユーザーのロックを解除します"
 
-#: src/tables/settings/UserTable.tsx:359
+#: src/tables/settings/UserTable.tsx:360
 msgid "Delete user"
 msgstr "ユーザーの削除"
 
-#: src/tables/settings/UserTable.tsx:360
+#: src/tables/settings/UserTable.tsx:361
 msgid "User deleted"
 msgstr "ユーザーが削除されました"
 
-#: src/tables/settings/UserTable.tsx:363
+#: src/tables/settings/UserTable.tsx:364
 msgid "Are you sure you want to delete this user?"
 msgstr "このユーザーを削除してもよろしいですか？"
 
-#: src/tables/settings/UserTable.tsx:373
+#: src/tables/settings/UserTable.tsx:374
 msgid "Set Password"
 msgstr "パスワードを設定してください"
 
-#: src/tables/settings/UserTable.tsx:378
+#: src/tables/settings/UserTable.tsx:379
 msgid "Password updated"
 msgstr "パスワードを更新しました"
 
-#: src/tables/settings/UserTable.tsx:389
+#: src/tables/settings/UserTable.tsx:390
 msgid "Add user"
 msgstr "ユーザーを追加"
 
-#: src/tables/settings/UserTable.tsx:402
+#: src/tables/settings/UserTable.tsx:403
 msgid "Show active users"
 msgstr "アクティブユーザーの表示"
 
@@ -12973,35 +12996,35 @@ msgstr "アクティブユーザーの表示"
 #~ msgid "Show staff users"
 #~ msgstr "Show staff users"
 
-#: src/tables/settings/UserTable.tsx:407
+#: src/tables/settings/UserTable.tsx:408
 msgid "Show administrators"
 msgstr "管理者を表示"
 
-#: src/tables/settings/UserTable.tsx:412
+#: src/tables/settings/UserTable.tsx:413
 msgid "Show superusers"
 msgstr "スーパーユーザーを表示"
 
-#: src/tables/settings/UserTable.tsx:431
+#: src/tables/settings/UserTable.tsx:432
 msgid "Edit User"
 msgstr "ユーザーを編集"
 
-#: src/tables/settings/UserTable.tsx:464
+#: src/tables/settings/UserTable.tsx:465
 msgid "Add User"
 msgstr "ユーザーを追加"
 
-#: src/tables/settings/UserTable.tsx:472
+#: src/tables/settings/UserTable.tsx:473
 msgid "Added user"
 msgstr "ユーザー追加"
 
-#: src/tables/settings/UserTable.tsx:482
+#: src/tables/settings/UserTable.tsx:483
 msgid "User updated"
 msgstr "ユーザーを更新しました"
 
-#: src/tables/settings/UserTable.tsx:483
+#: src/tables/settings/UserTable.tsx:484
 msgid "User updated successfully"
 msgstr "ユーザーの更新が正常に完了しました"
 
-#: src/tables/settings/UserTable.tsx:489
+#: src/tables/settings/UserTable.tsx:490
 msgid "Error updating user"
 msgstr "ユーザーの更新中にエラーが発生しました"
 
@@ -13392,7 +13415,7 @@ msgstr "目標期日を指定した注文の表示"
 msgid "Show orders with a start date"
 msgstr "開始日を指定した注文の表示"
 
-#: src/tables/stock/TransferOrderLineItemTable.tsx:194
+#: src/tables/stock/TransferOrderLineItemTable.tsx:196
 msgid "Transferred"
 msgstr "転送されました"
 
