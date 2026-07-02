@@ -1,6 +1,7 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -10,7 +11,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Text } from '@mantine/core';
+import { Alert, Center, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleCheck,
@@ -53,6 +54,16 @@ import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+
+/**
+ * Return true if the given build line record is "effectively consumable" -
+ * i.e. either the BOM line itself, or the underlying part, is marked as consumable.
+ */
+function isLineConsumable(record: any): boolean {
+  return (
+    !!record?.bom_item_detail?.consumable || !!record?.part_detail?.consumable
+  );
+}
 
 /**
  * Render a sub-table of allocated stock against a particular build line.
@@ -366,7 +377,12 @@ export default function BuildLineTable({
         ordering: 'consumable',
         filter: 'consumable',
         hidden: hasOutput,
-        defaultVisible: false
+        defaultVisible: false,
+        render: (record: any) => (
+          <Center>
+            <YesNoButton value={isLineConsumable(record)} />
+          </Center>
+        )
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
@@ -499,7 +515,7 @@ export default function BuildLineTable({
         hidden: !isActive,
         minWidth: 125,
         render: (record: any) => {
-          if (record?.bom_item_detail?.consumable) {
+          if (isLineConsumable(record)) {
             return (
               <Text
                 size='sm'
@@ -545,7 +561,7 @@ export default function BuildLineTable({
         hidden: !!output?.pk,
         minWidth: 125,
         render: (record: any) => {
-          return record?.bom_item_detail?.consumable ? (
+          return isLineConsumable(record) ? (
             <Text
               size='sm'
               style={{ fontStyle: 'italic' }}
@@ -747,7 +763,7 @@ export default function BuildLineTable({
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
       const in_production = build.status == buildStatus.PRODUCTION;
-      const consumable: boolean = record.bom_item_detail?.consumable ?? false;
+      const consumable: boolean = isLineConsumable(record);
       const trackable: boolean = part?.trackable ?? false;
 
       const hasOutput: boolean = !!output?.pk;
@@ -907,7 +923,7 @@ export default function BuildLineTable({
         onClick={() => {
           let rows = table.selectedRecords
             .filter((r) => r.allocatedQuantity < r.requiredQuantity)
-            .filter((r) => !r.bom_item_detail?.consumable);
+            .filter((r) => !isLineConsumable(r));
 
           if (hasOutput) {
             rows = rows.filter((r) => r.trackable);
