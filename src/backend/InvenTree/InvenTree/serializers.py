@@ -963,9 +963,6 @@ class DuplicateOptionsSerializer(serializers.Serializer):
 
         Arguments:
             queryset: Queryset used for the `original` PrimaryKeyRelatedField.
-            copy_parameters: Include a field to specify whether to copy parameters from the original instance (default True).
-            copy_lines: Include a field to specify whether to copy line items from the original instance (default False).
-            copy_extra_lines: Include a field to specify whether to copy extra line items from the original instance (default False).
             copy_fields: Optional list of dicts, each describing one boolean copy toggle.
                 Keys:
                     name: (str, required)
@@ -1001,6 +998,15 @@ class DuplicateOptionsSerializer(serializers.Serializer):
                 })
 
         super().__init__(*args, **kwargs)
+
+        # Re-class the instance with a model-specific subclass,
+        # so that each model generates a unique schema component name
+        if self.__class__ is DuplicateOptionsSerializer:
+            self.__class__ = type(
+                f'{queryset.model.__name__}DuplicateOptionsSerializer',
+                (DuplicateOptionsSerializer,),
+                {},
+            )
 
         self.fields['original'] = serializers.PrimaryKeyRelatedField(
             queryset=queryset,
