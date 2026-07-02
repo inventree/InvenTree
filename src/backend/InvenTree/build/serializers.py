@@ -68,9 +68,6 @@ class BuildSerializer(
 ):
     """Serializes a Build object."""
 
-    export_exclude_fields = ['duplicate']
-    import_exclude_fields = ['duplicate']
-
     SKIP_CREATE_FIELDS = ['duplicate']
 
     class Meta:

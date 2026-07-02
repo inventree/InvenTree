@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 514
 INVENTREE_API_TEXT = """
 
 v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
-    - Adds "duplicate" field to the BuildOrder API endpoint, allowing duplication options to be specified when creating a new build
+    - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
     - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
     - Part duplication options: renames "part" field to "original"
 

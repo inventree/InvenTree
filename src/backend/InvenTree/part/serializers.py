@@ -540,7 +540,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['creation_date', 'creation_user', 'duplicate']
+    import_exclude_fields = ['creation_date', 'creation_user']
 
     class Meta:
         """Metaclass defining serializer fields."""

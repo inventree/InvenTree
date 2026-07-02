@@ -77,9 +77,9 @@ class AbstractOrderSerializer(
 ):
     """Abstract serializer class which provides fields common to all order types."""
 
-    export_exclude_fields = ['notes', 'duplicate']
+    export_exclude_fields = ['notes']
 
-    import_exclude_fields = ['notes', 'duplicate']
+    import_exclude_fields = ['notes']
 
     # Number of line items in this order
     line_items = serializers.IntegerField(
@@ -1379,6 +1379,8 @@ class SalesOrderShipmentSerializer(
 ):
     """Serializer for the SalesOrderShipment class."""
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     class Meta:
         """Metaclass options."""
 
@@ -1391,6 +1393,7 @@ class SalesOrderShipmentSerializer(
             'shipment_address',
             'delivery_date',
             'checked_by',
+            'duplicate',
             'reference',
             'tracking_number',
             'invoice_number',
@@ -1474,6 +1477,25 @@ class SalesOrderShipmentSerializer(
     parameters = common.filters.enable_parameters_filter()
 
     tags = common.filters.enable_tags_filter()
+
+    duplicate = DuplicateOptionsSerializer(
+        order.models.SalesOrderShipment.objects.all(), copy_parameters=True
+    )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new SalesOrderShipment instance, optionally copying data from an existing shipment."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                instance.copy_parameters_from(original)
+
+        return instance
 
 
 class SalesOrderAllocationSerializer(
