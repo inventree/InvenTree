@@ -25,11 +25,13 @@ function PluginSettingGroupItem({
 }) {
   // Hide the accordion item if there are no settings for this plugin
   const [count, setCount] = useState<number>(0);
+  const [wasLoaded, setWasLoaded] = useState<boolean>(false);
 
   // Callback once the plugin settings have been loaded
   const onLoaded = useCallback(
     (settings: SettingsStateProps) => {
       setCount(settings.settings?.length || 0);
+      setWasLoaded(true);
     },
     [pluginKey]
   );
@@ -38,7 +40,7 @@ function PluginSettingGroupItem({
     <Accordion.Item
       key={`plugin-${pluginKey}`}
       value={pluginKey}
-      hidden={count === 0}
+      hidden={count === 0 && wasLoaded}
     >
       <Accordion.Control>
         <Group justify='space-between'>
@@ -50,6 +52,7 @@ function PluginSettingGroupItem({
           )}
         </Group>
       </Accordion.Control>
+
       <Accordion.Panel>
         {global ? (
           <PluginSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
