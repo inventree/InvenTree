@@ -29,7 +29,6 @@ from taggit.managers import TaggableManager
 
 import common.settings
 import InvenTree.exceptions
-import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
@@ -648,15 +647,139 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         return params
 
-    def check_parameter_delete(self, parameter):
+    def check_parameter_delete(self, parameter) -> bool:
         """Run a check to determine if the provided parameter can be deleted.
 
         The default implementation always returns True, but this can be overridden in the implementing class.
         """
         return True
 
-    def check_parameter_save(self, parameter):
+    def check_parameter_save(self, parameter) -> bool:
         """Run a check to determine if the provided parameter can be saved.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+
+class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
+    """Provides an abstracted class for managing notes.
+
+    Links the implementing model to the common.models.Note table,
+    and provides multiple accessor / helper methods.
+    """
+
+    class Meta:
+        """Metaclass options for InvenTreeNoteMixin."""
+
+        abstract = True
+
+    # Define a reverse relation to the Note model
+    notes_list = GenericRelation(
+        'common.Note', content_type_field='model_type', object_id_field='model_id'
+    )
+
+    @property
+    def notes(self) -> QuerySet:
+        """Return a queryset containing all notes for this model."""
+        # Check the query cache for pre-fetched parameters
+        if cache := getattr(self, '_prefetched_objects_cache', None):
+            if 'notes_list' in cache:
+                return cache['notes_list']
+
+        return self.notes_list.all()
+
+    def delete(self, *args, **kwargs):
+        """Handle the deletion of a model instance.
+
+        Before deleting the model instance, delete any associated notes.
+        """
+        self.notes_list.all().delete()
+        super().delete(*args, **kwargs)
+
+    @transaction.atomic
+    def copy_notes_from(self, other, **kwargs):
+        """Copy all notes from another model instance.
+
+        Arguments:
+            other: The other model instance to copy notes from
+        """
+        import os
+
+        from django.core.files.base import ContentFile
+
+        import common.models
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+
+        # Sort so primary note is saved last — Note.save() promotes the last
+        # note saved with primary=True, which correctly mirrors the source.
+        source_notes = sorted(other.notes.all(), key=lambda n: n.primary)
+
+        for source_note in source_notes:
+            new_note = common.models.Note(
+                model_type=content_type,
+                model_id=self.pk,
+                primary=source_note.primary,
+                title=source_note.title,
+                description=source_note.description,
+                content=source_note.content,
+            )
+            new_note.save()
+
+            content_updated = False
+            for img in source_note.images.all():
+                if not img.image:
+                    continue
+
+                old_url = img.image.url
+                filename = os.path.basename(img.image.name)
+
+                try:
+                    img.image.open('rb')
+                    data = img.image.read()
+                finally:
+                    img.image.close()
+
+                new_img = common.models.NotesImage(note=new_note, user=img.user)
+                new_img.image.save(filename, ContentFile(data), save=True)
+
+                if old_url in new_note.content:
+                    new_note.content = new_note.content.replace(
+                        old_url, new_img.image.url
+                    )
+                    content_updated = True
+
+            if content_updated:
+                new_note.save()
+
+    @property
+    def primary_note(self):
+        """Return the primary note for this model instance, if it exists."""
+        return self.notes_list.all().order_by('-primary').first()
+
+    def get_note(self, title: Optional[str] = None):
+        """Return a Note instance for the given note title.
+
+        Arguments:
+            title: Title of the note to retrieve. If None, returns the primary note (if it exists)
+        """
+        notes = self.notes_list.all().order_by('-primary')
+
+        if title:
+            notes = notes.filter(title=title)
+
+        return notes.first()
+
+    def check_note_delete(self, note) -> bool:
+        """Run a check to determine if the provided note can be deleted.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+    def check_note_save(self, note) -> bool:
+        """Run a check to determine if the provided note can be saved.
 
         The default implementation always returns True, but this can be overridden in the implementing class.
         """
@@ -1205,51 +1328,6 @@ class PathStringMixin(models.Model):
             }
             for item in self.path
         ]
-
-
-class InvenTreeNotesMixin(models.Model):
-    """A mixin class for adding notes functionality to a model class.
-
-    The following fields are added to any model which implements this mixin:
-
-    - notes : A text field for storing notes
-    """
-
-    class Meta:
-        """Metaclass options for this mixin.
-
-        Note: abstract must be true, as this is only a mixin, not a separate table
-        """
-
-        abstract = True
-
-    def delete(self, *args, **kwargs):
-        """Custom delete method for InvenTreeNotesMixin.
-
-        - Before deleting the object, check if there are any uploaded images associated with it.
-        - If so, delete the notes first
-        """
-        from common.models import NotesImage
-
-        images = NotesImage.objects.filter(
-            model_type=self.__class__.__name__.lower(), model_id=self.pk
-        )
-
-        if images.exists():
-            logger.info(
-                'Deleting %s uploaded images associated with %s <%s>',
-                images.count(),
-                self.__class__.__name__,
-                self.pk,
-            )
-
-            images.delete()
-
-        super().delete(*args, **kwargs)
-
-    notes = InvenTree.fields.InvenTreeNotesField(
-        verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
-    )
 
 
 class InvenTreeTagsMixin(models.Model):

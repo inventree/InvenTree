@@ -42,6 +42,7 @@ from .models import (
     InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
+    Note,
     NotesImage,
     NotificationEntry,
     NotificationMessage,
@@ -1692,6 +1693,128 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Check that a new file has been created
         self.assertEqual(NotesImage.objects.count(), n + 1)
+
+    def test_image_cleanup(self):
+        """Images no longer referenced in note content are deleted when the note is saved.
+
+        Specifically:
+        - An image removed from the content is deleted (DB record and file on disk)
+        - An image still referenced in the content is preserved (DB record and file on disk)
+        """
+        part = Part.objects.create(
+            name='Note Cleanup Test Part', description='Part for image-cleanup test'
+        )
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(
+            model_type=part_ct,
+            model_id=part.pk,
+            title='Image Cleanup Test Note',
+            content='initial',
+        )
+        note.save()
+
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='blue')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        # Attach two images to the note
+        ni1 = NotesImage(note=note)
+        ni1.image.save('cleanup_keep.png', ContentFile(png_bytes))
+
+        ni2 = NotesImage(note=note)
+        ni2.image.save('cleanup_remove.png', ContentFile(png_bytes))
+
+        url1, url2 = ni1.image.url, ni2.image.url
+        name1, name2 = ni1.image.name, ni2.image.name
+
+        # Both records and files exist before any content-driven cleanup
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Save with content that references both images — nothing should be removed
+        note.content = f'<img src="{url1}"><img src="{url2}">'
+        note.save()
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Remove the second image from the content and save
+        note.content = f'<img src="{url1}">'
+        note.save()
+
+        # The removed image must be gone from both the DB and the file system
+        self.assertFalse(NotesImage.objects.filter(pk=ni2.pk).exists())
+        self.assertFalse(default_storage.exists(name2))
+
+        # The retained image must still exist in both the DB and the file system
+        self.assertTrue(NotesImage.objects.filter(pk=ni1.pk).exists())
+        self.assertTrue(default_storage.exists(name1))
+
+    def test_copy_notes_with_images(self):
+        """Images are duplicated (file + DB record) when copy_notes_from is called.
+
+        Specifically:
+        - New NotesImage records are created pointing to the new notes
+        - The image files are physically copied (independent from the source)
+        - The new note content references the new image URLs, not the old ones
+        - Deleting the source note does not affect the copied note's images
+        """
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='green')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        src_part = Part.objects.create(
+            name='Copy Notes Source Part',
+            description='Source part for copy_notes_from test',
+        )
+        dst_part = Part.objects.create(
+            name='Copy Notes Dest Part',
+            description='Destination part for copy_notes_from test',
+        )
+
+        src_note = Note(
+            model_type=part_ct, model_id=src_part.pk, title='Src Note', content=''
+        )
+        src_note.save()
+
+        ni = NotesImage(note=src_note)
+        ni.image.save('copy_test.png', ContentFile(png_bytes))
+        old_url = ni.image.url
+        old_name = ni.image.name
+
+        src_note.content = f'![img]({old_url})'
+        src_note.save()
+
+        dst_part.copy_notes_from(src_part)
+
+        dst_note = dst_part.notes_list.get(title='Src Note')
+
+        # A new NotesImage must exist for the destination note
+        self.assertEqual(dst_note.images.count(), 1)
+        new_img = dst_note.images.first()
+
+        # The file must be a distinct copy
+        self.assertNotEqual(new_img.image.name, old_name)
+        self.assertTrue(default_storage.exists(new_img.image.name))
+
+        # The new note content must reference the new URL, not the old one
+        self.assertIn(new_img.image.url, dst_note.content)
+        self.assertNotIn(old_url, dst_note.content)
+
+        # Deleting the source NotesImage must not remove the copied image
+        # (files are independent; Django cascade does not call Python delete())
+        ni.delete()
+        self.assertFalse(default_storage.exists(old_name))
+        self.assertTrue(default_storage.exists(new_img.image.name))
+        self.assertTrue(NotesImage.objects.filter(pk=new_img.pk).exists())
 
 
 class ProjectCodesTest(InvenTreeAPITestCase):

@@ -38,7 +38,6 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
 )
 from stock.generators import generate_batch_code
@@ -59,7 +58,6 @@ from .validators import check_build_output
 class BuildSerializer(
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
-    NotesFieldMixin,
     InvenTreeTaggitSerializer,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -98,7 +96,6 @@ class BuildSerializer(
             'status_custom_key',
             'target_date',
             'take_from',
-            'notes',
             'link',
             'issued_by',
             'issued_by_detail',
@@ -1519,12 +1516,9 @@ class BuildLineSerializer(
         # Defer expensive fields which we do not need for this serializer
 
         queryset = queryset.defer(
-            'build__notes',
             'build__metadata',
             'bom_item__metadata',
-            'bom_item__part__notes',
             'bom_item__part__metadata',
-            'bom_item__sub_part__notes',
             'bom_item__sub_part__metadata',
         )
 

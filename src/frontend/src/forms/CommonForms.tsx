@@ -5,6 +5,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -301,6 +302,94 @@ export function useParameterFields({
     templateCreateFields,
     user
   ]);
+}
+
+export function useNoteTemplateFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      template: {
+        hidden: true,
+        value: true
+      },
+      model_type: {
+        label: t`Model Type`,
+        description: t`Limit this template to a specific model type, or leave blank for all models`,
+        required: false
+      },
+      title: {},
+      description: {}
+    };
+  }, []);
+}
+
+export function useNoteFields({
+  modelType,
+  modelId
+}: {
+  modelType: ModelType;
+  modelId: number;
+}): ApiFormFieldSet {
+  const api = useApi();
+
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+
+  const fetchTemplate = useCallback(
+    (pk: number | null) => {
+      if (!pk) return;
+      api
+        .get(apiUrl(ApiEndpoints.note_list, pk))
+        .then((response) => {
+          setTitle(response.data.title ?? '');
+          setDescription(response.data.description ?? '');
+          setContent(response.data.content ?? '');
+        })
+        .catch(() => {});
+    },
+    [api]
+  );
+
+  return useMemo(() => {
+    return {
+      model_type: {
+        hidden: true,
+        value: modelType
+      },
+      model_id: {
+        hidden: true,
+        value: modelId
+      },
+      template_source: {
+        field_type: 'related field',
+        label: t`From Template`,
+        description: t`Optionally pre-fill this note from an existing template`,
+        model: ModelType.notetemplate,
+        api_url: apiUrl(ApiEndpoints.note_list),
+        filters: {
+          template: true,
+          model_type: modelType
+        },
+        pk_field: 'pk',
+        required: false,
+        onValueChange: (value: any) => fetchTemplate(value),
+        value: null
+      },
+      title: {
+        value: title,
+        onValueChange: (value: any) => setTitle(value)
+      },
+      description: {
+        value: description,
+        onValueChange: (value: any) => setDescription(value)
+      },
+      primary: {},
+      content: {
+        hidden: true,
+        value: content
+      }
+    };
+  }, [modelType, modelId, title, description, content, fetchTemplate]);
 }
 
 export function selectionListFields(): ApiFormFieldSet {

@@ -979,6 +979,95 @@ Length: {{ length_value }}
 {% endraw %}
 ```
 
+## Notes
+
+[Notes](../concepts/notes.md) are rich-text documents that can be attached to most InvenTree model instances. Two template tags are available for accessing note content in a report.
+
+### note
+
+The `note` tag returns the rendered HTML content of a note, ready to embed directly in a report. Any images embedded in the note are automatically resolved to their base64-encoded data so that they appear in the generated PDF.
+
+::: report.templatetags.report.note
+    options:
+        show_docstring_description: false
+        show_source: False
+
+If no `title` argument is given, the [primary note](../concepts/notes.md#primary-note) is returned. If a `title` is given, the note whose title matches (case-insensitively) is returned instead. An empty string is returned when no matching note exists.
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Render the primary note for the part -->
+{% note part as part_note %}
+<div>{{ part_note }}</div>
+
+<!-- Render a note by title -->
+{% note part "Assembly Instructions" as instructions %}
+<div>{{ instructions }}</div>
+{% endraw %}
+```
+
+!!! info "Safe HTML Output"
+    The `note` tag returns pre-sanitized HTML and is marked safe for direct template rendering. Do **not** additionally wrap it with `| safe` or `| markdownify` — the content has already been processed.
+
+### note_instance
+
+The `note_instance` tag returns the `Note` object itself, giving access to its individual fields. This is useful when you need to display the note title, description, or metadata alongside its content.
+
+::: report.templatetags.report.note_instance
+    options:
+        show_docstring_description: false
+        show_source: False
+
+A `Note` object exposes the following attributes:
+
+| Attribute | Description |
+| --- | --- |
+| `title` | The title of the note |
+| `description` | An optional short description of the note |
+| `content` | The raw HTML content of the note |
+| `primary` | `True` if this is the primary note for the model instance |
+| `updated` | Timestamp of the last modification |
+| `updated_by` | The user who last modified the note |
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% note_instance part as primary_note %}
+{% if primary_note %}
+<h3>{{ primary_note.title }}</h3>
+{% if primary_note.description %}<p><em>{{ primary_note.description }}</em></p>{% endif %}
+{% note part as note_content %}
+<div>{{ note_content }}</div>
+{% endif %}
+{% endraw %}
+```
+
+### Iterating Over All Notes
+
+When a model has multiple notes and you want to render all of them, access the `notes` queryset directly:
+
+```html
+{% raw %}
+{% load report %}
+
+{% for n in part.notes.all %}
+<h3>{{ n.title }}</h3>
+{% note part n.title as note_content %}
+<div>{{ note_content }}</div>
+{% endfor %}
+{% endraw %}
+```
+
+!!! tip "Ordering Notes"
+    Use the [`order_queryset`](#order_queryset) helper to control the order in which notes are rendered, for example `{% order_queryset part.notes.all 'title' as ordered_notes %}`.
+
 ## Rendering Markdown
 
 Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.

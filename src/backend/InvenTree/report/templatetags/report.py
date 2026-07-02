@@ -22,6 +22,7 @@ from django.utils import translation
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import lxml.html
 from babel import Locale
 from babel.core import UnknownLocaleError
 from babel.dates import format_date as babel_format_date
@@ -497,6 +498,94 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
     )
+
+
+@register.simple_tag()
+def note_instance(
+    instance: Model, title: Optional[str] = None
+) -> Optional[common.models.Note]:
+    """Return a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        A Note object, or None if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    if not instance:
+        raise ValueError('notes tag requires a valid Model instance')
+
+    if not hasattr(instance, 'notes'):
+        raise TypeError("notes tag requires a Model with a 'notes' attribute")
+
+    notes = instance.notes
+
+    if title:
+        # First try with exact match
+        if note := notes.filter(title=title).first():
+            return note
+
+        # Next, try with case-insensitive match
+        if note := notes.filter(title__iexact=title).first():
+            return note
+
+    # If no title is provided, or if no matching note is found, return the first note (if any)
+    return notes.order_by('-primary').first()
+
+
+@register.simple_tag()
+def note(instance: Model, title: Optional[str] = None) -> str:
+    """Return the HTML content of a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        The HTML content of the Note, or an empty string if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    note = note_instance(instance, title)
+
+    if not note or not note.content:
+        return ''
+
+    content = note.content
+    media_prefix = settings.MEDIA_URL
+
+    # Replace any embedded image references with the actual image data
+    root = lxml.html.fragment_fromstring(content, create_parent='div')
+
+    for img in root.iter('img'):
+        src = img.get('src')
+        if not src:
+            continue
+
+        if not src.startswith(media_prefix):
+            continue
+
+        img_src = src[len(media_prefix) :]
+
+        # Extract img size attributes
+        img_data = uploaded_image(
+            img_src,
+            replace_missing=True,
+            width=img.get('width', None),
+            height=img.get('height', None),
+        )
+
+        # Replace the <img> src attribute
+        img.set('src', img_data)
+
+    content = lxml.html.tostring(root, encoding='unicode')
+    # fragment_fromstring wraps in a <div> — strip it back off
+    content = content.removeprefix('<div>').removesuffix('</div>')
+
+    return mark_safe(content)
 
 
 @register.simple_tag()

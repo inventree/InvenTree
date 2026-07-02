@@ -592,7 +592,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -634,7 +633,6 @@ class PartSerializer(
             'minimum_stock',
             'maximum_stock',
             'name',
-            'notes',
             'parameters',
             'pk',
             'purchaseable',

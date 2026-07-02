@@ -21,7 +21,6 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
 )
 
@@ -109,7 +108,6 @@ class CompanySerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
@@ -138,7 +136,6 @@ class CompanySerializer(
             'is_customer',
             'is_manufacturer',
             'is_supplier',
-            'notes',
             'parts_supplied',
             'parts_manufactured',
             'primary_address',
@@ -212,7 +209,6 @@ class ManufacturerPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for ManufacturerPart object."""
@@ -232,7 +228,6 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
-            'notes',
             'tags',
             'parameters',
         ]
@@ -314,7 +309,6 @@ class SupplierPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPart object."""
@@ -360,7 +354,6 @@ class SupplierPartSerializer(
             'supplier',
             'supplier_detail',
             'updated',
-            'notes',
             'part_detail',
             'tags',
             'price_breaks',

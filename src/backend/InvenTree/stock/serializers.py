@@ -359,7 +359,6 @@ class StockItemSerializer(
             'in_stock',
             'is_building',
             'link',
-            'notes',
             'owner',
             'packaging',
             'parent',

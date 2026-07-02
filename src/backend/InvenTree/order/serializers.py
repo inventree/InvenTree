@@ -38,7 +38,6 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
 )
 from order.status_codes import (
@@ -110,9 +109,9 @@ class AbstractOrderSerializer(
 ):
     """Abstract serializer class which provides fields common to all order types."""
 
-    export_exclude_fields = ['notes', 'duplicate']
+    export_exclude_fields = ['duplicate']
 
-    import_exclude_fields = ['notes', 'duplicate']
+    import_exclude_fields = ['duplicate']
 
     # Number of line items in this order
     line_items = serializers.IntegerField(
@@ -262,7 +261,6 @@ class AbstractOrderSerializer(
             'status',
             'status_text',
             'status_custom_key',
-            'notes',
             'barcode_hash',
             'overdue',
             'duplicate',
@@ -412,7 +410,6 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1099,7 +1096,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1406,7 +1402,6 @@ class SalesOrderShipmentSerializer(
     DataImportExportSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
@@ -1428,7 +1423,6 @@ class SalesOrderShipmentSerializer(
             'invoice_number',
             'barcode_hash',
             'link',
-            'notes',
             # Extra detail fields
             'parameters',
             'checked_by_detail',
@@ -2169,7 +2163,6 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     TotalPriceMixin,
@@ -2457,7 +2450,6 @@ class ReturnOrderExtraLineSerializer(
 
 @register_importer()
 class TransferOrderSerializer(
-    NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     InvenTreeModelSerializer,

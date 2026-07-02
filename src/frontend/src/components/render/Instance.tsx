@@ -58,6 +58,7 @@ import {
   RenderSelectionList,
   RenderTag
 } from './Generic';
+import { RenderNoteTemplate } from './Note';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -118,7 +119,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.selectionentry]: RenderSelectionEntry,
   [ModelType.error]: RenderError,
-  [ModelType.tag]: RenderTag
+  [ModelType.tag]: RenderTag,
+  [ModelType.notetemplate]: RenderNoteTemplate
 };
 
 /**

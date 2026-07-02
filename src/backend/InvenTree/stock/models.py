@@ -423,7 +423,7 @@ class StockItem(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,

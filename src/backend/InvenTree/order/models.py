@@ -299,7 +299,7 @@ class Order(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
@@ -2484,8 +2484,8 @@ class SalesOrderShipment(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
@@ -2502,7 +2502,6 @@ class SalesOrderShipment(
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
-        notes: Custom notes field for this shipment
     """
 
     @classmethod

@@ -40,7 +40,7 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         session.extract_columns()
 
-        self.assertEqual(session.column_mappings.count(), 14)
+        self.assertEqual(session.column_mappings.count(), 13)
 
         # Check some of the field mappings
         for field, col in [

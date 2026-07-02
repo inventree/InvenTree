@@ -20,7 +20,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
-from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
@@ -808,26 +807,6 @@ class CustomStatusSerializerMixin(serializers.Serializer):
         return self.context[cache_key].get(
             custom_key, instance.status_class.label(instance.get_status())
         )
-
-
-class NotesFieldMixin:
-    """Serializer mixin for handling 'notes' fields.
-
-    The 'notes' field will be hidden in a LIST serializer,
-    but available in a DETAIL serializer.
-    """
-
-    def __init__(self, *args, **kwargs):
-        """Remove 'notes' field from list views."""
-        super().__init__(*args, **kwargs)
-
-        if hasattr(self, 'context'):
-            if view := self.context.get('view', None):
-                if (
-                    issubclass(view.__class__, ListModelMixin)
-                    and not InvenTree.ready.isGeneratingSchema()
-                ):
-                    self.fields.pop('notes', None)
 
 
 class ContentTypeField(serializers.ChoiceField):
