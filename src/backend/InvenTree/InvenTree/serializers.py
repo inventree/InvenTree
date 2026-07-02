@@ -600,7 +600,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         Default implementation returns an empty list
         """
-        return []
+        return getattr(self, 'SKIP_CREATE_FIELDS', [])
 
     def save(self, **kwargs):
         """Catch any django ValidationError thrown at the moment `save` is called, and re-throw as a DRF ValidationError."""
@@ -921,3 +921,84 @@ class ContentTypeField(serializers.ChoiceField):
                 )
 
         return content_type
+
+
+class DuplicateOptionsSerializer(serializers.Serializer):
+    """Generic serializer for specifying copy options when duplicating a model instance.
+
+    Builds its fields dynamically at instantiation time so the same class can be
+    reused for any model without subclassing.
+    """
+
+    # Special 'shortcut' fields which are used for multiple models
+    DEFAULT_FIELDS = [
+        (
+            'copy_parameters',
+            _('Copy Parameters'),
+            _('Copy parameters from the original item'),
+            True,
+        )
+    ]
+
+    def __init__(
+        self,
+        queryset: QuerySet,
+        *args,
+        copy_fields: Optional[list[dict]] = None,
+        **kwargs,
+    ):
+        """Initialise the serializer and dynamically attach fields.
+
+        Arguments:
+            queryset: Queryset used for the `original` PrimaryKeyRelatedField.
+            copy_parameters: boolean field to specify whether to copy parameters from the original instance.
+            copy_fields: Optional list of dicts, each describing one boolean copy toggle.
+                Keys:
+                    name: (str, required)
+                    label: (str, optional)
+                    help_text: (str, optional)
+                    default: (bool, optional, default True)
+        """
+        # Enforce certain properties onto this serializer
+        kwargs['label'] = kwargs.get('label', _('Duplication Options'))
+        kwargs['help_text'] = kwargs.get(
+            'help_text', _('Specify options for duplicating this item')
+        )
+        kwargs['required'] = False
+        kwargs['write_only'] = True
+
+        copy_fields = copy_fields or []
+        copy_field_names = [spec['name'] for spec in copy_fields]
+
+        # Apply "default" fields
+        for name, label, help_text, default_value in self.DEFAULT_FIELDS:
+            popped_value = kwargs.pop(name, default_value)
+
+            if name in copy_field_names:
+                # Manually supplied field, continue
+                continue
+
+            if popped_value:
+                copy_fields.append({
+                    'name': name,
+                    'label': label,
+                    'help_text': help_text,
+                    'default': True,
+                })
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['original'] = serializers.PrimaryKeyRelatedField(
+            queryset=queryset,
+            required=True,
+            label=_('Original'),
+            help_text=_('Select instance to duplicate'),
+        )
+
+        for spec in copy_fields or []:
+            self.fields[spec['name']] = serializers.BooleanField(
+                required=False,
+                default=spec.get('default', True),
+                label=spec.get('label', spec['name']),
+                help_text=spec.get('help_text', ''),
+            )
