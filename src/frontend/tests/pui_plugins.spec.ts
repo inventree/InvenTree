@@ -75,8 +75,8 @@ test('Plugins - User Settings', async ({ browser }) => {
   await navigate(page, 'settings/user/');
   await loadTab(page, 'Plugin Settings');
 
-  // User settings for the "Sample Plugin" should be visible
-  await page.getByRole('button', { name: 'Sample Plugin' }).click();
+  // User settings for the "SampleIntegrationPlugin" should be visible
+  await page.getByRole('button', { name: 'SampleIntegrationPlugin' }).click();
 
   await page.getByText('User Setting 1').waitFor();
   await page.getByText('User Setting 2').waitFor();

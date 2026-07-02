@@ -65,6 +65,9 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     isSet: (key: string, default_value?: boolean) => {
       const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
+    },
+    getSettingLength: () => {
+      return Object.keys(get().lookup).length;
     }
   })
 );
@@ -114,6 +117,9 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   isSet: (key: string, default_value?: boolean) => {
     const value = get().lookup[key] ?? default_value ?? 'false';
     return isTrue(value);
+  },
+  getSettingLength: () => {
+    return Object.keys(get().lookup).length;
   }
 }));
 
@@ -185,6 +191,9 @@ export const createPluginSettingsState = ({
     isSet: (key: string, default_value?: boolean) => {
       const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
+    },
+    getSettingLength: () => {
+      return Object.keys(get().lookup).length;
     }
   }));
 };
@@ -246,6 +255,9 @@ export const createMachineSettingsState = ({
     isSet: (key: string, default_value?: boolean) => {
       const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
+    },
+    getSettingLength: () => {
+      return Object.keys(get().lookup).length;
     }
   }));
 };
