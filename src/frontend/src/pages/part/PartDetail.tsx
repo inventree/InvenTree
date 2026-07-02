@@ -551,6 +551,11 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'consumable',
+        label: t`Consumable Part`
+      },
+      {
+        type: 'boolean',
         name: 'starred',
         label: t`Subscribed`,
         icon: 'bell'
