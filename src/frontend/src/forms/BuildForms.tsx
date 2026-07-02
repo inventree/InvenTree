@@ -43,9 +43,11 @@ import { ProjectCodeField, TagsField } from './CommonFields';
  */
 export function useBuildOrderFields({
   create,
+  duplicateBuildId,
   modalId
 }: {
   create: boolean;
+  duplicateBuildId?: number | null;
   modalId: string;
 }): ApiFormFieldSet {
   const [destination, setDestination] = useState<number | null | undefined>(
@@ -133,7 +135,16 @@ export function useBuildOrderFields({
           is_active: true
         }
       },
-      external: {}
+      external: {},
+      duplicate: {
+        children: {
+          original: {
+            value: duplicateBuildId,
+            hidden: true
+          },
+          copy_parameters: {}
+        }
+      }
     };
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
@@ -144,8 +155,19 @@ export function useBuildOrderFields({
       delete fields.external;
     }
 
+    if (!duplicateBuildId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
+  }, [
+    create,
+    destination,
+    batchCode,
+    batchGenerator.result,
+    globalSettings,
+    duplicateBuildId
+  ]);
 }
 
 export function useBuildOrderOutputFields({
