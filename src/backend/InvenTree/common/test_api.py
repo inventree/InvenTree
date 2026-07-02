@@ -1688,3 +1688,152 @@ class SelectionListLockedTest(InvenTreeAPITestCase):
 
         # Entry must still exist — omitting choices must not delete entries
         self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+
+class NotePermissionAPITests(InvenTreeAPITestCase):
+    """Tests for Note API permission enforcement.
+
+    Covers two requirements:
+      1. Users cannot create/edit notes against a model they lack change permission for.
+      2. Users cannot view notes against a model they lack view permission for.
+    """
+
+    # No roles by default — each test assigns only what it needs
+    roles = []
+
+    def setUp(self):
+        """Create a Part and a pre-existing note for permission tests."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Perm Test Part', description='Part for permission testing'
+        )
+
+        # Create a note directly via ORM (bypasses API permission checks)
+        ct = ContentType.objects.get_for_model(Part)
+        self.note = Note.objects.create(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Pre-existing Note',
+            content='<p>content</p>',
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    # -------------------------------------------------------------------------
+    # Upload (create) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_create_note_no_role_is_denied(self):
+        """A user with no roles cannot create a note for a Part."""
+        self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Fail',
+            },
+            expected_code=403,
+        )
+
+    def test_create_note_view_only_role_is_denied(self):
+        """A user with only part.view cannot create a note for a Part.
+
+        'view' does not imply 'change' in the InvenTree ruleset hierarchy.
+        """
+        self.assignRole('part.view')
+        self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Fail',
+            },
+            expected_code=403,
+        )
+
+    def test_create_note_with_change_role_is_allowed(self):
+        """A user with part.change can create a note for a Part."""
+        self.assignRole('part.change')
+        response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Succeed',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['title'], 'Should Succeed')
+
+    def test_create_note_with_add_role_is_allowed(self):
+        """A user with part.add can create a note (add implies change in InvenTree)."""
+        self.assignRole('part.add')
+        response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Add Role Note',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['title'], 'Add Role Note')
+
+    # -------------------------------------------------------------------------
+    # View (read) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_list_notes_no_role_returns_empty(self):
+        """A user with no roles cannot see notes attached to a Part."""
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)
+
+    def test_list_notes_with_view_role_returns_notes(self):
+        """A user with part.view can see notes attached to a Part."""
+        self.assignRole('part.view')
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        pks = [n['pk'] for n in response.data]
+        self.assertIn(self.note.pk, pks)
+
+    def test_detail_note_no_role_returns_404(self):
+        """A user with no roles gets 404 when accessing a note detail for a Part."""
+        self.get(self._note_url(self.note.pk), expected_code=404)
+
+    def test_detail_note_with_view_role_returns_200(self):
+        """A user with part.view can access a specific note for a Part."""
+        self.assignRole('part.view')
+        response = self.get(self._note_url(self.note.pk), expected_code=200)
+        self.assertEqual(response.data['pk'], self.note.pk)
+
+    def test_list_notes_unrelated_role_does_not_leak(self):
+        """A user with a role that has no Part access cannot see Part notes.
+
+        purchase_order.view covers company/order tables; 'part_part' is NOT
+        in that ruleset, so Part notes must remain invisible to this user.
+        Note: build.view would be wrong here because 'part_part' IS listed in
+        the build ruleset (builds need to read parts).
+        """
+        self.assignRole('purchase_order.view')
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)
