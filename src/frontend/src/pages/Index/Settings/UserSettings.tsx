@@ -59,6 +59,7 @@ export default function UserSettings() {
               'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
+              'ENABLE_PREVIEW_PANEL',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
               'SHOW_EXTRA_MODEL_INFO',

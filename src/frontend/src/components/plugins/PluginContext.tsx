@@ -46,6 +46,11 @@ import {
   openGlobalImporter
 } from '../../states/ImporterState';
 import { usePluginState } from '../../states/PluginState';
+import {
+  closeGlobalPreview,
+  getGlobalPreviewState,
+  openGlobalPreview
+} from '../../states/PreviewDrawerState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
@@ -96,6 +101,12 @@ export const useInvenTreeContext = () => {
         close: () => closeGlobalImporter(),
         isOpen: () => getGlobalImporterState().isOpen,
         sessionId: () => getGlobalImporterState().sessionId
+      },
+      preview: {
+        open: (modelType, id?, instance?) =>
+          openGlobalPreview(modelType, id, instance),
+        close: () => closeGlobalPreview(),
+        isOpen: () => getGlobalPreviewState().isOpen
       },
       tables: {
         renderTable: (props: InvenTreeTableRenderProps<any>) => (

@@ -8,7 +8,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { companyFields } from '../../forms/CompanyForms';
@@ -16,6 +16,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
@@ -49,6 +50,7 @@ export function CompanyTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+  const previewDrawer = usePreviewDrawerState();
 
   const columns = useMemo(() => {
     return [
@@ -166,10 +168,16 @@ export function CompanyTable({
           params: {
             ...params
           },
-          onRowClick: (record: any, index: number, event: any) => {
-            if (record.pk) {
-              const base = path ?? 'company';
-              navigateToLink(`/${base}/${record.pk}`, navigate, event);
+          onRowClick: (record: any, _index: number, event: any) => {
+            if (!record.pk) return;
+            if (eventModified(event as any)) {
+              navigateToLink(
+                `/${path ?? 'company'}/${record.pk}`,
+                navigate,
+                event
+              );
+            } else {
+              previewDrawer.openPreview(ModelType.company, Number(record.pk));
             }
           },
           modelType: ModelType.company,
