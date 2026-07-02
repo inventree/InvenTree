@@ -704,6 +704,10 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
         Arguments:
             other: The other model instance to copy notes from
         """
+        import os
+
+        from django.core.files.base import ContentFile
+
         import common.models
 
         content_type = ContentType.objects.get_for_model(self.__class__)
@@ -713,14 +717,41 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
         source_notes = sorted(other.notes.all(), key=lambda n: n.primary)
 
         for source_note in source_notes:
-            common.models.Note(
+            new_note = common.models.Note(
                 model_type=content_type,
                 model_id=self.pk,
                 primary=source_note.primary,
                 title=source_note.title,
                 description=source_note.description,
                 content=source_note.content,
-            ).save()
+            )
+            new_note.save()
+
+            content_updated = False
+            for img in source_note.images.all():
+                if not img.image:
+                    continue
+
+                old_url = img.image.url
+                filename = os.path.basename(img.image.name)
+
+                try:
+                    img.image.open('rb')
+                    data = img.image.read()
+                finally:
+                    img.image.close()
+
+                new_img = common.models.NotesImage(note=new_note, user=img.user)
+                new_img.image.save(filename, ContentFile(data), save=True)
+
+                if old_url in new_note.content:
+                    new_note.content = new_note.content.replace(
+                        old_url, new_img.image.url
+                    )
+                    content_updated = True
+
+            if content_updated:
+                new_note.save()
 
     @property
     def primary_note(self):
