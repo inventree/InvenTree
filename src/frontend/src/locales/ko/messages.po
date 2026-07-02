@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-30 09:32\n"
+"PO-Revision-Date: 2026-07-02 08:32\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -566,7 +566,7 @@ msgstr "그룹"
 #: src/pages/core/CoreIndex.tsx:28
 #: src/pages/core/GroupDetail.tsx:82
 #: src/pages/core/UserDetail.tsx:99
-#: src/tables/settings/UserTable.tsx:276
+#: src/tables/settings/UserTable.tsx:277
 msgid "Groups"
 msgstr "그룹 목록"
 
@@ -639,8 +639,8 @@ msgstr "선택 항목"
 #: src/components/dashboard/DashboardLayout.tsx:297
 #: src/components/editors/NotesEditor.tsx:81
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
-#: src/components/forms/fields/ApiFormField.tsx:261
-#: src/components/forms/fields/TableField.tsx:58
+#: src/components/forms/fields/ApiFormField.tsx:299
+#: src/components/forms/fields/TableField.tsx:62
 #: src/components/importer/ImportDataSelector.tsx:206
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
@@ -652,7 +652,7 @@ msgstr "선택 항목"
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:83
-#: src/functions/auth.tsx:693
+#: src/functions/auth.tsx:706
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
@@ -670,7 +670,7 @@ msgid "Error"
 msgstr "오류"
 
 #: lib/enums/ModelInformation.tsx:317
-#: src/tables/machine/MachineListTable.tsx:402
+#: src/tables/machine/MachineListTable.tsx:403
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
 msgstr "오류 목록"
@@ -1085,7 +1085,7 @@ msgstr "시작일"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:153
 #: src/tables/sales/SalesOrderLineItemTable.tsx:133
-#: src/tables/stock/TransferOrderLineItemTable.tsx:114
+#: src/tables/stock/TransferOrderLineItemTable.tsx:116
 msgid "Target Date"
 msgstr "목표 날짜"
 
@@ -1441,7 +1441,7 @@ msgstr "새 재고 실사 보고서 생성"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
 #: src/pages/core/UserDetail.tsx:93
 #: src/pages/core/UserDetail.tsx:203
-#: src/tables/settings/UserTable.tsx:411
+#: src/tables/settings/UserTable.tsx:412
 msgid "Superuser"
 msgstr "수퍼유저"
 
@@ -1449,8 +1449,8 @@ msgstr "수퍼유저"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
-#: src/tables/settings/UserTable.tsx:285
-#: src/tables/settings/UserTable.tsx:406
+#: src/tables/settings/UserTable.tsx:286
+#: src/tables/settings/UserTable.tsx:407
 msgid "Administrator"
 msgstr "관리자"
 
@@ -1530,6 +1530,7 @@ msgstr "업로드 오류"
 
 #: src/components/details/DetailsImage.tsx:299
 #: src/components/forms/fields/AutoFillRightSection.tsx:34
+#: src/components/forms/fields/TreeField.tsx:312
 msgid "Clear"
 msgstr "분명한"
 
@@ -1830,21 +1831,21 @@ msgstr "성공적으로 로그인되었습니다"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
-#: src/functions/auth.tsx:133
-#: src/functions/auth.tsx:144
+#: src/functions/auth.tsx:148
+#: src/functions/auth.tsx:157
 msgid "Login failed"
 msgstr "로그인 실패"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:136
-#: src/functions/auth.tsx:356
+#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:369
 msgid "Check your input and try again."
 msgstr "입력 내용을 확인한 후 다시 시도하세요"
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:347
+#: src/functions/auth.tsx:360
 msgid "Mail delivery successful"
 msgstr "메일 전달 성공"
 
@@ -1994,9 +1995,9 @@ msgstr "주인"
 #: src/tables/machine/MachineTypeTable.tsx:355
 #: src/tables/plugin/PluginErrorTable.tsx:35
 #: src/tables/settings/ApiTokenTable.tsx:58
-#: src/tables/settings/GroupTable.tsx:95
-#: src/tables/settings/GroupTable.tsx:148
-#: src/tables/settings/GroupTable.tsx:256
+#: src/tables/settings/GroupTable.tsx:96
+#: src/tables/settings/GroupTable.tsx:149
+#: src/tables/settings/GroupTable.tsx:257
 #: src/tables/settings/PendingTasksTable.tsx:37
 #: src/tables/stock/LocationTypesTable.tsx:74
 msgid "Name"
@@ -2082,8 +2083,8 @@ msgid "Plugins"
 msgstr "플러그인"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/tables/general/ParameterTemplateTable.tsx:143
-#: src/tables/general/ParameterTemplateTable.tsx:178
+#: src/tables/general/ParameterTemplateTable.tsx:145
+#: src/tables/general/ParameterTemplateTable.tsx:180
 #: src/tables/part/PartTestTemplateTable.tsx:117
 #: src/tables/settings/TemplateTable.tsx:296
 #: src/tables/settings/TemplateTable.tsx:408
@@ -2108,7 +2109,17 @@ msgstr "중지됨"
 msgid "Running"
 msgstr "달리기"
 
-#: src/components/forms/fields/ApiFormField.tsx:215
+#: src/components/forms/fields/ApiFormField.tsx:139
+msgid "Select location"
+msgstr ""
+
+#: src/components/forms/fields/ApiFormField.tsx:155
+#: src/components/forms/fields/IconField.tsx:225
+#: src/components/wizards/ImportPartWizard.tsx:304
+msgid "Select category"
+msgstr "카테고리 선택"
+
+#: src/components/forms/fields/ApiFormField.tsx:253
 msgid "Select file to upload"
 msgstr "업로드할 파일 선택"
 
@@ -2135,11 +2146,6 @@ msgstr "분류되지 않음"
 msgid "Search..."
 msgstr "찾다..."
 
-#: src/components/forms/fields/IconField.tsx:225
-#: src/components/wizards/ImportPartWizard.tsx:304
-msgid "Select category"
-msgstr "카테고리 선택"
-
 #: src/components/forms/fields/IconField.tsx:234
 msgid "Select pack"
 msgstr "패키지 선택"
@@ -2156,6 +2162,7 @@ msgid "Loading"
 msgstr "불러오는 중"
 
 #: src/components/forms/fields/RelatedModelField.tsx:541
+#: src/components/forms/fields/TreeField.tsx:413
 #: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
@@ -2169,17 +2176,42 @@ msgstr "목"
 msgid "Create New {model}"
 msgstr ""
 
-#: src/components/forms/fields/TableField.tsx:59
+#: src/components/forms/fields/TableField.tsx:63
 msgid "modelRenderer entry required for tables"
 msgstr "테이블에 modelRenderer 항목이 필요함"
 
-#: src/components/forms/fields/TableField.tsx:333
+#: src/components/forms/fields/TableField.tsx:357
 msgid "No entries available"
 msgstr "사용할 수 있는 항목이 없습니다"
 
-#: src/components/forms/fields/TableField.tsx:344
+#: src/components/forms/fields/TableField.tsx:368
 msgid "Add new row"
 msgstr "새 행 추가"
+
+#: src/components/forms/fields/TreeField.tsx:328
+#: src/components/render/Instance.tsx:225
+#: src/components/render/ModelHoverCard.tsx:73
+#: src/tables/InvenTreeTable.tsx:787
+msgid "View details"
+msgstr "상세 보기"
+
+#: src/components/forms/fields/TreeField.tsx:407
+msgid "Select..."
+msgstr ""
+
+#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/wizards/ImportPartWizard.tsx:221
+#: src/forms/StockForms.tsx:761
+msgid "Loading..."
+msgstr "불러오는 중..."
+
+#: src/components/forms/fields/TreeField.tsx:439
+msgid "Collapse"
+msgstr ""
+
+#: src/components/forms/fields/TreeField.tsx:439
+msgid "Expand"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -2251,7 +2283,7 @@ msgstr "데이터 처리"
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:403
+#: src/functions/auth.tsx:416
 msgid "An error occurred"
 msgstr "오류가 발생했습니다"
 
@@ -2542,7 +2574,7 @@ msgid "No items"
 msgstr "항목 없음"
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:102
+#: src/components/render/Stock.tsx:97
 #: src/pages/part/PartDetail.tsx:954
 #: src/pages/stock/StockDetail.tsx:276
 #: src/pages/stock/StockDetail.tsx:1020
@@ -3180,12 +3212,12 @@ msgstr "날짜"
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
 #: src/pages/part/PartDetail.tsx:502
-#: src/tables/bom/UsedInTable.tsx:106
+#: src/tables/bom/UsedInTable.tsx:107
 #: src/tables/company/CompanyTable.tsx:68
 #: src/tables/company/CompanyTable.tsx:103
 #: src/tables/company/ParametricCompanyTable.tsx:19
-#: src/tables/machine/MachineListTable.tsx:384
-#: src/tables/machine/MachineListTable.tsx:799
+#: src/tables/machine/MachineListTable.tsx:385
+#: src/tables/machine/MachineListTable.tsx:800
 #: src/tables/part/PartTableFilters.tsx:13
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
@@ -3194,7 +3226,7 @@ msgstr "날짜"
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 #: src/tables/settings/ApiTokenTable.tsx:63
 #: src/tables/settings/ProjectCodeTable.tsx:104
-#: src/tables/settings/UserTable.tsx:401
+#: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
 msgid "Active"
 msgstr "활동적인"
@@ -3290,13 +3322,9 @@ msgstr ""
 #~ msgstr "Error occurred while loading plugin content"
 
 #: src/components/render/Instance.tsx:209
+#: src/components/render/ModelHoverCard.tsx:59
 msgid "ID"
 msgstr ""
-
-#: src/components/render/Instance.tsx:225
-#: src/tables/InvenTreeTable.tsx:787
-msgid "View details"
-msgstr "상세 보기"
 
 #: src/components/render/Instance.tsx:238
 #~ msgid "Unknown model: {model}"
@@ -3387,8 +3415,8 @@ msgid "Category"
 msgstr "카테고리"
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:114
-#: src/components/render/Stock.tsx:132
+#: src/components/render/Stock.tsx:109
+#: src/components/render/Stock.tsx:127
 #: src/forms/BuildForms.tsx:849
 #: src/forms/PurchaseOrderForms.tsx:704
 #: src/forms/StockForms.tsx:968
@@ -3410,7 +3438,7 @@ msgstr "카테고리"
 msgid "Location"
 msgstr "위치"
 
-#: src/components/render/Stock.tsx:99
+#: src/components/render/Stock.tsx:94
 #: src/pages/stock/StockDetail.tsx:209
 #: src/pages/stock/StockDetail.tsx:1008
 #: src/tables/build/BuildOutputTable.tsx:109
@@ -3419,7 +3447,7 @@ msgstr "위치"
 msgid "Serial Number"
 msgstr "시리얼 번호"
 
-#: src/components/render/Stock.tsx:104
+#: src/components/render/Stock.tsx:99
 #: src/components/wizards/OrderPartsWizard.tsx:385
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:264
@@ -3451,7 +3479,7 @@ msgstr "시리얼 번호"
 msgid "Quantity"
 msgstr "수량"
 
-#: src/components/render/Stock.tsx:117
+#: src/components/render/Stock.tsx:112
 #: src/forms/BuildForms.tsx:365
 #: src/forms/BuildForms.tsx:448
 #: src/forms/BuildForms.tsx:523
@@ -3984,11 +4012,6 @@ msgstr "이미 가져옴"
 msgid "Supplier"
 msgstr "공급자"
 
-#: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:761
-msgid "Loading..."
-msgstr "불러오는 중..."
-
 #: src/components/wizards/ImportPartWizard.tsx:223
 msgid "Error fetching suppliers"
 msgstr "공급업체를 불러오는 중 오류 발생"
@@ -4243,7 +4266,7 @@ msgstr "선택한 부분의 오류를 수정해주세요"
 #: src/tables/build/BuildLineTable.tsx:888
 #: src/tables/part/PartTable.tsx:419
 #: src/tables/sales/SalesOrderLineItemTable.tsx:417
-#: src/tables/stock/TransferOrderLineItemTable.tsx:330
+#: src/tables/stock/TransferOrderLineItemTable.tsx:332
 msgid "Order Parts"
 msgstr "자재 발주"
 
@@ -4834,7 +4857,7 @@ msgstr "완료할 수량"
 #: src/pages/stock/TransferOrderDetail.tsx:131
 #: src/tables/Filter.tsx:352
 #: src/tables/build/BuildOutputTable.tsx:499
-#: src/tables/machine/MachineListTable.tsx:387
+#: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:39
 #: src/tables/part/PartTestResultTable.tsx:324
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:137
@@ -4898,7 +4921,7 @@ msgstr "할당된 재고 품목은 재고로 반환됩니다."
 #: src/tables/ColumnRenderers.tsx:125
 #: src/tables/part/RelatedPartTable.tsx:73
 #: src/tables/stock/TransferOrderAllocationTable.tsx:120
-#: src/tables/stock/TransferOrderLineItemTable.tsx:95
+#: src/tables/stock/TransferOrderLineItemTable.tsx:97
 msgid "IPN"
 msgstr "품목 번호(IPN)"
 
@@ -4912,7 +4935,7 @@ msgstr "품목 번호(IPN)"
 #: src/tables/build/BuildLineTable.tsx:187
 #: src/tables/sales/SalesOrderLineItemTable.tsx:389
 #: src/tables/stock/StockItemTable.tsx:213
-#: src/tables/stock/TransferOrderLineItemTable.tsx:490
+#: src/tables/stock/TransferOrderLineItemTable.tsx:492
 msgid "Allocated"
 msgstr "할당됨"
 
@@ -4942,8 +4965,8 @@ msgstr "재고 할당의 원본 위치를 선택하세요"
 #: src/tables/build/BuildOutputTable.tsx:238
 #: src/tables/sales/SalesOrderLineItemTable.tsx:427
 #: src/tables/sales/SalesOrderLineItemTable.tsx:472
-#: src/tables/stock/TransferOrderLineItemTable.tsx:340
-#: src/tables/stock/TransferOrderLineItemTable.tsx:366
+#: src/tables/stock/TransferOrderLineItemTable.tsx:342
+#: src/tables/stock/TransferOrderLineItemTable.tsx:368
 msgid "Allocate Stock"
 msgstr "재고 할당"
 
@@ -5554,7 +5577,7 @@ msgstr "내부 서버 오류"
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:222
+#: src/functions/auth.tsx:235
 msgid "Logged Out"
 msgstr "로그아웃됨"
 
@@ -5570,93 +5593,93 @@ msgstr "이 브라우저에 충돌하는 세션이 있어 로그아웃되었습�
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:145
+#: src/functions/auth.tsx:158
 msgid "No response from server."
 msgstr "서버에서 응답이 없습니다"
 
-#: src/functions/auth.tsx:188
+#: src/functions/auth.tsx:201
 msgid "MFA Login successful"
 msgstr "MFA 로그인 성공"
 
-#: src/functions/auth.tsx:189
+#: src/functions/auth.tsx:202
 msgid "MFA details were automatically provided in the browser"
 msgstr "MFA 세부 정보가 브라우저에 자동으로 제공되었습니다."
 
-#: src/functions/auth.tsx:223
+#: src/functions/auth.tsx:236
 msgid "Successfully logged out"
 msgstr "성공적으로 로그아웃되었습니다"
 
-#: src/functions/auth.tsx:290
+#: src/functions/auth.tsx:303
 msgid "Language changed"
 msgstr "언어가 변경됨"
 
-#: src/functions/auth.tsx:291
+#: src/functions/auth.tsx:304
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "현재 사용 언어가 프로필에 설정된 언어로 변경되었습니다"
 
-#: src/functions/auth.tsx:312
+#: src/functions/auth.tsx:325
 msgid "Theme changed"
 msgstr "테마가 변경됨"
 
-#: src/functions/auth.tsx:313
+#: src/functions/auth.tsx:326
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "현재 사용 테마가 프로필에 설정된 테마로 변경되었습니다"
 
-#: src/functions/auth.tsx:348
+#: src/functions/auth.tsx:361
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "받은편지함에서 재설정 링크를 확인하세요. 계정이 있는 경우에만 동작합니다. 스팸함도 확인하세요"
 
-#: src/functions/auth.tsx:355
-#: src/functions/auth.tsx:619
+#: src/functions/auth.tsx:368
+#: src/functions/auth.tsx:632
 msgid "Reset failed"
 msgstr "재설정 실패"
 
-#: src/functions/auth.tsx:382
+#: src/functions/auth.tsx:395
 msgid "Already logged in"
 msgstr "이미 로그인되어 있습니다."
 
-#: src/functions/auth.tsx:383
+#: src/functions/auth.tsx:396
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "이 브라우저에 대해 서버에 충돌하는 세션이 있습니다. 먼저 해당 세션에서 로그아웃하세요"
 
-#: src/functions/auth.tsx:439
+#: src/functions/auth.tsx:452
 msgid "Logged In"
 msgstr "로그인됨"
 
-#: src/functions/auth.tsx:440
+#: src/functions/auth.tsx:453
 msgid "Successfully logged in"
 msgstr "성공적으로 로그인되었습니다"
 
-#: src/functions/auth.tsx:574
+#: src/functions/auth.tsx:587
 msgid "Failed to set up MFA"
 msgstr "MFA 설정에 실패했습니다"
 
-#: src/functions/auth.tsx:593
+#: src/functions/auth.tsx:606
 msgid "MFA Setup successful"
 msgstr "MFA 설정 성공"
 
-#: src/functions/auth.tsx:594
+#: src/functions/auth.tsx:607
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "TOTP 기반 MFA가 성공적으로 설정되었습니다. 다시 로그인해야 합니다"
 
-#: src/functions/auth.tsx:609
+#: src/functions/auth.tsx:622
 msgid "Password set"
 msgstr "비밀번호가 설정되었습니다"
 
-#: src/functions/auth.tsx:610
-#: src/functions/auth.tsx:719
+#: src/functions/auth.tsx:623
+#: src/functions/auth.tsx:732
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "비밀번호가 성공적으로 설정되었습니다. 이제 새로운 비밀번호로 로그인하실 수 있습니다"
 
-#: src/functions/auth.tsx:684
+#: src/functions/auth.tsx:697
 msgid "Password could not be changed"
 msgstr "비밀번호를 변경할 수 없습니다."
 
-#: src/functions/auth.tsx:702
+#: src/functions/auth.tsx:715
 msgid "The two password fields didn’t match"
 msgstr "두 개의 비밀번호 필드가 일치하지 않습니다"
 
-#: src/functions/auth.tsx:718
+#: src/functions/auth.tsx:731
 msgid "Password Changed"
 msgstr "비밀번호가 변경되었습니다."
 
@@ -6390,7 +6413,7 @@ msgid "Edit Account"
 msgstr "계정 편집"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
-#: src/tables/settings/UserTable.tsx:323
+#: src/tables/settings/UserTable.tsx:324
 msgid "Change Password"
 msgstr "비밀번호 변경"
 
@@ -7105,7 +7128,7 @@ msgid "There are no machine registry errors"
 msgstr "장비 레지스트리 오류가 없습니다"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:122
-#: src/tables/machine/MachineListTable.tsx:502
+#: src/tables/machine/MachineListTable.tsx:503
 msgid "Machine Settings"
 msgstr "장비 설정"
 
@@ -7114,7 +7137,7 @@ msgstr "장비 설정"
 #~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
-#: src/tables/settings/UserTable.tsx:195
+#: src/tables/settings/UserTable.tsx:196
 msgid "Info"
 msgstr "정보"
 
@@ -7431,7 +7454,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:275
 #: src/pages/part/PartDetail.tsx:360
 #: src/pages/stock/StockDetail.tsx:172
-#: src/tables/bom/UsedInTable.tsx:55
+#: src/tables/bom/UsedInTable.tsx:56
 #: src/tables/build/BuildOrderTable.tsx:66
 #: src/tables/stock/StockItemTable.tsx:70
 msgid "Revision"
@@ -7527,7 +7550,7 @@ msgstr "생성됨"
 #: src/pages/build/BuildDetail.tsx:434
 #: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/sales/SalesOrderLineItemTable.tsx:394
-#: src/tables/stock/TransferOrderLineItemTable.tsx:495
+#: src/tables/stock/TransferOrderLineItemTable.tsx:497
 msgid "Completed"
 msgstr "완전한"
 
@@ -7971,12 +7994,12 @@ msgstr "그룹 이름"
 
 #: src/pages/core/GroupDetail.tsx:52
 #: src/pages/core/GroupDetail.tsx:67
-#: src/tables/settings/GroupTable.tsx:85
+#: src/tables/settings/GroupTable.tsx:86
 msgid "Group Details"
 msgstr "그룹 상세 정보"
 
 #: src/pages/core/GroupDetail.tsx:55
-#: src/tables/settings/GroupTable.tsx:112
+#: src/tables/settings/GroupTable.tsx:113
 msgid "Group Roles"
 msgstr "그룹 역할"
 
@@ -7994,7 +8017,7 @@ msgid "User Profile"
 msgstr "사용자 프로필"
 
 #: src/pages/core/UserDetail.tsx:188
-#: src/tables/settings/UserTable.tsx:164
+#: src/tables/settings/UserTable.tsx:165
 msgid "User Details"
 msgstr "사용자 상세 정보"
 
@@ -8151,7 +8174,7 @@ msgstr "키워드"
 #: src/tables/build/BuildLineTable.tsx:311
 #: src/tables/part/PartTableFilters.tsx:137
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
-#: src/tables/stock/TransferOrderLineItemTable.tsx:118
+#: src/tables/stock/TransferOrderLineItemTable.tsx:120
 msgid "Available Stock"
 msgstr "사용 가능한 재고"
 
@@ -8159,7 +8182,7 @@ msgstr "사용 가능한 재고"
 #: src/tables/bom/BomTable.tsx:369
 #: src/tables/build/BuildLineTable.tsx:272
 #: src/tables/sales/SalesOrderLineItemTable.tsx:179
-#: src/tables/stock/TransferOrderLineItemTable.tsx:160
+#: src/tables/stock/TransferOrderLineItemTable.tsx:162
 msgid "On order"
 msgstr "주문시"
 
@@ -8184,7 +8207,7 @@ msgid "Maximum Stock"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:507
-#: src/tables/bom/UsedInTable.tsx:96
+#: src/tables/bom/UsedInTable.tsx:97
 #: src/tables/part/PartTableFilters.tsx:19
 #: src/tables/settings/SelectionListDrawer.tsx:171
 msgid "Locked"
@@ -8561,13 +8584,13 @@ msgstr "변형 허용"
 
 #: src/pages/part/bom/BomCompare.tsx:36
 #: src/tables/bom/BomTable.tsx:488
-#: src/tables/bom/UsedInTable.tsx:91
+#: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "상속됨"
 
 #: src/pages/part/bom/BomCompare.tsx:37
 #: src/tables/bom/BomTable.tsx:498
-#: src/tables/bom/UsedInTable.tsx:101
+#: src/tables/bom/UsedInTable.tsx:102
 #: src/tables/build/BuildLineTable.tsx:207
 msgid "Optional"
 msgstr "선택 사항"
@@ -8664,7 +8687,7 @@ msgstr "총가격"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
-#: src/tables/bom/UsedInTable.tsx:65
+#: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/part/PartTableFilters.tsx:43
 msgid "Component"
 msgstr "요소"
@@ -8781,7 +8804,7 @@ msgstr "구매 가격"
 #: src/pages/sales/ReturnOrderDetail.tsx:291
 #: src/pages/sales/SalesOrderDetail.tsx:282
 #: src/pages/stock/StockDetail.tsx:445
-#: src/tables/general/ParameterTable.tsx:102
+#: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:90
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
@@ -9606,7 +9629,7 @@ msgstr "이 재고 품목은 일부 할당되었습니다"
 #: src/tables/ColumnRenderers.tsx:262
 #: src/tables/build/BuildLineTable.tsx:308
 #: src/tables/sales/SalesOrderLineItemTable.tsx:159
-#: src/tables/stock/TransferOrderLineItemTable.tsx:140
+#: src/tables/stock/TransferOrderLineItemTable.tsx:142
 msgid "No stock available"
 msgstr "재고가 없습니다"
 
@@ -9618,7 +9641,7 @@ msgstr "본 상품은 재고가 소진되었습니다"
 #: src/tables/bom/BomTable.tsx:386
 #: src/tables/part/PartTable.tsx:194
 #: src/tables/sales/SalesOrderLineItemTable.tsx:188
-#: src/tables/stock/TransferOrderLineItemTable.tsx:169
+#: src/tables/stock/TransferOrderLineItemTable.tsx:171
 msgid "Stock Information"
 msgstr "재고 정보"
 
@@ -10120,9 +10143,9 @@ msgstr "대체 부품"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:140
 #: src/tables/sales/SalesOrderLineItemTable.tsx:198
 #: src/tables/sales/SalesOrderLineItemTable.tsx:215
-#: src/tables/stock/TransferOrderLineItemTable.tsx:121
-#: src/tables/stock/TransferOrderLineItemTable.tsx:180
-#: src/tables/stock/TransferOrderLineItemTable.tsx:198
+#: src/tables/stock/TransferOrderLineItemTable.tsx:123
+#: src/tables/stock/TransferOrderLineItemTable.tsx:182
+#: src/tables/stock/TransferOrderLineItemTable.tsx:200
 msgid "Virtual part"
 msgstr "가상 부품"
 
@@ -10164,7 +10187,7 @@ msgstr "대체재고 포함"
 #: src/tables/bom/BomTable.tsx:360
 #: src/tables/build/BuildLineTable.tsx:254
 #: src/tables/sales/SalesOrderLineItemTable.tsx:165
-#: src/tables/stock/TransferOrderLineItemTable.tsx:146
+#: src/tables/stock/TransferOrderLineItemTable.tsx:148
 msgid "Includes variant stock"
 msgstr "변형 재고 포함"
 
@@ -10230,7 +10253,7 @@ msgid "Show validated items"
 msgstr "검증된 항목 표시"
 
 #: src/tables/bom/BomTable.tsx:489
-#: src/tables/bom/UsedInTable.tsx:92
+#: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "상속된 항목 표시"
 
@@ -10239,7 +10262,7 @@ msgid "Show items which allow variant substitution"
 msgstr "변형 대체를 허용하는 항목 표시"
 
 #: src/tables/bom/BomTable.tsx:499
-#: src/tables/bom/UsedInTable.tsx:102
+#: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "선택 항목 표시"
 
@@ -10270,12 +10293,12 @@ msgid "BOM item created"
 msgstr "BOM 항목이 생성되었습니다."
 
 #: src/tables/bom/BomTable.tsx:554
-#: src/tables/bom/UsedInTable.tsx:122
+#: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "BOM 항목 편집"
 
 #: src/tables/bom/BomTable.tsx:556
-#: src/tables/bom/UsedInTable.tsx:126
+#: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "BOM 항목이 업데이트되었습니다."
 
@@ -10316,7 +10339,7 @@ msgid "Add a single BOM item"
 msgstr "단일 BOM 항목 추가"
 
 #: src/tables/bom/BomTable.tsx:670
-#: src/tables/general/ParameterTable.tsx:204
+#: src/tables/general/ParameterTable.tsx:203
 #: src/tables/part/PartTable.tsx:443
 msgid "Import from File"
 msgstr "파일에서 가져오기"
@@ -10337,7 +10360,7 @@ msgstr ""
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "부품이 잠겨 있으므로 BOM을 편집할 수 없습니다."
 
-#: src/tables/bom/UsedInTable.tsx:46
+#: src/tables/bom/UsedInTable.tsx:47
 #: src/tables/build/BuildLineTable.tsx:212
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
 #: src/tables/part/PartTableFilters.tsx:25
@@ -10345,47 +10368,47 @@ msgstr "부품이 잠겨 있으므로 BOM을 편집할 수 없습니다."
 msgid "Assembly"
 msgstr "조립품"
 
-#: src/tables/bom/UsedInTable.tsx:97
+#: src/tables/bom/UsedInTable.tsx:98
 msgid "Show locked assemblies"
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:107
+#: src/tables/bom/UsedInTable.tsx:108
 msgid "Show active assemblies"
 msgstr "활성 조립품 표시"
 
-#: src/tables/bom/UsedInTable.tsx:111
+#: src/tables/bom/UsedInTable.tsx:112
 #: src/tables/part/PartTableFilters.tsx:55
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "추적 가능"
 
-#: src/tables/bom/UsedInTable.tsx:112
+#: src/tables/bom/UsedInTable.tsx:113
 msgid "Show trackable assemblies"
 msgstr "추적 가능한 조립품 표시"
 
-#: src/tables/bom/UsedInTable.tsx:160
-#: src/tables/bom/UsedInTable.tsx:167
-#: src/tables/bom/UsedInTable.tsx:204
+#: src/tables/bom/UsedInTable.tsx:161
+#: src/tables/bom/UsedInTable.tsx:168
+#: src/tables/bom/UsedInTable.tsx:205
 msgid "Replace Component"
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:161
+#: src/tables/bom/UsedInTable.tsx:162
 msgid "Replace"
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:170
+#: src/tables/bom/UsedInTable.tsx:171
 msgid "This action cannot be easily undone, so please ensure you have selected the correct assemblies."
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:173
+#: src/tables/bom/UsedInTable.tsx:174
 msgid "The selected assemblies will be updated with the new component."
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:178
+#: src/tables/bom/UsedInTable.tsx:179
 msgid "No valid items selected"
 msgstr ""
 
-#: src/tables/bom/UsedInTable.tsx:180
+#: src/tables/bom/UsedInTable.tsx:181
 msgid "Please select one or more valid assemblies to replace the component."
 msgstr ""
 
@@ -10521,7 +10544,7 @@ msgstr "주문된 재고가 있는 항목 표시"
 
 #: src/tables/build/BuildLineTable.tsx:263
 #: src/tables/sales/SalesOrderLineItemTable.tsx:171
-#: src/tables/stock/TransferOrderLineItemTable.tsx:152
+#: src/tables/stock/TransferOrderLineItemTable.tsx:154
 msgid "In production"
 msgstr "생산 중"
 
@@ -10548,7 +10571,7 @@ msgstr "완전히 할당됨"
 
 #: src/tables/build/BuildLineTable.tsx:578
 #: src/tables/sales/SalesOrderLineItemTable.tsx:312
-#: src/tables/stock/TransferOrderLineItemTable.tsx:248
+#: src/tables/stock/TransferOrderLineItemTable.tsx:250
 msgid "Create Build Order"
 msgstr "생산 주문 생성"
 
@@ -10624,7 +10647,7 @@ msgstr "생산 재고"
 
 #: src/tables/build/BuildLineTable.tsx:854
 #: src/tables/sales/SalesOrderLineItemTable.tsx:553
-#: src/tables/stock/TransferOrderLineItemTable.tsx:447
+#: src/tables/stock/TransferOrderLineItemTable.tsx:449
 msgid "View Part"
 msgstr "부품 보기"
 
@@ -10962,8 +10985,8 @@ msgstr "항목 보기"
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:186
 #: src/tables/sales/SalesOrderLineItemTable.tsx:251
 #: src/tables/sales/SalesOrderLineItemTable.tsx:404
-#: src/tables/stock/TransferOrderLineItemTable.tsx:263
-#: src/tables/stock/TransferOrderLineItemTable.tsx:317
+#: src/tables/stock/TransferOrderLineItemTable.tsx:265
+#: src/tables/stock/TransferOrderLineItemTable.tsx:319
 msgid "Add Line Item"
 msgstr "항목 추가"
 
@@ -10971,7 +10994,7 @@ msgstr "항목 추가"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:320
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:270
-#: src/tables/stock/TransferOrderLineItemTable.tsx:280
+#: src/tables/stock/TransferOrderLineItemTable.tsx:282
 msgid "Edit Line Item"
 msgstr "항목 편집"
 
@@ -10979,7 +11002,7 @@ msgstr "항목 편집"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:329
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
 #: src/tables/sales/SalesOrderLineItemTable.tsx:279
-#: src/tables/stock/TransferOrderLineItemTable.tsx:289
+#: src/tables/stock/TransferOrderLineItemTable.tsx:291
 msgid "Delete Line Item"
 msgstr "항목 삭제"
 
@@ -10987,115 +11010,115 @@ msgstr "항목 삭제"
 msgid "Add Extra Line Item"
 msgstr "추가 항목 추가"
 
-#: src/tables/general/ParameterTable.tsx:89
+#: src/tables/general/ParameterTable.tsx:88
 msgid "Internal Units"
 msgstr "내부 단위"
 
-#: src/tables/general/ParameterTable.tsx:110
-#: src/tables/general/ParameterTable.tsx:125
+#: src/tables/general/ParameterTable.tsx:109
+#: src/tables/general/ParameterTable.tsx:124
 #: src/tables/general/ParametricDataTable.tsx:99
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "업데이트한 사용자"
 
-#: src/tables/general/ParameterTable.tsx:120
+#: src/tables/general/ParameterTable.tsx:119
 msgid "Show parameters for enabled templates"
 msgstr "활성화된 템플릿의 파라미터 표시"
 
-#: src/tables/general/ParameterTable.tsx:126
+#: src/tables/general/ParameterTable.tsx:125
 msgid "Filter by user who last updated the parameter"
 msgstr "파라미터를 마지막으로 업데이트한 사용자로 필터링"
 
-#: src/tables/general/ParameterTable.tsx:151
+#: src/tables/general/ParameterTable.tsx:150
 msgid "Import Parameters"
 msgstr "매개변수 가져오기"
 
-#: src/tables/general/ParameterTable.tsx:162
+#: src/tables/general/ParameterTable.tsx:161
 #: src/tables/general/ParametricDataTable.tsx:303
 #: src/tables/general/ParametricDataTable.tsx:434
 msgid "Add Parameter"
 msgstr "매개변수 추가"
 
-#: src/tables/general/ParameterTable.tsx:173
-#: src/tables/general/ParameterTable.tsx:220
+#: src/tables/general/ParameterTable.tsx:172
+#: src/tables/general/ParameterTable.tsx:219
 #: src/tables/general/ParametricDataTable.tsx:327
 msgid "Edit Parameter"
 msgstr "매개변수 편집"
 
-#: src/tables/general/ParameterTable.tsx:181
-#: src/tables/general/ParameterTable.tsx:228
+#: src/tables/general/ParameterTable.tsx:180
+#: src/tables/general/ParameterTable.tsx:227
 msgid "Delete Parameter"
 msgstr "매개변수 삭제"
 
-#: src/tables/general/ParameterTable.tsx:189
+#: src/tables/general/ParameterTable.tsx:188
 msgid "Add Parameters"
 msgstr "매개변수 추가"
 
-#: src/tables/general/ParameterTable.tsx:195
+#: src/tables/general/ParameterTable.tsx:194
 msgid "Create Parameter"
 msgstr "매개변수 생성"
 
-#: src/tables/general/ParameterTable.tsx:197
+#: src/tables/general/ParameterTable.tsx:196
 msgid "Create a new parameter"
 msgstr "새 매개변수 생성"
 
-#: src/tables/general/ParameterTable.tsx:206
+#: src/tables/general/ParameterTable.tsx:205
 msgid "Import parameters from a file"
 msgstr "파일에서 매개변수 가져오기"
 
-#: src/tables/general/ParameterTemplateTable.tsx:38
-#: src/tables/general/ParameterTemplateTable.tsx:187
+#: src/tables/general/ParameterTemplateTable.tsx:40
+#: src/tables/general/ParameterTemplateTable.tsx:189
 msgid "Add Parameter Template"
 msgstr "매개변수 템플릿 추가"
 
-#: src/tables/general/ParameterTemplateTable.tsx:54
+#: src/tables/general/ParameterTemplateTable.tsx:56
 msgid "Duplicate Parameter Template"
 msgstr "중복 매개변수 템플릿"
 
-#: src/tables/general/ParameterTemplateTable.tsx:68
+#: src/tables/general/ParameterTemplateTable.tsx:70
 msgid "Delete Parameter Template"
 msgstr "매개변수 템플릿 삭제"
 
-#: src/tables/general/ParameterTemplateTable.tsx:75
+#: src/tables/general/ParameterTemplateTable.tsx:77
 msgid "Edit Parameter Template"
 msgstr "매개변수 템플릿 편집"
 
-#: src/tables/general/ParameterTemplateTable.tsx:128
+#: src/tables/general/ParameterTemplateTable.tsx:130
 msgid "Checkbox"
 msgstr "체크박스"
 
-#: src/tables/general/ParameterTemplateTable.tsx:129
+#: src/tables/general/ParameterTemplateTable.tsx:131
 msgid "Show checkbox templates"
 msgstr "체크박스 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:133
+#: src/tables/general/ParameterTemplateTable.tsx:135
 msgid "Has choices"
 msgstr "선택권 있음"
 
-#: src/tables/general/ParameterTemplateTable.tsx:134
+#: src/tables/general/ParameterTemplateTable.tsx:136
 msgid "Show templates with choices"
 msgstr "선택 항목이 있는 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:138
+#: src/tables/general/ParameterTemplateTable.tsx:140
 #: src/tables/part/PartTableFilters.tsx:61
 msgid "Has Units"
 msgstr "단위 있음"
 
-#: src/tables/general/ParameterTemplateTable.tsx:139
+#: src/tables/general/ParameterTemplateTable.tsx:141
 msgid "Show templates with units"
 msgstr "단위가 포함된 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:144
+#: src/tables/general/ParameterTemplateTable.tsx:146
 msgid "Show enabled templates"
 msgstr "활성화된 템플릿 표시"
 
-#: src/tables/general/ParameterTemplateTable.tsx:148
+#: src/tables/general/ParameterTemplateTable.tsx:150
 #: src/tables/settings/ImportSessionTable.tsx:123
 #: src/tables/settings/TemplateTable.tsx:414
 msgid "Model Type"
 msgstr "모델 유형"
 
-#: src/tables/general/ParameterTemplateTable.tsx:149
+#: src/tables/general/ParameterTemplateTable.tsx:151
 msgid "Filter by model type"
 msgstr "모델 유형으로 필터링"
 
@@ -11120,41 +11143,41 @@ msgstr "선택지를 고르세요"
 msgid "Enter a value"
 msgstr "값을 입력하세요"
 
-#: src/tables/machine/MachineListTable.tsx:133
+#: src/tables/machine/MachineListTable.tsx:134
 msgid "Machine restarted"
 msgstr "장비가 재시작되었습니다"
-
-#: src/tables/machine/MachineListTable.tsx:235
-#: src/tables/machine/MachineListTable.tsx:297
-#: src/tables/machine/MachineListTable.tsx:729
-msgid "Edit machine"
-msgstr "장비 편집"
 
 #: src/tables/machine/MachineListTable.tsx:235
 #~ msgid "Are you sure you want to remove the machine \"{0}\"?"
 #~ msgstr "Are you sure you want to remove the machine \"{0}\"?"
 
-#: src/tables/machine/MachineListTable.tsx:249
-#: src/tables/machine/MachineListTable.tsx:301
+#: src/tables/machine/MachineListTable.tsx:236
+#: src/tables/machine/MachineListTable.tsx:298
+#: src/tables/machine/MachineListTable.tsx:730
+msgid "Edit machine"
+msgstr "장비 편집"
+
+#: src/tables/machine/MachineListTable.tsx:250
+#: src/tables/machine/MachineListTable.tsx:302
 msgid "Delete machine"
 msgstr "장비 삭제"
 
-#: src/tables/machine/MachineListTable.tsx:250
-#: src/tables/machine/MachineListTable.tsx:692
+#: src/tables/machine/MachineListTable.tsx:251
+#: src/tables/machine/MachineListTable.tsx:693
 msgid "Machine successfully deleted."
 msgstr "장비가 성공적으로 삭제되었습니다."
 
-#: src/tables/machine/MachineListTable.tsx:255
-#: src/tables/machine/MachineListTable.tsx:697
+#: src/tables/machine/MachineListTable.tsx:256
+#: src/tables/machine/MachineListTable.tsx:698
 msgid "Are you sure you want to remove this machine?"
 msgstr "이 장비를 삭제하시겠습니까?"
 
-#: src/tables/machine/MachineListTable.tsx:285
+#: src/tables/machine/MachineListTable.tsx:286
 msgid "Machine"
 msgstr "장비"
 
-#: src/tables/machine/MachineListTable.tsx:290
-#: src/tables/machine/MachineListTable.tsx:568
+#: src/tables/machine/MachineListTable.tsx:291
+#: src/tables/machine/MachineListTable.tsx:569
 msgid "Restart required"
 msgstr "다시 시작해야 함"
 
@@ -11162,19 +11185,19 @@ msgstr "다시 시작해야 함"
 #~ msgid "Machine information"
 #~ msgstr "Machine information"
 
-#: src/tables/machine/MachineListTable.tsx:294
+#: src/tables/machine/MachineListTable.tsx:295
 msgid "Machine Actions"
 msgstr "장비 작업"
 
-#: src/tables/machine/MachineListTable.tsx:306
+#: src/tables/machine/MachineListTable.tsx:307
 msgid "Restart"
 msgstr "다시 시작"
 
-#: src/tables/machine/MachineListTable.tsx:308
+#: src/tables/machine/MachineListTable.tsx:309
 msgid "Restart machine"
 msgstr "장비 재시작"
 
-#: src/tables/machine/MachineListTable.tsx:310
+#: src/tables/machine/MachineListTable.tsx:311
 msgid "manual restart required"
 msgstr "수동으로 다시 시작해야 함"
 
@@ -11182,29 +11205,29 @@ msgstr "수동으로 다시 시작해야 함"
 #~ msgid "Machine Information"
 #~ msgstr "Machine Information"
 
-#: src/tables/machine/MachineListTable.tsx:343
+#: src/tables/machine/MachineListTable.tsx:344
 msgid "General"
 msgstr "일반적인"
 
-#: src/tables/machine/MachineListTable.tsx:353
-#: src/tables/machine/MachineListTable.tsx:804
+#: src/tables/machine/MachineListTable.tsx:354
+#: src/tables/machine/MachineListTable.tsx:805
 msgid "Machine Type"
 msgstr "장비 유형"
 
-#: src/tables/machine/MachineListTable.tsx:366
+#: src/tables/machine/MachineListTable.tsx:367
 msgid "Machine Driver"
 msgstr "장비 드라이버"
 
-#: src/tables/machine/MachineListTable.tsx:381
+#: src/tables/machine/MachineListTable.tsx:382
 msgid "Initialized"
 msgstr "초기화됨"
 
-#: src/tables/machine/MachineListTable.tsx:410
+#: src/tables/machine/MachineListTable.tsx:411
 #: src/tables/machine/MachineTypeTable.tsx:305
 msgid "No errors reported"
 msgstr "보고된 오류 없음"
 
-#: src/tables/machine/MachineListTable.tsx:431
+#: src/tables/machine/MachineListTable.tsx:432
 msgid "Properties"
 msgstr "속성"
 
@@ -11212,7 +11235,7 @@ msgstr "속성"
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:521
+#: src/tables/machine/MachineListTable.tsx:522
 msgid "Driver Settings"
 msgstr "드라이버 설정"
 
@@ -11220,32 +11243,32 @@ msgstr "드라이버 설정"
 #~ msgid "Machine detail"
 #~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:648
+#: src/tables/machine/MachineListTable.tsx:649
 msgid "Add Machine"
 msgstr "장비 추가"
 
-#: src/tables/machine/MachineListTable.tsx:691
-#: src/tables/machine/MachineListTable.tsx:736
+#: src/tables/machine/MachineListTable.tsx:692
+#: src/tables/machine/MachineListTable.tsx:737
 msgid "Delete Machine"
 msgstr "장비 삭제"
 
-#: src/tables/machine/MachineListTable.tsx:704
+#: src/tables/machine/MachineListTable.tsx:705
 msgid "Edit Machine"
 msgstr "장비 편집"
 
-#: src/tables/machine/MachineListTable.tsx:718
+#: src/tables/machine/MachineListTable.tsx:719
 msgid "Restart Machine"
 msgstr "장비 재시작"
 
-#: src/tables/machine/MachineListTable.tsx:749
+#: src/tables/machine/MachineListTable.tsx:750
 msgid "Add machine"
 msgstr "장비 추가"
 
-#: src/tables/machine/MachineListTable.tsx:765
+#: src/tables/machine/MachineListTable.tsx:766
 msgid "Machine Detail"
 msgstr "장비 상세 정보"
 
-#: src/tables/machine/MachineListTable.tsx:813
+#: src/tables/machine/MachineListTable.tsx:814
 msgid "Driver"
 msgstr "운전사"
 
@@ -12287,7 +12310,7 @@ msgstr "출하에 할당"
 #~ msgstr "Allocate Serials"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:292
-#: src/tables/stock/TransferOrderLineItemTable.tsx:302
+#: src/tables/stock/TransferOrderLineItemTable.tsx:304
 msgid "Allocate Serial Numbers"
 msgstr "일련번호 할당"
 
@@ -12308,27 +12331,27 @@ msgid "All unallocated line items will be allocated"
 msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:390
-#: src/tables/stock/TransferOrderLineItemTable.tsx:491
+#: src/tables/stock/TransferOrderLineItemTable.tsx:493
 msgid "Show lines which are fully allocated"
 msgstr "완전히 할당된 항목 표시"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:395
-#: src/tables/stock/TransferOrderLineItemTable.tsx:496
+#: src/tables/stock/TransferOrderLineItemTable.tsx:498
 msgid "Show lines which are completed"
 msgstr "완료된 항목 표시"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:487
-#: src/tables/stock/TransferOrderLineItemTable.tsx:381
+#: src/tables/stock/TransferOrderLineItemTable.tsx:383
 msgid "Allocate serials"
 msgstr "시리얼 번호 할당"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:505
-#: src/tables/stock/TransferOrderLineItemTable.tsx:399
+#: src/tables/stock/TransferOrderLineItemTable.tsx:401
 msgid "Build stock"
 msgstr "생산 재고"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:523
-#: src/tables/stock/TransferOrderLineItemTable.tsx:417
+#: src/tables/stock/TransferOrderLineItemTable.tsx:419
 msgid "Order stock"
 msgstr "주문 재고"
 
@@ -12643,16 +12666,16 @@ msgstr "정보 없음"
 msgid "No error details are available for this task"
 msgstr "이 작업에 사용할 수 있는 오류 세부정보가 없습니다."
 
-#: src/tables/settings/GroupTable.tsx:71
+#: src/tables/settings/GroupTable.tsx:72
 msgid "Group with id {id} not found"
 msgstr "ID가 {id}인 그룹을 찾을 수 없습니다."
 
-#: src/tables/settings/GroupTable.tsx:73
+#: src/tables/settings/GroupTable.tsx:74
 msgid "An error occurred while fetching group details"
 msgstr "그룹 상세 정보를 불러오는 중 오류가 발생했습니다"
 
-#: src/tables/settings/GroupTable.tsx:96
-#: src/tables/settings/GroupTable.tsx:257
+#: src/tables/settings/GroupTable.tsx:97
+#: src/tables/settings/GroupTable.tsx:258
 msgid "Name of the user group"
 msgstr "사용자 그룹 이름"
 
@@ -12660,24 +12683,24 @@ msgstr "사용자 그룹 이름"
 #~ msgid "Permission set"
 #~ msgstr "Permission set"
 
-#: src/tables/settings/GroupTable.tsx:170
-#: src/tables/settings/UserTable.tsx:316
+#: src/tables/settings/GroupTable.tsx:171
+#: src/tables/settings/UserTable.tsx:317
 msgid "Open Profile"
 msgstr "프로필 열기"
 
-#: src/tables/settings/GroupTable.tsx:185
+#: src/tables/settings/GroupTable.tsx:186
 msgid "Delete group"
 msgstr "그룹 삭제"
 
-#: src/tables/settings/GroupTable.tsx:186
+#: src/tables/settings/GroupTable.tsx:187
 msgid "Group deleted"
 msgstr "그룹이 삭제되었습니다."
 
-#: src/tables/settings/GroupTable.tsx:188
+#: src/tables/settings/GroupTable.tsx:189
 msgid "Are you sure you want to delete this group?"
 msgstr "이 그룹을 삭제하시겠습니까?"
 
-#: src/tables/settings/GroupTable.tsx:200
+#: src/tables/settings/GroupTable.tsx:201
 msgid "Add group"
 msgstr "그룹 추가"
 
@@ -12685,11 +12708,11 @@ msgstr "그룹 추가"
 #~ msgid "Edit group"
 #~ msgstr "Edit group"
 
-#: src/tables/settings/GroupTable.tsx:221
+#: src/tables/settings/GroupTable.tsx:222
 msgid "Edit Group"
 msgstr "그룹 편집"
 
-#: src/tables/settings/GroupTable.tsx:253
+#: src/tables/settings/GroupTable.tsx:254
 msgid "Add Group"
 msgstr "그룹 추가"
 
@@ -12869,23 +12892,23 @@ msgstr "활성화 상태로 필터링"
 #~ msgid "Report Output"
 #~ msgstr "Report Output"
 
-#: src/tables/settings/UserTable.tsx:123
+#: src/tables/settings/UserTable.tsx:124
 msgid "Groups updated"
 msgstr "그룹이 업데이트되었습니다."
 
-#: src/tables/settings/UserTable.tsx:124
+#: src/tables/settings/UserTable.tsx:125
 msgid "User groups updated successfully"
 msgstr "사용자 그룹이 업데이트되었습니다."
 
-#: src/tables/settings/UserTable.tsx:131
+#: src/tables/settings/UserTable.tsx:132
 msgid "Error updating user groups"
 msgstr "사용자 그룹 업데이트 중 오류 발생"
 
-#: src/tables/settings/UserTable.tsx:150
+#: src/tables/settings/UserTable.tsx:151
 msgid "User with id {id} not found"
 msgstr "ID가 {id}인 사용자를 찾을 수 없습니다."
 
-#: src/tables/settings/UserTable.tsx:152
+#: src/tables/settings/UserTable.tsx:153
 msgid "An error occurred while fetching user details"
 msgstr "사용자 상세 정보를 불러오는 중 오류가 발생했습니다"
 
@@ -12893,39 +12916,39 @@ msgstr "사용자 상세 정보를 불러오는 중 오류가 발생했습니다
 #~ msgid "No groups"
 #~ msgstr "No groups"
 
-#: src/tables/settings/UserTable.tsx:178
+#: src/tables/settings/UserTable.tsx:179
 msgid "Is Active"
 msgstr "활성 상태임"
 
-#: src/tables/settings/UserTable.tsx:179
+#: src/tables/settings/UserTable.tsx:180
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "이 사용자를 활성 사용자로 처리할지 지정합니다. 계정을 삭제하는 대신 이 선택을 해제하세요."
-
-#: src/tables/settings/UserTable.tsx:183
-msgid "Is Administrator"
-msgstr "관리자임"
 
 #: src/tables/settings/UserTable.tsx:183
 #~ msgid "Is Staff"
 #~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:184
+msgid "Is Administrator"
+msgstr "관리자임"
+
+#: src/tables/settings/UserTable.tsx:185
 msgid "Designates whether the user can log into the django admin site."
 msgstr "사용자가 django 관리자 사이트에 로그인할 수 있는지 지정합니다."
 
-#: src/tables/settings/UserTable.tsx:188
+#: src/tables/settings/UserTable.tsx:189
 msgid "Is Superuser"
 msgstr "슈퍼유저임"
 
-#: src/tables/settings/UserTable.tsx:189
+#: src/tables/settings/UserTable.tsx:190
 msgid "Designates that this user has all permissions without explicitly assigning them."
 msgstr "이 사용자가 별도 권한 할당 없이 모든 권한을 가짐을 지정합니다."
 
-#: src/tables/settings/UserTable.tsx:199
+#: src/tables/settings/UserTable.tsx:200
 msgid "You cannot edit the rights for the currently logged-in user."
 msgstr "현재 로그인한 사용자의 권한은 편집할 수 없습니다."
 
-#: src/tables/settings/UserTable.tsx:218
+#: src/tables/settings/UserTable.tsx:219
 msgid "User Groups"
 msgstr "사용자 그룹"
 
@@ -12933,39 +12956,39 @@ msgstr "사용자 그룹"
 #~ msgid "Edit user"
 #~ msgstr "Edit user"
 
-#: src/tables/settings/UserTable.tsx:333
+#: src/tables/settings/UserTable.tsx:334
 msgid "Lock user"
 msgstr "사용자 잠금"
 
-#: src/tables/settings/UserTable.tsx:343
+#: src/tables/settings/UserTable.tsx:344
 msgid "Unlock user"
 msgstr "사용자 잠금 해제"
 
-#: src/tables/settings/UserTable.tsx:359
+#: src/tables/settings/UserTable.tsx:360
 msgid "Delete user"
 msgstr "사용자 삭제"
 
-#: src/tables/settings/UserTable.tsx:360
+#: src/tables/settings/UserTable.tsx:361
 msgid "User deleted"
 msgstr "사용자가 삭제되었습니다."
 
-#: src/tables/settings/UserTable.tsx:363
+#: src/tables/settings/UserTable.tsx:364
 msgid "Are you sure you want to delete this user?"
 msgstr "이 사용자를 삭제하시겠습니까?"
 
-#: src/tables/settings/UserTable.tsx:373
+#: src/tables/settings/UserTable.tsx:374
 msgid "Set Password"
 msgstr "비밀번호 설정"
 
-#: src/tables/settings/UserTable.tsx:378
+#: src/tables/settings/UserTable.tsx:379
 msgid "Password updated"
 msgstr "비밀번호가 업데이트되었습니다."
 
-#: src/tables/settings/UserTable.tsx:389
+#: src/tables/settings/UserTable.tsx:390
 msgid "Add user"
 msgstr "사용자 추가"
 
-#: src/tables/settings/UserTable.tsx:402
+#: src/tables/settings/UserTable.tsx:403
 msgid "Show active users"
 msgstr "활성 사용자 표시"
 
@@ -12973,35 +12996,35 @@ msgstr "활성 사용자 표시"
 #~ msgid "Show staff users"
 #~ msgstr "Show staff users"
 
-#: src/tables/settings/UserTable.tsx:407
+#: src/tables/settings/UserTable.tsx:408
 msgid "Show administrators"
 msgstr "관리자 표시"
 
-#: src/tables/settings/UserTable.tsx:412
+#: src/tables/settings/UserTable.tsx:413
 msgid "Show superusers"
 msgstr "슈퍼유저 표시"
 
-#: src/tables/settings/UserTable.tsx:431
+#: src/tables/settings/UserTable.tsx:432
 msgid "Edit User"
 msgstr "사용자 편집"
 
-#: src/tables/settings/UserTable.tsx:464
+#: src/tables/settings/UserTable.tsx:465
 msgid "Add User"
 msgstr "사용자 추가"
 
-#: src/tables/settings/UserTable.tsx:472
+#: src/tables/settings/UserTable.tsx:473
 msgid "Added user"
 msgstr "사용자가 추가되었습니다"
 
-#: src/tables/settings/UserTable.tsx:482
+#: src/tables/settings/UserTable.tsx:483
 msgid "User updated"
 msgstr "사용자가 업데이트되었습니다."
 
-#: src/tables/settings/UserTable.tsx:483
+#: src/tables/settings/UserTable.tsx:484
 msgid "User updated successfully"
 msgstr "사용자가 업데이트되었습니다."
 
-#: src/tables/settings/UserTable.tsx:489
+#: src/tables/settings/UserTable.tsx:490
 msgid "Error updating user"
 msgstr "사용자 업데이트 중 오류 발생"
 
@@ -13392,7 +13415,7 @@ msgstr ""
 msgid "Show orders with a start date"
 msgstr ""
 
-#: src/tables/stock/TransferOrderLineItemTable.tsx:194
+#: src/tables/stock/TransferOrderLineItemTable.tsx:196
 msgid "Transferred"
 msgstr ""
 
