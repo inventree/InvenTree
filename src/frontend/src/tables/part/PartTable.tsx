@@ -24,6 +24,7 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { DuplicateField } from '../../forms/CommonFields';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -312,12 +313,9 @@ export function PartListTable({
   const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
     return {
       ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: selectedPart.pk,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: selectedPart.pk,
+        extraFields: {
           copy_image: {
             value: true
           },
@@ -337,7 +335,7 @@ export function PartListTable({
             hidden: !selectedPart.testable
           }
         }
-      }
+      })
     };
   }, [createPartFields, globalSettings, selectedPart]);
 
