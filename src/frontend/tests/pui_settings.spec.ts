@@ -254,6 +254,22 @@ test('Settings - Admin', async ({ browser }) => {
   await loadTab(page, 'Category Parameters');
   await loadTab(page, 'Label Templates');
   await loadTab(page, 'Report Templates');
+
+  // Check the "report snippets" panel
+  await loadTab(page, 'Report Snippets');
+  await page
+    .getByText(
+      'Snippets are reusable pieces of HTML content that can be inserted into reports and labels.'
+    )
+    .waitFor();
+
+  // Launch the dialog to upload a new snippet
+  await page.getByLabel('action-button-add-snippet').click();
+  await page.getByText('Add Snippet', { exact: true }).waitFor();
+  await page.locator('input[type="file"]').waitFor({ state: 'attached' });
+  await page.getByLabel('text-field-description').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
   await loadTab(page, 'Plugins');
 
   // Adjust some "location type" items
