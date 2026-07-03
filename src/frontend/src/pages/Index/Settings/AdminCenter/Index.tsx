@@ -16,6 +16,7 @@ import {
   IconListDetails,
   IconMail,
   IconPackages,
+  IconPhoto,
   IconPlugConnected,
   IconQrcode,
   IconReport,
@@ -105,6 +106,10 @@ const LocationTypesTable = Loadable(
 
 const SnippetTable = Loadable(
   lazy(() => import('../../../../tables/settings/SnippetTable'))
+);
+
+const AssetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/AssetTable'))
 );
 
 export default function AdminCenter() {
@@ -232,6 +237,12 @@ export default function AdminCenter() {
         content: <SnippetTable />
       },
       {
+        name: 'assets',
+        label: t`Report Assets`,
+        icon: <IconPhoto />,
+        content: <AssetTable />
+      },
+      {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
@@ -283,7 +294,7 @@ export default function AdminCenter() {
       {
         id: 'reporting',
         label: t`Reporting`,
-        panelIDs: ['labels', 'reports', 'snippets']
+        panelIDs: ['labels', 'reports', 'snippets', 'assets']
       },
       {
         id: 'plm',
