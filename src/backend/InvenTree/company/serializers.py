@@ -193,7 +193,9 @@ class CompanySerializer(
 
     parameters = common.filters.enable_parameters_filter()
 
-    duplicate = DuplicateOptionsSerializer(Company.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Company.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -207,6 +209,9 @@ class CompanySerializer(
 
             if duplicate.get('copy_parameters', True):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                instance.copy_notes_from(original)
 
         return instance
 
@@ -262,7 +267,7 @@ class ManufacturerPartSerializer(
     parameters = common.filters.enable_parameters_filter()
 
     duplicate = DuplicateOptionsSerializer(
-        ManufacturerPart.objects.all(), copy_parameters=True
+        ManufacturerPart.objects.all(), copy_parameters=True, copy_notes=True
     )
 
     @transaction.atomic
@@ -277,6 +282,9 @@ class ManufacturerPartSerializer(
 
             if duplicate.get('copy_parameters', True):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                instance.copy_notes_from(original)
 
         return instance
 
@@ -535,7 +543,7 @@ class SupplierPartSerializer(
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
     duplicate = DuplicateOptionsSerializer(
-        SupplierPart.objects.all(), copy_parameters=True
+        SupplierPart.objects.all(), copy_parameters=True, copy_notes=True
     )
 
     @staticmethod
@@ -593,6 +601,9 @@ class SupplierPartSerializer(
 
             if duplicate.get('copy_parameters', True):
                 supplier_part.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                supplier_part.copy_notes_from(original)
 
         return supplier_part
 

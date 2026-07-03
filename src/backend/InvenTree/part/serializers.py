@@ -1046,8 +1046,7 @@ class PartSerializer(
                 instance.copy_bom_from(original)
 
             if duplicate.get('copy_notes', False):
-                instance.notes = original.notes
-                instance.save()
+                instance.copy_notes_from(original)
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image

@@ -269,6 +269,9 @@ class AbstractOrderSerializer(
             if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)
 
+            if duplicate.get('copy_notes', False):
+                instance.copy_notes_from(original)
+
         return instance
 
 
@@ -407,6 +410,7 @@ class PurchaseOrderSerializer(
         copy_lines=True,
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -1095,6 +1099,7 @@ class SalesOrderSerializer(
         copy_lines=True,
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -1472,7 +1477,9 @@ class SalesOrderShipmentSerializer(
     tags = common.filters.enable_tags_filter()
 
     duplicate = DuplicateOptionsSerializer(
-        order.models.SalesOrderShipment.objects.all(), copy_parameters=True
+        order.models.SalesOrderShipment.objects.all(),
+        copy_parameters=True,
+        copy_notes=True,
     )
 
     @transaction.atomic
@@ -1487,6 +1494,9 @@ class SalesOrderShipmentSerializer(
 
             if duplicate.get('copy_parameters', True):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                instance.copy_notes_from(original)
 
         return instance
 
@@ -2186,6 +2196,7 @@ class ReturnOrderSerializer(
         order.models.ReturnOrder.objects.all(),
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -2476,7 +2487,10 @@ class TransferOrderSerializer(
 
     # Note: TransferOrder does not have "extra" line items
     duplicate = DuplicateOptionsSerializer(
-        order.models.TransferOrder.objects.all(), copy_lines=True, copy_parameters=True
+        order.models.TransferOrder.objects.all(),
+        copy_lines=True,
+        copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod

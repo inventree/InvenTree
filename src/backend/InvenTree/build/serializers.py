@@ -191,7 +191,9 @@ class BuildSerializer(
 
         return queryset
 
-    duplicate = DuplicateOptionsSerializer(Build.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Build.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
@@ -211,6 +213,9 @@ class BuildSerializer(
 
             if duplicate.get('copy_parameters', True):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                instance.copy_notes_from(original)
 
         return instance
 
