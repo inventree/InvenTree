@@ -915,19 +915,13 @@ class DuplicateOptionsSerializer(serializers.Serializer):
             'copy_parameters',
             _('Copy Parameters'),
             _('Copy parameters from the original item'),
-            False,
         ),
-        (
-            'copy_lines',
-            _('Copy Lines'),
-            _('Copy line items from the original order'),
-            False,
-        ),
+        ('copy_notes', _('Copy Notes'), _('Copy notes from the original item')),
+        ('copy_lines', _('Copy Lines'), _('Copy line items from the original order')),
         (
             'copy_extra_lines',
             _('Copy Extra Lines'),
             _('Copy extra line items from the original order'),
-            False,
         ),
     ]
 
@@ -961,8 +955,8 @@ class DuplicateOptionsSerializer(serializers.Serializer):
         copy_field_names = [spec['name'] for spec in copy_fields]
 
         # Apply "default" fields
-        for name, label, help_text, default_value in self.DEFAULT_FIELDS:
-            popped_value = kwargs.pop(name, default_value)
+        for name, label, help_text in self.DEFAULT_FIELDS:
+            popped_value = kwargs.pop(name, False)
 
             if name in copy_field_names:
                 # Manually supplied field, continue
