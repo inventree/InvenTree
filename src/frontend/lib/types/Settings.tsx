@@ -57,4 +57,5 @@ export interface SettingsStateProps {
   pathParams?: PathParams;
   getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
   isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
+  getSettingLength: () => number;
 }

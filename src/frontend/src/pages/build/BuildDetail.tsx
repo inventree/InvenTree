@@ -632,6 +632,7 @@ export default function BuildDetail() {
 
   const duplicateBuildOrderFields = useBuildOrderFields({
     create: false,
+    duplicateBuildId: build.pk,
     modalId: 'duplicate-build-order'
   });
 
