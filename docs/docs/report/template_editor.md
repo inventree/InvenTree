@@ -31,3 +31,10 @@ If you don't want to override the template, but just render a preview for a temp
 #### Edit template metadata
 
 Editing metadata such as name, description, filters and even width/height for labels and orientation/page size for reports can be done from the edit modal accessible when clicking on the three dots (4) and select "Edit" in the dropdown menu.
+
+### Editing Snippets
+
+[Report snippets](./index.md#report-snippets) can also be edited directly within the browser, from the *Report Snippets* panel in the Admin Center. Selecting a snippet from the table opens it in the same code editor as used for report and label templates.
+
+!!! info "No Preview"
+    As snippets cannot be rendered by themselves (they must be included in a report or label template), no preview area is available when editing a snippet.

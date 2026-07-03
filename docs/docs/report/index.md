@@ -53,20 +53,20 @@ To read more about the capabilities of the report templating engine, and how to 
 
 ## Creating Templates
 
-Report and label templates can be created (and edited) via the [admin interface](../settings/admin.md), under the *Report* section.
+Report and label templates are managed from the [Admin Center](../settings/admin.md#admin-center), which provides dedicated panels (under the *Reporting* group) for each template type:
 
-Select the type of template you are wanting to create (a *Report Template* or *Label Template*) and press the *Add* button in the top right corner:
+- **Label Templates** - Create and edit [label templates](./labels.md)
+- **Report Templates** - Create and edit [report templates](./report.md)
+- **Report Snippets** - Manage reusable [snippet](#report-snippets) files
+- **Report Assets** - Manage uploaded [asset](#report-assets) files
 
-{{ image("report/report_template_admin.png", "Report template admin") }}
+Label and report templates are created and edited using the built-in [template editor](./template_editor.md), which allows templates to be written directly within the browser, with a live preview of the rendered output.
 
 !!! tip "Staff Access Only"
-    Only users with staff access can upload or edit report template files.
+    Only users with staff access can create, upload or edit templates, snippets and assets.
 
-!!! info "Editing Reports"
-    Existing reports can be edited from the admin interface, in the same location as described above. To change the contents of the template, re-upload a template file, to override the existing template data.
-
-!!! tip "Template Editor"
-    InvenTree also provides a powerful [template editor](./template_editor.md) which allows for the creation and editing of report templates directly within the browser.
+!!! info "Backend Admin Interface"
+    Templates can also be managed at a lower level via the [backend admin interface](../settings/admin.md#backend-admin-interface), under the *Report* section. This is recommended for advanced users only.
 
 ### Name and Description
 
@@ -183,7 +183,7 @@ When WeasyPrint renders a template to PDF it can make outbound requests to load 
 |---|---|
 | `data:` URIs | Always permitted — self-contained, no network access |
 | `file://` | Always blocked — assets and images must be inlined as `data:` URIs before reaching WeasyPrint |
-| `http` / `https` | Disabled by default, but can be blocked - see *Remote URL Fetching* below |
+| `http` / `https` | Disabled by default, but can be enabled - see *Remote URL Fetching* below |
 | Any other scheme | Always blocked |
 
 HTTP redirects are also disabled: a URL that passes validation cannot redirect to an internal address.

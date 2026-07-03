@@ -31,6 +31,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
@@ -43,6 +44,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { companyFields } from '../../forms/CompanyForms';
 import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -293,9 +295,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Edit Company`,
-    fields: companyFields(),
+    fields: useMemo(() => companyFields({}), []),
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
+  });
+
+  const duplicateCompany = useCreateApiFormModal({
+    url: ApiEndpoints.company_list,
+    title: t`Duplicate Company`,
+    initialData: useMemo(() => ({ ...company }), [company]),
+    fields: useMemo(
+      () => companyFields({ duplicateCompanyId: company?.pk }),
+      [company]
+    ),
+    follow: true,
+    modelType: ModelType.company
   });
 
   const deleteCompany = useDeleteApiFormModal({
@@ -322,6 +336,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => editCompany.open()
           }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateCompany.open()
+          }),
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.purchase_order),
             onClick: () => deleteCompany.open()
@@ -345,6 +363,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
+      {duplicateCompany.modal}
       <InstanceDetail
         query={instanceQuery}
         requiredPermission={ModelType.company}

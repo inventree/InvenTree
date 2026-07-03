@@ -2,11 +2,12 @@ import { t } from '@lingui/core/macro';
 import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { ActionButton, RowEditAction, UserRoles } from '@lib/index';
+import { ActionButton, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { IconExclamationCircle, IconReplace } from '@tabler/icons-react';
