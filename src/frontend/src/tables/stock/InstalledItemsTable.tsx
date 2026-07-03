@@ -16,7 +16,12 @@ import {
 } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { PartColumn, StatusColumn, StockColumn } from '../ColumnRenderers';
+import {
+  IPNColumn,
+  PartColumn,
+  StatusColumn,
+  StockColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
@@ -61,6 +66,7 @@ export default function InstalledItemsTable({
       PartColumn({
         part: 'part_detail'
       }),
+      IPNColumn({}),
       StockColumn({
         accessor: '',
         title: t`Stock Item`,
