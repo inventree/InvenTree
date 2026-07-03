@@ -69,12 +69,14 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 
 | Model Type | Description |
 | --- | --- |
-| company | A Company instance |
+| [company](#company) | A Company instance |
 | [build](#build-order) | A [Build Order](../manufacturing/build.md) instance |
 | [buildline](#build-line) | A [Build Order Line Item](../manufacturing/build.md) instance |
 | [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
+| [salesordershipment](#sales-order-shipment) | A [Sales Order Shipment](../sales/sales_order.md#sales-order-shipments) instance |
 | [returnorder](#return-order) | A [Return Order](../sales/return_order.md) instance |
 | [purchaseorder](#purchase-order) | A [Purchase Order](../purchasing/purchase_order.md) instance |
+| [transferorder](#transfer-order) | A [Transfer Order](../stock/transfer_order.md) instance |
 | [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
 | [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
@@ -141,6 +143,16 @@ When printing a report or label against a [PurchaseOrder](../purchasing/purchase
 
 {{ report_context("models", "purchaseorder") }}
 
+### Transfer Order
+
+When printing a report or label against a [TransferOrder](../stock/transfer_order.md) object, the following context variables are available:
+
+{{ report_context("models", "transferorder") }}
+
+::: order.models.TransferOrder.report_context
+    options:
+        show_source: True
+
 ### Stock Item
 
 When printing a report or label against a [StockItem](../stock/index.md#stock-item) object, the following context variables are available:
@@ -173,7 +185,7 @@ When printing a report or label against a [Part](../part/index.md) object, the f
 
 ## Model Variables
 
-Additional to the context variables provided directly to each template, each model type has a number of attributes and methods which can be accessedd via the template.
+Additional to the context variables provided directly to each template, each model type has a number of attributes and methods which can be accessed via the template.
 
 For each model type, a subset of the most commonly used attributes are listed below. For a full list of attributes and methods, refer to the source code for the particular model type.
 
@@ -187,7 +199,6 @@ Each part object has access to a lot of context variables about the part. The fo
 |----------|-------------|
 | name | Brief name for this part |
 | full_name | Full name for this part (including IPN, if not null and including variant, if not null) |
-| variant | Optional variant number for this part - Must be unique for the part name
 | category | The [PartCategory](#part-category) object to which this part belongs
 | description | Longer form description of the part
 | keywords | Optional keywords for improving part search results
@@ -244,7 +255,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | Variable | Description |
 |----------|-------------|
 | parent | Link to another [StockItem](#stock-item) from which this StockItem was created |
-| uid | Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode) |
 | part | Link to the master abstract [Part](#part) that this [StockItem](#stock-item) is an instance of |
 | supplier_part | Link to a specific [SupplierPart](#supplierpart) (optional) |
 | location | The [StockLocation](#stock-location) Where this [StockItem](#stock-item) is located |
@@ -263,7 +273,6 @@ Each part object has access to a lot of context variables about the part. The fo
 | build | Link to a Build (if this stock item was created from a build) |
 | is_building | Boolean field indicating if this stock item is currently being built (or is "in production") |
 | purchase_order | Link to a [PurchaseOrder](#purchase-order) (if this stock item was created from a PurchaseOrder) |
-| infinite | If True this [StockItem](#stock-item) can never be exhausted |
 | sales_order | Link to a [SalesOrder](#sales-order) object (if the StockItem has been assigned to a SalesOrder) |
 | purchase_price | The unit purchase price for this [StockItem](#stock-item) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
 | packaging | Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc) |
@@ -353,7 +362,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | Variable | Description |
 |----------|-------------|
 | username | the username of the user |
-| fist_name | The first name of the user |
+| first_name | The first name of the user |
 | last_name | The last name of the user |
 | email | The email address of the user |
 | pk | The primary key of the user |
