@@ -156,7 +156,7 @@ export function usePartFields({
       fields.duplicate = {
         icon: <IconCopy />,
         children: {
-          part: {
+          original: {
             value: duplicatePartInstance?.pk,
             hidden: true
           },

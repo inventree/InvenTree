@@ -573,7 +573,7 @@ class PurchaseOrderTest(OrderTest):
 
         # Duplicate with non-existent PK to provoke error
         data['duplicate'] = {
-            'order_id': 10000001,
+            'original': 10000001,
             'copy_lines': True,
             'copy_extra_lines': False,
         }
@@ -584,7 +584,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.post(reverse('api-po-list'), data, expected_code=400)
 
         data['duplicate'] = {
-            'order_id': 1,
+            'original': 1,
             'copy_lines': True,
             'copy_extra_lines': False,
         }
@@ -605,7 +605,7 @@ class PurchaseOrderTest(OrderTest):
         data['reference'] = 'PO-9998'
 
         data['duplicate'] = {
-            'order_id': 1,
+            'original': 1,
             'copy_lines': False,
             'copy_extra_lines': True,
         }
@@ -1792,7 +1792,7 @@ class SalesOrderTest(OrderTest):
             {
                 'reference': 'SO-12345',
                 'customer': so.customer.pk,
-                'duplicate': {'order_id': so.pk, 'copy_parameters': False},
+                'duplicate': {'original': so.pk, 'copy_parameters': False},
             },
         )
 
@@ -1809,7 +1809,7 @@ class SalesOrderTest(OrderTest):
             {
                 'reference': 'SO-12346',
                 'customer': so.customer.pk,
-                'duplicate': {'order_id': so.pk},
+                'duplicate': {'original': so.pk},
             },
         )
 

@@ -32,6 +32,7 @@ from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, s
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CustomStatusSerializerMixin,
+    DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -67,40 +68,6 @@ class TotalPriceMixin(serializers.Serializer):
     )
 
 
-class DuplicateOrderSerializer(serializers.Serializer):
-    """Serializer for specifying options when duplicating an order."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['order_id', 'copy_lines', 'copy_extra_lines', 'copy_parameters']
-
-    order_id = serializers.IntegerField(
-        required=True, label=_('Order ID'), help_text=_('ID of the order to duplicate')
-    )
-
-    copy_lines = serializers.BooleanField(
-        required=False,
-        default=True,
-        label=_('Copy Lines'),
-        help_text=_('Copy line items from the original order'),
-    )
-
-    copy_extra_lines = serializers.BooleanField(
-        required=False,
-        default=True,
-        label=_('Copy Extra Lines'),
-        help_text=_('Copy extra line items from the original order'),
-    )
-
-    copy_parameters = serializers.BooleanField(
-        required=False,
-        default=True,
-        label=_('Copy Parameters'),
-        help_text=_('Copy order parameters from the original order'),
-    )
-
-
 class AbstractOrderSerializer(
     CustomStatusSerializerMixin,
     DataImportExportSerializerMixin,
@@ -110,9 +77,9 @@ class AbstractOrderSerializer(
 ):
     """Abstract serializer class which provides fields common to all order types."""
 
-    export_exclude_fields = ['notes', 'duplicate']
+    export_exclude_fields = ['notes']
 
-    import_exclude_fields = ['notes', 'duplicate']
+    import_exclude_fields = ['notes']
 
     # Number of line items in this order
     line_items = serializers.IntegerField(
@@ -195,12 +162,8 @@ class AbstractOrderSerializer(
 
     created_by = UserSerializer(read_only=True)
 
-    duplicate = DuplicateOrderSerializer(
-        label=_('Duplicate Order'),
-        help_text=_('Specify options for duplicating this order'),
-        required=False,
-        write_only=True,
-    )
+    # Note: The 'duplicate' field must be defined by each concrete serializer class,
+    # as it requires a queryset specific to the order model type
 
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
@@ -293,30 +256,21 @@ class AbstractOrderSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            order_id = duplicate.get('order_id', None)
-            copy_lines = duplicate.get('copy_lines', True)
-            copy_extra_lines = duplicate.get('copy_extra_lines', True)
-            copy_parameters = duplicate.get('copy_parameters', True)
+            original = duplicate['original']
 
-            try:
-                copy_from = instance.__class__.objects.get(pk=order_id)
-            except Exception:
-                # If the order ID is invalid, raise a validation error
-                raise ValidationError(_('Invalid order ID'))
-
-            if copy_lines:
-                for line in copy_from.lines.all():
+            if duplicate.get('copy_lines', False):
+                for line in original.lines.all():
                     instance.clean_line_item(line)
                     line.save()
 
-            if copy_extra_lines:
-                for line in copy_from.extra_lines.all():
+            if duplicate.get('copy_extra_lines', False):
+                for line in original.extra_lines.all():
                     line.pk = None
                     line.order = instance
                     line.save()
 
-            if copy_parameters:
-                instance.copy_parameters_from(copy_from)
+            if duplicate.get('copy_parameters', False):
+                instance.copy_parameters_from(original)
 
         return instance
 
@@ -451,6 +405,13 @@ class PurchaseOrderSerializer(
         fields = super().skip_create_fields()
 
         return [*fields, 'duplicate']
+
+    duplicate = DuplicateOptionsSerializer(
+        order.models.PurchaseOrder.objects.all(),
+        copy_lines=True,
+        copy_extra_lines=True,
+        copy_parameters=True,
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1134,6 +1095,13 @@ class SalesOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    duplicate = DuplicateOptionsSerializer(
+        order.models.SalesOrder.objects.all(),
+        copy_lines=True,
+        copy_extra_lines=True,
+        copy_parameters=True,
+    )
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add extra information to the queryset.
@@ -1411,6 +1379,8 @@ class SalesOrderShipmentSerializer(
 ):
     """Serializer for the SalesOrderShipment class."""
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     class Meta:
         """Metaclass options."""
 
@@ -1423,6 +1393,7 @@ class SalesOrderShipmentSerializer(
             'shipment_address',
             'delivery_date',
             'checked_by',
+            'duplicate',
             'reference',
             'tracking_number',
             'invoice_number',
@@ -1506,6 +1477,25 @@ class SalesOrderShipmentSerializer(
     parameters = common.filters.enable_parameters_filter()
 
     tags = common.filters.enable_tags_filter()
+
+    duplicate = DuplicateOptionsSerializer(
+        order.models.SalesOrderShipment.objects.all(), copy_parameters=True
+    )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new SalesOrderShipment instance, optionally copying data from an existing shipment."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                instance.copy_parameters_from(original)
+
+        return instance
 
 
 class SalesOrderAllocationSerializer(
@@ -2198,6 +2188,14 @@ class ReturnOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    # Note: line items cannot be duplicated from a ReturnOrder,
+    # as they are linked to specific stock items
+    duplicate = DuplicateOptionsSerializer(
+        order.models.ReturnOrder.objects.all(),
+        copy_extra_lines=True,
+        copy_parameters=True,
+    )
+
     @staticmethod
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset."""
@@ -2484,6 +2482,11 @@ class TransferOrderSerializer(
         fields = super().skip_create_fields()
 
         return [*fields, 'duplicate']
+
+    # Note: TransferOrder does not have "extra" line items
+    duplicate = DuplicateOptionsSerializer(
+        order.models.TransferOrder.objects.all(), copy_lines=True, copy_parameters=True
+    )
 
     @staticmethod
     def annotate_queryset(queryset):

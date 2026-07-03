@@ -84,14 +84,9 @@ export function useReturnOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
-          },
-          copy_lines: {
-            // Cannot duplicate lines from a return order!
-            value: false,
-            hidden: true
           },
           copy_extra_lines: {},
           copy_parameters: {}

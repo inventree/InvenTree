@@ -34,6 +34,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CustomStatusSerializerMixin,
+    DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -67,6 +68,8 @@ class BuildSerializer(
 ):
     """Serializes a Build object."""
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     class Meta:
         """Serializer metaclass."""
 
@@ -80,6 +83,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'duplicate',
             'external',
             'parent',
             'part',
@@ -190,11 +194,28 @@ class BuildSerializer(
 
         return queryset
 
+    duplicate = DuplicateOptionsSerializer(Build.objects.all(), copy_parameters=True)
+
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new Build instance, optionally copying data from an existing build."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                instance.copy_parameters_from(original)
+
+        return instance
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""

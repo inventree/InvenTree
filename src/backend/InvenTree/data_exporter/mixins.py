@@ -16,6 +16,7 @@ from taggit.serializers import TagListSerializerField
 import data_exporter.serializers
 import data_exporter.tasks
 import InvenTree.exceptions
+import InvenTree.serializers
 from common.models import DataOutput
 from InvenTree.helpers import str2bool
 from InvenTree.tasks import offload_task
@@ -63,6 +64,14 @@ class DataExportSerializerMixin:
         if exporting:
             # Exclude fields which are not required for data export
             for field in self.get_export_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+
+            # Duplication options are never used for data export
+            for field in [
+                name
+                for name, field in self.fields.items()
+                if isinstance(field, InvenTree.serializers.DuplicateOptionsSerializer)
+            ]:
                 self.fields.pop(field, None)
         else:
             # Exclude fields which are only used for data export
