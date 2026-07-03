@@ -1584,7 +1584,7 @@ class WebhookMessage(models.Model):
         worked_on: Was the work on this message finished?
     """
 
-    message_id = models.UUIDField(
+    message_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Message ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3266,7 +3266,7 @@ class EmailMessage(models.Model):
         TRACK_READ = 'track_read', _('Track Read')
         TRACK_CLICK = 'track_click', _('Track Click')
 
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3374,7 +3374,7 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this thread'),
         primary_key=True,
