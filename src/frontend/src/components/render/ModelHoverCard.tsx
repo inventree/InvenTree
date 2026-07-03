@@ -12,7 +12,7 @@ import type { NavigateFunction } from 'react-router-dom';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
-import { getDetailUrl, navigateToLink } from '@lib/index';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import { IconLink } from '@tabler/icons-react';
 
 /**

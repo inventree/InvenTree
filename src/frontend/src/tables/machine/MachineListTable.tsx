@@ -23,6 +23,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import {
@@ -32,7 +33,7 @@ import {
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
+import { formatDecimal } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { Trans } from '@lingui/react/macro';

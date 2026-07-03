@@ -1,5 +1,6 @@
 """JSON serializers for Company app."""
 
+from django.db import transaction
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +15,7 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -116,6 +118,8 @@ class CompanySerializer(
 
     import_exclude_fields = ['image']
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     class Meta:
         """Metaclass options."""
 
@@ -130,6 +134,7 @@ class CompanySerializer(
             'email',
             'currency',
             'contact',
+            'duplicate',
             'link',
             'image',
             'active',
@@ -188,6 +193,23 @@ class CompanySerializer(
 
     parameters = common.filters.enable_parameters_filter()
 
+    duplicate = DuplicateOptionsSerializer(Company.objects.all(), copy_parameters=True)
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new Company instance, optionally copying data from an existing company."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                instance.copy_parameters_from(original)
+
+        return instance
+
 
 @register_importer()
 class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
@@ -213,6 +235,8 @@ class ManufacturerPartSerializer(
 ):
     """Serializer for ManufacturerPart object."""
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     class Meta:
         """Metaclass options."""
 
@@ -225,6 +249,7 @@ class ManufacturerPartSerializer(
             'manufacturer',
             'manufacturer_detail',
             'description',
+            'duplicate',
             'MPN',
             'link',
             'barcode_hash',
@@ -235,6 +260,25 @@ class ManufacturerPartSerializer(
     tags = common.filters.enable_tags_filter()
 
     parameters = common.filters.enable_parameters_filter()
+
+    duplicate = DuplicateOptionsSerializer(
+        ManufacturerPart.objects.all(), copy_parameters=True
+    )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new ManufacturerPart instance, optionally copying data from an existing instance."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                instance.copy_parameters_from(original)
+
+        return instance
 
     part_detail = OptionalField(
         serializer_class=part_serializers.PartBriefSerializer,
@@ -317,6 +361,8 @@ class SupplierPartSerializer(
 
     export_exclude_fields = ['tags']
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     export_child_fields = [
         'part_detail.name',
         'part_detail.description',
@@ -333,6 +379,7 @@ class SupplierPartSerializer(
             'available',
             'availability_updated',
             'description',
+            'duplicate',
             'in_stock',
             'on_order',
             'link',
@@ -487,6 +534,10 @@ class SupplierPartSerializer(
     # Date fields
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
+    duplicate = DuplicateOptionsSerializer(
+        SupplierPart.objects.all(), copy_parameters=True
+    )
+
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the SupplierPart queryset with extra fields.
@@ -515,8 +566,11 @@ class SupplierPartSerializer(
 
         return response
 
+    @transaction.atomic
     def create(self, validated_data):
         """Extract manufacturer data and process ManufacturerPart."""
+        duplicate = validated_data.pop('duplicate', None)
+
         # Extract 'available' quantity from the serializer
         available = validated_data.pop('available', None)
 
@@ -533,6 +587,12 @@ class SupplierPartSerializer(
         if manufacturer and MPN:
             kwargs = {'manufacturer': manufacturer, 'MPN': MPN}
             supplier_part.save(**kwargs)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_parameters', True):
+                supplier_part.copy_parameters_from(original)
 
         return supplier_part
 

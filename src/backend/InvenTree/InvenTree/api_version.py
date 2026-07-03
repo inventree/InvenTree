@@ -1,15 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 514
+INVENTREE_API_VERSION = 515
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v514 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/11971
+v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
+    - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
+    - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
+    - Part duplication options: renames "part" field to "original"
 
 v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/12250
     - Adds "active" field to the ProjectCode model and API endpoints
