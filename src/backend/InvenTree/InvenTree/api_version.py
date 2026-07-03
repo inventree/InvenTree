@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 514
 
 INVENTREE_API_TEXT = """
 
+v515 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12298
+    - Change the file fields definition to binary (from uri) in the upload requests
+
 v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
     - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
     - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
