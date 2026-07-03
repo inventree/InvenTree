@@ -2,6 +2,26 @@ import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconList } from '@tabler/icons-react';
 
+// Generic field for implementing a "duplication options" form field
+export function DuplicateField({
+  originalId,
+  extraFields
+}: Readonly<{
+  originalId?: number | null;
+  extraFields?: Record<string, any>;
+}>): ApiFormFieldType {
+  return {
+    children: {
+      original: {
+        value: originalId,
+        hidden: true
+      },
+      ...extraFields
+    }
+  };
+}
+
+// Generic field for rendering a list of tags within a form
 export function TagsField({
   label,
   description,

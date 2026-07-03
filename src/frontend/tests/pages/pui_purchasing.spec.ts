@@ -512,15 +512,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByLabel('action-button-receive-items').click();
 
   // Check for display of individual locations
-  await page
-    .getByRole('cell', { name: /Choose Location/ })
-    .getByText('Parts Bins')
-    .waitFor();
-  await page
-    .getByRole('cell', { name: /Choose Location/ })
-    .getByText('Room 101')
-    .waitFor();
-
+  await page.getByText('Parts Bins').first().waitFor();
+  await page.getByText('Room 101').first().waitFor();
   await page.getByText('Mechanical Lab').first().waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
@@ -549,8 +542,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Receive line item' }).click();
 
   // Select destination location
-  await page.getByLabel('related-field-location').click();
-  await page.getByRole('option', { name: 'Factory', exact: true }).click();
+  await page.getByLabel('tree-field-location').fill('factory');
+  await page.getByText('Factory', { exact: true }).click();
 
   // Receive only a *single* item
   await page.getByLabel('number-field-quantity').fill('1');
@@ -611,10 +604,8 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-receive-items' })
     .click();
 
-  await page
-    .getByRole('combobox', { name: 'related-field-location' })
-    .fill('factory');
-  await page.getByText('Factory/Storage Room A').click();
+  await page.getByLabel('tree-field-location').fill('factory');
+  await page.getByText('Factory', { exact: true }).click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
 

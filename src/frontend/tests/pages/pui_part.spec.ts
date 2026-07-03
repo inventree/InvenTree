@@ -495,6 +495,73 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Latest Serial Number').waitFor();
 });
 
+test('Parts - Details - Upload image modal accepts pasted clipboard image', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+
+  const uploadButton = page
+    .getByLabel('action-button-upload-new-image')
+    .first();
+
+  await uploadButton.waitFor();
+  await uploadButton.hover();
+  await uploadButton.click();
+
+  const uploadModalTitle = page.getByText('Upload Image', { exact: true });
+  await uploadModalTitle.waitFor();
+
+  await page.evaluate((pngBase64: string) => {
+    const binary = atob(pngBase64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    const imageFile = new File([bytes], 'pasted.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(imageFile);
+
+    const pasteEvent = new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    // Firefox does not reliably honour `clipboardData` passed via the
+    // ClipboardEvent constructor for synthetic paste events. Define it
+    // directly so the app receives the same DataTransfer in all browsers.
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: dataTransfer
+    });
+
+    const pasteTarget = document.activeElement ?? document.body;
+    pasteTarget.dispatchEvent(pasteEvent);
+  }, 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kb9Lw0AcxV9TtSItDmYQEQlYneyiIo61CkWoEGqFVh3Mj/6CJg1Jiouj4Fpw8Mdi1cHFWVcHV0EQ/AHiHyBOii5S4veSQosYD4778O7e4+4dwDUqimZ1xQFNt810MiFkc6tC6BU9GAGPCEYlxTLmRDEF3/F1jwBb72Isy//cnyOi5i0FCAjEccUwbeIN4plN22C8T8wrJUklPieeMOmCxI9Mlz1+Y1x0mWOZvJlJzxPzxEKxg+UOVkqmRjxNHFU1nfK5rMcq4y3GWqWmtO7JXhjO6yvLTKc5jCQWsQQRAmTUUEYFNmK06qRYSNN+wsc/5PpFcsnkKkMhxwKq0CC5frA/+N2tVZia9JLCCaD7xXE+xoDQLtCsO873seM0T4DgM3Clt/3VBjD7SXq9rUWPgP5t4OK6rcl7wOUOMPhkSKbkSkGaXKEAvJ/RN+WAgVugb83rrbWP0wcgQ12lboCDQ2C8SNnrPu/u7ezt3zOt/n4Aps9yu33ABq8AAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfqBh4UDgm4/dnOAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAABpJREFUKM9jrPivzkAKYGIgEYxqGNUwdDQAACVQAb74u92bAAAAAElFTkSuQmCC');
+
+  await expect(page.getByText('clipboard-image.png')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Image uploaded').waitFor();
+
+  // Now remove the associated image
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-delete-image' })
+    .click();
+  await page.getByRole('button', { name: 'Remove' }).click();
+  await page.getByText('The image has been removed successfully').waitFor();
+});
+
 test('Parts - Requirements', async ({ browser }) => {
   // Navigate to the "Widget Assembly" part detail page
   // This part has multiple "variants"
@@ -973,7 +1040,7 @@ test('Parts - Notes', async ({ browser }) => {
   await page.keyboard.press('Control+E');
   await page.getByLabel('text-field-name', { exact: true }).waitFor();
   await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('related-field-category').waitFor();
+  await page.getByLabel('tree-field-category').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Enable notes editing
@@ -1024,10 +1091,8 @@ test('Parts - Bulk Edit', async ({ browser }) => {
 
   await openDetailAction(page, 'part', 'set-category');
 
-  await page.getByLabel('related-field-category').fill('rnitu');
-  await page.waitForTimeout(250);
-
-  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
+  await page.getByLabel('tree-field-category').fill('rnitu');
+  await page.getByText('Furniture and associated').click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });

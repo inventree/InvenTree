@@ -9,12 +9,24 @@ import { TOTP } from 'otpauth';
  * Test various types of login failure
  */
 test('Login - Failures', async ({ page }) => {
-  const loginWithError = async () => {
+  const loginWithError = async ({
+    msg,
+    reload = true
+  }: {
+    msg?: string;
+    reload?: boolean;
+  }) => {
     await page.getByRole('button', { name: 'Log In' }).click();
     await page.getByText('Login failed', { exact: true }).waitFor();
     await page.getByText('Check your input and try again').first().waitFor();
 
-    await page.reload();
+    if (msg) {
+      await page.getByText(msg).waitFor();
+    }
+
+    if (reload) {
+      await page.reload();
+    }
   };
 
   // Navigate to the 'login' page
@@ -26,25 +38,56 @@ test('Login - Failures', async ({ page }) => {
   await page.getByLabel('login-username').fill('invalid user');
   await page.getByLabel('login-password').fill('invalid password');
 
-  await loginWithError();
+  await loginWithError({
+    msg: 'The username and/or password you specified are not correct'
+  });
 
   // Attempt login with valid (but disabled) user
   await page.getByLabel('login-username').fill('ian');
   await page.getByLabel('login-password').fill('inactive');
 
-  await loginWithError();
+  await loginWithError({});
 
   // Attempt login with no username
   await page.getByLabel('login-username').fill('');
   await page.getByLabel('login-password').fill('hunter2');
 
-  await loginWithError();
+  await loginWithError({});
 
   // Attempt login with no password
   await page.getByLabel('login-username').fill('ian');
   await page.getByLabel('login-password').fill('');
 
-  await loginWithError();
+  await loginWithError({});
+
+  let tooManyAttempts = false;
+
+  // Attempt login with incorrect password, multiple attempts
+  for (let i = 0; i < 10; i++) {
+    await page.getByLabel('login-username').fill('reader');
+    await page.getByLabel('login-password').fill('readonlyx');
+    await loginWithError({ reload: false });
+
+    const text = await page.getByText('Too many failed login attempts', {
+      exact: false
+    });
+
+    if (
+      await expect(text)
+        .toBeVisible({ timeout: 100 })
+        .then(() => true)
+        .catch(() => false)
+    ) {
+      tooManyAttempts = true;
+      break;
+    }
+
+    await page.reload();
+  }
+
+  if (!tooManyAttempts) {
+    await expect(tooManyAttempts).toEqual(true);
+  }
 });
 
 test('Login - Change Password', async ({ page }) => {
