@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from random import randint
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -18,7 +19,7 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting, ParameterTemplate
+from common.models import InvenTreeSetting, Note, ParameterTemplate
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
@@ -1639,6 +1640,14 @@ class PartCreationTests(PartAPITestBase):
                 description=f'Test template {key} for duplication',
             )
 
+        # Attach a note to the base part
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Part),
+            model_id=base_part.pk,
+            title='Duplication test note',
+            content='Some note content',
+        )
+
         for do_copy in [True, False]:
             response = self.post(
                 reverse('api-part-list'),
@@ -1664,7 +1673,7 @@ class PartCreationTests(PartAPITestBase):
 
             # Check new part
             self.assertEqual(part.bom_items.count(), 4 if do_copy else 0)
-            self.assertEqual(part.notes, base_part.notes if do_copy else None)
+            self.assertEqual(part.notes.count(), 1 if do_copy else 0)
             self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
             self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
 
