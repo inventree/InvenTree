@@ -16,6 +16,7 @@ from drf_spectacular.utils import (
     extend_schema,
     extend_schema_view,
 )
+from rest_framework import serializers
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -45,6 +46,20 @@ class ExtendedOAuth2Scheme(DjangoOAuthToolkitScheme):
 
 class ExtendedAutoSchema(AutoSchema):
     """Extend drf-spectacular to allow customizing the schema to match the actual API behavior."""
+
+    def _map_serializer_field(self, field, direction, *args, **kwargs):
+        """Custom field mapping overrides, falling back to default behavior."""
+        schema = super()._map_serializer_field(field, direction, *args, **kwargs)
+
+        direction_value = getattr(direction, 'value', direction)
+
+        # File and image fields in request schemas must be represented as binary
+        # payloads. In response schemas they are still rendered as URLs.
+        if direction_value == 'request' and isinstance(field, serializers.FileField):
+            schema['type'] = 'string'
+            schema['format'] = 'binary'
+
+        return schema
 
     def is_bulk_action(self, ref: str) -> bool:
         """Check the class of the current view for the bulk mixins."""
