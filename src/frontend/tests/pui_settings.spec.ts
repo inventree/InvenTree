@@ -270,6 +270,21 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByLabel('text-field-description').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
+  // Check the "report assets" panel
+  await loadTab(page, 'Report Assets');
+  await page
+    .getByText(
+      'Assets are files (such as images) which can be used when rendering reports and labels.'
+    )
+    .waitFor();
+
+  // Launch the dialog to upload a new asset
+  await page.getByLabel('action-button-add-asset').click();
+  await page.getByText('Add Asset', { exact: true }).waitFor();
+  await page.locator('input[type="file"]').waitFor({ state: 'attached' });
+  await page.getByLabel('text-field-description').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
   await loadTab(page, 'Plugins');
 
   // Adjust some "location type" items
