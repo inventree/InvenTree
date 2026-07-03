@@ -1,3 +1,6 @@
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
@@ -5,6 +8,7 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileCode,
   IconFileDownload,
   IconFileUpload,
   IconHome,
@@ -21,10 +25,6 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
-
-import { PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
@@ -101,6 +101,10 @@ const PartCategoryTemplateTable = Loadable(
 
 const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
+);
+
+const SnippetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/SnippetTable'))
 );
 
 export default function AdminCenter() {
@@ -222,6 +226,12 @@ export default function AdminCenter() {
         content: <ReportTemplatePanel />
       },
       {
+        name: 'snippets',
+        label: t`Report Snippets`,
+        icon: <IconFileCode />,
+        content: <SnippetTable />
+      },
+      {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
@@ -273,7 +283,7 @@ export default function AdminCenter() {
       {
         id: 'reporting',
         label: t`Reporting`,
-        panelIDs: ['labels', 'reports']
+        panelIDs: ['labels', 'reports', 'snippets']
       },
       {
         id: 'plm',
