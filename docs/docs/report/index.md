@@ -72,9 +72,23 @@ Select the type of template you are wanting to create (a *Report Template* or *L
 
 Each report template requires a name and description, which identify and describe the report template.
 
+### Revision
+
+Each template has a revision number, which is automatically incremented each time the template is updated. This provides a simple mechanism for tracking changes to a template over time. The revision number is read-only, and cannot be edited directly.
+
+!!! info "Template Revision Context"
+    The revision number of the template is made available when rendering, via the `template_revision` [context variable](./context_variables.md#global-context).
+
 ### Enabled Status
 
 Boolean field which determines if the specific report template is enabled, and available for use. Reports can be disabled to remove them from the list of available templates, but without deleting them from the database.
+
+### Attach to Model
+
+If the *Attach to Model on Print* option is enabled, a copy of the generated report is automatically saved as a file attachment against the item (model instance) for which it was generated, each time the template is printed.
+
+!!! warning "Attachment Support"
+    The report output is only attached if the target model type supports file attachments.
 
 ### Filename Pattern
 

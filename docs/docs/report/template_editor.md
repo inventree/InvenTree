@@ -4,11 +4,11 @@ title: Template editor
 
 ## Template editor
 
-The Template Editor is integrated into the [Admin Center](../settings//admin.md#admin-center) of the Web UI. It allows users to create and edit label and report templates directly with a side by side preview for a more productive workflow.
+The Template Editor is integrated into the [Admin Center](../settings/admin.md#admin-center) of the Web UI. It allows users to create and edit label and report templates directly with a side by side preview for a more productive workflow.
 
 ![Template Table](../assets/images/report/template-table.png)
 
-On the left side (1) are all possible possible template types for labels and reports listed. With the "+" button (2), above the template table (3), new templates for the selected type can be created. To switch to the template editor click on a template.
+On the left side (1) are all possible template types for labels and reports listed. With the "+" button (2), above the template table (3), new templates for the selected type can be created. To switch to the template editor click on a template.
 
 ### Editing Templates
 
