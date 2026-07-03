@@ -127,10 +127,14 @@ export default function ManufacturerPartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: manufacturerPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: editManufacturerPartFields,
+    fields: duplicateManufacturerPartFields,
     initialData: {
       ...manufacturerPart
     },

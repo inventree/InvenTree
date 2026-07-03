@@ -1,3 +1,9 @@
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
@@ -6,10 +12,6 @@ import {
   AddItemButton,
   ModelType,
   ProgressBar,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction,
   UserRoles,
   formatDecimal
 } from '@lib/index';

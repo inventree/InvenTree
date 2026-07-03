@@ -182,10 +182,14 @@ export default function SupplierPartDetail() {
     }
   });
 
+  const duplicateSupplierPartFields = useSupplierPartFields({
+    duplicateSupplierPartId: supplierPart?.pk
+  });
+
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     title: t`Add Supplier Part`,
-    fields: supplierPartFields,
+    fields: duplicateSupplierPartFields,
     initialData: {
       ...supplierPart
     },
