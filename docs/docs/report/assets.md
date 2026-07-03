@@ -4,7 +4,9 @@ title: Report Assets
 
 ## Report Assets
 
-User can upload asset files (e.g. images) which can be used when generating reports. For example, you may wish to generate a report with your company logo in the header. Asset files are uploaded via the admin interface.
+Users can upload asset files (e.g. images) which can be used when generating reports. For example, you may wish to generate a report with your company logo in the header.
+
+Asset files are managed from the [Admin Center](../settings/admin.md#admin-center), via the *Report Assets* panel. Staff users can upload new asset files, and remove assets which are no longer required.
 
 Asset files can be rendered directly into the template as follows
 
@@ -38,6 +40,6 @@ Asset files can be rendered directly into the template as follows
     If the requested asset name does not match the name of an uploaded asset, the template will continue without loading the image.
 
 !!! info "Assets location"
-    Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
+    Upload new assets via the *Report Assets* panel in the [Admin Center](../settings/admin.md#admin-center) to ensure they are uploaded to the correct location on the server.
 
 There are various [helper functions](./helpers.md#report-assets) available to assist with embedding assets into templates.

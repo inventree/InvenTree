@@ -8,7 +8,9 @@ A powerful feature provided by the django / WeasyPrint templating framework is t
 
 To support this, InvenTree provides report "snippets" - short (or not so short) template files which cannot be rendered by themselves, but can be called from other templates.
 
-Similar to [assets files](./assets.md), snippet template files are uploaded via the admin interface.
+Snippet files are managed from the [Admin Center](../settings/admin.md#admin-center), via the *Report Snippets* panel. Staff users can upload new snippet files, and edit or remove existing snippets.
+
+Additionally, the content of an existing snippet can be modified directly within the browser - simply select a snippet from the table to open it in the built-in [template editor](./template_editor.md#editing-snippets).
 
 Snippets are included in a template as follows:
 
