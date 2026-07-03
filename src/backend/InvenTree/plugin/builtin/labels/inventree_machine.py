@@ -187,11 +187,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
 
         def get_driver_options(self, fields):
             """Returns the selected machines serializer."""
-            _, driver = get_machine_and_driver(fields['machine'])
+            machine, driver = get_machine_and_driver(fields['machine'])
 
             if driver is None:
                 return None
 
             return driver.get_printing_options_serializer(
-                self.context['request'], context=self.context
+                self.context['request'], context=self.context, machine=machine
             )
