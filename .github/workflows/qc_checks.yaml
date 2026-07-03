@@ -4,7 +4,7 @@ name: QC
 
 on:
   push:
-    branches-ignore: ["l10*", "dependabot/*", "backport/*"]
+    branches-ignore: ["l10*", "dependabot/**", "backport/**"]
   pull_request:
     branches-ignore: ["l10*"]
 

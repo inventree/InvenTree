@@ -1,11 +1,13 @@
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import useTable from '@lib/hooks/UseTable';
 import {
   AddItemButton,
   ApiEndpoints,
   type ApiFormFieldSet,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
   UserRoles,
   apiUrl
 } from '@lib/index';

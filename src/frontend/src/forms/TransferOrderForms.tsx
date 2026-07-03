@@ -54,13 +54,12 @@ export function useTransferOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
           copy_lines: {},
-          // Transfer Orders don't have extra lines for now...
-          copy_extra_lines: { hidden: true, value: false }
+          copy_parameters: {}
         }
       };
     }

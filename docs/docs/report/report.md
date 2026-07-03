@@ -47,7 +47,7 @@ For example, rendering the name of a part (which is available in the particular 
 
 ## Merging Reports
 
-When rendering reports for multiple items, the default behaviour is that each item is rendered as a separate report. The chosen templeate is rendered multiple times, once for each item selected, and expects a single item in the context variable.
+When rendering reports for multiple items, the default behaviour is that each item is rendered as a separate report. The chosen template is rendered multiple times, once for each item selected, and expects a single item in the context variable.
 
 However, it is possible to merge multiple items into a single report document. This is achieved by enabling the `merge` attribute of the report template:
 
