@@ -292,10 +292,14 @@ export function SupplierPartTable({
     }
   });
 
+  const duplicateSupplierPartFields = useSupplierPartFields({
+    duplicateSupplierPartId: selectedSupplierPart?.pk
+  });
+
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     title: t`Add Supplier Part`,
-    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
+    fields: duplicateSupplierPartFields,
     initialData: {
       ...selectedSupplierPart,
       primary: false,
