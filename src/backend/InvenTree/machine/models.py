@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import common.models
+import InvenTree.fields
 from machine import registry
 from machine.machine_type import BaseMachineType
 
@@ -17,7 +18,9 @@ from machine.machine_type import BaseMachineType
 class MachineConfig(models.Model):
     """A Machine objects represents a physical machine."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = InvenTree.fields.InvenTreeUUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False
+    )
 
     name = models.CharField(
         unique=True,
