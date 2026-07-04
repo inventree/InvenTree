@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("part", "0150_part_maximum_stock"),
-        ("common", "0048_remove_notesimage_model_id_and_more")
+        ("common", "0049_remove_notesimage_model_id_and_more")
     ]
 
     operations = [

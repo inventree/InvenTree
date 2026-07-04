@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("build", "0059_build_tags"),
-        ("common", "0048_remove_notesimage_model_id_and_more")
+        ("common", "0049_remove_notesimage_model_id_and_more")
     ]
 
     operations = [
