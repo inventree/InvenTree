@@ -136,7 +136,7 @@ jobs:
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv
+          invoke dev.setup-test -iv -b multi-notes-migration # TODO: Fix this before merging
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
@@ -218,7 +218,7 @@ jobs:
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv
+          invoke dev.setup-test -iv -b multi-notes-migration # TODO: Fix this before merging
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
