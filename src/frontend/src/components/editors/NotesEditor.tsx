@@ -404,6 +404,7 @@ export default function NotesEditor({
                       {!isEditing && (
                         <Tooltip label={t`Edit note`}>
                           <ActionIcon
+                            aria-label='edit-note'
                             variant='transparent'
                             onClick={() => setIsEditing(true)}
                           >
@@ -417,6 +418,7 @@ export default function NotesEditor({
                       {isEditing && isDirty && (
                         <Tooltip label={t`Save note`}>
                           <ActionIcon
+                            aria-label='save-note'
                             variant='transparent'
                             color={'green'}
                             onClick={saveNote}
@@ -429,6 +431,7 @@ export default function NotesEditor({
                       {isEditing && isDirty && (
                         <Tooltip label={t`Reset note content`}>
                           <ActionIcon
+                            aria-label='reset-note'
                             variant='transparent'
                             onClick={reloadNote}
                             disabled={!canEdit || !isDirty}
@@ -440,6 +443,7 @@ export default function NotesEditor({
                       {isEditing && !isDirty && (
                         <Tooltip label={t`Finish editing`}>
                           <ActionIcon
+                            aria-label='finish-editing-note'
                             variant='transparent'
                             onClick={() => setIsEditing(false)}
                             color='green'

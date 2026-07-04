@@ -1031,23 +1031,61 @@ test('Parts - Test Results', async ({ browser }) => {
 });
 
 test('Parts - Notes', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
+  const page = await doCachedLogin(browser, { url: 'part/71/details' });
 
-  // Enable editing
-  await page.getByLabel('Enable Editing').waitFor();
+  await loadTab(page, 'Notes');
 
-  // Use keyboard shortcut to "edit" the part
-  await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-name', { exact: true }).waitFor();
-  await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('tree-field-category').waitFor();
+  // Expect to see notes rendered for this part
+  await page.getByRole('cell', { name: 'Red Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Green Widget' }).waitFor();
+  await page
+    .getByRole('link', { name: 'Read more in the documentation' })
+    .waitFor();
+
+  // Let's try to create a new note, but cancel before submitting
+  await page.getByRole('button', { name: 'Add Note' }).click();
+  await page.getByLabel('related-field-template').fill('instructions');
+  await page
+    .getByRole('option', { name: 'Manufacturing Instructions' })
+    .click();
+  await page.getByText('Manufacturing Instructions').waitFor();
+  await page.getByText('Manufacturing notes specific to this part').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  // Enable notes editing
-  await page.getByLabel('Enable Editing').click();
+  // Enable editing for this note
+  await page.getByRole('button', { name: 'edit-note' }).click();
 
-  await page.getByLabel('Save Notes').waitFor();
-  await page.getByLabel('Close Editor').waitFor();
+  await page.getByRole('button', { name: 'Bold' }).waitFor();
+  await page.getByRole('button', { name: 'Italic' }).waitFor();
+  await page.getByRole('button', { name: 'Underline' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 1' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 2' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 3' }).waitFor();
+
+  await page.getByRole('button', { name: 'finish-editing-note' }).click();
+
+  // Duplicate this part - should show options for copying notes
+  await page.getByRole('button', { name: 'action-menu-part-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-part-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-duplicate.copy_notes' })
+    .waitFor();
+
+  // Generate random IPN for copying
+  const ipn = `IPN-${Math.floor(Math.random() * 100000)}`;
+  await page.getByRole('textbox', { name: 'text-field-IPN' }).fill(ipn);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByText(`Part: ${ipn}`).waitFor();
+
+  // Check that the notes have been duplicated to this new part
+  await loadTab(page, 'Notes');
+  await page
+    .getByRole('heading', { name: 'On Widgets (And Variants Thereof)' })
+    .waitFor();
 });
 
 test('Parts - 404', async ({ browser }) => {
