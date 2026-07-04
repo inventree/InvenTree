@@ -13,6 +13,7 @@ from common.settings import get_global_setting
 
 def note_model_types():
     """Return a list of valid note model choices."""
+    import InvenTree.helpers_model
     import InvenTree.models
 
     return list(
@@ -30,6 +31,7 @@ def note_model_options():
 
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
+    import InvenTree.helpers_model
     import InvenTree.models
 
     return list(
@@ -59,6 +61,7 @@ def parameter_template_model_options():
 
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
+    import InvenTree.helpers_model
     import InvenTree.models
 
     return list(
