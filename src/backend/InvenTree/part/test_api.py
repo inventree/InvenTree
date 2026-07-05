@@ -2195,20 +2195,33 @@ class PartNotesTests(InvenTreeAPITestCase):
     roles = ['part.change', 'part.add']
 
     def test_long_notes(self):
-        """Test that very long notes field is rejected."""
-        # Ensure that we cannot upload a very long piece of text
-        url = reverse('api-part-detail', kwargs={'pk': 1})
+        """Test that a very long note content field is rejected.
 
-        response = self.patch(url, {'notes': 'abcde' * 10001}, expected_code=400)
+        Notes are no longer stored directly on the Part model - they are stored
+        as generic 'Note' instances, linked via a generic foreign key.
+        """
+        # Ensure that we cannot upload a very long piece of text
+        url = reverse('api-note-list')
+
+        response = self.post(
+            url,
+            {
+                'model_type': 'part',
+                'model_id': 1,
+                'title': 'Test Note',
+                'content': 'abcde' * 10001,
+            },
+            expected_code=400,
+        )
 
         self.assertIn(
             'Ensure this field has no more than 50000 characters',
-            str(response.data['notes']),
+            str(response.data['content']),
         )
 
     def test_multiline_formatting(self):
-        """Ensure that markdown formatting is retained."""
-        url = reverse('api-part-detail', kwargs={'pk': 1})
+        """Ensure that markdown formatting is retained in a note's content."""
+        url = reverse('api-note-list')
 
         notes = """
         ### Title
@@ -2221,13 +2234,22 @@ class PartNotesTests(InvenTreeAPITestCase):
 
         """
 
-        response = self.patch(url, {'notes': notes}, expected_code=200)
+        response = self.post(
+            url,
+            {
+                'model_type': 'part',
+                'model_id': 1,
+                'title': 'Test Note',
+                'content': notes,
+            },
+            expected_code=201,
+        )
 
         # Ensure that newline chars have not been removed
-        self.assertIn('\n', response.data['notes'])
+        self.assertIn('\n', response.data['content'])
 
-        # Entire notes field should match original value
-        self.assertEqual(response.data['notes'], notes.strip())
+        # Entire note content should match original value
+        self.assertEqual(response.data['content'], notes.strip())
 
 
 class PartPricingDetailTests(InvenTreeAPITestCase):
