@@ -25,6 +25,7 @@ from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.status_codes import (
     PurchaseOrderStatus,
+    RepairOrderStatus,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatus,
@@ -3015,6 +3016,176 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.run_output_test(
             reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
         )
+
+
+class RepairOrderTests(InvenTreeAPITestCase):
+    """Unit tests for RepairOrder API endpoints."""
+
+    fixtures = [
+        'category',
+        'company',
+        'repair_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+    roles = ['repair_order.view']
+
+    def test_options(self):
+        """Test the OPTIONS endpoint."""
+        self.assignRole('repair_order.add')
+        data = self.options(reverse('api-repair-order-list'), expected_code=200).data
+
+        self.assertEqual(data['name'], 'Repair Order List')
+
+        # Some checks on the 'reference' field
+        post = data['actions']['POST']
+        reference = post['reference']
+
+        self.assertEqual(reference['default'], 'RP-0007')
+        self.assertEqual(reference['label'], 'Reference')
+        self.assertEqual(reference['help_text'], 'Repair Order reference')
+        self.assertEqual(reference['required'], True)
+        self.assertEqual(reference['type'], 'string')
+
+    def test_list(self):
+        """Tests for the list endpoint."""
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Paginated query
+        data = self.get(
+            url,
+            {'limit': 1, 'ordering': 'reference', 'customer_detail': True},
+            expected_code=200,
+        ).data
+
+        self.assertEqual(data['count'], 6)
+        self.assertEqual(len(data['results']), 1)
+        result = data['results'][0]
+        self.assertEqual(result['reference'], 'RP-001')
+        self.assertEqual(result['customer_detail']['name'], 'A customer')
+
+        # Reverse ordering
+        data = self.get(url, {'ordering': '-reference'}, expected_code=200).data
+
+        self.assertEqual(data[0]['reference'], 'RP-006')
+
+        # Filter by customer
+        for cmp_id in [4, 5]:
+            data = self.get(url, {'customer': cmp_id}, expected_code=200).data
+
+            self.assertEqual(len(data), 3)
+
+            for result in data:
+                self.assertEqual(result['customer'], cmp_id)
+
+        # Filter by status
+        data = self.get(
+            url, {'status': RepairOrderStatus.IN_PROGRESS.value}, expected_code=200
+        ).data
+
+        self.assertEqual(len(data), 2)
+
+        for result in data:
+            self.assertEqual(result['status'], 20)
+
+    def test_create(self):
+        """Test creation of RepairOrder via the API."""
+        url = reverse('api-repair-order-list')
+
+        # Do not have required permissions yet
+        self.post(
+            url, {'customer': 1, 'description': 'a repair order'}, expected_code=403
+        )
+
+        self.assignRole('repair_order.add')
+
+        data = self.post(
+            url,
+            {
+                'customer': 4,
+                'customer_reference': 'cr',
+                'description': 'a repair order',
+            },
+            expected_code=201,
+        ).data
+
+        # Reference automatically generated
+        self.assertEqual(data['reference'], 'RP-0007')
+        self.assertEqual(data['customer_reference'], 'cr')
+
+    def test_detail(self):
+        """Test that we can view and update a RepairOrder via the API."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': 1})
+
+        # Test detail endpoint
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['reference'], 'RP-001')
+
+        # Attempt to update, incorrect permissions
+        self.patch(
+            url, {'customer_reference': 'My customer reference'}, expected_code=403
+        )
+
+        self.assignRole('repair_order.change')
+
+        self.patch(url, {'customer_reference': 'customer ref'}, expected_code=200)
+
+        rp = models.RepairOrder.objects.get(pk=1)
+        self.assertEqual(rp.customer_reference, 'customer ref')
+
+    def test_state_transitions(self):
+        """Test the state transition endpoints for a RepairOrder."""
+        # Issue: PENDING -> IN_PROGRESS
+        order = models.RepairOrder.objects.get(pk=1)
+        self.assertEqual(order.status, RepairOrderStatus.PENDING)
+        self.assertIsNone(order.issue_date)
+
+        url = reverse('api-repair-order-issue', kwargs={'pk': 1})
+
+        # POST without required permissions
+        self.post(url, expected_code=403)
+
+        self.assignRole('repair_order.add')
+
+        self.post(url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.IN_PROGRESS)
+        self.assertIsNotNone(order.issue_date)
+
+        # Hold: IN_PROGRESS -> ON_HOLD
+        self.post(reverse('api-repair-order-hold', kwargs={'pk': 1}), expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.ON_HOLD)
+
+        # Issue again: ON_HOLD -> IN_PROGRESS
+        self.post(url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.IN_PROGRESS)
+
+        # Complete: IN_PROGRESS -> COMPLETE
+        self.post(
+            reverse('api-repair-order-complete', kwargs={'pk': 1}), expected_code=201
+        )
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.COMPLETE)
+        self.assertIsNotNone(order.complete_date)
+
+        # Cancel a different (still open) order
+        cancel_order = models.RepairOrder.objects.get(pk=6)
+        self.assertEqual(cancel_order.status, RepairOrderStatus.PENDING)
+
+        self.post(
+            reverse('api-repair-order-cancel', kwargs={'pk': 6}), expected_code=201
+        )
+        cancel_order.refresh_from_db()
+        self.assertEqual(cancel_order.status, RepairOrderStatus.CANCELLED)
 
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):

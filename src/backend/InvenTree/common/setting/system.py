@@ -889,6 +889,28 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPAIRORDER_REFERENCE_PATTERN': {
+        'name': _('Repair Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Repair Order reference field'
+        ),
+        'default': 'RP-{ref:04d}',
+        'validator': order.validators.validate_repair_order_reference_pattern,
+    },
+    'REPAIRORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
+    'REPAIRORDER_EDIT_COMPLETED_ORDERS': {
+        'name': _('Edit Completed Repair Orders'),
+        'description': _(
+            'Allow editing of repair orders after they have been completed'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_REFERENCE_PATTERN': {
         'name': _('Sales Order Reference Pattern'),
         'description': _('Required pattern for generating Sales Order reference field'),
