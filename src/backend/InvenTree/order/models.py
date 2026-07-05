@@ -47,6 +47,7 @@ from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
 from order.events import (
     PurchaseOrderEvents,
+    RepairOrderEvents,
     ReturnOrderEvents,
     SalesOrderEvents,
     TransferOrderEvents,
@@ -54,6 +55,8 @@ from order.events import (
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     ReturnOrderStatusGroups,
@@ -269,6 +272,28 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     extra_lines: report.mixins.QuerySet['ReturnOrderExtraLine']
     lines: report.mixins.QuerySet['ReturnOrderLineItem']
     order: 'ReturnOrder'
+    customer: Optional[Company]
+
+
+class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
+    """Context for the repair order model.
+
+    Attributes:
+        description: The description field of the RepairOrder
+        reference: The reference field of the RepairOrder
+        title: The title (string representation) of the RepairOrder
+        extra_lines: Query set of all extra lines associated with the RepairOrder
+        lines: Query set of all line items associated with the RepairOrder
+        order: The RepairOrder instance itself
+        customer: The customer object associated with the RepairOrder
+    """
+
+    description: str
+    reference: str
+    title: str
+    extra_lines: report.mixins.QuerySet['RepairOrderExtraLine']
+    lines: report.mixins.QuerySet['RepairOrderLineItem']
+    order: 'RepairOrder'
     customer: Optional[Company]
 
 
@@ -3348,6 +3373,346 @@ class ReturnOrderExtraLine(OrderExtraLine):
         related_name='extra_lines',
         verbose_name=_('Order'),
         help_text=_('Return Order'),
+    )
+
+
+class RepairOrder(TotalPriceMixin, Order):
+    """A RepairOrder represents a customer's item which is to be repaired.
+
+    Attributes:
+        customer: Reference to the customer
+        status: The status of the order (refer to status_codes.RepairOrderStatus)
+    """
+
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'REPAIRORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = RepairOrderStatus
+    UNLOCK_SETTING = 'REPAIRORDER_EDIT_COMPLETED_ORDERS'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order')
+
+    def report_context(self) -> RepairOrderReportContext:
+        """Generate report context data for this RepairOrder."""
+        repair_ctx = super().report_context()
+
+        repair_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return repair_ctx
+
+    def get_absolute_url(self):
+        """Get the 'web' URL for this order."""
+        return pui_url(f'/sales/repair-order/{self.pk}')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrder model."""
+        return reverse('api-repair-order-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the RepairOrderStatus class."""
+        return RepairOrderStatusGroups
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Return default values for this model when issuing an API OPTIONS request."""
+        defaults = {
+            'reference': order.validators.generate_next_repair_order_reference()
+        }
+
+        return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'RP'
+
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this RepairOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        for line in self.lines.all():
+            if line.item and line.item.part:
+                # Add the part to the list of subscribed users
+                for user in line.item.part.get_subscribers():
+                    subscribed_users.add(user)
+
+        return list(subscribed_users)
+
+    def __str__(self):
+        """Render a string representation of this RepairOrder."""
+        return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Repair Order reference'),
+        default=order.validators.generate_next_repair_order_reference,
+        validators=[order.validators.validate_repair_order_reference],
+    )
+
+    customer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='repair_orders',
+        verbose_name=_('Customer'),
+        help_text=_('Company for which items are being repaired'),
+    )
+
+    @property
+    def company(self):
+        """Accessor helper for Order base class."""
+        return self.customer
+
+    status = InvenTreeCustomStatusModelField(
+        default=RepairOrderStatus.PENDING.value,
+        choices=RepairOrderStatus.items(),
+        status_class=RepairOrderStatus,
+        verbose_name=_('Status'),
+        help_text=_('Repair order status'),
+    )
+
+    customer_reference = models.CharField(
+        max_length=64,
+        blank=True,
+        verbose_name=_('Customer Reference '),
+        help_text=_('Customer order reference code'),
+    )
+
+    complete_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed'),
+    )
+
+    # region state changes
+    @property
+    def is_pending(self):
+        """Return True if this order is pending."""
+        return self.status == RepairOrderStatus.PENDING
+
+    @property
+    def is_open(self):
+        """Return True if this order is outstanding."""
+        return self.status in RepairOrderStatusGroups.OPEN
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            RepairOrderStatus.PENDING.value,
+            RepairOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as 'on hold' (if allowed)."""
+        if self.can_hold:
+            self.status = RepairOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(RepairOrderEvents.HOLD, id=self.pk)
+
+    @property
+    def can_cancel(self):
+        """Return True if this order can be cancelled."""
+        return self.status in RepairOrderStatusGroups.OPEN
+
+    def _action_cancel(self, *args, **kwargs):
+        """Cancel this RepairOrder (if not already cancelled)."""
+        if self.can_cancel:
+            self.status = RepairOrderStatus.CANCELLED.value
+            self.save()
+
+            trigger_event(RepairOrderEvents.CANCELLED, id=self.pk)
+
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                RepairOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
+            )
+
+    def _action_complete(self, *args, **kwargs):
+        """Complete this RepairOrder (if not already completed)."""
+        if self.status == RepairOrderStatus.IN_PROGRESS.value:
+            self.status = RepairOrderStatus.COMPLETE.value
+            self.complete_date = InvenTree.helpers.current_date()
+            self.save()
+
+            trigger_event(RepairOrderEvents.COMPLETED, id=self.pk)
+
+    def place_order(self):
+        """Deprecated version of 'issue_order."""
+        self.issue_order()
+
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            RepairOrderStatus.PENDING.value,
+            RepairOrderStatus.ON_HOLD.value,
+        ]
+
+    def _action_place(self, *args, **kwargs):
+        """Issue this RepairOrder (if currently pending)."""
+        if self.can_issue:
+            self.status = RepairOrderStatus.IN_PROGRESS.value
+            self.issue_date = InvenTree.helpers.current_date()
+            self.save()
+
+            trigger_event(RepairOrderEvents.ISSUED, id=self.pk)
+
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                RepairOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to IN_PROGRESS status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.IN_PROGRESS.value, self, self._action_place
+        )
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition to COMPLETE status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.COMPLETE.value, self, self._action_complete
+        )
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.CANCELLED.value, self, self._action_cancel
+        )
+
+    # endregion
+
+
+class RepairOrderLineItem(StatusCodeMixin, OrderLineItem):
+    """Model for a single LineItem in a RepairOrder."""
+
+    STATUS_CLASS = ReturnOrderLineStatus
+    STATUS_FIELD = 'outcome'
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Repair Order Line Item')
+        unique_together = [('order', 'item')]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model."""
+        return reverse('api-repair-order-line-list')
+
+    def clean(self):
+        """Perform extra validation steps for the RepairOrderLineItem model."""
+        super().clean()
+
+        if not self.item:
+            raise ValidationError({'item': _('Stock item must be specified')})
+
+        if self.quantity > self.item.quantity:
+            raise ValidationError({
+                'quantity': _('Repair quantity exceeds stock quantity')
+            })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Repair quantity must be greater than zero')
+            })
+
+        if self.item.serialized and self.quantity != 1:
+            raise ValidationError({
+                'quantity': _('Invalid quantity for serialized stock item')
+            })
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Repair Order'),
+    )
+
+    item = models.ForeignKey(
+        stock.models.StockItem,
+        on_delete=models.CASCADE,
+        related_name='repair_order_lines',
+        verbose_name=_('Item'),
+        help_text=_('Select item to repair for customer'),
+    )
+
+    quantity = models.DecimalField(
+        verbose_name=('Quantity'),
+        help_text=('Quantity to repair'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
+    )
+
+    outcome = InvenTreeCustomStatusModelField(
+        default=ReturnOrderLineStatus.PENDING.value,
+        choices=ReturnOrderLineStatus.items(),
+        status_class=ReturnOrderLineStatus,
+        verbose_name=_('Outcome'),
+        help_text=_('Outcome for this line item'),
+    )
+
+    price = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        verbose_name=_('Price'),
+        help_text=_('Cost associated with repair for this line item'),
+    )
+
+
+class RepairOrderExtraLine(OrderExtraLine):
+    """Model for a single ExtraLine in a RepairOrder."""
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Repair Order Extra Line')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderExtraLine model."""
+        return reverse('api-repair-order-extra-line-list')
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='extra_lines',
+        verbose_name=_('Order'),
+        help_text=_('Repair Order'),
     )
 
 

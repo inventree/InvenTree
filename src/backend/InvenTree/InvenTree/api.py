@@ -757,6 +757,7 @@ class APISearchView(GenericAPIView):
             'partcategory': part.api.CategoryList,
             'purchaseorder': order.api.PurchaseOrderList,
             'returnorder': order.api.ReturnOrderList,
+            'repairorder': order.api.RepairOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,
             'stockitem': stock.api.StockList,

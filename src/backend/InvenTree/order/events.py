@@ -39,6 +39,15 @@ class ReturnOrderEvents(BaseEventEnum):
     HOLD = 'returnorder.hold'
 
 
+class RepairOrderEvents(BaseEventEnum):
+    """Event enumeration for the Repair models."""
+
+    ISSUED = 'repairorder.issued'
+    COMPLETED = 'repairorder.completed'
+    CANCELLED = 'repairorder.cancelled'
+    HOLD = 'repairorder.hold'
+
+
 class TransferOrderEvents(BaseEventEnum):
     """Event enumeration for the PurchaseOrder models."""
 
