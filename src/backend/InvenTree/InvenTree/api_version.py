@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 516
 
 INVENTREE_API_TEXT = """
 
-v516 -> 2026-07-05 : https://github.com/inventree/InvenTree/pull/XXXXX
+v516 -> 2026-07-05 : https://github.com/inventree/InvenTree/pull/12303
     - Adds RepairOrder model and API endpoints
     - Adds RepairOrderStatus status codes
 
