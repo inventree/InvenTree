@@ -1048,6 +1048,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
 
+        # Map of tree_id -> note text, for items awaiting a Note once they have a pk
+        pending_notes: dict[int, str] = {}
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1139,6 +1142,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             else:
                 purchase_price = None
 
+            # Note text supplied for this line - attached as a Note once the item has a pk
+            line_note = item.get('note', '') or item.get('notes', '')
+
             # Construct dataset for creating a new StockItem instances
             stock_data = {
                 'part': supplier_part.part,
@@ -1149,7 +1155,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
                 'expiry_date': item.get('expiry_date', None),
-                'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
 
@@ -1206,6 +1211,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     item.validate_batch_code()
                     # run validation for serialized items plugin.validate_model_instance
                     item.run_plugin_validation()
+                    if line_note:
+                        pending_notes[item.tree_id] = line_note
                     stock_items.append(item)
 
             else:
@@ -1218,6 +1225,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     lft=1,
                     rght=2,
                 )
+
+                if line_note:
+                    pending_notes[new_item.tree_id] = line_note
 
                 new_item.set_status(status, custom_values=custom_stock_status_values)
 
@@ -1247,6 +1257,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
             ).prefetch_related('location')
 
             stock_items.extend(created_items)
+
+        # Attach any per-line notes to their corresponding stock item
+        if pending_notes:
+            from django.contrib.contenttypes.models import ContentType
+
+            content_type = ContentType.objects.get_for_model(stock.models.StockItem)
+
+            for item in stock_items:
+                if note := pending_notes.get(item.tree_id):
+                    common_models.Note.objects.create(
+                        model_type=content_type, model_id=item.pk, content=note
+                    )
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
