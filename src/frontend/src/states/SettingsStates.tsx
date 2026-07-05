@@ -15,15 +15,28 @@ import type {
 import { api } from '../App';
 import { useUserState } from './UserState';
 
+const createDefaultSettingsSetup = (get: () => SettingsStateProps) => ({
+  settings: [] as Setting[],
+  lookup: {} as SettingsLookup,
+  loaded: false,
+  isError: false,
+  getSetting: (key: string, default_value?: string) => {
+    return get().lookup[key] ?? default_value ?? '';
+  },
+  isSet: (key: string, default_value?: boolean) => {
+    const value = get().lookup[key] ?? default_value ?? 'false';
+    return isTrue(value);
+  },
+  getSettingLength: () => {
+    return Object.keys(get().lookup).length;
+  }
+});
+
 /**
  * State management for global (server side) settings
  */
 export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
-    settings: [],
-    loaded: false,
-    isError: false,
-    lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
       let success = true;
@@ -59,16 +72,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    },
-    getSettingLength: () => {
-      return Object.keys(get().lookup).length;
-    }
+    ...createDefaultSettingsSetup(get)
   })
 );
 
@@ -76,10 +80,6 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
  * State management for user (server side) settings
  */
 export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
-  settings: [],
-  lookup: {},
-  loaded: false,
-  isError: false,
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
     let success = true;
@@ -111,16 +111,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
 
     return success;
   },
-  getSetting: (key: string, default_value?: string) => {
-    return get().lookup[key] ?? default_value ?? '';
-  },
-  isSet: (key: string, default_value?: boolean) => {
-    const value = get().lookup[key] ?? default_value ?? 'false';
-    return isTrue(value);
-  },
-  getSettingLength: () => {
-    return Object.keys(get().lookup).length;
-  }
+  ...createDefaultSettingsSetup(get)
 }));
 
 /**
@@ -138,11 +129,7 @@ export const createPluginSettingsState = ({
   const pathParams: PathParams = { plugin };
 
   return createStore<SettingsStateProps>()((set, get) => ({
-    settings: [],
-    lookup: {},
-    loaded: false,
-    isError: false,
-    endpoint: endpoint,
+    endpoint,
     pathParams,
     fetchSettings: async () => {
       let success = true;
@@ -185,16 +172,7 @@ export const createPluginSettingsState = ({
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    },
-    getSettingLength: () => {
-      return Object.keys(get().lookup).length;
-    }
+    ...createDefaultSettingsSetup(get)
   }));
 };
 
@@ -213,10 +191,6 @@ export const createMachineSettingsState = ({
   const pathParams: PathParams = { machine, config_type: configType };
 
   return createStore<SettingsStateProps>((set, get) => ({
-    settings: [],
-    lookup: {},
-    loaded: false,
-    isError: false,
     endpoint: ApiEndpoints.machine_setting_detail,
     pathParams,
     fetchSettings: async () => {
@@ -249,16 +223,7 @@ export const createMachineSettingsState = ({
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    },
-    getSettingLength: () => {
-      return Object.keys(get().lookup).length;
-    }
+    ...createDefaultSettingsSetup(get)
   }));
 };
 
