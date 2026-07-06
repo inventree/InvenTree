@@ -6,8 +6,8 @@ import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { shortenString } from '@lib/functions/String';
-import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
+import { TableHoverCard } from '../tables/TableHoverCard';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**

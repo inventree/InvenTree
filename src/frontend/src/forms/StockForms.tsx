@@ -63,6 +63,7 @@ import {
   getStatusCodeOptions
 } from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
+import { StatusFilterOptions } from '../components/tables/Filter';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -76,7 +77,6 @@ import {
 } from '../hooks/UseGenerator';
 import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { StatusFilterOptions } from '../tables/Filter';
 import { TagsField } from './CommonFields';
 
 /**

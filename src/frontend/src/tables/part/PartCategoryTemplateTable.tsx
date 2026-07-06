@@ -16,6 +16,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -23,7 +24,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PartCategoryTemplateTable({
   categoryId

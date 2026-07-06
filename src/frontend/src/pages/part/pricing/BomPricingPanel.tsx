@@ -17,9 +17,12 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import {
+  DateColumn,
+  PartColumn
+} from '../../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
-import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
