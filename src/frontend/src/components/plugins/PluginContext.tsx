@@ -103,8 +103,8 @@ export const useInvenTreeContext = () => {
         sessionId: () => getGlobalImporterState().sessionId
       },
       preview: {
-        open: (modelType, id?, instance?) =>
-          openGlobalPreview(modelType, id, instance),
+        open: (modelType, id?, instance?, onClose?) =>
+          openGlobalPreview(modelType, id, instance, undefined, onClose),
         close: () => closeGlobalPreview(),
         isOpen: () => getGlobalPreviewState().isOpen
       },
