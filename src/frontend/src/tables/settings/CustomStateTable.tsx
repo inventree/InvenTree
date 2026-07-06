@@ -19,6 +19,7 @@ import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../../components/render/StatusRenderer';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { statusColorMap } from '../../defaults/backendMappings';
 import { useCustomStateFields } from '../../forms/CommonForms';
 import {
@@ -28,7 +29,6 @@ import {
 } from '../../hooks/UseForm';
 import { useGlobalStatusState } from '../../states/GlobalStatusState';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom states

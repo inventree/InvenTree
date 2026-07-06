@@ -23,6 +23,8 @@ import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useParameterFields } from '../../forms/CommonForms';
@@ -32,8 +34,6 @@ import {
 } from '../../hooks/UseForm';
 import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import {
   PARAMETER_FILTER_OPERATORS,
   ParameterFilter

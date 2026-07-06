@@ -33,12 +33,12 @@ import {
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useApi } from '../contexts/ApiContext';
-import { extractAvailableFields } from '../functions/forms';
-import { showApiErrorMessage } from '../functions/notifications';
-import { useLocalState } from '../states/LocalState';
-import { usePreviewDrawerState } from '../states/PreviewDrawerState';
-import { useUserSettingsState } from '../states/SettingsStates';
+import { useApi } from '../../contexts/ApiContext';
+import { extractAvailableFields } from '../../functions/forms';
+import { showApiErrorMessage } from '../../functions/notifications';
+import { useLocalState } from '../../states/LocalState';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 

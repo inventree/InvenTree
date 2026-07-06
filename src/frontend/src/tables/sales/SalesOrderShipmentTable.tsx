@@ -23,6 +23,14 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import {
+  CompanyColumn,
+  DateColumn,
+  LinkColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
   useSalesOrderShipmentFields,
@@ -34,14 +42,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  CompanyColumn,
-  DateColumn,
-  LinkColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
   showOrderInfo = false,

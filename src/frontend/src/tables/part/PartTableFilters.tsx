@@ -1,7 +1,7 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
-import { TagsFilter } from '../Filter';
+import { TagsFilter } from '../../components/tables/Filter';
 
 /**
  * Construct a set of filters for the part table

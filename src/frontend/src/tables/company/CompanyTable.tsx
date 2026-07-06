@@ -11,6 +11,13 @@ import { apiUrl } from '@lib/functions/Api';
 import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -19,13 +26,6 @@ import {
 import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CompanyColumn,
-  DescriptionColumn
-} from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * A table which displays a list of company records,
