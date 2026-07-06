@@ -50,6 +50,7 @@ interface PricingOverviewEntry {
   min_currency?: string | null | undefined;
   max_currency?: string | null | undefined;
   currency?: string | null | undefined;
+  hide_on_chart?: boolean;
 }
 
 export default function PricingOverviewPanel({
@@ -162,10 +163,12 @@ export default function PricingOverviewPanel({
           if (record?.min_value === null || record?.min_value === undefined) {
             return '-';
           }
-          return formatCurrency(record?.min_value, {
-            currency:
-              record.min_currency ?? record.currency ?? pricing?.currency
-          });
+          return (
+            formatCurrency(record?.min_value, {
+              currency:
+                record.min_currency ?? record.currency ?? pricing?.currency
+            }) || '-'
+          );
         }
       },
       {
@@ -176,10 +179,12 @@ export default function PricingOverviewPanel({
             return '-';
           }
 
-          return formatCurrency(record?.max_value, {
-            currency:
-              record.max_currency ?? record.currency ?? pricing?.currency
-          });
+          return (
+            formatCurrency(record?.max_value, {
+              currency:
+                record.max_currency ?? record.currency ?? pricing?.currency
+            }) || '-'
+          );
         }
       }
     ];
@@ -187,6 +192,14 @@ export default function PricingOverviewPanel({
 
   const overviewData: PricingOverviewEntry[] = useMemo(() => {
     return [
+      {
+        name: panelOptions.overall,
+        title: t`Overall Pricing`,
+        icon: <IconReportAnalytics />,
+        min_value: Number.parseFloat(pricing?.overall_min),
+        max_value: Number.parseFloat(pricing?.overall_max),
+        valid: pricing?.overall_min != null || pricing?.overall_max != null
+      },
       {
         name: panelOptions.override,
         title: t`Override Pricing`,
@@ -196,15 +209,8 @@ export default function PricingOverviewPanel({
         min_currency: pricing?.override_min_currency ?? pricing?.currency,
         max_currency: pricing?.override_max_currency ?? pricing?.currency,
         currency: pricing?.currency,
-        valid: pricing?.override_min != null && pricing?.override_max != null
-      },
-      {
-        name: panelOptions.overall,
-        title: t`Overall Pricing`,
-        icon: <IconReportAnalytics />,
-        min_value: Number.parseFloat(pricing?.overall_min),
-        max_value: Number.parseFloat(pricing?.overall_max),
-        valid: pricing?.overall_min != null && pricing?.overall_max != null
+        valid: pricing?.override_min != null || pricing?.override_max != null,
+        hide_on_chart: true
       },
       {
         name: panelOptions.internal,
@@ -213,7 +219,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.internal_cost_min),
         max_value: Number.parseFloat(pricing?.internal_cost_max),
         valid:
-          pricing?.internal_cost_min != null &&
+          pricing?.internal_cost_min != null ||
           pricing?.internal_cost_max != null
       },
       {
@@ -222,7 +228,7 @@ export default function PricingOverviewPanel({
         icon: <IconChartDonut />,
         min_value: Number.parseFloat(pricing?.bom_cost_min),
         max_value: Number.parseFloat(pricing?.bom_cost_max),
-        valid: pricing?.bom_cost_min != null && pricing?.bom_cost_max != null
+        valid: pricing?.bom_cost_min != null || pricing?.bom_cost_max != null
       },
       {
         name: panelOptions.purchase,
@@ -231,7 +237,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.purchase_cost_min),
         max_value: Number.parseFloat(pricing?.purchase_cost_max),
         valid:
-          pricing?.purchase_cost_min != null &&
+          pricing?.purchase_cost_min != null ||
           pricing?.purchase_cost_max != null
       },
       {
@@ -241,7 +247,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.supplier_price_min),
         max_value: Number.parseFloat(pricing?.supplier_price_max),
         valid:
-          pricing?.supplier_price_min != null &&
+          pricing?.supplier_price_min != null ||
           pricing?.supplier_price_max != null
       },
       {
@@ -251,7 +257,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.variant_cost_min),
         max_value: Number.parseFloat(pricing?.variant_cost_max),
         valid:
-          pricing?.variant_cost_min != null && pricing?.variant_cost_max != null
+          pricing?.variant_cost_min != null || pricing?.variant_cost_max != null
       },
       {
         name: panelOptions.sale_pricing,
@@ -260,7 +266,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.sale_price_min),
         max_value: Number.parseFloat(pricing?.sale_price_max),
         valid:
-          pricing?.sale_price_min != null && pricing?.sale_price_max != null
+          pricing?.sale_price_min != null || pricing?.sale_price_max != null
       },
       {
         name: panelOptions.sale_history,
@@ -269,7 +275,7 @@ export default function PricingOverviewPanel({
         min_value: Number.parseFloat(pricing?.sale_history_min),
         max_value: Number.parseFloat(pricing?.sale_history_max),
         valid:
-          pricing?.sale_history_min != null && pricing?.sale_history_max != null
+          pricing?.sale_history_min != null || pricing?.sale_history_max != null
       }
     ].filter((entry) => {
       return entry.valid;
@@ -328,7 +334,7 @@ export default function PricingOverviewPanel({
           <BarChart
             aria-label='pricing-overview-chart'
             dataKey='title'
-            data={overviewData}
+            data={overviewData.filter((entry) => !entry.hide_on_chart)}
             title={t`Pricing Overview`}
             series={[
               { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
