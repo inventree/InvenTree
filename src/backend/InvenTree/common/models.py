@@ -10,6 +10,7 @@ import hmac
 import json
 import math
 import os
+import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -3128,6 +3129,12 @@ class Note(
                     'width',
                     'height',
                 },
+            )
+
+            # nh3 does not recognise legacy IE-only CSS expression() calls as
+            # unsafe, so they survive style attribute filtering - strip them explicitly
+            self.content = re.sub(
+                r'expression\s*\(', '', self.content, flags=re.IGNORECASE
             )
 
     def check_save(self):
