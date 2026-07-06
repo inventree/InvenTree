@@ -224,7 +224,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ],
     },
     'ENABLE_PREVIEW_PANEL': {
-        'name': _('Enable Preview Panel'),
+        'name': _('Table Preview Panel'),
         'description': _('Display a preview panel when selecting items in tables'),
         'default': True,
         'validator': bool,

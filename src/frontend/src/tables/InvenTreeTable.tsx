@@ -106,6 +106,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   const userSettings = useUserSettingsState();
 
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
+
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
   }, [userSettings]);
@@ -746,7 +750,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           // If a model type is provided, navigate to the detail view for that model
           const url = getDetailUrl(tableProps.modelType, pk);
 
-          if (eventModified(event as any)) {
+          if (!showPreviewPanel || eventModified(event as any)) {
             navigateToLink(url, navigate, event);
           } else {
             showRowPreview(pk);
@@ -754,7 +758,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         }
       }
     },
-    [props.onRowClick, props.onCellClick]
+    [props.onRowClick, props.onCellClick, showPreviewPanel]
   );
 
   const supportsContextMenu = useMemo(() => {
