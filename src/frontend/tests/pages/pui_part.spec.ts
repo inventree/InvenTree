@@ -14,6 +14,9 @@ import {
   showParametricView,
   showTableView
 } from '../helpers';
+
+import { adminuser } from '../defaults';
+
 import { doCachedLogin } from '../login';
 import { setPluginState, setSettingState } from '../settings';
 
@@ -672,7 +675,10 @@ test('Parts - Allocations', async ({ browser }) => {
 
 test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Part with no history
-  const page = await doCachedLogin(browser, { url: 'part/82/pricing' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/82/pricing',
+    user: adminuser
+  });
 
   await page.getByText('Small plastic enclosure, black').waitFor();
   await loadTab(page, 'Part Pricing');
@@ -709,6 +715,18 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
+  // View part details via detail drawer
+  await page
+    .getByRole('cell', { name: 'Thumbnail Blue Paint' })
+    .first()
+    .click();
+  await page.getByRole('link', { name: 'details-part-' }).first().waitFor();
+  await page.getByText('Allocated to Build Orders').waitFor();
+  await page.getByText('440[litres]').waitFor();
+
+  // Close the drawer with the escape key
+  await page.keyboard.press('Escape');
+
   // We expect some pricing data to be displayed
   await page
     .getByLabel('BOM Pricing')
@@ -722,6 +740,10 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
     .getByRole('table')
     .getByText('Wood Screw')
     .click();
+
+  // We need to navigate via the preview drawer
+  await page.getByRole('link', { name: 'details-part-98' }).click();
+
   await page.waitForURL('**/part/98/**');
 });
 
