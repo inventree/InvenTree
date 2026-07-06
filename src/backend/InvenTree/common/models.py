@@ -1388,21 +1388,27 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
-    def convert_to(self, currency_code):
+    def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 
-        Args:
+        Arguments:
             currency_code: The currency code to convert to (e.g "USD" or "AUD")
+            raise_error: If True, raise an error if the conversion fails. If False, return None.
         """
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
+            InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
-            return self.price.amount
+
+            if raise_error:
+                raise
+
+            return None
 
         return converted.amount
 
