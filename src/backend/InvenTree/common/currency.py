@@ -162,6 +162,7 @@ def currency_exchange_plugins() -> Optional[list]:
 def get_price(
     instance,
     quantity,
+    moq: bool = True,
     multiples: bool = True,
     currency: Optional[str] = None,
     break_name: str = 'price_breaks',
@@ -171,6 +172,7 @@ def get_price(
     Arguments:
         instance: The model instance which contains the price break information
         quantity: The quantity to calculate the price for
+        moq: If True, then minimum order quantity will be observed (CURRENTLY NOT IMPLEMENTED)
         multiples: If True, then order multiples will be observed
         currency: The currency code to use for the calculation (default is None)
         break_name: The name of the price break field on the instance (default is 'price_breaks')
