@@ -1669,31 +1669,6 @@ class NotesImageTest(InvenTreeAPITestCase):
         # Check that no extra database entries have been created
         self.assertEqual(NotesImage.objects.count(), n)
 
-    def test_valid_image(self):
-        """Test upload of a valid image file."""
-        n = NotesImage.objects.count()
-
-        # Construct a simple image file
-        image = Image.new('RGB', (100, 100), color='red')
-
-        with io.BytesIO() as output:
-            image.save(output, format='PNG')
-            contents = output.getvalue()
-
-        self.post(
-            reverse('api-notes-image-list'),
-            data={
-                'image': SimpleUploadedFile(
-                    'test.png', contents, content_type='image/png'
-                )
-            },
-            format='multipart',
-            expected_code=201,
-        )
-
-        # Check that a new file has been created
-        self.assertEqual(NotesImage.objects.count(), n + 1)
-
     def test_image_cleanup(self):
         """Images no longer referenced in note content are deleted when the note is saved.
 

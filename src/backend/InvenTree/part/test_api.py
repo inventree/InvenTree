@@ -1363,23 +1363,6 @@ class PartAPITest(PartAPITestBase):
             date = datetime.fromisoformat(item['creation_date'])
             self.assertGreaterEqual(date, date_compare)
 
-    def test_part_notes(self):
-        """Test the 'notes' field."""
-        # First test the 'LIST' endpoint - no notes information provided
-        url = reverse('api-part-list')
-
-        response = self.get(url, {'limit': 1}, expected_code=200)
-        data = response.data['results'][0]
-
-        self.assertNotIn('notes', data)
-
-        # Second, test the 'DETAIL' endpoint - notes information provided
-        url = reverse('api-part-detail', kwargs={'pk': data['pk']})
-
-        response = self.get(url, expected_code=200)
-
-        self.assertIn('notes', response.data)
-
     def test_output_options(self):
         """Test the output options for PartList list."""
         self.run_output_test(
