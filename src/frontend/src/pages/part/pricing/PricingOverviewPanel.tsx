@@ -340,7 +340,27 @@ export default function PricingOverviewPanel({
               { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
               { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
             ]}
-            valueFormatter={(value) =>
+            referenceLines={[
+              {
+                y: Number.parseFloat(pricing?.override_min),
+                color: 'orange',
+                label: t`Override Minimum`,
+                labelPosition: 'insideBottomLeft'
+              },
+              {
+                y: Number.parseFloat(pricing?.override_max),
+                color: 'orange',
+                label: t`Override Maximum`,
+                labelPosition: 'insideBottomRight'
+              }
+            ]}
+            xAxis={{ label: t`Pricing Category` }}
+            yAxis={{
+              label: t`Price`,
+              formatter: (value: any) =>
+                tooltipFormatter(value, pricing?.currency)
+            }}
+            valueFormatter={(value: any) =>
               tooltipFormatter(value, pricing?.currency)
             }
           />
