@@ -216,6 +216,10 @@ function partTableColumns(): TableColumn[] {
       accessor: 'virtual',
       defaultVisible: false
     }),
+    BooleanColumn({
+      accessor: 'consumable',
+      defaultVisible: false
+    }),
     LinkColumn({})
   ];
 }

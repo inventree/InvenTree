@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12295](https://github.com/inventree/InvenTree/pull/12295) adds "consumable" field to the Part model and API endpoints
 - [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
 
 ### Changed

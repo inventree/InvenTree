@@ -131,6 +131,7 @@ nav:
     - Parts: part/index.md
     - Creating Parts: part/create.md
     - Virtual Parts: part/virtual.md
+    - Consumable Parts: part/consumable.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Revisions: part/revision.md
