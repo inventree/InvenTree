@@ -87,6 +87,9 @@ A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered f
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
+### Consumable
+
+A *Consumable* part is one which is generally used up during a build or other process, rather than being tracked and allocated as a discrete item. Refer to the [consumable parts documentation](./consumable.md) for more information.
 
 ## Locked Parts
 

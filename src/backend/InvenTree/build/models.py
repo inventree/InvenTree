@@ -974,7 +974,9 @@ class Build(
         items_to_delete = []
 
         lines = self.untracked_line_items.all()
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
         lines = lines.annotate(allocated=annotate_allocated_quantity())
 
         for build_line in lines:
@@ -1254,13 +1256,16 @@ class Build(
             return allocations
 
         tracked_line_items = self.tracked_line_items.filter(
-            bom_item__consumable=False, bom_item__sub_part__virtual=False
+            part.models.BomItem.consumable_filter(
+                consumable=False, prefix='bom_item__'
+            ),
+            bom_item__sub_part__virtual=False,
         )
 
         for line_item in tracked_line_items:
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1384,7 +1389,7 @@ class Build(
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1504,7 +1509,9 @@ class Build(
         lines = self.build_lines.all()
 
         # Remove any 'consumable' line items
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         if tracked is True:
             lines = lines.filter(bom_item__sub_part__trackable=True)
@@ -1541,7 +1548,9 @@ class Build(
         we need to test all "trackable" BuildLine objects
         """
         lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         # Find any lines which have not been fully allocated
         for line in lines:
@@ -1565,7 +1574,9 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-        lines = self.build_lines.all().exclude(bom_item__consumable=True)
+        lines = self.build_lines.all().exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         lines = lines.prefetch_related('allocations')
 
@@ -1794,7 +1805,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     def is_fully_allocated(self) -> bool:
         """Return True if this BuildLine is fully allocated."""
-        if self.bom_item.consumable:
+        if self.bom_item.is_consumable:
             return True
 
         required = max(0, self.quantity - self.consumed)
