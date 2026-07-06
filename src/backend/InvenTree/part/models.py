@@ -2994,15 +2994,12 @@ class PartPricing(common.models.MetaMixin):
 
         try:
             self.update_overall_cost()
-        except Exception:
-            # If something has happened to the Part model, might throw an error
-            pass
-
-        try:
             super().save(*args, **kwargs)
         except Exception:
-            # This error may be thrown if there is already duplicate pricing data
-            pass
+            log_error('PartPricing.save')
+            logger.error(
+                "Could not save PartPricing for part '%s' to the database", self.part
+            )
 
     def update_bom_cost(self, save=True):
         """Recalculate BOM cost for the referenced Part instance.
