@@ -1065,9 +1065,6 @@ When a model has multiple notes and you want to render all of them, access the `
 {% endraw %}
 ```
 
-!!! tip "Ordering Notes"
-    Use the [`order_queryset`](#order_queryset) helper to control the order in which notes are rendered, for example `{% order_queryset part.notes.all 'title' as ordered_notes %}`.
-
 ## Rendering Markdown
 
 Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
