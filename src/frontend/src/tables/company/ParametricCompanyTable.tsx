@@ -4,7 +4,10 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { CompanyColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 
 export default function ParametricCompanyTable({
