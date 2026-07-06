@@ -444,10 +444,12 @@ export function useStockItemSerializeFields({
 
 function DisassemblyLineRow({
   props,
-  record
+  record,
+  serialized
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
+  serialized: boolean;
 }>) {
   // Number of assemblies being disassembled (top-level form field)
   const assemblies = useWatch({ name: 'quantity' });
@@ -486,15 +488,22 @@ function DisassemblyLineRow({
       </Table.Td>
       <Table.Td>{record.quantity}</Table.Td>
       <Table.Td style={{ whiteSpace: 'nowrap' }}>
-        <TableFieldQuantityInput
-          min={0}
-          value={props.item.quantity ?? ''}
-          onChange={(value) => {
-            setEdited(true);
-            props.changeFn(props.rowId, 'quantity', value);
-          }}
-          error={props.rowErrors?.quantity?.message}
-        />
+        {serialized ? (
+          // Quantity is fixed when disassembling a serialized stock item
+          <Text size='sm' aria-label='text-field-quantity'>
+            {formatDecimal(props.item.quantity)}
+          </Text>
+        ) : (
+          <TableFieldQuantityInput
+            min={0}
+            value={props.item.quantity ?? ''}
+            onChange={(value) => {
+              setEdited(true);
+              props.changeFn(props.rowId, 'quantity', value);
+            }}
+            error={props.rowErrors?.quantity?.message}
+          />
+        )}
       </Table.Td>
       <Table.Td style={{ whiteSpace: 'nowrap' }}>
         <NumberInput
@@ -642,9 +651,15 @@ export function useDisassembleStockItem({
     [bomItems]
   );
 
+  // A serialized stock item must be disassembled in its entirety
+  const serialized: boolean =
+    !!stockItem.serial && Number(stockItem.quantity) == 1;
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
-      quantity: {},
+      quantity: {
+        disabled: serialized
+      },
       location: {
         filters: {
           structural: false
@@ -671,7 +686,12 @@ export function useDisassembleStockItem({
           }
 
           return (
-            <DisassemblyLineRow props={row} record={record} key={row.rowId} />
+            <DisassemblyLineRow
+              props={row}
+              record={record}
+              serialized={serialized}
+              key={row.rowId}
+            />
           );
         },
         headers: [
@@ -684,7 +704,7 @@ export function useDisassembleStockItem({
       },
       notes: {}
     };
-  }, [bomItems, records, stockItem]);
+  }, [bomItems, records, stockItem, serialized]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_disassemble,
