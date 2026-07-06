@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 514
+INVENTREE_API_VERSION = 515
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v515 -> 2026-07-06 : https://github.com/inventree/InvenTree/pull/xxxx
+    - Adds new "disassemble" API endpoint for stock items
+    - Allows a stock item to be broken down into component parts, based on its Bill of Materials
 
 v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
     - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints

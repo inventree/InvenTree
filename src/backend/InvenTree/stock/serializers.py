@@ -945,6 +945,191 @@ class UninstallStockItemSerializer(serializers.Serializer):
         item.uninstall_into_location(location, request.user, note)
 
 
+class DisassemblyLineSerializer(serializers.Serializer):
+    """Serializer for a single component line in a stock disassembly operation."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'bom_item',
+            'quantity',
+            'location',
+            'purchase_price',
+            'purchase_price_currency',
+        ]
+
+    bom_item = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.BomItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('BOM Item'),
+        help_text=_('BOM line which defines the component part to break out'),
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=Decimal(0),
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Quantity of the component part to create'),
+    )
+
+    def validate_quantity(self, quantity):
+        """Validation for the 'quantity' field."""
+        if quantity <= 0:
+            raise ValidationError(_('Quantity must be greater than zero'))
+
+        return quantity
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Location'),
+        help_text=_('Destination location for the component items'),
+    )
+
+    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Purchase Price'),
+        required=False,
+        allow_null=True,
+        default=None,
+        help_text=_(
+            'Unit purchase price for the component items (leave blank for automatic cost allocation)'
+        ),
+    )
+
+    purchase_price_currency = InvenTreeCurrencySerializer(
+        required=False, help_text=_('Purchase price currency')
+    )
+
+
+class DisassembleStockItemSerializer(serializers.Serializer):
+    """DRF serializer class for disassembling a StockItem into component parts.
+
+    Note: The stock item being disassembled is provided via the serializer context
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'quantity', 'location', 'notes']
+
+    items = DisassemblyLineSerializer(many=True)
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=Decimal(0),
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Number of assemblies to disassemble'),
+    )
+
+    def validate_quantity(self, quantity):
+        """Validation for the 'quantity' field."""
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
+        if quantity <= 0:
+            raise ValidationError(_('Quantity must be greater than zero'))
+
+        if quantity > item.quantity:
+            raise ValidationError(
+                _('Quantity must not exceed available stock quantity')
+                + f' ({item.quantity})'
+            )
+
+        return quantity
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Location'),
+        help_text=_('Default destination location for the component items'),
+    )
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Optional note field'),
+    )
+
+    def validate(self, data):
+        """Validate the disassembly operation.
+
+        - The stock item must be "in stock"
+        - Each line must reference a valid BOM item for the part
+        - Each BOM item may only be referenced once
+        """
+        data = super().validate(data)
+
+        item = self.context.get('item')
+
+        if not item:
+            raise ValidationError(_('No stock item provided'))
+
+        if not item.in_stock:
+            raise ValidationError(_('Stock item is unavailable'))
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_('Line items must be provided'))
+
+        # The set of valid BOM items for this part
+        bom_items = item.part.get_bom_items()
+
+        bom_item_pks = set()
+
+        for line in items:
+            bom_item = line['bom_item']
+
+            if not bom_items.filter(pk=bom_item.pk).exists():
+                raise ValidationError(
+                    _('BOM item is not valid for the selected stock item')
+                )
+
+            if bom_item.pk in bom_item_pks:
+                raise ValidationError(_('Duplicate BOM items provided'))
+
+            bom_item_pks.add(bom_item.pk)
+
+        return data
+
+    def save(self) -> list[StockItem]:
+        """Disassemble the provided StockItem into its component parts.
+
+        Returns:
+            A list of StockItem objects created by the disassembly operation.
+        """
+        item = self.context['item']
+        request = self.context.get('request')
+
+        data = self.validated_data
+
+        try:
+            return item.disassemble(
+                data['quantity'],
+                data['items'],
+                request.user if request else None,
+                location=data.get('location', None),
+                notes=data.get('notes', ''),
+            )
+        except DjangoValidationError as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+
 class ConvertStockItemSerializer(serializers.Serializer):
     """DRF serializer class for converting a StockItem to a valid variant part."""
 

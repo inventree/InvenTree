@@ -2215,6 +2215,193 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(item.batch, 'NEW-BATCH-CODE')
 
 
+class StockItemDisassembleTest(StockAPITestCase):
+    """Series of API tests for the StockItem disassembly endpoint."""
+
+    def setUp(self):
+        """Create a stock item of an assembly part, ready for disassembly."""
+        super().setUp()
+
+        # Part 100 ("Bob") is an assembly with 4 BOM lines
+        self.assembly = part.models.Part.objects.get(pk=100)
+
+        self.item = StockItem.objects.create(
+            part=self.assembly,
+            quantity=10,
+            location=StockLocation.objects.get(pk=1),
+            purchase_price=Money(100, 'USD'),
+        )
+
+        self.url = reverse('api-stock-item-disassemble', kwargs={'pk': self.item.pk})
+
+    def test_validation(self):
+        """Test validation checks for the disassembly endpoint."""
+        # Empty request
+        response = self.post(self.url, {}, expected_code=400)
+
+        self.assertIn('This field is required', str(response.data['items']))
+        self.assertIn('This field is required', str(response.data['quantity']))
+
+        # No line items provided
+        response = self.post(self.url, {'items': [], 'quantity': 1}, expected_code=400)
+
+        self.assertIn('Line items must be provided', str(response.data))
+
+        # Quantity exceeds available stock
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 100},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Quantity must not exceed available stock quantity', str(response.data)
+        )
+
+        # BOM item which points to a different part (BomItem pk=5 -> part 1)
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 5, 'quantity': 1}], 'quantity': 1},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'BOM item is not valid for the selected stock item', str(response.data)
+        )
+
+        # Duplicated BOM items
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 10},
+                    {'bom_item': 1, 'quantity': 5},
+                ],
+                'quantity': 1,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Duplicate BOM items provided', str(response.data))
+
+    def test_disassemble(self):
+        """Test a valid disassembly operation, using a subset of the BOM lines."""
+        n = StockItem.objects.count()
+
+        # Disassemble 4 assemblies, but only break out 2 of the 4 BOM lines
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 40},
+                    {'bom_item': 4, 'quantity': 12},
+                ],
+                'quantity': 4,
+                'notes': 'Breaking apart',
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(StockItem.objects.count(), n + 2)
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 6)
+
+        items = {entry['part']: entry for entry in response.data}
+
+        # Check the generated component items
+        item_1 = StockItem.objects.get(pk=items[1]['pk'])
+        item_50 = StockItem.objects.get(pk=items[50]['pk'])
+
+        self.assertEqual(item_1.quantity, 40)
+        self.assertEqual(item_50.quantity, 12)
+
+        # Components inherit the location of the disassembled item
+        self.assertEqual(item_1.location, self.item.location)
+
+        # Components are linked to the disassembled item
+        self.assertEqual(item_1.parent.pk, self.item.pk)
+        self.assertEqual(item_50.parent.pk, self.item.pk)
+
+        # Total cost (4 x 100 USD) is allocated evenly across 52 units
+        self.assertAlmostEqual(float(item_1.purchase_price.amount), 400 / 52, places=4)
+        self.assertAlmostEqual(float(item_50.purchase_price.amount), 400 / 52, places=4)
+        self.assertEqual(str(item_1.purchase_price.currency), 'USD')
+
+        # Check stock tracking entries have been created
+        self.assertTrue(
+            self.item.tracking_info.filter(
+                tracking_type=StockHistoryCode.DISASSEMBLED.value
+            ).exists()
+        )
+
+        for item in [item_1, item_50]:
+            entry = item.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).first()
+
+            self.assertIsNotNone(entry)
+            self.assertEqual(entry.deltas['stockitem'], self.item.pk)
+
+    def test_full_disassembly(self):
+        """Test that a fully disassembled item is retained at zero quantity."""
+        self.post(
+            self.url,
+            {'items': [{'bom_item': 2, 'quantity': 400}], 'quantity': 10},
+            expected_code=201,
+        )
+
+        self.item.refresh_from_db()
+
+        self.assertEqual(self.item.quantity, 0)
+        self.assertFalse(self.item.in_stock)
+
+    def test_explicit_pricing(self):
+        """Test that automatic cost allocation is skipped if explicit pricing is provided."""
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'bom_item': 1,
+                        'quantity': 10,
+                        'purchase_price': 5,
+                        'purchase_price_currency': 'NZD',
+                    },
+                    {'bom_item': 4, 'quantity': 3},
+                ],
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+
+        prices = {entry['part']: entry['purchase_price'] for entry in response.data}
+
+        self.assertAlmostEqual(prices[1], 5, places=3)
+        self.assertIsNone(prices[50])
+
+    def test_serialized(self):
+        """Test disassembly of a serialized stock item."""
+        item = StockItem.objects.create(
+            part=self.assembly, quantity=1, serial='SN-DISASSEMBLE-1'
+        )
+
+        url = reverse('api-stock-item-disassemble', kwargs={'pk': item.pk})
+
+        self.post(
+            url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # A serialized item cannot be "depleted" - it is marked as destroyed instead
+        self.assertEqual(item.status, StockStatus.DESTROYED.value)
+        self.assertFalse(item.in_stock)
+
+
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
 
