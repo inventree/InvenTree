@@ -90,7 +90,7 @@ jobs:
       - name: Setup Postgres Database
         run: |
           invoke migrate
-          invoke dev.setup-test -i
+          invoke dev.setup-test -i -b multi-notes-migration  # TODO: remove the -b option once the multi-notes migration is merged into master
       - name: Create Plugin Data
         run: |
           pip install -U inventree-dummy-app-plugin==0.1.0
