@@ -1388,21 +1388,27 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
-    def convert_to(self, currency_code):
+    def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 
-        Args:
+        Arguments:
             currency_code: The currency code to convert to (e.g "USD" or "AUD")
+            raise_error: If True, raise an error if the conversion fails. If False, return None.
         """
         try:
             converted = convert_money(self.price, currency_code)
-        except MissingRate:
+        except MissingRate:  # pragma: no cover
+            InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
-            return self.price.amount
+
+            if raise_error:
+                raise
+
+            return None
 
         return converted.amount
 
@@ -1584,7 +1590,7 @@ class WebhookMessage(models.Model):
         worked_on: Was the work on this message finished?
     """
 
-    message_id = models.UUIDField(
+    message_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Message ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3266,7 +3272,7 @@ class EmailMessage(models.Model):
         TRACK_READ = 'track_read', _('Track Read')
         TRACK_CLICK = 'track_click', _('Track Click')
 
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3374,7 +3380,7 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this thread'),
         primary_key=True,
