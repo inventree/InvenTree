@@ -15,6 +15,7 @@ import type {
 import { t } from '@lingui/core/macro';
 import {
   Alert,
+  Collapse,
   Flex,
   Group,
   List,
@@ -23,12 +24,15 @@ import {
   Skeleton,
   Stack,
   Table,
-  Text
+  Text,
+  UnstyledButton
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
   IconCalendarExclamation,
+  IconChevronDown,
+  IconChevronUp,
   IconCoins,
   IconCurrencyDollar,
   IconLink,
@@ -62,7 +66,10 @@ import {
   StatusRenderer,
   getStatusCodeOptions
 } from '../components/render/StatusRenderer';
-import { RenderStockLocation } from '../components/render/Stock';
+import {
+  RenderStockItem,
+  RenderStockLocation
+} from '../components/render/Stock';
 import { StatusFilterOptions } from '../components/tables/Filter';
 import { InvenTreeIcon } from '../functions/icons';
 import {
@@ -448,11 +455,13 @@ export function useStockItemSerializeFields({
 function DisassemblyLineRow({
   props,
   record,
+  installedItems,
   serialized,
   statuses
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
+  installedItems: any[];
   serialized: boolean;
   statuses: any;
 }>) {
@@ -461,6 +470,8 @@ function DisassemblyLineRow({
 
   // Once the user manually edits the row quantity, stop auto-scaling it
   const [edited, setEdited] = useState<boolean>(false);
+
+  const [installedOpen, installedHandlers] = useDisclosure(false);
 
   const [locationOpen, locationHandlers] = useDisclosure(false, {
     onClose: () => props.changeFn(props.rowId, 'location', undefined)
@@ -497,7 +508,26 @@ function DisassemblyLineRow({
               src={record.sub_part_detail?.thumbnail}
               align='center'
             />
-            <div>{record.sub_part_detail?.name}</div>
+            <Stack gap={2}>
+              <div>{record.sub_part_detail?.name}</div>
+              {installedItems.length > 0 && (
+                <UnstyledButton
+                  onClick={() => installedHandlers.toggle()}
+                  aria-label={`toggle-installed-items-${props.rowId}`}
+                >
+                  <Group gap={4} wrap='nowrap'>
+                    {installedOpen ? (
+                      <IconChevronUp size={14} />
+                    ) : (
+                      <IconChevronDown size={14} />
+                    )}
+                    <Text size='xs' c='blue'>
+                      {t`Installed Items`}: {installedItems.length}
+                    </Text>
+                  </Group>
+                </UnstyledButton>
+              )}
+            </Stack>
           </Group>
         </Table.Td>
         <Table.Td>{record.quantity}</Table.Td>
@@ -558,9 +588,35 @@ function DisassemblyLineRow({
           </Flex>
         </Table.Td>
         <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
+          <RemoveRowButton
+            onClick={() => props.removeFn(props.rowId)}
+            disabled={installedItems.length > 0}
+            tooltip={
+              installedItems.length > 0
+                ? t`This row cannot be removed as it has installed items`
+                : undefined
+            }
+          />
         </Table.Td>
       </Table.Tr>
+      {installedItems.length > 0 && (
+        <Table.Tr>
+          <Table.Td colSpan={6} style={{ padding: 0, borderBottom: 'none' }}>
+            <Collapse expanded={installedOpen}>
+              <Paper p='xs' pl='xl'>
+                <Stack gap='xs'>
+                  <Text size='xs' c='dimmed'>
+                    {t`The following installed items will be uninstalled during disassembly`}
+                  </Text>
+                  {installedItems.map((item: any) => (
+                    <RenderStockItem key={item.pk} instance={item} />
+                  ))}
+                </Stack>
+              </Paper>
+            </Collapse>
+          </Table.Td>
+        </Table.Tr>
+      )}
       <TableFieldExtraRow
         visible={locationOpen}
         fieldName='location'
@@ -682,6 +738,37 @@ function DisassemblyItemInfo({
 }
 
 /**
+ * Display any installed stock items which could not be matched
+ * against a BOM line item for the disassembly operation.
+ */
+function DisassemblyLeftoverItems({
+  items
+}: Readonly<{
+  items: any[];
+}>) {
+  if (items.length == 0) {
+    return null;
+  }
+
+  return (
+    <Alert
+      color='yellow'
+      icon={<IconPackage />}
+      title={t`Additional Installed Items`}
+    >
+      <Stack gap='xs'>
+        <Text size='sm'>
+          {t`The following items are installed within this stock item, but do not match a listed component. They will be uninstalled during disassembly.`}
+        </Text>
+        {items.map((item: any) => (
+          <RenderStockItem key={item.pk} instance={item} />
+        ))}
+      </Stack>
+    </Alert>
+  );
+}
+
+/**
  * Form for disassembling a stock item into its component parts,
  * based on the Bill of Materials for the associated part.
  */
@@ -701,7 +788,23 @@ export function useDisassembleStockItem({
         .get(apiUrl(ApiEndpoints.bom_list), {
           params: {
             part: stockItem.part,
-            sub_part_detail: true
+            sub_part_detail: true,
+            substitutes: true
+          }
+        })
+        .then((response) => response.data ?? [])
+  });
+
+  // Fetch any stock items which are installed within this stock item
+  const installedQuery = useQuery({
+    queryKey: ['installed-items-disassemble', stockItem.pk],
+    enabled: !!stockItem.pk && (stockItem.part_detail?.assembly ?? false),
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.stock_item_list), {
+          params: {
+            belongs_to: stockItem.pk,
+            part_detail: true
           }
         })
         .then((response) => response.data ?? [])
@@ -719,6 +822,32 @@ export function useDisassembleStockItem({
     () => Object.fromEntries(bomItems.map((elem: any) => [elem.pk, elem])),
     [bomItems]
   );
+
+  // Map installed stock items against the available BOM lines.
+  // Note: This mirrors the matching performed by the server during disassembly,
+  // matching against the referenced sub_part or any designated substitute parts.
+  // Variants of the sub_part cannot be resolved client-side, so any such items
+  // are reported as "leftover" items instead.
+  const { installedMap, leftoverItems } = useMemo(() => {
+    const map: Record<number, any[]> = {};
+    const leftover: any[] = [];
+
+    for (const item of installedQuery.data ?? []) {
+      const bomItem = bomItems.find(
+        (elem: any) =>
+          elem.sub_part === item.part ||
+          elem.substitutes?.some((sub: any) => sub.part === item.part)
+      );
+
+      if (bomItem) {
+        map[bomItem.pk] = [...(map[bomItem.pk] ?? []), item];
+      } else {
+        leftover.push(item);
+      }
+    }
+
+    return { installedMap: map, leftoverItems: leftover };
+  }, [bomItems, installedQuery.data]);
 
   // A serialized stock item must be disassembled in its entirety
   const serialized: boolean =
@@ -763,6 +892,7 @@ export function useDisassembleStockItem({
             <DisassemblyLineRow
               props={row}
               record={record}
+              installedItems={installedMap[row.item.bom_item] ?? []}
               serialized={serialized}
               statuses={stockStatusCodes}
               key={row.rowId}
@@ -780,7 +910,14 @@ export function useDisassembleStockItem({
       },
       notes: {}
     };
-  }, [bomItems, records, stockItem, serialized, stockStatusCodes]);
+  }, [
+    bomItems,
+    records,
+    installedMap,
+    stockItem,
+    serialized,
+    stockStatusCodes
+  ]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_disassemble,
@@ -788,13 +925,18 @@ export function useDisassembleStockItem({
     title: t`Disassemble Stock Item`,
     fields: fields,
     preFormContent: <DisassemblyItemInfo stockItem={stockItem} />,
+    postFormContent: <DisassemblyLeftoverItems items={leftoverItems} />,
     initialData: {
       quantity: stockItem.quantity,
       location: stockItem.location
     },
     size: '80%',
     successMessage: t`Stock item disassembled`,
-    onFormSuccess: refresh
+    onFormSuccess: refresh,
+    onOpen: () => {
+      // Ensure the installed items data is up to date when the form is opened
+      installedQuery.refetch();
+    }
   });
 }
 
