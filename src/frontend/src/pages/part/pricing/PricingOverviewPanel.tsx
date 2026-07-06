@@ -354,12 +354,8 @@ export default function PricingOverviewPanel({
                 labelPosition: 'insideBottomRight'
               }
             ]}
-            xAxis={{ label: t`Pricing Category` }}
-            yAxis={{
-              label: t`Price`,
-              formatter: (value: any) =>
-                tooltipFormatter(value, pricing?.currency)
-            }}
+            xAxisLabel={t`Pricing Category`}
+            yAxisLabel={t`Price`}
             valueFormatter={(value: any) =>
               tooltipFormatter(value, pricing?.currency)
             }
