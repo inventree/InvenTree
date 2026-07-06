@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 515
+INVENTREE_API_VERSION = 516
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12295
+    - Adds "consumable" field to the Part model and API endpoints
 
 v515 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12298
     - Change the file fields definition to binary (from uri) in the upload requests
