@@ -3,6 +3,7 @@ import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
@@ -18,6 +19,7 @@ import {
   Group,
   List,
   NumberInput,
+  Paper,
   Skeleton,
   Stack,
   Table,
@@ -38,6 +40,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
   type JSX,
+  type ReactNode,
   Suspense,
   useCallback,
   useEffect,
@@ -519,6 +522,88 @@ function DisassemblyLineRow({
 }
 
 /**
+ * Display a summary of the stock item which is about to be disassembled.
+ */
+function DisassemblyItemInfo({
+  stockItem
+}: Readonly<{
+  stockItem: any;
+}>) {
+  const serialized: boolean =
+    !!stockItem.serial && Number(stockItem.quantity) == 1;
+
+  const details: { label: string; value: ReactNode }[] = useMemo(() => {
+    const rows = [
+      {
+        label: t`Location`,
+        value: stockItem.location_detail?.pathstring ?? t`No location set`
+      }
+    ];
+
+    if (serialized) {
+      rows.push({
+        label: t`Serial Number`,
+        value: stockItem.serial
+      });
+    } else {
+      rows.push({
+        label: t`Quantity`,
+        value: formatDecimal(stockItem.quantity)
+      });
+    }
+
+    if (stockItem.batch) {
+      rows.push({
+        label: t`Batch Code`,
+        value: stockItem.batch
+      });
+    }
+
+    return rows;
+  }, [stockItem, serialized]);
+
+  return (
+    <Paper withBorder p='sm'>
+      <Group gap='md' wrap='nowrap' align='center'>
+        <Thumbnail
+          size={56}
+          src={stockItem.part_detail?.thumbnail}
+          align='center'
+        />
+        <Group grow wrap='nowrap'>
+          <Stack gap={2}>
+            <Text fw={700}>
+              {stockItem.part_detail?.full_name ?? stockItem.part_detail?.name}
+            </Text>
+            {stockItem.part_detail?.description && (
+              <Text size='sm' c='dimmed'>
+                {stockItem.part_detail.description}
+              </Text>
+            )}
+          </Stack>
+          <Table withRowBorders={false} verticalSpacing={2}>
+            <Table.Tbody>
+              {details.map((row) => (
+                <Table.Tr key={row.label}>
+                  <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+                    <Text size='sm' c='dimmed'>
+                      {row.label}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text size='sm'>{row.value}</Text>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Group>
+      </Group>
+    </Paper>
+  );
+}
+
+/**
  * Form for disassembling a stock item into its component parts,
  * based on the Bill of Materials for the associated part.
  */
@@ -606,6 +691,7 @@ export function useDisassembleStockItem({
     pk: stockItem.pk,
     title: t`Disassemble Stock Item`,
     fields: fields,
+    preFormContent: <DisassemblyItemInfo stockItem={stockItem} />,
     initialData: {
       quantity: stockItem.quantity,
       location: stockItem.location
