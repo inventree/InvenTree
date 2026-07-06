@@ -1877,9 +1877,13 @@ class StockItem(
             line_quantity = Decimal(line['quantity'])
 
             if line_quantity > 0:
-                line['purchase_price'] = (
-                    total_cost * (weight / total_weight) / line_quantity
-                )
+                if weight is None:
+                    # Fallback to an even split
+                    line['purchase_price'] = total_cost / len(lines) / line_quantity
+                else:
+                    line['purchase_price'] = (
+                        total_cost * (weight / total_weight) / line_quantity
+                    )
 
         return lines
 
@@ -1906,11 +1910,16 @@ class StockItem(
             notes: Optional transaction notes
 
         Returns:
-            A list of the newly created StockItem objects
+            A list of the component StockItem objects (created or uninstalled)
 
         Note:
             This stock item is *retained* (with reduced quantity) even if the
             quantity reaches zero, to preserve traceability of the disassembly.
+
+        Note:
+            Any stock items which are *installed* within this stock item are
+            broken out (uninstalled) as part of the disassembly operation,
+            rather than creating new stock items for them.
         """
         try:
             quantity = Decimal(quantity)
@@ -1935,6 +1944,17 @@ class StockItem(
         if len(lines) == 0:
             raise ValidationError(_('No BOM lines provided'))
 
+        # Any items installed within this stock item *must* be broken out,
+        # which requires that the entire quantity is disassembled
+        installed_items = list(self.installed_parts.all())
+
+        if len(installed_items) > 0 and quantity != self.quantity:
+            raise ValidationError({
+                'quantity': _(
+                    'Stock item with installed items must be disassembled in its entirety'
+                )
+            })
+
         # Allocate pricing data across the generated components
         lines = self.allocate_disassembly_pricing(quantity, lines)
 
@@ -1942,6 +1962,37 @@ class StockItem(
         custom_status_values = StockItem.STATUS_CLASS.custom_values()
 
         items = []
+
+        # Match installed items against the provided BOM lines,
+        # so that the correct location and status values can be applied
+        line_map = {}
+
+        for line in lines:
+            for part in line['bom_item'].get_valid_parts_for_allocation():
+                line_map.setdefault(part.pk, line)
+
+        for installed_item in installed_items:
+            line = line_map.get(installed_item.part.pk)
+
+            destination = (
+                (line.get('location') if line else None) or location or self.location
+            )
+
+            # Break the installed item out into the destination location
+            installed_item.uninstall_into_location(destination, user, notes)
+
+            if line:
+                # The uninstalled quantity reduces the quantity of new items
+                # to be created against the matching BOM line
+                line['quantity'] = Decimal(line['quantity']) - installed_item.quantity
+
+                if status := line.get('status'):
+                    installed_item.set_status(
+                        status, custom_values=custom_status_values
+                    )
+                    installed_item.save(add_note=False)
+
+            items.append(installed_item)
 
         for line in lines:
             bom_item = line['bom_item']
