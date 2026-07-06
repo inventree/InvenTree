@@ -17,6 +17,7 @@ import {
   Flex,
   Group,
   List,
+  NumberInput,
   Skeleton,
   Stack,
   Table,
@@ -44,7 +45,7 @@ import {
   useRef,
   useState
 } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -436,6 +437,183 @@ export function useStockItemSerializeFields({
       destination: {}
     };
   }, [serialGenerator.result]);
+}
+
+function DisassemblyLineRow({
+  props,
+  record
+}: Readonly<{
+  props: TableFieldRowProps;
+  record: any;
+}>) {
+  // Number of assemblies being disassembled (top-level form field)
+  const assemblies = useWatch({ name: 'quantity' });
+
+  // Once the user manually edits the row quantity, stop auto-scaling it
+  const [edited, setEdited] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (edited) {
+      return;
+    }
+
+    const n = Number(assemblies);
+    const unit = Number(record.quantity);
+
+    if (Number.isFinite(n) && Number.isFinite(unit)) {
+      const expected = unit * n;
+
+      if (props.item.quantity !== expected) {
+        props.changeFn(props.rowId, 'quantity', expected);
+      }
+    }
+  }, [assemblies, edited]);
+
+  return (
+    <Table.Tr>
+      <Table.Td>
+        <Group gap='xs' justify='left' wrap='nowrap'>
+          <Thumbnail
+            size={32}
+            src={record.sub_part_detail?.thumbnail}
+            align='center'
+          />
+          <div>{record.sub_part_detail?.name}</div>
+        </Group>
+      </Table.Td>
+      <Table.Td>{record.quantity}</Table.Td>
+      <Table.Td style={{ whiteSpace: 'nowrap' }}>
+        <TableFieldQuantityInput
+          min={0}
+          value={props.item.quantity ?? ''}
+          onChange={(value) => {
+            setEdited(true);
+            props.changeFn(props.rowId, 'quantity', value);
+          }}
+          error={props.rowErrors?.quantity?.message}
+        />
+      </Table.Td>
+      <Table.Td style={{ whiteSpace: 'nowrap' }}>
+        <NumberInput
+          radius='sm'
+          aria-label='number-field-purchase_price'
+          placeholder={t`Automatic`}
+          min={0}
+          decimalScale={6}
+          value={props.item.purchase_price ?? ''}
+          onChange={(value) => {
+            props.changeFn(
+              props.rowId,
+              'purchase_price',
+              value === '' ? null : value
+            );
+          }}
+          error={props.rowErrors?.purchase_price?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+/**
+ * Form for disassembling a stock item into its component parts,
+ * based on the Bill of Materials for the associated part.
+ */
+export function useDisassembleStockItem({
+  stockItem,
+  refresh
+}: {
+  stockItem: any;
+  refresh: () => void;
+}) {
+  // Fetch BOM lines for the part associated with the stock item
+  const bomQuery = useQuery({
+    queryKey: ['bom-items-disassemble', stockItem.pk, stockItem.part],
+    enabled: !!stockItem.part && (stockItem.part_detail?.assembly ?? false),
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.bom_list), {
+          params: {
+            part: stockItem.part,
+            sub_part_detail: true
+          }
+        })
+        .then((response) => response.data ?? [])
+  });
+
+  const bomItems: any[] = useMemo(() => {
+    // Consumable BOM lines are excluded from disassembly,
+    // as are any lines which point to a virtual part
+    return (bomQuery.data ?? []).filter(
+      (elem: any) => !elem.consumable && !elem.sub_part_detail?.virtual
+    );
+  }, [bomQuery.data]);
+
+  const records = useMemo(
+    () => Object.fromEntries(bomItems.map((elem: any) => [elem.pk, elem])),
+    [bomItems]
+  );
+
+  const fields: ApiFormFieldSet = useMemo(() => {
+    return {
+      quantity: {},
+      location: {
+        filters: {
+          structural: false
+        }
+      },
+      items: {
+        field_type: 'table',
+        value: bomItems.map((elem: any) => {
+          return {
+            id: elem.pk,
+            bom_item: elem.pk,
+            quantity:
+              (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
+            purchase_price: null,
+            purchase_price_currency:
+              stockItem.purchase_price_currency ?? undefined
+          };
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = records[row.item.bom_item];
+
+          if (!record) {
+            return null;
+          }
+
+          return (
+            <DisassemblyLineRow props={row} record={record} key={row.rowId} />
+          );
+        },
+        headers: [
+          { title: t`Component`, style: { minWidth: '200px' } },
+          { title: t`Unit Quantity`, style: { width: '100px' } },
+          { title: t`Quantity`, style: { width: '200px' } },
+          { title: t`Unit Price`, style: { width: '200px' } },
+          { title: '', style: { width: '50px' } }
+        ]
+      },
+      notes: {}
+    };
+  }, [bomItems, records, stockItem]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.stock_disassemble,
+    pk: stockItem.pk,
+    title: t`Disassemble Stock Item`,
+    fields: fields,
+    initialData: {
+      quantity: stockItem.quantity,
+      location: stockItem.location
+    },
+    size: '80%',
+    successMessage: t`Stock item disassembled`,
+    onFormSuccess: refresh
+  });
 }
 
 function StockItemDefaultMove({
