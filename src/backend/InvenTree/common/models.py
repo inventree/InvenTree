@@ -1397,7 +1397,7 @@ class PriceBreak(MetaMixin):
         """
         try:
             converted = convert_money(self.price, currency_code)
-        except MissingRate:
+        except MissingRate:  # pragma: no cover
             InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
