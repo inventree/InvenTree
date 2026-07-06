@@ -961,7 +961,7 @@ export default function StockDetail() {
             name: t`Disassemble`,
             tooltip: t`Disassemble this stock item into its component parts`,
             hidden:
-              !user.hasChangeRole(UserRoles.stock) ||
+              !user.hasAddRole(UserRoles.stock) ||
               !stockitem.in_stock ||
               stockitem.part_detail?.assembly != true,
             icon: <IconArrowsSplit color='blue' />,
