@@ -1887,6 +1887,77 @@ class BuildLineTests(BuildAPITest):
         self.assertSetEqual(false_ids, expected_false)
         self.assertSetEqual(true_ids | false_ids, {line.pk for line in lines})
 
+    def test_filter_consumable_via_part(self):
+        """Filter BuildLine objects by 'consumable' status, accounting for the underlying part.
+
+        A BuildLine should be treated as 'consumable' if either the BOM line
+        itself is marked as consumable, or the underlying part is marked as consumable.
+        """
+        assembly = Part.objects.create(
+            name='Consumable Filter Assembly',
+            description='Assembly for consumable filter tests',
+            assembly=True,
+        )
+
+        plain = Part.objects.create(
+            name='Consumable Filter Plain Component',
+            description='A regular component',
+            component=True,
+        )
+
+        consumable_part = Part.objects.create(
+            name='Consumable Filter Consumable Part',
+            description='A part marked as consumable',
+            component=True,
+            consumable=True,
+        )
+
+        consumable_line_part = Part.objects.create(
+            name='Consumable Filter Consumable BOM Line',
+            description='A part which is consumable only via its BOM line',
+            component=True,
+        )
+
+        bom_item_plain = BomItem.objects.create(
+            part=assembly, sub_part=plain, quantity=1
+        )
+        bom_item_part_consumable = BomItem.objects.create(
+            part=assembly, sub_part=consumable_part, quantity=1
+        )
+        bom_item_line_consumable = BomItem.objects.create(
+            part=assembly, sub_part=consumable_line_part, quantity=1, consumable=True
+        )
+
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-9997',
+            quantity=1,
+            title='Consumable Filter Build',
+        )
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(url, data={'build': build.pk, 'consumable': True})
+        returned_bom_items = {item['bom_item'] for item in response.data}
+
+        self.assertIn(bom_item_part_consumable.pk, returned_bom_items)
+        self.assertIn(bom_item_line_consumable.pk, returned_bom_items)
+        self.assertNotIn(bom_item_plain.pk, returned_bom_items)
+
+        response = self.get(url, data={'build': build.pk, 'consumable': False})
+        returned_bom_items = {item['bom_item'] for item in response.data}
+
+        self.assertIn(bom_item_plain.pk, returned_bom_items)
+        self.assertNotIn(bom_item_part_consumable.pk, returned_bom_items)
+        self.assertNotIn(bom_item_line_consumable.pk, returned_bom_items)
+
+        # Check that the serialized 'consumable' field reflects the combined status
+        response = self.get(
+            url, data={'build': build.pk, 'bom_item': bom_item_part_consumable.pk}
+        )
+        self.assertEqual(len(response.data), 1)
+        self.assertTrue(response.data[0]['consumable'])
+
     def test_output_options(self):
         """Test output options  for the BuildLine endpoint."""
         self.run_output_test(

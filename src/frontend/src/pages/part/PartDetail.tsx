@@ -551,6 +551,11 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'consumable',
+        label: t`Consumable Part`
+      },
+      {
+        type: 'boolean',
         name: 'starred',
         label: t`Subscribed`,
         icon: 'bell'
@@ -1002,10 +1007,16 @@ export default function PartDetail() {
         key='inactive'
       />,
       <DetailsBadge
-        label={t`Virtual Part`}
+        label={t`Virtual`}
         color='cyan.4'
         visible={part.virtual}
         key='virtual'
+      />,
+      <DetailsBadge
+        label={t`Consumable`}
+        color='cyan.4'
+        visible={part.consumable}
+        key='consumable'
       />
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);

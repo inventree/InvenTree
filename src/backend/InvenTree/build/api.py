@@ -457,8 +457,21 @@ class BuildLineFilter(FilterSet):
 
     # Fields on related models
     consumable = rest_filters.BooleanFilter(
-        label=_('Consumable'), field_name='bom_item__consumable'
+        label=_('Consumable'), method='filter_consumable'
     )
+
+    def filter_consumable(self, queryset, name, value):
+        """Filter the queryset based on the "effective" consumable status of the BOM item.
+
+        A BuildLine is considered "consumable" if either the BOM item itself,
+        or the underlying part, is marked as consumable.
+        """
+        return queryset.filter(
+            part_models.BomItem.consumable_filter(
+                consumable=str2bool(value), prefix='bom_item__'
+            )
+        )
+
     optional = rest_filters.BooleanFilter(
         label=_('Optional'), field_name='bom_item__optional'
     )

@@ -277,6 +277,52 @@ class BomItemTest(TestCase):
 
         self.assertEqual(assembly.can_build, 20)
 
+        # Mark 'c4' as consumable at the *part* level (not the BOM line itself)
+        c4.consumable = True
+        c4.save()
+
+        bom_item_c4 = BomItem.objects.create(part=assembly, sub_part=c4, quantity=200)
+
+        # The raw BomItem field is unset, but the part is marked as consumable
+        self.assertFalse(bom_item_c4.consumable)
+        self.assertTrue(bom_item_c4.is_consumable)
+
+        # A BomItem which is consumable via its part does not alter the can_build calculation
+        self.assertEqual(assembly.can_build, 20)
+
+    def test_consumable_filter(self):
+        """Tests for the BomItem.consumable_filter() helper method."""
+        assembly = Part.objects.create(
+            name='Another assembly', description='Made with parts', assembly=True
+        )
+
+        c1 = Part.objects.create(name='D1', description='Not consumable')
+        c2 = Part.objects.create(name='D2', description='Consumable BOM line')
+        c3 = Part.objects.create(
+            name='D3', description='Consumable part', consumable=True
+        )
+
+        bom_item_1 = BomItem.objects.create(part=assembly, sub_part=c1, quantity=1)
+        bom_item_2 = BomItem.objects.create(
+            part=assembly, sub_part=c2, quantity=1, consumable=True
+        )
+        bom_item_3 = BomItem.objects.create(part=assembly, sub_part=c3, quantity=1)
+
+        consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=True))
+        )
+        non_consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=False))
+        )
+
+        self.assertIn(bom_item_2, consumable_items)
+        self.assertIn(bom_item_3, consumable_items)
+        self.assertNotIn(bom_item_1, consumable_items)
+
+        self.assertIn(bom_item_1, non_consumable_items)
+        self.assertNotIn(bom_item_2, non_consumable_items)
+        self.assertNotIn(bom_item_3, non_consumable_items)
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         for model in [BomItem]:

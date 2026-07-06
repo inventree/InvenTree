@@ -925,6 +925,8 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
+    consumable = rest_filters.BooleanFilter()
+
     tags = common.filters.TagsFilter()
 
     # Created date filters

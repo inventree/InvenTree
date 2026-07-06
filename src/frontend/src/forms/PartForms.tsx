@@ -103,6 +103,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {},
       active: {},
       starred: {

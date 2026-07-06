@@ -105,6 +105,12 @@ export function PartTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'consumable',
+      label: t`Consumable`,
+      description: t`Filter by parts which are consumable`,
+      type: 'boolean'
+    },
+    {
       name: 'is_template',
       label: t`Is Template`,
       description: t`Filter by parts which are templates`,

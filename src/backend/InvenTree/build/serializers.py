@@ -996,7 +996,7 @@ class BuildAllocationSerializer(serializers.Serializer):
                 output = item.get('output', None)
 
                 # Ignore allocation for consumable BOM items
-                if build_line.bom_item.consumable:
+                if build_line.bom_item.is_consumable:
                     continue
 
                 params = {
@@ -1389,7 +1389,7 @@ class BuildLineSerializer(
         source='bom_item.reference', label=_('Reference'), read_only=True
     )
     consumable = serializers.BooleanField(
-        source='bom_item.consumable', label=_('Consumable'), read_only=True
+        source='bom_item.is_consumable', label=_('Consumable'), read_only=True
     )
     optional = serializers.BooleanField(
         source='bom_item.optional', label=_('Optional'), read_only=True
