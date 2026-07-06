@@ -14,6 +14,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { cancelEvent } from '@lib/functions/Events';
 import {
   eventModified,
+  getBaseUrl,
   getDetailUrl,
   navigateToLink
 } from '@lib/functions/Navigation';
@@ -34,6 +35,7 @@ export default function PreviewDrawer({
   instance: providedInstance,
   filters,
   preview: providedPreview,
+  targetUrl,
   opened,
   onClose
 }: Readonly<{
@@ -42,6 +44,7 @@ export default function PreviewDrawer({
   instance?: any;
   filters?: Record<string, any>;
   preview?: PreviewType;
+  targetUrl?: string;
   opened: boolean;
   onClose: () => void;
 }>) {
@@ -108,20 +111,32 @@ export default function PreviewDrawer({
     return () => document.removeEventListener('click', handler, true);
   }, [onClose, opened]);
 
+  const primaryUrl = useMemo(() => {
+    if (targetUrl) return targetUrl;
+    if (modelType && id) return getDetailUrl(modelType, id);
+    return undefined;
+  }, [targetUrl, modelType, id]);
+
+  const primaryHref = useMemo(() => {
+    if (!primaryUrl) return undefined;
+    const base = `/${getBaseUrl()}`;
+    return primaryUrl.startsWith(base) ? primaryUrl : `${base}${primaryUrl}`;
+  }, [primaryUrl]);
+
   const clickTitle = useCallback(
     (
       event: Parameters<
         React.AnchorHTMLAttributes<HTMLAnchorElement>['onClick'] & {}
       >[0]
     ) => {
-      if (!modelType || !id) return;
+      if (!primaryUrl) return;
 
       if (!eventModified(event as any)) {
         onClose();
       }
-      navigateToLink(getDetailUrl(modelType!, id!), navigate, event as any);
+      navigateToLink(primaryUrl, navigate, event as any);
     },
-    [modelType, id, navigate]
+    [primaryUrl, navigate]
   );
 
   return (
@@ -130,12 +145,9 @@ export default function PreviewDrawer({
       size='xl'
       title={
         previewComponent ? (
-          !!modelType && !!id ? (
-            <Anchor
-              href={getDetailUrl(modelType!, id, true)}
-              onClick={(e) => clickTitle(e)}
-            >
-              <Group gap='xs'>
+          primaryHref ? (
+            <Anchor href={primaryHref} onClick={(e) => clickTitle(e)}>
+              <Group aria-label={`details-${modelType}-${id}`} gap='xs'>
                 <Tooltip label={t`View Details`} position='left'>
                   <ActionIcon variant='transparent' size='lg'>
                     <IconArrowRight />

@@ -11,6 +11,7 @@ export default function GlobalPreviewDrawer() {
   const id = usePreviewDrawerState((state) => state.id);
   const instance = usePreviewDrawerState((state) => state.instance);
   const preview = usePreviewDrawerState((state) => state.preview);
+  const targetUrl = usePreviewDrawerState((state) => state.targetUrl);
   const closePreview = usePreviewDrawerState((state) => state.closePreview);
 
   if (!enabled) {
@@ -23,6 +24,7 @@ export default function GlobalPreviewDrawer() {
       id={id}
       instance={instance}
       preview={preview}
+      targetUrl={targetUrl}
       opened={isOpen}
       onClose={closePreview}
     />

@@ -17,6 +17,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
@@ -51,6 +52,11 @@ export function CompanyTable({
   const navigate = useNavigate();
   const user = useUserState();
   const previewDrawer = usePreviewDrawerState();
+  const userSettings = useUserSettingsState();
+
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
 
   const columns = useMemo(() => {
     return [
@@ -170,14 +176,18 @@ export function CompanyTable({
           },
           onRowClick: (record: any, _index: number, event: any) => {
             if (!record.pk) return;
-            if (eventModified(event as any)) {
-              navigateToLink(
-                `/${path ?? 'company'}/${record.pk}`,
-                navigate,
-                event
-              );
+            const url = `/${path ?? 'company'}/${record.pk}`;
+            if (!showPreviewPanel || eventModified(event as any)) {
+              navigateToLink(url, navigate, event);
             } else {
-              previewDrawer.openPreview(ModelType.company, Number(record.pk));
+              previewDrawer.openPreview(
+                ModelType.company,
+                Number(record.pk),
+                undefined,
+                undefined,
+                undefined,
+                url
+              );
             }
           },
           modelType: ModelType.company,
