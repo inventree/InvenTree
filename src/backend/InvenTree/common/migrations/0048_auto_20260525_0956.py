@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
         ("common", "0047_note"),
         ("company", "0079_auto_20260212_1054"),
         ("order", "0119_transferorderlineitem_line_int"),
-        ("part", "0150_part_maximum_stock"),
+        ("part", "0151_part_consumable"),
         ("stock", "0123_remove_stockitem_review_needed")
     ]
 

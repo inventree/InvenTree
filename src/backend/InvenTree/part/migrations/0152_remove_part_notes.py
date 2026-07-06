@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("part", "0150_part_maximum_stock"),
+        ("part", "0151_part_consumable"),
         ("common", "0049_remove_notesimage_model_id_and_more")
     ]
 
