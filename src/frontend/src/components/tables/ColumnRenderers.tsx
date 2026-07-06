@@ -25,18 +25,18 @@ import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import type { ReactNode } from 'react';
-import { Thumbnail } from '../components/images/Thumbnail';
-import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner } from '../components/render/User';
 import {
   formatCurrency,
   formatDate,
   formatDecimal
-} from '../defaults/formatters';
+} from '../../defaults/formatters';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../states/SettingsStates';
+} from '../../states/SettingsStates';
+import { Thumbnail } from '../images/Thumbnail';
+import { TableStatusRenderer } from '../render/StatusRenderer';
+import { RenderOwner } from '../render/User';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
 export type PartColumnProps = TableColumnProps & {

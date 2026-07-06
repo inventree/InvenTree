@@ -18,6 +18,19 @@ import type { TableColumn } from '@lib/types/Tables';
 import { Alert } from '@mantine/core';
 import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
@@ -27,16 +40,6 @@ import {
 } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  LocationColumn,
-  PartColumn,
-  ReferenceColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderAllocationTable({
   partId,
