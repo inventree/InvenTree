@@ -13,6 +13,15 @@ import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  DecimalColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  NoteColumn,
+  ProjectCodeColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
@@ -21,15 +30,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DecimalColumn,
-  DescriptionColumn,
-  LineItemColumn,
-  LinkColumn,
-  NoteColumn,
-  ProjectCodeColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,

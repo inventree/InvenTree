@@ -23,6 +23,20 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
 import { RenderInstance } from '../../components/render/Instance';
+import {
+  CurrencyColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  LocationColumn,
+  NoteColumn,
+  PartColumn,
+  ProjectCodeColumn,
+  ReferenceColumn,
+  TargetDateColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
@@ -37,20 +51,6 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
-import {
-  CurrencyColumn,
-  DescriptionColumn,
-  LineItemColumn,
-  LinkColumn,
-  LocationColumn,
-  NoteColumn,
-  PartColumn,
-  ProjectCodeColumn,
-  ReferenceColumn,
-  TargetDateColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Display a table of purchase order line items, for a specific order

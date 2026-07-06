@@ -13,17 +13,17 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
   IPNColumn,
   PartColumn,
   ProjectCodeColumn,
   StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
+} from '../../components/tables/ColumnRenderers';
+import { IncludeVariantsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
 export default function PartSalesAllocationsTable({

@@ -25,7 +25,7 @@ import {
   TargetDateBeforeFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 export default function ReturnOrderFilters({
   partId,

@@ -5,15 +5,15 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { isTrue } from '@lib/functions/Conversion';
 import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
-import type {
-  StatusCodeInterface,
-  StatusCodeListInterface
-} from '../components/render/StatusRenderer';
 import {
   type StatusLookup,
   useGlobalStatusState
-} from '../states/GlobalStatusState';
-import { useGlobalSettingsState } from '../states/SettingsStates';
+} from '../../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import type {
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '../render/StatusRenderer';
 
 // Determine the appropriate display label for a given filter, based on its name and the list of available filters
 export function filterDisplayLabel(

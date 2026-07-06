@@ -13,6 +13,11 @@ import type { TableColumn } from '@lib/types/Tables';
 import { IconLock } from '@tabler/icons-react';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import {
   selectionEntryFields,
   selectionListFields
 } from '../../forms/CommonForms';
@@ -22,8 +27,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 function SelectionListEntriesTable({
   id,

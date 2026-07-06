@@ -29,11 +29,11 @@ import {
   TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
 import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useSalesOrderFields({

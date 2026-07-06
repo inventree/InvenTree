@@ -47,11 +47,11 @@ import {
 } from '../../states/ImporterState';
 import { usePluginState } from '../../states/PluginState';
 import { useServerApiState } from '../../states/ServerApiState';
-import { InvenTreeTableInternal } from '../../tables/InvenTreeTable';
 import { EditApiForm } from '../forms/ApiForm';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 import { RenderInlineModel } from '../render/Instance';
+import { InvenTreeTableInternal } from '../tables/InvenTreeTable';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));

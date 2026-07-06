@@ -23,14 +23,14 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
+import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import {
   AssignedToMeFilter,
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
   ResponsibleFilter
-} from '../../tables/Filter';
-import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
+} from '../tables/Filter';
 import Calendar from './Calendar';
 
 /**

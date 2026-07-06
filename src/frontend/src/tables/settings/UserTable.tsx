@@ -36,6 +36,8 @@ import {
   TransferList,
   type TransferListItem
 } from '../../components/items/TransferList';
+import { BooleanColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useApiFormModal,
@@ -44,8 +46,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {

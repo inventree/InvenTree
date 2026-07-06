@@ -28,6 +28,8 @@ import {
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -35,8 +37,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import type { TemplateI } from './TemplateTable';
 
 export type SnippetI = {

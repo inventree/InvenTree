@@ -8,8 +8,8 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({

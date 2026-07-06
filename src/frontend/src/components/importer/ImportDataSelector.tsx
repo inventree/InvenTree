@@ -30,8 +30,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RenderRemoteInstance } from '../render/Instance';
+import { InvenTreeTable } from '../tables/InvenTreeTable';
 
 function ImporterDataCell({
   session,

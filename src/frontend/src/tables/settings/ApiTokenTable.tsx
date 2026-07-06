@@ -13,11 +13,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
+import {
+  BooleanColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { BooleanColumn, UserColumn } from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({
   only_myself = true
