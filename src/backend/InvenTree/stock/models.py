@@ -1899,6 +1899,7 @@ class StockItem(
                 bom_item: The BomItem instance defining the component to break out
                 quantity: The total quantity of the component to create
                 location: Optional destination StockLocation for the component
+                status: Optional StockStatus code for the component (default: OK)
                 purchase_price: Optional unit purchase price for the component
             user: The user performing the operation
             location: Default destination location for the generated components
@@ -1937,6 +1938,9 @@ class StockItem(
         # Allocate pricing data across the generated components
         lines = self.allocate_disassembly_pricing(quantity, lines)
 
+        # Cache the custom status options for the StockItem model
+        custom_status_values = StockItem.STATUS_CLASS.custom_values()
+
         items = []
 
         for line in lines:
@@ -1956,6 +1960,9 @@ class StockItem(
                 batch=self.batch,
                 purchase_price=line.get('purchase_price', None),
             )
+
+            if status := line.get('status'):
+                new_item.set_status(status, custom_values=custom_status_values)
 
             # Ensure the tree structure is observed
             new_item.tree_id = None

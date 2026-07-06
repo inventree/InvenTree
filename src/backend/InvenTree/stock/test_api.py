@@ -2289,12 +2289,18 @@ class StockItemDisassembleTest(StockAPITestCase):
         n = StockItem.objects.count()
 
         # Disassemble 4 assemblies, but only break out 2 of the 4 BOM lines
+        # The second line specifies a custom location and status
         response = self.post(
             self.url,
             {
                 'items': [
                     {'bom_item': 1, 'quantity': 40},
-                    {'bom_item': 4, 'quantity': 12},
+                    {
+                        'bom_item': 4,
+                        'quantity': 12,
+                        'location': 2,
+                        'status': StockStatus.DAMAGED.value,
+                    },
                 ],
                 'quantity': 4,
                 'notes': 'Breaking apart',
@@ -2317,8 +2323,13 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(item_1.quantity, 40)
         self.assertEqual(item_50.quantity, 12)
 
-        # Components inherit the location of the disassembled item
+        # Components inherit the location of the disassembled item by default
         self.assertEqual(item_1.location, self.item.location)
+        self.assertEqual(item_1.status, StockStatus.OK.value)
+
+        # A custom location and status can be specified per line
+        self.assertEqual(item_50.location.pk, 2)
+        self.assertEqual(item_50.status, StockStatus.DAMAGED.value)
 
         # Components are linked to the disassembled item
         self.assertEqual(item_1.parent.pk, self.item.pk)

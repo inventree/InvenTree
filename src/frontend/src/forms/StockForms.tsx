@@ -58,7 +58,10 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { StatusRenderer } from '../components/render/StatusRenderer';
+import {
+  StatusRenderer,
+  getStatusCodeOptions
+} from '../components/render/StatusRenderer';
 import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
@@ -445,17 +448,27 @@ export function useStockItemSerializeFields({
 function DisassemblyLineRow({
   props,
   record,
-  serialized
+  serialized,
+  statuses
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
   serialized: boolean;
+  statuses: any;
 }>) {
   // Number of assemblies being disassembled (top-level form field)
   const assemblies = useWatch({ name: 'quantity' });
 
   // Once the user manually edits the row quantity, stop auto-scaling it
   const [edited, setEdited] = useState<boolean>(false);
+
+  const [locationOpen, locationHandlers] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.rowId, 'location', undefined)
+  });
+
+  const [statusOpen, statusHandlers] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.rowId, 'status', undefined)
+  });
 
   useEffect(() => {
     if (edited) {
@@ -475,58 +488,114 @@ function DisassemblyLineRow({
   }, [assemblies, edited]);
 
   return (
-    <Table.Tr>
-      <Table.Td>
-        <Group gap='xs' justify='left' wrap='nowrap'>
-          <Thumbnail
-            size={32}
-            src={record.sub_part_detail?.thumbnail}
-            align='center'
-          />
-          <div>{record.sub_part_detail?.name}</div>
-        </Group>
-      </Table.Td>
-      <Table.Td>{record.quantity}</Table.Td>
-      <Table.Td style={{ whiteSpace: 'nowrap' }}>
-        {serialized ? (
-          // Quantity is fixed when disassembling a serialized stock item
-          <Text size='sm' aria-label='text-field-quantity'>
-            {formatDecimal(props.item.quantity)}
-          </Text>
-        ) : (
-          <TableFieldQuantityInput
+    <>
+      <Table.Tr>
+        <Table.Td>
+          <Group gap='xs' justify='left' wrap='nowrap'>
+            <Thumbnail
+              size={32}
+              src={record.sub_part_detail?.thumbnail}
+              align='center'
+            />
+            <div>{record.sub_part_detail?.name}</div>
+          </Group>
+        </Table.Td>
+        <Table.Td>{record.quantity}</Table.Td>
+        <Table.Td style={{ whiteSpace: 'nowrap' }}>
+          {serialized ? (
+            // Quantity is fixed when disassembling a serialized stock item
+            <Text size='sm' aria-label='text-field-quantity'>
+              {formatDecimal(props.item.quantity)}
+            </Text>
+          ) : (
+            <TableFieldQuantityInput
+              min={0}
+              value={props.item.quantity ?? ''}
+              onChange={(value) => {
+                setEdited(true);
+                props.changeFn(props.rowId, 'quantity', value);
+              }}
+              error={props.rowErrors?.quantity?.message}
+            />
+          )}
+        </Table.Td>
+        <Table.Td style={{ whiteSpace: 'nowrap' }}>
+          <NumberInput
+            radius='sm'
+            aria-label='number-field-purchase_price'
+            placeholder={t`Automatic`}
             min={0}
-            value={props.item.quantity ?? ''}
+            decimalScale={6}
+            value={props.item.purchase_price ?? ''}
             onChange={(value) => {
-              setEdited(true);
-              props.changeFn(props.rowId, 'quantity', value);
+              props.changeFn(
+                props.rowId,
+                'purchase_price',
+                value === '' ? null : value
+              );
             }}
-            error={props.rowErrors?.quantity?.message}
+            error={props.rowErrors?.purchase_price?.message}
           />
-        )}
-      </Table.Td>
-      <Table.Td style={{ whiteSpace: 'nowrap' }}>
-        <NumberInput
-          radius='sm'
-          aria-label='number-field-purchase_price'
-          placeholder={t`Automatic`}
-          min={0}
-          decimalScale={6}
-          value={props.item.purchase_price ?? ''}
-          onChange={(value) => {
-            props.changeFn(
-              props.rowId,
-              'purchase_price',
-              value === '' ? null : value
-            );
-          }}
-          error={props.rowErrors?.purchase_price?.message}
-        />
-      </Table.Td>
-      <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
-      </Table.Td>
-    </Table.Tr>
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+          <Flex gap='1px'>
+            <ActionButton
+              size='sm'
+              onClick={() => locationHandlers.toggle()}
+              icon={<InvenTreeIcon icon='location' />}
+              tooltip={t`Set Location`}
+              tooltipAlignment='top'
+              variant={locationOpen ? 'outline' : 'transparent'}
+            />
+            <ActionButton
+              size='sm'
+              onClick={() => statusHandlers.toggle()}
+              icon={<InvenTreeIcon icon='status' />}
+              tooltip={t`Change Status`}
+              tooltipAlignment='top'
+              variant={statusOpen ? 'outline' : 'transparent'}
+            />
+          </Flex>
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
+        </Table.Td>
+      </Table.Tr>
+      <TableFieldExtraRow
+        visible={locationOpen}
+        fieldName='location'
+        onValueChange={(value) =>
+          props.changeFn(props.rowId, 'location', value)
+        }
+        fieldDefinition={{
+          field_type: 'related field',
+          model: ModelType.stocklocation,
+          api_url: apiUrl(ApiEndpoints.stock_location_list),
+          filters: {
+            structural: false
+          },
+          value: props.item.location,
+          label: t`Location`,
+          description: t`Custom location for the component items`,
+          icon: <InvenTreeIcon icon='location' />
+        }}
+        error={props.rowErrors?.location?.message}
+      />
+      <TableFieldExtraRow
+        visible={statusOpen}
+        fieldName='status'
+        defaultValue={10}
+        onValueChange={(value) => props.changeFn(props.rowId, 'status', value)}
+        fieldDefinition={{
+          field_type: 'choice',
+          api_url: apiUrl(ApiEndpoints.stock_status),
+          choices: statuses,
+          label: t`Status`,
+          description: t`Status for the component items`
+        }}
+        error={props.rowErrors?.status?.message}
+      />
+    </>
   );
 }
 
@@ -655,6 +724,11 @@ export function useDisassembleStockItem({
   const serialized: boolean =
     !!stockItem.serial && Number(stockItem.quantity) == 1;
 
+  const stockStatusCodes = useMemo(
+    () => getStatusCodeOptions(ModelType.stockitem),
+    []
+  );
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
       quantity: {
@@ -690,6 +764,7 @@ export function useDisassembleStockItem({
               props={row}
               record={record}
               serialized={serialized}
+              statuses={stockStatusCodes}
               key={row.rowId}
             />
           );
@@ -699,12 +774,13 @@ export function useDisassembleStockItem({
           { title: t`Unit Quantity`, style: { width: '100px' } },
           { title: t`Quantity`, style: { width: '200px' } },
           { title: t`Unit Price`, style: { width: '200px' } },
+          { title: t`Actions` },
           { title: '', style: { width: '50px' } }
         ]
       },
       notes: {}
     };
-  }, [bomItems, records, stockItem, serialized]);
+  }, [bomItems, records, stockItem, serialized, stockStatusCodes]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_disassemble,
