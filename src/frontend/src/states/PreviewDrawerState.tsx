@@ -2,6 +2,8 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { create } from 'zustand';
 import type { PreviewType } from '../components/previews/PreviewType';
 
+type PreviewDrawerId = number | string | undefined;
+
 interface PreviewDrawerStateProps {
   isOpen: boolean;
   modelType?: ModelType;
@@ -12,7 +14,7 @@ interface PreviewDrawerStateProps {
   onCloseCallback?: () => void;
   openPreview: (
     modelType: ModelType,
-    id: number | string | undefined,
+    id: PreviewDrawerId,
     instance?: any,
     preview?: PreviewType,
     onClose?: () => void,

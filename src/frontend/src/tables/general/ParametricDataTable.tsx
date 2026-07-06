@@ -1,6 +1,9 @@
 import { cancelEvent } from '@lib/functions/Events';
-import { eventModified } from '@lib/functions/Navigation';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
