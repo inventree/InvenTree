@@ -755,7 +755,8 @@ class APISearchView(GenericAPIView):
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
-            'purchaseorder': order.api.PurchaseOrderList,
+            # TODO @matmair fix
+            #'purchaseorder': order.api.PurchaseOrderList,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,

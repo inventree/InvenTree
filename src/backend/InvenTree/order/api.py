@@ -375,8 +375,8 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 
 
 class PurchaseOrderViewSet(
-    SerializerContextMixin,
     OrderCreateMixin,  #
+    SerializerContextMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
@@ -386,7 +386,7 @@ class PurchaseOrderViewSet(
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
-    # output_options = PurchaseOrderOutputOptions
+    output_options = PurchaseOrderOutputOptions
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
 
@@ -421,9 +421,10 @@ class PurchaseOrderViewSet(
 
     ordering = '-reference'
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
-        queryset = super().get_queryset().prefetch_related('supplier', 'created_by')
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset.prefetch_related('supplier', 'created_by')
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
         return queryset
 
@@ -449,6 +450,7 @@ class PurchaseOrderViewSet(
         detail=True,
         methods=['post'],
         serializer_class=serializers.PurchaseOrderHoldSerializer,
+        output_options=None,
     )
     def hold(self, request, pk=None):
         """API endpoint to place a PurchaseOrder on hold."""
@@ -463,6 +465,7 @@ class PurchaseOrderViewSet(
         detail=True,
         methods=['post'],
         serializer_class=serializers.PurchaseOrderCancelSerializer,
+        output_options=None,
     )
     def cancel(self, request, pk=None):
         """API endpoint to 'cancel' a purchase order.
@@ -480,6 +483,7 @@ class PurchaseOrderViewSet(
         detail=True,
         methods=['post'],
         serializer_class=serializers.PurchaseOrderCompleteSerializer,
+        output_options=None,
     )
     def complete(self, request, pk=None):
         """API endpoint to 'complete' a purchase order.."""
@@ -494,6 +498,7 @@ class PurchaseOrderViewSet(
         detail=True,
         methods=['post'],
         serializer_class=serializers.PurchaseOrderIssueSerializer,
+        output_options=None,
     )
     def issue(self, request, pk=None):
         """API endpoint to 'issue' (place) a PurchaseOrder."""
@@ -509,6 +514,7 @@ class PurchaseOrderViewSet(
         serializer_class=serializers.PurchaseOrderReceiveSerializer,
         pagination_class=None,
         filter_backends=[],
+        output_options=None,
     )
     def receive(self, request, pk=None):
         """API endpoint to receive stock items against a PurchaseOrder.
