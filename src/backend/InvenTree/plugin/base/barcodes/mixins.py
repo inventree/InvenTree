@@ -389,6 +389,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
             debug_response['no_match'] = True
             return debug_response
 
+        if not line_item or not line_item.part:
+            return {'error': _('No matching line item found')}
+
         if line_item.part != supplier_part:
             return {'error': _('Supplier part does not match line item')}
 
