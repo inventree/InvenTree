@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
 import { openGlobalPreview } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import {
@@ -64,6 +65,9 @@ export default function OrderCalendar({
 }) {
   const navigate = useNavigate();
   const user = useUserState();
+  const previewPanelEnabled = useUserSettingsState((state) =>
+    state.isSet('ENABLE_PREVIEW_PANEL')
+  );
 
   // These filters apply to all order types
   const orderFilters: TableFilter[] = useMemo(() => {
@@ -175,12 +179,10 @@ export default function OrderCalendar({
   const onClickOrder = (info: EventClickArg) => {
     if (!info.event.id) return;
 
-    if (eventModified(event as any)) {
-      navigateToLink(
-        getDetailUrl(model, info.event.id),
-        navigate,
-        info.jsEvent
-      );
+    const detailUrl = getDetailUrl(model, info.event.id);
+
+    if (eventModified(info.jsEvent as any) || !previewPanelEnabled) {
+      navigateToLink(detailUrl, navigate, info.jsEvent);
     } else {
       openGlobalPreview(model, Number.parseInt(info.event.id));
     }
