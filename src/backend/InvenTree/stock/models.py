@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -3127,8 +3126,10 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
 def rename_stock_item_test_result_attachment(instance, filename):
     """Rename test result."""
-    return os.path.join(
-        'stock_files', str(instance.stock_item.pk), os.path.basename(filename)
+    from common.media import rename_uploaded_file
+
+    return rename_uploaded_file(
+        filename, 'test_result', model_type='stockitem', model_id=instance.stock_item.pk
     )
 
 
