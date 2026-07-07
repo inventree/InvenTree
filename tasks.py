@@ -1071,7 +1071,7 @@ def listbackups(c):
 )
 @state_logger
 def migrate(c, detect: bool = False, verbose: bool = False):
-    """Performs database migrations. This is a critical step if the database schema have been altered.
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
     Arguments:
         c: Command line context.
