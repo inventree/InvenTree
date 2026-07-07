@@ -945,6 +945,33 @@ class UninstallStockItemSerializer(serializers.Serializer):
         item.uninstall_into_location(location, request.user, note)
 
 
+class StockStatusCustomSerializer(serializers.ChoiceField):
+    """Serializer to allow annotating the schema to use int where custom values may be entered."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the status selector."""
+        if 'choices' not in kwargs:
+            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Status')
+
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = _('Stock item status code')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(
+                    f'* `{value}` - {label}' for value, label in kwargs['choices']
+                )
+                + "\n\nAdditional custom status keys may be retrieved from the 'stock_status_retrieve' call."
+            )
+
+        super().__init__(*args, **kwargs)
+
+
 class DisassemblyLineSerializer(serializers.Serializer):
     """Serializer for a single component line in a stock disassembly operation."""
 
@@ -955,6 +982,7 @@ class DisassemblyLineSerializer(serializers.Serializer):
             'bom_item',
             'quantity',
             'location',
+            'status',
             'purchase_price',
             'purchase_price_currency',
         ]
@@ -991,6 +1019,10 @@ class DisassemblyLineSerializer(serializers.Serializer):
         required=False,
         label=_('Location'),
         help_text=_('Destination location for the component items'),
+    )
+
+    status = StockStatusCustomSerializer(
+        required=False, help_text=_('Status code for the component items')
     )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1193,33 +1225,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
         help_text='Status key, chosen from the list of StockStatus keys'
     )
 )
-class StockStatusCustomSerializer(serializers.ChoiceField):
-    """Serializer to allow annotating the schema to use int where custom values may be entered."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the status selector."""
-        if 'choices' not in kwargs:
-            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
-
-        if 'label' not in kwargs:
-            kwargs['label'] = _('Status')
-
-        if 'help_text' not in kwargs:
-            kwargs['help_text'] = _('Stock item status code')
-
-        if InvenTree.ready.isGeneratingSchema():
-            kwargs['help_text'] = (
-                kwargs['help_text']
-                + '\n\n'
-                + '\n'.join(
-                    f'* `{value}` - {label}' for value, label in kwargs['choices']
-                )
-                + "\n\nAdditional custom status keys may be retrieved from the 'stock_status_retrieve' call."
-            )
-
-        super().__init__(*args, **kwargs)
-
-
 class StockChangeStatusSerializer(serializers.Serializer):
     """Serializer for changing status of multiple StockItem objects."""
 

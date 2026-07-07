@@ -1920,6 +1920,12 @@ class StockItem(
             Any stock items which are *installed* within this stock item are
             broken out (uninstalled) as part of the disassembly operation,
             rather than creating new stock items for them.
+
+        Note:
+            Traceability data is passed down from this stock item to the
+            generated components: the batch code and source purchase order
+            are copied across, while any source build order is recorded
+            in the stock tracking history of each component.
         """
         try:
             quantity = Decimal(quantity)
@@ -2013,6 +2019,7 @@ class StockItem(
                 location=destination,
                 parent=self,
                 batch=self.batch,
+                purchase_order=self.purchase_order,
                 purchase_price=line.get('purchase_price', None),
             )
 
@@ -2023,11 +2030,20 @@ class StockItem(
             new_item.tree_id = None
             new_item.save(add_note=False)
 
+            deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
+
+            # Record traceability links against the disassembled assembly
+            if self.build:
+                deltas['buildorder'] = self.build.pk
+
+            if self.purchase_order:
+                deltas['purchaseorder'] = self.purchase_order.pk
+
             new_item.add_tracking_entry(
                 StockHistoryCode.CREATED_FROM_DISASSEMBLY,
                 user,
                 notes=notes,
-                deltas={'stockitem': self.pk, 'quantity': float(line_quantity)},
+                deltas=deltas,
                 location=destination,
             )
 

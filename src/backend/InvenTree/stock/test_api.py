@@ -14,6 +14,7 @@ from rest_framework import status
 
 import build.models
 import company.models
+import order.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
@@ -2367,6 +2368,45 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         self.assertEqual(self.item.quantity, 0)
         self.assertFalse(self.item.in_stock)
+
+    def test_traceability_inheritance(self):
+        """Test that traceability data is passed down to the generated components."""
+        po = order.models.PurchaseOrder.objects.create(
+            supplier=company.models.Company.objects.get(pk=1), reference='PO-9999'
+        )
+
+        bo = build.models.Build.objects.create(
+            part=self.assembly, quantity=10, reference='BO-9999'
+        )
+
+        self.item.batch = 'ABC-123'
+        self.item.purchase_order = po
+        self.item.build = bo
+        self.item.save()
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 1},
+            expected_code=201,
+        )
+
+        component = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        # Batch code and source purchase order are inherited directly
+        self.assertEqual(component.batch, 'ABC-123')
+        self.assertEqual(component.purchase_order, po)
+
+        # The source build order cannot be copied across (the component is not
+        # an output of the build) - instead it is recorded in the stock history
+        self.assertIsNone(component.build)
+
+        entry = component.tracking_info.filter(
+            tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+        ).first()
+
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.deltas['buildorder'], bo.pk)
+        self.assertEqual(entry.deltas['purchaseorder'], po.pk)
 
     def test_explicit_pricing(self):
         """Test that automatic cost allocation is skipped if explicit pricing is provided."""
