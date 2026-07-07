@@ -22,7 +22,7 @@ From the main menu, users can access the following items:
 
 - [Navigation Menu](#navigation-menu)
 - [Dashboard](#dashboard)
-- [Global Search](#search)
+- [Global Search](./global_search.md)
 - [Spotlight](#spotlight)
 - [Barcode Scanning](#barcode-scanning)
 - [Notifications](#notifications)
@@ -133,57 +133,15 @@ Read more about this optional feature on the dedicated [Preview Panels](./previe
 
 ## Forms
 
-Data entry and editing within InvenTree is typically performed through the use of forms, which provide a structured interface for inputting and modifying data. Forms are designed to be user-friendly and efficient, allowing users to quickly enter and update information within the system.
+Data entry and editing within InvenTree is typically performed through the use of forms, which provide a structured interface for inputting and modifying data.
 
-Forms are typically displayed as a modal dialog, separated into multiple sections and fields.
-
-### Data Creation
-
-Example: Creating a new part via the "Add Part" form:
-
-{{ image("concepts/ui_form_add_part.png", "Add Part Button") }}
-
-On several forms is displayed option "Keep form open" in bottom part of the form on left side of Submit button (option is visible on the screenshot above). When this switch is turned on, form window is not closed after submit and filled form data is not reset. This is useful for creating more entries at one time with similar properties (e.g. only different number in name).
-
-### Data Editing
-
-Example: Editing an existing purchase order via the "Edit Purchase Order" form:
-
-{{ image("concepts/ui_form_edit_po.png", "Edit Purchase Order") }}
-
-### Confirm Actions
-
-Many actions within InvenTree require user confirmation before they can be executed. This is typically implemented through the use of confirmation dialogs, which prompt the user to confirm their intention before proceeding with the action.
-
-{{ image("concepts/ui_form_hold_po.png", "Confirmation Dialog") }}
+Read more about working with forms on the dedicated [Forms](./forms.md) page.
 
 ## Global Search
 
-Accessible from the [main menu](#main-menu), the global search functionality allows users to quickly find specific items or information within the InvenTree system. The search icon is located at the top of the interface and provides a convenient way to search across all sections of the system.
+Accessible from the [main menu](#main-menu), the global search functionality allows users to quickly find specific items or information within the InvenTree system.
 
-Clicking on the "search" icon (in the menu bar) opens the search menu, which allows users to enter search queries and view results from across the system.
-
-{{ image("concepts/ui_global_search.png", "Global Search") }}
-
-Search results are organized by category (e.g. Parts, Stock, Manufacturing, etc.) and provide quick access to the relevant pages for each search result.
-
-### Detail View
-
-To navigate to the detail page for a particular search result, simply click on the desired result from the search results list. This will take you directly to the relevant page within the InvenTree system, allowing you to view and interact with the specific item or information you were searching for.
-
-### Full Results
-
-The "global search" menu provides a limited set of search results for each category, typically showing the most relevant or recent results. To view the full set of search results for a particular category, click on the "View all results" button located at the top-left of the search results list for that category:
-
-{{ image("concepts/ui_global_search_view_all.png", "View Full Search Results") }}
-
-### Collapse Result Groups
-
-To collapse a particular category of search results in the global search menu, click on the "collapse" icon located at the top-right corner of the search results list for that category. This will hide the search results for that category, allowing you to focus on other categories or search results.
-
-### Remove Result Groups
-
-To remove a particular category of search results from the global search menu, click on the "remove" icon located at the top-right corner of the search results list for that category.
+Read more about the global search feature on the dedicated [Global Search](./global_search.md) page.
 
 ## Spotlight
 
