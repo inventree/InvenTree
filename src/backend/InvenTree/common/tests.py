@@ -36,6 +36,7 @@ from part.models import Part
 from plugin import registry
 
 from .api import WebhookView
+from .media import rename_uploaded_file
 from .models import (
     Attachment,
     CustomUnit,
@@ -54,6 +55,21 @@ from .models import (
 )
 
 CONTENT_TYPE_JSON = 'application/json'
+
+
+class MediaHelpersTest(TestCase):
+    """Unit tests for media helper functions."""
+
+    def test_rename_uploaded_file_preserves_extension(self):
+        """Ensure normal file extensions are preserved."""
+        upload_path = rename_uploaded_file('report.v1.txt', 'attachments', 'part', 123)
+
+        self.assertEqual(upload_path, 'part/123/attachments/report.v1.txt')
+
+    def test_rename_uploaded_file_rejects_dotdot_filename(self):
+        """Ensure explicit directory traversal token is blocked."""
+        with self.assertRaises(ValidationError):
+            rename_uploaded_file('..', 'attachments', 'part', 123)
 
 
 class AttachmentTest(InvenTreeAPITestCase):
