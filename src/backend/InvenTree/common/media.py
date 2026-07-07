@@ -3,7 +3,9 @@
 from pathlib import Path
 from typing import Optional
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
+from django.core.files.utils import validate_file_name
+from django.utils.translation import gettext_lazy as _
 
 
 def rename_uploaded_file(
@@ -34,18 +36,11 @@ def rename_uploaded_file(
     if not file_type:
         raise ValidationError('File type must be specified.')
 
-    # First, remove any illegal characters from the filename.
-    # Keep '.' so valid file extensions are preserved.
-    illegal_chars = '\'"\\\\/`~#|!@#$%^&*()[]{}<>?;:+=,'
-
-    for c in illegal_chars:
-        filename = filename.replace(c, '')
-
-    # Convert to a Path, ensure the filename is not attempting to traverse directories
-    file_path = Path(filename)
-
-    if file_path.is_absolute() or '..' in file_path.parts or len(file_path.parts) > 1:
-        raise ValidationError('Invalid filename: cannot contain directory traversal.')
+    # Ensure the filename is not attempting to traverse directories
+    try:
+        validate_file_name(filename, allow_relative_path=False)
+    except SuspiciousFileOperation:
+        raise ValidationError(_('Invalid filename'))
 
     # Construct an upload path based on the provided parts
     parts = []
@@ -61,8 +56,8 @@ def rename_uploaded_file(
     # Include the file type in the path
     parts.append(str(file_type))
 
-    # Finally, include the sanitized filename
-    parts.append(file_path.name)
+    # Finally, include the validated filename
+    parts.append(filename)
 
     # Join all parts to form the final upload path
     return str(Path(*parts))
