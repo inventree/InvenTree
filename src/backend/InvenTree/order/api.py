@@ -42,10 +42,13 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import current_date, str2bool
-from InvenTree.helpers_api import InvenTreeApiRouter, RetrieveUpdateDestroyModelViewSet
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
-    CleanMixin,
     CreateAPI,
     ListAPI,
     ListCreateAPI,
@@ -382,7 +385,6 @@ class PurchaseOrderViewSet(
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
-    CleanMixin,
     RetrieveUpdateDestroyModelViewSet,
 ):
     """Dummy 3."""
@@ -658,7 +660,6 @@ class PurchaseOrderLineItemViewSet(
     SerializerContextMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
-    CleanMixin,
     BulkDeleteViewsetMixin,
     RetrieveUpdateDestroyModelViewSet,
 ):
@@ -766,10 +767,7 @@ order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-
 
 
 class PurchaseOrderExtraLineViewSet(
-    GeneralExtraLineList,
-    OutputOptionsMixin,
-    CleanMixin,
-    RetrieveUpdateDestroyModelViewSet,
+    GeneralExtraLineList, OutputOptionsMixin, CleanModelViewSet
 ):
     """Dummy 1."""
 
