@@ -23,8 +23,8 @@ class CleanMixin:
     # Define a list of field names which will *not* be cleaned
     SAFE_FIELDS = []
 
-    def create(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+    def create(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -33,8 +33,8 @@ class CleanMixin:
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    def update(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+    def update(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(
