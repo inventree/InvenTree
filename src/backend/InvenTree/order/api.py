@@ -443,6 +443,8 @@ class PurchaseOrderViewSet(
 
         return context
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -453,8 +455,10 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -468,8 +472,10 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -480,8 +486,10 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
     @action(
         detail=True,
         methods=['post'],
