@@ -1955,9 +1955,6 @@ class StockItem(
                 )
             })
 
-        # Allocate pricing data across the generated components
-        lines = self.allocate_disassembly_pricing(quantity, lines)
-
         # Cache the custom status options for the StockItem model
         custom_status_values = StockItem.STATUS_CLASS.custom_values()
 
@@ -1978,21 +1975,28 @@ class StockItem(
                 (line.get('location') if line else None) or location or self.location
             )
 
-            # Break the installed item out into the destination location
-            installed_item.uninstall_into_location(destination, user, notes)
-
             if line:
                 # The uninstalled quantity reduces the quantity of new items
                 # to be created against the matching BOM line
-                line['quantity'] = Decimal(line['quantity']) - installed_item.quantity
+                line['quantity'] = max(
+                    Decimal(0), Decimal(line['quantity']) - installed_item.quantity
+                )
 
                 if status := line.get('status'):
                     installed_item.set_status(
                         status, custom_values=custom_status_values
                     )
-                    installed_item.save(add_note=False)
+
+            # Break the installed item out into the destination location
+            # Note: this also saves any status change applied above
+            installed_item.uninstall_into_location(destination, user, notes)
 
             items.append(installed_item)
+
+        # Allocate pricing data across the generated components.
+        # Note: Deliberately performed *after* the installed items are uninstalled,
+        # so that the cost is only spread across newly created stock items
+        lines = self.allocate_disassembly_pricing(quantity, lines)
 
         for line in lines:
             bom_item = line['bom_item']

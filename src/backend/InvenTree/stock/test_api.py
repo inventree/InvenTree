@@ -2392,6 +2392,219 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertAlmostEqual(prices[1], 5, places=3)
         self.assertIsNone(prices[50])
 
+    def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
+        """Install a new stock item into the assembly under test."""
+        return StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=part_pk),
+            quantity=quantity,
+            belongs_to=self.item,
+            location=None,
+            **kwargs,
+        )
+
+    def test_installed_items_partial(self):
+        """Installed items are uninstalled, and only the remainder is created afresh."""
+        sub_1 = self.install_item(1, 12)
+        sub_2 = self.install_item(1, 8)
+
+        n = StockItem.objects.count()
+
+        # Disassemble all 10 assemblies - the line requires 100 units in total
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 100}], 'quantity': 10},
+            expected_code=201,
+        )
+
+        # Two uninstalled items, plus a single new item for the remainder
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(StockItem.objects.count(), n + 1)
+
+        pks = {entry['pk'] for entry in response.data}
+        self.assertIn(sub_1.pk, pks)
+        self.assertIn(sub_2.pk, pks)
+
+        for sub in [sub_1, sub_2]:
+            sub.refresh_from_db()
+            self.assertIsNone(sub.belongs_to)
+            self.assertEqual(sub.location, self.item.location)
+
+        new_item = StockItem.objects.get(pk=(pks - {sub_1.pk, sub_2.pk}).pop())
+        self.assertEqual(new_item.part.pk, 1)
+        self.assertEqual(new_item.quantity, 80)
+
+        # Uninstalled items are updated, not created afresh
+        self.assertTrue(
+            sub_1.tracking_info.filter(
+                tracking_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY.value
+            ).exists()
+        )
+        self.assertFalse(
+            sub_1.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).exists()
+        )
+        self.assertTrue(
+            self.item.tracking_info.filter(
+                tracking_type=StockHistoryCode.REMOVED_CHILD_ITEM.value
+            ).exists()
+        )
+        self.assertTrue(
+            new_item.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).exists()
+        )
+
+    def test_installed_items_full_coverage(self):
+        """No new stock item is created for a line fully covered by installed items."""
+        sub = self.install_item(1, 120, purchase_price=Money(3, 'USD'))
+
+        n = StockItem.objects.count()
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 100},
+                    {'bom_item': 4, 'quantity': 30},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        # The first line is fully covered by the uninstalled item
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(StockItem.objects.count(), n + 1)
+
+        sub.refresh_from_db()
+        self.assertIsNone(sub.belongs_to)
+
+        # The uninstalled item retains its own purchase price
+        self.assertEqual(sub.purchase_price, Money(3, 'USD'))
+
+        # The total cost (10 x 100 USD) is spread only across newly created units
+        new_item = StockItem.objects.get(part=50, parent=self.item)
+        self.assertEqual(new_item.quantity, 30)
+        self.assertAlmostEqual(
+            float(new_item.purchase_price.amount), 1000 / 30, places=4
+        )
+
+    def test_installed_items_leftover(self):
+        """Installed items which do not match a BOM line are still uninstalled."""
+        # Part 2 is not a component of the assembly
+        sub = self.install_item(2, 5, status=StockStatus.ATTENTION.value)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [{'bom_item': 2, 'quantity': 400}],
+                'quantity': 10,
+                'location': 2,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+        sub.refresh_from_db()
+        self.assertIsNone(sub.belongs_to)
+
+        # Uninstalled to the top-level destination, retaining its own status
+        self.assertEqual(sub.location.pk, 2)
+        self.assertEqual(sub.status, StockStatus.ATTENTION.value)
+
+        # The BOM line quantity is not reduced by the unmatched item
+        new_item = StockItem.objects.get(part=3, parent=self.item)
+        self.assertEqual(new_item.quantity, 400)
+
+    def test_installed_items_require_full_disassembly(self):
+        """Partial disassembly is rejected while items are installed."""
+        self.install_item(1, 1)
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 50}], 'quantity': 5},
+            expected_code=400,
+        )
+
+        self.assertIn('must be disassembled in its entirety', str(response.data))
+
+    def test_installed_items_status_and_location(self):
+        """Explicit per-line status and location values are applied to uninstalled items."""
+        sub_1 = self.install_item(1, 10)
+        sub_2 = self.install_item(50, 4, status=StockStatus.ATTENTION.value)
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'bom_item': 1,
+                        'quantity': 100,
+                        'location': 2,
+                        'status': StockStatus.DAMAGED.value,
+                    },
+                    {'bom_item': 4, 'quantity': 30},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        sub_1.refresh_from_db()
+        self.assertEqual(sub_1.location.pk, 2)
+        self.assertEqual(sub_1.status, StockStatus.DAMAGED.value)
+
+        # No explicit status provided for the second line - item status is retained
+        sub_2.refresh_from_db()
+        self.assertEqual(sub_2.location, self.item.location)
+        self.assertEqual(sub_2.status, StockStatus.ATTENTION.value)
+
+    def test_installed_items_variants_and_substitutes(self):
+        """Installed variant and substitute parts are matched against BOM lines."""
+        # Designate part 2 as a substitute for BOM line 4
+        part.models.BomItemSubstitute.objects.create(
+            bom_item=part.models.BomItem.objects.get(pk=4),
+            part=part.models.Part.objects.get(pk=2),
+        )
+
+        # New BOM line against a template part, allowing variants
+        bom_line = part.models.BomItem.objects.create(
+            part=self.assembly,
+            sub_part=part.models.Part.objects.get(pk=10000),
+            quantity=5,
+            allow_variants=True,
+        )
+
+        substitute_item = self.install_item(2, 10)
+        variant_item = self.install_item(10001, 20)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 4, 'quantity': 30},
+                    {'bom_item': bom_line.pk, 'quantity': 50},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 4)
+
+        for sub in [substitute_item, variant_item]:
+            sub.refresh_from_db()
+            self.assertIsNone(sub.belongs_to)
+
+        # Line quantities are reduced by the matched installed items
+        new_50 = StockItem.objects.get(part=50, parent=self.item)
+        self.assertEqual(new_50.quantity, 20)
+
+        new_chair = StockItem.objects.get(part=10000, parent=self.item)
+        self.assertEqual(new_chair.quantity, 30)
+
     def test_serialized(self):
         """Test disassembly of a serialized stock item."""
         item = StockItem.objects.create(
