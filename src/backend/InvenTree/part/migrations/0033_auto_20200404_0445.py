@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='image',
-            field=stdimage.models.StdImageField(blank=True, null=True, upload_to=part.models.rename_part_image),
+            field=stdimage.models.StdImageField(blank=True, null=True, upload_to='_image', variations={'thumbnail': (128, 128)}, verbose_name='Image'),
         ),
     ]

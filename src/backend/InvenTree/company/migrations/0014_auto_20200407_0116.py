@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='company',
             name='image',
-            field=stdimage.models.StdImageField(blank=True, null=True, upload_to=company.models.rename_company_image),
+            field=stdimage.models.StdImageField(blank=True, null=True, upload_to='_image'),
         ),
     ]

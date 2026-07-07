@@ -1,7 +1,5 @@
 """Tests for the Part model."""
 
-import os
-
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -21,7 +19,6 @@ from .models import (
     PartRelated,
     PartStar,
     PartTestTemplate,
-    rename_part_image,
 )
 
 
@@ -232,11 +229,6 @@ class PartTest(TestCase):
         orphan = Part.objects.get(name='Orphan')
         self.assertIsNone(orphan.category)
         self.assertEqual(orphan.category_path, '')
-
-    def test_rename_img(self):
-        """Test that an image can be renamed."""
-        img = rename_part_image(self.r1, 'hello.png')
-        self.assertEqual(img, os.path.join('part_images', 'hello.png'))
 
     def test_stock(self):
         """Test case where there is zero stock."""

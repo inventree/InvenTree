@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(blank=True, help_text='Contact email address', max_length=254)),
                 ('contact', models.CharField(blank=True, help_text='Point of contact', max_length=100)),
                 ('URL', models.URLField(blank=True, help_text='Link to external company information')),
-                ('image', models.ImageField(blank=True, max_length=255, null=True, upload_to=company.models.rename_company_image)),
+                ('image', models.ImageField(blank=True, max_length=255, null=True, upload_to='_image')),
                 ('notes', models.TextField(blank=True)),
                 ('is_customer', models.BooleanField(default=False, help_text='Do you sell items to this company?')),
                 ('is_supplier', models.BooleanField(default=True, help_text='Do you purchase items from this company?')),
