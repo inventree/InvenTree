@@ -378,10 +378,8 @@ class StockTest(StockTestBase):
         self.assertEqual(it.status, StockStatus.OK.value)
 
         # Next, perform a valid stocktake
-        self.assertTrue(
-            it.stocktake(
-                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
-            )
+        it.stocktake(
+            100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
         )
 
         it.refresh_from_db()
@@ -728,6 +726,13 @@ class StockTest(StockTestBase):
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 60)
         self.assertIsNone(s1.purchase_price)
+
+        merge_entry = s1.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 60.0)
 
         part.stock_items.all().delete()
 

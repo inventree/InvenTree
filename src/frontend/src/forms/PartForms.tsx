@@ -103,6 +103,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {},
       active: {},
       starred: {
@@ -156,7 +159,7 @@ export function usePartFields({
       fields.duplicate = {
         icon: <IconCopy />,
         children: {
-          part: {
+          original: {
             value: duplicatePartInstance?.pk,
             hidden: true
           },

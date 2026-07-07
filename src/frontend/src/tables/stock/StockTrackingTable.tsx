@@ -31,14 +31,14 @@ import {
   IPNColumn,
   PartColumn,
   StockColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
 import {
   IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
   UserFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 type StockTrackingEntry = {
   label: string;

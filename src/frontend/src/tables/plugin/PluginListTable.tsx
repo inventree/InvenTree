@@ -22,6 +22,11 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
+import {
+  BooleanColumn,
+  LinkColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useCreateApiFormModal,
@@ -30,8 +35,6 @@ import {
 } from '../../hooks/UseForm';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, LinkColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct an indicator icon for a single plugin

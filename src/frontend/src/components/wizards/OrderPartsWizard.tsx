@@ -32,10 +32,10 @@ import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
-import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Render the "requirements" info for a part

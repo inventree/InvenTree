@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -8,19 +7,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
-import { useStockFields } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
@@ -29,7 +19,7 @@ import {
   PartColumn,
   StatusColumn,
   StockColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
 import {
   BatchFilter,
   CreatedAfterFilter,
@@ -47,8 +37,16 @@ import {
   TagsFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { useStockFields } from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Construct a list of columns for the stock item table
@@ -86,6 +84,7 @@ function stockItemTableColumns({
         'allocated',
         'consumed',
         'installed',
+        'in_stock',
         'sent_to_customer'
       ]
     }),
@@ -380,8 +379,6 @@ export function StockItemTable({
     [settings]
   );
 
-  const navigate = useNavigate();
-
   const tableColumns = useMemo(
     () =>
       stockItemTableColumns({
@@ -402,7 +399,6 @@ export function StockItemTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: () => {
         table.clearSelectedRecords();
         table.refreshTable();
@@ -432,11 +428,7 @@ export function StockItemTable({
     },
     follow: params.openNewStockItem ?? true,
     table: table,
-    onFormSuccess: (response: any) => {
-      // Returns a list that may contain multiple serialized stock items
-      // Navigate to the first result
-      navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
-    },
+    modelType: ModelType.stockitem,
     successMessage: t`Stock item created`,
     keepOpenOption: true
   });

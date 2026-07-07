@@ -1,3 +1,9 @@
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
@@ -6,10 +12,6 @@ import {
   AddItemButton,
   ModelType,
   ProgressBar,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction,
   UserRoles,
   formatDecimal
 } from '@lib/index';
@@ -28,6 +30,17 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RenderPart } from '../../components/render/Part';
+import {
+  DateColumn,
+  DecimalColumn,
+  DescriptionColumn,
+  LinkColumn,
+  ProjectCodeColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
@@ -41,17 +54,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DecimalColumn,
-  DescriptionColumn,
-  LinkColumn,
-  ProjectCodeColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 import TransferOrderAllocationTable from './TransferOrderAllocationTable';
 
 export default function TransferOrderLineItemTable({

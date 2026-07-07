@@ -1,9 +1,8 @@
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
   ModelType,
-  RowDeleteAction,
-  RowEditAction,
   YesNoButton,
   apiUrl,
   formatDecimal
@@ -14,6 +13,15 @@ import { t } from '@lingui/core/macro';
 import { IconFileUpload, IconPlus } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useParameterFields } from '../../forms/CommonForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
@@ -23,15 +31,6 @@ import {
 } from '../../hooks/UseForm';
 import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DescriptionColumn,
-  NoteColumn,
-  UserColumn
-} from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a table listing parameters

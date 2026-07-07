@@ -2206,6 +2206,35 @@ class StockItem(
 
         return True
 
+    def find_merge_target(self, location):
+        """Find an existing stock item at location that can absorb this item."""
+        if location is None:
+            return None
+
+        candidates = list(
+            StockItem.objects
+            .filter(part=self.part, location=location)
+            .exclude(pk=self.pk)
+            .order_by('pk')
+        )
+
+        if not candidates:
+            return None
+
+        if self.batch:
+            batch_matches = [c for c in candidates if c.batch == self.batch]
+            search_order = batch_matches + [
+                c for c in candidates if c not in batch_matches
+            ]
+        else:
+            search_order = candidates
+
+        for target in search_order:
+            if target.can_merge(other=self, raise_error=False):
+                return target
+
+        return None
+
     @transaction.atomic
     def merge_stock_items(self, other_items, raise_error=False, **kwargs):
         """Merge another stock item into this one; the two become one!
@@ -2227,7 +2256,7 @@ class StockItem(
 
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
-        notes = kwargs.get('notes')
+        notes = kwargs.get('notes') or ''
 
         parent_id = self.parent.pk if self.parent else None
 
@@ -2245,9 +2274,12 @@ class StockItem(
                 )
                 return
 
+        merged_quantity = Decimal(0)
+
         for other in other_items:
             tree_ids.add(other.tree_id)
 
+            merged_quantity += other.quantity
             self.quantity += other.quantity
 
             if other.purchase_price:
@@ -2271,15 +2303,25 @@ class StockItem(
 
             other.delete()
 
+        transfer_deltas = kwargs.pop('transfer_deltas', None)
+
+        tracking_deltas = {
+            'quantity': float(self.quantity),
+            'added': float(merged_quantity),
+        }
+
+        if location:
+            tracking_deltas['location'] = location.pk
+
+        if transfer_deltas:
+            tracking_deltas = {**transfer_deltas, **tracking_deltas}
+
         self.add_tracking_entry(
             StockHistoryCode.MERGED_STOCK_ITEMS,
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={
-                'location': location.pk if location else None,
-                'quantity': self.quantity,
-            },
+            deltas=tracking_deltas,
         )
 
         # Update the location of the item
@@ -2340,6 +2382,8 @@ class StockItem(
             status: If provided, override the status (default = existing status)
             packaging: If provided, override the packaging (default = existing packaging)
             allow_production: If True, allow splitting of stock which is in production (default = False)
+            record_tracking: If False, skip tracking entries (for merge-on-transfer)
+            split_transfer_deltas: Optional dict to receive split tracking deltas
 
         Returns:
             The new StockItem object
@@ -2352,6 +2396,8 @@ class StockItem(
         """
         # Run initial checks to test if the stock item can actually be "split"
         allow_production = kwargs.get('allow_production', False)
+        record_tracking = kwargs.pop('record_tracking', True)
+        split_transfer_deltas = kwargs.pop('split_transfer_deltas', None)
 
         # Cannot split a stock item which is in production
         if self.is_building and not allow_production:
@@ -2424,15 +2470,23 @@ class StockItem(
 
         new_stock.save(add_note=False)
 
-        # Add a stock tracking entry for the newly created item
-        new_stock.add_tracking_entry(
-            StockHistoryCode.SPLIT_FROM_PARENT,
-            user,
-            quantity=quantity,
-            notes=notes,
-            location=location,
-            deltas=deltas,
-        )
+        if split_transfer_deltas is not None:
+            split_transfer_deltas.clear()
+            split_transfer_deltas.update(deltas)
+
+            if location:
+                split_transfer_deltas['location'] = location.pk
+
+        if record_tracking:
+            # Add a stock tracking entry for the newly created item
+            new_stock.add_tracking_entry(
+                StockHistoryCode.SPLIT_FROM_PARENT,
+                user,
+                quantity=quantity,
+                notes=notes,
+                location=location,
+                deltas=deltas,
+            )
 
         # Copy the test results of this part to the new one
         new_stock.copyTestResultsFrom(self)
@@ -2445,6 +2499,7 @@ class StockItem(
             notes=notes,
             location=location,
             stockitem=new_stock,
+            record_tracking=record_tracking,
         )
 
         # Rebuild the tree for this parent item
@@ -2608,7 +2663,7 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, **kwargs):
+    def stocktake(self, count, user, **kwargs) -> None:
         """Perform item stocktake.
 
         Arguments:
@@ -2623,7 +2678,7 @@ class StockItem(
         try:
             count = Decimal(count)
         except InvalidOperation:
-            return False
+            return
 
         if count < 0:
             return False
@@ -2651,8 +2706,8 @@ class StockItem(
             )
             tracking_info['old_status_logical'] = old_status_logical
 
-        if self.updateQuantity(count):
-            tracking_info['quantity'] = float(count)
+        if self.serialized or self.updateQuantity(count):
+            tracking_info['quantity'] = 1 if self.serialized else float(count)
 
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
@@ -2672,14 +2727,11 @@ class StockItem(
                 deltas=tracking_info,
             )
 
-        trigger_event(
-            StockEvents.ITEM_COUNTED,
-            'stockitem.counted',
-            id=self.id,
-            quantity=float(self.quantity),
-        )
-
-        return True
+            trigger_event(
+                StockEvents.ITEM_COUNTED,
+                id=self.id,
+                quantity=1 if self.serialized else float(self.quantity),
+            )
 
     @transaction.atomic
     def add_stock(self, quantity, user, **kwargs):
@@ -2754,7 +2806,10 @@ class StockItem(
             code: The stock history code to use
             notes: Optional notes for the stock removal
             status: Optionally adjust the stock status
+            record_tracking: If False, skip creating a tracking entry
         """
+        record_tracking = kwargs.pop('record_tracking', True)
+
         # Cannot remove items from a serialized part
         if self.serialized:
             return False
@@ -2804,9 +2859,10 @@ class StockItem(
 
             self.save(add_note=False)
 
-            self.add_tracking_entry(
-                code, user, notes=kwargs.get('notes', ''), deltas=deltas
-            )
+            if record_tracking:
+                self.add_tracking_entry(
+                    code, user, notes=kwargs.get('notes', ''), deltas=deltas
+                )
 
         return True
 

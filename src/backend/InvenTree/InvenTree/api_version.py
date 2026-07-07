@@ -1,10 +1,29 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 511
+INVENTREE_API_VERSION = 516
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12295
+    - Adds "consumable" field to the Part model and API endpoints
+
+v515 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12298
+    - Change the file fields definition to binary (from uri) in the upload requests
+
+v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
+    - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
+    - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
+    - Part duplication options: renames "part" field to "original"
+
+v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/12250
+    - Adds "active" field to the ProjectCode model and API endpoints
+
+v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
+    - Adds optional "merge" field to each item in the Stock Transfer API endpoint
+    - When merge is enabled, transferred stock is combined into compatible existing stock at the destination
+    - Stock merge tracking entries now include an "added" delta field.
 
 v511 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/12204
     - Adds new filtering options to PartCategoryTree and StockLocationTree API endpoints

@@ -1649,7 +1649,7 @@ class PartCreationTests(PartAPITestBase):
                     'testable': do_copy,
                     'assembly': do_copy,
                     'duplicate': {
-                        'part': 100,
+                        'original': 100,
                         'copy_bom': do_copy,
                         'copy_notes': do_copy,
                         'copy_image': do_copy,

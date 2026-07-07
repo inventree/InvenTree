@@ -34,8 +34,8 @@ import {
   IconReload,
   IconX
 } from '@tabler/icons-react';
-import { api } from '../App';
-import { StandaloneField } from '../components/forms/StandaloneField';
+import { api } from '../../App';
+import { StandaloneField } from '../forms/StandaloneField';
 import {
   filterDisplayLabel,
   filterDisplayValue,

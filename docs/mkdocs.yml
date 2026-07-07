@@ -130,6 +130,7 @@ nav:
     - Parts: part/index.md
     - Creating Parts: part/create.md
     - Virtual Parts: part/virtual.md
+    - Consumable Parts: part/consumable.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Revisions: part/revision.md
@@ -174,6 +175,8 @@ nav:
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
     - Labels: report/labels.md
+    - Report Assets: report/assets.md
+    - Report Snippets: report/snippets.md
     - Context Variables: report/context_variables.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md

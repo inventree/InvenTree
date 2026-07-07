@@ -65,8 +65,8 @@ const AboutContent = ({
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup
       .filter((entry: AboutLookupRef) => !!data[entry.ref])
-      .map((entry: AboutLookupRef, idx) => (
-        <Table.Tr key={idx}>
+      .map((entry: AboutLookupRef) => (
+        <Table.Tr key={entry.ref}>
           <Table.Td>{entry.title}</Table.Td>
           <Table.Td>
             <Group justify='space-between' gap='xs'>

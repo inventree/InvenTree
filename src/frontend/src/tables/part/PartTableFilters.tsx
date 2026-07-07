@@ -1,7 +1,7 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
-import { TagsFilter } from '../Filter';
+import { TagsFilter } from '../../components/tables/Filter';
 
 /**
  * Construct a set of filters for the part table
@@ -102,6 +102,12 @@ export function PartTableFilters(): TableFilter[] {
       name: 'virtual',
       label: t`Virtual`,
       description: t`Filter by parts which are virtual`,
+      type: 'boolean'
+    },
+    {
+      name: 'consumable',
+      label: t`Consumable`,
+      description: t`Filter by parts which are consumable`,
       type: 'boolean'
     },
     {

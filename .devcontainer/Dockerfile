@@ -1,7 +1,5 @@
 # Dockerfile for the InvenTree devcontainer
-
-# In contrast with the "production" image (which is based on an Alpine image)
-# we use a Debian-based image for the devcontainer
+# This container is used for development of the InvenTree project, and includes all necessary dependencies for both backend and frontend development.
 
 FROM mcr.microsoft.com/devcontainers/python:3.12-trixie@sha256:5440cb68898d190ad6c6e8a4634ce89d0645bea47f9c8beb75612bb8e3983711
 
@@ -25,10 +23,10 @@ RUN chmod +x init.sh
 
 # Install required base packages
 RUN apt update && apt install -y \
-   python3.12-dev python3.12-venv \
+   python3-dev python3-venv \
    postgresql-client \
    libldap2-dev libsasl2-dev \
-   libpango1.0-0 libcairo2 \
+   libpango-1.0-0 libcairo2 \
    poppler-utils weasyprint
 
 # Install packages required for frontend development
