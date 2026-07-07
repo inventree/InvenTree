@@ -97,6 +97,28 @@ class ReturnOrderStatusGroups:
     COMPLETE = [ReturnOrderStatus.COMPLETE.value]
 
 
+class RepairOrderStatus(StatusCode):
+    """Defines a set of status codes for a RepairOrder."""
+
+    PENDING = 10, _('Pending'), ColorEnum.secondary
+    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning
+    COMPLETE = 30, _('Complete'), ColorEnum.success
+    CANCELLED = 40, _('Cancelled'), ColorEnum.danger
+
+
+class RepairOrderStatusGroups:
+    """Groups for RepairOrderStatus codes."""
+
+    OPEN = [
+        RepairOrderStatus.PENDING.value,
+        RepairOrderStatus.ON_HOLD.value,
+        RepairOrderStatus.IN_PROGRESS.value,
+    ]
+
+    COMPLETE = [RepairOrderStatus.COMPLETE.value]
+
+
 class ReturnOrderLineStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrderLineItem."""
 

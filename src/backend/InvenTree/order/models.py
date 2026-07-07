@@ -47,6 +47,7 @@ from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
 from order.events import (
     PurchaseOrderEvents,
+    RepairOrderEvents,
     ReturnOrderEvents,
     SalesOrderEvents,
     TransferOrderEvents,
@@ -54,6 +55,8 @@ from order.events import (
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     ReturnOrderStatusGroups,
@@ -3326,6 +3329,303 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
         blank=True,
         verbose_name=_('Price'),
         help_text=_('Cost associated with return or repair for this line item'),
+    )
+
+
+class RepairOrder(Order):
+    """A RepairOrder represents repair work performed for a customer."""
+
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = None
+    STATUS_CLASS = RepairOrderStatus
+    UNLOCK_SETTING = 'REPAIRORDER_EDIT_COMPLETED_ORDERS'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this RepairOrder."""
+        super().clean_line_item(line)
+        line.consumed_date = None
+
+    def get_absolute_url(self):
+        """Get the 'web' URL for this order."""
+        return pui_url(f'/sales/repair-order/{self.pk}')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrder model."""
+        return reverse('api-repair-order-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the RepairOrderStatus class."""
+        return RepairOrderStatusGroups
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Return default values for this model when issuing an API OPTIONS request."""
+        return {'reference': order.validators.generate_next_repair_order_reference()}
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'REPAIR'
+
+    def __str__(self):
+        """Render a string representation of this RepairOrder."""
+        return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Repair Order reference'),
+        default=order.validators.generate_next_repair_order_reference,
+        validators=[order.validators.validate_repair_order_reference],
+    )
+
+    customer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='repair_orders',
+        verbose_name=_('Customer'),
+        help_text=_('Company for which repair work is performed'),
+    )
+
+    @property
+    def company(self):
+        """Accessor helper for Order base class."""
+        return self.customer
+
+    item = models.ForeignKey(
+        stock.models.StockItem,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        verbose_name=_('Stock Item'),
+        help_text=_('Stock item being repaired'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        verbose_name=_('Part'),
+        help_text=_('Part being repaired'),
+    )
+
+    serial = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Serial Number'),
+        help_text=_('Serial number for the item being repaired'),
+    )
+
+    status = InvenTreeCustomStatusModelField(
+        default=RepairOrderStatus.PENDING.value,
+        choices=RepairOrderStatus.items(),
+        status_class=RepairOrderStatus,
+        verbose_name=_('Status'),
+        help_text=_('Repair order status'),
+    )
+
+    customer_reference = models.CharField(
+        max_length=64,
+        blank=True,
+        verbose_name=_('Customer Reference'),
+        help_text=_('Customer order reference code'),
+    )
+
+    complete_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed'),
+    )
+
+    def clean(self):
+        """Perform extra validation steps for RepairOrder."""
+        super().clean()
+
+        if not self.customer:
+            raise ValidationError({'customer': _('Customer must be specified')})
+
+        if not any([self.item, self.part, self.serial, self.description]):
+            raise ValidationError({
+                'description': _(
+                    'Repair order requires an item, part, serial number, or description'
+                )
+            })
+
+        if self.item and self.customer and self.item.customer:
+            if self.item.customer != self.customer:
+                raise ValidationError({
+                    'item': _('Stock item customer does not match repair order customer')
+                })
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            RepairOrderStatus.PENDING.value,
+            RepairOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as on hold."""
+        if self.can_hold:
+            self.status = RepairOrderStatus.ON_HOLD.value
+            self.save()
+            trigger_event(RepairOrderEvents.HOLD, id=self.pk)
+
+    @property
+    def can_cancel(self):
+        """Return True if this order can be cancelled."""
+        return self.status in RepairOrderStatusGroups.OPEN
+
+    def _action_cancel(self, *args, **kwargs):
+        """Cancel this RepairOrder."""
+        if self.can_cancel:
+            self.status = RepairOrderStatus.CANCELLED.value
+            self.save()
+            trigger_event(RepairOrderEvents.CANCELLED, id=self.pk)
+
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            RepairOrderStatus.PENDING.value,
+            RepairOrderStatus.ON_HOLD.value,
+        ]
+
+    def _action_issue(self, *args, **kwargs):
+        """Issue this RepairOrder."""
+        if self.can_issue:
+            self.status = RepairOrderStatus.IN_PROGRESS.value
+            self.issue_date = InvenTree.helpers.current_date()
+            self.save()
+            trigger_event(RepairOrderEvents.ISSUED, id=self.pk)
+
+    def _action_complete(self, *args, **kwargs):
+        """Complete this RepairOrder."""
+        if self.status == RepairOrderStatus.IN_PROGRESS.value:
+            self.status = RepairOrderStatus.COMPLETE.value
+            self.complete_date = InvenTree.helpers.current_date()
+            self.save()
+            trigger_event(RepairOrderEvents.COMPLETED, id=self.pk)
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to IN_PROGRESS status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.IN_PROGRESS.value, self, self._action_issue
+        )
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition to COMPLETE status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.COMPLETE.value, self, self._action_complete
+        )
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        return self.handle_transition(
+            self.status, RepairOrderStatus.CANCELLED.value, self, self._action_cancel
+        )
+
+
+class RepairOrderLine(OrderLineItem):
+    """Model for a single line item in a RepairOrder."""
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Repair Order Line Item')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model."""
+        return reverse('api-repair-order-line-list')
+
+    def clean(self):
+        """Perform extra validation steps for RepairOrderLine."""
+        super().clean()
+
+        if not self.part and not self.stock_item:
+            raise ValidationError({
+                'part': _('Repair order line requires a part or stock item')
+            })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Repair quantity must be greater than zero')
+            })
+
+        if self.stock_item and self.quantity > self.stock_item.quantity:
+            raise ValidationError({
+                'quantity': _('Repair quantity exceeds stock quantity')
+            })
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Repair Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        related_name='repair_order_lines',
+        blank=True,
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part required for repair'),
+    )
+
+    stock_item = models.ForeignKey(
+        stock.models.StockItem,
+        on_delete=models.SET_NULL,
+        related_name='repair_order_lines',
+        blank=True,
+        null=True,
+        verbose_name=_('Stock Item'),
+        help_text=_('Stock item required for repair'),
+    )
+
+    quantity = models.DecimalField(
+        verbose_name=_('Quantity'),
+        help_text=_('Quantity required for repair'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
+    )
+
+    consumed_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Consumed Date'),
+        help_text=_('The date this repair line item was consumed'),
     )
 
 

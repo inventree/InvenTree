@@ -2453,6 +2453,194 @@ class ReturnOrderExtraLineSerializer(
     )
 
 
+class RepairOrderSerializer(
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for the RepairOrder model class."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.RepairOrder
+        fields = AbstractOrderSerializer.order_fields([
+            'complete_date',
+            'customer',
+            'customer_detail',
+            'customer_reference',
+            'item',
+            'item_detail',
+            'part',
+            'part_detail',
+            'serial',
+            'updated_at',
+        ])
+        read_only_fields = ['creation_date', 'updated_at']
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
+
+    duplicate = DuplicateOptionsSerializer(
+        order.models.RepairOrder.objects.all(),
+        copy_extra_lines=False,
+        copy_parameters=True,
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Custom annotation for the serializer queryset."""
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount('lines', filter=~Q(consumed_date=None))
+        )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    order.models.RepairOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        return queryset
+
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['customer'],
+    )
+
+    item_detail = OptionalField(
+        serializer_class=stock.serializers.StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['item__part', 'item__supplier_part'],
+    )
+
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['part'],
+    )
+
+
+class RepairOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for holding a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to hold the order."""
+        self.order.hold_order()
+
+
+class RepairOrderIssueSerializer(OrderAdjustSerializer):
+    """Serializer for issuing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to issue the order."""
+        self.order.issue_order()
+
+
+class RepairOrderCancelSerializer(OrderAdjustSerializer):
+    """Serializer for cancelling a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to cancel the order."""
+        self.order.cancel_order()
+
+
+class RepairOrderCompleteSerializer(OrderAdjustSerializer):
+    """Serializer for completing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to complete the order."""
+        self.order.complete_order()
+
+
+@register_importer()
+class RepairOrderLineSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a RepairOrderLine object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.RepairOrderLine
+        fields = AbstractLineItemSerializer.line_fields([
+            'part',
+            'part_detail',
+            'stock_item',
+            'stock_item_detail',
+            'consumed_date',
+        ])
+
+    order_detail = OptionalField(
+        serializer_class=RepairOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
+    )
+
+    quantity = serializers.FloatField(
+        label=_('Quantity'), help_text=_('Quantity required for repair')
+    )
+
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+    )
+
+    stock_item_detail = OptionalField(
+        serializer_class=stock.serializers.StockItemSerializer,
+        serializer_kwargs={
+            'source': 'stock_item',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['stock_item__part', 'stock_item__supplier_part'],
+    )
+
+
 @register_importer()
 class TransferOrderSerializer(
     NotesFieldMixin,
