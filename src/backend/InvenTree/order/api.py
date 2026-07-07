@@ -17,7 +17,7 @@ from django_filters.rest_framework.filterset import FilterSet
 from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -766,7 +766,10 @@ order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-
 
 
 class PurchaseOrderExtraLineViewSet(
-    GeneralExtraLineList, OutputOptionsMixin, viewsets.ModelViewSet
+    GeneralExtraLineList,
+    OutputOptionsMixin,
+    CleanMixin,
+    RetrieveUpdateDestroyModelViewSet,
 ):
     """Dummy 1."""
 
