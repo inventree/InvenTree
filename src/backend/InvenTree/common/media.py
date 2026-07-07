@@ -34,8 +34,9 @@ def rename_uploaded_file(
     if not file_type:
         raise ValidationError('File type must be specified.')
 
-    # First, remove any illegal characters from the filename
-    illegal_chars = '\'"\\\\/.`~#|!@#$%^&*()[]{}<>?;:+=,'
+    # First, remove any illegal characters from the filename.
+    # Keep '.' so valid file extensions are preserved.
+    illegal_chars = '\'"\\\\/`~#|!@#$%^&*()[]{}<>?;:+=,'
 
     for c in illegal_chars:
         filename = filename.replace(c, '')
