@@ -9,6 +9,7 @@ interface PreviewDrawerStateProps {
   modelType?: ModelType;
   id?: number | string;
   instance?: any;
+  filters?: Record<string, any>;
   preview?: PreviewType;
   targetUrl?: string;
   onCloseCallback?: () => void;
@@ -18,7 +19,8 @@ interface PreviewDrawerStateProps {
     instance?: any,
     preview?: PreviewType,
     onClose?: () => void,
-    targetUrl?: string
+    targetUrl?: string,
+    filters?: Record<string, any>
   ) => void;
   closePreview: () => void;
 }
@@ -29,6 +31,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
     modelType: undefined,
     id: undefined,
     instance: undefined,
+    filters: undefined,
     preview: undefined,
     targetUrl: undefined,
     onCloseCallback: undefined,
@@ -39,7 +42,8 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
       instance?: any,
       preview?: PreviewType,
       onClose?: () => void,
-      targetUrl?: string
+      targetUrl?: string,
+      filters?: Record<string, any>
     ) => {
       set({
         modelType,
@@ -47,6 +51,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
         instance,
         preview,
         targetUrl,
+        filters,
         isOpen: true,
         onCloseCallback: onClose
       });
@@ -61,6 +66,7 @@ export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
         id: undefined,
         preview: undefined,
         targetUrl: undefined,
+        filters: undefined,
         onCloseCallback: undefined
       });
 
@@ -75,11 +81,12 @@ export function openGlobalPreview(
   instance?: any,
   preview?: PreviewType,
   onClose?: () => void,
-  targetUrl?: string
+  targetUrl?: string,
+  filters?: Record<string, any>
 ) {
   usePreviewDrawerState
     .getState()
-    .openPreview(modelType, id, instance, preview, onClose, targetUrl);
+    .openPreview(modelType, id, instance, preview, onClose, targetUrl, filters);
 }
 
 export function closeGlobalPreview() {

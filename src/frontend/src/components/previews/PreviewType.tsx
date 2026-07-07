@@ -25,6 +25,41 @@ export type PreviewComponentProps = {
 
 export type PreviewComponent = (props: PreviewComponentProps) => PreviewType;
 
+/**
+ * Return the default set of API query parameters to request when fetching
+ * the instance data used to render the preview for a given model type.
+ *
+ * These are merged with (and overridden by) any explicit filters provided
+ * by the caller which opened the preview.
+ */
+export function getPreviewQueryParams(
+  modelType: ModelType
+): Record<string, any> {
+  switch (modelType) {
+    case ModelType.stockitem:
+      return { part_detail: true };
+    case ModelType.purchaseorder:
+      return { supplier_detail: true };
+    case ModelType.salesorder:
+    case ModelType.returnorder:
+      return { customer_detail: true };
+    case ModelType.supplierpart:
+      return {
+        part_detail: true,
+        supplier_detail: true,
+        manufacturer_detail: true
+      };
+    case ModelType.manufacturerpart:
+      return { part_detail: true, manufacturer_detail: true };
+    case ModelType.build:
+      return { part_detail: true };
+    case ModelType.salesordershipment:
+      return { order_detail: true };
+    default:
+      return {};
+  }
+}
+
 export function getPreviewComponentForModel({
   modelType,
   instance,

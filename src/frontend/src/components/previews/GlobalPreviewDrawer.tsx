@@ -10,6 +10,7 @@ export default function GlobalPreviewDrawer() {
   const modelType = usePreviewDrawerState((state) => state.modelType);
   const id = usePreviewDrawerState((state) => state.id);
   const instance = usePreviewDrawerState((state) => state.instance);
+  const filters = usePreviewDrawerState((state) => state.filters);
   const preview = usePreviewDrawerState((state) => state.preview);
   const targetUrl = usePreviewDrawerState((state) => state.targetUrl);
   const closePreview = usePreviewDrawerState((state) => state.closePreview);
@@ -23,6 +24,7 @@ export default function GlobalPreviewDrawer() {
       modelType={modelType}
       id={id}
       instance={instance}
+      filters={filters}
       preview={preview}
       targetUrl={targetUrl}
       opened={isOpen}

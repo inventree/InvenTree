@@ -26,7 +26,11 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
-import { type PreviewType, getPreviewComponentForModel } from './PreviewType';
+import {
+  type PreviewType,
+  getPreviewComponentForModel,
+  getPreviewQueryParams
+} from './PreviewType';
 import { FallbackPreviewComponent } from './models/Fallback';
 
 export default function PreviewDrawer({
@@ -55,12 +59,22 @@ export default function PreviewDrawer({
     ? ModelInformationDict[modelType].api_endpoint
     : undefined;
 
+  // Combine the default query params for the model type with any filters
+  // explicitly provided by the caller which opened the preview (which take
+  // precedence over the defaults).
+  const queryParams = useMemo(() => {
+    return {
+      ...(modelType ? getPreviewQueryParams(modelType) : {}),
+      ...filters
+    };
+  }, [modelType, filters]);
+
   const { instance: fetchedInstance, instanceQuery } = useInstance({
     endpoint: apiEndpoint!,
     pk: id,
     hasPrimaryKey: true,
     defaultValue: {},
-    params: filters,
+    params: queryParams,
     disabled: !!providedInstance || !modelType || !id
   });
 
