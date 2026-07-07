@@ -10,7 +10,6 @@ import {
 } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { cancelEvent } from '@lib/functions/Events';
 import {
   eventModified,
@@ -51,22 +50,21 @@ export default function PreviewDrawer({
 }>) {
   const navigate = useNavigate();
 
-  const modelInfo = modelType ? getModelInfo(modelType) : null;
-  const apiEndpoint = modelType
-    ? ModelInformationDict[modelType].api_endpoint
-    : undefined;
+  const modelInfo = useMemo(() => {
+    return modelType ? getModelInfo(modelType) : null;
+  }, [modelType]);
+
+  const apiEndpoint = modelInfo?.api_endpoint ?? undefined;
 
   // Combine the default query params for the model type with any filters
   // explicitly provided by the caller which opened the preview (which take
   // precedence over the defaults).
   const queryParams = useMemo(() => {
     return {
-      ...(modelType
-        ? (ModelInformationDict[modelType].default_query_params ?? {})
-        : {}),
+      ...(modelInfo?.default_query_params ?? {}),
       ...filters
     };
-  }, [modelType, filters]);
+  }, [modelInfo, filters]);
 
   const { instance: fetchedInstance, instanceQuery } = useInstance({
     endpoint: apiEndpoint!,
@@ -85,7 +83,7 @@ export default function PreviewDrawer({
     if (providedPreview) return providedPreview;
     if (!modelType || !modelInfo || id == null) return null;
 
-    const component = ModelInformationDict[modelType].preview?.({
+    const component = modelInfo?.preview?.({
       instance,
       modelId: typeof id === 'string' ? Number(id) : id
     });
@@ -100,7 +98,7 @@ export default function PreviewDrawer({
     }
 
     return component;
-  }, [providedPreview, modelType, id, instance]);
+  }, [providedPreview, modelType, id, instance, modelInfo]);
 
   useEffect(() => {
     if (!opened) return;
