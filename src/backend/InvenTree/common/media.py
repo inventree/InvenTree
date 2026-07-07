@@ -6,7 +6,7 @@ from typing import Optional
 from django.core.exceptions import ValidationError
 
 
-def common_file_upload_handler(
+def rename_uploaded_file(
     filename: str,
     file_type: str,
     model_type: Optional[str] = None,
@@ -35,7 +35,7 @@ def common_file_upload_handler(
         raise ValidationError('File type must be specified.')
 
     # First, remove any illegal characters from the filename
-    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+    illegal_chars = '\'"\\\\/.`~#|!@#$%^&*()[]{}<>?;:+=,'
 
     for c in illegal_chars:
         filename = filename.replace(c, '')
@@ -43,11 +43,7 @@ def common_file_upload_handler(
     # Convert to a Path, ensure the filename is not attempting to traverse directories
     file_path = Path(filename)
 
-    if (
-        file_path.is_absolute()
-        or file_path.parts.count() > 1
-        or '..' in file_path.parts
-    ):
+    if file_path.is_absolute() or '..' in file_path.parts or len(file_path.parts) > 1:
         raise ValidationError('Invalid filename: cannot contain directory traversal.')
 
     # Construct an upload path based on the provided parts
