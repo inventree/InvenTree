@@ -19,6 +19,7 @@ import {
   navigateToLink
 } from '@lib/functions/Navigation';
 import type { ModelType } from '@lib/index';
+import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight } from '@tabler/icons-react';
 import type React from 'react';
@@ -26,11 +27,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
 import { getModelInfo } from '../render/ModelType';
-import {
-  type PreviewType,
-  getPreviewComponentForModel,
-  getPreviewQueryParams
-} from './PreviewType';
+import './ModelPreviewShim';
 import { FallbackPreviewComponent } from './models/Fallback';
 
 export default function PreviewDrawer({
@@ -64,7 +61,9 @@ export default function PreviewDrawer({
   // precedence over the defaults).
   const queryParams = useMemo(() => {
     return {
-      ...(modelType ? getPreviewQueryParams(modelType) : {}),
+      ...(modelType
+        ? (ModelInformationDict[modelType].default_query_params ?? {})
+        : {}),
       ...filters
     };
   }, [modelType, filters]);
@@ -86,8 +85,7 @@ export default function PreviewDrawer({
     if (providedPreview) return providedPreview;
     if (!modelType || !modelInfo || id == null) return null;
 
-    const component: PreviewType | null = getPreviewComponentForModel({
-      modelType,
+    const component = ModelInformationDict[modelType].preview?.({
       instance,
       modelId: typeof id === 'string' ? Number(id) : id
     });

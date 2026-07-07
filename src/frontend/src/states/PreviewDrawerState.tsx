@@ -1,6 +1,6 @@
 import type { ModelType } from '@lib/enums/ModelType';
+import type { PreviewType } from '@lib/types/Preview';
 import { create } from 'zustand';
-import type { PreviewType } from '../components/previews/PreviewType';
 
 type PreviewDrawerId = number | string | undefined;
 

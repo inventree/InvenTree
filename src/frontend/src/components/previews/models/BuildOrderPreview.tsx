@@ -1,6 +1,6 @@
+import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
 import { BuildOrderDetailsPanel } from '../../../pages/build/BuildOrderDetailsPanel';
-import type { PreviewType } from '../PreviewType';
 
 export function BuildOrderPreviewComponent({
   instance,

@@ -1,5 +1,5 @@
+import type { PreviewType } from '@lib/types/Preview';
 import { PartDetailsPanel } from '../../../pages/part/PartDetailsPanel';
-import type { PreviewType } from '../PreviewType';
 
 export function PartPreviewComponent({
   instance,

@@ -1,6 +1,6 @@
+import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
 import { StockLocationDetailsPanel } from '../../../pages/stock/StockLocationDetailsPanel';
-import type { PreviewType } from '../PreviewType';
 
 export function StockLocationPreviewComponent({
   instance,

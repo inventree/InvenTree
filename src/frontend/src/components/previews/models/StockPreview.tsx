@@ -1,6 +1,6 @@
 import { formatDecimal } from '@lib/functions/Formatting';
+import type { PreviewType } from '@lib/types/Preview';
 import { StockDetailsPanel } from '../../../pages/stock/StockDetailsPanel';
-import type { PreviewType } from '../PreviewType';
 
 export function StockPreviewComponent({
   instance,

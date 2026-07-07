@@ -1,6 +1,6 @@
+import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
 import { SupplierPartDetailsPanel } from '../../../pages/company/SupplierPartDetailsPanel';
-import type { PreviewType } from '../PreviewType';
 
 export function SupplierPartPreviewComponent({
   instance,
