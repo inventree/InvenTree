@@ -1315,6 +1315,12 @@ class Part(
         help_text=_('Is this part consumable, such as glue or a fastener?'),
     )
 
+    dummy_field = models.BooleanField(
+        default=False,
+        verbose_name=_('Dummy Field'),
+        help_text=_('Dummy field for testing purposes'),
+    )
+
     bom_validated = models.BooleanField(
         default=False,
         verbose_name=_('BOM Validated'),
