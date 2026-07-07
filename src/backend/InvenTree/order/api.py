@@ -380,8 +380,8 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 
 
 class PurchaseOrderViewSet(
-    OrderCreateMixin,  #
     SerializerContextMixin,
+    OrderCreateMixin,  #
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
