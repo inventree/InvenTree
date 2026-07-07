@@ -390,13 +390,16 @@ class SupplierBarcodeMixin(BarcodeMixin):
             return debug_response
 
         if not line_item or not line_item.part:
-            return {'error': _('No matching line item found')}
+            return {'error': _('No matching line item found'), 'no_match': True}
 
         if line_item.part != supplier_part:
-            return {'error': _('Supplier part does not match line item')}
+            return {
+                'error': _('Supplier part does not match line item'),
+                'no_match': False,
+            }
 
         if line_item.is_completed():
-            return {'error': _('Line item is already completed')}
+            return {'error': _('Line item is already completed'), 'no_match': False}
 
         # Extract location information for the line item
         location = (
