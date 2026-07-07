@@ -34,6 +34,7 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
     BulkUpdateMixin,
     ParameterListMixin,
     meta_path,
@@ -41,9 +42,10 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import current_date, str2bool
-from InvenTree.helpers_api import InvenTreeApiRouter
+from InvenTree.helpers_api import InvenTreeApiRouter, RetrieveUpdateDestroyModelViewSet
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
+    CleanMixin,
     CreateAPI,
     ListAPI,
     ListCreateAPI,
@@ -380,7 +382,8 @@ class PurchaseOrderViewSet(
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
-    viewsets.ModelViewSet,
+    CleanMixin,
+    RetrieveUpdateDestroyModelViewSet,
 ):
     """Dummy 3."""
 
@@ -470,7 +473,7 @@ class PurchaseOrderViewSet(
     def cancel(self, request, pk=None):
         """API endpoint to 'cancel' a purchase order.
 
-        The purchase order must be in a state which can be cancelled.
+        The purchase order must be in a state which can be cancelled
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -486,7 +489,7 @@ class PurchaseOrderViewSet(
         output_options=None,
     )
     def complete(self, request, pk=None):
-        """API endpoint to 'complete' a purchase order.."""
+        """API endpoint to 'complete' a purchase order."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -529,7 +532,7 @@ class PurchaseOrderViewSet(
             - location: destination for stock item (optional)
             - batch_code: the batch code for this stock item
             - serial_numbers: serial numbers for this stock item
-        - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item.
+        - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -655,7 +658,9 @@ class PurchaseOrderLineItemViewSet(
     SerializerContextMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
-    viewsets.ModelViewSet,
+    CleanMixin,
+    BulkDeleteViewsetMixin,
+    RetrieveUpdateDestroyModelViewSet,
 ):
     """Dummy 2."""
 
