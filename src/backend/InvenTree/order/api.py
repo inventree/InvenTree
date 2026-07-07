@@ -376,27 +376,18 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 
 class PurchaseOrderViewSet(
     SerializerContextMixin,
-    # OrderCreateMixin
+    OrderCreateMixin,  #
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
     viewsets.ModelViewSet,
 ):
-    """ViewSet for PurchaseOrder API endpoints.
-
-    Combines:
-    - PurchaseOrderList (GET list, POST create)
-    - PurchaseOrderDetail (GET detail, PUT update, DELETE destroy)
-    - Custom actions: cancel, hold, complete, issue, receive
-    """
+    """Dummy 3."""
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
-    output_options = PurchaseOrderOutputOptions
+    # output_options = PurchaseOrderOutputOptions
     queryset = models.PurchaseOrder.objects.all()
-    # queryset = models.PurchaseOrder.objects.all().prefetch_related(
-    #     'supplier', 'created_by'
-    # )
     serializer_class = serializers.PurchaseOrderSerializer
 
     ordering_field_aliases = {
@@ -432,7 +423,7 @@ class PurchaseOrderViewSet(
 
     def get_queryset(self):
         """Return the annotated queryset for this endpoint."""
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related('supplier', 'created_by')
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
         return queryset
 
@@ -458,7 +449,7 @@ class PurchaseOrderViewSet(
         serializer_class=serializers.PurchaseOrderHoldSerializer,
     )
     def hold(self, request, pk=None):
-        """Place a purchase order on hold."""
+        """API endpoint to place a PurchaseOrder on hold."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -470,7 +461,10 @@ class PurchaseOrderViewSet(
         serializer_class=serializers.PurchaseOrderCancelSerializer,
     )
     def cancel(self, request, pk=None):
-        """Cancel a purchase order."""
+        """API endpoint to 'cancel' a purchase order.
+
+        The purchase order must be in a state which can be cancelled.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -482,7 +476,7 @@ class PurchaseOrderViewSet(
         serializer_class=serializers.PurchaseOrderCompleteSerializer,
     )
     def complete(self, request, pk=None):
-        """Complete a purchase order."""
+        """API endpoint to 'complete' a purchase order.."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -494,7 +488,7 @@ class PurchaseOrderViewSet(
         serializer_class=serializers.PurchaseOrderIssueSerializer,
     )
     def issue(self, request, pk=None):
-        """Issue a purchase order."""
+        """API endpoint to 'issue' (place) a PurchaseOrder."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -505,13 +499,29 @@ class PurchaseOrderViewSet(
         detail=True,
         methods=['post'],
         serializer_class=serializers.PurchaseOrderReceiveSerializer,
+        pagination_class=None,
+        filter_backends=[],
     )
     def receive(self, request, pk=None):
-        """Receive stock items against a purchase order."""
+        """API endpoint to receive stock items against a PurchaseOrder.
+
+        - The purchase order is specified in the URL.
+        - Items to receive are specified as a list called "items" with the following options:
+            - line_item: pk of the PO Line item
+            - supplier_part: pk value of the supplier part
+            - quantity: quantity to receive
+            - status: stock item status
+            - expiry_date: stock item expiry date (optional)
+            - location: destination for stock item (optional)
+            - batch_code: the batch code for this stock item
+            - serial_numbers: serial numbers for this stock item
+        - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
+
         response = stock_serializers.StockItemSerializer(queryset, many=True)
         return Response(response.data, status=status.HTTP_201_CREATED)
 
@@ -633,12 +643,7 @@ class PurchaseOrderLineItemViewSet(
     OutputOptionsMixin,
     viewsets.ModelViewSet,
 ):
-    """ViewSet for PurchaseOrderLineItem API endpoints.
-
-    Combines:
-    - PurchaseOrderLineItemList (GET list, POST create)
-    - PurchaseOrderLineItemDetail (GET detail, PUT update, DELETE destroy)
-    """
+    """Dummy 2."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
@@ -742,29 +747,12 @@ order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-
 
 
 class PurchaseOrderExtraLineViewSet(
-    SerializerContextMixin,
-    DataExportViewMixin,
-    OutputOptionsMixin,
-    viewsets.ModelViewSet,
+    GeneralExtraLineList, OutputOptionsMixin, viewsets.ModelViewSet
 ):
-    """ViewSet for PurchaseOrderExtraLine API endpoints.
-
-    Combines:
-    - PurchaseOrderExtraLineList (GET list, POST create)
-    - PurchaseOrderExtraLineDetail (GET detail, PUT update, DELETE destroy)
-    """
+    """Dummy 1."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
-    filter_backends = SEARCH_ORDER_FILTER
-
-    ordering_fields = ['quantity', 'notes', 'reference', 'line']
-
-    ordering_field_aliases = {'line': ['line_int', 'line']}
-
-    search_fields = ['quantity', 'notes', 'reference', 'description']
-
-    filterset_fields = ['order']
 
     def get_queryset(self):
         """Return the annotated queryset for this endpoint."""
