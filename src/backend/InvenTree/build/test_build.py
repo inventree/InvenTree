@@ -998,6 +998,38 @@ class AutoAllocationTests(BuildTestBase):
 
         self.assertEqual(self.build.allocated_stock.count(), N - 8)
 
+    def test_consumable_via_part(self):
+        """A BOM line should be treated as consumable if the underlying part is consumable.
+
+        Even though 'bom_item_1' itself is not marked as consumable, marking
+        'sub_part_1' as consumable should have the same effect as marking the
+        BOM line itself as consumable.
+        """
+        self.sub_part_1.consumable = True
+        self.sub_part_1.save()
+
+        self.assertFalse(self.bom_item_1.consumable)
+        self.assertTrue(self.bom_item_1.is_consumable)
+
+        # The BuildLine should be treated as fully allocated, without any stock allocated
+        self.assertEqual(self.line_1.allocated_quantity(), 0)
+        self.assertTrue(self.line_1.is_fully_allocated())
+
+        # The build should not consider this line when checking for unallocated lines
+        unallocated_lines = self.build.unallocated_lines(tracked=False)
+        self.assertNotIn(self.line_1, unallocated_lines)
+
+        # Auto-allocation should skip this line, even though stock exists
+        self.build.auto_allocate_stock(
+            interchangeable=True, substitutes=True, optional_items=True
+        )
+
+        self.assertEqual(self.line_1.allocated_quantity(), 0)
+        self.assertEqual(BuildItem.objects.filter(build_line=self.line_1).count(), 0)
+
+        # The other (non-consumable) line should still be allocated as normal
+        self.assertEqual(self.line_2.allocated_quantity(), 30)
+
 
 class ExternalBuildTest(InvenTreeAPITestCase):
     """Unit tests for external build order functionality."""

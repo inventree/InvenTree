@@ -29,13 +29,13 @@ import {
   RenderStockItem,
   RenderStockLocation
 } from '../components/render/Stock';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
 import { DuplicateField, ProjectCodeField, TagsField } from './CommonFields';
 
 /**

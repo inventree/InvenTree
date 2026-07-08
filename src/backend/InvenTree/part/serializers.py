@@ -357,6 +357,7 @@ class PartBriefSerializer(
             'testable',
             'trackable',
             'virtual',
+            'consumable',
             'units',
             'pricing_min',
             'pricing_max',
@@ -588,6 +589,7 @@ class PartSerializer(
             'units',
             'variant_of',
             'virtual',
+            'consumable',
             'pricing_min',
             'pricing_max',
             'pricing_updated',
@@ -1427,7 +1429,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'update',
         ]
 
-    currency = serializers.CharField(allow_null=True, read_only=True)
+    currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        allow_null=True, read_only=True
+    )
 
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 

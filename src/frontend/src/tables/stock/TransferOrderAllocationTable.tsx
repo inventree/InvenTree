@@ -11,6 +11,18 @@ import { t } from '@lingui/core/macro';
 import { Alert } from '@mantine/core';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  DescriptionColumn,
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useTransferOrderAllocationFields } from '../../forms/TransferOrderForms';
 import {
   useDeleteApiFormModal,
@@ -18,15 +30,6 @@ import {
 } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  LocationColumn,
-  PartColumn,
-  ReferenceColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function TransferOrderAllocationTable({
   partId,

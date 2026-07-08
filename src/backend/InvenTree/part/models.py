@@ -53,7 +53,7 @@ from common.settings import get_global_setting
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.helpers import decimal2string, normalize
 from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
@@ -503,6 +503,7 @@ class Part(
         active: Is this part active? Parts are deactivated instead of being deleted
         locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
+        consumable: Is this part consumable, such as glue or a fastener?
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
@@ -1308,6 +1309,12 @@ class Part(
         help_text=_('Is this a virtual part, such as a software product or license?'),
     )
 
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_('Is this part consumable, such as glue or a fastener?'),
+    )
+
     bom_validated = models.BooleanField(
         default=False,
         verbose_name=_('BOM Validated'),
@@ -1619,7 +1626,7 @@ class Part(
         queryset = self.get_bom_items(include_virtual=False)
 
         # Ignore 'consumable' BOM items for this calculation
-        queryset = queryset.filter(consumable=False)
+        queryset = queryset.filter(BomItem.consumable_filter(consumable=False))
 
         # Annotate the queryset with the 'can_build' quantity
         queryset = part.filters.annotate_bom_item_can_build(queryset)
@@ -2994,15 +3001,12 @@ class PartPricing(common.models.MetaMixin):
 
         try:
             self.update_overall_cost()
-        except Exception:
-            # If something has happened to the Part model, might throw an error
-            pass
-
-        try:
             super().save(*args, **kwargs)
         except Exception:
-            # This error may be thrown if there is already duplicate pricing data
-            pass
+            log_error('PartPricing.save')
+            logger.error(
+                "Could not save PartPricing for part '%s' to the database", self.part
+            )
 
     def update_bom_cost(self, save=True):
         """Recalculate BOM cost for the referenced Part instance.
@@ -3374,7 +3378,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.currency.currency_code_mappings(),
+        validators=[validators.validate_currency_code],
     )
 
     scheduled_for_update = models.BooleanField(default=False)
@@ -4288,6 +4292,35 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return self.get_item_hash() == self.checksum
 
+    @property
+    def is_consumable(self) -> bool:
+        """Return True if this BOM line should be treated as consumable.
+
+        This is the case if either:
+        - The BOM line itself is marked as consumable
+        - The underlying part is marked as consumable
+        """
+        return self.consumable or self.sub_part.consumable
+
+    @staticmethod
+    def consumable_filter(consumable: bool = True, prefix: str = '') -> Q:
+        """Return a Q filter which selects BomItem objects based on "effective" consumable status.
+
+        A BomItem is considered "effectively consumable" if either the BOM line itself,
+        or the underlying part, is marked as consumable.
+
+        Arguments:
+            consumable: If True, return a filter which matches consumable BOM items.
+                        If False, return a filter which matches non-consumable BOM items.
+            prefix: Optional field lookup prefix, for use against querysets of a
+                    related model (e.g. 'bom_item__' when filtering a BuildLine queryset).
+        """
+        f = Q(**{f'{prefix}consumable': True}) | Q(**{
+            f'{prefix}sub_part__consumable': True
+        })
+
+        return f if consumable else ~f
+
     def clean(self):
         """Check validity of the BomItem model.
 
@@ -4389,29 +4422,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
                 log_error('bom_item.get_required_quantity')
 
         return required
-
-    @property
-    def price_range(self, internal=False):
-        """Return the price-range for this BOM item."""
-        # get internal price setting
-        use_internal = get_global_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        p_range = self.sub_part.get_price_range(
-            self.quantity, internal=use_internal and internal
-        )
-
-        if p_range is None:
-            return p_range
-
-        p_min, p_max = p_range
-
-        if p_min == p_max:
-            return decimal2money(p_min)
-
-        # Convert to better string representation
-        p_min = decimal2money(p_min)
-        p_max = decimal2money(p_max)
-
-        return f'{p_min} to {p_max}'
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
