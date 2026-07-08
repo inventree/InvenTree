@@ -36,7 +36,7 @@ from common.models import CustomUnit, InvenTreeSetting
 from common.settings import get_global_setting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase, in_env_context
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context, trackTreeRebuilds
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -109,6 +109,40 @@ class TreeFixtureTest(TestCase):
 
         self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
+
+
+class TreeRebuildTest(TestCase):
+    """Test that tree operations do not trigger redundant tree rebuilds."""
+
+    def test_create_root_node(self):
+        """Creating a new top-level tree node must not trigger a tree rebuild."""
+        for model in [PartCategory, StockLocation]:
+            with trackTreeRebuilds() as tracker:
+                node_1 = model.objects.create(name='Node 1', description='First node')
+                node_2 = model.objects.create(name='Node 2', description='Second node')
+
+            self.assertEqual(len(tracker.partial), 0)
+            self.assertEqual(len(tracker.full), 0)
+
+            # The MPTT fields must be pre-set at insertion time
+            for node in [node_1, node_2]:
+                self.assertEqual((node.lft, node.rght, node.level), (1, 2, 0))
+
+            # Each new top-level node must receive a unique tree_id
+            self.assertNotEqual(node_1.tree_id, node_2.tree_id)
+
+    def test_create_child_node(self):
+        """Creating a child node must rebuild the parent tree exactly once."""
+        parent = StockLocation.objects.create(name='Parent Location')
+
+        with trackTreeRebuilds() as tracker:
+            child = StockLocation.objects.create(name='Child Location', parent=parent)
+
+        self.assertEqual(tracker.partial, [('StockLocation', parent.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+
+        self.assertEqual(child.parent, parent)
+        self.assertEqual(child.tree_id, parent.tree_id)
 
 
 class HostTest(InvenTreeTestCase):

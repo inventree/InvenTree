@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
+from InvenTree.unit_test import trackTreeRebuilds
 
 from .models import Part, PartCategory
 
@@ -259,6 +260,32 @@ class CategoryTest(TestCase):
         tree_ids = PartCategory.objects.values_list('tree_id', flat=True).distinct()
         tree_ids = set(tree_ids)
         self.assertEqual(len(tree_ids), 10)
+
+    def test_root_delete_rebuild_count(self):
+        """Test that deleting a root category rebuilds each resulting tree exactly once."""
+        # Clear out the existing categories
+        for p in PartCategory.objects.all():
+            p.delete()
+
+        root = PartCategory.objects.create(name='Root Category', description='Root')
+
+        for i in range(3):
+            PartCategory.objects.create(
+                name=f'Child Category {i}', description='Child', parent=root
+            )
+
+        root.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            root.delete()
+
+        # No full tree rebuild is required
+        self.assertEqual(len(tracker.full), 0)
+
+        # Three trees result from the delete: each is rebuilt exactly once
+        # (the original tree, plus one new tree for each additional subtree)
+        self.assertEqual(len(tracker.partial), 3)
+        self.assertEqual(len(tracker.partial), len(set(tracker.partial)))
 
     def test_category_tree(self):
         """Unit tests for the part category tree structure (MPTT).

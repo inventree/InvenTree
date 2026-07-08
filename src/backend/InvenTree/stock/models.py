@@ -555,6 +555,13 @@ class StockItem(
 
         super().delete(**kwargs)
 
+    def partial_rebuild(self, tree_id: int) -> bool:
+        """Perform a partial rebuild of the stock item tree.
+
+        If the partial rebuild fails, a full tree rebuild is scheduled in the background.
+        """
+        return stock.tasks.rebuild_stock_item_tree(tree_id)
+
     @staticmethod
     def get_api_url():
         """Return API url."""
@@ -2497,8 +2504,7 @@ class StockItem(
             record_tracking=record_tracking,
         )
 
-        # Rebuild the tree for this parent item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
+        # Note: The tree has already been rebuilt, when the new item was saved
 
         # Attempt to reload the new item from the database
         try:

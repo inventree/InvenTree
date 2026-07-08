@@ -23,6 +23,7 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     findOffloadedEvent,
+    trackTreeRebuilds,
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
@@ -383,6 +384,40 @@ class BuildTest(BuildTestBase):
             )
 
         BuildItem.objects.bulk_create(items_to_create)
+
+    def test_consume_rebuild_count(self):
+        """Test that stock consumption does not perform redundant tree rebuilds."""
+        # Allocate untracked stock against the build:
+        # - Full-quantity allocations are consumed without splitting
+        # - Partial allocations require a stock split (and hence a tree rebuild)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: 3,  # Full quantity - no split required
+                self.stock_1_2: 47,  # Partial quantity - split required
+                self.stock_2_1: 5,  # Full quantity - no split required
+                self.stock_2_2: 5,
+                self.stock_2_3: 5,
+                self.stock_2_4: 5,
+                self.stock_2_5: 5,
+            },
+        )
+
+        with trackTreeRebuilds() as tracker:
+            build.tasks.consume_build_stock(
+                self.build.pk,
+                lines=[self.line_1.pk, self.line_2.pk],
+                user_id=self.user.pk,
+            )
+
+        # No full tree rebuilds are required
+        self.assertEqual(len(tracker.full), 0)
+
+        # No tree is rebuilt more than once
+        self.assertEqual(len(tracker.partial), len(set(tracker.partial)))
+
+        # Only the split allocation requires a tree rebuild
+        self.assertEqual(tracker.partial, [('StockItem', self.stock_1_2.tree_id)])
 
     def test_partial_allocation(self):
         """Test partial allocation of stock."""

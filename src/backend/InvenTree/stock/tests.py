@@ -11,7 +11,7 @@ from djmoney.money import Money
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase, trackTreeRebuilds
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -1277,6 +1277,48 @@ class StockTreeTest(StockTestBase):
 
         self.assertEqual(item.get_children().count(), 12)
         self.assertEqual(item.get_descendants(include_self=True).count(), 13)
+
+    def test_rebuild_counts(self):
+        """Test that stock operations do not perform redundant tree rebuilds."""
+        part = Part.objects.create(
+            name='Rebuild part',
+            description='A part for testing tree rebuild counts',
+            trackable=True,
+        )
+
+        # Creating a new top-level stock item must not require a tree rebuild
+        with trackTreeRebuilds() as tracker:
+            item = StockItem.objects.create(part=part, quantity=100)
+
+        self.assertEqual(len(tracker.partial), 0)
+        self.assertEqual(len(tracker.full), 0)
+
+        # Splitting stock must rebuild the tree exactly once
+        with trackTreeRebuilds() as tracker:
+            child = item.splitStock(25, None, None)
+
+        self.assertEqual(tracker.partial, [('StockItem', item.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+        self.assertEqual(child.parent.pk, item.pk)
+
+        # Serializing stock must rebuild the tree exactly once
+        item.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            item.serializeStock(10, [str(i) for i in range(10)], None)
+
+        self.assertEqual(tracker.partial, [('StockItem', item.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+
+        # Simple stock adjustments must not require a tree rebuild
+        item.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            item.add_stock(10, None)
+            item.take_stock(5, None)
+
+        self.assertEqual(len(tracker.partial), 0)
+        self.assertEqual(len(tracker.full), 0)
 
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
