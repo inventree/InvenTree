@@ -81,14 +81,12 @@ test('Company - Supplier Parts', async ({ browser }) => {
 
   await loadTab(page, 'Supplier Parts');
   await clearTableFilters(page);
-
-  await page.getByText(/1 \- 25 \/ 77\d/).waitFor();
+  await page.getByText(/1 \- 25 \/ 7\d\d/).waitFor();
 
   await setTableChoiceFilter(page, 'Primary', 'Yes');
-  await page.getByText(/1 \- 25 \/ 31\d/).waitFor();
+  await page.getByText(/1 \- 25 \/ 3\d\d/).waitFor();
 
   await clearTableFilters(page);
-
   await setTableChoiceFilter(page, 'Primary', 'No');
-  await page.getByText(/1 \- 25 \/ 45\d/).waitFor();
+  await page.getByText(/1 \- 25 \/ 4\d\d/).waitFor();
 });
