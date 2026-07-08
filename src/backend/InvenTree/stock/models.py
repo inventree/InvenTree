@@ -466,11 +466,6 @@ class StockItem(
 
         verbose_name = _('Stock Item')
 
-    class MPTTMeta:
-        """MPTT metaclass options."""
-
-        order_insertion_by = ['part']
-
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
 

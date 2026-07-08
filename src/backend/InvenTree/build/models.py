@@ -117,11 +117,6 @@ class Build(
         verbose_name = _('Build Order')
         verbose_name_plural = _('Build Orders')
 
-    class MPTTMeta:
-        """MPTT options for the BuildOrder model."""
-
-        order_insertion_by = ['reference']
-
     class BuildItemTypes(StringEnum):
         """Enumeration of available item types."""
 

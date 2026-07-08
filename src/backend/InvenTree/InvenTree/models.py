@@ -716,6 +716,11 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
     - Better handling of deletion of nodes and items
     - Ensure tree is correctly rebuilt after deletion and other operations
     - Improved protection against recursive tree structures
+
+    Note: 'order_insertion_by' must not be used on any InvenTreeTree subclass.
+    Ordered insertion of root nodes requires a global tree_id renumbering
+    (UPDATE ... WHERE tree_id > x) on nearly every top-level insert,
+    which is expensive and unsafe under concurrent database writes.
     """
 
     # How each node reference its parent object
@@ -729,11 +734,6 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         """Metaclass defines extra model properties."""
 
         abstract = True
-
-    class MPTTMeta:
-        """MPTT metaclass options."""
-
-        order_insertion_by = ['name']
 
     @transaction.atomic
     def delete(self, *args, **kwargs):
