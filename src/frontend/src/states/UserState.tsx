@@ -72,59 +72,47 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return;
     }
 
-    // Fetch user data
-    await api
-      .get(apiUrl(ApiEndpoints.user_me), {
-        timeout: 2000
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          const user: UserProps = {
-            pk: response.data.pk,
-            first_name: response.data?.first_name ?? '',
-            last_name: response.data?.last_name ?? '',
-            email: response.data.email,
-            username: response.data.username,
-            groups: response.data.groups,
-            profile: response.data.profile
-          };
-          get().setUser(user);
-          // profile info
-        } else {
-          get().clearUserState();
-        }
-      })
-      .catch(() => {
-        get().clearUserState();
-      });
+    // Fetch user data and role data concurrently - neither depends on the
+    // other's response, both only require an authenticated session (already
+    // confirmed above), so there's no need to wait for one before firing the other.
+    const [userResult, rolesResult] = await Promise.allSettled([
+      api.get(apiUrl(ApiEndpoints.user_me), { timeout: 2000 }),
+      api.get(apiUrl(ApiEndpoints.user_me_roles))
+    ]);
 
-    if (!get().isLoggedIn()) {
+    if (userResult.status === 'fulfilled' && userResult.value.status == 200) {
+      const response = userResult.value;
+      const user: UserProps = {
+        pk: response.data.pk,
+        first_name: response.data?.first_name ?? '',
+        last_name: response.data?.last_name ?? '',
+        email: response.data.email,
+        username: response.data.username,
+        groups: response.data.groups,
+        profile: response.data.profile
+      };
+      get().setUser(user);
+    } else {
+      get().clearUserState();
       return;
     }
 
-    // Fetch role data
-    await api
-      .get(apiUrl(ApiEndpoints.user_me_roles))
-      .then((response) => {
-        if (response.status == 200) {
-          const user: UserProps = get().user as UserProps;
+    if (rolesResult.status === 'fulfilled' && rolesResult.value.status == 200) {
+      const response = rolesResult.value;
+      const user: UserProps = get().user as UserProps;
 
-          // Update user with role data
-          if (user) {
-            user.roles = response.data?.roles ?? {};
-            user.permissions = response.data?.permissions ?? {};
-            user.is_staff = response.data?.is_staff ?? false;
-            user.is_superuser = response.data?.is_superuser ?? false;
-            get().setUser(user);
-          }
-        } else {
-          get().clearUserState();
-        }
-      })
-      .catch((_error) => {
-        console.error('ERR: Error fetching user roles');
-        get().clearUserState();
-      });
+      // Update user with role data
+      if (user) {
+        user.roles = response.data?.roles ?? {};
+        user.permissions = response.data?.permissions ?? {};
+        user.is_staff = response.data?.is_staff ?? false;
+        user.is_superuser = response.data?.is_superuser ?? false;
+        get().setUser(user);
+      }
+    } else {
+      console.error('ERR: Error fetching user roles');
+      get().clearUserState();
+    }
   },
   isAuthed: () => {
     return get().is_authed;
