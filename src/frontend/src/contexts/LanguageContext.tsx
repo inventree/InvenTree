@@ -141,8 +141,11 @@ export function LanguageContext({
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = new_locales;
 
-        // Reload server state (and refresh status codes)
-        fetchGlobalStates();
+        // Reload server state (and refresh status codes). Forced: the
+        // Accept-Language header actually changed (initial set, or a real
+        // locale change), so this must not be skipped by the "already
+        // fetched" guard even if another caller already fetched once.
+        fetchGlobalStates(true);
 
         // Clear out cached table column names
         useStoredTableState.getState().clearTableColumnNames();
