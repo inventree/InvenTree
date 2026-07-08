@@ -392,7 +392,9 @@ class PurchaseOrderViewSet(
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
-    queryset = models.PurchaseOrder.objects.all()
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
     serializer_class = serializers.PurchaseOrderSerializer
 
     ordering_field_aliases = {
@@ -429,7 +431,6 @@ class PurchaseOrderViewSet(
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset.prefetch_related('supplier', 'created_by')
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
         return queryset
 
