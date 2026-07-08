@@ -22,6 +22,14 @@ Example: Editing an existing purchase order via the "Edit Purchase Order" form:
 
 {{ image("concepts/ui_form_edit_po.png", "Edit Purchase Order") }}
 
+### Form Submission
+
+A form can be submitted by clicking the "Submit" button located at the bottom-right corner of the form.
+
+Alternatively, an open form can be submitted using the keyboard shortcut `Ctrl + Enter` (or `Cmd + Enter` on macOS). This shortcut works even while typing in a form field, providing a quick way to submit the form without needing to reach for the mouse. It is particularly useful in multi-line text fields, where pressing `Enter` inserts a new line rather than submitting the form.
+
+The keyboard shortcut is only active while a form is open, and follows the same rules as the "Submit" button - for example, it has no effect while the form is loading, or when editing an existing item without any changes.
+
 ### Confirm Actions
 
 Many actions within InvenTree require user confirmation before they can be executed. This is typically implemented through the use of confirmation dialogs, which prompt the user to confirm their intention before proceeding with the action.
