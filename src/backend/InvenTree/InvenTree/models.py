@@ -735,6 +735,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         order_insertion_by = ['name']
 
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         """Handle the deletion of a tree node.
 
