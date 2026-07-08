@@ -7,7 +7,7 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import RedirectView
@@ -843,9 +843,13 @@ class APISearchView(GenericAPIView):
 
                 try:
                     if is_viewset:
-                        list_method = cls.as_view({'get': 'list'})(
-                            request._request, *args, **kwargs
-                        )
+                        # use dummy request to call the list method of the viewset
+                        req = HttpRequest()
+                        req.method = 'GET'
+                        req.user = request.user
+                        req.GET = params
+
+                        list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
                     else:
                         list_method = view.list(request, *args, **kwargs)
                     results[key] = list_method.data
