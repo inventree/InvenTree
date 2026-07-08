@@ -822,9 +822,13 @@ class NotesFieldMixin:
         super().__init__(*args, **kwargs)
 
         if hasattr(self, 'context'):
+            request = self.context.get('request', None)
+            method = getattr(request, 'method', None)
+
             if view := self.context.get('view', None):
                 if (
                     issubclass(view.__class__, ListModelMixin)
+                    and method in SAFE_METHODS
                     and not InvenTree.ready.isGeneratingSchema()
                 ):
                     self.fields.pop('notes', None)
