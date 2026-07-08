@@ -9,8 +9,10 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
+import { openGlobalPreview } from '../../src/states/PreviewDrawerState';
+import { useUserSettingsState } from '../../src/states/SettingsStates';
 import { cancelEvent } from '../functions/Events';
-import { getDetailUrl } from '../functions/Navigation';
+import { eventModified, getDetailUrl } from '../functions/Navigation';
 import { navigateToLink } from '../functions/Navigation';
 import type { RowAction, RowViewProps } from '../types/Tables';
 
@@ -23,8 +25,16 @@ export function RowViewAction(props: RowViewProps): RowAction {
     color: undefined,
     icon: <IconArrowRight />,
     onClick: (event: any) => {
-      const url = getDetailUrl(props.modelType, props.modelId);
-      navigateToLink(url, props.navigate, event);
+      const showPreviewPanel = useUserSettingsState
+        .getState()
+        .isSet('ENABLE_PREVIEW_PANEL');
+
+      if (!showPreviewPanel || eventModified(event as any)) {
+        const url = getDetailUrl(props.modelType, props.modelId);
+        navigateToLink(url, props.navigate, event);
+      } else {
+        openGlobalPreview(props.modelType, props.modelId);
+      }
     }
   };
 }
