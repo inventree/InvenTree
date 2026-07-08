@@ -6,6 +6,7 @@ import { type JSX, useEffect, useRef, useState } from 'react';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
+import { markLocaleReady } from '../functions/localeReady';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
@@ -195,6 +196,7 @@ export async function activateLocale(locale: string | null) {
     const { messages } = await import(`../locales/${localeDir}/messages.ts`);
     i18n.load(locale, messages);
     i18n.activate(locale);
+    markLocaleReady();
   } catch (err) {
     console.error(`Failed to load locale ${locale}:`, err);
   }
