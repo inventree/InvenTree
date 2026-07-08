@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
 import { isTrue } from '@lib/functions/Conversion';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import {
   type NestedDict,
   constructFormUrl,
@@ -597,6 +598,23 @@ export function ApiForm({
       props.onFormError?.(error, form);
     },
     [props.onFormError]
+  );
+
+  // Submit the form with Ctrl+Enter (Cmd+Enter on Mac) while it is open.
+  // An empty tagsToIgnore list allows the hotkey to fire from within form inputs.
+  useInvenTreeHotkeys(
+    [
+      [
+        'mod+Enter',
+        t`Submit form`,
+        () => {
+          if (!isLoading && (!props.fetchInitialData || isDirty)) {
+            form.handleSubmit(submitForm, onFormError)();
+          }
+        }
+      ]
+    ],
+    []
   );
 
   if (optionsLoading || initialDataQuery.isFetching) {
