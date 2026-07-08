@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import type { InvenTreeIconType } from '../types/Icons';
+import type { InstanceRenderInterface } from '../types/Rendering';
 import { ApiEndpoints } from './ApiEndpoints';
 import type { ModelType } from './ModelType';
 
@@ -14,6 +15,7 @@ export interface ModelInformationInterface {
   supports_barcode?: boolean;
   icon: keyof InvenTreeIconType;
   preview?: (props: { instance: any; modelId: number }) => any;
+  render?: (props: Readonly<InstanceRenderInterface>) => any;
   default_query_params?: Record<string, any>;
 }
 
@@ -30,13 +32,28 @@ export type ModelDict = {
 type ModelPreviewKey = keyof typeof ModelType;
 type ModelPreviewProps = { instance: any; modelId: number };
 type ModelPreview = (props: ModelPreviewProps) => any;
-
-const modelPreviewRegistry: Partial<Record<ModelPreviewKey, ModelPreview>> = {};
+type ModelRender = (props: Readonly<InstanceRenderInterface>) => any;
 
 export function registerModelPreviews(
   previews: Partial<Record<ModelPreviewKey, ModelPreview>>
 ) {
-  Object.assign(modelPreviewRegistry, previews);
+  (Object.keys(previews) as ModelPreviewKey[]).forEach((model) => {
+    const preview = previews[model];
+    if (preview) {
+      ModelInformationDict[model].preview = preview;
+    }
+  });
+}
+
+export function registerModelRenderers(
+  renderers: Partial<Record<ModelPreviewKey, ModelRender>>
+) {
+  (Object.keys(renderers) as ModelPreviewKey[]).forEach((model) => {
+    const renderer = renderers[model];
+    if (renderer) {
+      ModelInformationDict[model].render = renderer;
+    }
+  });
 }
 
 export const ModelInformationDict: ModelDict = {
@@ -48,8 +65,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.part_list,
     admin_url: '/part/part/',
     supports_barcode: true,
-    icon: 'part',
-    preview: (props) => modelPreviewRegistry.part?.(props)
+    icon: 'part'
   },
   parameter: {
     label: () => t`Parameter`,
@@ -84,8 +100,7 @@ export const ModelInformationDict: ModelDict = {
       part_detail: true,
       supplier_detail: true,
       manufacturer_detail: true
-    },
-    preview: (props) => modelPreviewRegistry.supplierpart?.(props)
+    }
   },
   manufacturerpart: {
     label: () => t`Manufacturer Part`,
@@ -96,8 +111,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/company/manufacturerpart/',
     supports_barcode: true,
     icon: 'manufacturers',
-    default_query_params: { part_detail: true, manufacturer_detail: true },
-    preview: (props) => modelPreviewRegistry.manufacturerpart?.(props)
+    default_query_params: { part_detail: true, manufacturer_detail: true }
   },
   partcategory: {
     label: () => t`Part Category`,
@@ -106,8 +120,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/part/category/:pk/',
     api_endpoint: ApiEndpoints.category_list,
     admin_url: '/part/partcategory/',
-    icon: 'category',
-    preview: (props) => modelPreviewRegistry.partcategory?.(props)
+    icon: 'category'
   },
   stockitem: {
     label: () => t`Stock Item`,
@@ -118,8 +131,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/stock/stockitem/',
     supports_barcode: true,
     icon: 'stock',
-    default_query_params: { part_detail: true },
-    preview: (props) => modelPreviewRegistry.stockitem?.(props)
+    default_query_params: { part_detail: true }
   },
   stocklocation: {
     label: () => t`Stock Location`,
@@ -129,8 +141,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.stock_location_list,
     admin_url: '/stock/stocklocation/',
     supports_barcode: true,
-    icon: 'location',
-    preview: (props) => modelPreviewRegistry.stocklocation?.(props)
+    icon: 'location'
   },
   stocklocationtype: {
     label: () => t`Stock Location Type`,
@@ -153,8 +164,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/build/build/',
     supports_barcode: true,
     icon: 'build_order',
-    default_query_params: { part_detail: true },
-    preview: (props) => modelPreviewRegistry.build?.(props)
+    default_query_params: { part_detail: true }
   },
   buildline: {
     label: () => t`Build Line`,
@@ -176,8 +186,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/company/:pk/',
     api_endpoint: ApiEndpoints.company_list,
     admin_url: '/company/company/',
-    icon: 'building',
-    preview: (props) => modelPreviewRegistry.company?.(props)
+    icon: 'building'
   },
   projectcode: {
     label: () => t`Project Code`,
@@ -195,8 +204,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/order/purchaseorder/',
     supports_barcode: true,
     icon: 'purchase_orders',
-    default_query_params: { supplier_detail: true },
-    preview: (props) => modelPreviewRegistry.purchaseorder?.(props)
+    default_query_params: { supplier_detail: true }
   },
   purchaseorderlineitem: {
     label: () => t`Purchase Order Line`,
@@ -213,8 +221,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/order/salesorder/',
     supports_barcode: true,
     icon: 'sales_orders',
-    default_query_params: { customer_detail: true },
-    preview: (props) => modelPreviewRegistry.salesorder?.(props)
+    default_query_params: { customer_detail: true }
   },
   salesordershipment: {
     label: () => t`Sales Order Shipment`,
@@ -225,8 +232,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
     supports_barcode: true,
     icon: 'shipment',
-    default_query_params: { order_detail: true },
-    preview: (props) => modelPreviewRegistry.salesordershipment?.(props)
+    default_query_params: { order_detail: true }
   },
   returnorder: {
     label: () => t`Return Order`,
@@ -237,8 +243,7 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/order/returnorder/',
     supports_barcode: true,
     icon: 'return_orders',
-    default_query_params: { customer_detail: true },
-    preview: (props) => modelPreviewRegistry.returnorder?.(props)
+    default_query_params: { customer_detail: true }
   },
   returnorderlineitem: {
     label: () => t`Return Order Line Item`,
@@ -254,8 +259,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.transfer_order_list,
     admin_url: '/order/transferorder/',
     supports_barcode: true,
-    icon: 'transfer_orders',
-    preview: (props) => modelPreviewRegistry.transferorder?.(props)
+    icon: 'transfer_orders'
   },
   transferorderlineitem: {
     label: () => t`Transfer Order Line Item`,
