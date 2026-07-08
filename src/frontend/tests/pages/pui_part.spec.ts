@@ -503,6 +503,7 @@ test('Parts - Details - Upload image modal accepts pasted clipboard image', asyn
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
 
   const uploadButton = page
@@ -550,10 +551,13 @@ test('Parts - Details - Upload image modal accepts pasted clipboard image', asyn
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Image uploaded').waitFor();
 
+  await page.reload();
+
   // Now remove the associated image
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-delete-image' })
