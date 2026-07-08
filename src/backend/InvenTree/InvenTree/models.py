@@ -903,6 +903,14 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
                 # If we have a parent, use the parent's tree_id
                 self.tree_id = parent.tree_id
                 self.level = parent.level + 1
+            elif not self.pk:
+                # A new top-level node: pre-set the MPTT fields,
+                # so that MPTT does not overwrite the provided tree_id
+                # with its own (non concurrency-safe) value at insertion time
+                self.tree_id = self.getNextTreeID()
+                self.lft = 1
+                self.rght = 2
+                self.level = 0
             else:
                 # Otherwise, we need to generate a new tree_id
                 self.tree_id = self.getNextTreeID()
