@@ -892,8 +892,19 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         """Instance filters for InvenTreeTree models."""
         return {self.NODE_PARENT_KEY: {'exclude_tree': self.pk}}
 
+    @classmethod
+    def _lock_tree_id_allocator(cls) -> None:
+        """Acquire a row lock which serializes tree_id allocation for this model."""
+        content_type = ContentType.objects.get_for_model(cls, for_concrete_model=False)
+        ContentType.objects.select_for_update().filter(pk=content_type.pk).get()
+
+    @transaction.atomic
     def save(self, *args, **kwargs):
-        """Custom save method for InvenTreeTree abstract model."""
+        """Custom save method for InvenTreeTree abstract model.
+
+        Runs in a single transaction so node updates and any required rebuilds
+        either complete together or roll back together.
+        """
         db_instance = None
 
         parent = getattr(self, self.NODE_PARENT_KEY, None)
@@ -906,7 +917,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             elif not self.pk:
                 # A new top-level node: pre-set the MPTT fields,
                 # so that MPTT does not overwrite the provided tree_id
-                # with its own (non concurrency-safe) value at insertion time
+                # with its own value at insertion time
                 self.tree_id = self.getNextTreeID()
                 self.lft = 1
                 self.rght = 2
@@ -1013,13 +1024,20 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
     @classmethod
     def getNextTreeID(cls) -> int:
-        """Return the next available tree_id for this model class."""
-        instance = cls.objects.order_by('-tree_id').first()
+        """Return the next available tree_id for this model class.
 
-        if instance:
-            return instance.tree_id + 1
-        else:
-            return 1
+        The allocation is serialized per model to avoid concurrent callers
+        selecting the same top-level tree_id.
+        """
+        with transaction.atomic():
+            cls._lock_tree_id_allocator()
+
+            instance = cls.objects.order_by('-tree_id').first()
+
+            if instance:
+                return instance.tree_id + 1
+            else:
+                return 1
 
 
 class PathStringMixin(models.Model):

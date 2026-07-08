@@ -152,7 +152,7 @@ class StockLocation(
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
 
-        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        Base tree delete handles transactional integrity for tree mutations.
         """
         super().delete(
             delete_children=kwargs.get('delete_sub_locations', False),
