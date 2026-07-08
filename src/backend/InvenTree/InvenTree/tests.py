@@ -144,6 +144,92 @@ class TreeRebuildTest(TestCase):
         self.assertEqual(child.parent, parent)
         self.assertEqual(child.tree_id, parent.tree_id)
 
+    def test_concurrent_root_creates(self):
+        """Test that concurrent root node creation produces unique tree_ids.
+
+        This test verifies that the tree_id allocator lock prevents
+        concurrent transactions from selecting the same top-level tree_id.
+        """
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        def create_root_location(idx):
+            """Create a root-level stock location."""
+            return StockLocation.objects.create(
+                name=f'Concurrent Root {idx}', description=f'Root {idx}'
+            )
+
+        # Clear existing locations
+        StockLocation.objects.all().delete()
+
+        # Create multiple root nodes concurrently
+        num_workers = 5
+        nodes = []
+
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [
+                executor.submit(create_root_location, i) for i in range(num_workers)
+            ]
+            nodes = [f.result() for f in as_completed(futures)]
+
+        # All nodes must have unique tree_id values
+        tree_ids = [node.tree_id for node in nodes]
+        self.assertEqual(len(set(tree_ids)), num_workers)
+
+        # All nodes must be at level 0
+        for node in nodes:
+            node.refresh_from_db()
+            self.assertEqual(node.level, 0)
+            self.assertIsNone(node.parent)
+
+    def test_cross_tree_move(self):
+        """Test that moving a node between trees triggers two partial rebuilds.
+
+        When a node's parent is changed to a node from a different tree,
+        both the old tree and new tree must be rebuilt.
+        """
+        root_a = StockLocation.objects.create(name='Root A')
+        root_b = StockLocation.objects.create(name='Root B')
+
+        child = StockLocation.objects.create(name='Child', parent=root_a)
+
+        # Verify initial state: child is under root_a
+        self.assertEqual(child.tree_id, root_a.tree_id)
+        self.assertEqual(child.parent, root_a)
+
+        # Move child from root_a to root_b
+        with trackTreeRebuilds() as tracker:
+            child.parent = root_b
+            child.save()
+
+        # Should trigger exactly two partial rebuilds (one for each tree)
+        self.assertEqual(len(tracker.partial), 2)
+        self.assertEqual(len(tracker.full), 0)
+
+        # Verify final state: child is now under root_b
+        child.refresh_from_db()
+        self.assertEqual(child.tree_id, root_b.tree_id)
+        self.assertEqual(child.parent, root_b)
+        self.assertEqual(child.level, 1)
+
+    def test_invalid_move_error_mapping(self):
+        """Test that InvalidMove exceptions are mapped to ValidationError.
+
+        Attempting to create a cycle (e.g., parent=self) should raise
+        InvalidMove internally, which is converted to a ValidationError
+        with a user-friendly message.
+        """
+        node = StockLocation.objects.create(name='Test Node')
+
+        # Attempt to set node as its own parent (creates a cycle)
+        node.parent = node
+
+        with self.assertRaises(ValidationError) as context:
+            node.save()
+
+        # The error should reference the parent field
+        self.assertIn('parent', context.exception.message_dict)
+        self.assertIn('Invalid choice', str(context.exception.message_dict['parent']))
+
 
 class HostTest(InvenTreeTestCase):
     """Test for host configuration."""

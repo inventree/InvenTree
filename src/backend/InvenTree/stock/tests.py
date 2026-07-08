@@ -1320,6 +1320,44 @@ class StockTreeTest(StockTestBase):
         self.assertEqual(len(tracker.partial), 0)
         self.assertEqual(len(tracker.full), 0)
 
+    def test_location_root_delete_rebuild_count(self):
+        """Test that deleting a root location rebuilds each resulting tree exactly once.
+
+        This mirrors the PartCategory root-delete rebuild count test,
+        ensuring StockLocation has parity for this critical operation.
+        """
+        # Clear out all stock items (they reference locations via foreign key)
+        StockItem.objects.all().delete()
+
+        # Clear out existing locations
+        StockLocation.objects.all().delete()
+
+        root = StockLocation.objects.create(name='Root Location')
+
+        # Create three child locations
+        for i in range(3):
+            StockLocation.objects.create(
+                name=f'Child Location {i}', description='Child', parent=root
+            )
+
+        root.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            root.delete()
+
+        # No full tree rebuild is required
+        self.assertEqual(len(tracker.full), 0)
+
+        # Three trees result from the delete: each is rebuilt exactly once
+        # (the original tree, plus one new tree for each additional subtree)
+        self.assertEqual(len(tracker.partial), 3)
+        self.assertEqual(len(tracker.partial), len(set(tracker.partial)))
+
+        # All child locations should now be root-level
+        for loc in StockLocation.objects.all():
+            self.assertIsNone(loc.parent)
+            self.assertEqual(loc.level, 0)
+
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
         part = Part.objects.create(
