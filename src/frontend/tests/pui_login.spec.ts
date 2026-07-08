@@ -98,6 +98,7 @@ test('Login - Change Password', async ({ page }) => {
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account', { waitUntil: 'networkidle' });
 
+  await page.waitForTimeout(1000);
   await openDetailAction(page, 'account', 'change-password');
 
   // First attempt with some errors
