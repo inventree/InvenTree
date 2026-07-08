@@ -677,6 +677,11 @@ class PluginsRegistry:
 
         if plg_key in configs:
             plg_db = configs[plg_key]
+
+            # Handle edge case where PluginConfig has been created without a valid name
+            if plg_name and plg_db.name != plg_name:
+                plg_db.name = plg_name
+                plg_db.save()
         else:
             plg_db = self.get_plugin_config(plg_key, plg_name)
 
