@@ -10,8 +10,7 @@ import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -36,6 +35,8 @@ import {
   TargetDateColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -376,7 +377,7 @@ export function PurchaseOrderLineItemTable({
             deleteLine.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           hidden: !record.build_order,
           title: t`View Build Order`,
           modelType: ModelType.build,
