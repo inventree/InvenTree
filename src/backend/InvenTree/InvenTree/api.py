@@ -755,8 +755,7 @@ class APISearchView(GenericAPIView):
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
-            # TODO @matmair fix
-            #'purchaseorder': order.api.PurchaseOrderList,
+            'purchaseorder': order.api.PurchaseOrderViewSet,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,
@@ -820,7 +819,11 @@ class APISearchView(GenericAPIView):
                 if type(params) is not dict:
                     continue
 
-                view = cls()
+                is_viewset = issubclass(cls, viewsets.GenericViewSet) or issubclass(
+                    cls, viewsets.ViewSetMixin
+                )
+
+                view = cls if is_viewset else cls()
 
                 # Override regular query params with specific ones for this search request
                 cloned_request._request.GET = params
@@ -839,7 +842,13 @@ class APISearchView(GenericAPIView):
                     continue
 
                 try:
-                    results[key] = view.list(request, *args, **kwargs).data
+                    if is_viewset:
+                        list_method = cls.as_view({'get': 'list'})(
+                            request._request, *args, **kwargs
+                        )
+                    else:
+                        list_method = view.list(request, *args, **kwargs)
+                    results[key] = list_method.data
                 except Exception as exc:
                     results[key] = {'error': str(exc)}
 
