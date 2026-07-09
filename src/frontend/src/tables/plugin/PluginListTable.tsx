@@ -82,10 +82,12 @@ export default function PluginListTable() {
             return;
           }
 
+          const name: string = record.name || record.meta?.human_name;
+
           return (
             <Group justify='left'>
               <PluginIcon plugin={record} />
-              <Text>{record.name}</Text>
+              <Text size='sm'>{name}</Text>
             </Group>
           );
         }
