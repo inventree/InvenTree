@@ -230,6 +230,38 @@ class TreeRebuildTest(TestCase):
         self.assertIn('parent', context.exception.message_dict)
         self.assertIn('Invalid choice', str(context.exception.message_dict['parent']))
 
+    def test_partial_rebuild_failure_logging(self):
+        """Test that a failed tree rebuild logs the model type and node ID.
+
+        tree_id values get reallocated over time, so a log entry which only
+        records the tree_id is not enough to identify which tree failed once
+        it's read back later - the model type and node ID must also be present.
+        """
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        Error.objects.all().delete()
+
+        parent = StockLocation.objects.create(name='Rebuild Failure Parent')
+        StockLocation.objects.create(name='Rebuild Failure Child', parent=parent)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            result = parent.partial_rebuild(parent.tree_id)
+
+        self.assertFalse(result)
+
+        error = Error.objects.filter(path__contains='partial_rebuild').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockLocation', error.path)
+        self.assertIn(f'node_id={parent.pk}', error.path)
+        self.assertIn(f'tree_id={parent.tree_id}', error.path)
+
 
 class HostTest(InvenTreeTestCase):
     """Test for host configuration."""

@@ -560,7 +560,7 @@ class StockItem(
 
         If the partial rebuild fails, a full tree rebuild is scheduled in the background.
         """
-        return stock.tasks.rebuild_stock_item_tree(tree_id)
+        return stock.tasks.rebuild_stock_item_tree(tree_id, node_id=self.pk)
 
     @staticmethod
     def get_api_url():
@@ -760,7 +760,7 @@ class StockItem(
             logger.info(
                 'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
             )
-            stock.tasks.rebuild_stock_item_tree(parent.tree_id)
+            stock.tasks.rebuild_stock_item_tree(parent.tree_id, node_id=parent.pk)
 
         # Fetch the new StockItem objects from the database
         items = StockItem.objects.filter(part=part, serial__in=serials)
@@ -2363,13 +2363,18 @@ class StockItem(
         # Rebuild stock trees as required
         rebuild_result = True
         for tree_id in tree_ids:
-            if not stock.tasks.rebuild_stock_item_tree(tree_id, rebuild_on_fail=False):
+            if not stock.tasks.rebuild_stock_item_tree(
+                tree_id, rebuild_on_fail=False, node_id=self.pk
+            ):
                 rebuild_result = False
 
         if not rebuild_result:
             # If the rebuild failed, offload the task to a background worker
             logger.warning(
-                'Failed to rebuild stock item tree during merge_stock_items operation, offloading task.'
+                'Failed to rebuild stock item tree during merge_stock_items operation '
+                '(model=StockItem, node_id=%s, tree_ids=%s); offloading task.',
+                self.pk,
+                sorted(tree_ids),
             )
             InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
 

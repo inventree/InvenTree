@@ -980,7 +980,22 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             except Exception as e:
                 # Any other error is unexpected
                 InvenTree.sentry.report_exception(e)
-                InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
+                # Note: tree_id values get reallocated over time, so on their own
+                # they are not enough to identify *which* tree failed once this is
+                # read back from the logs later - identify the model and node in
+                # the error path too (not via error_data, which would discard the
+                # traceback).
+                node_ctx = f'node_id={self.pk}, tree_ids={sorted(trees)}'
+                InvenTree.exceptions.log_error(
+                    f'{self.__class__.__name__}.save [{node_ctx}]'
+                )
+                logger.exception(
+                    'Failed to refresh %s <%s> after tree rebuild (tree_ids=%s): %s',
+                    self.__class__.__name__,
+                    self.pk,
+                    sorted(trees),
+                    e,
+                )
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
@@ -994,11 +1009,20 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             # This is a critical error, explicitly report to sentry
             InvenTree.sentry.report_exception(e)
 
-            InvenTree.exceptions.log_error(f'{self.__class__.__name__}.partial_rebuild')
+            # Note: tree_id values get reallocated over time, so on their own
+            # they are not enough to identify *which* tree failed once this is
+            # read back from the logs later - identify the model and node in
+            # the error path too (not via error_data, which would discard the
+            # traceback).
+            node_ctx = f'node_id={self.pk}, tree_id={tree_id}'
+            InvenTree.exceptions.log_error(
+                f'{self.__class__.__name__}.partial_rebuild [{node_ctx}]'
+            )
             logger.exception(
-                'Failed to rebuild tree for %s <%s>: %s',
+                'Failed to rebuild tree for %s <%s> (tree_id=%s): %s',
                 self.__class__.__name__,
                 self.pk,
+                tree_id,
                 e,
             )
             return False

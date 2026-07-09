@@ -1358,6 +1358,46 @@ class StockTreeTest(StockTestBase):
             self.assertIsNone(loc.parent)
             self.assertEqual(loc.level, 0)
 
+    def test_partial_rebuild_failure_logging(self):
+        """Test that a failed StockItem tree rebuild logs the model type and node ID.
+
+        StockItem overrides partial_rebuild() to delegate to
+        stock.tasks.rebuild_stock_item_tree(), a separate code path from the
+        generic InvenTreeTree.partial_rebuild() (covered by
+        InvenTree.tests.TreeRebuildTest.test_partial_rebuild_failure_logging) -
+        verify it also logs enough context (not just the tree_id, which gets
+        reallocated over time) to identify which tree failed.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        Error.objects.all().delete()
+
+        part = Part.objects.create(
+            name='Rebuild failure part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=100)
+        child = root.splitStock(10, None, None)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            result = child.partial_rebuild(root.tree_id)
+
+        self.assertFalse(result)
+
+        error = Error.objects.filter(path__contains='rebuild_stock_item_tree').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockItem', error.path)
+        self.assertIn(f'node_id={child.pk}', error.path)
+        self.assertIn(f'tree_id={root.tree_id}', error.path)
+
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
         part = Part.objects.create(
