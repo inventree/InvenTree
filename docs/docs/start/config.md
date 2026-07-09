@@ -65,7 +65,7 @@ The following basic options are available:
 {{ configsetting("INVENTREE_SITE_URL") }} Specify a fixed site URL |
 {{ configsetting("INVENTREE_TIMEZONE") }} Server timezone |
 {{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) |
-{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing [admin interface](../settings/admin.md) |
+{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing the [Django Admin interface](../settings/django_admin.md) |
 {{ configsetting("INVENTREE_LANGUAGE") }} Default language |
 {{ configsetting("INVENTREE_AUTO_UPDATE") }} Database migrations will be run automatically |
 
