@@ -10,6 +10,7 @@ import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -47,7 +48,7 @@ import { RenderInstance } from '../../render/Instance';
 /**
  * Render a 'select' field for searching the database against a particular model type
  */
-export function RelatedModelField({
+function RelatedModelFieldComponent({
   controller,
   fieldName,
   definition,
@@ -570,6 +571,8 @@ export function RelatedModelField({
     </Input.Wrapper>
   );
 }
+
+export const RelatedModelField = memo(RelatedModelFieldComponent);
 
 function InlineCreateButton({
   definition,
