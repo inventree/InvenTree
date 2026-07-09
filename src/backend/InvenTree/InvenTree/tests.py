@@ -283,20 +283,26 @@ class TreeRebuildTest(TestCase):
         mock_rebuild.assert_called()
 
     def test_delete_double_rebuild_failure_propagates(self):
-        """Test current behavior when the delete() full-rebuild fallback also fails.
+        """Test that a failed delete() full-rebuild fallback is reported, then re-raised.
 
-        Unlike every other tree-rebuild failure path in this module, there is
-        no try/except around the fallback self.__class__.objects.rebuild()
-        call in delete() - if partial_rebuild() fails *and* the fallback full
-        rebuild also fails, the exception is not logged or converted, it just
-        propagates straight out of delete(). This test documents that current
-        behavior, so a future change to add/remove handling here is a
-        deliberate decision rather than an accidental regression.
+        If partial_rebuild() fails *and* the fallback full rebuild also
+        fails, there is no further fallback available - the failure is
+        reported to sentry and re-raised, so the enclosing
+        @transaction.atomic block rolls back the whole delete() call rather
+        than silently leaving a corrupted tree structure in place.
+
+        Note: unlike every other tree-failure handler, this one does *not*
+        call InvenTree.exceptions.log_error() (which would persist an Error
+        row to the database) - that write would itself be rolled back by the
+        same transaction it's trying to report on, so it would silently never
+        persist. sentry.report_exception() is used instead, since it's an
+        external HTTP call unaffected by the DB rollback.
         """
         from mptt.managers import TreeManager
 
         root = StockLocation.objects.create(name='Double Fail Root')
         StockLocation.objects.create(name='Double Fail Child', parent=root)
+        root_pk = root.pk
 
         def boom(*args, **kwargs):
             raise RuntimeError('forced full-rebuild failure')
@@ -304,9 +310,17 @@ class TreeRebuildTest(TestCase):
         with (
             mock.patch.object(StockLocation, 'partial_rebuild', return_value=False),
             mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception') as mock_report,
         ):
             with self.assertRaises(RuntimeError):
                 root.delete()
+
+        # The failure must have been reported (survives the rollback below)
+        mock_report.assert_called_once()
+        self.assertIsInstance(mock_report.call_args[0][0], RuntimeError)
+
+        # The delete() transaction must have rolled back entirely
+        self.assertTrue(StockLocation.objects.filter(pk=root_pk).exists())
 
 
 class HostTest(InvenTreeTestCase):

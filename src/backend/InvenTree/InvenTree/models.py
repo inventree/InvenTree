@@ -763,6 +763,12 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         tree_id = self.tree_id
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
+        # Django clears self.pk once super().delete() (below) succeeds, but we
+        # still need a stable identifier for logging further down (both here,
+        # and inside partial_rebuild(), which we call after the row is gone) -
+        # capture it now, and restore it once the row is deleted.
+        node_pk = self.pk
+
         # When deleting a top level node with multiple children,
         # we need to assign a new tree_id to each child node
         # otherwise they will all have the same tree_id (which is not allowed)
@@ -786,6 +792,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         # 2. Delete *this* node
         super().delete(*args, **kwargs)
+        self.pk = node_pk
 
         # A set of tree_id values which need to be rebuilt
         trees = set()
@@ -817,7 +824,34 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         if not result:
             # Rebuild the entire tree (expensive!!!)
-            self.__class__.objects.rebuild()
+            try:
+                self.__class__.objects.rebuild()
+            except Exception as e:
+                # This is a critical error: the tree could not be fully
+                # rebuilt after deletion. There is no further fallback here,
+                # so log it and re-raise - letting the enclosing
+                # @transaction.atomic block roll back the whole delete() call
+                # is safer than silently leaving a corrupted tree structure
+                # in place.
+                #
+                # Note: we deliberately do NOT call InvenTree.exceptions.log_error()
+                # here (unlike every other tree-failure handler in this file).
+                # That call persists an Error row to the database - but since
+                # we are about to re-raise and roll back this entire
+                # transaction, that row would be rolled back right along with
+                # it and never actually persist. sentry.report_exception() (an
+                # external HTTP call) and logger.exception() (structlog, not a
+                # DB write) are used instead, as they are not transactional
+                # and will survive the rollback.
+                InvenTree.sentry.report_exception(e)
+                logger.exception(
+                    'Failed to rebuild %s tree after deleting <%s> (tree_ids=%s): %s',
+                    self.__class__.__name__,
+                    node_pk,
+                    sorted(trees),
+                    e,
+                )
+                raise
 
     def handle_tree_delete(self, delete_children=False, delete_items=False):
         """Delete a single instance of the tree, based on provided kwargs.
