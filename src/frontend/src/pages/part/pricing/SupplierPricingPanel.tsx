@@ -55,7 +55,8 @@ export default function SupplierPricingPanel({
             base_part: part.pk,
             supplier_detail: true,
             part_detail: true
-          }
+          },
+          enableDownload: true
         }}
       />
       {supplierPricingData.length > 0 ? (

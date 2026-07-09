@@ -276,7 +276,10 @@ class PartSalePriceSerializer(
     )
 
 
-class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartInternalPriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for internal prices for Part model."""
 
     class Meta:
