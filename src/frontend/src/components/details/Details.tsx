@@ -560,12 +560,12 @@ export function DetailsTable({
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
-            {visibleFields.map((field: DetailsField, index: number) => (
+            {visibleFields.map((field: DetailsField) => (
               <DetailsTableField
                 field={field}
                 item={item}
                 showIcons={showIcons}
-                key={index}
+                key={field.name}
               />
             ))}
           </Table.Tbody>

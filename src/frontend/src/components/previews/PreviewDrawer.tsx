@@ -21,7 +21,6 @@ import type { ModelType } from '@lib/index';
 import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
 import { IconArrowRight } from '@tabler/icons-react';
-import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInstance } from '../../hooks/UseInstance';
@@ -61,7 +60,7 @@ export default function PreviewDrawer({
   // precedence over the defaults).
   const queryParams = useMemo(() => {
     return {
-      ...(modelInfo?.default_query_params ?? {}),
+      ...modelInfo?.default_query_params,
       ...filters
     };
   }, [modelInfo, filters]);
@@ -134,11 +133,7 @@ export default function PreviewDrawer({
   }, [primaryUrl]);
 
   const clickTitle = useCallback(
-    (
-      event: Parameters<
-        React.AnchorHTMLAttributes<HTMLAnchorElement>['onClick'] & {}
-      >[0]
-    ) => {
+    (event: any) => {
       if (!primaryUrl) return;
 
       if (!eventModified(event as any)) {

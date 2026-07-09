@@ -24,8 +24,11 @@ export function ItemDetailsGrid({
         verticalSpacing='xs'
       >
         {children}
-        {visibleTables.map((props, index) => (
-          <DetailsTable key={index} {...props} />
+        {visibleTables.map((props) => (
+          <DetailsTable
+            key={props.fields.map((field) => field.name).join(',')}
+            {...props}
+          />
         ))}
       </SimpleGrid>
     </Paper>
