@@ -46,4 +46,6 @@ jobs:
         run: |
           python ./.github/scripts/check_source_strings.py --frontend --backend
       - name: Check Migration Files
-        run: python3 .github/scripts/check_migration_files.py
+        run: |
+          invoke migrate --detect
+          python3 .github/scripts/check_migration_files.py
