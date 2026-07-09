@@ -3,6 +3,7 @@
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.db import DatabaseError
 from django.db.models import Sum
 from django.test import TransactionTestCase, override_settings
 
@@ -1397,6 +1398,173 @@ class StockTreeTest(StockTestBase):
         self.assertIn('StockItem', error.path)
         self.assertIn(f'node_id={child.pk}', error.path)
         self.assertIn(f'tree_id={root.tree_id}', error.path)
+
+    def test_save_get_db_instance_missing_row(self):
+        """Document current behavior of save() when self.pk is set but the row is gone.
+
+        This can happen if the underlying row was deleted out from under an
+        in-memory instance (e.g. by a concurrent delete elsewhere).
+
+        Two things worth recording here, both discovered while trying to
+        write this test:
+
+        1. DiffMixin.get_db_instance() already catches DoesNotExist
+           internally and returns None, so InvenTreeTree.save()'s own
+           `except self.__class__.DoesNotExist` around its call to
+           get_db_instance() is effectively unreachable given the current
+           implementation - it can never actually observe that exception.
+           (Mocking get_db_instance() itself to raise, to force that specific
+           except clause, is unrealistic: it bypasses get_db_instance()'s own
+           handling and instead surfaces the DoesNotExist through a
+           *different*, unrelated, unprotected caller -
+           PluginValidationMixin.run_plugin_validation() via
+           DiffMixin.get_field_deltas() - a separate gap, not this one.)
+
+        2. The realistic scenario (genuinely deleting the row, then saving
+           the stale in-memory instance) does not reach get_db_instance()'s
+           handling at all - it never gets past `super().save()`, which
+           raises DatabaseError("Save with update_fields did not affect any
+           rows.") from deep within Django/django-mptt's own save chain, well
+           before InvenTreeTree.save()'s own tree-rebuild logic runs. This is
+           uncaught and unlogged anywhere in the tree code.
+        """
+        part = Part.objects.create(
+            name='Missing row part', description='A part for failure testing'
+        )
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        # Simulate the underlying row disappearing without going through
+        # delete() (which would refresh/re-sync this in-memory instance) -
+        # e.g. a raw bulk delete from a concurrent process.
+        StockItem.objects.filter(pk=item.pk).delete()
+
+        item.quantity = 20
+
+        with self.assertRaises(DatabaseError):
+            item.save()
+
+    def test_save_transaction_management_error_ignored(self):
+        """Test that save() silently ignores TransactionManagementError from refresh_from_db().
+
+        This is expected to occur when save() triggers a tree rebuild while
+        already inside a caller's transaction that cannot support a
+        mid-transaction refresh - it is not treated as an error.
+        """
+        from unittest import mock
+
+        from django.db.transaction import TransactionManagementError
+
+        part = Part.objects.create(
+            name='TxErr part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=10)
+
+        with mock.patch.object(
+            StockItem,
+            'refresh_from_db',
+            side_effect=TransactionManagementError('forced'),
+        ):
+            # splitStock() creates a new child StockItem with a parent set,
+            # which triggers save()'s tree-rebuild-then-refresh path.
+            child = root.splitStock(5, None, None)  # must not raise
+
+        self.assertIsNotNone(child.pk)
+
+    def test_save_refresh_from_db_failure_logging(self):
+        """Test save()'s generic exception handler when refresh_from_db() fails.
+
+        This is distinct from partial_rebuild() itself failing (covered by
+        test_partial_rebuild_failure_logging): here the rebuild *succeeds*,
+        but the follow-up refresh_from_db() fails for some unrelated reason.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+
+        Error.objects.all().delete()
+
+        part = Part.objects.create(
+            name='Refresh fail part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=10)
+
+        with (
+            mock.patch.object(
+                StockItem,
+                'refresh_from_db',
+                side_effect=RuntimeError('forced refresh failure'),
+            ),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            child = root.splitStock(5, None, None)  # must not raise
+
+        error = Error.objects.filter(path__contains='.save').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockItem', error.path)
+        self.assertIn(f'node_id={child.pk}', error.path)
+
+    def test_rebuild_stock_items_failure_logging(self):
+        """Test that a failed full StockItem tree rebuild is logged with context.
+
+        rebuild_stock_items() is the last-resort fallback used when a partial
+        rebuild fails (see rebuild_stock_item_tree()) - it has its own
+        error handling which was previously untested.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        import stock.tasks
+
+        Error.objects.all().delete()
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced full rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            stock.tasks.rebuild_stock_items()  # must not raise
+
+        error = Error.objects.filter(path__contains='rebuild_stock_items').last()
+        self.assertIsNotNone(error)
+
+    def test_merge_stock_items_rebuild_failure(self):
+        """Test that merge_stock_items() offloads a full rebuild task when its trailing rebuild fails.
+
+        merge_stock_items() rebuilds every tree_id touched by the merge in a
+        loop after deleting the merged-in items; if any of those rebuilds
+        fail, it should log a warning and offload a full background rebuild
+        rather than leaving the tree in a partially-rebuilt state.
+        """
+        from unittest import mock
+
+        from mptt.managers import TreeManager
+
+        import stock.tasks
+
+        part = Part.objects.create(
+            name='Merge fail part', description='A part for failure testing'
+        )
+        item_a = StockItem.objects.create(part=part, quantity=10)
+        item_b = StockItem.objects.create(part=part, quantity=20)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced merge rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+            mock.patch('InvenTree.tasks.offload_task') as mock_offload,
+        ):
+            item_a.merge_stock_items([item_b])
+
+        # Both tree_ids failed to rebuild, so a full rebuild task must be offloaded
+        mock_offload.assert_called()
+        args, _kwargs = mock_offload.call_args
+        self.assertIn(stock.tasks.rebuild_stock_items, args)
 
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""

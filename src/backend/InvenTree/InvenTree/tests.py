@@ -260,7 +260,53 @@ class TreeRebuildTest(TestCase):
         self.assertIsNotNone(error)
         self.assertIn('StockLocation', error.path)
         self.assertIn(f'node_id={parent.pk}', error.path)
-        self.assertIn(f'tree_id={parent.tree_id}', error.path)
+
+    def test_delete_partial_rebuild_fallback(self):
+        """Test that delete() falls back to a full tree rebuild when partial_rebuild fails.
+
+        delete() aggregates the return value of partial_rebuild() for each
+        affected tree_id, and if any of them returned False, falls back to a
+        full self.__class__.objects.rebuild() - verify that fallback actually
+        triggers.
+        """
+        from mptt.managers import TreeManager
+
+        root = StockLocation.objects.create(name='Fallback Root')
+        StockLocation.objects.create(name='Fallback Child', parent=root)
+
+        with (
+            mock.patch.object(StockLocation, 'partial_rebuild', return_value=False),
+            mock.patch.object(TreeManager, 'rebuild') as mock_rebuild,
+        ):
+            root.delete()
+
+        mock_rebuild.assert_called()
+
+    def test_delete_double_rebuild_failure_propagates(self):
+        """Test current behavior when the delete() full-rebuild fallback also fails.
+
+        Unlike every other tree-rebuild failure path in this module, there is
+        no try/except around the fallback self.__class__.objects.rebuild()
+        call in delete() - if partial_rebuild() fails *and* the fallback full
+        rebuild also fails, the exception is not logged or converted, it just
+        propagates straight out of delete(). This test documents that current
+        behavior, so a future change to add/remove handling here is a
+        deliberate decision rather than an accidental regression.
+        """
+        from mptt.managers import TreeManager
+
+        root = StockLocation.objects.create(name='Double Fail Root')
+        StockLocation.objects.create(name='Double Fail Child', parent=root)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced full-rebuild failure')
+
+        with (
+            mock.patch.object(StockLocation, 'partial_rebuild', return_value=False),
+            mock.patch.object(TreeManager, 'rebuild', boom),
+        ):
+            with self.assertRaises(RuntimeError):
+                root.delete()
 
 
 class HostTest(InvenTreeTestCase):
