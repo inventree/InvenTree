@@ -711,7 +711,10 @@ class StockItem(
         part = data['part']
 
         parent = kwargs.pop('parent', None) or data.get('parent')
-        tree_id = kwargs.pop('tree_id', StockItem.getNextTreeID())
+        tree_id = kwargs.pop('tree_id', None)
+
+        if tree_id is None:
+            tree_id = StockItem.getNextTreeID()
 
         if parent:
             # Override with parent's tree_id if provided
@@ -749,6 +752,10 @@ class StockItem(
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
         if parent and parent.tree_id:
+            # This bypasses save(), so we must acquire the tree_id-allocator lock
+            # ourselves - see InvenTree.models.InvenTreeTree._lock_tree_id_allocator()
+            cls._lock_tree_id_allocator()
+
             # Rebuild the tree structure for this StockItem tree
             logger.info(
                 'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
