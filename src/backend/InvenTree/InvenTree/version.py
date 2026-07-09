@@ -133,27 +133,14 @@ def isInvenTreeDevelopmentVersion() -> bool:
     return inventreeVersion().endswith('dev')
 
 
-def inventreeDocsVersion() -> str:
-    """Return the version string matching the latest documentation.
-
-    Development -> "latest"
-    Release -> "major.minor.sub" e.g. "0.5.2"
-    """
-    if isInvenTreeDevelopmentVersion():
-        return 'latest'
-
-    return INVENTREE_SW_VERSION
-
-
 def inventreeDocUrl() -> str:
     """Return URL for InvenTree documentation site."""
-    tag = inventreeDocsVersion()
-    return f'https://docs.inventree.org/en/{tag}'
+    return 'https://docs.inventree.org'
 
 
 def inventreeAppUrl() -> str:
     """Return URL for InvenTree app site."""
-    return 'https://docs.inventree.org/en/stable/app/'
+    return 'https://docs.inventree.org/en/latest/app/'
 
 
 def inventreeGithubUrl() -> str:
