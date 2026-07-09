@@ -286,6 +286,13 @@ function RelatedModelFieldComponent({
     field.value
   ]);
 
+  // Track which id we've already requested (or are currently requesting),
+  // so that if this effect re-fires for an unrelated reason - e.g. a new
+  // `definition.filters`/`definition.api_url` reference - before the
+  // in-flight request for the same id resolves and updates `pk`, it doesn't
+  // issue a duplicate API call for that same id.
+  const requestedIdRef = useRef<number | string | null>(null);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
@@ -294,8 +301,11 @@ function RelatedModelFieldComponent({
     const id = pk || field.value;
 
     if (id !== null && id !== undefined && id !== '') {
+      if (requestedIdRef.current === id) return;
+      requestedIdRef.current = id;
       fetchSingleField(id);
     } else {
+      requestedIdRef.current = null;
       setPk(null);
     }
   }, [
