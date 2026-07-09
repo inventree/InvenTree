@@ -144,28 +144,34 @@ export default function PreviewDrawer({
     [primaryUrl, navigate]
   );
 
+  const drawerTitle = useMemo(() => {
+    if (!previewComponent) return null;
+
+    const titleText = (
+      <StylishText size='lg'>{previewComponent.title}</StylishText>
+    );
+
+    if (!primaryHref) return titleText;
+
+    return (
+      <Anchor href={primaryHref} onClick={(e) => clickTitle(e)}>
+        <Group aria-label={`details-${modelType}-${id}`} gap='xs'>
+          <Tooltip label={t`View Details`} position='left'>
+            <ActionIcon variant='transparent' size='lg'>
+              <IconArrowRight />
+            </ActionIcon>
+          </Tooltip>
+          {titleText}
+        </Group>
+      </Anchor>
+    );
+  }, [previewComponent, primaryHref, modelType, id, clickTitle]);
+
   return (
     <Drawer
       position='right'
       size='xl'
-      title={
-        previewComponent ? (
-          primaryHref ? (
-            <Anchor href={primaryHref} onClick={(e) => clickTitle(e)}>
-              <Group aria-label={`details-${modelType}-${id}`} gap='xs'>
-                <Tooltip label={t`View Details`} position='left'>
-                  <ActionIcon variant='transparent' size='lg'>
-                    <IconArrowRight />
-                  </ActionIcon>
-                </Tooltip>
-                <StylishText size='lg'>{previewComponent.title}</StylishText>
-              </Group>
-            </Anchor>
-          ) : (
-            <StylishText size='lg'>{previewComponent.title}</StylishText>
-          )
-        ) : null
-      }
+      title={drawerTitle}
       opened={opened}
       onClose={onClose}
       withCloseButton
