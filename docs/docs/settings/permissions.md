@@ -7,7 +7,7 @@ title: User Permissions
 InvenTree provides access control to various features and data, by assigning each *user* to one (or more) *groups* which have multiple *roles* assigned.
 
 !!! info "Superuser"
-    The superuser account is afforded *all* permissions across an InvenTree installation. This includes the admin interface, web interface, and API.
+    The superuser account is afforded *all* permissions across an InvenTree installation. This includes the [Database Admin interface](./db_admin.md), web interface, and API.
 
 ### User
 
@@ -54,7 +54,7 @@ Within each role, there are four levels of available permissions:
 ## Dangerous User Flags
 
 In addition to the above permissions, there are two special flags that can be assigned to a user:
-- **Staff** - A user with the *staff* flag is able to access the admin interface, and can trigger dangerous actions that might have a security impact such as changing parsable files on the server (templates / reports / plugins). Some of these actions require the *admin* role to be assigned as well.
+- **Staff** - A user with the *staff* flag is able to access the [Database Admin interface](./db_admin.md), and can trigger dangerous actions that might have a security impact such as changing parsable files on the server (templates / reports / plugins). Some of these actions require the *admin* role to be assigned as well.
 - **Superuser** - A user with the *superuser* flag is able to access and change all data and functions of InvenTree. A superuser can modify and access all data that the InvenTree installation / server has access to - including shell access on the server OS itself. This is a very powerful flag, and should be used with caution.
 
 It is strongly recommended to register any users with staff / superuser flags with strong MFA methods to reduce the risk of unauthorized access. These accounts should be used with caution, and should not be used for day-to-day operations.
@@ -62,11 +62,11 @@ It is strongly recommended to register any users with staff / superuser flags wi
 Practicing account tiering is strongly recommended.
 
 
-## Admin Interface Permissions
+## Database Admin Permissions
 
-If a user does not have the required permissions to perform a certain action in the admin interface, those options not be displayed.
+If a user does not have the required permissions to perform a certain action in the [Database Admin interface](./db_admin.md), those options will not be displayed.
 
-If a user is expecting a certain option to be available in the admin interface, but it is not present, it is most likely the case that the user does not have those permissions assigned.
+If a user is expecting a certain option to be available in the Database Admin interface, but it is not present, it is most likely the case that the user does not have those permissions assigned.
 
 ## Web Interface Permissions
 
