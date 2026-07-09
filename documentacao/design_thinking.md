@@ -34,9 +34,25 @@ Este documento apresenta as personas e o mapa de empatia.
 * **Ideia 1:** Criar um painel visual (Dashboard) para monitoramento de erros em tempo real.
 * **Ideia 2:** Padronizar e reestruturar as saídas de erro do sistema de forma semântica (Ex: `[ERRO: BANCO_DE_DADOS] Falha de conexão na porta 5432`) acompanhadas de possíveis ações de correção (Foco selecionado para o MVP).
 
-# 3.3 Design Thinking com IA
+## 3.3 Prompts Utilizados para a IA
 
-Este documento apresenta os resultados da fase de Discovery obtidos através da colaboração com Inteligência Artificial, conforme os requisitos de transparência e criticidade estabelecidos[cite: 1].
+#### Prompt 1: Criação de Personas e Mapa de Empatia
+
+Atue como um especialista em Product Discovery e Design Thinking aplicado à Engenharia de Software. Estou trabalhando em um projeto prático de reformulação e melhoria de uma ferramenta de software livre puramente técnica, baseada em CLI (Interface de Linha de Comando). 
+
+Preciso que você crie 2 personas distintas que representem os usuários desse ecossistema:
+1. Um usuário extremo focado no desenvolvimento (ex: um desenvolvedor iniciante ou adotante inicial tentando configurar o ambiente).
+2. Um usuário de ponta focado na operação/suporte diário (ex: um analista de suporte sob pressão).
+
+Para cada persona, forneça: Perfil, Comportamento, Frustrações/Dores e Objetivos/Ganhos. 
+
+Em seguida, monte um Mapa de Empatia em formato de tabela Markdown focado na segunda persona (Analista de Suporte), dividindo em: O que ela Pensa e Sente?, O que ela Vê?, O que ela Ouve?, O que ela Fala e Faz?, Dores (Frustrações) e Ganhos (Necessidades/Desejos).
+
+#### Prompt 2: Brainstorming e Ideação de Soluções
+
+Com base nas dores apresentadas pela persona Mariana Souza (Analista de Suporte), especificamente sobre a dificuldade de diagnosticar falhas operacionais devido a logs extensos, poluídos e extremamente genéricos no terminal, sugira ideias de soluções. 
+
+Gere duas propostas distintas: uma que envolva uma quebra de paradigma visual (Dashboard) e outra focada em reestruturação semântica diretamente na linha de comando (CLI) que traga ações de correção acopladas ao erro.
 
 ## 4. Reflexão Crítica
 
