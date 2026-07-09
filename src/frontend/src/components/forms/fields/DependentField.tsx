@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import {
   type Control,
   type FieldValues,
@@ -13,7 +13,7 @@ import {
 } from '../../../functions/forms';
 import { ApiFormField } from './ApiFormField';
 
-export function DependentField({
+function DependentFieldComponent({
   control,
   fieldName,
   definition,
@@ -90,3 +90,5 @@ export function DependentField({
     />
   );
 }
+
+export const DependentField = memo(DependentFieldComponent);
