@@ -51,14 +51,15 @@ export function DependentField({
         extractAvailableFields(res, 'POST');
 
       // update the fields in the form state with the new fields
+      // (preserve the reference for any field that did not actually change,
+      // so unrelated fields don't re-render on every dependent-field update)
       setFields((prevFields) => {
-        const newFields: Record<string, ReturnType<typeof constructField>> = {};
+        const newFields: ApiFormFieldSet = {};
 
         for (const [k, v] of Object.entries(prevFields)) {
-          newFields[k] = constructField({
-            field: v,
-            definition: fields?.[k]
-          });
+          newFields[k] = fields?.[k]
+            ? constructField({ field: v, definition: fields[k] })
+            : v;
         }
 
         return newFields;

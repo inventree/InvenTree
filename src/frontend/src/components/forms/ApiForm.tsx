@@ -41,6 +41,7 @@ import type {
   ApiFormProps
 } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
+import { isEquivalent } from '../../functions/comparison';
 import { constructField, extractAvailableFields } from '../../functions/forms';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
 import { ApiFormField } from './fields/ApiFormField';
@@ -314,7 +315,21 @@ export function ApiForm({
       }
     }
 
-    setFields(_fields);
+    // Preserve the previous reference for any field whose definition did not
+    // actually change, so unrelated fields don't re-render just because the
+    // fields hook rebuilt its entire output (e.g. in response to some other
+    // field's onValueChange updating local state elsewhere in that hook)
+    setFields((prevFields) => {
+      const nextFields: ApiFormFieldSet = {};
+
+      for (const k of Object.keys(_fields)) {
+        const prev = prevFields[k];
+        const next = _fields[k];
+        nextFields[k] = prev && isEquivalent(prev, next) ? prev : next;
+      }
+
+      return nextFields;
+    });
   }, [props.fields, props.initialData, defaultValues, initialDataQuery.data]);
 
   // Fetch initial data on form load
@@ -600,6 +615,24 @@ export function ApiForm({
     [props.onFormError]
   );
 
+  // Submit the form when "Enter" is pressed in a field.
+  // Routed through a ref so that the callback identity passed down to every
+  // field stays stable across renders - isValid / isDirty change on every
+  // keystroke anywhere in the form, and a fresh onKeyDown reference here
+  // would force every field (not just the one being edited) to re-render.
+  const submitOnEnterRef = useRef<() => void>(() => {});
+  submitOnEnterRef.current = () => {
+    if (!isLoading && (!props.fetchInitialData || isDirty)) {
+      form.handleSubmit(submitForm, onFormError)();
+    }
+  };
+
+  const onFieldKeyDown = useCallback((value: any) => {
+    if (value === 'Enter') {
+      submitOnEnterRef.current();
+    }
+  }, []);
+
   // Submit the form with Ctrl+Enter (Cmd+Enter on Mac) while it is open.
   // An empty tagsToIgnore list allows the hotkey to fire from within form inputs.
   useInvenTreeHotkeys(
@@ -685,15 +718,7 @@ export function ApiForm({
                           url={url}
                           navigate={navigate}
                           setFields={setFields}
-                          onKeyDown={(value) => {
-                            if (
-                              value == 'Enter' &&
-                              !isLoading &&
-                              (!props.fetchInitialData || isDirty)
-                            ) {
-                              form.handleSubmit(submitForm, onFormError)();
-                            }
-                          }}
+                          onKeyDown={onFieldKeyDown}
                         />
                       );
                     })}
