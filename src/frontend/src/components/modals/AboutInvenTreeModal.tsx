@@ -19,6 +19,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
+import { docLinks } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
 
@@ -177,7 +178,12 @@ const AboutContent = ({
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],
-            data.links,
+            {
+              doc: docLinks.docs,
+              code: docLinks.github,
+              app: docLinks.app,
+              bug: docLinks.bug
+            },
             true
           )}
         </Table.Tbody>

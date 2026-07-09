@@ -81,20 +81,21 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
 }
 
 export const docLinks = {
-  docs: 'https://docs.inventree.org/en/latest/',
+  docs: 'https://docs.inventree.org/',
   app: 'https://docs.inventree.org/en/latest/app/',
   getting_started: 'https://docs.inventree.org/en/latest/start/',
   api: 'https://docs.inventree.org/en/latest/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
   github: 'https://github.com/inventree/inventree',
+  bug: 'https://github.com/inventree/inventree/issues',
   errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
   return [
     {
-      id: 'gettin-started',
+      id: 'getting-started',
       title: t`Getting Started`,
       link: docLinks.getting_started,
       external: true,
