@@ -4,7 +4,7 @@ title: Importing Data
 
 ## Importing Data
 
-External data can be imported via the admin interface, allowing for rapid integration of existing datasets, or bulk editing of table data.
+External data can be imported via the [Admin Center](../settings/admin.md#admin-center), allowing for rapid integration of existing datasets, or bulk editing of table data.
 
 !!! danger "Danger"
     Uploading bulk data directly is a non-reversible action.

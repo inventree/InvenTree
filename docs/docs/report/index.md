@@ -65,8 +65,8 @@ Label and report templates are created and edited using the built-in [template e
 !!! tip "Staff Access Only"
     Only users with staff access can create, upload or edit templates, snippets and assets.
 
-!!! info "Backend Admin Interface"
-    Templates can also be managed at a lower level via the [backend admin interface](../settings/admin.md#backend-admin-interface), under the *Report* section. This is recommended for advanced users only.
+!!! info "Database Admin Interface"
+    Templates can also be managed at a lower level via the [Database Admin interface](../settings/db_admin.md), under the *Report* section. This is recommended for advanced users only.
 
 ### Name and Description
 

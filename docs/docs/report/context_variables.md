@@ -286,7 +286,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | icon | The name of the icon if set, e.g. fas fa-warehouse |
 | item_count | Simply returns the number of stock items in this location |
 | name | The name of the location. This is only the name of this location, not the path |
-| owner | The owner of the location if it has one. The owner can only be assigned in the admin interface |
+| owner | The owner of the location if it has one |
 | parent | The parent location. Returns None if it is already the top most one |
 | path | A queryset of locations that contains the hierarchy starting from the top most parent |
 | pathstring | A string that contains all names of the path separated by slashes e.g. A/B/C |
@@ -307,8 +307,8 @@ Each part object has access to a lot of context variables about the part. The fo
 | contact | Contact Name |
 | phone | Contact phone number |
 | email | Contact email address |
-| link | A second URL to the company (Actually only accessible in the admin interface) |
-| notes | Extra notes about the company (Actually only accessible in the admin interface) |
+| link | URL associated with the company |
+| notes | Extra notes about the company |
 | is_customer | Boolean value, is this company a customer |
 | is_supplier | Boolean value, is this company a supplier |
 | is_manufacturer | Boolean value, is this company a manufacturer |
