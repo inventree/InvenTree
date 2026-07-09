@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
 - [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
 
 ### Added
