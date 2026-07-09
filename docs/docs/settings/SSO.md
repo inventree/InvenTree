@@ -18,7 +18,7 @@ The basic requirements for configuring SSO are outlined below:
 
 1. Enable backend for each required SSO provider(s) in the [config file or environment variables](../start/config.md#single-sign-on).
 1. Create an external *app* with your provider of choice
-1. Add the required client configurations in the `SocialApp` app in the [Django Admin interface](../settings/django_admin.md).
+1. Add the required client configurations in the `SocialApp` app in the [Database Admin interface](../settings/db_admin.md).
 1. Configure the *callback* URL for the external app.
 1. Enable SSO for the users in the [global settings](../settings/global.md).
 1. Configure [e-mail](../settings/email.md).

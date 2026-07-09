@@ -16,7 +16,7 @@ InvenTree provides multiple administration interfaces with different safety leve
 - Access to global runtime settings
 - Available to staff users (or users with equivalent API scope)
 
-[**Django Admin Interface**](./django_admin.md):
+[**Database Admin Interface**](./db_admin.md):
 
 - Low-level database administration
 - Fewer safeguards than the Admin Center
@@ -52,4 +52,6 @@ Some panes can only be accessed by users with specific permissions. For example,
 
 The System Settings interface provides ordered access to all global settings in InvenTree. Users need to have _staff_ privileges enabled or the _a:staff_ scope.
 
-For low-level administration tasks, use the [Django Admin Interface](./django_admin.md).
+### Database Admin Interface
+
+For low-level administration tasks, use the [Database Admin Interface](./db_admin.md).

@@ -47,7 +47,7 @@ Some admin views support filtering of results against specified criteria. For ex
 
 ### Edit Database Objects
 
-Individual database objects can be edited directly in Django Admin. The image below shows an example of editing a Part object:
+Individual database objects can be edited directly in the Database Admin interface. The image below shows an example of editing a Part object:
 
 {{ image("admin/edit_part.png", "Edit part") }}
 

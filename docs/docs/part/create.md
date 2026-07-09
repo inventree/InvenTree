@@ -85,4 +85,4 @@ In addition to the primary methods for creating or importing part data, the foll
 
 - [Via the REST API](../api/index.md)
 - [Using the Python library](../api/python/index.md)
-- [Within the Django Admin interface](../settings/django_admin.md)
+- [Within the Database Admin interface](../settings/db_admin.md)
