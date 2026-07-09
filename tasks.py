@@ -1070,10 +1070,13 @@ def listbackups(c):
     },
 )
 @state_logger
-def migrate(c, detect: bool = True, verbose: bool = False):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
