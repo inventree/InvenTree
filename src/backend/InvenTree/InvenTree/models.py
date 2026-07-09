@@ -894,7 +894,15 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
     @classmethod
     def _lock_tree_id_allocator(cls) -> None:
-        """Acquire a row lock which serializes tree_id allocation for this model."""
+        """Acquire a row lock which serializes tree_id allocation for this model.
+
+        Also used to serialize tree *rebuilds* (see save(), below): partial_rebuild()
+        reads every node in a tree and then bulk_update()s computed lft/rght/level
+        values back, with no locking of its own. Two concurrent rebuilds of the same
+        tree_id (e.g. two concurrent splitStock() calls sharing a parent) would
+        otherwise race, with whichever call writes back last silently discarding the
+        other's contribution to the tree.
+        """
         content_type = ContentType.objects.get_for_model(cls, for_concrete_model=False)
         ContentType.objects.select_for_update().filter(pk=content_type.pk).get()
 
@@ -952,6 +960,11 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif parent:
             # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
+
+        if trees:
+            # Serialize this rebuild against any other concurrent tree_id
+            # allocation or rebuild for this model - see _lock_tree_id_allocator()
+            self._lock_tree_id_allocator()
 
         for tree_id in trees:
             if tree_id:

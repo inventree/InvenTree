@@ -4,7 +4,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
-from django.test import override_settings
+from django.test import TransactionTestCase, override_settings
 
 from djmoney.money import Money
 
@@ -1413,6 +1413,108 @@ class StockTreeTest(StockTestBase):
             self.assertEqual(child.level, 1)
             self.assertGreater(child.lft, item_1.lft)
             self.assertLess(child.rght, item_1.rght)
+
+
+class StockTreeConcurrencyTest(TransactionTestCase):
+    """Tests for concurrent modification of the StockItem tree structure.
+
+    Uses TransactionTestCase (rather than TestCase) because these tests spawn
+    real worker threads which need their own DB connections to see data
+    committed by the main thread - a plain TestCase wraps each test in an
+    uncommitted transaction that other connections cannot see.
+    """
+
+    def test_concurrent_split_stock(self):
+        """Test that concurrent splitStock() calls against the same tree do not corrupt it.
+
+        Two threads each split a child off the *same* parent StockItem at the same
+        time, each triggering a partial tree rebuild for the same tree_id. Unlike
+        top-level tree_id allocation, this path is not protected by
+        _lock_tree_id_allocator(), so django-mptt's rebuild() (a plain read of the
+        tree's nodes, followed by a bulk_update of computed lft/rght/level values)
+        can race: both threads read the tree before either has written back, so the
+        thread which writes second silently overwrites the first thread's contribution,
+        leaving two sibling nodes with identical (overlapping) lft/rght ranges.
+
+        A threading.Barrier is used to try to force both threads to complete their
+        "read" step before either proceeds to "write", so the race is reproduced
+        deterministically rather than relying on incidental timing, *if* nothing
+        else is serializing the two calls.
+
+        Note: if tree rebuilds are correctly serialized (i.e. this test is running
+        against a fix for the race), the second thread will not reach the barrier
+        until the first thread's entire save() has committed and released its lock -
+        so the barrier is expected to time out in that case. That's fine: a timeout
+        just means "the two calls did not overlap", so we fall through to the
+        post-condition checks either way.
+        """
+        import threading
+        from unittest import mock
+
+        from django.db import connection
+
+        from mptt.managers import TreeManager
+
+        part = Part.objects.create(
+            name='Concurrent split part', description='A part for concurrency testing'
+        )
+        location = StockLocation.objects.create(name='Concurrent Split Location')
+
+        root = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        barrier = threading.Barrier(2)
+        original_get_children = TreeManager._get_children
+
+        def synchronized_get_children(self, **filters):
+            """Wrap _get_children so both threads finish reading before either writes.
+
+            Tolerates the barrier not being satisfied (see docstring above).
+            """
+            result = original_get_children(self, **filters)
+            try:
+                barrier.wait(timeout=3)
+            except threading.BrokenBarrierError:
+                pass
+            return result
+
+        results = {}
+        errors = []
+
+        def worker(idx):
+            try:
+                parent = StockItem.objects.get(pk=root.pk)
+                child = parent.splitStock(10, None, None)
+                results[idx] = child.pk
+            except Exception as exc:  # pragma: no cover - failure path
+                errors.append(exc)
+            finally:
+                # Each thread gets its own DB connection; close it explicitly
+                # so it doesn't leak past the end of the test.
+                connection.close()
+
+        with mock.patch.object(TreeManager, '_get_children', synchronized_get_children):
+            t1 = threading.Thread(target=worker, args=(1,))
+            t2 = threading.Thread(target=worker, args=(2,))
+            t1.start()
+            t2.start()
+            t1.join(timeout=15)
+            t2.join(timeout=15)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 2)
+        self.assertEqual(len(set(results.values())), 2)
+
+        root.refresh_from_db()
+
+        children = list(root.get_children())
+
+        # Both splits must be visible as children of the root item
+        self.assertEqual(len(children), 2)
+        self.assertEqual(root.get_descendants(include_self=True).count(), 3)
+
+        # No two nodes may have overlapping lft/rght ranges
+        children.sort(key=lambda c: c.lft)
+        self.assertLess(children[0].rght, children[1].lft)
 
 
 class TestResultTest(StockTestBase):
