@@ -24,9 +24,6 @@ Use one of the following methods:
 - Append `/admin/` to the base InvenTree URL (for example: `http://localhost:8000/admin/`)
 - Use the configured administrator URL from `INVENTREE_ADMIN_URL`
 
-!!! info "Screenshot Placeholder"
-    TODO: Add screenshot of the Database Admin landing page.
-
 {{ image("admin/admin.png", "Database Admin panel") }}
 
 ### Permissions

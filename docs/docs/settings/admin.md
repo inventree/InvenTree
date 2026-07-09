@@ -41,9 +41,6 @@ The Admin Center can be accessed in any of the following ways:
 - Command palette quick action: *Admin Center*
 - Direct URL: `/web/settings/admin`
 
-!!! info "Screenshot Placeholder"
-	TODO: Add screenshot of the Admin Center landing page (`/web/settings/admin`).
-
 #### Permissions
 
 Some panes can only be accessed by users with specific permissions. For example, the *Stocktake* pane can only be accessed by users with the `stocktake` permission.
