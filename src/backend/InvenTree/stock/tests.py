@@ -181,6 +181,12 @@ class StockTest(StockTestBase):
 
     def test_loc_count(self):
         """Test count function."""
+        if StockLocation.objects.count() != 7:
+            for loc in StockLocation.objects.all().order_by('pk'):
+                print(
+                    f'DEBUG loc pk={loc.pk} name={loc.name!r} tree_id={loc.tree_id} parent={loc.parent_id}',
+                    flush=True,
+                )
         self.assertEqual(StockLocation.objects.count(), 7)
 
     def test_url(self):
