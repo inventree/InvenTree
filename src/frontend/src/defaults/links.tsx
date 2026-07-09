@@ -89,6 +89,7 @@ export const docLinks = {
   faq: 'https://docs.inventree.org/en/latest/faq/',
   github: 'https://github.com/inventree/inventree',
   bug: 'https://github.com/inventree/inventree/issues',
+  releases: 'https://github.com/inventree/inventree/releases',
   errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
 };
 
