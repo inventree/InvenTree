@@ -1429,7 +1429,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'update',
         ]
 
-    currency = serializers.CharField(allow_null=True, read_only=True)
+    currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        allow_null=True, read_only=True
+    )
 
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
