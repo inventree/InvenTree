@@ -71,7 +71,9 @@ def money_kwargs(**kwargs):
         kwargs['decimal_places'] = 6
 
     if 'currency_choices' not in kwargs:
-        kwargs['currency_choices'] = currency_code_mappings()
+        # Pass the function itself (not the evaluated result) so that the
+        # available currency options are resolved dynamically.
+        kwargs['currency_choices'] = currency_code_mappings
 
     if InvenTree.ready.isRunningMigrations():
         # During migrations, avoid setting a default currency
