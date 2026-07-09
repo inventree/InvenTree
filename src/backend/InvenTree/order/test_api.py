@@ -2416,8 +2416,12 @@ class SalesOrderAllocateTest(OrderTest):
 
         for line in self.order.lines.all():
             for stock_item in line.part.stock_items.all():
-                # Find a non-serialized stock item to allocate
-                if not stock_item.serialized:
+                # Find a non-serialized stock item with enough available quantity.
+                # StockItem has no default ordering, so on some DB backends
+                # (e.g. Postgres) this queryset can return a zero-quantity
+                # item before others with plenty of stock - checking quantity
+                # here (not just serialized) keeps the choice deterministic.
+                if not stock_item.serialized and stock_item.quantity >= 5:
                     break
 
             # Fully-allocate each line
