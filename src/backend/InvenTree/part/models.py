@@ -3378,7 +3378,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.currency.currency_code_mappings(),
+        validators=[validators.validate_currency_code],
     )
 
     scheduled_for_update = models.BooleanField(default=False)
