@@ -1465,11 +1465,15 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
         # Create a new Error object associated with this failed task
         # This will, in turn, trigger a notification to staff users via the Error post_save signal
 
+        message = f"Task '{instance.func} ({instance.pk})' failed after {n} attempts"
+
+        logger.error(message)
+
         log_error(
             'task_failure',
             scope='worker',
             error_name='Task Failure',
-            error_info=f"Task '{instance.pk}' failed after {n} attempts",
+            error_info=message,
             error_data=str(instance.result) if instance.result else '',
         )
 
