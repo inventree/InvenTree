@@ -60,6 +60,7 @@ function IconField({
           description={definition.description}
           required={definition.required}
           error={definition.error ?? error?.message}
+          aria-label={`icon-field-${field.name}`}
           ref={field.ref}
           component='button'
           type='button'
