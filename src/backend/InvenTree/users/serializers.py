@@ -78,37 +78,47 @@ class RoleSerializer(InvenTreeModelSerializer):
 
     def get_roles(self, user: User) -> dict:
         """Roles associated with the user."""
-        roles = {}
-
-        # Cache the 'groups' queryset for the user
-        groups = prefetch_rule_sets(user)
-
-        for ruleset in RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission, groups=groups):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        return roles
+        return get_user_roles(user)
 
     def get_permissions(self, user: User) -> dict:
         """Permissions associated with the user."""
-        if user.is_superuser:
-            permissions = Permission.objects.all()
-        else:
-            permissions = Permission.objects.filter(
-                Q(user=user) | Q(group__user=user)
-            ).distinct()
+        return get_user_permissions(user)
 
-        return generate_permission_dict(permissions)
+
+def get_user_roles(user: User) -> dict:
+    """Return a dict of the roles associated with the given user."""
+    roles = {}
+
+    # Cache the 'groups' queryset for the user
+    groups = prefetch_rule_sets(user)
+
+    for ruleset in RULESET_CHOICES:
+        role, _text = ruleset
+
+        permissions = []
+
+        for permission in RULESET_PERMISSIONS:
+            if check_user_role(user, role, permission, groups=groups):
+                permissions.append(permission)
+
+        if len(permissions) > 0:
+            roles[role] = permissions
+        else:
+            roles[role] = None  # pragma: no cover
+
+    return roles
+
+
+def get_user_permissions(user: User) -> dict:
+    """Return a dict of the permissions associated with the given user."""
+    if user.is_superuser:
+        permissions = Permission.objects.all()
+    else:
+        permissions = Permission.objects.filter(
+            Q(user=user) | Q(group__user=user)
+        ).distinct()
+
+    return generate_permission_dict(permissions)
 
 
 def generate_permission_dict(permissions) -> dict:
@@ -390,7 +400,7 @@ class UserSetPasswordSerializer(serializers.Serializer):
     )
 
 
-class MeUserSerializer(ExtendedUserSerializer):
+class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     """API serializer specifically for the 'me' endpoint."""
 
     class Meta(ExtendedUserSerializer.Meta):
@@ -401,7 +411,11 @@ class MeUserSerializer(ExtendedUserSerializer):
         """
 
         # Remove the 'group_ids' field, as this is not relevant for the 'me' endpoint
-        fields = [f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids']
+        fields = [
+            *(f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids'),
+            'roles',
+            'permissions',
+        ]
 
         read_only_fields = [
             *ExtendedUserSerializer.Meta.read_only_fields,
@@ -411,6 +425,31 @@ class MeUserSerializer(ExtendedUserSerializer):
         ]
 
     profile = UserProfileSerializer(many=False, read_only=True)
+
+    # Roles and permissions are only computed (and included) when the
+    # request explicitly asks for them via '?roles=true' - they require
+    # extra queries, and most callers of this endpoint only want basic
+    # user details. Shares a filter_name so both come back together, since
+    # they were previously served as a single '/user/me/roles/' response.
+    roles = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'read_only': True},
+        filter_name='roles',
+    )
+
+    permissions = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        filter_name='roles',
+    )
+
+    def get_roles(self, user: User) -> dict:
+        """Roles associated with the user."""
+        return get_user_roles(user)
+
+    def get_permissions(self, user: User) -> dict:
+        """Permissions associated with the user."""
+        return get_user_permissions(user)
 
     # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
     is_staff = serializers.BooleanField(

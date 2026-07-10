@@ -1,5 +1,14 @@
+import { lazy } from 'react';
+
+import { Loadable } from '../../functions/loading';
 import { useImporterState } from '../../states/ImporterState';
-import ImporterDrawer from './ImporterDrawer';
+
+// Lazy loaded: this pulls in InvenTreeTable (and its own sizeable
+// dependency tree) via ImportDataSelector, but an import session is only
+// ever open for a small fraction of page loads - the isOpen/sessionId
+// check below runs first regardless, so nothing here is fetched at all
+// unless the user actually opens the importer.
+const ImporterDrawer = Loadable(lazy(() => import('./ImporterDrawer')));
 
 export default function GlobalImporterDrawer() {
   const isOpen = useImporterState((state) => state.isOpen);
