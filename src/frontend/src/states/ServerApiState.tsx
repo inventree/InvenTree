@@ -11,7 +11,7 @@ import type { ServerAPIProps } from './states';
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
-  fetchServerApiState: () => Promise<void>;
+  fetchServerApiState: (force?: boolean) => Promise<void>;
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
   setAuthContext: (auth_context: AuthContext | undefined) => void;
@@ -31,13 +31,24 @@ function get_server_setting(val: any) {
   return val;
 }
 
+let pendingServerApiFetch: Promise<void> | null = null;
+let serverApiFetched = false;
+
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
     (set, get) => ({
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-      fetchServerApiState: async () => {
-        await Promise.all([
+      fetchServerApiState: async (force = false) => {
+        if (pendingServerApiFetch && !force) {
+          return pendingServerApiFetch;
+        }
+
+        if (serverApiFetched && !force) {
+          return;
+        }
+
+        pendingServerApiFetch = Promise.all([
           // Fetch server data
           api
             .get(apiUrl(ApiEndpoints.api_server_info))
@@ -59,7 +70,14 @@ export const useServerApiState = create<ServerApiStateProps>()(
             .catch(() => {
               console.error('ERR: Error fetching SSO information');
             })
-        ]);
+        ]).then(() => {});
+
+        try {
+          await pendingServerApiFetch;
+          serverApiFetched = true;
+        } finally {
+          pendingServerApiFetch = null;
+        }
       },
       auth_config: undefined,
       auth_context: undefined,
