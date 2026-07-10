@@ -104,8 +104,8 @@ The project uses [Invoke](https://www.pyinvoketasks.com/) (`tasks.py`) as the ta
 # One-time setup: creates venv at dev/venv/, installs deps, sets up pre-commit hooks
 invoke dev.setup-dev
 
-# Apply database migrations
-invoke migrate
+# Apply database migrations (and detect/create new migration files if required)
+invoke migrate --detect
 
 # Create an admin account (required to log in)
 invoke superuser
