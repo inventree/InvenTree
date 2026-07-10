@@ -15,7 +15,7 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import type { NavigateFunction } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ import { ModelHoverCard } from '../../render/ModelHoverCard';
  * endpoint. Supports server-side search, lazy child loading, and (when a model
  * type is provided) barcode scanning and a hover-card navigate link.
  */
-export function TreeField({
+function TreeFieldComponent({
   controller,
   definition,
   fieldName,
@@ -497,3 +497,5 @@ export function TreeField({
     </Input.Wrapper>
   );
 }
+
+export const TreeField = memo(TreeFieldComponent);
