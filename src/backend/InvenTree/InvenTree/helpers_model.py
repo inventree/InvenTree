@@ -281,6 +281,7 @@ def notify_responsible(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
     extra_users: Optional[list] = None,
 ):
@@ -293,6 +294,7 @@ def notify_responsible(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context: Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
         extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
@@ -306,7 +308,14 @@ def notify_responsible(
     if extra_users:
         users.extend(extra_users)
 
-    notify_users(users, instance, sender, content=content, exclude=exclude)
+    notify_users(
+        users,
+        instance,
+        sender,
+        content=content,
+        html_context=html_context,
+        exclude=exclude,
+    )
 
 
 def notify_users(
@@ -314,6 +323,7 @@ def notify_users(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
 ):
     """Notify all passed users or groups.
@@ -326,6 +336,7 @@ def notify_users(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context (dict, optional): Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
     # Setup context for notification parsing
@@ -345,9 +356,11 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    tmp = content.template
-    if tmp:
-        context['template']['html'] = tmp.format(**content_context)
+    if tmp := content.template:
+        html_context = html_context or {}
+        html_context.update(content_context)
+
+        context['template']['html'] = tmp.format(**html_context)
 
     # Create notification
     trigger_notification(
