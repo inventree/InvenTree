@@ -190,7 +190,8 @@ nav:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
-    - Admin Interface: settings/admin.md
+    - Admin Center: settings/admin.md
+    - Database Admin Interface: settings/db_admin.md
     - Setup:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
