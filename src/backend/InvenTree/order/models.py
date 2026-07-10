@@ -1048,6 +1048,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
 
+        # Set of users to notify (subscribers to any received part)
+        notify_users = set()
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1105,6 +1108,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Update the line item quantity
             line.received += quantity
             line_items_to_update.append(line)
+
+            # Track subscribers to this part, to notify them later
+            notify_users.update(line.part.part.get_subscribers())
 
             # Extract optional serial numbers
             serials = item.get('serials', None)
@@ -1200,13 +1206,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     serials=serials, **stock_data
                 )
 
-                for item in new_items:
-                    item.set_status(status, custom_values=custom_stock_status_values)
+                for new_item in new_items:
+                    new_item.set_status(
+                        status, custom_values=custom_stock_status_values
+                    )
                     # run validation for serialized items plugin.validate_batch_code
-                    item.validate_batch_code()
+                    new_item.validate_batch_code()
                     # run validation for serialized items plugin.validate_model_instance
-                    item.run_plugin_validation()
-                    stock_items.append(item)
+                    new_item.run_plugin_validation()
+                    stock_items.append(new_item)
 
             else:
                 new_item = stock.models.StockItem(
@@ -1292,7 +1300,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
-            extra_users=line.part.part.get_subscribers(),
+            extra_users=notify_users,
         )
 
         # Return a list of the created stock items
