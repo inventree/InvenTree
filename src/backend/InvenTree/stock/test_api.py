@@ -1630,6 +1630,34 @@ class StockItemTest(StockAPITestCase):
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
 
+    def test_barcode_data_in_detail_api(self):
+        """Test that 'barcode_data' (the linked barcode string) is exposed via the API.
+
+        Regression test for #11745: the linked barcode string must be present in
+        the StockItem serializer output so it can be displayed in the user interface.
+        It must be read-only (assigned/cleared only via the barcode link endpoints).
+        """
+        item = StockItem.objects.get(pk=1)
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        # With no external barcode assigned, the field is present but empty
+        response = self.get(url, expected_code=200)
+        self.assertIn('barcode_data', response.data)
+        self.assertEqual(response.data['barcode_data'], '')
+
+        # Assign a third-party barcode to the stock item
+        item.assign_barcode(barcode_data='TEST-123')
+        item.refresh_from_db()
+
+        # The linked barcode string must now be returned by the detail endpoint
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['barcode_data'], 'TEST-123')
+
+        # The field must be read-only: a PATCH must not overwrite it
+        self.patch(url, data={'barcode_data': 'HACKED-VALUE'}, expected_code=200)
+        item.refresh_from_db()
+        self.assertEqual(item.barcode_data, 'TEST-123')
+
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
