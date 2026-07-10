@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 518
+INVENTREE_API_VERSION = 519
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
+v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
     - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
+
+v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341
+    - Enable import of internal part prices via the API
 
 v517 -> 2026-07-08 : https://github.com/inventree/InvenTree/pull/12336
     - Fix currency code options for the PartPricing  model and API endpoints
