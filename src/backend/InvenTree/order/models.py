@@ -1051,6 +1051,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Set of users to notify (subscribers to any received part)
         notify_users = set()
 
+        # Cache of subscribers per part, to avoid repeated queries for the same part
+        part_subscribers_cache: dict[int, list] = {}
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1110,7 +1113,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
             line_items_to_update.append(line)
 
             # Track subscribers to this part, to notify them later
-            notify_users.update(line.part.part.get_subscribers())
+            # (cache the result per-part, as multiple lines may reference the same part)
+            if base_part.pk not in part_subscribers_cache:
+                part_subscribers_cache[base_part.pk] = base_part.get_subscribers()
+
+            notify_users.update(part_subscribers_cache[base_part.pk])
 
             # Extract optional serial numbers
             serials = item.get('serials', None)
