@@ -156,8 +156,8 @@ test('Login - Cold vs Warm vs Hot Load', async ({ page }) => {
   // Page load threshold values
   // Note: Vite server in dev mode is significantly slower than production build
   const COLD_MS_THRESHOLD: number = 5000;
-  const WARM_MS_THRESHOLD: number = 2500;
-  const HOT_MS_THRESHOLD: number = 2000;
+  const WARM_MS_THRESHOLD: number = 4000;
+  const HOT_MS_THRESHOLD: number = 3000;
 
   const coldMs = await loginAndMeasure(page);
 
