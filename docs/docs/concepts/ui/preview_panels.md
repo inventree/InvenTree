@@ -8,7 +8,6 @@ Many [table views](./tables.md) in InvenTree link each row to the detail page fo
 
 If the preview panel feature is enabled, clicking on a row instead opens a "preview" drawer on the right-hand side of the screen. The preview drawer displays a summary of the selected item, without navigating away from the current table view.
 
-<!-- TODO: replace with a real screenshot of the preview drawer -->
 {{ image("concepts/ui_preview_drawer.png", "Preview Drawer") }}
 
 ## Enabling the Preview Panel
@@ -23,7 +22,6 @@ Once enabled, clicking on a row in a supported table opens the preview drawer fo
 
 The preview drawer title includes an arrow icon, linking to the full detail page for the previewed item. Click on the title (or the arrow icon) to navigate to the detail page and close the drawer.
 
-<!-- TODO: replace with a real screenshot of the "view details" link -->
 {{ image("concepts/ui_preview_details_link.png", "View Details Link") }}
 
 ### Following Links
