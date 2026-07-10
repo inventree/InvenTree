@@ -1,6 +1,7 @@
 """Custom fields used in InvenTree."""
 
 import sys
+import uuid
 from decimal import Decimal
 
 from django import forms
@@ -59,6 +60,34 @@ class InvenTreeURLField(models.URLField):
         super().__init__(**kwargs)
 
 
+class InvenTreeUUIDField(models.UUIDField):
+    """UUIDField which is always stored as a char(32) column on MySQL / MariaDB.
+
+    On MariaDB 10.7+, Django maps UUIDField to the native 'uuid' column type,
+    and writes 36-character (hyphenated) values to match.
+    However, databases migrated under older Django / MariaDB versions retain
+    their original char(32) columns, into which a 36-character value does not fit.
+
+    To ensure consistent behavior across all supported database backends,
+    we force the legacy char(32) storage format on MySQL / MariaDB.
+
+    Ref: https://docs.djangoproject.com/en/5.2/releases/5.0/#migrating-existing-uuidfield-on-mariadb-10-7
+    """
+
+    def db_type(self, connection):
+        """Force a char(32) column type on MySQL / MariaDB backends."""
+        if connection.vendor == 'mysql':
+            return 'char(32)'
+        return super().db_type(connection)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        """Store values in 32-character hex format on MySQL / MariaDB backends."""
+        value = super().get_db_prep_value(value, connection, prepared)
+        if connection.vendor == 'mysql' and isinstance(value, uuid.UUID):
+            value = value.hex
+        return value
+
+
 def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
     from common.currency import currency_code_mappings
@@ -71,7 +100,9 @@ def money_kwargs(**kwargs):
         kwargs['decimal_places'] = 6
 
     if 'currency_choices' not in kwargs:
-        kwargs['currency_choices'] = currency_code_mappings()
+        # Pass the function itself (not the evaluated result) so that the
+        # available currency options are resolved dynamically.
+        kwargs['currency_choices'] = currency_code_mappings
 
     if InvenTree.ready.isRunningMigrations():
         # During migrations, avoid setting a default currency

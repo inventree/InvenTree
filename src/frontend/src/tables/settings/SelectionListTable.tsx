@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
@@ -7,26 +8,31 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { selectionListFields } from '../../forms/selectionListFields';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { selectionListFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+import SelectionListDrawer from './SelectionListDrawer';
 
 /**
  * Table for displaying list of selectionlist items
  */
 export default function SelectionListTable() {
   const table = useTable('selectionlist');
+  const navigate = useNavigate();
 
   const user = useUserState();
 
@@ -70,14 +76,6 @@ export default function SelectionListTable() {
     number | undefined
   >(undefined);
 
-  const editSelectionList = useEditApiFormModal({
-    url: ApiEndpoints.selectionlist_list,
-    pk: selectedSelectionList,
-    title: t`Edit Selection List`,
-    fields: selectionListFields(),
-    table: table
-  });
-
   const deleteSelectionList = useDeleteApiFormModal({
     url: ApiEndpoints.selectionlist_list,
     pk: selectedSelectionList,
@@ -91,8 +89,7 @@ export default function SelectionListTable() {
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.admin),
           onClick: () => {
-            setSelectedSelectionList(record.pk);
-            editSelectionList.open();
+            navigate(`${record.pk}/`);
           }
         }),
         RowDeleteAction({
@@ -120,8 +117,16 @@ export default function SelectionListTable() {
   return (
     <>
       {newSelectionList.modal}
-      {editSelectionList.modal}
       {deleteSelectionList.modal}
+      <DetailDrawer
+        title={t`Selection List`}
+        size='xl'
+        renderContent={(id) =>
+          id ? (
+            <SelectionListDrawer id={id} refreshTable={table.refreshTable} />
+          ) : null
+        }
+      />
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.selectionlist_list)}
         tableState={table}
@@ -129,7 +134,10 @@ export default function SelectionListTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          onRowClick: (record) => {
+            navigate(`${record.pk}/`);
+          }
         }}
       />
     </>

@@ -66,7 +66,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                 name=p['name'],
                 description=p['description'],
                 exact=p['sku'] == term,
-                price=f'{p["price"][1][0]:.2f}€',
+                price=f'{p["price"][1][0]:.2f}€',  # ty:ignore[not-subscriptable]
                 link=p['link'],
                 image_url=p['image_url'],
                 existing_part=getattr(

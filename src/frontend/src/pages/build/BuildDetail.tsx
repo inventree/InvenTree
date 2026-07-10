@@ -632,6 +632,7 @@ export default function BuildDetail() {
 
   const duplicateBuildOrderFields = useBuildOrderFields({
     create: false,
+    duplicateBuildId: build.pk,
     modalId: 'duplicate-build-order'
   });
 
@@ -783,7 +784,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status_custom_key}
+            status={build.status_custom_key || build.status}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />,

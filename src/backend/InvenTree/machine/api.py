@@ -3,6 +3,7 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -142,7 +143,10 @@ class MachineRestart(APIView):
     - POST: restart machine by pk
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnlyScope,
+    ]
 
     @extend_schema(
         request=None, responses={200: MachineSerializers.MachineRestartSerializer()}

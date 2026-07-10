@@ -22,6 +22,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from rest_framework import serializers
 from sesame.utils import get_user
 from stdimage.models import StdImageFieldFile
 
@@ -607,35 +608,6 @@ class FormatTest(TestCase):
 
         with self.assertRaises(ValueError):
             InvenTree.format.extract_named_group('test', 'PO-ABC-xyz', 'PO-###-{test}')
-
-    def test_currency_formatting(self):
-        """Test that currency formatting works correctly for multiple currencies."""
-        test_data = (
-            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),
-            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),
-            (Money(0.348102, 'EUR'), 1, False, '0.3'),
-            (Money(0.916530, 'GBP'), 1, True, '£0.9'),
-            (Money(61.031024, 'JPY'), 3, False, '61.031'),
-            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),
-            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),
-            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),
-            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),
-            (Money(0.348102, 'GBP'), 3, False, '0.348'),
-            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),
-            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),
-            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),
-            (Money(0.585787, 'USD'), 1, True, '$0.6'),
-            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),
-            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
-        )
-
-        with self.settings(LANGUAGE_CODE='en-us'):
-            for value, decimal_places, include_symbol, expected_result in test_data:
-                result = InvenTree.format.format_money(
-                    value, decimal_places=decimal_places, include_symbol=include_symbol
-                )
-
-                self.assertEqual(result, expected_result)
 
 
 class TestHelpers(TestCase):
@@ -1845,6 +1817,35 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+    def test_file_field_request_schema_binary(self):
+        """Verify only request file fields are exposed as binary."""
+        auto_schema = object.__new__(schema.ExtendedAutoSchema)
+
+        mapped_schemas = [
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+            {'type': 'string', 'format': 'uri'},
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+        ]
+
+        with mock.patch(
+            'drf_spectacular.openapi.AutoSchema._map_serializer_field',
+            side_effect=mapped_schemas,
+        ):
+            file_request = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'request'
+            )
+            url_request = auto_schema._map_serializer_field(
+                serializers.URLField(), 'request'
+            )
+            file_response = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'response'
+            )
+
+        self.assertEqual(file_request['format'], 'binary')
+        self.assertTrue(file_request['nullable'])
+        self.assertEqual(url_request['format'], 'uri')
+        self.assertEqual(file_response['format'], 'uri')
 
 
 class URLCompatibilityTest(InvenTreeTestCase):

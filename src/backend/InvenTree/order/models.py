@@ -272,7 +272,7 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     customer: Optional[Company]
 
 
-class TransferOrderReportContext(report.mixins.BaseReportContext, TypedDict):
+class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
     """Context for the transfer order model.
 
     Attributes:
@@ -590,6 +590,21 @@ class Order(
         """Return the Address associated with this order."""
         return self.address or self.company.primary_address
 
+    @property
+    def status_text(self):
+        """Return the text representation of the current status. This will consider any custom status."""
+        if self.get_custom_status() is not None:
+            from generic.states.custom import (
+                get_logical_value as get_custom_state_logical_value,
+            )
+
+            custom_status = get_custom_state_logical_value(
+                self.get_custom_status(), model=self._meta.model_name
+            )
+            return custom_status.label
+        else:
+            return self.status_class.label(self.get_status())
+
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model."""
@@ -624,7 +639,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
         return_ctx = super().report_context()
-        return_ctx.update({'supplier': self.supplier})
+
+        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-key]
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -691,11 +707,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
-
-    @property
-    def status_text(self):
-        """Return the text representation of the status field."""
-        return PurchaseOrderStatus.text(self.status)
 
     supplier = models.ForeignKey(
         Company,
@@ -1037,6 +1048,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
 
+        # Set of users to notify (subscribers to any received part)
+        notify_users = set()
+
+        # Cache of subscribers per part, to avoid repeated queries for the same part
+        part_subscribers_cache: dict[int, list] = {}
+
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
@@ -1094,6 +1111,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Update the line item quantity
             line.received += quantity
             line_items_to_update.append(line)
+
+            # Track subscribers to this part, to notify them later
+            # (cache the result per-part, as multiple lines may reference the same part)
+            if base_part.pk not in part_subscribers_cache:
+                part_subscribers_cache[base_part.pk] = base_part.get_subscribers()
+
+            notify_users.update(part_subscribers_cache[base_part.pk])
 
             # Extract optional serial numbers
             serials = item.get('serials', None)
@@ -1189,13 +1213,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     serials=serials, **stock_data
                 )
 
-                for item in new_items:
-                    item.set_status(status, custom_values=custom_stock_status_values)
+                for new_item in new_items:
+                    new_item.set_status(
+                        status, custom_values=custom_stock_status_values
+                    )
                     # run validation for serialized items plugin.validate_batch_code
-                    item.validate_batch_code()
+                    new_item.validate_batch_code()
                     # run validation for serialized items plugin.validate_model_instance
-                    item.run_plugin_validation()
-                    stock_items.append(item)
+                    new_item.run_plugin_validation()
+                    stock_items.append(new_item)
 
             else:
                 new_item = stock.models.StockItem(
@@ -1281,7 +1307,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
-            extra_users=line.part.part.get_subscribers(),
+            extra_users=notify_users,
         )
 
         # Return a list of the created stock items
@@ -1362,7 +1388,8 @@ class SalesOrder(TotalPriceMixin, Order):
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
         return_ctx = super().report_context()
-        return_ctx.update({'customer': self.customer})
+
+        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1442,11 +1469,6 @@ class SalesOrder(TotalPriceMixin, Order):
         verbose_name=_('Status'),
         help_text=_('Sales order status'),
     )
-
-    @property
-    def status_text(self) -> str:
-        """Return the text representation of the status field."""
-        return SalesOrderStatus.text(self.status)
 
     customer_reference = models.CharField(
         max_length=64,
@@ -2926,7 +2948,8 @@ class ReturnOrder(TotalPriceMixin, Order):
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
         return_ctx = super().report_context()
-        return_ctx.update({'customer': self.customer})
+
+        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
         return return_ctx
 
     def get_absolute_url(self):

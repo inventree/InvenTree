@@ -218,7 +218,10 @@ export default function PartDetail() {
   // Fetch information on parts which are revisions of *this* part
   const partRevisionQuery = useQuery({
     refetchOnMount: true,
-    enabled: revisionsEnabled && !!part && !!part.revision_count,
+    enabled:
+      revisionsEnabled &&
+      !!part &&
+      (!!part.revision_count || !!part.revision_of),
     queryKey: ['part_revisions', part.pk, part.revision_count],
     queryFn: async () =>
       api
@@ -227,7 +230,23 @@ export default function PartDetail() {
             revision_of: part.pk
           }
         })
-        .then((response) => response.data)
+        .then(async (response) => {
+          let data = response.data;
+
+          // If the part is also a revision, fetch upstream revision information too
+          if (!!part.revision_of) {
+            await api
+              .get(apiUrl(ApiEndpoints.part_list), {
+                params: {
+                  revision_of: part.revision_of
+                }
+              })
+              .then((response) => {
+                data = [...data, ...response.data];
+              });
+          }
+          return data;
+        })
   });
 
   const partRevisionOptions: any[] = useMemo(() => {
@@ -529,6 +548,11 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'virtual',
         label: t`Virtual Part`
+      },
+      {
+        type: 'boolean',
+        name: 'consumable',
+        label: t`Consumable Part`
       },
       {
         type: 'boolean',
@@ -983,10 +1007,16 @@ export default function PartDetail() {
         key='inactive'
       />,
       <DetailsBadge
-        label={t`Virtual Part`}
+        label={t`Virtual`}
         color='cyan.4'
         visible={part.virtual}
         key='virtual'
+      />,
+      <DetailsBadge
+        label={t`Consumable`}
+        color='cyan.4'
+        visible={part.consumable}
+        key='consumable'
       />
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
@@ -1045,10 +1075,9 @@ export default function PartDetail() {
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
-      pk: part.pk,
-      model: ModelType.part,
       refresh: refreshInstance,
       filters: {
+        part: part.pk,
         in_stock: true
       }
     };
@@ -1152,6 +1181,7 @@ export default function PartDetail() {
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree
               title={t`Part Categories`}
+              childIdentifier='subcategories'
               modelType={ModelType.partcategory}
               endpoint={ApiEndpoints.category_tree}
               opened={treeOpen}

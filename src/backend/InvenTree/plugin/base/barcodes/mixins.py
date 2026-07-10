@@ -42,7 +42,7 @@ class BarcodeMixin:
         """Does this plugin have everything needed to process a barcode."""
         return True
 
-    def scan(self, barcode_data):
+    def scan(self, barcode_data: str, user, **kwargs) -> dict | None:
         """Scan a barcode against this plugin.
 
         This method is explicitly called from the /scan/ API endpoint,
@@ -261,7 +261,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data: str) -> dict | None:
+    def scan(self, barcode_data: str, user, **kwargs) -> dict | None:
         """Perform a generic 'scan' operation on a supplier barcode.
 
         The supplier barcode may provide sufficient information to match against
@@ -297,7 +297,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         for k, v in matches.items():
             if v and hasattr(v, 'pk'):
                 has_match = True
-                data[k] = v.format_matched_response()
+                data[k] = v.format_matched_response(user=user)
 
         if not has_match:
             return None
@@ -389,11 +389,17 @@ class SupplierBarcodeMixin(BarcodeMixin):
             debug_response['no_match'] = True
             return debug_response
 
+        if not line_item or not line_item.part:
+            return {'error': _('No matching line item found'), 'no_match': False}
+
         if line_item.part != supplier_part:
-            return {'error': _('Supplier part does not match line item')}
+            return {
+                'error': _('Supplier part does not match line item'),
+                'no_match': False,
+            }
 
         if line_item.is_completed():
-            return {'error': _('Line item is already completed')}
+            return {'error': _('Line item is already completed'), 'no_match': False}
 
         # Extract location information for the line item
         location = (

@@ -1,4 +1,5 @@
 import { cancelEvent } from '@lib/functions/Events';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -7,28 +8,27 @@ import {
   UserRoles,
   YesNoButton,
   apiUrl,
-  formatDecimal,
-  getDetailUrl,
-  navigateToLink
+  formatDecimal
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group } from '@mantine/core';
+import { Divider, Group, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
+import { formatDate } from '../../defaults/formatters';
 import { useParameterFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import {
   PARAMETER_FILTER_OPERATORS,
   ParameterFilter
@@ -72,11 +72,41 @@ function ParameterCell({
     parameter.data_numeric != parameter.data
   ) {
     const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });
-    extra.push(`${numeric} [${template.units}]`);
+
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>
+          {numeric}
+        </Text>
+        <Text size='xs'>[{template.units}]</Text>
+      </Group>
+    );
+  }
+
+  if (parameter?.updated) {
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>{t`Last Updated`}</Text>
+        <Text size='xs'>{formatDate(parameter.updated)}</Text>
+      </Group>
+    );
+  }
+
+  if (parameter?.updated_by_detail?.username) {
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>{t`Updated By`}</Text>
+        <Text size='xs'>{parameter.updated_by_detail.username}</Text>
+      </Group>
+    );
   }
 
   if (hovered && canEdit) {
-    extra.push(t`Click to edit`);
+    if (extra.length > 0) {
+      extra.push(<Divider />);
+    }
+
+    extra.push(<Text size='xs'>{t`Click to edit`}</Text>);
   }
 
   return (
@@ -88,6 +118,7 @@ function ParameterCell({
             extra={extra}
             icon={hovered && canEdit ? 'edit' : 'info'}
             title={template.name}
+            minWidth={250}
           />
         </Group>
       </Group>

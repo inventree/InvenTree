@@ -1,47 +1,65 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
-import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+import {
+  ActionIcon,
+  Alert,
+  Container,
+  Group,
+  NumberInput,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
+import {
+  IconCornerDownRight,
+  IconExclamationCircle
+} from '@tabler/icons-react';
+import {
+  type ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef
+} from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { isEquivalent } from '../../../functions/comparison';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 
 export interface TableFieldRowProps {
   item: any;
-  idx: number;
+  rowId: string | number;
   rowErrors: any;
-  control: UseControllerReturn<FieldValues, any>;
-  changeFn: (idx: number, key: string, value: any) => void;
-  removeFn: (idx: number) => void;
+  changeFn: (rowId: number | string, key: string, value: any) => void;
+  removeFn: (rowId: number | string) => void;
 }
 
 function TableFieldRow({
   item,
-  idx,
-  errors,
-  definition,
-  control,
+  rowId,
+  rowErrors,
+  modelRenderer,
+  columnCount,
   changeFn,
   removeFn
 }: Readonly<{
   item: any;
-  idx: number;
-  errors: any;
-  definition: ApiFormFieldType;
-  control: UseControllerReturn<FieldValues, any>;
-  changeFn: (idx: number, key: string, value: any) => void;
-  removeFn: (idx: number) => void;
+  rowId: string | number;
+  rowErrors: any;
+  modelRenderer?: ApiFormFieldType['modelRenderer'];
+  columnCount?: number;
+  changeFn: (rowId: number | string, key: string, value: any) => void;
+  removeFn: (rowId: number | string) => void;
 }>) {
   // Table fields require render function
-  if (!definition.modelRenderer) {
+  if (!modelRenderer) {
     return (
       <Table.Tr key='table-row-no-renderer'>
-        <Table.Td colSpan={definition.headers?.length}>
+        <Table.Td colSpan={columnCount}>
           <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
             {t`modelRenderer entry required for tables`}
           </Alert>
@@ -50,15 +68,50 @@ function TableFieldRow({
     );
   }
 
-  return definition.modelRenderer({
-    item: item,
-    idx: idx,
-    rowErrors: errors,
-    control: control,
-    changeFn: changeFn,
-    removeFn: removeFn
-  });
+  const nonFieldErrors = rowErrors?.non_field_errors;
+
+  return (
+    <>
+      {modelRenderer({
+        item: item,
+        rowId: rowId,
+        rowErrors: rowErrors,
+        changeFn: changeFn,
+        removeFn: removeFn
+      })}
+      {nonFieldErrors && (
+        <Table.Tr key={`table-row-${rowId}-non-field-errors`}>
+          <Table.Td colSpan={columnCount}>
+            <Group gap='xs'>
+              <ActionIcon size='sm' variant='transparent' c='red'>
+                <IconCornerDownRight />
+              </ActionIcon>
+              <Text size='xs' c='red'>
+                {nonFieldErrors.message ?? nonFieldErrors}
+              </Text>
+            </Group>
+          </Table.Td>
+        </Table.Tr>
+      )}
+    </>
+  );
 }
+
+// Memoize each table field row, so that we don't re-render the entire table when a single row is updated
+const MemoizedTableFieldRow = memo(
+  TableFieldRow,
+  (previousProps, nextProps) => {
+    return (
+      previousProps.rowId === nextProps.rowId &&
+      isEquivalent(previousProps.item, nextProps.item) &&
+      isEquivalent(previousProps.rowErrors, nextProps.rowErrors) &&
+      previousProps.modelRenderer === nextProps.modelRenderer &&
+      previousProps.changeFn === nextProps.changeFn &&
+      previousProps.removeFn === nextProps.removeFn &&
+      previousProps.columnCount === nextProps.columnCount
+    );
+  }
+);
 
 export function TableFieldErrorWrapper({
   props,
@@ -83,33 +136,131 @@ export function TableFieldErrorWrapper({
   );
 }
 
-export function TableField({
+function TableFieldComponent({
   definition,
   fieldName,
-  control
+  value,
+  onChange,
+  error
 }: Readonly<{
   definition: ApiFormFieldType;
   fieldName: string;
-  control: UseControllerReturn<FieldValues, any>;
+  value: any;
+  onChange: (value: any) => void;
+  error?: any;
 }>) {
-  const {
-    field,
-    fieldState: { error }
-  } = control;
-  const { value } = field;
+  const valueRef = useRef(value);
+  const onChangeRef = useRef(onChange);
+  const rowIndexByIdRef = useRef(new Map<string | number, number>());
+  const generatedRowIdsRef = useRef(new WeakMap<object, string>());
+  const generatedRowIdCounterRef = useRef(0);
 
-  const onRowFieldChange = (idx: number, key: string, value: any) => {
-    const val = field.value;
-    val[idx][key] = value;
+  const getRowIdentifier = useCallback(
+    (item: any, idx: number): string | number => {
+      if (item && typeof item === 'object') {
+        const intrinsicId = item.pk ?? item.item ?? item.id ?? item.uuid;
 
-    field.onChange(val);
-  };
+        if (intrinsicId !== undefined && intrinsicId !== null) {
+          return intrinsicId;
+        }
 
-  const removeRow = (idx: number) => {
-    const val = field.value;
-    val.splice(idx, 1);
-    field.onChange(val);
-  };
+        const existingGeneratedId = generatedRowIdsRef.current.get(item);
+
+        if (existingGeneratedId) {
+          return existingGeneratedId;
+        }
+
+        generatedRowIdCounterRef.current += 1;
+        const generatedId = `table-row-generated-${generatedRowIdCounterRef.current}`;
+        generatedRowIdsRef.current.set(item, generatedId);
+
+        return generatedId;
+      }
+
+      return item ?? idx;
+    },
+    []
+  );
+
+  // Keep refs in sync with latest values without introducing them as deps
+  valueRef.current = value;
+  onChangeRef.current = onChange;
+
+  useEffect(() => {
+    const nextRowIndexById = new Map<string | number, number>();
+
+    value?.forEach((item: any, idx: number) => {
+      nextRowIndexById.set(getRowIdentifier(item, idx), idx);
+    });
+
+    rowIndexByIdRef.current = nextRowIndexById;
+  }, [value, getRowIdentifier]);
+
+  const resolveRowIndex = useCallback((identifier: number | string) => {
+    const mappedIndex = rowIndexByIdRef.current.get(identifier);
+
+    if (mappedIndex !== undefined) {
+      return mappedIndex;
+    }
+
+    if (typeof identifier === 'number' && identifier >= 0) {
+      return identifier;
+    }
+
+    return undefined;
+  }, []);
+
+  const onRowFieldChange = useCallback(
+    (identifier: number | string, key: string, rowValue: any) => {
+      const idx = resolveRowIndex(identifier);
+
+      if (idx === undefined) {
+        return;
+      }
+
+      const currentValue = valueRef.current;
+
+      if (!Array.isArray(currentValue) || currentValue[idx] === undefined) {
+        return;
+      }
+
+      const nextValue = [...currentValue];
+      const currentRow = nextValue[idx];
+
+      if (currentRow && typeof currentRow === 'object') {
+        nextValue[idx] = {
+          ...currentRow,
+          [key]: rowValue
+        };
+      }
+
+      valueRef.current = nextValue;
+      onChangeRef.current(nextValue);
+    },
+    [resolveRowIndex]
+  );
+
+  const removeRow = useCallback(
+    (identifier: number | string) => {
+      const idx = resolveRowIndex(identifier);
+
+      if (idx === undefined) {
+        return;
+      }
+
+      const currentValue = valueRef.current;
+
+      if (!Array.isArray(currentValue)) {
+        return;
+      }
+
+      const nextValue = [...currentValue];
+      nextValue.splice(idx, 1);
+
+      onChangeRef.current(nextValue);
+    },
+    [resolveRowIndex]
+  );
 
   // Extract errors associated with the current row
   const rowErrors: any = useCallback(
@@ -125,7 +276,7 @@ export function TableField({
     <Table
       highlightOnHover
       striped
-      aria-label={`table-field-${field.name}`}
+      aria-label={`table-field-${fieldName}`}
       style={{ width: '100%' }}
     >
       <Table.Thead>
@@ -146,14 +297,16 @@ export function TableField({
       <Table.Tbody>
         {(value?.length ?? 0) > 0 ? (
           value.map((item: any, idx: number) => {
+            const rowId = getRowIdentifier(item, idx);
+
             return (
-              <TableFieldRow
-                key={`table-row-${idx}`}
+              <MemoizedTableFieldRow
+                key={`table-row-${rowId}`}
                 item={item}
-                idx={idx}
-                errors={rowErrors(idx)}
-                control={control}
-                definition={definition}
+                rowId={rowId}
+                rowErrors={rowErrors(idx)}
+                modelRenderer={definition.modelRenderer}
+                columnCount={definition.headers?.length}
                 changeFn={onRowFieldChange}
                 removeFn={removeRow}
               />
@@ -189,9 +342,7 @@ export function TableField({
                   if (definition.addRow === undefined) return;
                   const ret = definition.addRow();
                   if (ret) {
-                    const val = field.value;
-                    val.push(ret);
-                    field.onChange(val);
+                    onChange([...(value ?? []), ret]);
                   }
                 }}
               />
@@ -202,6 +353,19 @@ export function TableField({
     </Table>
   );
 }
+
+export const TableField = memo(
+  TableFieldComponent,
+  (previousProps, nextProps) => {
+    return (
+      previousProps.definition === nextProps.definition &&
+      previousProps.fieldName === nextProps.fieldName &&
+      isEquivalent(previousProps.value, nextProps.value) &&
+      isEquivalent(previousProps.error, nextProps.error) &&
+      previousProps.onChange === nextProps.onChange
+    );
+  }
+);
 
 /*
  * Display an "extra" row below the main table row, for additional information.
@@ -224,10 +388,16 @@ export function TableFieldExtraRow({
   emptyValue?: any;
   onValueChange: (value: any) => void;
 }) {
+  const hasMounted = useRef(false);
+
   // Callback whenever the visibility of the sub-field changes
+  // Skip the initial mount — the value was never set, nothing to reset
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
     if (!visible) {
-      // If the sub-field is hidden, reset the value to the "empty" value
       onValueChange(emptyValue);
     }
   }, [visible]);
@@ -260,5 +430,39 @@ export function TableFieldExtraRow({
         </Table.Td>
       </Table.Tr>
     )
+  );
+}
+
+export function TableFieldQuantityInput({
+  value,
+  onChange,
+  error,
+  min
+}: {
+  value: number | '';
+  onChange: (value: number | '') => void;
+  error?: string;
+  min?: number;
+}) {
+  return (
+    <NumberInput
+      radius='sm'
+      aria-label='number-field-quantity'
+      min={min}
+      step={1}
+      decimalScale={10}
+      value={value}
+      onChange={(v: number | string) => {
+        if (typeof v === 'number') {
+          onChange(Number.isFinite(v) ? v : '');
+        } else if (v.trim() !== '') {
+          const parsed = Number.parseFloat(v);
+          onChange(Number.isFinite(parsed) ? parsed : '');
+        } else {
+          onChange('');
+        }
+      }}
+      error={error}
+    />
   );
 }

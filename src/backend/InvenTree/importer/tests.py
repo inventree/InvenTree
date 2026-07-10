@@ -2,10 +2,11 @@
 
 import os
 
+from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
-from importer.models import DataImportRow, DataImportSession
+from importer.models import DataImportColumnMap, DataImportRow, DataImportSession
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 
 
@@ -58,20 +59,92 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         self.assertEqual(session.rows.count(), 12)
 
         # Check that some data has been imported
-        for row in session.rows.all():
+        rows = list(session.rows.all())
+        self.assertEqual(len(rows), 12)
+
+        for row in rows:
             self.assertIsNotNone(row.data.get('name', None))
             self.assertTrue(row.valid)
 
             row.validate(commit=True)
             self.assertTrue(row.complete)
 
-        self.assertEqual(session.completed_row_count, 12)
+        # All rows accepted: rows and mappings are cleared, session is retained
+        session.refresh_from_db()
+        self.assertEqual(session.rows.count(), 0)
+        self.assertEqual(session.column_mappings.count(), 0)
 
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
 
     def test_field_defaults(self):
         """Test default field values."""
+
+    def test_lookup_field_ambiguous_match(self):
+        """Test the behavior of lookup_related_field for ambiguous and pinned matches."""
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from part.models import Part, PartCategory
+
+        category = PartCategory.objects.create(
+            name='Test Category', description='Test category'
+        )
+
+        # Two parts which collide under different IMPORT_ID_FIELDS ('IPN' and 'name')
+        part_a = Part.objects.create(
+            category=category, name='Widget', description='desc', IPN='AMBIG-001'
+        )
+        Part.objects.create(
+            category=category, name='AMBIG-001', description='desc', IPN='WIDGET-002'
+        )
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        row = DataImportRow(session=session)
+        row.related_field_map = {}
+
+        # Auto-lookup (no pinned lookup field) raises, as the value matches two different parts
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', 'AMBIG-001')
+
+        # Pinning the lookup field to 'IPN' resolves the match unambiguously
+        result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='IPN')
+        self.assertEqual(result, part_a.pk)
+
+        # Pinning the lookup field to 'name' resolves to the *other* part
+        result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='name')
+        self.assertNotEqual(result, part_a.pk)
+
+    def test_lookup_field_validation(self):
+        """Test that DataImportColumnMap.clean() validates the lookup_field value."""
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        part_mapping = session.column_mappings.get(field='part')
+        quantity_mapping = session.column_mappings.get(field='quantity')
+
+        # Valid lookup field for a related (FK) field
+        part_mapping.lookup_field = 'IPN'
+        part_mapping.save()
+        part_mapping.refresh_from_db()
+        self.assertEqual(part_mapping.lookup_field, 'IPN')
+
+        # Invalid lookup field (not a valid IMPORT_ID_FIELDS option)
+        part_mapping.lookup_field = 'not_a_real_field'
+        with self.assertRaises(DjangoValidationError):
+            part_mapping.save()
+
+        # lookup_field cannot be set against a non-related field
+        quantity_mapping.lookup_field = 'IPN'
+        with self.assertRaises(DjangoValidationError):
+            quantity_mapping.save()
 
 
 class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
@@ -174,6 +247,58 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         # Check that there are new database records
         self.assertEqual(PartCategory.objects.count(), N + 4)
 
+    def test_column_mapping_lookup_field(self):
+        """Test that the 'lookup_field' option can be specified via the column-mapping API."""
+        f = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='stockitem', user=self.user
+        )
+
+        self.assignRole('stock.change')
+
+        # available_fields should expose the valid lookup field options for the 'part' FK field
+        session_detail = self.get(
+            reverse('api-import-session-detail', kwargs={'pk': session.pk})
+        ).data
+        part_field_info = session_detail['available_fields']['part']
+        self.assertIn('lookup_fields', part_field_info)
+        self.assertIn('IPN', part_field_info['lookup_fields'])
+        self.assertIn('name', part_field_info['lookup_fields'])
+        self.assertIn('pk', part_field_info['lookup_fields'])
+
+        part_mapping = session.column_mappings.get(field='part')
+        quantity_mapping = session.column_mappings.get(field='quantity')
+
+        mapping_url = reverse(
+            'api-importer-mapping-detail', kwargs={'pk': part_mapping.pk}
+        )
+
+        # Initially, no lookup field is set (defaults to 'auto')
+        data = self.get(mapping_url).data
+        self.assertIn(data['lookup_field'], [None, ''])
+
+        # Set a valid lookup field
+        data = self.patch(mapping_url, {'lookup_field': 'IPN'}, expected_code=200).data
+        self.assertEqual(data['lookup_field'], 'IPN')
+
+        # Confirm it persists
+        data = self.get(mapping_url).data
+        self.assertEqual(data['lookup_field'], 'IPN')
+
+        # An invalid lookup field is rejected
+        self.patch(mapping_url, {'lookup_field': 'not_a_real_field'}, expected_code=400)
+
+        # Clear the lookup field (revert to 'auto')
+        data = self.patch(mapping_url, {'lookup_field': None}, expected_code=200).data
+        self.assertIn(data['lookup_field'], [None, ''])
+
+        # lookup_field cannot be set against a non-related field
+        quantity_url = reverse(
+            'api-importer-mapping-detail', kwargs={'pk': quantity_mapping.pk}
+        )
+        self.patch(quantity_url, {'lookup_field': 'IPN'}, expected_code=400)
+
     def test_session_list(self):
         """Test API endpoint which details the list of import sessions."""
         url = reverse('api-importer-session-list')
@@ -203,6 +328,191 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 3)
         for session in response.data:
             self.assertEqual(session['user'], self.user.pk)
+
+    def test_accept_fields_ownership(self):
+        """Test that accept_fields rejects requests for sessions owned by another user."""
+        other_user = User.objects.create_user(
+            username='other_accept', password='password'
+        )
+
+        f = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=other_user
+        )
+
+        url = reverse('api-import-session-accept-fields', kwargs={'pk': session.pk})
+
+        # Non-owner, non-staff should be denied
+        self.user.is_staff = False
+        self.user.save()
+        self.post(url, expected_code=403)
+
+        # Staff should be allowed (subject to model permission)
+        # Company is part of the purchase_order ruleset
+        self.user.is_staff = True
+        self.user.save()
+        self.assignRole('purchase_order.change')
+        self.post(url, expected_code=200)
+
+    def test_accept_rows_ownership(self):
+        """Test that accept_rows rejects requests for sessions owned by another user."""
+        other_user = User.objects.create_user(
+            username='other_accept_rows', password='password'
+        )
+
+        f = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=other_user
+        )
+        session.extract_columns()
+
+        url = reverse('api-import-session-accept-rows', kwargs={'pk': session.pk})
+
+        self.user.is_staff = False
+        self.user.save()
+        self.post(url, {'rows': []}, expected_code=403)
+
+        # Staff can reach the endpoint (rows list is empty so validation rejects with 400, not 403)
+        self.user.is_staff = True
+        self.user.save()
+        self.post(url, {'rows': []}, expected_code=400)
+
+    def test_session_cleanup_on_complete(self):
+        """Test that a completed import session deletes itself and all associated data."""
+        url = reverse('api-importer-session-list')
+        data_file = self.helper_file('part_categories.csv')
+
+        data = self.post(
+            url,
+            {'model_type': 'partcategory', 'data_file': data_file},
+            format='multipart',
+        ).data
+
+        session_id = data['pk']
+        session_pk = session_id
+
+        self.assignRole('part_category.add')
+        self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session_id}),
+            expected_code=200,
+        )
+
+        rows = self.get(
+            reverse('api-importer-row-list'), data={'session': session_id}
+        ).data
+        row_ids = [r['pk'] for r in rows]
+        self.assertGreater(len(row_ids), 0)
+
+        # Confirm rows and mappings exist before acceptance
+        self.assertTrue(DataImportRow.objects.filter(session_id=session_pk).exists())
+        self.assertTrue(
+            DataImportColumnMap.objects.filter(session_id=session_pk).exists()
+        )
+
+        # Accept all rows — this should trigger cleanup of rows and mappings
+        self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session_id}),
+            {'rows': row_ids},
+        )
+
+        # Rows and column mappings must be cleared
+        self.assertFalse(DataImportRow.objects.filter(session_id=session_pk).exists())
+        self.assertFalse(
+            DataImportColumnMap.objects.filter(session_id=session_pk).exists()
+        )
+
+        # Session itself is retained as an audit record with COMPLETE status
+        from importer.models import DataImportSession
+        from importer.status_codes import DataImportStatusCode
+
+        session_obj = DataImportSession.objects.get(pk=session_pk)
+        self.assertEqual(session_obj.status, DataImportStatusCode.COMPLETE.value)
+
+        detail = self.get(
+            reverse('api-import-session-detail', kwargs={'pk': session_id}),
+            expected_code=200,
+        ).data
+        self.assertEqual(detail['row_count'], 0)
+        self.assertEqual(detail['completed_row_count'], 0)
+
+    def test_row_and_mapping_ownership(self):
+        """Test that DataImportRow and DataImportColumnMap endpoints filter by session ownership."""
+        f = self.helper_file('companies.csv')
+
+        other_user = User.objects.create_user(
+            username='other_importer', password='password'
+        )
+
+        # Session owned by self.user
+        session_mine = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=self.user
+        )
+        session_mine.extract_columns()
+
+        # Session owned by another user
+        f2 = self.helper_file('companies.csv')
+        session_other = DataImportSession.objects.create(
+            data_file=f2, model_type='company', user=other_user
+        )
+        session_other.extract_columns()
+
+        row_list_url = reverse('api-importer-row-list')
+        mapping_list_url = reverse('api-importer-mapping-list')
+
+        # Non-staff: should only see rows/mappings from own session
+        self.user.is_staff = False
+        self.user.save()
+
+        rows = self.get(row_list_url).data
+        for row in rows:
+            self.assertEqual(row['session'], session_mine.pk)
+
+        mappings = self.get(mapping_list_url).data
+        for mapping in mappings:
+            self.assertEqual(mapping['session'], session_mine.pk)
+
+        # Detail endpoint: own session's row/mapping should be accessible
+        own_row = DataImportRow.objects.filter(session=session_mine).first()
+        other_row = DataImportRow.objects.filter(session=session_other).first()
+
+        if own_row:
+            self.get(
+                reverse('api-importer-row-detail', kwargs={'pk': own_row.pk}),
+                expected_code=200,
+            )
+        if other_row:
+            self.get(
+                reverse('api-importer-row-detail', kwargs={'pk': other_row.pk}),
+                expected_code=404,
+            )
+
+        own_mapping = DataImportColumnMap.objects.filter(session=session_mine).first()
+        other_mapping = DataImportColumnMap.objects.filter(
+            session=session_other
+        ).first()
+
+        if own_mapping:
+            self.get(
+                reverse('api-importer-mapping-detail', kwargs={'pk': own_mapping.pk}),
+                expected_code=200,
+            )
+        if other_mapping:
+            self.get(
+                reverse('api-importer-mapping-detail', kwargs={'pk': other_mapping.pk}),
+                expected_code=404,
+            )
+
+        # Staff user: should see rows/mappings from all sessions
+        self.user.is_staff = True
+        self.user.save()
+
+        all_row_pks = set(DataImportRow.objects.values_list('pk', flat=True))
+        response_rows = self.get(row_list_url).data
+        self.assertEqual({r['pk'] for r in response_rows}, all_row_pks)
+
+        all_mapping_pks = set(DataImportColumnMap.objects.values_list('pk', flat=True))
+        response_mappings = self.get(mapping_list_url).data
+        self.assertEqual({m['pk'] for m in response_mappings}, all_mapping_pks)
 
 
 class AdminTest(ImporterMixin, AdminTestCase):

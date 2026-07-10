@@ -1162,7 +1162,18 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = StockLocation
-        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'sublocations']
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'pathstring',
+            'parent',
+            'tree_id',
+            'level',
+            'icon',
+            'structural',
+            'sublocations',
+        ]
 
     sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
 
@@ -1639,7 +1650,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['pk', 'quantity', 'batch', 'status', 'packaging']
+        fields = ['pk', 'quantity', 'batch', 'status', 'packaging', 'merge']
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
@@ -1713,6 +1724,15 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         help_text=_('Packaging this stock item is stored in'),
     )
 
+    merge = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Merge into existing stock'),
+        help_text=_(
+            'Merge this item into existing stock at the destination if possible'
+        ),
+    )
+
 
 class StockAdjustmentSerializer(serializers.Serializer):
     """Base class for managing stock adjustment actions via the API."""
@@ -1752,13 +1772,22 @@ class StockCountSerializer(StockAdjustmentSerializer):
         fields = ['items', 'notes', 'location']
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=False,
         allow_null=True,
         label=_('Location'),
         help_text=_('Set stock location for counted items (optional)'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     def save(self):
         """Count stock."""
@@ -1856,13 +1885,22 @@ class StockTransferSerializer(StockAdjustmentSerializer):
     items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=True,
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination stock location'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     def save(self):
         """Transfer stock."""
@@ -1879,6 +1917,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+                merge = item.get('merge', False)
 
                 # Optional fields
                 kwargs = {}
@@ -1886,6 +1925,47 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
                         kwargs[field_name] = field_value
+
+                if merge:
+                    target = stock_item.find_merge_target(location)
+
+                    if target:
+                        merge_kwargs = {
+                            'location': location,
+                            'notes': notes,
+                            'user': request.user,
+                            **kwargs,
+                        }
+
+                        if quantity < stock_item.quantity:
+                            transfer_deltas = {}
+
+                            piece = stock_item.splitStock(
+                                quantity,
+                                location,
+                                request.user,
+                                notes=notes,
+                                allow_production=True,
+                                record_tracking=False,
+                                split_transfer_deltas=transfer_deltas,
+                                **kwargs,
+                            )
+                            merge_kwargs['transfer_deltas'] = transfer_deltas
+                            target.merge_stock_items([piece], **merge_kwargs)
+                        else:
+                            transfer_deltas = {'stockitem': stock_item.pk}
+
+                            if location:
+                                transfer_deltas['location'] = location.pk
+
+                            for field_name in StockItem.optional_transfer_fields():
+                                if field_name in kwargs:
+                                    transfer_deltas[field_name] = kwargs[field_name]
+
+                            merge_kwargs['transfer_deltas'] = transfer_deltas
+                            target.merge_stock_items([stock_item], **merge_kwargs)
+
+                        continue
 
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
@@ -1905,13 +1985,22 @@ class StockReturnSerializer(StockAdjustmentSerializer):
     )
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.filter(structural=False),
+        queryset=StockLocation.objects.filter(),
         many=False,
         required=True,
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination stock location'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     merge = serializers.BooleanField(
         default=False,

@@ -23,6 +23,7 @@ from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
+from rest_framework.exceptions import PermissionDenied
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
@@ -568,7 +569,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             if 'parameters_list' in cache:
                 return cache['parameters_list']
 
-        return self.parameters_list.all()
+        return self.parameters_list.all().prefetch_related('template')
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
@@ -1334,8 +1335,16 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return generate_barcode(self)
 
-    def format_matched_response(self):
+    def format_matched_response(self, user, **kwargs):
         """Format a standard response for a matched barcode."""
+        # Check permission for this object
+        from users.permissions import check_user_permission
+
+        if not check_user_permission(user, self, 'view'):
+            raise PermissionDenied(
+                _('User does not have permission to view this model')
+            )
+
         data = {'pk': self.pk}
 
         if hasattr(self, 'get_api_url'):
@@ -1456,11 +1465,15 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
         # Create a new Error object associated with this failed task
         # This will, in turn, trigger a notification to staff users via the Error post_save signal
 
+        message = f"Task '{instance.func} ({instance.pk})' failed after {n} attempts"
+
+        logger.error(message)
+
         log_error(
             'task_failure',
             scope='worker',
             error_name='Task Failure',
-            error_info=f"Task '{instance.pk}' failed after {n} attempts",
+            error_info=message,
             error_data=str(instance.result) if instance.result else '',
         )
 

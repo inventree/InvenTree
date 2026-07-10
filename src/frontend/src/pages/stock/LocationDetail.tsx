@@ -70,8 +70,9 @@ function TransferOrderCalendar() {
     <OrderCalendar
       model={ModelType.transferorder}
       role={UserRoles.transfer_order}
-      params={{ outstanding: true }}
+      params={{}}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
     />
   );
 }
@@ -348,10 +349,9 @@ export default function Stock() {
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
-      pk: location.pk,
-      model: 'location',
       refresh: refreshInstance,
       filters: {
+        location: location.pk,
         in_stock: true
       }
     };
@@ -513,6 +513,7 @@ export default function Stock() {
             title={t`Stock Locations`}
             modelType={ModelType.stocklocation}
             endpoint={ApiEndpoints.stock_location_tree}
+            childIdentifier='sublocations'
             opened={treeOpen}
             onClose={() => setTreeOpen(false)}
             selectedId={location?.pk}

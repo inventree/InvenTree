@@ -11,7 +11,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import BomItem, Part
+from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockStatus
 
@@ -1531,10 +1531,15 @@ class BuildOutputScrapTest(BuildAPITest):
             'notes': 'Partial complete',
         }
 
-        # Ensure that an invalid quantity raises an error
-        for q in [-4, 0, 999]:
+        # Ensure that an invalid quantity raises an error, with the expected message
+        for q, expected_message in [
+            (-4, 'Ensure this value is greater than or equal to 0'),
+            (0, 'Quantity must be greater than zero'),
+            (999, 'Quantity cannot be greater than the output quantity'),
+        ]:
             data['outputs'][0]['quantity'] = q
-            self.post(url, data, expected_code=400)
+            response = self.post(url, data, expected_code=400)
+            self.assertIn(expected_message, str(response.data))
 
         # Partially complete the output (with a valid quantity)
         data['outputs'][0]['quantity'] = 4
@@ -1551,6 +1556,94 @@ class BuildOutputScrapTest(BuildAPITest):
         self.assertEqual(completed_output.quantity, 4)
         self.assertEqual(completed_output.status, StockStatus.OK)
         self.assertFalse(completed_output.is_building)
+
+    def test_complete_with_required_tests(self):
+        """Test that build output completion is blocked if required tests have not passed."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(1).first()
+
+        template = PartTestTemplate.objects.create(
+            part=build.part, test_name='Required test', required=True
+        )
+
+        set_global_setting(
+            'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None
+        )
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        data = {'outputs': [{'output': output.pk}], 'location': 1}
+
+        response = self.post(url, data, expected_code=400)
+
+        self.assertIn(
+            'Build output has not passed all required tests', str(response.data)
+        )
+
+        # Add a passing test result - the output should now be able to be completed
+        output.add_test_result(template=template, result=True)
+
+        self.post(url, data, expected_code=200)
+
+    def test_complete_still_in_production(self):
+        """Test that build output completion is blocked if an allocated item is still in production."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(1).first()
+
+        build.create_build_line_items()
+        line = build.build_lines.first()
+
+        sub_build = Build.objects.create(
+            part=line.bom_item.sub_part,
+            quantity=1,
+            title='Sub-build',
+            reference='BO-9998',
+        )
+
+        in_production = StockItem.objects.create(
+            part=line.bom_item.sub_part, quantity=1, is_building=True, build=sub_build
+        )
+
+        BuildItem.objects.create(
+            build_line=line, stock_item=in_production, quantity=1, install_into=output
+        )
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        response = self.post(
+            url, {'outputs': [{'output': output.pk}], 'location': 1}, expected_code=400
+        )
+
+        self.assertIn(
+            'Allocated stock items are still in production', str(response.data)
+        )
+
+    def test_partial_complete_with_allocated_items(self):
+        """Test that a build output with allocated items cannot be partially completed."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+
+        build.create_build_line_items()
+        line = build.build_lines.first()
+
+        stock_item = StockItem.objects.create(part=line.bom_item.sub_part, quantity=10)
+
+        BuildItem.objects.create(
+            build_line=line, stock_item=stock_item, quantity=1, install_into=output
+        )
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        response = self.post(
+            url,
+            {'outputs': [{'output': output.pk, 'quantity': 4}], 'location': 1},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Cannot partially complete a build output with allocated items',
+            str(response.data),
+        )
 
 
 class BuildOutputCancelTest(BuildAPITest):
@@ -1624,6 +1717,246 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
+
+    def test_filter_available_allocated_consumed_mixed(self):
+        """Filter BuildLine objects with mixed allocated / consumed / stock states."""
+        assembly = Part.objects.create(
+            name='Available Filter Assembly',
+            description='Assembly for advanced available filter tests',
+            assembly=True,
+        )
+
+        components = [
+            Part.objects.create(
+                name=f'Available Filter Component {idx}',
+                description=f'Component {idx}',
+                component=True,
+            )
+            for idx in range(4)
+        ]
+
+        # The assembly uses 10x of each component
+        for component in components:
+            BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        # Create a new Build, requiring 100x of each component
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-9999',
+            quantity=10,
+            title='Available Filter Mixed',
+        )
+
+        lines = list(build.build_lines.order_by('pk'))
+        self.assertEqual(len(lines), 4)
+
+        # Build line quantity is 100 for each line (10 * build quantity 10)
+        for line in lines:
+            self.assertEqual(line.quantity, 100)
+
+        # Stock allocation baseline for each component
+        # Note: Quantity values will be updated later
+        stock_items = [
+            StockItem.objects.create(part=component, quantity=1)
+            for component in components
+        ]
+
+        # Line 0: AVAILABLE = True
+        # allocated = 30
+        # consumed = 0
+        # available = 70
+        BuildItem.objects.create(
+            build_line=lines[0], stock_item=stock_items[0], quantity=30
+        )
+
+        stock_items[0].quantity = 30 + 70
+        stock_items[0].save()
+
+        # Line 1: allocated 20 + consumed 30 + available stock 50 => available (100)
+        BuildItem.objects.create(
+            build_line=lines[1], stock_item=stock_items[1], quantity=20
+        )
+        lines[1].consumed = 30
+        lines[1].save()
+        stock_items[1].quantity = 20 + 50
+        stock_items[1].save()
+
+        # Line 2: allocated 0 + consumed 10 + available stock 50 => not available (60)
+        lines[2].consumed = 10
+        lines[2].save()
+        stock_items[2].quantity = 50
+        stock_items[2].save()
+
+        # Line 3: allocated 40 + consumed 0 + available stock 20 => not available (60)
+        BuildItem.objects.create(
+            build_line=lines[3], stock_item=stock_items[3], quantity=40
+        )
+        stock_items[3].quantity = 40 + 20
+        stock_items[3].save()
+
+        url = reverse('api-build-line-list')
+
+        response_true = self.get(url, {'build': build.pk, 'available': True})
+
+        response_false = self.get(url, {'build': build.pk, 'available': False})
+
+        true_ids = {item['pk'] for item in response_true.data}
+        false_ids = {item['pk'] for item in response_false.data}
+
+        self.assertSetEqual(true_ids, {lines[0].pk, lines[1].pk})
+        self.assertSetEqual(false_ids, {lines[2].pk, lines[3].pk})
+        self.assertSetEqual(true_ids | false_ids, {line.pk for line in lines})
+
+    def test_filter_available_substitute_and_variant_stock(self):
+        """Filter BuildLine objects where availability comes from substitute or variant stock."""
+        assembly = Part.objects.create(
+            name='Available Filter Sub/Var Assembly',
+            description='Assembly for substitute and variant availability tests',
+            assembly=True,
+        )
+
+        # Substitute path: line should pass via substitute stock
+        sub_master_ok = Part.objects.create(name='Sub Master OK', component=True)
+        sub_alt_ok = Part.objects.create(name='Sub Alt OK', component=True)
+
+        # Substitute path: line should fail (insufficient substitute stock)
+        sub_master_low = Part.objects.create(name='Sub Master Low', component=True)
+        sub_alt_low = Part.objects.create(name='Sub Alt Low', component=True)
+
+        # Variant path: line should pass via variant stock
+        var_parent_ok = Part.objects.create(
+            name='Variant Parent OK', component=True, is_template=True
+        )
+        var_child_ok = Part.objects.create(
+            name='Variant Child OK', component=True, variant_of=var_parent_ok
+        )
+
+        # Variant path: line should fail (insufficient variant stock)
+        var_parent_low = Part.objects.create(
+            name='Variant Parent Low', component=True, is_template=True
+        )
+        var_child_low = Part.objects.create(
+            name='Variant Child Low', component=True, variant_of=var_parent_low
+        )
+
+        bom_sub_ok = BomItem.objects.create(
+            part=assembly, sub_part=sub_master_ok, quantity=10, allow_variants=False
+        )
+        bom_sub_low = BomItem.objects.create(
+            part=assembly, sub_part=sub_master_low, quantity=10, allow_variants=False
+        )
+        bom_var_ok = BomItem.objects.create(
+            part=assembly, sub_part=var_parent_ok, quantity=10, allow_variants=True
+        )
+        bom_var_low = BomItem.objects.create(
+            part=assembly, sub_part=var_parent_low, quantity=10, allow_variants=True
+        )
+
+        BomItemSubstitute.objects.create(bom_item=bom_sub_ok, part=sub_alt_ok)
+        BomItemSubstitute.objects.create(bom_item=bom_sub_low, part=sub_alt_low)
+
+        # Build quantity 10 => each line requires 100 units
+        build = Build.objects.create(
+            part=assembly, reference='BO-0987', quantity=10, title='Available Sub/Var'
+        )
+
+        lines = list(build.build_lines.order_by('pk'))
+        self.assertEqual(len(lines), 4)
+
+        # Keep master parts at zero stock so only substitute/variant paths contribute
+        StockItem.objects.create(part=sub_alt_ok, quantity=100)
+        StockItem.objects.create(part=sub_alt_low, quantity=40)
+        StockItem.objects.create(part=var_child_ok, quantity=100)
+        StockItem.objects.create(part=var_child_low, quantity=40)
+
+        url = reverse('api-build-line-list')
+
+        response_true = self.get(url, {'build': build.pk, 'available': True})
+
+        response_false = self.get(url, {'build': build.pk, 'available': False})
+
+        pk_by_bom = {line.bom_item_id: line.pk for line in lines}
+
+        expected_true = {pk_by_bom[bom_sub_ok.pk], pk_by_bom[bom_var_ok.pk]}
+        expected_false = {pk_by_bom[bom_sub_low.pk], pk_by_bom[bom_var_low.pk]}
+
+        true_ids = {item['pk'] for item in response_true.data}
+        false_ids = {item['pk'] for item in response_false.data}
+
+        self.assertSetEqual(true_ids, expected_true)
+        self.assertSetEqual(false_ids, expected_false)
+        self.assertSetEqual(true_ids | false_ids, {line.pk for line in lines})
+
+    def test_filter_consumable_via_part(self):
+        """Filter BuildLine objects by 'consumable' status, accounting for the underlying part.
+
+        A BuildLine should be treated as 'consumable' if either the BOM line
+        itself is marked as consumable, or the underlying part is marked as consumable.
+        """
+        assembly = Part.objects.create(
+            name='Consumable Filter Assembly',
+            description='Assembly for consumable filter tests',
+            assembly=True,
+        )
+
+        plain = Part.objects.create(
+            name='Consumable Filter Plain Component',
+            description='A regular component',
+            component=True,
+        )
+
+        consumable_part = Part.objects.create(
+            name='Consumable Filter Consumable Part',
+            description='A part marked as consumable',
+            component=True,
+            consumable=True,
+        )
+
+        consumable_line_part = Part.objects.create(
+            name='Consumable Filter Consumable BOM Line',
+            description='A part which is consumable only via its BOM line',
+            component=True,
+        )
+
+        bom_item_plain = BomItem.objects.create(
+            part=assembly, sub_part=plain, quantity=1
+        )
+        bom_item_part_consumable = BomItem.objects.create(
+            part=assembly, sub_part=consumable_part, quantity=1
+        )
+        bom_item_line_consumable = BomItem.objects.create(
+            part=assembly, sub_part=consumable_line_part, quantity=1, consumable=True
+        )
+
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-9997',
+            quantity=1,
+            title='Consumable Filter Build',
+        )
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(url, data={'build': build.pk, 'consumable': True})
+        returned_bom_items = {item['bom_item'] for item in response.data}
+
+        self.assertIn(bom_item_part_consumable.pk, returned_bom_items)
+        self.assertIn(bom_item_line_consumable.pk, returned_bom_items)
+        self.assertNotIn(bom_item_plain.pk, returned_bom_items)
+
+        response = self.get(url, data={'build': build.pk, 'consumable': False})
+        returned_bom_items = {item['bom_item'] for item in response.data}
+
+        self.assertIn(bom_item_plain.pk, returned_bom_items)
+        self.assertNotIn(bom_item_part_consumable.pk, returned_bom_items)
+        self.assertNotIn(bom_item_line_consumable.pk, returned_bom_items)
+
+        # Check that the serialized 'consumable' field reflects the combined status
+        response = self.get(
+            url, data={'build': build.pk, 'bom_item': bom_item_part_consumable.pk}
+        )
+        self.assertEqual(len(response.data), 1)
+        self.assertTrue(response.data[0]['consumable'])
 
     def test_output_options(self):
         """Test output options  for the BuildLine endpoint."""

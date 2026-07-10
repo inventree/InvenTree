@@ -3,7 +3,10 @@ import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useMemo } from 'react';
-import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 

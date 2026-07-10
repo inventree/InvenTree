@@ -90,7 +90,8 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     define: {
-      ...__INVENTREE_VERSION_INFO__
+      ...__INVENTREE_VERSION_INFO__,
+      'process.env.NODE_ENV': JSON.stringify(mode)
     }
   };
 });

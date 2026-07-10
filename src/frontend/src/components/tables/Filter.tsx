@@ -5,15 +5,15 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { isTrue } from '@lib/functions/Conversion';
 import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
-import type {
-  StatusCodeInterface,
-  StatusCodeListInterface
-} from '../components/render/StatusRenderer';
 import {
   type StatusLookup,
   useGlobalStatusState
-} from '../states/GlobalStatusState';
-import { useGlobalSettingsState } from '../states/SettingsStates';
+} from '../../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import type {
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '../render/StatusRenderer';
 
 // Determine the appropriate display label for a given filter, based on its name and the list of available filters
 export function filterDisplayLabel(
@@ -374,11 +374,13 @@ export function ProjectCodeFilter(): TableFilter {
 export function OwnerFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name: string;
   label: string;
   description: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name,
@@ -386,6 +388,7 @@ export function OwnerFilter({
     description: description,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.owner_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.owner,
     modelRenderer: (instance: any) => instance.name
   };
@@ -425,11 +428,13 @@ export function TagsFilter({
 export function UserFilter({
   name,
   label,
-  description
+  description,
+  apiFilter
 }: {
   name?: string;
   label?: string;
   description?: string;
+  apiFilter?: Record<string, any>;
 }): TableFilter {
   return {
     name: name ?? 'user',
@@ -437,6 +442,7 @@ export function UserFilter({
     description: description ?? t`Filter by user`,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.user_list),
+    apiFilter: { is_active: true, ...apiFilter },
     model: ModelType.user,
     modelRenderer: (instance: any) => instance.username
   };

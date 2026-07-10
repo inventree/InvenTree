@@ -227,8 +227,10 @@ test('Build Order - Calendar', async ({ browser }) => {
   await page
     .getByRole('option', { name: 'Part Category', exact: true })
     .click();
-  await page.getByLabel('related-field-filter-category').click();
-  await page.getByText('Part category, level 1').waitFor();
+  await page.getByLabel('tree-field-filter-category').click();
+  await page.getByText('Part category, level 1').click();
+  await page.getByText('Filter by part category').waitFor();
+  await page.getByText('Category 0').first().waitFor();
 
   // Required because we downloaded a file
   await page.context().close();
@@ -324,9 +326,9 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     .getByRole('img', { name: 'field-batch_code-accept-placeholder' })
     .click();
 
-  await page.getByLabel('related-field-location').click();
-  await page.getByLabel('related-field-location').fill('Reel');
-  await page.getByText('- Electronics Lab/Reel Storage').click();
+  await page.getByLabel('tree-field-location').click();
+  await page.getByLabel('tree-field-location').fill('Reel');
+  await page.getByText('Storage for component reels').click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Should be an error as the number of serial numbers doesn't match the quantity
@@ -361,9 +363,10 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   const row2 = await getRowFromCell(cell2);
   await row2.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Complete' }).click();
-  await page.getByLabel('related-field-location').click();
+  await page.getByLabel('tree-field-location').click();
+  await page.getByLabel('tree-field-location').fill('Mechanical');
   await page.getByText('Mechanical Lab').click();
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been completed').waitFor();
 
@@ -385,10 +388,8 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   // Next, adjust the "location" field - and check that the "quantity" field does not change
   // Ref: https://github.com/inventree/InvenTree/pull/12081
-  await page
-    .getByRole('combobox', { name: 'related-field-location' })
-    .fill('factory');
-  await page.getByTitle('Factory/Mechanical Lab').click();
+  await page.getByLabel('tree-field-location').fill('mechanical');
+  await page.getByText('Mechanical Lab').click();
   await page.waitForTimeout(250);
 
   // Check the 'quantity' value again - it should not have changed
@@ -539,11 +540,7 @@ test('Build Order - Auto Allocate Tracked', async ({ browser }) => {
     .click();
 
   // Wait for auto-filled form field
-  await page
-    .locator('div')
-    .filter({ hasText: /^Factory$/ })
-    .first()
-    .waitFor();
+  await page.getByText('Factory').waitFor();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Wait for one of the required parts to be allocated
@@ -903,4 +900,16 @@ test('Build Order - BOM Quantity', async ({ browser }) => {
     .locator('div');
   const row2 = await getRowFromCell(line);
   await row2.getByText('1,175').first().waitFor();
+
+  // Test table filtering against the "Required Parts" table
+  await clearTableFilters(page);
+  await page.getByText('1 - 7 / 7').waitFor();
+
+  // Filter by "available" stock
+  await setTableChoiceFilter(page, 'Available', 'Yes');
+  await page.getByText('1 - 3 / 3').waitFor();
+
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Available', 'No');
+  await page.getByText('1 - 4 / 4').waitFor();
 });

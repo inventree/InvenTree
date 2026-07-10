@@ -70,6 +70,24 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByLabel('breadcrumb-1-factory').click();
 
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
+
+  // Load the tree again - from a deeply nested location
+  // We expect it to auto-expand to the current location
+  await navigate(page, 'stock/location/17/stock-items');
+  await page.getByLabel('nav-breadcrumb-action').click();
+
+  for (let ii = 0; ii <= 5; ii++) {
+    await page
+      .locator('div')
+      .filter({ hasText: `Location ${ii}` })
+      .first()
+      .waitFor();
+  }
+
+  // Let's search for a particular location
+  await page.getByRole('textbox', { name: 'nav-tree-search' }).fill('room');
+  await page.getByText('Storage Room A').first().waitFor();
+  await page.getByText('Storage Room B').first().waitFor();
 });
 
 test('Stock - Location Delete', async ({ browser }) => {
@@ -481,7 +499,8 @@ test('Stock - Tracking', async ({ browser }) => {
 
   // Navigate to the "stock tracking" tab
   await loadTab(page, 'Stock Tracking');
-  await page.getByText('- - Factory/Office Block/Room').first().waitFor();
+
+  await page.getByText('Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
 

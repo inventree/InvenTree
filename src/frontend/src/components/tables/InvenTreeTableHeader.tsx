@@ -33,9 +33,9 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
-import { PrintingActions } from '../components/buttons/PrintingActions';
-import useDataExport from '../hooks/UseDataExport';
-import { useDeleteApiFormModal } from '../hooks/UseForm';
+import useDataExport from '../../hooks/UseDataExport';
+import { useDeleteApiFormModal } from '../../hooks/UseForm';
+import { PrintingActions } from '../buttons/PrintingActions';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**

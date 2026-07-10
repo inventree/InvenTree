@@ -23,14 +23,14 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
 import { useUserState } from '../../states/UserState';
+import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import {
   AssignedToMeFilter,
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
   ResponsibleFilter
-} from '../../tables/Filter';
-import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
+} from '../tables/Filter';
 import Calendar from './Calendar';
 
 /**
@@ -47,12 +47,14 @@ export default function OrderCalendar({
   role,
   params,
   filters,
+  initialFilters,
   tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  initialFilters?: TableFilter[];
   tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
@@ -94,7 +96,8 @@ export default function OrderCalendar({
   const calendarState = useCalendar({
     endpoint: modelInfo.api_endpoint,
     name: model.toString(),
-    queryParams: params
+    queryParams: params,
+    initialFilters: initialFilters
   });
 
   // Build the events
@@ -186,7 +189,7 @@ export default function OrderCalendar({
       }
 
       return (
-        <Group gap='xs' wrap='nowrap'>
+        <Group gap='xs' wrap='nowrap' style={{ paddingLeft: 5 }}>
           {order.overdue && (
             <ActionIcon
               color='orange-7'
