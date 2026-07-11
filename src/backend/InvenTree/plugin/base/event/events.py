@@ -11,7 +11,7 @@ from opentelemetry import trace
 import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
-from InvenTree.tasks import offload_task
+from InvenTree.tasks import bulk_offload_task, offload_task
 from plugin import PluginMixinEnum
 from plugin.registry import registry
 
@@ -56,6 +56,60 @@ def trigger_event(event: str, *args, **kwargs) -> None:
     kwargs['force_async'] = force_async
 
     offload_task(register_event, event, *args, group='plugin', **kwargs)
+
+
+@tracer.start_as_current_span('bulk_trigger_event')
+def bulk_trigger_event(event: str, entries: list) -> None:
+    """Trigger the same event multiple times, in a single bulk database write.
+
+    Equivalent to calling trigger_event(event, *args, **kwargs) once per (args, kwargs)
+    pair in 'entries', but queues all of the resulting background tasks via a single
+    bulk_offload_task() call, rather than one INSERT per event.
+
+    Arguments:
+        event: The event to trigger
+        entries: List of (args, kwargs) tuples, one per event instance to register
+
+    These events will be stored in the database, and the worker will respond to them later on.
+    """
+    if not entries:
+        return
+
+    if not get_global_setting('ENABLE_PLUGINS_EVENTS', False):
+        # Do nothing if plugin events are not enabled
+        return
+
+    # Ensure event name is stringified
+    event = str(event).strip()
+
+    # Make sure the database can be accessed and is not being tested rn
+    if (
+        not canAppAccessDatabase(allow_shell=True)
+        and not settings.PLUGIN_TESTING_EVENTS
+    ):
+        logger.debug("Ignoring bulk triggered event '%s' - database not ready", event)
+        return
+
+    logger.debug("Bulk event triggered: '%s' (%s entries)", event, len(entries))
+
+    force_async = True
+
+    # If we are running in testing mode, we can enable or disable async processing
+    if settings.PLUGIN_TESTING_EVENTS:
+        force_async = settings.PLUGIN_TESTING_EVENTS_ASYNC
+
+    task_entries = []
+
+    for args, kwargs in entries:
+        kwargs = dict(kwargs)
+        # 'force_async' is a bulk_offload_task() control flag, not event data - it is
+        # resolved once for the whole batch above, so strip any per-entry override
+        kwargs.pop('force_async', None)
+        task_entries.append(((event, *args), kwargs))
+
+    bulk_offload_task(
+        register_event, task_entries, group='plugin', force_async=force_async
+    )
 
 
 @tracer.start_as_current_span('register_event')

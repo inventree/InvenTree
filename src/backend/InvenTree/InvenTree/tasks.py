@@ -325,16 +325,16 @@ def offload_task(
 
 def bulk_offload_task(
     taskname,
-    args_list: list,
+    entries: list,
     group: str = 'inventree',
     force_sync: bool = False,
-    **kwargs,
+    force_async: bool = False,
 ) -> bool:
     """Queue the same background task many times, in a single bulk database write.
 
-    Equivalent to calling offload_task() once per entry in args_list, but writes all of
-    the queued tasks to the django-q2 ORM broker table (OrmQ) in a single bulk_create()
-    call, rather than one INSERT per task.
+    Equivalent to calling offload_task() once per (args, kwargs) pair in 'entries', but
+    writes all of the queued tasks to the django-q2 ORM broker table (OrmQ) in a single
+    bulk_create() call, rather than one INSERT per task.
 
     Note: InvenTree always configures django-q2 to use the ORM broker (see
     InvenTree.setting.worker.get_worker_config), so this does not need to handle any
@@ -342,15 +342,15 @@ def bulk_offload_task(
 
     Arguments:
         taskname: The name of the task to be run, in the format 'app.module.function'
-        args_list: List of positional-argument tuples, one per task instance to queue
+        entries: List of (args, kwargs) tuples, one per task instance to queue
         group: The task group to assign to each queued task
         force_sync: If True, run all tasks synchronously (even if workers are running)
-        **kwargs: Keyword arguments, applied identically to every queued task instance
+        force_async: If True, force all tasks to be queued (even if workers are not running)
 
     Returns:
         bool: True if the tasks were queued (or run synchronously), False otherwise
     """
-    if not args_list:
+    if not entries:
         return False
 
     try:
@@ -369,9 +369,9 @@ def bulk_offload_task(
         raise_warning(f"Could not offload bulk task '{taskname}' - database not ready")
         force_sync = True
 
-    if force_sync or not is_worker_running():
+    if not force_async and (force_sync or not is_worker_running()):
         # Workers are not available - fall back to running each task synchronously
-        for args in args_list:
+        for args, kwargs in entries:
             offload_task(
                 taskname,
                 *args,
@@ -385,9 +385,9 @@ def bulk_offload_task(
 
     broker = get_broker()
 
-    entries = []
+    tasks = []
 
-    for args in args_list:
+    for args, kwargs in entries:
         name, task_id = uuid()
 
         task = {
@@ -400,7 +400,7 @@ def bulk_offload_task(
             'started': timezone.now(),
         }
 
-        entries.append(
+        tasks.append(
             OrmQ(
                 key=broker.list_key or 'inventree',
                 payload=SignedPackage.dumps(task),
@@ -408,7 +408,7 @@ def bulk_offload_task(
             )
         )
 
-    OrmQ.objects.bulk_create(entries)
+    OrmQ.objects.bulk_create(tasks)
 
     return True
 
