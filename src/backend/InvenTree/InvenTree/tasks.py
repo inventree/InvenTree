@@ -323,6 +323,96 @@ def offload_task(
     return True
 
 
+def bulk_offload_task(
+    taskname,
+    args_list: list,
+    group: str = 'inventree',
+    force_sync: bool = False,
+    **kwargs,
+) -> bool:
+    """Queue the same background task many times, in a single bulk database write.
+
+    Equivalent to calling offload_task() once per entry in args_list, but writes all of
+    the queued tasks to the django-q2 ORM broker table (OrmQ) in a single bulk_create()
+    call, rather than one INSERT per task.
+
+    Note: InvenTree always configures django-q2 to use the ORM broker (see
+    InvenTree.setting.worker.get_worker_config), so this does not need to handle any
+    other broker backend.
+
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        args_list: List of positional-argument tuples, one per task instance to queue
+        group: The task group to assign to each queued task
+        force_sync: If True, run all tasks synchronously (even if workers are running)
+        **kwargs: Keyword arguments, applied identically to every queued task instance
+
+    Returns:
+        bool: True if the tasks were queued (or run synchronously), False otherwise
+    """
+    if not args_list:
+        return False
+
+    try:
+        from django_q.brokers import get_broker
+        from django_q.humanhash import uuid
+        from django_q.models import OrmQ
+        from django_q.signing import SignedPackage
+
+        from InvenTree.status import is_worker_running
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(
+            "Could not offload bulk task '%s' - app registry not ready", taskname
+        )
+        force_sync = True
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        raise_warning(f"Could not offload bulk task '{taskname}' - database not ready")
+        force_sync = True
+
+    if force_sync or not is_worker_running():
+        # Workers are not available - fall back to running each task synchronously
+        for args in args_list:
+            offload_task(
+                taskname,
+                *args,
+                group=group,
+                force_sync=True,
+                check_duplicates=False,
+                **kwargs,
+            )
+
+        return True
+
+    broker = get_broker()
+
+    entries = []
+
+    for args in args_list:
+        name, task_id = uuid()
+
+        task = {
+            'id': task_id,
+            'name': name,
+            'func': taskname,
+            'args': args,
+            'kwargs': kwargs,
+            'group': group,
+            'started': timezone.now(),
+        }
+
+        entries.append(
+            OrmQ(
+                key=broker.list_key or 'inventree',
+                payload=SignedPackage.dumps(task),
+                lock=timezone.now(),
+            )
+        )
+
+    OrmQ.objects.bulk_create(entries)
+
+    return True
+
+
 def get_queued_task(task_id: str):
     """Find the task in the queue, if it exists.
 
