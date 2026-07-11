@@ -2521,11 +2521,14 @@ class StockItem(
     def _apply_model_reference_fields(self, kwargs: dict, deltas: dict) -> None:
         """Pop any model reference kwargs (see model_reference_fields) and record their pk in deltas."""
         for field in StockItem.model_reference_fields():
-            if instance := kwargs.pop(field, None):
-                if hasattr(instance, 'pk'):
-                    deltas[field] = instance.pk
-                else:
-                    deltas[field] = instance
+            instance = deltas.pop(field, None) or kwargs.pop(field, None)
+
+            if instance is None:
+                continue
+            elif hasattr(instance, 'pk'):
+                deltas[field] = instance.pk
+            else:
+                deltas[field] = instance
 
     def _resolve_status_kwarg(self, kwargs: dict):
         """Pop a status value from kwargs, preferring 'status' over 'status_custom_key'.
