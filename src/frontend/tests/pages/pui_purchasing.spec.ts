@@ -516,6 +516,26 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByText('Room 101').first().waitFor();
   await page.getByText('Mechanical Lab').first().waitFor();
 
+  // Editing the quantity for one row should not affect any other row
+  // (regression test for per-row TableField memoization)
+  const quantityInputs = page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+
+  // .count() does not auto-wait, so explicitly wait for the second row's
+  // input to be ready before relying on the total count being stable
+  await expect(quantityInputs.nth(1)).toBeVisible();
+
+  const rowCount = await quantityInputs.count();
+  expect(rowCount).toBeGreaterThanOrEqual(2);
+
+  await quantityInputs.nth(0).fill('11');
+  await quantityInputs.nth(1).fill('22');
+  await page.waitForTimeout(250);
+
+  await expect(quantityInputs.nth(0)).toHaveValue('11');
+  await expect(quantityInputs.nth(1)).toHaveValue('22');
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Let's actually receive an item (with custom values)

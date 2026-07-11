@@ -121,6 +121,15 @@ export function ApiFormField({
     [fieldName, definition]
   );
 
+  // Stable wrapper so the identity passed to leaf field components does not
+  // change unless onKeyDown itself changes (onKeyDown may be undefined)
+  const safeOnKeyDown = useCallback(
+    (value: any) => {
+      onKeyDown?.(value);
+    },
+    [onKeyDown]
+  );
+
   // Construct the individual field
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
@@ -177,9 +186,7 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
-            onKeyDown={(value) => {
-              onKeyDown?.(value);
-            }}
+            onKeyDown={safeOnKeyDown}
           />
         );
       case 'password':
@@ -189,9 +196,7 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
-            onKeyDown={(value) => {
-              onKeyDown?.(value);
-            }}
+            onKeyDown={safeOnKeyDown}
           />
         );
       case 'icon':
@@ -204,9 +209,7 @@ export function ApiFormField({
             controller={controller}
             definition={reducedDefinition}
             fieldName={fieldName}
-            onChange={(value: boolean) => {
-              onChange(value);
-            }}
+            onChange={onChange}
           />
         );
       case 'date':
@@ -231,9 +234,7 @@ export function ApiFormField({
               fieldDefinition.placeholderWarningCompare ?? undefined
             }
             placeholderWarning={fieldDefinition.placeholderWarning ?? undefined}
-            onChange={(value: any) => {
-              onChange(value);
-            }}
+            onChange={onChange}
           />
         );
       case 'choice':
@@ -311,7 +312,7 @@ export function ApiFormField({
     fieldName,
     fieldDefinition,
     onChange,
-    onKeyDown,
+    safeOnKeyDown,
     reducedDefinition,
     ref,
     setFields,
