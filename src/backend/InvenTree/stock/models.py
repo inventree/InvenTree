@@ -420,7 +420,6 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -429,7 +428,7 @@ class StockItem(
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTree.models.InvenTreeModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
