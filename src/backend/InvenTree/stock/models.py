@@ -563,14 +563,18 @@ class StockItem(
         """Return API url."""
         return reverse('api-stock-list')
 
-    def api_instance_filters(self):
-        """Custom API instance filters."""
-        return {'parent': {'exclude_tree': self.pk}}
-
     @classmethod
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'SI'
+
+    def get_children(self):
+        """Return a queryset of all StockItem objects which are children of this StockItem.
+
+        As the StockItem model is no longer a MPTT model,
+        this function is implemented manually
+        """
+        return StockItem.objects.filter(parent=self).exclude(pk=self.pk)
 
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
@@ -2048,9 +2052,6 @@ class StockItem(
         self.add_tracking_entry(
             StockHistoryCode.DISASSEMBLED, user, notes=notes, deltas=deltas
         )
-
-        # Rebuild the stock tree for this item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
 
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 

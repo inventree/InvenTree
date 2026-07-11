@@ -617,17 +617,7 @@ class StockItemListTest(StockAPITestCase):
             item.delete()
 
         for idx in range(1000):
-            items.append(
-                StockItem(
-                    part=part,
-                    location=location,
-                    quantity=idx % 10,
-                    level=0,
-                    lft=0,
-                    rght=0,
-                    tree_id=0,
-                )
-            )
+            items.append(StockItem(part=part, location=location, quantity=idx % 10))
 
         StockItem.objects.bulk_create(items, batch_size=250)
 
@@ -737,13 +727,6 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(location=7)
         self.assertEqual(len(response), 18)
-
-    def test_filter_by_exclude_tree(self):
-        """Filter StockItem by excluding a StockItem tree."""
-        response = self.get_stock(exclude_tree=1000)
-        for item in response:
-            self.assertNotEqual(item['pk'], 1000)
-            self.assertNotEqual(item['parent'], 1000)
 
     def test_filter_by_depleted(self):
         """Filter StockItem by depleted status."""
@@ -1044,15 +1027,7 @@ class StockItemListTest(StockAPITestCase):
             part = parts[idx % N_PARTS]
             location = locations[idx % N_LOCATIONS]
 
-            item = StockItem(
-                part=part,
-                location=location,
-                quantity=10,
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
-            )
+            item = StockItem(part=part, location=location, quantity=10)
             stock_items.append(item)
             idx += 1
 
@@ -1168,8 +1143,7 @@ class StockItemListTest(StockAPITestCase):
         prt = Part.objects.first()
 
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1, level=0, tree_id=0, lft=0, rght=0)
-            for _ in range(100)
+            StockItem(part=prt, quantity=1) for _ in range(100)
         ])
 
         # List *all* stock items
@@ -1249,7 +1223,7 @@ class StockItemListTest(StockAPITestCase):
         parent_item.refresh_from_db()
 
         # Check that the parent item has 5 child items
-        self.assertEqual(parent_item.get_descendants(include_self=False).count(), 5)
+        self.assertEqual(parent_item.get_children().count(), 5)
         self.assertEqual(my_part.stock_items.count(), 6)
 
         # Fetch stock list via API
@@ -1454,10 +1428,6 @@ class CustomStockItemStatusTest(StockAPITestCase):
             StockItem(
                 part=part,
                 quantity=1,
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
                 status=custom_statuses[i % 10].logical_key,
                 status_custom_key=custom_statuses[i % 10].key,
             )

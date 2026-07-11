@@ -667,7 +667,7 @@ export default function StockDetail() {
         content: stockitem?.pk ? (
           <StockItemTable
             tableName='child-stock'
-            params={{ ancestor: stockitem.pk }}
+            params={{ parent: stockitem.pk }}
           />
         ) : (
           <Skeleton />
