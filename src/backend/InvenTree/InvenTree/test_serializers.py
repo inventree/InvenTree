@@ -111,3 +111,55 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
             self.assertNotContains(response, 'field_e')
+
+
+class BarcodeSerializerMixinTest(InvenTreeAPITestCase):
+    """Tests for the shared BarcodeSerializerMixin.
+
+    Ref #11745: every model which supports custom (third-party) barcodes must
+    expose the linked barcode string ('barcode_data') via its API serializer,
+    as a read-only field, so that it can be displayed in the user interface.
+    """
+
+    def test_barcode_data_field_exposed(self):
+        """'barcode_data' must be present and read-only on every barcode serializer."""
+        from build.serializers import BuildSerializer
+        from company.serializers import (
+            ManufacturerPartSerializer,
+            SupplierPartSerializer,
+        )
+        from order.serializers import (
+            PurchaseOrderSerializer,
+            ReturnOrderSerializer,
+            SalesOrderSerializer,
+            SalesOrderShipmentSerializer,
+            TransferOrderSerializer,
+        )
+        from part.serializers import PartSerializer
+        from stock.serializers import LocationSerializer, StockItemSerializer
+
+        serializers = [
+            PartSerializer,
+            StockItemSerializer,
+            LocationSerializer,
+            BuildSerializer,
+            ManufacturerPartSerializer,
+            SupplierPartSerializer,
+            PurchaseOrderSerializer,
+            SalesOrderSerializer,
+            ReturnOrderSerializer,
+            TransferOrderSerializer,
+            SalesOrderShipmentSerializer,
+        ]
+
+        for serializer in serializers:
+            fields = serializer().fields
+            self.assertIn(
+                'barcode_data',
+                fields,
+                f"'barcode_data' missing from {serializer.__name__}",
+            )
+            self.assertTrue(
+                fields['barcode_data'].read_only,
+                f"'barcode_data' must be read-only in {serializer.__name__}",
+            )

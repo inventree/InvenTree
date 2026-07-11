@@ -834,6 +834,22 @@ class NotesFieldMixin:
                     self.fields.pop('notes', None)
 
 
+class BarcodeSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models which support custom (third-party) barcode assignment.
+
+    Exposes the read-only 'barcode_data' field (the linked barcode string) so that
+    it can be displayed in the user interface. Applies to any model inheriting from
+    InvenTree.models.InvenTreeBarcodeMixin (e.g. Part, StockItem, StockLocation).
+
+    Note: The serializer's Meta.fields must include 'barcode_data' for it to appear.
+    The field is read-only here; barcodes are assigned via the barcode link endpoints.
+    """
+
+    barcode_data = serializers.CharField(
+        read_only=True, label=_('Barcode Data'), help_text=_('Third party barcode data')
+    )
+
+
 class ContentTypeField(serializers.ChoiceField):
     """Serializer field which represents a ContentType as 'app_label.model_name'.
 

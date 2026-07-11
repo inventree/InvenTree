@@ -31,6 +31,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     DuplicateOptionsSerializer,
     FilterableSerializerMixin,
@@ -69,6 +70,7 @@ class TotalPriceMixin(serializers.Serializer):
 
 
 class AbstractOrderSerializer(
+    BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
@@ -227,6 +229,7 @@ class AbstractOrderSerializer(
             'status_custom_key',
             'notes',
             'barcode_hash',
+            'barcode_data',
             'overdue',
             'duplicate',
             # Extra detail fields
@@ -1371,6 +1374,7 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
+    BarcodeSerializerMixin,
     DataImportExportSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeTaggitSerializer,
@@ -1398,6 +1402,7 @@ class SalesOrderShipmentSerializer(
             'tracking_number',
             'invoice_number',
             'barcode_hash',
+            'barcode_data',
             'link',
             'notes',
             # Extra detail fields

@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 520
 INVENTREE_API_TEXT = """
 
 v520 -> 2026-07-10 : https://github.com/inventree/InvenTree/pull/TODO
-    - Adds read-only "barcode_data" field to the StockItem API endpoint
+    - Adds read-only "barcode_data" field to the API endpoints for all models supporting custom barcodes (Part, StockItem, StockLocation, Build, SupplierPart, ManufacturerPart, PurchaseOrder, SalesOrder, ReturnOrder, TransferOrder, SalesOrderShipment)
 
 v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
     - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
