@@ -2192,7 +2192,7 @@ class StockItem(
             return None
 
         # Extract any additional information from the kwargs
-        self._apply_model_reference_fields(deltas, kwargs)
+        self._apply_model_reference_fields(kwargs, deltas)
 
         # Quantity specified?
         quantity = kwargs.get('quantity')
