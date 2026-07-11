@@ -2533,17 +2533,10 @@ class StockItem(
         Returns:
             The resolved status value, or None if neither key was provided (or truthy)
         """
-        status = kwargs.pop('status', None)
-
-        if not status:
-            status = kwargs.pop('status_custom_key', None)
-
-        return status
+        return kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
     def _apply_status_change(self, status, deltas: dict) -> None:
         """Apply a status change to this StockItem, recording delta information.
-
-        No-op if status is falsy, or matches the current status.
 
         Args:
             status: The new status value (may be a custom status key)
@@ -2564,11 +2557,7 @@ class StockItem(
         deltas['old_status_logical'] = old_status_logical
 
     def _apply_optional_transfer_fields(self, kwargs: dict, deltas: dict) -> None:
-        """Apply optional transfer fields (see optional_transfer_fields) from kwargs.
-
-        Note: 'status' is handled separately via _resolve_status_kwarg / _apply_status_change,
-        and should already have been popped from kwargs before calling this method.
-        """
+        """Apply optional transfer fields (see optional_transfer_fields) from kwargs."""
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
                 setattr(self, field, kwargs[field])
