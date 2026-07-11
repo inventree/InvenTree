@@ -37,7 +37,7 @@ A line item can be removed from the form entirely if that particular component i
 
 Only the *available* quantity of a stock item can be disassembled. A [serialized](./traceability.md#serial-numbers) stock item does not have an adjustable quantity - since it represents a single physical unit, it must always be disassembled in its entirety.
 
-The original stock item is never deleted as a result of disassembly - its quantity is reduced by the disassembled amount, in order to preserve traceability. If a stock item is disassembled down to a zero quantity, it is retained in the database (in an *unavailable* state) rather than removed. A serialized item cannot be reduced to a zero quantity, so in this case the original item is instead marked with a *Destroyed* status.
+The original stock item is never deleted as a result of disassembly - its quantity is reduced by the disassembled amount, in order to preserve traceability. If a stock item is disassembled down to a zero quantity, it is retained in the database (in an *unavailable* state) rather than removed, even if the item has the [Delete on Deplete](./availability.md#delete-on-deplete) flag set. A serialized item cannot be reduced to a zero quantity, so in this case the original item is instead marked with a *Destroyed* status.
 
 ### Accounting for Installed Items
 
@@ -72,14 +72,9 @@ Disassembling a stock item generates a full audit trail:
 
 ### Purchasing Bundled Items
 
-Some suppliers may only sell a set of components as a single bundled or "kit" product, rather than as individual line items. In InvenTree, this can be modelled as follows:
+Some suppliers only sell a group of components as a single bundled or "kit" product, rather than as individual purchasable line items. Such a bundle can be modelled as an assembly part, purchased and received as a single stock item, and later disassembled into its individual components - with purchase price and traceability data automatically apportioned across the generated components, as described above.
 
-1. Create a part to represent the bundle as it is purchased (e.g. linked to the relevant [supplier part](../purchasing/purchase_order.md)), and mark it as an *assembly*
-2. Define a BOM for the bundle part, listing each of the individual components and the quantity contained in a single bundle
-3. Receive the purchased stock as normal against the bundle part - a single stock item is created, tracking the purchase price and source purchase order of the bundle as a whole
-4. When the individual components are required, disassemble the bundled stock item into its components
-
-This allows the bundle to be purchased, received, and tracked as a single unit, while still making the individual components available as their own stock items (with an apportioned purchase price) once the bundle is broken apart. The traceability data of the bundle purchase (batch code, purchase order) is preserved across each generated component, as described above.
+Refer to the [Bundled Items](../purchasing/purchase_order.md#bundled-items) documentation for a full description of how to set this up.
 
 ### Enforced Limitations
 
