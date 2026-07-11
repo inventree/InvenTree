@@ -54,6 +54,23 @@ export type DetailsField = {
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
+/**
+ * Construct a reusable "Linked Barcode" detail field for any model which
+ * supports custom (third-party) barcode assignment (i.e. exposes 'barcode_data').
+ *
+ * The field is copyable and only rendered when a barcode is linked to the instance.
+ */
+export function barcodeDataField(instance: any): DetailsField {
+  return {
+    type: 'text',
+    name: 'barcode_data',
+    icon: 'barcode',
+    label: t`Linked Barcode`,
+    copy: true,
+    hidden: !instance?.barcode_data
+  };
+}
+
 type StringDetailField =
   | {
       type: 'string' | 'text';

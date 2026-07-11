@@ -16,7 +16,8 @@ import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -180,7 +181,8 @@ export default function PurchaseOrderDetail() {
         icon: 'status',
         hidden:
           !order.status_custom_key || order.status_custom_key == order.status
-      }
+      },
+      barcodeDataField(order)
     ];
 
     const tr: DetailsField[] = [

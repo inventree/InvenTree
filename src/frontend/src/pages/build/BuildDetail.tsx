@@ -29,7 +29,8 @@ import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -319,7 +320,8 @@ export default function BuildDetail() {
         model_field: 'reference',
         model: ModelType.build,
         hidden: !build.parent
-      }
+      },
+      barcodeDataField(build)
     ];
 
     const tr: DetailsField[] = [

@@ -330,6 +330,40 @@ test('Stock - Serialize', async ({ browser }) => {
 });
 
 /**
+ * Regression test for #11745: the linked barcode string must be visible on the
+ * stock item detail page. Drives the link -> display -> unlink flow, and checks
+ * that the "Linked Barcode" field only appears when a barcode is linked.
+ */
+test('Stock - Linked Barcode Display', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/232/details' });
+  await page.getByText('Stock Item Details').first().waitFor();
+
+  // With no barcode linked, the "Linked Barcode" field must not be rendered
+  await expect(page.getByText('Linked Barcode')).toHaveCount(0);
+
+  // Link a custom barcode via the barcode actions dropdown
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+
+  // Enter the barcode data via the keyboard input and submit
+  await page.getByLabel('barcode-input-scanner').click();
+  await page.getByLabel('barcode-scan-keyboard-input').fill('TEST-123');
+  await page.getByRole('button', { name: 'Link', exact: true }).click();
+
+  // The linked barcode string must now be visible on the detail page
+  await page.getByText('Linked Barcode').waitFor();
+  await page.getByText('TEST-123').waitFor();
+
+  // Clean up: unlink the barcode so the test is idempotent
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+  await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+
+  // Once unlinked, the field must disappear again
+  await expect(page.getByText('Linked Barcode')).toHaveCount(0);
+});
+
+/**
  * Test various 'actions' on the stock detail page
  */
 test('Stock - Stock Actions', async ({ browser }) => {

@@ -309,6 +309,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
+    InvenTree.serializers.BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
@@ -374,6 +375,7 @@ class StockItemSerializer(
             'SKU',
             'MPN',
             'barcode_hash',
+            'barcode_data',
             'creation_date',
             'stocktake_date',
             'updated',
@@ -1204,6 +1206,7 @@ class LocationDeleteSerializer(serializers.Serializer):
 
 @register_importer()
 class LocationSerializer(
+    InvenTree.serializers.BarcodeSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
@@ -1220,6 +1223,7 @@ class LocationSerializer(
         fields = [
             'pk',
             'barcode_hash',
+            'barcode_data',
             'name',
             'level',
             'description',
