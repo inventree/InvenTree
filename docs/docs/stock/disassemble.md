@@ -20,7 +20,7 @@ To disassemble a stock item, navigate to the stock item detail page and select t
 
 ### Disassembly Form
 
-The disassembly form is pre-populated with one line per BOM line item defined for the part, based on the quantity of assemblies being disassembled. Any line item marked as [consumable](../manufacturing/bom.md#consumable-bom-line-items), or which points to a [virtual](../part/index.md) part, is excluded from the default list, as these components are not expected to be tracked as physical stock.
+The disassembly form is pre-populated with one line per BOM line item defined for the part, based on the quantity of assemblies being disassembled. Any line item marked as [consumable](../manufacturing/bom.md#consumable-bom-line-items) (whether the BOM line itself or its underlying part is marked consumable), or which points to a [virtual](../part/index.md) part, is excluded, as these components are not expected to be tracked as physical stock. This exclusion is enforced by the API - such a BOM line cannot be submitted for disassembly, even if referenced directly.
 
 For each line, the following values may be adjusted:
 
