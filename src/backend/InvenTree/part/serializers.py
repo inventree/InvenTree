@@ -1,6 +1,5 @@
 """DRF data serializers for Part app."""
 
-import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -26,7 +25,6 @@ import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
 import part.filters as part_filters
-import part.helpers as part_helpers
 import stock.models
 import users.models
 from data_exporter.mixins import DataExportSerializerMixin
@@ -1020,13 +1018,8 @@ class PartSerializer(
         if not img:
             return img
 
-        img = img.split(os.path.sep)[-1]
-
-        # Ensure that the file actually exists
-        img_path = os.path.join(part_helpers.get_part_image_directory(), img)
-
-        if not os.path.exists(img_path) or not os.path.isfile(img_path):
-            raise ValidationError(_('Image file does not exist'))
+        # TODO: REFACTOR THIS TO USE django storages API
+        raise ValidationError('THIS NEEDS TO BE REFACTORED')
 
         return img
 
@@ -1120,10 +1113,10 @@ class PartSerializer(
         existing_image = data.pop('existing_image', None)
 
         if existing_image:
-            img_path = os.path.join(part_helpers.PART_IMAGE_DIR, existing_image)
-
-            part.image = img_path
+            # img_path = os.path.join(part_helpers.PART_IMAGE_DIR, existing_image)
+            # part.image = img_path
             part.save()
+            raise ValidationError('THIS NEEDS TO BE REFACTORED')
 
         return self.instance
 

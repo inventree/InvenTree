@@ -1,9 +1,8 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-from collections.abc import Callable
 from datetime import datetime
 from string import Formatter
-from typing import Any, Optional
+from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
@@ -1506,6 +1505,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
         )
 
 
+def rename_image(instance, filename):
+    """Rename the uploaded image file using the IMAGE_RENAME function."""
+    from common.media import rename_uploaded_file
+
+    return rename_uploaded_file(
+        filename, 'image', instance.__class__.__name__.lower(), instance.pk
+    )
+
+
 class InvenTreeImageMixin(models.Model):
     """A mixin class for adding image functionality to a model class.
 
@@ -1514,8 +1522,6 @@ class InvenTreeImageMixin(models.Model):
     - image : An image field for storing an image
     """
 
-    IMAGE_RENAME: Callable | None = None
-
     class Meta:
         """Metaclass options for this mixin.
 
@@ -1523,18 +1529,6 @@ class InvenTreeImageMixin(models.Model):
         """
 
         abstract = True
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
-        if self.IMAGE_RENAME is None:
-            raise NotImplementedError(
-                'IMAGE_RENAME must be implemented in the model class'
-            )
-        super().__init__(*args, **kwargs)
-
-    def rename_image(self, filename):
-        """Rename the uploaded image file using the IMAGE_RENAME function."""
-        return self.IMAGE_RENAME(filename)
 
     image = StdImageField(
         upload_to=rename_image,

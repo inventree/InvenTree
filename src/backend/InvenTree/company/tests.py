@@ -1,6 +1,5 @@
 """Unit tests for the models in the 'company' app."""
 
-import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -8,14 +7,7 @@ from django.test import TestCase
 
 from part.models import Part
 
-from .models import (
-    Address,
-    Company,
-    Contact,
-    ManufacturerPart,
-    SupplierPart,
-    rename_company_image,
-)
+from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
 
 
 class CompanySimpleTest(TestCase):
@@ -60,15 +52,6 @@ class CompanySimpleTest(TestCase):
         """Test the detail URL for a company."""
         c = Company.objects.get(pk=1)
         self.assertEqual(c.get_absolute_url(), '/web/purchasing/manufacturer/1')
-
-    def test_image_renamer(self):
-        """Test the company image upload functionality."""
-        c = Company.objects.get(pk=1)
-        rn = rename_company_image(c, 'test.png')
-        self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img.png')
-
-        rn = rename_company_image(c, 'test2')
-        self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img')
 
     def test_price_breaks(self):
         """Unit tests for price breaks."""

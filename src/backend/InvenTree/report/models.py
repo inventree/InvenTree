@@ -66,17 +66,20 @@ def rename_template(instance, filename):
     - Retains the original uploaded filename
     - Checks for duplicate filenames across instance class
     """
-    path = instance.get_upload_path(filename)
+    from common.media import rename_uploaded_file
 
-    # Throw error if any other model instances reference this path
-    instance.check_existing_file(path, raise_error=True)
+    # Upload report template files to MEDIA_ROOT/report/<model_type>/<filename>
+    upload_path = rename_uploaded_file(filename, instance.SUBDIR, model_type='report')
+
+    # Check for duplicate filenames across the model class
+    instance.check_existing_file(upload_path, raise_error=True)
 
     # Delete file with this name if it already exists
-    if default_storage.exists(path):
-        logger.info(f'Deleting existing template file: {path}')
-        default_storage.delete(path)
+    if default_storage.exists(upload_path):
+        logger.info(f'Deleting existing template file: {upload_path}')
+        default_storage.delete(upload_path)
 
-    return path
+    return upload_path
 
 
 class TemplateUploadMixin:

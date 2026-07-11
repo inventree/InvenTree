@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='image',
-            field=stdimage.models.StdImageField(blank=True, null=True, upload_to=part.models.rename_part_image, verbose_name='Image'),
+            field=stdimage.models.StdImageField(blank=True, null=True, upload_to='_image', verbose_name='Image'),
         ),
         migrations.AlterField(
             model_name='part',

@@ -1,6 +1,5 @@
 """Company database model definitions."""
 
-import os
 from decimal import Decimal
 from typing import TypedDict
 
@@ -29,28 +28,6 @@ import report.mixins
 from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
-
-
-def rename_company_image(instance, filename):
-    """Function to rename a company image after upload.
-
-    Args:
-        instance: Company object
-        filename: uploaded image filename
-
-    Returns:
-        New image filename
-    """
-    base = 'company_images'
-
-    ext = filename.split('.')[-1] if filename.count('.') > 0 else ''
-
-    fn = f'company_{instance.pk}_img'
-
-    if ext:
-        fn += '.' + ext
-
-    return os.path.join(base, fn)
 
 
 class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
@@ -111,7 +88,6 @@ class Company(
         tax_id: Tax ID for the company
     """
 
-    IMAGE_RENAME = rename_company_image
     IMPORT_ID_FIELDS = ['name']
 
     class Meta:

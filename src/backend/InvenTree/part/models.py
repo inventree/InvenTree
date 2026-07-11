@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import inspect
 import math
-import os
 import re
 from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
@@ -331,22 +330,6 @@ class PartCategory(
             PartCategoryStar.objects.filter(category=self, user=user).delete()
 
 
-def rename_part_image(instance, filename):
-    """Function for renaming a part image file.
-
-    Args:
-        instance: Instance of a Part object
-        filename: Name of original uploaded file
-
-    Returns:
-        Cleaned filename in format part_<n>_img
-    """
-    base = part_helpers.PART_IMAGE_DIR
-    fname = os.path.basename(filename)
-
-    return os.path.join(base, fname)
-
-
 class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a ParameterTemplate.
 
@@ -517,7 +500,6 @@ class Part(
     """
 
     NODE_PARENT_KEY = 'variant_of'
-    IMAGE_RENAME = rename_part_image
     IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()

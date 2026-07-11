@@ -1910,7 +1910,7 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     reload_unit_registry()
 
 
-def rename_attachment(instance, filename: str):
+def rename_attachment(instance, filename: str) -> str:
     """Callback function to rename an uploaded attachment file.
 
     Args:
@@ -1920,17 +1920,13 @@ def rename_attachment(instance, filename: str):
     Returns:
         str: The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'.
     """
-    # Remove any illegal characters from the filename
-    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+    from common.media import rename_uploaded_file
 
-    for c in illegal_chars:
-        filename = filename.replace(c, '')
-
-    filename = os.path.basename(filename)
-
-    # Generate a new filename for the attachment
-    return os.path.join(
-        'attachments', str(instance.model_type), str(instance.model_id), filename
+    return rename_uploaded_file(
+        filename,
+        'attachment',
+        model_type=instance.model_type,
+        model_id=instance.model_id,
     )
 
 
