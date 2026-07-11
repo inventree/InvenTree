@@ -2285,6 +2285,37 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         self.assertIn('Duplicate BOM items provided', str(response.data))
 
+    def test_consumable_and_virtual_excluded(self):
+        """Consumable BOM lines, and lines pointing to a virtual part, cannot be disassembled."""
+        # BOM line marked as consumable directly
+        consumable_line = part.models.BomItem.objects.create(
+            part=self.assembly,
+            sub_part=part.models.Part.objects.get(pk=2),
+            quantity=1,
+            consumable=True,
+        )
+
+        # BOM line whose sub_part is marked as consumable
+        consumable_part = part.models.Part.objects.get(pk=3)
+        consumable_part.consumable = True
+        consumable_part.save()
+
+        # BOM line whose sub_part is marked as virtual
+        virtual_part = part.models.Part.objects.get(pk=5)
+        virtual_part.virtual = True
+        virtual_part.save()
+
+        for bom_item_pk in [consumable_line.pk, 2, 3]:
+            response = self.post(
+                self.url,
+                {'items': [{'bom_item': bom_item_pk, 'quantity': 1}], 'quantity': 1},
+                expected_code=400,
+            )
+
+            self.assertIn(
+                'BOM item is not valid for the selected stock item', str(response.data)
+            )
+
     def test_disassemble(self):
         """Test a valid disassembly operation, using a subset of the BOM lines."""
         n = StockItem.objects.count()

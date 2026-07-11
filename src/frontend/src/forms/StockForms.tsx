@@ -814,7 +814,10 @@ export function useDisassembleStockItem({
     // Consumable BOM lines are excluded from disassembly,
     // as are any lines which point to a virtual part
     return (bomQuery.data ?? []).filter(
-      (elem: any) => !elem.consumable && !elem.sub_part_detail?.virtual
+      (elem: any) =>
+        !elem.consumable &&
+        !elem.sub_part_detail?.consumable &&
+        !elem.sub_part_detail?.virtual
     );
   }, [bomQuery.data]);
 

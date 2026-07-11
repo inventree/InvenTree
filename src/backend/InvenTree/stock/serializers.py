@@ -1118,8 +1118,12 @@ class DisassembleStockItemSerializer(serializers.Serializer):
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
 
-        # The set of valid BOM items for this part
-        bom_items = item.part.get_bom_items()
+        # The set of valid BOM items for this part.
+        # Consumable BOM lines (and lines pointing to a virtual part) are excluded,
+        # as these components are not expected to be tracked as physical stock
+        bom_items = item.part.get_bom_items(include_virtual=False).filter(
+            part_models.BomItem.consumable_filter(consumable=False)
+        )
 
         bom_item_pks = set()
 
