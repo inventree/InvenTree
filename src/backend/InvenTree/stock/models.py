@@ -33,7 +33,6 @@ import InvenTree.ready
 import InvenTree.tasks
 import order.models
 import report.mixins
-import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
@@ -706,19 +705,9 @@ class StockItem(
             raise ValidationError({'part': _('Part must be specified')})
 
         part = data['part']
-
         parent = kwargs.pop('parent', None) or data.get('parent')
-        tree_id = kwargs.pop('tree_id', StockItem.getNextTreeID())
 
-        if parent:
-            # Override with parent's tree_id if provided
-            tree_id = parent.tree_id
-
-        # Pre-calculate MPTT fields
-        data['parent'] = parent if parent else None
-        data['level'] = parent.level + 1 if parent else 0
-        data['lft'] = 0 if parent else 1
-        data['rght'] = 0 if parent else 2
+        data['parent'] = parent
 
         # Force single quantity for each item
         data['quantity'] = 1
@@ -731,26 +720,11 @@ class StockItem(
             else:
                 data['serial_int'] = 0
 
-            data['tree_id'] = tree_id
-
-            if not parent:
-                # No parent, this is a top-level item, so increment the tree_id
-                # This is because each new item is a "top-level" node in the StockItem tree
-                tree_id += 1
-
             # Construct a new StockItem from the provided dict
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
         StockItem.objects.bulk_create(items, batch_size=250)
-
-        # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        if parent and parent.tree_id:
-            # Rebuild the tree structure for this StockItem tree
-            logger.info(
-                'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
-            )
-            stock.tasks.rebuild_stock_item_tree(parent.tree_id)
 
         # Fetch the new StockItem objects from the database
         items = StockItem.objects.filter(part=part, serial__in=serials)
@@ -2297,7 +2271,6 @@ class StockItem(
 
         # Set the parent ID correctly
         data['parent'] = self
-        data['tree_id'] = self.tree_id
 
         # Generate a new serial number for each item
         items = StockItem._create_serial_numbers(serials, **data)
@@ -2520,9 +2493,6 @@ class StockItem(
         if len(other_items) == 0:
             return
 
-        # Keep track of the tree IDs that are being merged
-        tree_ids = {self.tree_id}
-
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
         notes = kwargs.get('notes') or ''
@@ -2546,8 +2516,6 @@ class StockItem(
         merged_quantity = Decimal(0)
 
         for other in other_items:
-            tree_ids.add(other.tree_id)
-
             merged_quantity += other.quantity
             self.quantity += other.quantity
 
@@ -2618,19 +2586,6 @@ class StockItem(
                 self.purchase_price = total_price / quantity
 
         self.save()
-
-        # Rebuild stock trees as required
-        rebuild_result = True
-        for tree_id in tree_ids:
-            if not stock.tasks.rebuild_stock_item_tree(tree_id, rebuild_on_fail=False):
-                rebuild_result = False
-
-        if not rebuild_result:
-            # If the rebuild failed, offload the task to a background worker
-            logger.warning(
-                'Failed to rebuild stock item tree during merge_stock_items operation, offloading task.'
-            )
-            InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -2704,7 +2659,6 @@ class StockItem(
 
         # Update the new stock item to ensure the tree structure is observed
         new_stock.parent = self
-        new_stock.tree_id = None
 
         # Create 'deltas' dict to record changes for tracking
         deltas = {'stockitem': self.pk}
@@ -2751,9 +2705,6 @@ class StockItem(
             stockitem=new_stock,
             record_tracking=record_tracking,
         )
-
-        # Rebuild the tree for this parent item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
 
         # Attempt to reload the new item from the database
         try:
