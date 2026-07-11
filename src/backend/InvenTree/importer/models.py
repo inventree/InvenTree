@@ -341,7 +341,7 @@ class DataImportSession(models.Model):
             logger.error('Failed to load data file')
             return
 
-        headers = df.headers
+        headers = importer.operations.normalize_headers(df.headers)
 
         imported_rows = []
 
