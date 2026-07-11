@@ -1921,11 +1921,8 @@ class StockItem(
         ):
             return None
 
-        # Has a location been specified?
-        location = kwargs.get('location')
-
-        if location:
-            deltas['location'] = location.id
+        # Extract any additional information from the kwargs
+        self._apply_model_reference_fields(deltas, kwargs)
 
         # Quantity specified?
         quantity = kwargs.get('quantity')
@@ -1933,8 +1930,11 @@ class StockItem(
         if quantity:
             deltas['quantity'] = float(quantity)
 
+        # If this item has already been deleted (e.g. depleted via delete_on_deplete),
+        # self.pk is None - Django refuses to save a FK pointing at an unsaved instance,
+        # even for a nullable/SET_NULL field, so pass None explicitly instead of self.
         entry = StockItemTracking(
-            item=self,
+            item=self if self.pk else None,
             part=self.part,
             tracking_type=entry_type.value,
             user=user,
@@ -2310,11 +2310,10 @@ class StockItem(
             'added': float(merged_quantity),
         }
 
-        if location:
-            tracking_deltas['location'] = location.pk
+        self._apply_model_reference_fields(kwargs, tracking_deltas)
 
         if transfer_deltas:
-            tracking_deltas = {**transfer_deltas, **tracking_deltas}
+            tracking_deltas.update(transfer_deltas)
 
         self.add_tracking_entry(
             StockHistoryCode.MERGED_STOCK_ITEMS,
@@ -2384,9 +2383,11 @@ class StockItem(
             allow_production: If True, allow splitting of stock which is in production (default = False)
             record_tracking: If False, skip tracking entries (for merge-on-transfer)
             split_transfer_deltas: Optional dict to receive split tracking deltas
+            copy_test_results: If True, copy test results from this item to the new one (default = True)
 
         Returns:
-            The new StockItem object
+            The new StockItem object, or None if no split occurred (e.g. invalid
+            quantity, or this item is serialized)
 
         Raises:
             ValidationError: If the stock item cannot be split
@@ -2394,6 +2395,10 @@ class StockItem(
         - The provided quantity will be subtracted from this item and given to the new one.
         - The new item will have a different StockItem ID, while this will remain the same.
         """
+        # Do not split a serialized part
+        if self.serialized:
+            return None
+
         # Run initial checks to test if the stock item can actually be "split"
         allow_production = kwargs.get('allow_production', False)
         record_tracking = kwargs.pop('record_tracking', True)
@@ -2403,70 +2408,45 @@ class StockItem(
         if self.is_building and not allow_production:
             raise ValidationError(_('Stock item is currently in production'))
 
-        notes = kwargs.get('notes', '')
-
-        # Do not split a serialized part
-        if self.serialized:
-            return self
-
         try:
+            # Exit early if the provided quantity is invalid
             quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
-            return self
+            logger.error(
+                'StockItem<%s>.split_stock - invalid quantity (%s)', self.pk, quantity
+            )
+            InvenTree.exceptions.log_error('StockItem.split_stock')
+            return None
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
-            return self
+            return None
 
         # Also doesn't make sense to split the full amount
         if quantity >= self.quantity:
-            return self
+            return None
 
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
         new_stock.quantity = quantity
+        new_stock.location = location or self.location
 
         # Update the new stock item to ensure the tree structure is observed
         new_stock.parent = self
         new_stock.tree_id = None
 
-        # Move to the new location if specified, otherwise use current location
-        if location:
-            new_stock.location = location
-        else:
-            new_stock.location = self.location
-
+        # Create 'deltas' dict to record changes for tracking
         deltas = {'stockitem': self.pk}
 
-        transferorder = kwargs.pop('transferorder', None)
-        if transferorder:
-            deltas['transferorder'] = transferorder.pk
+        new_stock._apply_model_reference_fields(kwargs, deltas)
+
+        status = new_stock._resolve_status_kwarg(kwargs)
+        new_stock._apply_status_change(status, deltas)
 
         # Optional fields which can be supplied in a 'move' call
-        for field in StockItem.optional_transfer_fields():
-            if field in kwargs:
-                # handle specific case for status deltas
-                if field == 'status':
-                    status = kwargs[field]
-                    if not new_stock.compare_status(status):
-                        old_custom_status = new_stock.get_custom_status()
-                        old_status_logical = new_stock.status
-                        new_stock.set_status(status)
-                        deltas['status'] = status  # may be a custom value
-                        deltas['status_logical'] = (
-                            new_stock.status
-                        )  # always the logical value
-                        deltas['old_status'] = (
-                            old_custom_status
-                            if old_custom_status
-                            else old_status_logical
-                        )
-                        deltas['old_status_logical'] = old_status_logical
-                else:
-                    setattr(new_stock, field, kwargs[field])
-                    deltas[field] = kwargs[field]
+        new_stock._apply_optional_transfer_fields(kwargs, deltas)
 
         new_stock.save(add_note=False)
 
@@ -2483,20 +2463,21 @@ class StockItem(
                 StockHistoryCode.SPLIT_FROM_PARENT,
                 user,
                 quantity=quantity,
-                notes=notes,
+                notes=kwargs.get('notes', ''),
                 location=location,
                 deltas=deltas,
             )
 
         # Copy the test results of this part to the new one
-        new_stock.copyTestResultsFrom(self)
+        if kwargs.get('copy_test_results', True):
+            new_stock.copyTestResultsFrom(self)
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
             code=StockHistoryCode.SPLIT_CHILD_ITEM,
-            notes=notes,
+            notes=kwargs.get('notes', ''),
             location=location,
             stockitem=new_stock,
             record_tracking=record_tracking,
@@ -2520,6 +2501,83 @@ class StockItem(
     def optional_transfer_fields(cls):
         """Returns a list of optional fields for a stock transfer."""
         return ['batch', 'status', 'packaging']
+
+    @classmethod
+    def model_reference_fields(cls):
+        """Returns a list of optional 'reference' fields for a stock adjustment.
+
+        If present, the referenced model is recorded (by pk) in the tracking deltas,
+        linking the resulting tracking entry back to the order which triggered it.
+        """
+        return [
+            'stockitemlocation',
+            'transferorder',
+            'purchaseorder',
+            'salesorder',
+            'returnorder',
+            'buildorder',
+        ]
+
+    def _apply_model_reference_fields(self, kwargs: dict, deltas: dict) -> None:
+        """Pop any model reference kwargs (see model_reference_fields) and record their pk in deltas."""
+        for field in StockItem.model_reference_fields():
+            if instance := kwargs.pop(field, None):
+                if hasattr(instance, 'pk'):
+                    deltas[field] = instance.pk
+                else:
+                    deltas[field] = instance
+
+    def _resolve_status_kwarg(self, kwargs: dict):
+        """Pop a status value from kwargs, preferring 'status' over 'status_custom_key'.
+
+        Returns:
+            The resolved status value, or None if neither key was provided (or truthy)
+        """
+        status = kwargs.pop('status', None)
+
+        if not status:
+            status = kwargs.pop('status_custom_key', None)
+
+        return status
+
+    def _apply_status_change(self, status, deltas: dict) -> None:
+        """Apply a status change to this StockItem, recording delta information.
+
+        No-op if status is falsy, or matches the current status.
+
+        Args:
+            status: The new status value (may be a custom status key)
+            deltas: A dict to update with delta information (mutated in place)
+        """
+        if not status or self.compare_status(status):
+            return
+
+        old_custom_status = self.get_custom_status()
+        old_status_logical = self.status
+        self.set_status(status)
+
+        deltas['status'] = status  # may be a custom value
+        deltas['status_logical'] = self.status  # always the logical value
+        deltas['old_status'] = (
+            old_custom_status if old_custom_status else old_status_logical
+        )
+        deltas['old_status_logical'] = old_status_logical
+
+    def _apply_optional_transfer_fields(self, kwargs: dict, deltas: dict) -> None:
+        """Apply optional transfer fields (see optional_transfer_fields) from kwargs.
+
+        Note: 'status' is handled separately via _resolve_status_kwarg / _apply_status_change,
+        and should already have been popped from kwargs before calling this method.
+        """
+        for field in StockItem.optional_transfer_fields():
+            if field in kwargs:
+                setattr(self, field, kwargs[field])
+
+                # If the provided value is a model instance, store the primary key in the deltas dict
+                if hasattr(kwargs[field], 'pk'):
+                    deltas[field] = kwargs[field].pk
+                else:
+                    deltas[field] = kwargs[field]
 
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
@@ -2570,9 +2628,11 @@ class StockItem(
             kwargs['notes'] = notes
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user, allow_production=True, **kwargs)
+            new_stock = self.splitStock(
+                quantity, location, user, allow_production=True, **kwargs
+            )
 
-            return True
+            return new_stock is not None
 
         # Moving into the same location triggers a different history code
         same_location = location == self.location
@@ -2588,28 +2648,12 @@ class StockItem(
         else:
             tracking_info['location'] = location.pk
 
-        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
-
-        if status and not self.compare_status(status):
-            old_custom_status = self.get_custom_status()
-            old_status_logical = self.status
-            self.set_status(status)
-            tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logical'] = self.status  # always the logical value
-            tracking_info['old_status'] = (
-                old_custom_status if old_custom_status else old_status_logical
-            )
-            tracking_info['old_status_logical'] = old_status_logical
-
-        transferorder = kwargs.pop('transferorder', None)
-        if transferorder:
-            tracking_info['transferorder'] = transferorder.pk
+        status = self._resolve_status_kwarg(kwargs)
+        self._apply_status_change(status, tracking_info)
+        self._apply_model_reference_fields(kwargs, tracking_info)
 
         # Optional fields which can be supplied in a 'move' call
-        for field in StockItem.optional_transfer_fields():
-            if field in kwargs:
-                setattr(self, field, kwargs[field])
-                tracking_info[field] = kwargs[field]
+        self._apply_optional_transfer_fields(kwargs, tracking_info)
 
         self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
 
@@ -2635,13 +2679,14 @@ class StockItem(
         Returns:
             - True if the quantity was saved
             - False if the StockItem was deleted
+            - None if the provided quantity was invalid, or the item is serialized
         """
         # Do not adjust quantity of a serialized part
         if self.serialized:
             return
 
         try:
-            self.quantity = Decimal(quantity)
+            quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
             return
 
@@ -2693,45 +2738,40 @@ class StockItem(
             tracking_info['location'] = location.pk
             tracking_info['old_location'] = old_location.pk if old_location else None
 
-        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+        status = self._resolve_status_kwarg(kwargs)
+        self._apply_status_change(status, tracking_info)
+        self._apply_model_reference_fields(kwargs, tracking_info)
 
-        if status and not self.compare_status(status):
-            old_custom_status = self.get_custom_status()
-            old_status_logical = self.status
-            self.set_status(status)
-            tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logical'] = self.status  # always the logical value
-            tracking_info['old_status'] = (
-                old_custom_status if old_custom_status else old_status_logical
-            )
-            tracking_info['old_status_logical'] = old_status_logical
+        quantity_updated = self.serialized or self.updateQuantity(count)
 
-        if self.serialized or self.updateQuantity(count):
-            tracking_info['quantity'] = 1 if self.serialized else float(count)
+        # Record the resulting quantity, whether or not this item survived the stocktake
+        # (self.quantity is updated by updateQuantity() even if the item was deleted)
+        tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
 
+        if quantity_updated:
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
 
             # Optional fields which can be supplied in a 'stocktake' call
-            for field in StockItem.optional_transfer_fields():
-                if field in kwargs:
-                    setattr(self, field, kwargs[field])
-                    tracking_info[field] = kwargs[field]
+            self._apply_optional_transfer_fields(kwargs, tracking_info)
 
             self.save(add_note=False)
-
-            self.add_tracking_entry(
-                StockHistoryCode.STOCK_COUNT,
-                user,
-                notes=kwargs.get('notes', ''),
-                deltas=tracking_info,
-            )
 
             trigger_event(
                 StockEvents.ITEM_COUNTED,
                 id=self.id,
                 quantity=1 if self.serialized else float(self.quantity),
             )
+
+        # Always record a tracking entry, even if the item was deleted as a result
+        # of this stocktake (e.g. counted to zero with delete_on_deplete set) -
+        # StockItemTracking.item uses SET_NULL so the history is retained regardless.
+        self.add_tracking_entry(
+            StockHistoryCode.STOCK_COUNT,
+            user,
+            notes=kwargs.get('notes', ''),
+            deltas=tracking_info,
+        )
 
     @transaction.atomic
     def add_stock(self, quantity, user, **kwargs):
@@ -2760,28 +2800,16 @@ class StockItem(
 
         tracking_info = {}
 
-        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
-
-        if status and not self.compare_status(status):
-            old_custom_status = self.get_custom_status()
-            old_status_logical = self.status
-            self.set_status(status)
-            tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logical'] = self.status  # always the logical value
-            tracking_info['old_status'] = (
-                old_custom_status if old_custom_status else old_status_logical
-            )
-            tracking_info['old_status_logical'] = old_status_logical
+        status = self._resolve_status_kwarg(kwargs)
+        self._apply_status_change(status, tracking_info)
+        self._apply_model_reference_fields(kwargs, tracking_info)
 
         if self.updateQuantity(self.quantity + quantity):
             tracking_info['added'] = float(quantity)
             tracking_info['quantity'] = float(self.quantity)
 
             # Optional fields which can be supplied in a 'stocktake' call
-            for field in StockItem.optional_transfer_fields():
-                if field in kwargs:
-                    setattr(self, field, kwargs[field])
-                    tracking_info[field] = kwargs[field]
+            self._apply_optional_transfer_fields(kwargs, tracking_info)
 
             self.save(add_note=False)
 
@@ -2824,45 +2852,30 @@ class StockItem(
 
         deltas = {}
 
-        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+        status = self._resolve_status_kwarg(kwargs)
+        self._apply_status_change(status, deltas)
+        self._apply_model_reference_fields(kwargs, deltas)
 
-        if status and not self.compare_status(status):
-            old_custom_status = self.get_custom_status()
-            old_status_logical = self.status
-            self.set_status(status)
-            deltas['status'] = status  # may be a custom value
-            deltas['status_logical'] = self.status  # always the logical value
-            deltas['old_status'] = (
-                old_custom_status if old_custom_status else old_status_logical
-            )
-            deltas['old_status_logical'] = old_status_logical
+        quantity_updated = self.updateQuantity(self.quantity - quantity)
 
-        if self.updateQuantity(self.quantity - quantity):
-            deltas['removed'] = float(quantity)
-            deltas['quantity'] = float(self.quantity)
+        # Record the resulting quantity, whether or not this item survived the removal
+        # (self.quantity is updated by updateQuantity() even if the item was deleted)
+        deltas['removed'] = float(quantity)
+        deltas['quantity'] = float(self.quantity)
 
-            if location := kwargs.get('location'):
-                deltas['location'] = location.pk
-
-            if stockitem := kwargs.get('stockitem'):
-                deltas['stockitem'] = stockitem.pk
-
+        if quantity_updated:
             # Optional fields which can be supplied in a 'stocktake' call
-            for field in StockItem.optional_transfer_fields():
-                if field in kwargs:
-                    setattr(self, field, kwargs[field])
-                    deltas[field] = kwargs[field]
-
-            transferorder = kwargs.pop('transferorder', None)
-            if transferorder:
-                deltas['transferorder'] = transferorder.pk
+            self._apply_optional_transfer_fields(kwargs, deltas)
 
             self.save(add_note=False)
 
-            if record_tracking:
-                self.add_tracking_entry(
-                    code, user, notes=kwargs.get('notes', ''), deltas=deltas
-                )
+        # Always record a tracking entry, even if the item was deleted as a result
+        # of this removal (e.g. depleted to zero with delete_on_deplete set) -
+        # StockItemTracking.item uses SET_NULL so the history is retained regardless.
+        if record_tracking:
+            self.add_tracking_entry(
+                code, user, notes=kwargs.get('notes', ''), deltas=deltas
+            )
 
         return True
 
@@ -3033,18 +3046,20 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            InvenTree.tasks.offload_task(
-                part_tasks.notify_low_stock_if_required,
-                instance.part.pk,
-                group='notification',
-                force_async=True,
-            )
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
 
-        if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
-            if instance.part:
-                instance.part.schedule_pricing_update(create=True)
+    if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        InvenTree.tasks.offload_task(
+            part_tasks.notify_low_stock_if_required,
+            instance.part.pk,
+            group='notification',
+            force_async=True,
+        )
+
+    if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
