@@ -54,7 +54,8 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -402,7 +403,8 @@ export default function PartDetail() {
         external: true,
         copy: true,
         hidden: !part.link
-      }
+      },
+      barcodeDataField(part)
     ];
 
     // Top right - stock availability information

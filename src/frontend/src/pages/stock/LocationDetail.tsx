@@ -26,7 +26,8 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -145,7 +146,8 @@ export default function Stock() {
         label: t`Parent Location`,
         model: ModelType.stocklocation,
         hidden: !location?.parent
-      }
+      },
+      barcodeDataField(location)
     ];
 
     const right: DetailsField[] = [

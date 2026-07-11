@@ -18,7 +18,8 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -95,7 +96,8 @@ export default function ManufacturerPartDetail() {
         copy: true,
         icon: 'info',
         hidden: !manufacturerPart.description
-      }
+      },
+      barcodeDataField(manufacturerPart)
     ];
 
     const tr: DetailsField[] = [
