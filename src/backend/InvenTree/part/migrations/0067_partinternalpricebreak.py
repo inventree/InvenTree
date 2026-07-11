@@ -26,6 +26,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'unique_together': {('part', 'quantity')},
+                'verbose_name': 'Part Internal Price Break',
             },
         ),
     ]

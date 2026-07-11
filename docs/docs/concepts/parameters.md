@@ -35,7 +35,7 @@ Parameter templates are used to define the different types of parameters which a
 
 ### Create Template
 
-Parameter templates are created and edited via the [admin interface](../settings/admin.md).
+Parameter templates are created and edited via the [Admin Center](../settings/admin.md#admin-center).
 
 To create a template:
 

@@ -1,15 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 517
-
+INVENTREE_API_VERSION = 519
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v517 -> 2026-07-06 : https://github.com/inventree/InvenTree/pull/xxxx
+v519 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/xxxx
     - Adds new "disassemble" API endpoint for stock items
     - Allows a stock item to be broken down into component parts, based on its Bill of Materials
+
+v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341
+    - Enable import of internal part prices via the API
+
+v517 -> 2026-07-08 : https://github.com/inventree/InvenTree/pull/12336
+    - Fix currency code options for the PartPricing  model and API endpoints
 
 v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12295
     - Adds "consumable" field to the Part model and API endpoints

@@ -184,7 +184,7 @@ django-upgrade --target-version {{ config.extra.django_version }} `find . -name 
 
 ## Migration Files
 
-Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
+Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate --detect` and commit the migration files before submitting the PR.
 
 *Note: A github action checks for unstaged migration files and will reject the PR if it finds any!*
 

@@ -60,7 +60,8 @@ The user menu provides access to the following items:
 
 - **User Settings:** Access to [user settings](../settings/user.md).
 - **System Settings:** Access to [global settings](../settings/global.md) settings. *Note: Access to system settings may be restricted based on user permissions.*
-- **Admin Interface:** Access to the [admin interface](../settings/admin.md) for data management. *Note: Access to the admin interface may be restricted based on user permissions.*
+- **Admin Center:** Access to the [Admin Center](../settings/admin.md#admin-center) for operational administration.
+- **Database Admin Interface:** Low-level administration via the [Database Admin interface](../settings/db_admin.md). *Note: Access may be restricted based on user permissions and staff status.*
 - **Change Color Mode:** Toggle between light and dark color modes.
 - **About InvenTree:** View version and license information about InvenTree.
 - **Logout:** Log out of the InvenTree system.
@@ -282,6 +283,14 @@ On several forms is displayed option "Keep form open" in bottom part of the form
 Example: Editing an existing purchase order via the "Edit Purchase Order" form:
 
 {{ image("concepts/ui_form_edit_po.png", "Edit Purchase Order") }}
+
+### Form Submission
+
+A form can be submitted by clicking the "Submit" button located at the bottom-right corner of the form.
+
+Alternatively, an open form can be submitted using the keyboard shortcut `Ctrl + Enter` (or `Cmd + Enter` on macOS). This shortcut works even while typing in a form field, providing a quick way to submit the form without needing to reach for the mouse. It is particularly useful in multi-line text fields, where pressing `Enter` inserts a new line rather than submitting the form.
+
+The keyboard shortcut is only active while a form is open, and follows the same rules as the "Submit" button - for example, it has no effect while the form is loading, or when editing an existing item without any changes.
 
 ### Confirm Actions
 

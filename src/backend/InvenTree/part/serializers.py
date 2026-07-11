@@ -276,7 +276,10 @@ class PartSalePriceSerializer(
     )
 
 
-class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartInternalPriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for internal prices for Part model."""
 
     class Meta:
@@ -1429,7 +1432,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'update',
         ]
 
-    currency = serializers.CharField(allow_null=True, read_only=True)
+    currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        allow_null=True, read_only=True
+    )
 
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
