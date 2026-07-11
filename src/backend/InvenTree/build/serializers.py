@@ -33,6 +33,7 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     DuplicateOptionsSerializer,
     FilterableSerializerMixin,
@@ -58,6 +59,7 @@ from .validators import check_build_output
 
 
 class BuildSerializer(
+    BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     NotesFieldMixin,
@@ -78,6 +80,7 @@ class BuildSerializer(
             'pk',
             'title',
             'barcode_hash',
+            'barcode_data',
             'batch',
             'creation_date',
             'completed',
