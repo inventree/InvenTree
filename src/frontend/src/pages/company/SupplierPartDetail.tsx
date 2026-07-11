@@ -20,7 +20,8 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -125,7 +126,8 @@ export default function SupplierPartDetail() {
         label: t`Note`,
         copy: true,
         hidden: !supplierPart.note
-      }
+      },
+      barcodeDataField(supplierPart)
     ];
 
     const bl: DetailsField[] = [

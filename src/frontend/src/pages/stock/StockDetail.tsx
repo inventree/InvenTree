@@ -44,7 +44,8 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -198,7 +199,8 @@ export default function StockDetail() {
         external: true,
         copy: true,
         hidden: !stockitem.link
-      }
+      },
+      barcodeDataField(stockitem)
     ];
 
     // Top right - available stock information
@@ -430,14 +432,6 @@ export default function StockDetail() {
         icon: 'part',
         label: t`Packaging`,
         hidden: !stockitem.packaging
-      },
-      {
-        type: 'text',
-        name: 'barcode_data',
-        icon: 'barcode',
-        label: t`Linked Barcode`,
-        copy: true,
-        hidden: !stockitem.barcode_data
       },
       {
         type: 'date',
