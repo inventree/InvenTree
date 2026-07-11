@@ -2,7 +2,7 @@ import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
 import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { navigate, openDetailAction } from './helpers';
+import { clickOnRowMenu, loadTab, navigate, openDetailAction } from './helpers';
 import { doCachedLogin } from './login';
 
 // Test hover form action in related fields
@@ -201,4 +201,117 @@ test('Forms - Keep form open option', async ({ browser }) => {
   // Location should be created, and the form (modal) should disappear
   await page.getByText('Item Created').waitFor();
   await expect(page.getByRole('dialog')).toBeHidden();
+});
+
+test('Forms - DateTime Field', async ({ browser }) => {
+  // The "started_datetime" / "finished_datetime" test-result fields are only
+  // shown when the "TEST_STATION_DATA" global setting is enabled
+  const api = await createApi({});
+  const settingUrl = 'settings/global/TEST_STATION_DATA/';
+
+  const enableResponse = await api.patch(settingUrl, {
+    data: { value: 'true' }
+  });
+  expect(enableResponse.status()).toBe(200);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'stock/item/1194/test_results'
+  });
+  await page.waitForURL('**/web/stock/**');
+  await loadTab(page, 'Test Results');
+
+  const cell = page.getByText('395c6d5586e5fb656901d047be27e1f7');
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Set a value via the Mantine DateTimePicker popup - a button which opens a
+  // calendar (for the date) plus separate hour/minute/second spinbuttons
+  const setDateTime = async (
+    fieldLabel: string,
+    day: string,
+    hour: string,
+    minute: string
+  ) => {
+    const field = page.getByLabel(fieldLabel);
+    await expect(field).toBeVisible();
+    await field.click();
+    await page.getByRole('button', { name: day }).click();
+
+    const spinbuttons = page.getByRole('spinbutton');
+    await spinbuttons.nth(0).fill(hour);
+    await spinbuttons.nth(1).fill(minute);
+    await spinbuttons.nth(2).fill('00');
+
+    await page.keyboard.press('Escape');
+  };
+
+  await setDateTime(
+    'date-time-field-started_datetime',
+    '10 March 2024',
+    '10',
+    '30'
+  );
+  await setDateTime(
+    'date-time-field-finished_datetime',
+    '11 March 2024',
+    '11',
+    '45'
+  );
+
+  await expect(page.getByLabel('date-time-field-started_datetime')).toHaveText(
+    '2024-03-10 10:30:00'
+  );
+  await expect(page.getByLabel('date-time-field-finished_datetime')).toHaveText(
+    '2024-03-11 11:45:00'
+  );
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Test result updated').waitFor();
+
+  // Restore the global setting to its default value
+  const disableResponse = await api.patch(settingUrl, {
+    data: { value: 'false' }
+  });
+  expect(disableResponse.status()).toBe(200);
+});
+
+// Test the "nested object" field type, via the "Initial Supplier" section
+// of the "Create Part" form
+test('Forms - Nested Object Field', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  // Generate a unique part name
+  const partName = `Test Part ${new Date().getTime()}`;
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  // The "Initial Supplier" nested-object field should be visible and expanded by default
+  await page.getByText('Supplier Information').waitFor();
+
+  const supplierField = page.getByLabel(
+    'related-field-initial_supplier.supplier'
+  );
+  await expect(supplierField).toBeVisible();
+  await supplierField.fill('Mouser');
+  await page.getByText('Mouser Electronics').first().click();
+
+  const skuValue = `SKU-${new Date().getTime()}`;
+  await page
+    .getByLabel('text-field-initial_supplier.sku', { exact: true })
+    .fill(skuValue);
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Confirm the part was created with the expected name
+  await page.getByText(partName).first().waitFor();
 });
