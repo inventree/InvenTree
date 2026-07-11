@@ -8,7 +8,7 @@ The Part detail view page provides a detailed view of a single part in the syste
 
 ### Category Breadcrumb List
 
-The categories of each part is displayed on the top navigation bar as show in the above screenshot.
+The categories of each part is displayed on the top navigation bar.
 [Click here](./index.md#part-category) for more information about categories.
 
 ## Part Details
