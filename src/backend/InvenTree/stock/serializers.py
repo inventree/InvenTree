@@ -2142,6 +2142,10 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                                 split_transfer_deltas=transfer_deltas,
                                 **kwargs,
                             )
+
+                            if not piece:
+                                continue
+
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([piece], **merge_kwargs)
                         else:
