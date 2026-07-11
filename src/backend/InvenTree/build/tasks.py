@@ -6,6 +6,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -49,7 +50,7 @@ def consume_build_stock(
         items: Optional dict of BuildItem IDs (and quantities)to consume
         user_id: The ID of the user who initiated the stock consumption
     """
-    from build.models import Build, BuildItem, BuildLine
+    from build.models import Build, BuildItem
 
     build = Build.objects.get(pk=build_id)
     user = User.objects.filter(pk=user_id).first() if user_id else None
@@ -58,24 +59,19 @@ def consume_build_stock(
     items = items or {}
     notes = kwargs.pop('notes', '')
 
-    # Extract the relevant BuildLine and BuildItem objects
-    with transaction.atomic():
-        # Consume each of the specified BuildLine objects
-        for line_id in lines:
-            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
-                for item in build_line.allocations.all():
-                    item.complete_allocation(
-                        quantity=item.quantity, notes=notes, user=user
-                    )
+    # Condense the provided lines and items into a single BuildItem queryset,
+    # preselecting the related StockItem to avoid per-item queries downstream
+    build_items = (
+        BuildItem.objects
+        .filter(
+            Q(build_line__pk__in=lines) | Q(pk__in=items.keys()),
+            build_line__build=build,
+        )
+        .select_related('stock_item', 'stock_item__part')
+        .distinct()
+    )
 
-        # Consume each of the specified BuildItem objects
-        for item_id, quantity in items.items():
-            if build_item := BuildItem.objects.filter(
-                pk=item_id, build_line__build=build
-            ).first():
-                build_item.complete_allocation(
-                    quantity=quantity, notes=notes, user=user
-                )
+    build.complete_allocations(build_items, quantities=items, notes=notes, user=user)
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -97,7 +93,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     else:
         user = None
 
-    build_order.complete_allocations(user)
+    build_order.complete_outstanding_allocations(user)
 
 
 @tracer.start_as_current_span('delete_build_outputs')

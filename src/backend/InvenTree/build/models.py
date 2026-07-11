@@ -648,13 +648,47 @@ class Build(
 
         return self.is_fully_allocated(tracked=False)
 
-    def complete_allocations(self, user) -> None:
+    @transaction.atomic
+    def complete_allocations(
+        self,
+        build_items: QuerySet,
+        quantities: Optional[dict] = None,
+        notes: Optional[str] = None,
+        user: Optional[User] = None,
+    ):
+        """Complete the allocation of stock for the given build lines.
+
+        Arguments:
+            build_items: QuerySet of build items to complete allocations for
+            quantities: Optional dict of quantities to allocate
+            notes: Optional notes for the allocation
+            user: The user completing the allocation
+        """
+        for item in build_items:
+            quantity = quantities.get(item.pk) if quantities else None
+            item.complete_allocation(quantity=quantity, notes=notes, user=user)
+
+    @transaction.atomic
+    def complete_outstanding_allocations(self, user) -> None:
         """Complete all stock allocations for this build order.
 
-        - This function is called when a build order is completed
+        - This function is called when a build order is completed.
+        - Any outstanding allocations will be consumed
+
+        Arguments:
+            user: The user who is completing the build
         """
-        # Remove untracked allocated stock
-        self.subtract_allocated_stock(user)
+        # Find all BuildItem objects which point to this build
+        items = self.allocated_stock.filter(
+            build_line__bom_item__sub_part__trackable=False
+        ).select_related('stock_item', 'stock_item__part')
+
+        # Remove stock
+        for item in items:
+            item.complete_allocation(user=user)
+
+        # Delete allocation
+        items.all().delete()
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
@@ -1012,20 +1046,6 @@ class Build(
     def allocated_stock(self) -> QuerySet:
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
-
-    def subtract_allocated_stock(self, user) -> None:
-        """Removes the allocated untracked items from stock."""
-        # Find all BuildItem objects which point to this build
-        items = self.allocated_stock.filter(
-            build_line__bom_item__sub_part__trackable=False
-        )
-
-        # Remove stock
-        for item in items:
-            item.complete_allocation(user=user)
-
-        # Delete allocation
-        items.all().delete()
 
     @transaction.atomic
     def scrap_build_output(
@@ -2002,7 +2022,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, quantity=None, notes: str = '', user=None) -> None:
+    def complete_allocation(
+        self, quantity: Optional[decimal.Decimal] = None, notes: str = '', user=None
+    ) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
 
         Arguments:
@@ -2010,12 +2032,15 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             notes: Additional notes to add to the transaction
             user: The user completing the allocation
 
-        - If the referenced part is trackable, the stock item will be *installed* into the build output
-        - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
+        Actions:
+            - Split allocated stock item, if necessary
+            - Mark the stock item as 'consumed' by the build order
+            - Increase the 'consumed' quantity for this BuildItem
+            - Delete the BuildItem if the quantity is fully consumed
 
-        TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
-        TODO: Revisit, and refactor!
-
+        Notes:
+            - If the referenced part is trackable, the stock item will be *installed* into the build output
+            - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
         """
         # If the quantity is not provided, use the quantity of this BuildItem
         if quantity is None:
