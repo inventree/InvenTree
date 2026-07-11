@@ -45,7 +45,7 @@ The global navigation menu is located on the left-hand side of the interface and
 The navigation menu is organized into several key areas, including:
 
 - **Navigation:** Provides access to the main sections of the system, including Parts, Stock, Manufacturing, Purchasing, and Sales.
-- **Settings:** Quick access to user settings, system settings, and the admin interface.
+- **Settings:** Quick access to user settings, system settings, and the admin center.
 - **Actions:** Provides quick access to commonly used actions
 - **Documentation:** Links to the online documentation.
 - **About:** InvenTree version and license information.
@@ -60,7 +60,8 @@ The user menu provides access to the following items:
 
 - **User Settings:** Access to [user settings](../../settings/user.md).
 - **System Settings:** Access to [global settings](../../settings/global.md) settings. *Note: Access to system settings may be restricted based on user permissions.*
-- **Admin Interface:** Access to the [admin interface](../../settings/admin.md) for data management. *Note: Access to the admin interface may be restricted based on user permissions.*
+- **Admin Center:** Access to the [admin center](../../settings/admin.md#admin-center) for operational administration
+- **Database Admin Interface:** Low level administration via the [Database Admin Interface](../../settings/db_admin.md). *Note: Access may be restricted based on user permissions.*
 - **Change Color Mode:** Toggle between light and dark color modes.
 - **About InvenTree:** View version and license information about InvenTree.
 - **Logout:** Log out of the InvenTree system.
