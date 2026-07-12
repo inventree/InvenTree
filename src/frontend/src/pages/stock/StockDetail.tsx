@@ -13,6 +13,7 @@ import {
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsSplit,
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
@@ -69,6 +70,7 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
+  useDisassembleStockItem,
   useFindSerialNumberForm,
   useStockFields,
   useStockItemSerializeFields
@@ -864,6 +866,11 @@ export default function StockDetail() {
     successMessage: t`Stock item serialized`
   });
 
+  const disassembleStockItem = useDisassembleStockItem({
+    stockItem: stockitem,
+    refresh: refreshInstance
+  });
+
   const orderPartsWizard = OrderPartsWizard({
     parts: stockitem.part_detail ? [stockitem.part_detail] : []
   });
@@ -948,6 +955,18 @@ export default function StockDetail() {
             icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {
               serializeStockItem.open();
+            }
+          },
+          {
+            name: t`Disassemble`,
+            tooltip: t`Disassemble this stock item into its component parts`,
+            hidden:
+              !user.hasAddRole(UserRoles.stock) ||
+              !stockitem.in_stock ||
+              stockitem.part_detail?.assembly != true,
+            icon: <IconArrowsSplit color='blue' />,
+            onClick: () => {
+              disassembleStockItem.open();
             }
           },
           {
@@ -1118,6 +1137,7 @@ export default function StockDetail() {
       {convertStockItem.modal}
       {duplicateStockItem.modal}
       {serializeStockItem.modal}
+      {disassembleStockItem.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       {orderPartsWizard.wizard}
     </>

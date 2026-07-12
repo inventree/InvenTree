@@ -1815,6 +1815,276 @@ class StockItem(
 
         self.save()
 
+    def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
+        """Allocate the purchase price of this stock item across disassembly lines.
+
+        Automatic cost allocation is only performed if:
+        - This stock item has a recorded purchase price
+        - None of the provided lines specify an explicit purchase price
+
+        The total cost is apportioned across the lines pro-rata,
+        weighted by existing pricing data for each component part.
+        If pricing data is not available for *every* line,
+        the cost is split evenly across the generated units.
+
+        Args:
+            quantity: The number of units of this stock item being disassembled
+            lines: A list of dict objects (see the disassemble method)
+
+        Returns:
+            The list of lines, with 'purchase_price' values filled in where possible
+        """
+        if not self.purchase_price:
+            return lines
+
+        if any(line.get('purchase_price') is not None for line in lines):
+            # Explicit pricing has been provided - do not override
+            return lines
+
+        # Calculate a relative pricing "weight" for each line
+        weights = []
+
+        for line in lines:
+            pricing = line['bom_item'].sub_part.pricing
+
+            price_range = [
+                price
+                for price in [pricing.overall_min, pricing.overall_max]
+                if price is not None
+            ]
+
+            weight = None
+
+            if price_range:
+                mid = sum(price_range[1:], price_range[0]) / len(price_range)
+
+                if mid.amount > 0:
+                    weight = Decimal(mid.amount) * Decimal(line['quantity'])
+
+            weights.append(weight)
+
+        if any(weight is None for weight in weights):
+            # Insufficient pricing data - fall back to an even (per unit) split
+            weights = [Decimal(line['quantity']) for line in lines]
+
+        total_weight = sum(weights)
+
+        if total_weight <= 0:
+            return lines
+
+        # Total cost of the disassembled units
+        total_cost = self.purchase_price * quantity
+
+        for line, weight in zip(lines, weights, strict=True):
+            line_quantity = Decimal(line['quantity'])
+
+            if line_quantity > 0:
+                if weight is None:
+                    # Fallback to an even split
+                    line['purchase_price'] = total_cost / len(lines) / line_quantity
+                else:
+                    line['purchase_price'] = (
+                        total_cost * (weight / total_weight) / line_quantity
+                    )
+
+        return lines
+
+    @transaction.atomic
+    def disassemble(
+        self, quantity, lines: list, user, location=None, notes: str = ''
+    ) -> list[StockItem]:
+        """Disassemble this stock item into its component parts.
+
+        The provided BOM lines determine which component parts are "broken out"
+        of this stock item. A new stock item is created for each line,
+        and the quantity of this item is reduced accordingly.
+
+        Args:
+            quantity: The number of units of this stock item to disassemble
+            lines: A list of dict objects, each containing:
+                bom_item: The BomItem instance defining the component to break out
+                quantity: The total quantity of the component to create
+                location: Optional destination StockLocation for the component
+                status: Optional StockStatus code for the component (default: OK)
+                purchase_price: Optional unit purchase price for the component
+            user: The user performing the operation
+            location: Default destination location for the generated components
+            notes: Optional transaction notes
+
+        Returns:
+            A list of the component StockItem objects (created or uninstalled)
+
+        Note:
+            This stock item is *retained* (with reduced quantity) even if the
+            quantity reaches zero, to preserve traceability of the disassembly.
+
+        Note:
+            Any stock items which are *installed* within this stock item are
+            broken out (uninstalled) as part of the disassembly operation,
+            rather than creating new stock items for them.
+
+        Note:
+            Traceability data is passed down from this stock item to the
+            generated components: the batch code and source purchase order
+            are copied across, while any source build order is recorded
+            in the stock tracking history of each component.
+        """
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            raise ValidationError({'quantity': _('Invalid quantity provided')})
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        if quantity > self.quantity:
+            raise ValidationError({
+                'quantity': _('Quantity must not exceed available stock quantity')
+            })
+
+        if self.serialized and quantity != self.quantity:
+            raise ValidationError({
+                'quantity': _(
+                    'Serialized stock item must be disassembled in its entirety'
+                )
+            })
+
+        if len(lines) == 0:
+            raise ValidationError(_('No BOM lines provided'))
+
+        # Any items installed within this stock item *must* be broken out,
+        # which requires that the entire quantity is disassembled
+        installed_items = list(self.installed_parts.all())
+
+        if len(installed_items) > 0 and quantity != self.quantity:
+            raise ValidationError({
+                'quantity': _(
+                    'Stock item with installed items must be disassembled in its entirety'
+                )
+            })
+
+        # Cache the custom status options for the StockItem model
+        custom_status_values = StockItem.STATUS_CLASS.custom_values()
+
+        items = []
+
+        # Match installed items against the provided BOM lines,
+        # so that the correct location and status values can be applied
+        line_map = {}
+
+        for line in lines:
+            for part in line['bom_item'].get_valid_parts_for_allocation():
+                line_map.setdefault(part.pk, line)
+
+        for installed_item in installed_items:
+            line = line_map.get(installed_item.part.pk)
+
+            destination = (
+                (line.get('location') if line else None) or location or self.location
+            )
+
+            if line:
+                # The uninstalled quantity reduces the quantity of new items
+                # to be created against the matching BOM line
+                line['quantity'] = max(
+                    Decimal(0), Decimal(line['quantity']) - installed_item.quantity
+                )
+
+                if status := line.get('status'):
+                    installed_item.set_status(
+                        status, custom_values=custom_status_values
+                    )
+
+            # Break the installed item out into the destination location
+            # Note: this also saves any status change applied above
+            installed_item.uninstall_into_location(destination, user, notes)
+
+            items.append(installed_item)
+
+        # Allocate pricing data across the generated components.
+        # Note: Deliberately performed *after* the installed items are uninstalled,
+        # so that the cost is only spread across newly created stock items
+        lines = self.allocate_disassembly_pricing(quantity, lines)
+
+        for line in lines:
+            bom_item = line['bom_item']
+            line_quantity = Decimal(line['quantity'])
+
+            if line_quantity <= 0:
+                continue
+
+            destination = line.get('location') or location or self.location
+
+            new_item = StockItem(
+                part=bom_item.sub_part,
+                quantity=line_quantity,
+                location=destination,
+                parent=self,
+                batch=self.batch,
+                purchase_order=self.purchase_order,
+                purchase_price=line.get('purchase_price', None),
+            )
+
+            if status := line.get('status'):
+                new_item.set_status(status, custom_values=custom_status_values)
+
+            # Ensure the tree structure is observed
+            new_item.tree_id = None
+            new_item.save(add_note=False)
+
+            deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
+
+            # Record traceability links against the disassembled assembly
+            if self.build:
+                deltas['buildorder'] = self.build.pk
+
+            if self.purchase_order:
+                deltas['purchaseorder'] = self.purchase_order.pk
+
+            new_item.add_tracking_entry(
+                StockHistoryCode.CREATED_FROM_DISASSEMBLY,
+                user,
+                notes=notes,
+                deltas=deltas,
+                location=destination,
+            )
+
+            items.append(new_item)
+
+        # Consume this stock item.
+        # Note: the item is deliberately retained (not deleted) at zero quantity,
+        # to preserve the disassembly history
+        if self.serialized:
+            # A serialized item cannot be reduced to zero quantity,
+            # so instead it is marked as "destroyed"
+            deltas = {
+                'removed': float(quantity),
+                'status': StockStatus.DESTROYED.value,
+                'old_status': self.status,
+            }
+
+            self.set_status(StockStatus.DESTROYED.value)
+        else:
+            deltas = {
+                'removed': float(quantity),
+                'quantity': float(self.quantity - quantity),
+            }
+
+            self.quantity = self.quantity - quantity
+
+        self.save(add_note=False)
+
+        self.add_tracking_entry(
+            StockHistoryCode.DISASSEMBLED, user, notes=notes, deltas=deltas
+        )
+
+        # Rebuild the stock tree for this item
+        stock.tasks.rebuild_stock_item_tree(self.tree_id)
+
+        trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
+
+        return items
+
     @property
     def children(self):
         """Return a list of the child items which have been split from this stock item."""
@@ -1924,7 +2194,7 @@ class StockItem(
             return None
 
         # Extract any additional information from the kwargs
-        self._apply_model_reference_fields(deltas, kwargs)
+        self._apply_model_reference_fields(kwargs, deltas)
 
         # Quantity specified?
         quantity = kwargs.get('quantity')

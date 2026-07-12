@@ -40,6 +40,31 @@ This view displays all tracking entries associated with any stock item linked to
 !!! info "Deleted Stock Items"
     Even if a stock item is deleted from the system, the associated stock tracking entries are retained for historical reference. They will be visible in the part tracking history, but not in the stock item tracking history (as the stock item itself has been deleted).
 
+## Installed Stock Items
+
+A stock item can be *installed* inside another stock item, forming a parent/child relationship between the two. This is used to represent physical assembly - for example, a serialized PCB assembly which has been fitted with a tracked sub-component, such as a wireless module or a pre-programmed IC.
+
+An installed stock item is no longer available for regular stock actions (it cannot be moved, allocated to an order, or built into another assembly) while it remains installed - it is only accessible "through" its parent item.
+
+### How Items Become Installed
+
+There are two ways that a stock item can become installed inside another:
+
+- **Tracked build allocation** - when a [tracked BOM item](../manufacturing/allocate.md#allocating-tracked-stock) is allocated to a build order and the build output is completed, the allocated stock item is automatically installed into the completed build output
+- **Manual installation** - from the *Stock Item Detail* page, a user can manually install one stock item into another, using the *Install Item* action. By default, the selected item's part must appear in the [Bill of Materials](../manufacturing/bom.md) of the parent item's part - this check can be disabled using the {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION", short=True) }} setting
+
+### Viewing Installed Items
+
+Any stock items installed within a particular stock item are displayed on the *Installed Items* tab of the *Stock Item Detail* page.
+
+By default, installed stock items are hidden from general stock item tables (as they are not directly available for use) - this can be changed using the {{ globalsetting("STOCK_SHOW_INSTALLED_ITEMS", short=True) }} setting.
+
+### Removing Installed Items
+
+An installed stock item can be removed (uninstalled) from its parent using the *Uninstall Item* action, which returns the item to a selected stock location and makes it available for regular stock actions once more.
+
+Additionally, installed items are automatically uninstalled when the parent item is [disassembled](./disassemble.md#accounting-for-installed-items) into its component parts - refer to that page for a detailed description of how installed items are matched against Bill of Materials line items during disassembly.
+
 ## Stock Tracking Settings
 
 There are a number of configuration options available for controlling the behavior of stock tracking functionality in the [system settings view](../settings/global.md):
