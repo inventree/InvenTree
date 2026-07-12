@@ -1555,7 +1555,10 @@ class StockItemTest(StockAPITestCase):
         # POST with an empty part reference
 
         response = self.post(
-            self.list_url, data={'quantity': 10, 'location': 1}, max_query_count=2250
+            self.list_url,
+            data={'quantity': 10, 'location': 1},
+            max_query_count=2250,
+            expected_code=400,
         )
 
         self.assertContains(
@@ -1570,6 +1573,7 @@ class StockItemTest(StockAPITestCase):
             self.list_url,
             data={'quantity': 10, 'location': 1, 'part': 10000000},
             max_query_count=2250,
+            expected_code=400,
         )
 
         self.assertContains(
@@ -3193,6 +3197,9 @@ class StockTransferMergeTest(StockAPITestCase):
 
     def test_transfer_merge_does_not_copy_source_tracking(self):
         """Transfer merge keeps destination history and adds a single merge entry."""
+        # Track total number of tracking entries created
+        N_TRACKING_ENTRIES = StockItemTracking.objects.count()
+
         existing = StockItem.objects.create(
             part=self.part, location=self.dest, quantity=100
         )
@@ -3230,6 +3237,23 @@ class StockTransferMergeTest(StockAPITestCase):
         self.assertEqual(merge_entry.deltas['quantity'], 150.0)
         self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
         self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+        self.assertEqual(StockItemTracking.objects.count(), N_TRACKING_ENTRIES + 4)
+
+        # Ensure tracking entries were bulk created in the correct order
+        entries = list(StockItemTracking.objects.order_by('-pk')[:4])[::-1]
+
+        for idx, tt in enumerate([
+            StockHistoryCode.CREATED,
+            StockHistoryCode.CREATED,
+            StockHistoryCode.STOCK_UPDATE,
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+        ]):
+            self.assertEqual(
+                entries[idx].tracking_type,
+                tt,
+                f'Entry {idx} has unexpected tracking type {entries[idx].tracking_type}',
+            )
 
     def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
         """Partial merge reuses split transfer deltas on the merge tracking entry."""
