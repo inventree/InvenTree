@@ -148,6 +148,7 @@ test('Build Order - Tags', async ({ browser }) => {
 
   // Check for expected results
   await page.getByRole('cell', { name: 'BO0026' }).click();
+  await page.getByText('Build Order: BO0026').first().waitFor();
   await page.getByText('100 x 002.01-PCBA | Widget').waitFor();
 
   // Check for tags displayed on BuildOrder detail page
@@ -279,6 +280,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
   await page.getByRole('cell', { name: 'BX-123' }).waitFor();
+  await page.waitForLoadState('networkidle');
 
   // Check the "printing" actions for the selected outputs
   await page.getByRole('checkbox', { name: 'Select all records' }).check();

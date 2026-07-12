@@ -226,6 +226,8 @@ export default function BuildDetail() {
       part_detail: true,
       tags: true
     },
+    hasPrimaryKey: true,
+    defaultValue: {},
     refetchOnMount: true
   });
 
