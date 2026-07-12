@@ -1832,7 +1832,12 @@ class StockAddSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         notes = data.get('notes', '')
 
-        with transaction.atomic():
+        with (
+            transaction.atomic(),
+            batch_events(),
+            batch_tracking_entries(),
+            batch_offload_tasks(),
+        ):
             for item in data['items']:
                 stock_item = item['pk']
                 quantity = item['quantity']
@@ -1861,7 +1866,12 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         notes = data.get('notes', '')
 
-        with transaction.atomic():
+        with (
+            transaction.atomic(),
+            batch_events(),
+            batch_tracking_entries(),
+            batch_offload_tasks(),
+        ):
             for item in data['items']:
                 stock_item = item['pk']
                 quantity = item['quantity']
@@ -1918,7 +1928,12 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         notes = data.get('notes', '')
         location = data['location']
 
-        with transaction.atomic():
+        with (
+            transaction.atomic(),
+            batch_events(),
+            batch_tracking_entries(),
+            batch_offload_tasks(),
+        ):
             for item in items:
                 # Required fields
                 stock_item = item['pk']
