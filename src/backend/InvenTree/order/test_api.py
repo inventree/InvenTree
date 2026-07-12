@@ -1430,6 +1430,52 @@ class PurchaseOrderReceiveTest(OrderTest):
             line.refresh_from_db()
             self.assertEqual(line.received, line.quantity)
 
+    def test_bulk_receive_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        sp = SupplierPart.objects.first()
+
+        po = models.PurchaseOrder.objects.create(
+            reference='PO-BENCHMARK-100', supplier=sp.supplier
+        )
+
+        N_LINES = 100
+
+        models.PurchaseOrderLineItem.objects.bulk_create([
+            models.PurchaseOrderLineItem(order=po, part=sp, quantity=10)
+            for _ in range(N_LINES)
+        ])
+
+        po.place_order()
+
+        url = reverse('api-po-receive', kwargs={'pk': po.pk})
+
+        lines = po.lines.all()
+        location = StockLocation.objects.filter(structural=False).first()
+
+        data = {
+            'items': [
+                {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+            ],
+            'location': location.pk,
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.post(url, data, max_query_count=400, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data), N_LINES)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-po-receive]: receiving 100 line items required {query_count} DB queries'
+        )
+
     def test_packaging(self):
         """Test that we can supply a 'packaging' value when receiving items."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)

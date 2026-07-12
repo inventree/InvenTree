@@ -42,6 +42,7 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     OptionalField,
 )
+from InvenTree.tasks import batch_offload_tasks
 from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
@@ -50,6 +51,8 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.serializers import PartBriefSerializer
+from plugin.base.event.events import batch_events
+from stock.models import batch_tracking_entries
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -1047,9 +1050,15 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         location = data.get('location', order.destination)
 
         try:
-            items = order.receive_line_items(
-                location, items, request.user if request else None
-            )
+            with (
+                transaction.atomic(),
+                batch_events(),
+                batch_tracking_entries(),
+                batch_offload_tasks(),
+            ):
+                items = order.receive_line_items(
+                    location, items, request.user if request else None
+                )
         except (ValidationError, DjangoValidationError) as exc:
             # Catch model errors and re-throw as DRF errors
             raise ValidationError(detail=serializers.as_serializer_error(exc))
