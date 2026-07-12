@@ -876,8 +876,9 @@ class BuildAllocationTest(BuildAPITest):
         serials = [str(x) for x in range(100, 110)]
 
         # Create serialized component items
-        for sn in serials:
-            StockItem.objects.create(part=component, quantity=1, serial=str(sn))
+        StockItem.objects.bulk_create([
+            StockItem(part=component, quantity=1, serial=str(sn)) for sn in serials
+        ])
 
         self.assertEqual(N_BUILD_ITEMS, BuildItem.objects.count())
 
