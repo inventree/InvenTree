@@ -26,6 +26,7 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    batch_tracking_entries,
 )
 
 
@@ -904,6 +905,130 @@ class StockTest(StockTestBase):
                 part=part, quantity=10, purchase_price=Money(5, 'GBP')
             )
             self.assertEqual(item.purchase_price_currency, 'GBP')
+
+
+class TrackingEntryBatchTests(StockTestBase):
+    """Unit tests for the batch_tracking_entries() context manager."""
+
+    def test_entries_queued_and_flushed_on_commit(self):
+        """Tracking entries created inside batch_tracking_entries() are bulk-created on commit."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                for idx in range(10):
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT,
+                        self.user,
+                        deltas={'quantity': idx},
+                        notes=f'Batch entry {idx}',
+                    )
+
+                # Nothing should be written yet - the batch only flushes on commit
+                self.assertEqual(StockItemTracking.objects.count(), n)
+
+        entries = StockItemTracking.objects.filter(item=item).order_by('id')[:10]
+        self.assertEqual(StockItemTracking.objects.count(), n + 10)
+
+        for idx, entry in enumerate(entries):
+            self.assertEqual(entry.tracking_type, StockHistoryCode.STOCK_COUNT)
+            self.assertEqual(entry.deltas.get('quantity'), idx)
+            self.assertEqual(entry.notes, f'Batch entry {idx}')
+
+    def test_entries_discarded_on_rollback(self):
+        """Tracking entries queued in a batch are discarded if the transaction rolls back."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            try:
+                with transaction.atomic(), batch_tracking_entries():
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+                    )
+                    raise ValueError('boom')
+            except ValueError:
+                pass
+
+        self.assertEqual(StockItemTracking.objects.count(), n)
+
+    def test_entries_outside_batch_fire_immediately(self):
+        """Tracking entries created outside any batch are unaffected - saved immediately."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        item.add_tracking_entry(
+            StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+        )
+
+        # No transaction commit or captureOnCommitCallbacks needed - it was never queued
+        self.assertEqual(StockItemTracking.objects.count(), n + 1)
+
+    def test_nested_batch_share_one_flush(self):
+        """A nested batch_tracking_entries() call reuses the outer batch, rather than flushing twice."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                item.add_tracking_entry(
+                    StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+                )
+                with batch_tracking_entries():
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 2}
+                    )
+                self.assertEqual(StockItemTracking.objects.count(), n)
+
+        self.assertEqual(StockItemTracking.objects.count(), n + 2)
+
+    def test_commit_false_is_unaffected_by_batch(self):
+        """commit=False callers keep manual ownership of the entry, even inside a batch."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with transaction.atomic(), batch_tracking_entries():
+            entry = item.add_tracking_entry(
+                StockHistoryCode.STOCK_COUNT,
+                self.user,
+                deltas={'quantity': 1},
+                commit=False,
+            )
+
+        # The entry was returned uncommitted - the batch never saw it, so it was never written
+        self.assertIsNotNone(entry)
+        self.assertIsNone(entry.pk)
+        self.assertEqual(StockItemTracking.objects.count(), n)
+
+    def test_stocktake_batch_tracking_entries(self):
+        """Integration test: batching stocktake() tracking entries via the StockCountSerializer path."""
+        part = Part.objects.create(
+            name='Batch tracking part', description='For batch tracking testing'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=self.home, quantity=idx + 1)
+            for idx in range(10)
+        ]
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                for idx, item in enumerate(items):
+                    item.stocktake(100 + idx, self.user, notes='Batch stocktake')
+
+        entries = StockItemTracking.objects.filter(
+            item__in=items, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).order_by('id')
+        self.assertEqual(entries.count(), 10)
+        self.assertEqual(StockItemTracking.objects.count(), n + 10)
 
 
 class StockBarcodeTest(StockTestBase):

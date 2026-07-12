@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import contextvars
 import os
+from contextlib import contextmanager
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -1944,7 +1946,11 @@ class StockItem(
         )
 
         if commit:
-            entry.save()
+            if (batch := _tracking_batch.get()) is not None:
+                # A batch_tracking_entries() context is active - queue rather than save now
+                batch.add(entry)
+            else:
+                entry.save()
 
         return entry
 
@@ -3056,6 +3062,72 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         if instance.part:
             instance.part.schedule_pricing_update(create=True)
+
+
+# Context-local batch of pending StockItemTracking entries (see batch_tracking_entries())
+_tracking_batch: contextvars.ContextVar = contextvars.ContextVar(
+    'tracking_batch', default=None
+)
+
+
+class TrackingEntryBatch:
+    """Collects StockItemTracking entries created within a batch_tracking_entries() scope."""
+
+    def __init__(self):
+        """Initialize an empty batch."""
+        self.entries: list[StockItemTracking] = []
+
+    def add(self, entry: StockItemTracking) -> None:
+        """Record a single (unsaved) tracking entry against this batch."""
+        self.entries.append(entry)
+
+    def flush(self) -> None:
+        """Bulk-create all entries collected so far, in a single database write."""
+        entries, self.entries = self.entries, []
+
+        if entries:
+            StockItemTracking.objects.bulk_create(entries, batch_size=250)
+
+
+@contextmanager
+def batch_tracking_entries():
+    """Batch StockItemTracking entries created within this scope into a single bulk_create().
+
+    StockItem.add_tracking_entry() saves its entry immediately by default (commit=True).
+    While this context is active, any such call - made directly, or indirectly via a nested
+    function call - is queued instead of saved immediately. The queued entries are flushed via
+    a single bulk_create() when the current transaction commits (or immediately, if no
+    transaction is active). If the transaction is instead rolled back, the queued entries are
+    discarded, rather than being written for a change that never happened.
+
+    Calls that already pass commit=False to add_tracking_entry() are unaffected either way -
+    that contract (the caller takes ownership of saving/collecting the entry itself, as done
+    for example in PurchaseOrder.receive_line_items()) is unchanged.
+
+    Nesting is not supported: a nested batch_tracking_entries() call reuses the outer batch,
+    and only the outermost call schedules a flush.
+
+    This mirrors plugin.base.event.events.batch_events() - see that docstring for the
+    reasoning behind the on-commit flush and the context-local (rather than parameter-based)
+    design, which allows existing single-item entrypoints (e.g. StockItem.stocktake()) to be
+    reused unmodified by both single-item and bulk callers.
+
+    Yields:
+        The current TrackingEntryBatch instance
+    """
+    if _tracking_batch.get() is not None:
+        # Already inside a batch - extend it, rather than creating a nested one
+        yield _tracking_batch.get()
+        return
+
+    batch = TrackingEntryBatch()
+    token = _tracking_batch.set(batch)
+
+    try:
+        yield batch
+    finally:
+        _tracking_batch.reset(token)
+        transaction.on_commit(batch.flush)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

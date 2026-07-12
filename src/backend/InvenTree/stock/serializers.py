@@ -48,6 +48,7 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    batch_tracking_entries,
 )
 
 logger = structlog.get_logger('inventree')
@@ -1797,7 +1798,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         notes = data.get('notes', '')
         location = data.get('location', None)
 
-        with transaction.atomic(), batch_events():
+        with transaction.atomic(), batch_events(), batch_tracking_entries():
             for item in items:
                 stock_item = item['pk']
                 quantity = item['quantity']
