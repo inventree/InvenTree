@@ -7,7 +7,11 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -22,6 +26,8 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import {
@@ -59,6 +65,9 @@ export default function OrderCalendar({
 }) {
   const navigate = useNavigate();
   const user = useUserState();
+  const previewPanelEnabled = useUserSettingsState((state) =>
+    state.isSet('ENABLE_PREVIEW_PANEL')
+  );
 
   // These filters apply to all order types
   const orderFilters: TableFilter[] = useMemo(() => {
@@ -166,14 +175,16 @@ export default function OrderCalendar({
     }
   };
 
-  // Callback when PurchaseOrder is clicked
+  // Callback when an order is clicked - open preview drawer, or navigate on modifier click
   const onClickOrder = (info: EventClickArg) => {
-    if (!!info.event.id) {
-      navigateToLink(
-        getDetailUrl(model, info.event.id),
-        navigate,
-        info.jsEvent
-      );
+    if (!info.event.id) return;
+
+    const detailUrl = getDetailUrl(model, info.event.id);
+
+    if (eventModified(info.jsEvent as any) || !previewPanelEnabled) {
+      navigateToLink(detailUrl, navigate, info.jsEvent);
+    } else {
+      openGlobalPreview(model, Number.parseInt(info.event.id));
     }
   };
 

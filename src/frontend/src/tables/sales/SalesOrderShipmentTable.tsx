@@ -11,8 +11,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowCancelAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -30,6 +29,8 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { TagsFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
@@ -255,7 +256,7 @@ export default function SalesOrderShipmentTable({
             deleteShipment.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,
