@@ -1,5 +1,6 @@
 """Order model definitions."""
 
+import copy
 from decimal import Decimal
 from typing import Any, Optional, TypedDict
 
@@ -8,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
+from django.db.models.base import ModelState
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
@@ -63,7 +65,8 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
-from plugin.events import trigger_event
+from plugin.events import bulk_trigger_event, trigger_event
+from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
@@ -2696,6 +2699,175 @@ class SalesOrderShipment(
         return True
 
     @transaction.atomic
+    def complete_allocations(
+        self, allocations: QuerySet, user: Optional[User] = None
+    ) -> None:
+        """Complete a set of SalesOrderAllocation objects, marking their stock as shipped to the customer.
+
+        Arguments:
+            allocations: QuerySet of SalesOrderAllocation objects to complete
+            user: The user completing the allocations
+
+        Notes:
+            This unrolls what would otherwise be a per-allocation call, so that the underlying
+            StockItem, StockItemTracking, SalesOrderLineItem and SalesOrderAllocation writes can
+            be batched into a handful of bulk queries instead of several per allocation.
+        """
+        import part.tasks
+
+        order = self.order
+        customer = order.customer
+
+        # Preselect related fields to avoid per-row database queries below
+        allocations = allocations.select_related('line', 'item', 'item__part')
+
+        split_items = []  # (source_item, new_item, quantity) - stock to split off
+        shipped_items = []  # (target_item, quantity) - stock to mark as shipped
+
+        # Canonical (mutable) copy of each distinct StockItem being drawn from - multiple
+        # allocations may draw from the same StockItem, so track running state
+        seen_stock_items: dict = {}
+
+        # Track the lines which have already been processed, to avoid double counting
+        seen_lines: dict = {}
+
+        # Allocations whose 'item' now points at a newly-split-off StockItem
+        allocations_to_update = []
+
+        for allocation in allocations:
+            stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
+            quantity = allocation.quantity
+
+            seen_stock_items[stock_item.pk] = stock_item
+
+            if quantity < stock_item.quantity:
+                # Split off exactly the shipped quantity into a new StockItem,
+                # leaving the remainder in place as available stock
+                new_item = copy.copy(stock_item)
+                new_item._state = ModelState()
+                new_item.pk = None
+                new_item.quantity = quantity
+                new_item.parent = stock_item
+
+                stock_item.quantity -= quantity
+
+                target_item = new_item
+                split_items.append((stock_item, new_item, quantity))
+
+                allocation.item = new_item
+                allocations_to_update.append(allocation)
+            else:
+                target_item = stock_item
+
+            # Resolve the final resting state of the target item now
+            target_item.sales_order = order
+            target_item.customer = customer
+            target_item.location = None
+
+            shipped_items.append((target_item, quantity))
+
+            # Increase the "shipped" quantity for the associated line
+            line = seen_lines.get(allocation.line_id) or allocation.line
+            line.shipped += quantity
+            seen_lines[line.pk] = line
+
+        # Nothing to do?
+        if not seen_stock_items:
+            return
+
+        # Bulk-create the newly split-off stock items - this resolves their primary keys,
+        # which the tracking entries below need
+        new_stock_items = [new_item for _, new_item, _ in split_items]
+        stock.models.StockItem.objects.bulk_create(new_stock_items)
+
+        tracking_entries = []
+        split_events = []
+        customer_events = []
+
+        # Split stock items for "split_items"
+        for source_item, new_item, quantity in split_items:
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=new_item.pk,
+                    part_id=new_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
+                    user=user,
+                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
+                )
+            )
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=source_item.pk,
+                    part_id=source_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    user=user,
+                    deltas={
+                        'removed': float(quantity),
+                        'quantity': float(source_item.quantity),
+                    },
+                )
+            )
+
+            split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
+
+        # Ship stock items for "shipped_items"
+        for target_item, quantity in shipped_items:
+            deltas = {'quantity': float(quantity), 'salesorder': order.pk}
+
+            if customer is not None:
+                deltas['customer'] = customer.pk
+                deltas['customer_name'] = customer.name
+
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=target_item.pk,
+                    part_id=target_item.part_id,
+                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+                    user=user,
+                    deltas=deltas,
+                )
+            )
+
+            customer_events.append((
+                (),
+                {'id': target_item.pk, 'customer': customer.pk if customer else None},
+            ))
+
+        # Flush all StockItem field changes (quantity reductions, and shipment details)
+        stock.models.StockItem.objects.bulk_update(
+            seen_stock_items.values(), ['quantity']
+        )
+        stock.models.StockItem.objects.bulk_update(
+            [item for item, _ in shipped_items], ['sales_order', 'customer', 'location']
+        )
+
+        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+
+        # Update sales order lines for "seen_lines"
+        SalesOrderLineItem.objects.bulk_update(seen_lines.values(), ['shipped'])
+
+        # Repoint allocations onto their (possibly newly split) StockItem
+        if allocations_to_update:
+            SalesOrderAllocation.objects.bulk_update(allocations_to_update, ['item'])
+
+        # Queue the ITEM_SPLIT / ITEM_ASSIGNED_TO_CUSTOMER plugin events in bulk,
+        # rather than one offload_task() call (and one OrmQ insert) per item
+        bulk_trigger_event(StockEvents.ITEM_SPLIT, split_events)
+        bulk_trigger_event(StockEvents.ITEM_ASSIGNED_TO_CUSTOMER, customer_events)
+
+        # bulk_update()/bulk_create() above do not fire StockItem's post_save signal,
+        # which normally triggers a low-stock check for the affected part - so queue
+        # that check explicitly, once per distinct part touched by this call
+        touched_part_ids = {item.part_id for item in seen_stock_items.values()}
+
+        InvenTree.tasks.bulk_offload_task(
+            part.tasks.notify_low_stock_if_required,
+            [((part_id,), {}) for part_id in touched_part_ids],
+            group='notification',
+            force_async=True,
+        )
+
+    @transaction.atomic
     def complete_shipment(self, user, **kwargs):
         """Complete this particular shipment.
 
@@ -2896,28 +3068,6 @@ class SalesOrderAllocation(models.Model):
     def get_po(self):
         """Return the PurchaseOrder associated with this allocation."""
         return self.item.purchase_order
-
-    def complete_allocation(self, user):
-        """Complete this allocation (called when the parent SalesOrder is marked as "shipped").
-
-        Executes:
-        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
-        - Mark the StockItem as belonging to the Customer (this will remove it from stock)
-        """
-        order = self.line.order
-
-        item = self.item.allocateToCustomer(
-            order.customer, quantity=self.quantity, order=order, user=user
-        )
-
-        # Update the 'shipped' quantity
-        self.line.shipped += self.quantity
-        self.line.save()
-
-        # Update our own reference to the StockItem
-        # (It may have changed if the stock was split)
-        self.item = item
-        self.save()
 
 
 class ReturnOrder(TotalPriceMixin, Order):

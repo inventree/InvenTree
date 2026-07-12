@@ -424,8 +424,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
             url,
             expected_code=200,
             benchmark=True,
-            max_query_time=100,
-            max_query_count=10000,
+            max_query_time=5,
+            max_query_count=100,
         )
         self.assertEqual(response.status_code, 200)
 

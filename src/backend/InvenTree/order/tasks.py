@@ -263,8 +263,7 @@ def complete_sales_order_shipment(
     logger.info('Completing SalesOrderShipment <%s>', shipment)
 
     with transaction.atomic():
-        for allocation in shipment.allocations.all():
-            allocation.complete_allocation(user=user)
+        shipment.complete_allocations(shipment.allocations.all(), user=user)
 
         # Once all allocations have been completed, we can mark the shipment as complete
         shipment.shipment_date = shipment_date or datetime.now().date()
