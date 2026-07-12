@@ -2819,6 +2819,79 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         self.assertTrue(alloc_b.exists())
 
     # ------------------------------------------------------------------
+    # Variant stock / sort priority
+    # ------------------------------------------------------------------
+
+    def test_direct_match_preferred_over_variant_stock(self):
+        """Direct part matches are allocated ahead of variant stock (sort priority 1 vs 2)."""
+        build = self._make_build(quantity=5)
+
+        bom_item = BomItem.objects.get(part=self.assembly, sub_part=self.component)
+        bom_item.allow_variants = True
+        bom_item.save()
+
+        self.component.is_template = True
+        self.component.save()
+
+        variant = Part.objects.create(
+            name='AutoAlloc Component Variant',
+            description='',
+            component=True,
+            variant_of=self.component,
+        )
+
+        direct_stock = StockItem.objects.create(part=self.component, quantity=5)
+        StockItem.objects.create(part=variant, quantity=100)
+
+        self.post(self._url(build.pk), {'interchangeable': True}, expected_code=200)
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().stock_item, direct_stock)
+
+    # ------------------------------------------------------------------
+    # Location filtering
+    # ------------------------------------------------------------------
+
+    def test_location_filters_allocation(self):
+        """The 'location' filter restricts allocation to stock within that location."""
+        build = self._make_build(quantity=5)
+
+        in_location = StockItem.objects.create(
+            part=self.component, quantity=5, location=self.loc_a
+        )
+        StockItem.objects.create(part=self.component, quantity=100, location=self.loc_b)
+
+        self.post(
+            self._url(build.pk),
+            {'location': self.loc_a.pk, 'interchangeable': True},
+            expected_code=200,
+        )
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().stock_item, in_location)
+
+    def test_exclude_location_filters_allocation(self):
+        """The 'exclude_location' filter excludes stock within that location."""
+        build = self._make_build(quantity=5)
+
+        StockItem.objects.create(part=self.component, quantity=100, location=self.loc_a)
+        allowed = StockItem.objects.create(
+            part=self.component, quantity=5, location=self.loc_b
+        )
+
+        self.post(
+            self._url(build.pk),
+            {'exclude_location': self.loc_a.pk, 'interchangeable': True},
+            expected_code=200,
+        )
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+        self.assertEqual(allocs.count(), 1)
+        self.assertEqual(allocs.first().stock_item, allowed)
+
+    # ------------------------------------------------------------------
     # Large number of build lines (performance / bulk allocation)
     # ------------------------------------------------------------------
 
