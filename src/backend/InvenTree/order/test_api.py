@@ -34,7 +34,7 @@ from order.status_codes import (
 )
 from part.models import Part
 from stock.models import StockItem, StockLocation, StockSortOrder
-from stock.status_codes import StockStatus
+from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
 
 
@@ -1416,11 +1416,23 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         # Check for expected response
         self.assertEqual(len(response), N_LINES)
+
+        # Check that the expected number of stock items has been created
         self.assertEqual(N_ITEMS + N_LINES, StockItem.objects.count())
 
         for item in response:
             self.assertEqual(item['purchase_order'], po.pk)
             self.assertEqual(item['status'], StockStatus.QUARANTINED)
+
+            stock_item = StockItem.objects.get(pk=item['pk'])
+            # Check that the item has tracking entries
+            self.assertEqual(stock_item.tracking_info.count(), 1)
+            entry = stock_item.tracking_info.first()
+            self.assertEqual(entry.deltas['quantity'], stock_item.quantity)
+            self.assertEqual(entry.user, self.user)
+            self.assertEqual(
+                entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            )
 
         # Check that the order has been completed
         po.refresh_from_db()
