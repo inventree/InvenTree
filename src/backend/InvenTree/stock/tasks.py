@@ -1,6 +1,7 @@
 """Background tasks for the stock app."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 import structlog
 from opentelemetry import trace
@@ -34,12 +35,19 @@ def rebuild_stock_items():
         logger.exception('Failed to rebuild StockItem tree: %s', e)
 
 
-def rebuild_stock_item_tree(tree_id: int, rebuild_on_fail: bool = True) -> bool:
+def rebuild_stock_item_tree(
+    tree_id: int, rebuild_on_fail: bool = True, node_id: Optional[int] = None
+) -> bool:
     """Rebuild the stock tree structure.
 
     Arguments:
         tree_id (int): The ID of the StockItem tree to rebuild.
         rebuild_on_fail (bool): If True, will attempt to rebuild the entire StockItem tree if the partial rebuild fails.
+        node_id (int): Optional pk of the StockItem which triggered this rebuild.
+            Used only for error logging: tree_id values get reallocated over time,
+            so on their own they are not enough to identify *which* tree failed
+            once this is read back from the logs later - the triggering node lets
+            us identify it unambiguously.
 
     Returns:
         bool: True if the partial tree rebuild was successful, False otherwise.
@@ -59,8 +67,19 @@ def rebuild_stock_item_tree(tree_id: int, rebuild_on_fail: bool = True) -> bool:
             # This is a critical error, explicitly report to sentry
             report_exception(e)
 
-            log_error('rebuild_stock_item_tree')
-            logger.warning('Failed to rebuild StockItem tree for tree_id: %s', tree_id)
+            # Note: tree_id values get reallocated over time, so on their own
+            # they are not enough to identify *which* tree failed once this is
+            # read back from the logs later - identify the model and node in
+            # the error path too (not via error_data, which would discard the
+            # traceback).
+            node_ctx = f'model=StockItem, node_id={node_id}, tree_id={tree_id}'
+            log_error(f'rebuild_stock_item_tree [{node_ctx}]')
+            logger.warning(
+                'Failed to rebuild StockItem tree for tree_id=%s (node_id=%s): %s',
+                tree_id,
+                node_id,
+                e,
+            )
             # If the partial rebuild fails, rebuild the entire tree
             if rebuild_on_fail:
                 offload_task(rebuild_stock_items, group='stock')

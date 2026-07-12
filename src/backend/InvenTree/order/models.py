@@ -1057,6 +1057,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
         default_currency = currency_code_default()
 
+        # Pre-allocate a tree_id for each new (non-serialized) top-level StockItem.
+        # Calling getNextTreeID() once and incrementing locally avoids re-acquiring
+        # the tree_id allocation lock on every iteration of the loop below.
+        next_tree_id = stock.models.StockItem.getNextTreeID()
+
         # Prefetch line item objects for DB efficiency
         line_items_ids = [item['line_item'].pk for item in items]
 
@@ -1227,12 +1232,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 new_item = stock.models.StockItem(
                     **stock_data,
                     serial='',
-                    tree_id=stock.models.StockItem.getNextTreeID(),
+                    tree_id=next_tree_id,
                     parent=None,
                     level=0,
                     lft=1,
                     rght=2,
                 )
+                next_tree_id += 1
 
                 new_item.set_status(status, custom_values=custom_stock_status_values)
 

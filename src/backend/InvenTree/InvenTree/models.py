@@ -716,6 +716,11 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
     - Better handling of deletion of nodes and items
     - Ensure tree is correctly rebuilt after deletion and other operations
     - Improved protection against recursive tree structures
+
+    Note: 'order_insertion_by' must not be used on any InvenTreeTree subclass.
+    Ordered insertion of root nodes requires a global tree_id renumbering
+    (UPDATE ... WHERE tree_id > x) on nearly every top-level insert,
+    which is expensive and unsafe under concurrent database writes.
     """
 
     # How each node reference its parent object
@@ -730,11 +735,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         abstract = True
 
-    class MPTTMeta:
-        """MPTT metaclass options."""
-
-        order_insertion_by = ['name']
-
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         """Handle the deletion of a tree node.
 
@@ -762,6 +763,12 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         tree_id = self.tree_id
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
+        # Django clears self.pk once super().delete() (below) succeeds, but we
+        # still need a stable identifier for logging further down (both here,
+        # and inside partial_rebuild(), which we call after the row is gone) -
+        # capture it now, and restore it once the row is deleted.
+        node_pk = self.pk
+
         # When deleting a top level node with multiple children,
         # we need to assign a new tree_id to each child node
         # otherwise they will all have the same tree_id (which is not allowed)
@@ -785,6 +792,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         # 2. Delete *this* node
         super().delete(*args, **kwargs)
+        self.pk = node_pk
 
         # A set of tree_id values which need to be rebuilt
         trees = set()
@@ -816,7 +824,34 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         if not result:
             # Rebuild the entire tree (expensive!!!)
-            self.__class__.objects.rebuild()
+            try:
+                self.__class__.objects.rebuild()
+            except Exception as e:
+                # This is a critical error: the tree could not be fully
+                # rebuilt after deletion. There is no further fallback here,
+                # so log it and re-raise - letting the enclosing
+                # @transaction.atomic block roll back the whole delete() call
+                # is safer than silently leaving a corrupted tree structure
+                # in place.
+                #
+                # Note: we deliberately do NOT call InvenTree.exceptions.log_error()
+                # here (unlike every other tree-failure handler in this file).
+                # That call persists an Error row to the database - but since
+                # we are about to re-raise and roll back this entire
+                # transaction, that row would be rolled back right along with
+                # it and never actually persist. sentry.report_exception() (an
+                # external HTTP call) and logger.exception() (structlog, not a
+                # DB write) are used instead, as they are not transactional
+                # and will survive the rollback.
+                InvenTree.sentry.report_exception(e)
+                logger.exception(
+                    'Failed to rebuild %s tree after deleting <%s> (tree_ids=%s): %s',
+                    self.__class__.__name__,
+                    node_pk,
+                    sorted(trees),
+                    e,
+                )
+                raise
 
     def handle_tree_delete(self, delete_children=False, delete_items=False):
         """Delete a single instance of the tree, based on provided kwargs.
@@ -891,8 +926,27 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         """Instance filters for InvenTreeTree models."""
         return {self.NODE_PARENT_KEY: {'exclude_tree': self.pk}}
 
+    @classmethod
+    def _lock_tree_id_allocator(cls) -> None:
+        """Acquire a row lock which serializes tree_id allocation for this model.
+
+        Also used to serialize tree *rebuilds* (see save(), below): partial_rebuild()
+        reads every node in a tree and then bulk_update()s computed lft/rght/level
+        values back, with no locking of its own. Two concurrent rebuilds of the same
+        tree_id (e.g. two concurrent splitStock() calls sharing a parent) would
+        otherwise race, with whichever call writes back last silently discarding the
+        other's contribution to the tree.
+        """
+        content_type = ContentType.objects.get_for_model(cls, for_concrete_model=False)
+        ContentType.objects.select_for_update().filter(pk=content_type.pk).get()
+
+    @transaction.atomic
     def save(self, *args, **kwargs):
-        """Custom save method for InvenTreeTree abstract model."""
+        """Custom save method for InvenTreeTree abstract model.
+
+        Runs in a single transaction so node updates and any required rebuilds
+        either complete together or roll back together.
+        """
         db_instance = None
 
         parent = getattr(self, self.NODE_PARENT_KEY, None)
@@ -902,6 +956,14 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
                 # If we have a parent, use the parent's tree_id
                 self.tree_id = parent.tree_id
                 self.level = parent.level + 1
+            elif not self.pk:
+                # A new top-level node: pre-set the MPTT fields,
+                # so that MPTT does not overwrite the provided tree_id
+                # with its own value at insertion time
+                self.tree_id = self.getNextTreeID()
+                self.lft = 1
+                self.rght = 2
+                self.level = 0
             else:
                 # Otherwise, we need to generate a new tree_id
                 self.tree_id = self.getNextTreeID()
@@ -933,6 +995,11 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
 
+        if trees:
+            # Serialize this rebuild against any other concurrent tree_id
+            # allocation or rebuild for this model - see _lock_tree_id_allocator()
+            self._lock_tree_id_allocator()
+
         for tree_id in trees:
             if tree_id:
                 self.partial_rebuild(tree_id)
@@ -947,7 +1014,22 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             except Exception as e:
                 # Any other error is unexpected
                 InvenTree.sentry.report_exception(e)
-                InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
+                # Note: tree_id values get reallocated over time, so on their own
+                # they are not enough to identify *which* tree failed once this is
+                # read back from the logs later - identify the model and node in
+                # the error path too (not via error_data, which would discard the
+                # traceback).
+                node_ctx = f'node_id={self.pk}, tree_ids={sorted(trees)}'
+                InvenTree.exceptions.log_error(
+                    f'{self.__class__.__name__}.save [{node_ctx}]'
+                )
+                logger.exception(
+                    'Failed to refresh %s <%s> after tree rebuild (tree_ids=%s): %s',
+                    self.__class__.__name__,
+                    self.pk,
+                    sorted(trees),
+                    e,
+                )
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
@@ -961,11 +1043,20 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             # This is a critical error, explicitly report to sentry
             InvenTree.sentry.report_exception(e)
 
-            InvenTree.exceptions.log_error(f'{self.__class__.__name__}.partial_rebuild')
+            # Note: tree_id values get reallocated over time, so on their own
+            # they are not enough to identify *which* tree failed once this is
+            # read back from the logs later - identify the model and node in
+            # the error path too (not via error_data, which would discard the
+            # traceback).
+            node_ctx = f'node_id={self.pk}, tree_id={tree_id}'
+            InvenTree.exceptions.log_error(
+                f'{self.__class__.__name__}.partial_rebuild [{node_ctx}]'
+            )
             logger.exception(
-                'Failed to rebuild tree for %s <%s>: %s',
+                'Failed to rebuild tree for %s <%s> (tree_id=%s): %s',
                 self.__class__.__name__,
                 self.pk,
+                tree_id,
                 e,
             )
             return False
@@ -1004,13 +1095,20 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
     @classmethod
     def getNextTreeID(cls) -> int:
-        """Return the next available tree_id for this model class."""
-        instance = cls.objects.order_by('-tree_id').first()
+        """Return the next available tree_id for this model class.
 
-        if instance:
-            return instance.tree_id + 1
-        else:
-            return 1
+        The allocation is serialized per model to avoid concurrent callers
+        selecting the same top-level tree_id.
+        """
+        with transaction.atomic():
+            cls._lock_tree_id_allocator()
+
+            instance = cls.objects.order_by('-tree_id').first()
+
+            if instance:
+                return instance.tree_id + 1
+            else:
+                return 1
 
 
 class PathStringMixin(models.Model):

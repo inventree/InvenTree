@@ -152,7 +152,7 @@ class StockLocation(
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
 
-        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        Base tree delete handles transactional integrity for tree mutations.
         """
         super().delete(
             delete_children=kwargs.get('delete_sub_locations', False),
@@ -466,11 +466,6 @@ class StockItem(
 
         verbose_name = _('Stock Item')
 
-    class MPTTMeta:
-        """MPTT metaclass options."""
-
-        order_insertion_by = ['part']
-
     def save(self, *args, **kwargs):
         """Save this StockItem to the database.
 
@@ -559,6 +554,13 @@ class StockItem(
                 raise ValidationError(_('Serialized stock items cannot be deleted'))
 
         super().delete(**kwargs)
+
+    def partial_rebuild(self, tree_id: int) -> bool:
+        """Perform a partial rebuild of the stock item tree.
+
+        If the partial rebuild fails, a full tree rebuild is scheduled in the background.
+        """
+        return stock.tasks.rebuild_stock_item_tree(tree_id, node_id=self.pk)
 
     @staticmethod
     def get_api_url():
@@ -709,7 +711,10 @@ class StockItem(
         part = data['part']
 
         parent = kwargs.pop('parent', None) or data.get('parent')
-        tree_id = kwargs.pop('tree_id', StockItem.getNextTreeID())
+        tree_id = kwargs.pop('tree_id', None)
+
+        if tree_id is None:
+            tree_id = StockItem.getNextTreeID()
 
         if parent:
             # Override with parent's tree_id if provided
@@ -747,11 +752,15 @@ class StockItem(
 
         # We will need to rebuild the stock item tree manually, due to the bulk_create operation
         if parent and parent.tree_id:
+            # This bypasses save(), so we must acquire the tree_id-allocator lock
+            # ourselves - see InvenTree.models.InvenTreeTree._lock_tree_id_allocator()
+            cls._lock_tree_id_allocator()
+
             # Rebuild the tree structure for this StockItem tree
             logger.info(
                 'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
             )
-            stock.tasks.rebuild_stock_item_tree(parent.tree_id)
+            stock.tasks.rebuild_stock_item_tree(parent.tree_id, node_id=parent.pk)
 
         # Fetch the new StockItem objects from the database
         items = StockItem.objects.filter(part=part, serial__in=serials)
@@ -2623,13 +2632,18 @@ class StockItem(
         # Rebuild stock trees as required
         rebuild_result = True
         for tree_id in tree_ids:
-            if not stock.tasks.rebuild_stock_item_tree(tree_id, rebuild_on_fail=False):
+            if not stock.tasks.rebuild_stock_item_tree(
+                tree_id, rebuild_on_fail=False, node_id=self.pk
+            ):
                 rebuild_result = False
 
         if not rebuild_result:
             # If the rebuild failed, offload the task to a background worker
             logger.warning(
-                'Failed to rebuild stock item tree during merge_stock_items operation, offloading task.'
+                'Failed to rebuild stock item tree during merge_stock_items operation '
+                '(model=StockItem, node_id=%s, tree_ids=%s); offloading task.',
+                self.pk,
+                sorted(tree_ids),
             )
             InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
 
@@ -2753,8 +2767,7 @@ class StockItem(
             record_tracking=record_tracking,
         )
 
-        # Rebuild the tree for this parent item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
+        # Note: The tree has already been rebuilt, when the new item was saved
 
         # Attempt to reload the new item from the database
         try:

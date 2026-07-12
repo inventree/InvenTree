@@ -95,7 +95,7 @@ class PartCategory(
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
-        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        Base tree delete handles transactional integrity for tree mutations.
         """
         super().delete(
             delete_children=kwargs.get('delete_child_categories', False),

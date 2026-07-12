@@ -36,7 +36,7 @@ from common.models import CustomUnit, InvenTreeSetting
 from common.settings import get_global_setting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase, in_env_context
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context, trackTreeRebuilds
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -109,6 +109,218 @@ class TreeFixtureTest(TestCase):
 
         self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
+
+
+class TreeRebuildTest(TestCase):
+    """Test that tree operations do not trigger redundant tree rebuilds."""
+
+    def test_create_root_node(self):
+        """Creating a new top-level tree node must not trigger a tree rebuild."""
+        for model in [PartCategory, StockLocation]:
+            with trackTreeRebuilds() as tracker:
+                node_1 = model.objects.create(name='Node 1', description='First node')
+                node_2 = model.objects.create(name='Node 2', description='Second node')
+
+            self.assertEqual(len(tracker.partial), 0)
+            self.assertEqual(len(tracker.full), 0)
+
+            # The MPTT fields must be pre-set at insertion time
+            for node in [node_1, node_2]:
+                self.assertEqual((node.lft, node.rght, node.level), (1, 2, 0))
+
+            # Each new top-level node must receive a unique tree_id
+            self.assertNotEqual(node_1.tree_id, node_2.tree_id)
+
+    def test_create_child_node(self):
+        """Creating a child node must rebuild the parent tree exactly once."""
+        parent = StockLocation.objects.create(name='Parent Location')
+
+        with trackTreeRebuilds() as tracker:
+            child = StockLocation.objects.create(name='Child Location', parent=parent)
+
+        self.assertEqual(tracker.partial, [('StockLocation', parent.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+
+        self.assertEqual(child.parent, parent)
+        self.assertEqual(child.tree_id, parent.tree_id)
+
+    def test_concurrent_root_creates(self):
+        """Test that concurrent root node creation produces unique tree_ids.
+
+        This test verifies that the tree_id allocator lock prevents
+        concurrent transactions from selecting the same top-level tree_id.
+        """
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        def create_root_location(idx):
+            """Create a root-level stock location."""
+            return StockLocation.objects.create(
+                name=f'Concurrent Root {idx}', description=f'Root {idx}'
+            )
+
+        # Clear existing locations
+        StockLocation.objects.all().delete()
+
+        # Create multiple root nodes concurrently
+        num_workers = 5
+        nodes = []
+
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [
+                executor.submit(create_root_location, i) for i in range(num_workers)
+            ]
+            nodes = [f.result() for f in as_completed(futures)]
+
+        # All nodes must have unique tree_id values
+        tree_ids = [node.tree_id for node in nodes]
+        self.assertEqual(len(set(tree_ids)), num_workers)
+
+        # All nodes must be at level 0
+        for node in nodes:
+            node.refresh_from_db()
+            self.assertEqual(node.level, 0)
+            self.assertIsNone(node.parent)
+
+    def test_cross_tree_move(self):
+        """Test that moving a node between trees triggers two partial rebuilds.
+
+        When a node's parent is changed to a node from a different tree,
+        both the old tree and new tree must be rebuilt.
+        """
+        root_a = StockLocation.objects.create(name='Root A')
+        root_b = StockLocation.objects.create(name='Root B')
+
+        child = StockLocation.objects.create(name='Child', parent=root_a)
+
+        # Verify initial state: child is under root_a
+        self.assertEqual(child.tree_id, root_a.tree_id)
+        self.assertEqual(child.parent, root_a)
+
+        # Move child from root_a to root_b
+        with trackTreeRebuilds() as tracker:
+            child.parent = root_b
+            child.save()
+
+        # Should trigger exactly two partial rebuilds (one for each tree)
+        self.assertEqual(len(tracker.partial), 2)
+        self.assertEqual(len(tracker.full), 0)
+
+        # Verify final state: child is now under root_b
+        child.refresh_from_db()
+        self.assertEqual(child.tree_id, root_b.tree_id)
+        self.assertEqual(child.parent, root_b)
+        self.assertEqual(child.level, 1)
+
+    def test_invalid_move_error_mapping(self):
+        """Test that InvalidMove exceptions are mapped to ValidationError.
+
+        Attempting to create a cycle (e.g., parent=self) should raise
+        InvalidMove internally, which is converted to a ValidationError
+        with a user-friendly message.
+        """
+        node = StockLocation.objects.create(name='Test Node')
+
+        # Attempt to set node as its own parent (creates a cycle)
+        node.parent = node
+
+        with self.assertRaises(ValidationError) as context:
+            node.save()
+
+        # The error should reference the parent field
+        self.assertIn('parent', context.exception.message_dict)
+        self.assertIn('Invalid choice', str(context.exception.message_dict['parent']))
+
+    def test_partial_rebuild_failure_logging(self):
+        """Test that a failed tree rebuild logs the model type and node ID.
+
+        tree_id values get reallocated over time, so a log entry which only
+        records the tree_id is not enough to identify which tree failed once
+        it's read back later - the model type and node ID must also be present.
+        """
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        Error.objects.all().delete()
+
+        parent = StockLocation.objects.create(name='Rebuild Failure Parent')
+        StockLocation.objects.create(name='Rebuild Failure Child', parent=parent)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            result = parent.partial_rebuild(parent.tree_id)
+
+        self.assertFalse(result)
+
+        error = Error.objects.filter(path__contains='partial_rebuild').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockLocation', error.path)
+        self.assertIn(f'node_id={parent.pk}', error.path)
+
+    def test_delete_partial_rebuild_fallback(self):
+        """Test that delete() falls back to a full tree rebuild when partial_rebuild fails.
+
+        delete() aggregates the return value of partial_rebuild() for each
+        affected tree_id, and if any of them returned False, falls back to a
+        full self.__class__.objects.rebuild() - verify that fallback actually
+        triggers.
+        """
+        from mptt.managers import TreeManager
+
+        root = StockLocation.objects.create(name='Fallback Root')
+        StockLocation.objects.create(name='Fallback Child', parent=root)
+
+        with (
+            mock.patch.object(StockLocation, 'partial_rebuild', return_value=False),
+            mock.patch.object(TreeManager, 'rebuild') as mock_rebuild,
+        ):
+            root.delete()
+
+        mock_rebuild.assert_called()
+
+    def test_delete_double_rebuild_failure_propagates(self):
+        """Test that a failed delete() full-rebuild fallback is reported, then re-raised.
+
+        If partial_rebuild() fails *and* the fallback full rebuild also
+        fails, there is no further fallback available - the failure is
+        reported to sentry and re-raised, so the enclosing
+        @transaction.atomic block rolls back the whole delete() call rather
+        than silently leaving a corrupted tree structure in place.
+
+        Note: unlike every other tree-failure handler, this one does *not*
+        call InvenTree.exceptions.log_error() (which would persist an Error
+        row to the database) - that write would itself be rolled back by the
+        same transaction it's trying to report on, so it would silently never
+        persist. sentry.report_exception() is used instead, since it's an
+        external HTTP call unaffected by the DB rollback.
+        """
+        from mptt.managers import TreeManager
+
+        root = StockLocation.objects.create(name='Double Fail Root')
+        StockLocation.objects.create(name='Double Fail Child', parent=root)
+        root_pk = root.pk
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced full-rebuild failure')
+
+        with (
+            mock.patch.object(StockLocation, 'partial_rebuild', return_value=False),
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception') as mock_report,
+        ):
+            with self.assertRaises(RuntimeError):
+                root.delete()
+
+        # The failure must have been reported (survives the rollback below)
+        mock_report.assert_called_once()
+        self.assertIsInstance(mock_report.call_args[0][0], RuntimeError)
+
+        # The delete() transaction must have rolled back entirely
+        self.assertTrue(StockLocation.objects.filter(pk=root_pk).exists())
 
 
 class HostTest(InvenTreeTestCase):

@@ -23,6 +23,7 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     findOffloadedEvent,
+    trackTreeRebuilds,
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
@@ -383,6 +384,107 @@ class BuildTest(BuildTestBase):
             )
 
         BuildItem.objects.bulk_create(items_to_create)
+
+    def test_consume_rebuild_count(self):
+        """Test that stock consumption does not perform redundant tree rebuilds."""
+        # Allocate untracked stock against the build:
+        # - Full-quantity allocations are consumed without splitting
+        # - Partial allocations require a stock split (and hence a tree rebuild)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: 3,  # Full quantity - no split required
+                self.stock_1_2: 47,  # Partial quantity - split required
+                self.stock_2_1: 5,  # Full quantity - no split required
+                self.stock_2_2: 5,
+                self.stock_2_3: 5,
+                self.stock_2_4: 5,
+                self.stock_2_5: 5,
+            },
+        )
+
+        with trackTreeRebuilds() as tracker:
+            build.tasks.consume_build_stock(
+                self.build.pk,
+                lines=[self.line_1.pk, self.line_2.pk],
+                user_id=self.user.pk,
+            )
+
+        # No full tree rebuilds are required
+        self.assertEqual(len(tracker.full), 0)
+
+        # No tree is rebuilt more than once
+        self.assertEqual(len(tracker.partial), len(set(tracker.partial)))
+
+        # Only the split allocation requires a tree rebuild
+        self.assertEqual(tracker.partial, [('StockItem', self.stock_1_2.tree_id)])
+
+    def test_consume_rebuild_count_bulk(self):
+        """Test tree rebuild behavior when consuming a large number of stock items."""
+        n_full = 150  # Items which will be fully consumed (no stock split required)
+        n_partial = 50  # Items which will be partially consumed (split required)
+
+        # Create a build order which requires a large amount of stock
+        bld = Build.objects.create(
+            reference=generate_next_build_reference(),
+            title='A large build order',
+            part=self.assembly,
+            quantity=100,
+            issued_by=get_user_model().objects.get(pk=1),
+        )
+
+        line = BuildLine.objects.get(build=bld, bom_item=self.bom_item_1)
+
+        full_items = [
+            StockItem.objects.create(part=self.sub_part_1, quantity=1)
+            for _ in range(n_full)
+        ]
+
+        partial_items = [
+            StockItem.objects.create(part=self.sub_part_1, quantity=4)
+            for _ in range(n_partial)
+        ]
+
+        allocations = [
+            BuildItem(build_line=line, stock_item=item, quantity=1)
+            for item in full_items
+        ]
+
+        allocations += [
+            BuildItem(build_line=line, stock_item=item, quantity=3)
+            for item in partial_items
+        ]
+
+        BuildItem.objects.bulk_create(allocations)
+
+        self.assertEqual(line.allocations.count(), n_full + n_partial)
+
+        with trackTreeRebuilds() as tracker:
+            build.tasks.consume_build_stock(
+                bld.pk, lines=[line.pk], user_id=self.user.pk
+            )
+
+        # No full tree rebuilds are performed
+        self.assertEqual(tracker.full, [])
+
+        # Each partially consumed item rebuilds its own tree exactly once,
+        # while the fully consumed items do not require any tree rebuild
+        self.assertEqual(len(tracker.partial), n_partial)
+        self.assertEqual(
+            set(tracker.partial),
+            {('StockItem', item.tree_id) for item in partial_items},
+        )
+
+        # All allocations have been consumed against the build
+        self.assertEqual(line.allocations.count(), 0)
+
+        line.refresh_from_db()
+        self.assertEqual(line.consumed, n_full + 3 * n_partial)
+
+        # Each fully consumed item (and each split child item) is assigned to the build
+        self.assertEqual(
+            StockItem.objects.filter(consumed_by=bld).count(), n_full + n_partial
+        )
 
     def test_partial_allocation(self):
         """Test partial allocation of stock."""

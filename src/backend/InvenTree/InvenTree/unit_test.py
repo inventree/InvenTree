@@ -21,6 +21,7 @@ from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from mptt.managers import TreeManager
 from rest_framework.test import APITestCase
 
 from plugin import registry
@@ -63,6 +64,52 @@ def count_queries(
             print(f'{msg}: {output}')
         else:
             print(output)
+
+
+class TreeRebuildTracker:
+    """Records MPTT tree rebuild operations, for use with trackTreeRebuilds."""
+
+    def __init__(self):
+        """Initialize the tracker with empty call lists."""
+        # List of (model name, tree_id) tuples, one per partial tree rebuild
+        self.partial = []
+
+        # List of model names, one per full tree rebuild
+        self.full = []
+
+
+@contextmanager
+def trackTreeRebuilds():
+    """Context manager which records MPTT tree rebuild operations.
+
+    Tree rebuilds are expensive operations,
+    so unit tests can use this helper to assert that a given code path
+    does not perform redundant (or unexpected) rebuilds.
+
+    Yields:
+        TreeRebuildTracker: Records partial and full tree rebuild operations
+    """
+    tracker = TreeRebuildTracker()
+
+    original_partial = TreeManager.partial_rebuild
+    original_rebuild = TreeManager.rebuild
+
+    def partial_rebuild(manager, tree_id, *args, **kwargs):
+        tracker.partial.append((manager.model.__name__, tree_id))
+        return original_partial(manager, tree_id, *args, **kwargs)
+
+    def rebuild(manager, *args, **kwargs):
+        # Note: partial_rebuild delegates to rebuild() with a tree_id filter,
+        # so only count rebuild operations which cover the entire table
+        if not kwargs.get('tree_id'):
+            tracker.full.append(manager.model.__name__)
+        return original_rebuild(manager, *args, **kwargs)
+
+    with (
+        mock.patch.object(TreeManager, 'partial_rebuild', partial_rebuild),
+        mock.patch.object(TreeManager, 'rebuild', rebuild),
+    ):
+        yield tracker
 
 
 def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:

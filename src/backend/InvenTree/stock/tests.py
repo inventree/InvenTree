@@ -3,15 +3,16 @@
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.db import DatabaseError
 from django.db.models import Sum
-from django.test import override_settings
+from django.test import TransactionTestCase, override_settings
 
 from djmoney.money import Money
 
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase, trackTreeRebuilds
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -180,6 +181,12 @@ class StockTest(StockTestBase):
 
     def test_loc_count(self):
         """Test count function."""
+        if StockLocation.objects.count() != 7:
+            for loc in StockLocation.objects.all().order_by('pk'):
+                print(
+                    f'DEBUG loc pk={loc.pk} name={loc.name!r} tree_id={loc.tree_id} parent={loc.parent_id}',
+                    flush=True,
+                )
         self.assertEqual(StockLocation.objects.count(), 7)
 
     def test_url(self):
@@ -1278,6 +1285,293 @@ class StockTreeTest(StockTestBase):
         self.assertEqual(item.get_children().count(), 12)
         self.assertEqual(item.get_descendants(include_self=True).count(), 13)
 
+    def test_rebuild_counts(self):
+        """Test that stock operations do not perform redundant tree rebuilds."""
+        part = Part.objects.create(
+            name='Rebuild part',
+            description='A part for testing tree rebuild counts',
+            trackable=True,
+        )
+
+        # Creating a new top-level stock item must not require a tree rebuild
+        with trackTreeRebuilds() as tracker:
+            item = StockItem.objects.create(part=part, quantity=100)
+
+        self.assertEqual(len(tracker.partial), 0)
+        self.assertEqual(len(tracker.full), 0)
+
+        # Splitting stock must rebuild the tree exactly once
+        with trackTreeRebuilds() as tracker:
+            child = item.splitStock(25, None, None)
+
+        self.assertEqual(tracker.partial, [('StockItem', item.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+        self.assertEqual(child.parent.pk, item.pk)
+
+        # Serializing stock must rebuild the tree exactly once
+        item.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            item.serializeStock(10, [str(i) for i in range(10)], None)
+
+        self.assertEqual(tracker.partial, [('StockItem', item.tree_id)])
+        self.assertEqual(len(tracker.full), 0)
+
+        # Simple stock adjustments must not require a tree rebuild
+        item.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            item.add_stock(10, None)
+            item.take_stock(5, None)
+
+        self.assertEqual(len(tracker.partial), 0)
+        self.assertEqual(len(tracker.full), 0)
+
+    def test_location_root_delete_rebuild_count(self):
+        """Test that deleting a root location rebuilds each resulting tree exactly once.
+
+        This mirrors the PartCategory root-delete rebuild count test,
+        ensuring StockLocation has parity for this critical operation.
+        """
+        # Clear out all stock items (they reference locations via foreign key)
+        StockItem.objects.all().delete()
+
+        # Clear out existing locations
+        StockLocation.objects.all().delete()
+
+        root = StockLocation.objects.create(name='Root Location')
+
+        # Create three child locations
+        for i in range(3):
+            StockLocation.objects.create(
+                name=f'Child Location {i}', description='Child', parent=root
+            )
+
+        root.refresh_from_db()
+
+        with trackTreeRebuilds() as tracker:
+            root.delete()
+
+        # No full tree rebuild is required
+        self.assertEqual(len(tracker.full), 0)
+
+        # Three trees result from the delete: each is rebuilt exactly once
+        # (the original tree, plus one new tree for each additional subtree)
+        self.assertEqual(len(tracker.partial), 3)
+        self.assertEqual(len(tracker.partial), len(set(tracker.partial)))
+
+        # All child locations should now be root-level
+        for loc in StockLocation.objects.all():
+            self.assertIsNone(loc.parent)
+            self.assertEqual(loc.level, 0)
+
+    def test_partial_rebuild_failure_logging(self):
+        """Test that a failed StockItem tree rebuild logs the model type and node ID.
+
+        StockItem overrides partial_rebuild() to delegate to
+        stock.tasks.rebuild_stock_item_tree(), a separate code path from the
+        generic InvenTreeTree.partial_rebuild() (covered by
+        InvenTree.tests.TreeRebuildTest.test_partial_rebuild_failure_logging) -
+        verify it also logs enough context (not just the tree_id, which gets
+        reallocated over time) to identify which tree failed.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        Error.objects.all().delete()
+
+        part = Part.objects.create(
+            name='Rebuild failure part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=100)
+        child = root.splitStock(10, None, None)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            result = child.partial_rebuild(root.tree_id)
+
+        self.assertFalse(result)
+
+        error = Error.objects.filter(path__contains='rebuild_stock_item_tree').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockItem', error.path)
+        self.assertIn(f'node_id={child.pk}', error.path)
+        self.assertIn(f'tree_id={root.tree_id}', error.path)
+
+    def test_save_get_db_instance_missing_row(self):
+        """Document current behavior of save() when self.pk is set but the row is gone.
+
+        This can happen if the underlying row was deleted out from under an
+        in-memory instance (e.g. by a concurrent delete elsewhere).
+
+        Two things worth recording here, both discovered while trying to
+        write this test:
+
+        1. DiffMixin.get_db_instance() already catches DoesNotExist
+           internally and returns None, so InvenTreeTree.save()'s own
+           `except self.__class__.DoesNotExist` around its call to
+           get_db_instance() is effectively unreachable given the current
+           implementation - it can never actually observe that exception.
+           (Mocking get_db_instance() itself to raise, to force that specific
+           except clause, is unrealistic: it bypasses get_db_instance()'s own
+           handling and instead surfaces the DoesNotExist through a
+           *different*, unrelated, unprotected caller -
+           PluginValidationMixin.run_plugin_validation() via
+           DiffMixin.get_field_deltas() - a separate gap, not this one.)
+
+        2. The realistic scenario (genuinely deleting the row, then saving
+           the stale in-memory instance) does not reach get_db_instance()'s
+           handling at all - it never gets past `super().save()`, which
+           raises DatabaseError("Save with update_fields did not affect any
+           rows.") from deep within Django/django-mptt's own save chain, well
+           before InvenTreeTree.save()'s own tree-rebuild logic runs. This is
+           uncaught and unlogged anywhere in the tree code.
+        """
+        part = Part.objects.create(
+            name='Missing row part', description='A part for failure testing'
+        )
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        # Simulate the underlying row disappearing without going through
+        # delete() (which would refresh/re-sync this in-memory instance) -
+        # e.g. a raw bulk delete from a concurrent process.
+        StockItem.objects.filter(pk=item.pk).delete()
+
+        item.quantity = 20
+
+        with self.assertRaises(DatabaseError):
+            item.save()
+
+    def test_save_transaction_management_error_ignored(self):
+        """Test that save() silently ignores TransactionManagementError from refresh_from_db().
+
+        This is expected to occur when save() triggers a tree rebuild while
+        already inside a caller's transaction that cannot support a
+        mid-transaction refresh - it is not treated as an error.
+        """
+        from unittest import mock
+
+        from django.db.transaction import TransactionManagementError
+
+        part = Part.objects.create(
+            name='TxErr part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=10)
+
+        with mock.patch.object(
+            StockItem,
+            'refresh_from_db',
+            side_effect=TransactionManagementError('forced'),
+        ):
+            # splitStock() creates a new child StockItem with a parent set,
+            # which triggers save()'s tree-rebuild-then-refresh path.
+            child = root.splitStock(5, None, None)  # must not raise
+
+        self.assertIsNotNone(child.pk)
+
+    def test_save_refresh_from_db_failure_logging(self):
+        """Test save()'s generic exception handler when refresh_from_db() fails.
+
+        This is distinct from partial_rebuild() itself failing (covered by
+        test_partial_rebuild_failure_logging): here the rebuild *succeeds*,
+        but the follow-up refresh_from_db() fails for some unrelated reason.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+
+        Error.objects.all().delete()
+
+        part = Part.objects.create(
+            name='Refresh fail part', description='A part for failure testing'
+        )
+        root = StockItem.objects.create(part=part, quantity=10)
+
+        with (
+            mock.patch.object(
+                StockItem,
+                'refresh_from_db',
+                side_effect=RuntimeError('forced refresh failure'),
+            ),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            child = root.splitStock(5, None, None)  # must not raise
+
+        error = Error.objects.filter(path__contains='.save').last()
+        self.assertIsNotNone(error)
+        self.assertIn('StockItem', error.path)
+        self.assertIn(f'node_id={child.pk}', error.path)
+
+    def test_rebuild_stock_items_failure_logging(self):
+        """Test that a failed full StockItem tree rebuild is logged with context.
+
+        rebuild_stock_items() is the last-resort fallback used when a partial
+        rebuild fails (see rebuild_stock_item_tree()) - it has its own
+        error handling which was previously untested.
+        """
+        from unittest import mock
+
+        from error_report.models import Error
+        from mptt.managers import TreeManager
+
+        import stock.tasks
+
+        Error.objects.all().delete()
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced full rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+        ):
+            stock.tasks.rebuild_stock_items()  # must not raise
+
+        error = Error.objects.filter(path__contains='rebuild_stock_items').last()
+        self.assertIsNotNone(error)
+
+    def test_merge_stock_items_rebuild_failure(self):
+        """Test that merge_stock_items() offloads a full rebuild task when its trailing rebuild fails.
+
+        merge_stock_items() rebuilds every tree_id touched by the merge in a
+        loop after deleting the merged-in items; if any of those rebuilds
+        fail, it should log a warning and offload a full background rebuild
+        rather than leaving the tree in a partially-rebuilt state.
+        """
+        from unittest import mock
+
+        from mptt.managers import TreeManager
+
+        import stock.tasks
+
+        part = Part.objects.create(
+            name='Merge fail part', description='A part for failure testing'
+        )
+        item_a = StockItem.objects.create(part=part, quantity=10)
+        item_b = StockItem.objects.create(part=part, quantity=20)
+
+        def boom(*args, **kwargs):
+            raise RuntimeError('forced merge rebuild failure')
+
+        with (
+            mock.patch.object(TreeManager, 'rebuild', boom),
+            mock.patch('InvenTree.sentry.report_exception'),
+            mock.patch('InvenTree.tasks.offload_task') as mock_offload,
+        ):
+            item_a.merge_stock_items([item_b])
+
+        # Both tree_ids failed to rebuild, so a full rebuild task must be offloaded
+        mock_offload.assert_called()
+        args, _kwargs = mock_offload.call_args
+        self.assertIn(stock.tasks.rebuild_stock_items, args)
+
     def test_serialize(self):
         """Test that StockItem serialization maintains tree structure."""
         part = Part.objects.create(
@@ -1333,6 +1627,329 @@ class StockTreeTest(StockTestBase):
             self.assertEqual(child.level, 1)
             self.assertGreater(child.lft, item_1.lft)
             self.assertLess(child.rght, item_1.rght)
+
+
+class StockTreeConcurrencyTest(TransactionTestCase):
+    """Tests for concurrent modification of the StockItem tree structure.
+
+    Uses TransactionTestCase (rather than TestCase) because these tests spawn
+    real worker threads which need their own DB connections to see data
+    committed by the main thread - a plain TestCase wraps each test in an
+    uncommitted transaction that other connections cannot see.
+    """
+
+    def test_concurrent_split_stock(self):
+        """Test that concurrent splitStock() calls against the same tree do not corrupt it.
+
+        Two threads each split a child off the *same* parent StockItem at the same
+        time, each triggering a partial tree rebuild for the same tree_id. Unlike
+        top-level tree_id allocation, this path is not protected by
+        _lock_tree_id_allocator(), so django-mptt's rebuild() (a plain read of the
+        tree's nodes, followed by a bulk_update of computed lft/rght/level values)
+        can race: both threads read the tree before either has written back, so the
+        thread which writes second silently overwrites the first thread's contribution,
+        leaving two sibling nodes with identical (overlapping) lft/rght ranges.
+
+        A threading.Barrier is used to try to force both threads to complete their
+        "read" step before either proceeds to "write", so the race is reproduced
+        deterministically rather than relying on incidental timing, *if* nothing
+        else is serializing the two calls.
+
+        Note: if tree rebuilds are correctly serialized (i.e. this test is running
+        against a fix for the race), the second thread will not reach the barrier
+        until the first thread's entire save() has committed and released its lock -
+        so the barrier is expected to time out in that case. That's fine: a timeout
+        just means "the two calls did not overlap", so we fall through to the
+        post-condition checks either way.
+        """
+        import threading
+        from unittest import mock
+
+        from django.db import connection
+
+        from mptt.managers import TreeManager
+
+        part = Part.objects.create(
+            name='Concurrent split part', description='A part for concurrency testing'
+        )
+        location = StockLocation.objects.create(name='Concurrent Split Location')
+
+        root = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        barrier = threading.Barrier(2)
+        original_get_children = TreeManager._get_children
+
+        def synchronized_get_children(self, **filters):
+            """Wrap _get_children so both threads finish reading before either writes.
+
+            Tolerates the barrier not being satisfied (see docstring above).
+            """
+            result = original_get_children(self, **filters)
+            try:
+                barrier.wait(timeout=3)
+            except threading.BrokenBarrierError:
+                pass
+            return result
+
+        results = {}
+        errors = []
+
+        def worker(idx):
+            try:
+                parent = StockItem.objects.get(pk=root.pk)
+                child = parent.splitStock(10, None, None)
+                results[idx] = child.pk
+            except Exception as exc:  # pragma: no cover - failure path
+                errors.append(exc)
+            finally:
+                # Each thread gets its own DB connection; close it explicitly
+                # so it doesn't leak past the end of the test.
+                connection.close()
+
+        with mock.patch.object(TreeManager, '_get_children', synchronized_get_children):
+            t1 = threading.Thread(target=worker, args=(1,))
+            t2 = threading.Thread(target=worker, args=(2,))
+            t1.start()
+            t2.start()
+            t1.join(timeout=15)
+            t2.join(timeout=15)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 2)
+        self.assertEqual(len(set(results.values())), 2)
+
+        root.refresh_from_db()
+
+        children = list(root.get_children())
+
+        # Both splits must be visible as children of the root item
+        self.assertEqual(len(children), 2)
+        self.assertEqual(root.get_descendants(include_self=True).count(), 3)
+
+        # No two nodes may have overlapping lft/rght ranges
+        children.sort(key=lambda c: c.lft)
+        self.assertLess(children[0].rght, children[1].lft)
+
+    def assertValidNestedSet(self, nodes):
+        """Assert that a set of nodes (all from the same tree) forms a valid nested set.
+
+        For N nodes in a valid MPTT tree, the N lft values and N rght values must
+        together be exactly the 2N integers from 1 to 2N, with no duplicates and no
+        gaps - each node's [lft, rght] interval is either fully nested inside, or
+        fully disjoint from, every other node's interval. A race which causes one
+        writer's contribution to be silently discarded (or two nodes to end up with
+        the same numbering) violates this and is caught here as a duplicate or a
+        gap, without needing to hand-check pairwise overlaps.
+        """
+        nodes = list(nodes)
+        values = [n.lft for n in nodes] + [n.rght for n in nodes]
+
+        self.assertEqual(
+            len(values), len(set(values)), 'Duplicate lft/rght value found in tree'
+        )
+        self.assertEqual(
+            set(values),
+            set(range(1, 2 * len(nodes) + 1)),
+            'lft/rght values are not a contiguous 1..2N range',
+        )
+
+        # A racing writer can also leave a *valid* 1..2N permutation in place
+        # (no duplicates, no gaps) while still getting the nesting wrong - e.g.
+        # a parent's [lft, rght] window no longer actually contains its own
+        # child's window, because the child's numbers were written by the other
+        # thread and the parent's numbers were then overwritten without
+        # accounting for that child. So also verify parent/child containment
+        # directly, against the real 'parent' foreign key.
+        by_pk = {n.pk: n for n in nodes}
+        for node in nodes:
+            if node.parent_id and node.parent_id in by_pk:
+                parent = by_pk[node.parent_id]
+                self.assertLess(
+                    parent.lft,
+                    node.lft,
+                    f'{node} (lft={node.lft}) not nested inside parent {parent} (lft={parent.lft})',
+                )
+                self.assertLess(
+                    node.rght,
+                    parent.rght,
+                    f'{node} (rght={node.rght}) not nested inside parent {parent} (rght={parent.rght})',
+                )
+
+    def test_concurrent_serialize_stock(self):
+        """Test that concurrent serializeStock() calls against the same tree do not corrupt it.
+
+        serializeStock() delegates to StockItem._create_serial_numbers(), which -
+        when called with a 'parent' (i.e. serializing a previously-split child) -
+        creates the new items with bulk_create() and then calls
+        stock.tasks.rebuild_stock_item_tree() *directly*, bypassing save() entirely.
+        This means it is not covered by the tree_id-allocator lock acquired in
+        InvenTreeTree.save(), and is vulnerable to the same lost-update race as
+        splitStock() was.
+
+        Two sibling StockItems (both split from the same root, so sharing a
+        tree_id) are serialized concurrently from two threads, each triggering a
+        rebuild of that shared tree_id.
+
+        Note: find_conflicting_serial_numbers() (called early in serializeStock())
+        reads the SERIAL_NUMBER_GLOBALLY_UNIQUE global setting. On a fresh test
+        database that setting row doesn't exist yet, and get_global_setting()
+        creates it on first read - so both threads' first read would otherwise
+        race to INSERT the same row, and the loser blocks on Postgres's unique-key
+        conflict resolution until the winner's transaction commits. That has
+        nothing to do with the tree_id race under test, but it serializes the two
+        threads for the length of an entire serializeStock() call, which would
+        starve the *real* race of any chance to occur. So the setting is read
+        once up front (single-threaded) to force that row to exist before the
+        threads start.
+        """
+        import threading
+        from unittest import mock
+
+        from django.db import connection
+
+        from mptt.managers import TreeManager
+
+        from common.settings import get_global_setting
+
+        get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False)
+
+        part = Part.objects.create(
+            name='Concurrent serialize part',
+            description='A part for concurrency testing',
+            trackable=True,
+        )
+        location = StockLocation.objects.create(name='Concurrent Serialize Location')
+
+        root = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Split off two sibling children up-front (sequentially) - both share root's tree_id
+        child_a = root.splitStock(10, None, None)
+        child_b = root.splitStock(10, None, None)
+
+        barrier = threading.Barrier(2)
+        original_get_children = TreeManager._get_children
+
+        def synchronized_get_children(self, **filters):
+            result = original_get_children(self, **filters)
+            try:
+                barrier.wait(timeout=3)
+            except threading.BrokenBarrierError:
+                pass
+            return result
+
+        errors = []
+        start_barrier = threading.Barrier(2)
+
+        def worker(item_pk, serials):
+            try:
+                item = StockItem.objects.get(pk=item_pk)
+                start_barrier.wait(timeout=5)
+                item.serializeStock(len(serials), serials, None)
+            except Exception as exc:  # pragma: no cover - failure path
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        with mock.patch.object(TreeManager, '_get_children', synchronized_get_children):
+            t1 = threading.Thread(
+                target=worker, args=(child_a.pk, ['SN-A-1', 'SN-A-2', 'SN-A-3'])
+            )
+            t2 = threading.Thread(
+                target=worker, args=(child_b.pk, ['SN-B-1', 'SN-B-2', 'SN-B-3'])
+            )
+            t1.start()
+            t2.start()
+            t1.join(timeout=15)
+            t2.join(timeout=15)
+
+        self.assertEqual(errors, [])
+
+        root.refresh_from_db()
+
+        # root + 2 split children + 3 serials under each child = 9 nodes total
+        descendants = root.get_descendants(include_self=True)
+        self.assertEqual(descendants.count(), 9)
+        self.assertValidNestedSet(descendants)
+
+    def test_concurrent_merge_stock_items(self):
+        """Test that concurrent merge_stock_items() calls against the same tree do not corrupt it.
+
+        merge_stock_items() deletes each merged-in item (other.delete()) and then
+        does a final direct rebuild pass over every tree_id touched by the merge.
+        Unlike the two gaps above, this trailing rebuild is *not* actually
+        unprotected: other.delete() unconditionally acquires the tree_id-allocator
+        lock (via its own call to getNextTreeID()) before merge_stock_items() ever
+        reaches the trailing rebuild loop, and - because merge_stock_items() is
+        itself wrapped in @transaction.atomic - that lock is a real row lock which
+        is held for the rest of the enclosing transaction, not released until the
+        whole merge_stock_items() call commits. So the trailing loop is already
+        covered incidentally.
+
+        This test exercises two concurrent merges which both need to rebuild the
+        same (shared) tree_id, to confirm that is actually true in practice and
+        not just in theory - and to catch a regression if a future change to
+        merge_stock_items() or delete() ever removes that incidental protection.
+        """
+        import threading
+        from unittest import mock
+
+        from django.db import connection
+
+        from mptt.managers import TreeManager
+
+        part = Part.objects.create(
+            name='Concurrent merge part', description='A part for concurrency testing'
+        )
+        location = StockLocation.objects.create(name='Concurrent Merge Location')
+
+        root = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Split off four siblings up-front (sequentially) - all share root's tree_id
+        item_a = root.splitStock(10, None, None)
+        item_b = root.splitStock(10, None, None)
+        item_c = root.splitStock(10, None, None)
+        item_d = root.splitStock(10, None, None)
+
+        # Each merge triggers 2 rebuilds (other.delete(), then the trailing loop)
+        barrier = threading.Barrier(4)
+        original_get_children = TreeManager._get_children
+
+        def synchronized_get_children(self, **filters):
+            result = original_get_children(self, **filters)
+            try:
+                barrier.wait(timeout=3)
+            except threading.BrokenBarrierError:
+                pass
+            return result
+
+        errors = []
+
+        def worker(keep_pk, merge_pk):
+            try:
+                keep = StockItem.objects.get(pk=keep_pk)
+                merge = StockItem.objects.get(pk=merge_pk)
+                keep.merge_stock_items(merge)
+            except Exception as exc:  # pragma: no cover - failure path
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        with mock.patch.object(TreeManager, '_get_children', synchronized_get_children):
+            t1 = threading.Thread(target=worker, args=(item_a.pk, item_b.pk))
+            t2 = threading.Thread(target=worker, args=(item_c.pk, item_d.pk))
+            t1.start()
+            t2.start()
+            t1.join(timeout=15)
+            t2.join(timeout=15)
+
+        self.assertEqual(errors, [])
+
+        root.refresh_from_db()
+
+        # root + item_a (merged with b) + item_c (merged with d) = 3 nodes remaining
+        descendants = root.get_descendants(include_self=True)
+        self.assertEqual(descendants.count(), 3)
+        self.assertValidNestedSet(descendants)
 
 
 class TestResultTest(StockTestBase):
