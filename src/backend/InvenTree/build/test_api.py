@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
+from django.db.models import Sum
 from django.urls import reverse
 
 from rest_framework import status
@@ -2148,6 +2149,149 @@ class BuildConsumeTest(BuildAPITest):
 
         for line in self.build.build_lines.all():
             self.assertEqual(line.consumed, 100)
+
+    def test_consume_many_lines(self):
+        """Test consuming stock against a build order with a large number of BOM lines.
+
+        - Create 100 sub-components for a new assembly
+        - Create a build order against the assembly
+        - Create a stock item for each component - some with exactly the required
+          quantity, others with more than required (to test stock splitting)
+        - Allocate stock against each build line
+        - Complete the build order (via output creation, output completion, and finish)
+        - Check that every build line is fully consumed
+        - Check that stock items are reduced (and split) correctly
+        """
+        N = 100
+        bom_quantity = 5
+        build_quantity = 10
+        required_quantity = bom_quantity * build_quantity
+
+        assembly = Part.objects.create(
+            name='Large Test Assembly',
+            description='Assembly with a large number of BOM lines',
+            assembly=True,
+        )
+
+        components = [
+            Part.objects.create(
+                name=f'Large Test Component {i}',
+                description=f'Large Test Component Description {i}',
+                component=True,
+            )
+            for i in range(N)
+        ]
+
+        for component in components:
+            BomItem.objects.create(
+                part=assembly, sub_part=component, quantity=bom_quantity
+            )
+
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-12350',
+            quantity=build_quantity,
+            title='Large Test Build',
+        )
+
+        self.assertEqual(build.build_lines.count(), N)
+
+        # Create a stock item for each component
+        # Odd-indexed components get more stock than is required (to test splitting)
+        stock_items = [
+            StockItem.objects.create(
+                part=component, quantity=required_quantity + (25 if idx % 2 else 0)
+            )
+            for idx, component in enumerate(components)
+        ]
+
+        # Allocate stock against each build line
+        data = {
+            'items': [
+                {
+                    'build_line': line.pk,
+                    'stock_item': si.pk,
+                    'quantity': required_quantity,
+                }
+                for line, si in zip(build.build_lines.all(), stock_items, strict=True)
+            ]
+        }
+
+        self.post(
+            reverse('api-build-allocate', kwargs={'pk': build.pk}),
+            data,
+            expected_code=201,
+            max_query_count=2000,
+        )
+
+        self.assertEqual(build.allocated_stock.count(), N)
+        self.assertTrue(build.are_untracked_parts_allocated)
+
+        # Create (and complete) a single build output for the full build quantity
+        build.create_build_output(build_quantity)
+        output = build.incomplete_outputs.first()
+
+        self.post(
+            reverse('api-build-output-complete', kwargs={'pk': build.pk}),
+            {
+                'outputs': [{'output': output.pk}],
+                'location': 1,
+                'status': StockStatus.OK.value,
+            },
+            expected_code=200,
+            max_query_count=1000,
+        )
+
+        build.refresh_from_db()
+        self.assertEqual(build.completed, build_quantity)
+        self.assertTrue(build.can_complete)
+
+        # Finish the build order - this consumes all allocated stock
+        self.post(
+            reverse('api-build-finish', kwargs={'pk': build.pk}),
+            {},
+            expected_code=201,
+            max_query_count=5000,
+        )
+
+        build.refresh_from_db()
+        self.assertTrue(build.is_complete)
+
+        # All lines should be fully consumed, and no allocations should remain
+        self.assertEqual(build.allocated_stock.count(), 0)
+        self.assertEqual(build.build_lines.count(), N)
+
+        for line in build.build_lines.all():
+            self.assertEqual(line.consumed, required_quantity)
+
+        # Check that each original stock item was correctly reduced / split
+        for idx, (component, stock_item) in enumerate(
+            zip(components, stock_items, strict=True)
+        ):
+            stock_item.refresh_from_db()
+
+            if idx % 2:
+                # Excess stock - original item should be split, retaining the remainder
+                self.assertEqual(stock_item.quantity, 25)
+                self.assertIsNone(stock_item.consumed_by)
+
+                # A new stock item should have been split off, and consumed by the build
+                consumed_items = StockItem.objects.filter(
+                    part=component, consumed_by=build
+                )
+                self.assertEqual(consumed_items.count(), 1)
+                self.assertEqual(consumed_items.first().quantity, required_quantity)
+                self.assertNotEqual(consumed_items.first().pk, stock_item.pk)
+            else:
+                # Exact stock - original item should be consumed directly (no split)
+                self.assertEqual(stock_item.quantity, required_quantity)
+                self.assertEqual(stock_item.consumed_by, build)
+
+            # In either case, total quantity of stock for this component is unchanged
+            total_quantity = StockItem.objects.filter(part=component).aggregate(
+                total=Sum('quantity')
+            )['total']
+            self.assertEqual(total_quantity, required_quantity + (25 if idx % 2 else 0))
 
 
 class BuildCustomStatusTest(BuildAPITest):
