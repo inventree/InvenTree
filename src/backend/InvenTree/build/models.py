@@ -664,6 +664,8 @@ class Build(
             notes: Optional notes for the allocation
             user: The user completing the allocation
         """
+        build_items = build_items.select_related('stock_item', 'stock_item__part')
+
         for item in build_items:
             quantity = quantities.get(item.pk) if quantities else None
             item.complete_allocation(quantity=quantity, notes=notes, user=user)
@@ -681,13 +683,11 @@ class Build(
         # Find all BuildItem objects which point to this build
         items = self.allocated_stock.filter(
             build_line__bom_item__sub_part__trackable=False
-        ).select_related('stock_item', 'stock_item__part')
+        )
 
-        # Remove stock
-        for item in items:
-            item.complete_allocation(user=user)
+        self.complete_allocations(build_items=items, user=user)
 
-        # Delete allocation
+        # Delete any remaining allocations
         items.all().delete()
 
         # Ensure that there are no longer any BuildItem objects
@@ -1088,12 +1088,11 @@ class Build(
         allocated_items = output.items_to_install.all()
 
         # Complete or discard allocations
-        for build_item in allocated_items:
-            if not discard_allocations:
-                build_item.complete_allocation(user=user)
+        if not discard_allocations:
+            self.complete_allocations(build_items=allocated_items, user=user)
 
         # Delete allocations
-        allocated_items.delete()
+        allocated_items.all().delete()
 
         output.add_tracking_entry(
             StockHistoryCode.BUILD_OUTPUT_REJECTED,
@@ -1201,9 +1200,7 @@ class Build(
             'stock_item', 'stock_item__part'
         )
 
-        for build_item in allocated_items:
-            # Complete the allocation of stock for that item
-            build_item.complete_allocation(user=user)
+        self.complete_allocations(build_items=allocated_items, user=user)
 
         # Delete the BuildItem objects from the database
         allocated_items.all().delete()
