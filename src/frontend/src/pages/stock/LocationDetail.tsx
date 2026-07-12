@@ -367,8 +367,12 @@ export default function Stock() {
   });
 
   const scanInStockItem = useBarcodeScanDialog({
-    title: t`Scan Stock Item`,
+    title: t`Scan Stock Items into Location`,
     modelType: ModelType.stockitem,
+    // continuous=true keeps the dialog open after each successful scan so
+    // operators can rapidly scan an entire shelf of items in one session.
+    // Resolves: https://github.com/inventree/InvenTree/issues/11138
+    continuous: true,
     callback: async (barcode, response) => {
       const item = response.stockitem.instance;
 
