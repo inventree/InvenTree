@@ -3,9 +3,11 @@
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import Sum
 from django.test import override_settings
 
+from django_q.models import OrmQ
 from djmoney.money import Money
 
 from build.models import Build
@@ -14,6 +16,8 @@ from company.models import Company
 from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
+from plugin.base.event.events import batch_events
+from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import (
@@ -385,6 +389,76 @@ class StockTest(StockTestBase):
         it.refresh_from_db()
         self.assertEqual(it.quantity, 100)
         self.assertEqual(it.status, StockStatus.DAMAGED.value)
+
+    def get_counted_events(self):
+        """Helper: return queued OrmQ tasks corresponding to a StockEvents.ITEM_COUNTED event.
+
+        stocktake() also fires an ITEM_QUANTITY_UPDATED event (via updateQuantity()) and may
+        offload a (deduped) low-stock notification task, so tests filter down to just the
+        ITEM_COUNTED entries they care about, rather than asserting the raw queue total.
+        """
+        return [
+            task
+            for task in OrmQ.objects.all().order_by('id')
+            if task.args() == (StockEvents.ITEM_COUNTED,)
+        ]
+
+    def test_stocktake_batch_events(self):
+        """Test that batch_events() collapses per-item stocktake() events into one bulk write.
+
+        StockItem.stocktake() always calls trigger_event() exactly as it does when called
+        standalone (see test_stocktake_events_outside_batch below) - a bulk caller wraps its
+        loop in batch_events() to collapse those N individual event offloads into a single
+        bulk_trigger_event() call, fired when the enclosing transaction commits.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Batch stocktake part', description='For batch stocktake testing'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=self.home, quantity=idx + 1)
+            for idx in range(10)
+        ]
+
+        OrmQ.objects.all().delete()
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # All 10 ITEM_COUNTED events should be queued via a single bulk write,
+            # fired when the transaction commits (captured here via captureOnCommitCallbacks)
+            with self.captureOnCommitCallbacks(execute=True):
+                with transaction.atomic(), batch_events():
+                    for idx, item in enumerate(items):
+                        item.stocktake(100 + idx, self.user, notes='Batch stocktake')
+
+        counted_tasks = self.get_counted_events()
+        self.assertEqual(len(counted_tasks), 10)
+
+        for idx, (task, item) in enumerate(zip(counted_tasks, items, strict=True)):
+            self.assertEqual(task.func(), 'plugin.base.event.events.register_event')
+            self.assertEqual(task.kwargs(), {'id': item.id, 'quantity': 100.0 + idx})
+
+    def test_stocktake_events_outside_batch(self):
+        """Test that stocktake() still fires events immediately when called outside batch_events()."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        item = StockItem.objects.get(pk=2)
+
+        OrmQ.objects.all().delete()
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            item.stocktake(42, self.user, notes='Single stocktake')
+
+        # No batch_events() context was active, so the event was queued immediately -
+        # no transaction commit or captureOnCommitCallbacks is required to see it
+        counted_tasks = self.get_counted_events()
+        self.assertEqual(len(counted_tasks), 1)
+        self.assertEqual(counted_tasks[0].kwargs(), {'id': item.id, 'quantity': 42.0})
 
     def test_add_stock(self):
         """Test adding stock."""

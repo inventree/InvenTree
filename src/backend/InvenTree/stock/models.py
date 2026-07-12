@@ -2684,6 +2684,10 @@ class StockItem(
 
         quantity = max(quantity, 0)
 
+        # No change if the quantity is the same as the current quantity
+        if self.quantity == quantity:
+            return
+
         self.quantity = quantity
 
         if quantity == 0 and self.delete_on_deplete and self.can_delete():

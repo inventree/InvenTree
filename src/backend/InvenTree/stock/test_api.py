@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import pytest
@@ -2438,6 +2440,51 @@ class StocktakeTest(StockAPITestCase):
         self.assertIn(
             'Structural locations cannot be assigned stock items',
             str(response.data['location']),
+        )
+
+    def test_bulk_count_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to count 100 stock items at once.
+
+        This is not a strict regression test (query counts are printed, not asserted against
+        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
+        (e.g. batch_events()) on the stock count endpoint. Run with -v2 to see the printed
+        query count.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk count benchmark part',
+            description='Created for the stock count query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk count benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-count')
+
+        data = {
+            'items': [
+                {'pk': item.pk, 'quantity': idx + 100} for idx, item in enumerate(items)
+            ]
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-stock-count]: counting 100 stock items required {query_count} DB queries'
         )
 
 
