@@ -812,16 +812,22 @@ class SerializeStockItemSerializer(serializers.Serializer):
             part=item.part,
         )
 
-        return (
-            item.serializeStock(
-                data['quantity'],
-                serials,
-                user=user,
-                notes=data.get('notes', ''),
-                location=data['destination'],
+        with (
+            transaction.atomic(),
+            batch_events(),
+            batch_tracking_entries(),
+            batch_offload_tasks(),
+        ):
+            return (
+                item.serializeStock(
+                    data['quantity'],
+                    serials,
+                    user=user,
+                    notes=data.get('notes', ''),
+                    location=data['destination'],
+                )
+                or []
             )
-            or []
-        )
 
 
 class InstallStockItemSerializer(serializers.Serializer):

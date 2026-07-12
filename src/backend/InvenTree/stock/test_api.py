@@ -1636,6 +1636,49 @@ class StockItemTest(StockAPITestCase):
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
 
+    def test_bulk_serialize_benchmark(self):
+        """Benchmark: measure the number of DB queries required to serialize 100 stock items at once.
+
+        This is not a strict regression test (query counts are printed, not asserted against
+        a fixed threshold) - it exists as a baseline comparison against the stock count/add/
+        remove/transfer benchmarks in StocktakeTest (see test_bulk_count_query_benchmark),
+        since serializeStock() already batches its StockItem and StockItemTracking writes via
+        bulk_create(). Run with -v2 to see the printed query count.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk serialize benchmark part',
+            description='Created for the stock serialize query-count benchmark',
+            trackable=True,
+        )
+
+        location = StockLocation.objects.create(
+            name='Bulk serialize benchmark location'
+        )
+
+        item = StockItem.objects.create(part=part, location=location, quantity=100)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        data = {'quantity': 100, 'serial_numbers': '1-100', 'destination': location.pk}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                # TODO: 2026-07-12 : Refactor this API call
+                response = self.post(url, data, max_query_count=1300, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data), 100)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-stock-item-serialize]: serializing 100 stock items required {query_count} DB queries'
+        )
+
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
