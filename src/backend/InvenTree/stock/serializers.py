@@ -31,6 +31,7 @@ import stock.status_codes
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
+from InvenTree.fields import PrefetchedPrimaryKeyRelatedField
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CustomStatusSerializerMixin,
@@ -1668,7 +1669,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
         super().__init__(*args, **kwargs)
 
-    pk = serializers.PrimaryKeyRelatedField(
+    pk = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_stockitems',
         queryset=StockItem.objects.all(),
         many=False,
         allow_null=False,
@@ -1757,6 +1759,27 @@ class StockAdjustmentSerializer(serializers.Serializer):
         label=_('Notes'),
         help_text=_('Stock transaction notes'),
     )
+
+    def to_internal_value(self, data):
+        """Bulk-fetch referenced StockItem objects before per-item validation.
+
+        Populates the '_stockitems' context cache that PrefetchedPrimaryKeyRelatedField
+        looks up against, avoiding one .get() query per item in the 'items' list.
+        """
+        pks = set()
+
+        for item in data.get('items', []):
+            try:
+                pks.add(int(item.get('pk')))
+            except (TypeError, ValueError):
+                pass
+
+        if pks:
+            self.context['_stockitems'] = {
+                obj.pk: obj for obj in StockItem.objects.filter(pk__in=pks)
+            }
+
+        return super().to_internal_value(data)
 
     def validate(self, data):
         """Make sure items are provided."""
