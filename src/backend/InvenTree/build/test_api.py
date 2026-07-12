@@ -6,6 +6,7 @@ from typing import Optional
 from django.db.models import Sum
 from django.urls import reverse
 
+from django_q.models import OrmQ
 from rest_framework import status
 
 from build.models import Build, BuildItem, BuildLine
@@ -13,8 +14,9 @@ from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
-from stock.models import StockItem, StockLocation, StockSortOrder
-from stock.status_codes import StockStatus
+from stock.events import StockEvents
+from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
+from stock.status_codes import StockHistoryCode, StockStatus
 
 
 class TestBuildAPI(InvenTreeAPITestCase):
@@ -2157,15 +2159,24 @@ class BuildConsumeTest(BuildAPITest):
         - Create a build order against the assembly
         - Create a stock item for each component - some with exactly the required
           quantity, others with more than required (to test stock splitting)
+        - Every 10th line is instead allocated from *two* different stock items,
+          whose quantities combined equal the required quantity (to test multiple
+          BuildItems being allocated against a single BuildLine)
         - Allocate stock against each build line
         - Complete the build order (via output creation, output completion, and finish)
         - Check that every build line is fully consumed
         - Check that stock items are reduced (and split) correctly
+        - Check that associated events are triggered
+        - Check that required low-stock checks are triggered for each component
+        - Check that the correct stock tracking entries are created for each split stock item
         """
         N = 100
         bom_quantity = 5
         build_quantity = 10
         required_quantity = bom_quantity * build_quantity
+
+        # Every MULTI_ITEM_STRIDE'th line is allocated from two stock items instead of one
+        MULTI_ITEM_STRIDE = 10
 
         assembly = Part.objects.create(
             name='Large Test Assembly',
@@ -2196,26 +2207,50 @@ class BuildConsumeTest(BuildAPITest):
 
         self.assertEqual(build.build_lines.count(), N)
 
-        # Create a stock item for each component
-        # Odd-indexed components get more stock than is required (to test splitting)
-        stock_items = [
-            StockItem.objects.create(
-                part=component, quantity=required_quantity + (25 if idx % 2 else 0)
-            )
-            for idx, component in enumerate(components)
-        ]
+        # Create stock item(s) for each component:
+        # - Every MULTI_ITEM_STRIDE'th line gets *two* stock items, whose quantities
+        #   combined equal the required quantity (no splitting needed for either)
+        # - Of the rest, odd-indexed components get more stock than is required (to
+        #   test splitting), even-indexed components get exactly the required quantity
+        stock_items = []
 
-        # Allocate stock against each build line
-        data = {
-            'items': [
-                {
+        for idx, component in enumerate(components):
+            if idx % MULTI_ITEM_STRIDE == 0:
+                first_quantity = required_quantity * 3 // 5
+                stock_items.append([
+                    StockItem.objects.create(part=component, quantity=first_quantity),
+                    StockItem.objects.create(
+                        part=component, quantity=required_quantity - first_quantity
+                    ),
+                ])
+            else:
+                stock_items.append([
+                    StockItem.objects.create(
+                        part=component,
+                        quantity=required_quantity + (25 if idx % 2 else 0),
+                    )
+                ])
+
+        # Allocate stock against each build line - lines with multiple stock items get
+        # one allocation entry per stock item, with quantities summing to the required amount
+        allocation_items = []
+
+        for line, items in zip(build.build_lines.all(), stock_items, strict=True):
+            if len(items) > 1:
+                for si in items:
+                    allocation_items.append({
+                        'build_line': line.pk,
+                        'stock_item': si.pk,
+                        'quantity': si.quantity,
+                    })
+            else:
+                allocation_items.append({
                     'build_line': line.pk,
-                    'stock_item': si.pk,
+                    'stock_item': items[0].pk,
                     'quantity': required_quantity,
-                }
-                for line, si in zip(build.build_lines.all(), stock_items, strict=True)
-            ]
-        }
+                })
+
+        data = {'items': allocation_items}
 
         self.post(
             reverse('api-build-allocate', kwargs={'pk': build.pk}),
@@ -2225,7 +2260,8 @@ class BuildConsumeTest(BuildAPITest):
             max_query_count=50,
         )
 
-        self.assertEqual(build.allocated_stock.count(), N)
+        n_multi_item_lines = len(range(0, N, MULTI_ITEM_STRIDE))
+        self.assertEqual(build.allocated_stock.count(), N + n_multi_item_lines)
         self.assertTrue(build.are_untracked_parts_allocated)
 
         # Create (and complete) a single build output for the full build quantity
@@ -2240,24 +2276,57 @@ class BuildConsumeTest(BuildAPITest):
                 'status': StockStatus.OK.value,
             },
             expected_code=200,
-            max_query_count=1000,
+            max_query_count=200,
         )
 
         build.refresh_from_db()
         self.assertEqual(build.completed, build_quantity)
         self.assertTrue(build.can_complete)
 
+        # Enable plugin events, and queue them (rather than firing synchronously),
+        # so we can inspect exactly what was queued once the build is finished
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        # Start with a fresh slate for the OrmQ queue, so we can inspect exactly what is queued during the build finish
+        OrmQ.objects.all().delete()
+
         # Finish the build order - this consumes all allocated stock
-        self.post(
-            reverse('api-build-finish', kwargs={'pk': build.pk}),
-            {},
-            expected_code=201,
-            benchmark=True,
-            max_query_count=4250,
-        )
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            self.post(
+                reverse('api-build-finish', kwargs={'pk': build.pk}),
+                {},
+                expected_code=201,
+                benchmark=True,
+                max_query_count=200,
+            )
 
         build.refresh_from_db()
         self.assertTrue(build.is_complete)
+
+        queued_tasks = list(OrmQ.objects.all())
+
+        # register_event tasks queued for StockEvents.ITEM_SPLIT, one per split component
+        split_event_tasks = [
+            task
+            for task in queued_tasks
+            if task.func() == 'plugin.base.event.events.register_event'
+            and task.args() == (StockEvents.ITEM_SPLIT,)
+        ]
+        self.assertEqual(len(split_event_tasks), N // 2)
+
+        # 'notify_low_stock_if_required' should be queued once per distinct part touched -
+        # every one of the N components here is a distinct part
+        low_stock_tasks = [
+            task
+            for task in queued_tasks
+            if task.func() == 'part.tasks.notify_low_stock_if_required'
+        ]
+        self.assertEqual(
+            {task.args()[0] for task in low_stock_tasks},
+            {component.pk for component in components},
+        )
 
         # All lines should be fully consumed, and no allocations should remain
         self.assertEqual(build.allocated_stock.count(), 0)
@@ -2267,10 +2336,47 @@ class BuildConsumeTest(BuildAPITest):
             self.assertEqual(line.consumed, required_quantity)
 
         # Check that each original stock item was correctly reduced / split
-        for idx, (component, stock_item) in enumerate(
+        for idx, (component, items) in enumerate(
             zip(components, stock_items, strict=True)
         ):
-            stock_item.refresh_from_db()
+            for si in items:
+                si.refresh_from_db()
+
+            if idx % MULTI_ITEM_STRIDE == 0:
+                # Two different stock items were allocated against this line - each
+                # should be fully consumed directly (no splitting), and combined they
+                # should cover the full required quantity
+                self.assertEqual(len(items), 2)
+
+                consumed_total = sum(si.quantity for si in items)
+                self.assertEqual(consumed_total, required_quantity)
+
+                for si in items:
+                    self.assertEqual(si.consumed_by, build)
+
+                    self.assertFalse(
+                        StockItemTracking.objects.filter(
+                            item=si,
+                            tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                        ).exists()
+                    )
+                    self.assertTrue(
+                        StockItemTracking.objects.filter(
+                            item=si,
+                            tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
+                            deltas__buildorder=build.pk,
+                        ).exists()
+                    )
+
+                # Total quantity of stock for this component is unchanged
+                total_quantity = StockItem.objects.filter(part=component).aggregate(
+                    total=Sum('quantity')
+                )['total']
+                self.assertEqual(total_quantity, required_quantity)
+
+                continue
+
+            stock_item = items[0]
 
             if idx % 2:
                 # Excess stock - original item should be split, retaining the remainder
@@ -2282,18 +2388,185 @@ class BuildConsumeTest(BuildAPITest):
                     part=component, consumed_by=build
                 )
                 self.assertEqual(consumed_items.count(), 1)
-                self.assertEqual(consumed_items.first().quantity, required_quantity)
-                self.assertNotEqual(consumed_items.first().pk, stock_item.pk)
+                consumed_item = consumed_items.first()
+                self.assertEqual(consumed_item.quantity, required_quantity)
+                self.assertNotEqual(consumed_item.pk, stock_item.pk)
+
+                # Split tracking entries: one on the new (split-off) item, one on the original
+                self.assertTrue(
+                    StockItemTracking.objects.filter(
+                        item=consumed_item,
+                        tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
+                        deltas__stockitem=stock_item.pk,
+                    ).exists()
+                )
+                self.assertTrue(
+                    StockItemTracking.objects.filter(
+                        item=stock_item,
+                        tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    ).exists()
+                )
+
+                # The ITEM_SPLIT event should reference the new item as 'id' and the
+                # original item as 'parent'
+                self.assertTrue(
+                    any(
+                        task.kwargs()
+                        == {'id': consumed_item.pk, 'parent': stock_item.pk}
+                        for task in split_event_tasks
+                    )
+                )
+
+                # Consumption is recorded against the new (split-off) item
+                self.assertTrue(
+                    StockItemTracking.objects.filter(
+                        item=consumed_item,
+                        tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
+                        deltas__buildorder=build.pk,
+                    ).exists()
+                )
             else:
                 # Exact stock - original item should be consumed directly (no split)
                 self.assertEqual(stock_item.quantity, required_quantity)
                 self.assertEqual(stock_item.consumed_by, build)
+
+                # No split occurred - consumption is recorded directly against this item
+                self.assertFalse(
+                    StockItemTracking.objects.filter(
+                        item=stock_item,
+                        tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    ).exists()
+                )
+                self.assertTrue(
+                    StockItemTracking.objects.filter(
+                        item=stock_item,
+                        tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
+                        deltas__buildorder=build.pk,
+                    ).exists()
+                )
 
             # In either case, total quantity of stock for this component is unchanged
             total_quantity = StockItem.objects.filter(part=component).aggregate(
                 total=Sum('quantity')
             )['total']
             self.assertEqual(total_quantity, required_quantity + (25 if idx % 2 else 0))
+
+    def test_consume_tracked_allocations(self):
+        """Test consuming of tracked allocations against a BuildOrder."""
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        tracked_assembly = Part.objects.create(
+            name='Tracked Test Assembly',
+            description='Trackable assembly for install-path testing',
+            assembly=True,
+            trackable=True,
+        )
+
+        tracked_component = Part.objects.create(
+            name='Tracked Test Component',
+            description='Trackable component for install-path testing',
+            trackable=True,
+            component=True,
+        )
+
+        BomItem.objects.create(
+            part=tracked_assembly, sub_part=tracked_component, quantity=1
+        )
+
+        tracked_build = Build.objects.create(
+            part=tracked_assembly,
+            reference='BO-99002',
+            quantity=2,
+            title='Tracked Test Build',
+        )
+
+        serials = ['901', '902']
+
+        for sn in serials:
+            StockItem.objects.create(part=tracked_component, quantity=1, serial=sn)
+
+        # Auto-allocate serialized outputs against matching component serial numbers
+        response = self.post(
+            reverse('api-build-output-create', kwargs={'pk': tracked_build.pk}),
+            {
+                'quantity': 2,
+                'serial_numbers': ', '.join(serials),
+                'auto_allocate': True,
+            },
+            expected_code=201,
+        )
+
+        outputs = {
+            entry['serial']: StockItem.objects.get(
+                part=tracked_assembly, serial=entry['serial']
+            )
+            for entry in response.data
+        }
+        tracked_components = {
+            sn: StockItem.objects.get(part=tracked_component, serial=sn)
+            for sn in serials
+        }
+
+        OrmQ.objects.all().delete()
+
+        # Consume the tracked allocations directly (rather than completing the output),
+        # to route them through Build.complete_allocations() and exercise the install path
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            self.post(
+                reverse('api-build-consume', kwargs={'pk': tracked_build.pk}),
+                {
+                    'lines': [
+                        {'build_line': line.pk}
+                        for line in tracked_build.build_lines.all()
+                    ]
+                },
+                expected_code=200,
+            )
+
+        self.assertEqual(tracked_build.allocated_stock.count(), 0)
+
+        install_event_tasks = [
+            task
+            for task in OrmQ.objects.all()
+            if task.func() == 'plugin.base.event.events.register_event'
+            and task.args() == (StockEvents.ITEM_INSTALLED_INTO_ASSEMBLY,)
+        ]
+        self.assertEqual(len(install_event_tasks), len(serials))
+
+        for sn in serials:
+            component_item = tracked_components[sn]
+            output_item = outputs[sn]
+
+            component_item.refresh_from_db()
+
+            # The component is now installed into (and consumed by) the output
+            self.assertEqual(component_item.belongs_to, output_item)
+            self.assertEqual(component_item.consumed_by, tracked_build)
+
+            self.assertTrue(
+                any(
+                    task.kwargs()
+                    == {'id': component_item.pk, 'assembly_id': output_item.pk}
+                    for task in install_event_tasks
+                )
+            )
+
+            self.assertTrue(
+                StockItemTracking.objects.filter(
+                    item=component_item,
+                    tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY.value,
+                    deltas__stockitem=output_item.pk,
+                ).exists()
+            )
+            self.assertTrue(
+                StockItemTracking.objects.filter(
+                    item=output_item,
+                    tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM.value,
+                    deltas__stockitem=component_item.pk,
+                ).exists()
+            )
 
 
 class BuildCustomStatusTest(BuildAPITest):
