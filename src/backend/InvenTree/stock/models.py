@@ -1041,10 +1041,10 @@ class StockItem(
         return self.part.full_name
 
     # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
-    parent = TreeForeignKey(
-        'self',
+    parent = models.ForeignKey(
+        'stock.StockItem',
         verbose_name=_('Parent Stock Item'),
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='children',
