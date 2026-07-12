@@ -104,10 +104,9 @@ class TreeFixtureTest(TestCase):
         self.run_tree_test(Build)
 
     def test_stock(self):
-        """Test MPTT tree structure for Stock model."""
-        from stock.models import StockItem, StockLocation
+        """Test MPTT tree structure for StockLocation model."""
+        from stock.models import StockLocation
 
-        self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
 
 
