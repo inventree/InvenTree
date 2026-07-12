@@ -1555,7 +1555,9 @@ class StockItemTest(StockAPITestCase):
         """Test creation of a StockItem via the API."""
         # POST with an empty part reference
 
-        response = self.client.post(self.list_url, data={'quantity': 10, 'location': 1})
+        response = self.post(
+            self.list_url, data={'quantity': 10, 'location': 1}, max_query_count=2250
+        )
 
         self.assertContains(
             response,
@@ -1565,8 +1567,10 @@ class StockItemTest(StockAPITestCase):
 
         # POST with an invalid part reference
 
-        response = self.client.post(
-            self.list_url, data={'quantity': 10, 'location': 1, 'part': 10000000}
+        response = self.post(
+            self.list_url,
+            data={'quantity': 10, 'location': 1, 'part': 10000000},
+            max_query_count=2250,
         )
 
         self.assertContains(
@@ -2476,7 +2480,8 @@ class StocktakeTest(StockAPITestCase):
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
             with CaptureQueriesContext(connection) as ctx:
-                response = self.client.post(url, data, format='json')
+                # TODO: 2026-07-12 : Refactor this API call
+                response = self.post(url, data, max_query_count=2250, format='json')
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
@@ -2485,6 +2490,138 @@ class StocktakeTest(StockAPITestCase):
 
         print(
             f'\nBenchmark [api-stock-count]: counting 100 stock items required {query_count} DB queries'
+        )
+
+    def test_bulk_add_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to add stock to 100 items at once.
+
+        This is not a strict regression test (query counts are printed, not asserted against
+        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
+        on the stock add endpoint. Run with -v2 to see the printed query count.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk add benchmark part',
+            description='Created for the stock add query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk add benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-add')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                # TODO: 2026-07-12 : Refactor this API call
+                response = self.post(url, data, max_query_count=2500, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-stock-add]: adding stock to 100 items required {query_count} DB queries'
+        )
+
+    def test_bulk_remove_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to remove stock from 100 items at once.
+
+        This is not a strict regression test (query counts are printed, not asserted against
+        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
+        on the stock remove endpoint. Run with -v2 to see the printed query count.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk remove benchmark part',
+            description='Created for the stock remove query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk remove benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 100)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-remove')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                # TODO: 2026-07-12 : Refactor this API call
+                response = self.post(url, data, max_query_count=2250, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-stock-remove]: removing stock from 100 items required {query_count} DB queries'
+        )
+
+    def test_bulk_move_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to move 100 stock items at once.
+
+        This is not a strict regression test (query counts are printed, not asserted against
+        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
+        on the stock transfer (move) endpoint. Run with -v2 to see the printed query count.
+
+        Each item is moved by its full quantity, to avoid the splitStock() branch used for
+        partial-quantity moves (which creates an additional StockItem per split).
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk move benchmark part',
+            description='Created for the stock move query-count benchmark',
+        )
+
+        source = StockLocation.objects.create(name='Bulk move benchmark source')
+        destination = StockLocation.objects.create(
+            name='Bulk move benchmark destination'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=source, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-transfer')
+
+        data = {
+            'items': [{'pk': item.pk, 'quantity': item.quantity} for item in items],
+            'location': destination.pk,
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            with CaptureQueriesContext(connection) as ctx:
+                # TODO: 2026-07-12 : Refactor this API call
+                response = self.post(url, data, max_query_count=1250, format='json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+        query_count = len(ctx.captured_queries)
+
+        print(
+            f'\nBenchmark [api-stock-transfer]: moving 100 stock items required {query_count} DB queries'
         )
 
 
