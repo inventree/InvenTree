@@ -411,3 +411,31 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
 
         # 20 more tasks should have been added
         self.assertEqual(OrmQ.objects.count(), 41)
+
+    def test_bulk_offload(self):
+        """Test the bulk_offload_task function."""
+        # Start with a blank slate
+        OrmQ.objects.all().delete()
+
+        entries = [
+            ((idx, idx + 1), {'animal': f'animal_{idx}', 'count': idx})
+            for idx in range(10)
+        ]
+
+        # Queuing all 10 tasks should only take a single database write (bulk_create)
+        with self.assertNumQueries(1):
+            result = InvenTree.tasks.bulk_offload_task(
+                'dummy_module.dummy_function', entries, force_async=True
+            )
+
+        self.assertTrue(result)
+        self.assertEqual(OrmQ.objects.count(), 10)
+
+        # Read out the pending tasks, and check that the args / kwargs match
+        queued_tasks = OrmQ.objects.all().order_by('id')
+
+        for task, (args, kwargs) in zip(queued_tasks, entries, strict=True):
+            self.assertEqual(task.func(), 'dummy_module.dummy_function')
+            self.assertEqual(task.group(), 'inventree')
+            self.assertEqual(task.args(), args)
+            self.assertEqual(task.kwargs(), kwargs)
