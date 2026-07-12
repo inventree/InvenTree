@@ -987,38 +987,8 @@ class BuildAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data.get('items', [])
-
-        with transaction.atomic():
-            for item in items:
-                build_line = item['build_line']
-                stock_item = item['stock_item']
-                quantity = item['quantity']
-                output = item.get('output', None)
-
-                # Ignore allocation for consumable BOM items
-                if build_line.bom_item.is_consumable:
-                    continue
-
-                params = {
-                    'build_line': build_line,
-                    'stock_item': stock_item,
-                    'install_into': output,
-                }
-
-                try:
-                    if build_item := BuildItem.objects.filter(**params).first():
-                        # Find an existing BuildItem for this stock item
-                        # If it exists, increase the quantity
-                        build_item.quantity += quantity
-                        build_item.save()
-                    else:
-                        # Create a new BuildItem to allocate stock
-                        build_item = BuildItem.objects.create(
-                            quantity=quantity, **params
-                        )
-                except (ValidationError, DjangoValidationError) as exc:
-                    # Catch model errors and re-throw as DRF errors
-                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+        build = self.context['build']
+        build.allocate_stock(items)
 
 
 class BuildAutoAllocationSerializer(serializers.Serializer):

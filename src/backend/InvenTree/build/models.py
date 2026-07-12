@@ -1244,6 +1244,55 @@ class Build(
         self.save()
 
     @transaction.atomic
+    def allocate_stock(self, items: list[dict]):
+        """Allocated provided stock items against this Build.
+
+        Arguments:
+            items: A list of dictionaries containing the following keys:
+                - build_line: The BuildLine instance to allocate against
+                - stock_item: The StockItem instance to allocate
+                - quantity: The quantity to allocate
+                - output: Optional StockItem (build output) to install into
+
+        This function will create new BuildItem objects, or update existing ones
+        """
+        to_create = {}
+        to_update = {}
+
+        for item in items:
+            build_line = item['build_line']
+            stock_item = item['stock_item']
+            quantity = item['quantity']
+            output = item.get('output', None)
+
+            # Ignore allocation for consumable BOM items
+            if build_line.bom_item.is_consumable:
+                continue
+
+            filters = {
+                'build_line': build_line,
+                'stock_item': stock_item,
+                'install_into': output,
+            }
+
+            # If a BuildItem already exists for this allocation, update it
+            if build_item := BuildItem.objects.filter(**filters).first():
+                # We may have already seen this
+                if build_item.pk in to_update:
+                    build_item = to_update[build_item.pk]
+
+                build_item.quantity += quantity
+            else:
+                # This is a new BuildItem
+                build_item = BuildItem(quantity=quantity, **filters)
+                to_create[
+                    build_line.pk, stock_item.pk, output.pk if output else None
+                ] = build_item
+
+        BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
+        BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
+
+    @transaction.atomic
     def auto_allocate_stock(
         self, item_type: str = BuildItemTypes.UNTRACKED, **kwargs
     ) -> None:

@@ -2222,7 +2222,7 @@ class BuildConsumeTest(BuildAPITest):
             data,
             expected_code=201,
             benchmark=True,
-            max_query_count=1750,
+            max_query_count=1000,
         )
 
         self.assertEqual(build.allocated_stock.count(), N)
