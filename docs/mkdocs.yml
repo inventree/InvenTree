@@ -146,6 +146,7 @@ nav:
     - Stock Tracking: stock/tracking.md
     - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md
+    - Stock Disassembly: stock/disassemble.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
