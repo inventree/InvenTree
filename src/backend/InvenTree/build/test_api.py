@@ -2221,7 +2221,8 @@ class BuildConsumeTest(BuildAPITest):
             reverse('api-build-allocate', kwargs={'pk': build.pk}),
             data,
             expected_code=201,
-            max_query_count=2000,
+            benchmark=True,
+            max_query_count=1750,
         )
 
         self.assertEqual(build.allocated_stock.count(), N)
@@ -2251,7 +2252,8 @@ class BuildConsumeTest(BuildAPITest):
             reverse('api-build-finish', kwargs={'pk': build.pk}),
             {},
             expected_code=201,
-            max_query_count=5000,
+            benchmark=True,
+            max_query_count=4250,
         )
 
         build.refresh_from_db()
