@@ -508,7 +508,10 @@ class InvenTreeAPITestCase(
 
         t1 = time.time()
 
-        with self.assertNumQueriesLessThan(max_query_count, url=url) as context:
+        with (
+            self.assertNumQueriesLessThan(max_query_count, url=url) as context,
+            self.captureOnCommitCallbacks(execute=True),
+        ):
             response = method(url, data, **kwargs)
 
         t2 = time.time()
