@@ -39,6 +39,7 @@ from InvenTree.serializers import (
     OptionalField,
     TreePathSerializer,
 )
+from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from users.serializers import UserSerializer
 
@@ -1798,7 +1799,12 @@ class StockCountSerializer(StockAdjustmentSerializer):
         notes = data.get('notes', '')
         location = data.get('location', None)
 
-        with transaction.atomic(), batch_events(), batch_tracking_entries():
+        with (
+            transaction.atomic(),
+            batch_events(),
+            batch_tracking_entries(),
+            batch_offload_tasks(),
+        ):
             for item in items:
                 stock_item = item['pk']
                 quantity = item['quantity']

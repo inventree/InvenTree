@@ -1,10 +1,13 @@
 """Functions for tasks and a few general async tasks."""
 
+import contextvars
 import json
 import os
 import re
 import warnings
+from collections import defaultdict
 from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional
@@ -13,7 +16,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
-from django.db import DEFAULT_DB_ALIAS, connections
+from django.db import DEFAULT_DB_ALIAS, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
@@ -201,6 +204,86 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
     return task_id
 
 
+# Context-local batch of pending offload_task() calls (see batch_offload_tasks())
+_task_batch: contextvars.ContextVar = contextvars.ContextVar('task_batch', default=None)
+
+
+class TaskBatch:
+    """Collects offload_task() calls made within a batch_offload_tasks() scope.
+
+    Entries are grouped by (taskname, group, force_async), so that each distinct
+    combination triggered within the batch is flushed via its own bulk_offload_task() call.
+    """
+
+    def __init__(self):
+        """Initialize an empty batch."""
+        self.entries: dict[tuple, list] = defaultdict(list)
+
+    def add(
+        self, taskname, group: str, force_async: bool, args: tuple, kwargs: dict
+    ) -> None:
+        """Record a single offload_task() call against this batch."""
+        self.entries[taskname, group, force_async].append((args, kwargs))
+
+    def flush(self) -> None:
+        """Fire a bulk_offload_task() call for each (taskname, group, force_async) group collected so far."""
+        entries, self.entries = self.entries, defaultdict(list)
+
+        for (taskname, group, force_async), task_entries in entries.items():
+            bulk_offload_task(
+                taskname, task_entries, group=group, force_async=force_async
+            )
+
+
+@contextmanager
+def batch_offload_tasks():
+    """Batch offload_task() calls made within this scope into bulk_offload_task() calls.
+
+    Any offload_task() call made (directly, or indirectly via a nested function call) while
+    this context is active is queued instead of immediately offloaded - *except* for calls
+    which pass force_sync=True, which always run immediately and synchronously as before.
+    Excluding these is necessary because a forced-sync call is relied upon to have completed,
+    with its side effects visible, by the time offload_task() returns control to the caller -
+    deferring it would silently break that contract.
+
+    The queued calls are flushed - grouped by (taskname, group, force_async), one
+    bulk_offload_task() call per group - when the current database transaction commits (or
+    immediately, if no transaction is active). If the transaction is instead rolled back, the
+    queued calls are discarded, rather than being fired for a write that never happened.
+
+    Note: bulk_offload_task() does not perform duplicate-task checking, unlike offload_task()'s
+    default (check_duplicates=True) behavior - queued calls are never deduplicated, regardless
+    of the check_duplicates value passed to offload_task().
+
+    A batched offload_task() call always returns True immediately, rather than a task ID -
+    the actual task ID is not known until the batch is flushed, possibly well after the
+    call returns. Callers which depend on the returned task ID should not use this context.
+
+    Nesting is not supported: a nested batch_offload_tasks() call reuses the outer batch,
+    and only the outermost call schedules a flush.
+
+    This mirrors plugin.base.event.events.batch_events() and stock.models.batch_tracking_entries()
+    - see batch_events()'s docstring for the reasoning behind the on-commit flush and the
+    context-local (rather than parameter-based) design.
+
+    Yields:
+        The current TaskBatch instance
+    """
+    if _task_batch.get() is not None:
+        # Already inside a batch - extend it, rather than creating a nested one
+        yield _task_batch.get()
+        return
+
+    batch = TaskBatch()
+    token = _task_batch.set(batch)
+
+    try:
+        yield batch
+    finally:
+        _task_batch.reset(token)
+        transaction.on_commit(batch.flush)
+
+
 def offload_task(
     taskname,
     *args,
@@ -224,10 +307,17 @@ def offload_task(
     Returns:
         str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
-    from InvenTree.exceptions import log_error
-
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
+
+    if not force_sync and (batch := _task_batch.get()) is not None:
+        # A batch_offload_tasks() context is active - queue this task rather than
+        # offloading it immediately (force_sync=True calls never reach this branch -
+        # see batch_offload_tasks() for why they are excluded from batching)
+        batch.add(taskname, group, force_async, args, kwargs)
+        return True
+
+    from InvenTree.exceptions import log_error
 
     try:
         import importlib

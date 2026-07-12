@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
+from django.db import transaction
 from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
@@ -439,3 +440,147 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             self.assertEqual(task.group(), 'inventree')
             self.assertEqual(task.args(), args)
             self.assertEqual(task.kwargs(), kwargs)
+
+
+class TaskBatchTests(TestCase):
+    """Unit tests for the batch_offload_tasks() context manager."""
+
+    def setUp(self):
+        """Start each test with an empty task queue."""
+        super().setUp()
+        OrmQ.objects.all().delete()
+
+    def test_tasks_queued_and_flushed_on_commit(self):
+        """Tasks offloaded inside batch_offload_tasks() are queued and flushed as one bulk write on commit."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                for idx in range(10):
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.dummy_function',
+                        idx,
+                        force_async=True,
+                        animal=f'animal_{idx}',
+                    )
+
+                # Nothing should be queued yet - the batch only flushes on commit
+                self.assertEqual(OrmQ.objects.count(), 0)
+
+        self.assertEqual(OrmQ.objects.count(), 10)
+
+        queued_tasks = OrmQ.objects.all().order_by('id')
+
+        for idx, task in enumerate(queued_tasks):
+            self.assertEqual(task.func(), 'dummy_module.dummy_function')
+            self.assertEqual(task.group(), 'inventree')
+            self.assertEqual(task.args(), (idx,))
+            self.assertEqual(task.kwargs(), {'animal': f'animal_{idx}'})
+
+    def test_tasks_grouped_by_name_and_group(self):
+        """Tasks with different (taskname, group) combinations are flushed as separate bulk writes."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                for idx in range(5):
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.task_a', idx, force_async=True, group='alpha'
+                    )
+                for idx in range(3):
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.task_b', idx, force_async=True, group='beta'
+                    )
+
+        self.assertEqual(OrmQ.objects.count(), 8)
+        self.assertEqual(
+            sum(
+                1
+                for t in OrmQ.objects.all()
+                if t.func() == 'dummy_module.task_a' and t.group() == 'alpha'
+            ),
+            5,
+        )
+        self.assertEqual(
+            sum(
+                1
+                for t in OrmQ.objects.all()
+                if t.func() == 'dummy_module.task_b' and t.group() == 'beta'
+            ),
+            3,
+        )
+
+    def test_tasks_discarded_on_rollback(self):
+        """Tasks queued in a batch are discarded, not fired, if the transaction rolls back."""
+        with self.captureOnCommitCallbacks(execute=True):
+            try:
+                with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.dummy_function', force_async=True
+                    )
+                    raise ValueError('boom')
+            except ValueError:
+                pass
+
+        self.assertEqual(OrmQ.objects.count(), 0)
+
+    def test_tasks_outside_batch_fire_immediately(self):
+        """Tasks offloaded outside any batch_offload_tasks() context are unaffected - fired immediately."""
+        InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
+
+        # No transaction commit or captureOnCommitCallbacks needed - it was never queued
+        self.assertEqual(OrmQ.objects.count(), 1)
+
+    def test_nested_batch_share_one_flush(self):
+        """A nested batch_offload_tasks() call reuses the outer batch, rather than flushing twice."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(
+                    'dummy_module.dummy_function', 1, force_async=True
+                )
+                with InvenTree.tasks.batch_offload_tasks():
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.dummy_function', 2, force_async=True
+                    )
+                self.assertEqual(OrmQ.objects.count(), 0)
+
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+    def test_force_sync_excluded_from_batch(self):
+        """force_sync=True calls bypass batch_offload_tasks() entirely and run immediately."""
+        calls = []
+
+        def sync_target():
+            calls.append('ran')
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(sync_target, force_sync=True)
+
+                # Ran immediately - not deferred to flush, and never touched the task queue
+                self.assertEqual(calls, ['ran'])
+                self.assertEqual(OrmQ.objects.count(), 0)
+
+                InvenTree.tasks.offload_task(
+                    'dummy_module.dummy_function', force_async=True
+                )
+
+                # The (non-force_sync) async call is queued, not yet in OrmQ
+                self.assertEqual(OrmQ.objects.count(), 0)
+
+        # After commit: only the batched async call produced an OrmQ entry
+        self.assertEqual(OrmQ.objects.count(), 1)
+        self.assertEqual(calls, ['ran'])
+
+    def test_batched_calls_skip_duplicate_check(self):
+        """Unlike individual offload_task() calls, batched calls are never deduplicated."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                for _ in range(3):
+                    InvenTree.tasks.offload_task(
+                        'dummy_module.dummy_function_dup',
+                        1,
+                        2,
+                        animal='cat',
+                        force_async=True,
+                    )
+
+        # All 3 identical calls were queued, unlike the non-batched dedup behavior
+        # exercised in InvenTreeTaskTests.test_duplicate_tasks
+        self.assertEqual(OrmQ.objects.count(), 3)
