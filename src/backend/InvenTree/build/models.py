@@ -741,11 +741,6 @@ class Build(
             group='build',
         )
 
-        self.completion_date = InvenTree.helpers.current_date()
-        self.completed_by = user
-        self.status = BuildStatus.COMPLETE.value
-        self.save()
-
     @transaction.atomic
     def issue_build(self):
         """Mark the Build as IN PRODUCTION.

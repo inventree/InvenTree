@@ -253,6 +253,8 @@ def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = Fal
         trim_allocated_stock: If True, trim any allocated stock which was not consumed
     """
     from build.models import Build
+    from build.status_codes import BuildStatus
+    from common.models import User
 
     build = Build.objects.get(pk=build_id)
     user = User.objects.filter(pk=user_id).first() if user_id else None
@@ -262,6 +264,12 @@ def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = Fal
 
     # Complete any remaining allocations for this build order
     complete_build_allocations(build_id, user_id)
+
+    # Mark the build as completed
+    build.completion_date = InvenTree.helpers.current_date()
+    build.completed_by = user
+    build.status = BuildStatus.COMPLETE.value
+    build.save()
 
     # Register an event
     trigger_event(BuildEvents.COMPLETED, id=build.pk)
