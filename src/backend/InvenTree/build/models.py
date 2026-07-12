@@ -1254,6 +1254,22 @@ class Build(
         to_create = {}
         to_update = {}
 
+        # Bulk-fetch any BuildItems which already exist for these (build_line, stock_item)
+        # pairs, keyed by (build_line_id, stock_item_id, install_into_id). Looking these up
+        # from a dict below avoids the one-query-per-item cost of a per-entry .filter().first()
+        # call, which otherwise dominates the query count for a large allocation request.
+        existing_items = {
+            (
+                existing.build_line_id,
+                existing.stock_item_id,
+                existing.install_into_id,
+            ): existing
+            for existing in BuildItem.objects.filter(
+                build_line__in={item['build_line'] for item in items},
+                stock_item__in={item['stock_item'] for item in items},
+            )
+        }
+
         for item in items:
             build_line = item['build_line']
             stock_item = item['stock_item']
@@ -1270,8 +1286,10 @@ class Build(
                 'install_into': output,
             }
 
+            key = (build_line.pk, stock_item.pk, output.pk if output else None)
+
             # If a BuildItem already exists for this allocation, update it
-            if build_item := BuildItem.objects.filter(**filters).first():
+            if build_item := existing_items.get(key):
                 # We may have already seen this
                 if build_item.pk in to_update:
                     build_item = to_update[build_item.pk]
@@ -1280,9 +1298,7 @@ class Build(
             else:
                 # This is a new BuildItem
                 build_item = BuildItem(quantity=quantity, **filters)
-                to_create[
-                    build_line.pk, stock_item.pk, output.pk if output else None
-                ] = build_item
+                to_create[key] = build_item
 
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
