@@ -351,6 +351,18 @@ class StockTest(StockTestBase):
         stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
+    def test_split_stock_tracking_deltas(self):
+        """The parent's SPLIT_CHILD_ITEM tracking entry must reference the new child item."""
+        parent = StockItem.objects.get(id=1234)
+        child = parent.splitStock(100, None, self.user)
+
+        parent_entry = parent.tracking_info.filter(
+            tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+        ).first()
+
+        self.assertIsNotNone(parent_entry)
+        self.assertEqual(parent_entry.deltas.get('stockitem'), child.pk)
+
     def test_stocktake(self):
         """Test stocktake function."""
         # Perform stocktake

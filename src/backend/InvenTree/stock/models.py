@@ -2833,6 +2833,7 @@ class StockItem(
         linking the resulting tracking entry back to the order which triggered it.
         """
         return [
+            'stockitem',
             'stockitemlocation',
             'transferorder',
             'purchaseorder',
