@@ -718,6 +718,49 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(part=10004)
         self.assertEqual(len(response), 3)
 
+    def test_filter_by_part_include_variants(self):
+        """Filter StockItem list by part, with / without including variants.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/12232
+        - The 'Install Stock Item' form relies on 'include_variants=false' to avoid
+          surfacing variant stock which the BOM does not allow
+        """
+        category = part.models.PartCategory.objects.get(pk=3)
+
+        master_part = part.models.Part.objects.create(
+            name='Master Variant Part',
+            description='Master part which has variants',
+            category=category,
+            is_template=True,
+        )
+
+        variant_part = part.models.Part.objects.create(
+            name='Variant Part',
+            description='A variant of the master part',
+            category=category,
+            variant_of=master_part,
+        )
+
+        StockItem.objects.create(part=master_part, quantity=5)
+        StockItem.objects.create(part=variant_part, quantity=3)
+
+        # By default, 'include_variants' defaults to True - stock for both parts is returned
+        response = self.get_stock(part=master_part.pk)
+        self.assertEqual(len(response), 2)
+
+        response = self.get_stock(part=master_part.pk, include_variants=True)
+        self.assertEqual(len(response), 2)
+
+        # Exclude variants - only stock for the exact part is returned
+        response = self.get_stock(part=master_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], master_part.pk)
+
+        # Filtering directly on the variant part is unaffected by 'include_variants'
+        response = self.get_stock(part=variant_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], variant_part.pk)
+
     def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
         response = self.get_stock(IPN='R.CH')
