@@ -179,7 +179,7 @@ test('Purchase Orders - General', async ({ browser }) => {
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByRole('cell', { name: 'PO0012' }).click();
-  await page.waitForTimeout(200);
+  await page.waitForLoadState('networkidle');
 
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Received Stock');

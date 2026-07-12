@@ -57,7 +57,7 @@ An import session can be initiated from a number of different contexts within th
 
 Staff users can create an import session from within the [Admin Center](../settings/admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
 
-Users can quickly navigate to the data import management page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
+Users can quickly navigate to the data import management page from the [spotlight search](./ui/index.md#spotlight), by searching for "import" and selecting the "Import data" option.
 
 ### Data Tables
 

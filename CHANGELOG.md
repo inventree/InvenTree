@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12117](https://github.com/inventree/InvenTree/pull/12117) adds a "preview" drawer to the InvenTree table component, allowing users to preview the details of a selected row without navigating away from the table view. This feature is optional and can be enabled or disabled via the `PREVIEW_DRAWER_ENABLED` system setting.
 - [#12341](https://github.com/inventree/InvenTree/pull/12341) adds support for importing internal part prices.
 - [#12295](https://github.com/inventree/InvenTree/pull/12295) adds "consumable" field to the Part model and API endpoints
 - [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
