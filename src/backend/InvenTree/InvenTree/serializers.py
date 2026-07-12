@@ -291,6 +291,110 @@ class FilterableSerializerMixin:
         return queryset
 
 
+@dataclass
+class PrefetchSpec:
+    """Describes a single bulk-prefetch to run against incoming (un-validated) request data.
+
+    Used by `BulkPrefetchSerializerMixin` to populate the {pk: instance} caches that
+    `InvenTree.fields.PrefetchedPrimaryKeyRelatedField` looks up against.
+
+    Attributes:
+        list_field: Name of the list field in the raw request data (e.g. 'items').
+        pk_field: Name of the pk-valued key within each entry of that list (e.g. 'stock_item').
+        queryset: Base queryset used to resolve the collected pks (e.g. `StockItem.objects.select_related(...)`).
+        cache_key: Context key to store the resulting {pk: instance} map under - must match
+            the `cache_key` passed to the corresponding `PrefetchedPrimaryKeyRelatedField`.
+    """
+
+    list_field: str
+    pk_field: str
+    queryset: QuerySet
+    cache_key: str
+
+
+class BulkPrefetchSerializerMixin:
+    """Mixin for a parent serializer whose nested list fields use PrefetchedPrimaryKeyRelatedField.
+
+    Without this mixin, PrefetchedPrimaryKeyRelatedField falls back to one .get() query per
+    list entry, since no cache has been populated in the context - for a request with
+    hundreds of entries, that turns validation itself into an O(n) query cost.
+
+    Subclasses declare `prefetch_fields`, a list of `PrefetchSpec` objects describing which
+    lists of raw entries to bulk-resolve before per-field validation runs:
+
+        class MySerializer(BulkPrefetchSerializerMixin, serializers.Serializer):
+            prefetch_fields = [
+                PrefetchSpec('items', 'stock_item', StockItem.objects.all(), '_stock_item'),
+                PrefetchSpec('items', 'build_line', BuildLine.objects.all(), '_build_line'),
+            ]
+
+            items = MyItemSerializer(many=True)
+
+        class MyItemSerializer(serializers.Serializer):
+            stock_item = PrefetchedPrimaryKeyRelatedField(
+                cache_key='_stock_item', queryset=StockItem.objects.all()
+            )
+            build_line = PrefetchedPrimaryKeyRelatedField(
+                cache_key='_build_line', queryset=BuildLine.objects.all()
+            )
+
+    Multiple specs may share the same `list_field` (as above), one per pk-valued key
+    that needs resolving within each entry.
+    """
+
+    prefetch_fields: list[PrefetchSpec] = []
+
+    @staticmethod
+    def _extract_pks(entries, key: str) -> set:
+        """Pull the raw pk values for 'key' out of a list of raw (un-validated) dicts.
+
+        Silently ignores entries which are not dicts, or whose value cannot be
+        interpreted as an integer pk - those are left for the per-field validation
+        (PrefetchedPrimaryKeyRelatedField) to reject with the usual error message.
+        """
+        pks = set()
+
+        for entry in entries or []:
+            if not isinstance(entry, dict):
+                continue
+
+            try:
+                pks.add(int(entry.get(key)))
+            except (TypeError, ValueError):
+                continue
+
+        return pks
+
+    def to_internal_value(self, data):
+        """Bulk-prefetch the objects referenced by each declared PrefetchSpec.
+
+        Populating context[cache_key] here means PrefetchedPrimaryKeyRelatedField resolves
+        each entry via an O(1) dict lookup, so the whole request is validated in a fixed,
+        small number of queries instead of one query per list entry.
+        """
+        if isinstance(data, dict):
+            for spec in self.prefetch_fields:
+                pks = self._extract_pks(data.get(spec.list_field), spec.pk_field)
+
+                self.context[spec.cache_key] = {
+                    obj.pk: obj for obj in spec.queryset.filter(pk__in=pks)
+                }
+
+            self.after_prefetch(data)
+
+        return super().to_internal_value(data)
+
+    def after_prefetch(self, data):
+        """Optional hook called once the pk caches are populated, before nested field validation runs.
+
+        Override this to bulk-compute anything else that per-entry `validate_<field>()`
+        or `validate()` methods would otherwise recompute one entry at a time - e.g. an
+        aggregate that would otherwise cost one query per entry. Stash the result in
+        `self.context` (the same mechanism `prefetch_fields` uses) so nested serializers
+        can look it up.
+        """
+
+
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 

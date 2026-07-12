@@ -1672,6 +1672,53 @@ class StockItem(
         """Return the quantity of this StockItem which is *not* allocated."""
         return max(self.quantity - self.allocation_count(), 0)
 
+    @staticmethod
+    def bulk_allocation_count(stock_items) -> dict:
+        """Bulk-compute the total allocated quantity (builds + sales orders + transfer orders) for a set of StockItem objects.
+
+        Mirrors the per-instance calculation in `allocation_count()`, but resolves the whole
+        set in 3 aggregate queries (one per allocation type) rather than one query per
+        allocation type *per item* - critical for validating requests which reference many
+        stock items at once.
+
+        Returns:
+            A {stock_item.pk: total_allocated_quantity} dict. Items with no allocations
+            of any kind are omitted (i.e. callers should default missing pks to zero).
+        """
+        pks = [item.pk for item in stock_items]
+
+        totals = {}
+
+        def _accumulate(queryset, group_field):
+            rows = queryset.values(group_field).annotate(
+                total=Coalesce(Sum('quantity'), Decimal(0))
+            )
+            for row in rows:
+                pk = row[group_field]
+                totals[pk] = totals.get(pk, Decimal(0)) + row['total']
+
+        _accumulate(
+            build.models.BuildItem.objects.filter(stock_item__in=pks), 'stock_item'
+        )
+
+        _accumulate(
+            order.models.SalesOrderAllocation.objects.filter(
+                item__in=pks,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
+                shipment__shipment_date=None,
+            ),
+            'item',
+        )
+
+        _accumulate(
+            order.models.TransferOrderAllocation.objects.filter(
+                item__in=pks, line__order__status__in=TransferOrderStatusGroups.OPEN
+            ),
+            'item',
+        )
+
+        return totals
+
     def can_delete(self):
         """Can this stock item be deleted?
 

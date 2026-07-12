@@ -31,8 +31,10 @@ import part.serializers as part_serializers
 import stock.models as stock_models
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
+from InvenTree.fields import PrefetchedPrimaryKeyRelatedField
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    BulkPrefetchSerializerMixin,
     CustomStatusSerializerMixin,
     DuplicateOptionsSerializer,
     FilterableSerializerMixin,
@@ -41,6 +43,7 @@ from InvenTree.serializers import (
     InvenTreeTaggitSerializer,
     NotesFieldMixin,
     OptionalField,
+    PrefetchSpec,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -858,7 +861,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         fields = ['build_item', 'stock_item', 'quantity', 'output']
 
-    build_line = serializers.PrimaryKeyRelatedField(
+    build_line = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_build_line',
         queryset=BuildLine.objects.all(),
         many=False,
         allow_null=False,
@@ -886,7 +890,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         return build_line
 
-    stock_item = serializers.PrimaryKeyRelatedField(
+    stock_item = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_stock_item',
         queryset=StockItem.objects.all(),
         many=False,
         allow_null=False,
@@ -912,7 +917,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         return quantity
 
-    output = serializers.PrimaryKeyRelatedField(
+    output = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_output',
         queryset=StockItem.objects.filter(is_building=True),
         many=False,
         allow_null=True,
@@ -935,7 +941,15 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         # Note: Because of allow_variants options, it may not be a direct match!
 
         # Check that the quantity does not exceed the available amount from the stock item
-        q = stock_item.unallocated_quantity()
+        allocated = self.context.get('_stock_item_allocated')
+
+        if allocated is not None:
+            q = max(
+                stock_item.quantity - allocated.get(stock_item.pk, Decimal(0)),
+                Decimal(0),
+            )
+        else:
+            q = stock_item.unallocated_quantity()
 
         if quantity > q:
             q = InvenTree.helpers.clean_decimal(q)
@@ -961,7 +975,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         return data
 
 
-class BuildAllocationSerializer(serializers.Serializer):
+class BuildAllocationSerializer(BulkPrefetchSerializerMixin, serializers.Serializer):
     """Serializer for allocating stock items against a build order."""
 
     class Meta:
@@ -969,7 +983,32 @@ class BuildAllocationSerializer(serializers.Serializer):
 
         fields = ['items']
 
+    prefetch_fields = [
+        PrefetchSpec(
+            'items',
+            'build_line',
+            BuildLine.objects.select_related(
+                'build', 'bom_item__part', 'bom_item__sub_part'
+            ),
+            '_build_line',
+        ),
+        PrefetchSpec('items', 'stock_item', StockItem.objects.all(), '_stock_item'),
+        PrefetchSpec(
+            'items', 'output', StockItem.objects.filter(is_building=True), '_output'
+        ),
+    ]
+
     items = BuildAllocationItemSerializer(many=True)
+
+    def after_prefetch(self, data):
+        """Bulk-compute allocated quantities for every referenced stock item.
+
+        BuildAllocationItemSerializer.validate() checks each stock item's unallocated.
+        """
+        stock_items = self.context.get('_stock_item', {}).values()
+        self.context['_stock_item_allocated'] = StockItem.bulk_allocation_count(
+            stock_items
+        )
 
     def validate(self, data):
         """Validation."""
