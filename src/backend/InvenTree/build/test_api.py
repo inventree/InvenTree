@@ -2817,3 +2817,82 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
 
         self.assertTrue(alloc_a.exists())
         self.assertTrue(alloc_b.exists())
+
+    # ------------------------------------------------------------------
+    # Large number of build lines (performance / bulk allocation)
+    # ------------------------------------------------------------------
+
+    def test_many_build_lines_allocated_correctly(self):
+        """A build with 100 BOM lines, each with sufficient dedicated stock, is fully auto-allocated.
+
+        This test is a performance benchmark for the auto-allocate endpoint,
+        to ensure that auto-allocating 100x items does not cause an excessive amount of DB hits.
+        """
+        assembly = Part.objects.create(
+            name='AutoAlloc Big Assembly', description='', assembly=True
+        )
+        build = Build.objects.create(
+            part=assembly,
+            reference=f'BO-{9000 + Build.objects.count():04d}',
+            quantity=10,
+        )
+
+        components = [
+            Part(
+                name=f'AutoAlloc Bulk Component {i}',
+                description='',
+                component=True,
+                tree_id=0,
+                level=0,
+                lft=0,
+                rght=0,
+            )
+            for i in range(100)
+        ]
+
+        Part.objects.bulk_create(components)
+
+        # Create BomItem for each component, and a stock item with sufficient quantity to cover the build
+        bom_items = [
+            BomItem(part=assembly, sub_part=component, quantity=13)
+            for component in components
+        ]
+
+        BomItem.objects.bulk_create(bom_items)
+
+        # Create multiple stock items for each component, with a total sufficient stock to fulfil each line
+        stock_items = []
+
+        for _i in range(4):
+            for component in components:
+                # Total of 160 stock for each component
+                stock_items.append(
+                    StockItem(
+                        part=component, quantity=40, level=0, tree_id=0, lft=0, rght=0
+                    )
+                )
+
+        StockItem.objects.bulk_create(stock_items)
+
+        build.create_build_line_items()
+
+        self.assertEqual(build.build_lines.count(), 100)
+
+        self.post(
+            self._url(build.pk),
+            {'interchangeable': True},
+            expected_code=200,
+            benchmark=True,
+            max_query_count=150,
+        )
+
+        allocs = BuildItem.objects.filter(build_line__build=build)
+
+        # Every line should have received exactly one allocation, covering the full requirement.
+        self.assertEqual(allocs.count(), 400)
+
+        for component in components:
+            fa = allocs.filter(stock_item__part=component)
+            self.assertEqual(fa.count(), 4)
+            allocated = sum(a.quantity for a in fa)
+            self.assertEqual(allocated, 130)  # 130 allocated to each line

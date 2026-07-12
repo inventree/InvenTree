@@ -1680,12 +1680,29 @@ class Build(
                 return 2
             return 3
 
-        new_items = []
-
         # Select only "untracked" line items
         untracked_lines = self.untracked_line_items.all()
+
         if line_ids:
             untracked_lines = untracked_lines.filter(pk__in=line_ids)
+
+        untracked_lines = untracked_lines.select_related(
+            'bom_item', 'bom_item__sub_part'
+        ).prefetch_related('bom_item__substitutes__part')
+
+        # Pre-compute the outstanding (unallocated) quantity for every line in a single
+        # query, instead of one aggregate query per line via BuildLine.unallocated_quantity()
+        untracked_lines = untracked_lines.annotate(
+            allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
+        )
+
+        # First pass: resolve the candidate stock items for each line. We defer the actual
+        # allocation quantity math until every candidate stock item's outstanding allocated
+        # quantity can be resolved in a single bulk query (see below), rather than querying
+        # it (x3) per stock item as each line is processed.
+        line_data = []
+        candidate_stock = {}
 
         for line_item in untracked_lines:
             # Find the referenced BomItem
@@ -1699,23 +1716,32 @@ class Build(
                 # User has specified that optional_items are to be ignored
                 continue
 
-            variant_parts = bom_item.sub_part.get_descendants(include_self=False)
-
-            unallocated_quantity = line_item.unallocated_quantity()
+            unallocated_quantity = max(line_item.required - line_item.allocated, 0)
 
             if unallocated_quantity <= 0:
                 # This BomItem is fully allocated, we can continue
                 continue
 
+            variant_parts = (
+                list(bom_item.sub_part.get_descendants(include_self=False))
+                if bom_item.allow_variants
+                else []
+            )
+
             # Check which parts we can "use" (may include variants and substitutes)
             available_parts = bom_item.get_valid_parts_for_allocation(
-                allow_variants=True, allow_inactive=False, allow_substitutes=substitutes
+                allow_variants=True,
+                allow_inactive=False,
+                allow_substitutes=substitutes,
+                variant_parts=variant_parts,
             )
 
             # Look for available stock items
-            available_stock = stock.models.StockItem.objects.filter(
-                stock.models.StockItem.IN_STOCK_FILTER
-            )
+            # select_related('part') avoids a per-item query in the stock_sort() key
+            # function below, which inspects item.part for every candidate.
+            available_stock = stock.models.StockItem.objects.select_related(
+                'part'
+            ).filter(stock.models.StockItem.IN_STOCK_FILTER)
 
             # Filter by list of available parts
             available_stock = available_stock.filter(part__in=list(available_parts))
@@ -1766,42 +1792,56 @@ class Build(
                 key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v),
             )
 
-            if len(available_stock) == 1 or interchangeable:
-                # Either there is only a single stock item available,
-                # or all items are "interchangeable" and we don't care where we take stock from
+            if len(available_stock) != 1 and not interchangeable:
+                # Multiple stock items are available, but they are not interchangeable -
+                # the user must manually decide how to allocate them.
+                continue
 
-                for stock_item in available_stock:
-                    # Skip inactive parts
-                    if not stock_item.part.active:
-                        continue
+            for stock_item in available_stock:
+                candidate_stock[stock_item.pk] = stock_item
 
-                    # How much of the stock item is "available" for allocation?
-                    quantity = min(
-                        unallocated_quantity, stock_item.unallocated_quantity()
-                    )
+            line_data.append((line_item, unallocated_quantity, available_stock))
 
-                    if quantity > 0:
-                        try:
-                            new_items.append(
-                                BuildItem(
-                                    build_line=line_item,
-                                    stock_item=stock_item,
-                                    quantity=quantity,
-                                )
+        # Bulk-resolve the outstanding allocated quantity for every candidate stock item
+        # identified above, in a fixed number of queries rather than 3 queries per item.
+        allocated_by_pk = stock.models.StockItem.bulk_allocation_count(
+            candidate_stock.values()
+        )
+
+        new_items = []
+
+        for line_item, unallocated_quantity, available_stock in line_data:
+            # Either there is only a single stock item available, or all items are
+            # "interchangeable" and we don't care where we take stock from
+            for stock_item in available_stock:
+                # How much of the stock item is "available" for allocation?
+                stock_unallocated = max(
+                    stock_item.quantity - allocated_by_pk.get(stock_item.pk, 0), 0
+                )
+                quantity = min(unallocated_quantity, stock_unallocated)
+
+                if quantity > 0:
+                    try:
+                        new_items.append(
+                            BuildItem(
+                                build_line=line_item,
+                                stock_item=stock_item,
+                                quantity=quantity,
                             )
+                        )
 
-                            # Subtract the required quantity
-                            unallocated_quantity -= quantity
+                        # Subtract the required quantity
+                        unallocated_quantity -= quantity
 
-                        except (ValidationError, serializers.ValidationError) as exc:
-                            # Re-raise with a Django-compatible validation payload
-                            raise ValidationError(
-                                serializers.as_serializer_error(exc)
-                            ) from exc
+                    except (ValidationError, serializers.ValidationError) as exc:
+                        # Re-raise with a Django-compatible validation payload
+                        raise ValidationError(
+                            serializers.as_serializer_error(exc)
+                        ) from exc
 
-                    if unallocated_quantity <= 0:
-                        # We have now fully-allocated this BomItem - no need to continue!
-                        break
+                if unallocated_quantity <= 0:
+                    # We have now fully-allocated this BomItem - no need to continue!
+                    break
 
         # Bulk-create the new BuildItem objects
         BuildItem.objects.bulk_create(new_items, batch_size=250)

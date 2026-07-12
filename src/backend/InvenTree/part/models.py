@@ -3678,6 +3678,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         allow_variants: bool = True,
         allow_substitutes: bool = True,
         allow_inactive: bool = True,
+        variant_parts=None,
     ):
         """Return a list of valid parts which can be allocated against this BomItem.
 
@@ -3685,6 +3686,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             allow_variants: If True, include variants of the sub_part
             allow_substitutes: If True, include any directly specified substitute parts
             allow_inactive: If True, include inactive parts in the returned list
+            variant_parts: Optional pre-fetched iterable of sub_part's descendants,
+                to avoid re-querying the part tree when the caller already has it
 
         Includes:
         - The referenced sub_part
@@ -3698,7 +3701,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         # Variant parts (if allowed)
         if allow_variants and self.allow_variants:
-            for variant in self.sub_part.get_descendants(include_self=False):
+            if variant_parts is None:
+                variant_parts = self.sub_part.get_descendants(include_self=False)
+            for variant in variant_parts:
                 parts.add(variant)
 
         # Substitute parts
