@@ -1524,7 +1524,12 @@ class StockItemTest(StockAPITestCase):
         """Test creation of a StockItem via the API."""
         # POST with an empty part reference
 
-        response = self.client.post(self.list_url, data={'quantity': 10, 'location': 1})
+        response = self.post(
+            self.list_url,
+            data={'quantity': 10, 'location': 1},
+            max_query_count=2250,
+            expected_code=400,
+        )
 
         self.assertContains(
             response,
@@ -1534,8 +1539,11 @@ class StockItemTest(StockAPITestCase):
 
         # POST with an invalid part reference
 
-        response = self.client.post(
-            self.list_url, data={'quantity': 10, 'location': 1, 'part': 10000000}
+        response = self.post(
+            self.list_url,
+            data={'quantity': 10, 'location': 1, 'part': 10000000},
+            max_query_count=2250,
+            expected_code=400,
         )
 
         self.assertContains(
@@ -1600,6 +1608,37 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(new_items.count(), 3)
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
+
+    def test_bulk_serialize_benchmark(self):
+        """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk serialize benchmark part',
+            description='Created for the stock serialize query-count benchmark',
+            trackable=True,
+        )
+
+        location = StockLocation.objects.create(
+            name='Bulk serialize benchmark location'
+        )
+
+        item = StockItem.objects.create(part=part, location=location, quantity=100)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        data = {'quantity': 100, 'serial_numbers': '1-100', 'destination': location.pk}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1300, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data), 100)
 
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
@@ -2892,6 +2931,140 @@ class StocktakeTest(StockAPITestCase):
             str(response.data['location']),
         )
 
+    def test_bulk_count_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk count benchmark part',
+            description='Created for the stock count query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk count benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-count')
+
+        data = {
+            'items': [
+                {'pk': item.pk, 'quantity': idx + 100} for idx, item in enumerate(items)
+            ]
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_add_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to add stock to 100 items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk add benchmark part',
+            description='Created for the stock add query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk add benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-add')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2500, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_remove_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to remove stock from 100 items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk remove benchmark part',
+            description='Created for the stock remove query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk remove benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 100)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-remove')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_move_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to move 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk move benchmark part',
+            description='Created for the stock move query-count benchmark',
+        )
+
+        source = StockLocation.objects.create(name='Bulk move benchmark source')
+        destination = StockLocation.objects.create(
+            name='Bulk move benchmark destination'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=source, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-transfer')
+
+        data = {
+            'items': [{'pk': item.pk, 'quantity': item.quantity} for item in items],
+            'location': destination.pk,
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
 
 class StockTransferMergeTest(StockAPITestCase):
     """Tests for optional merge-on-transfer behavior."""
@@ -2994,6 +3167,9 @@ class StockTransferMergeTest(StockAPITestCase):
 
     def test_transfer_merge_does_not_copy_source_tracking(self):
         """Transfer merge keeps destination history and adds a single merge entry."""
+        # Track total number of tracking entries created
+        N_TRACKING_ENTRIES = StockItemTracking.objects.count()
+
         existing = StockItem.objects.create(
             part=self.part, location=self.dest, quantity=100
         )
@@ -3031,6 +3207,23 @@ class StockTransferMergeTest(StockAPITestCase):
         self.assertEqual(merge_entry.deltas['quantity'], 150.0)
         self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
         self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+        self.assertEqual(StockItemTracking.objects.count(), N_TRACKING_ENTRIES + 4)
+
+        # Ensure tracking entries were bulk created in the correct order
+        entries = list(StockItemTracking.objects.order_by('-pk')[:4])[::-1]
+
+        for idx, tt in enumerate([
+            StockHistoryCode.CREATED,
+            StockHistoryCode.CREATED,
+            StockHistoryCode.STOCK_UPDATE,
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+        ]):
+            self.assertEqual(
+                entries[idx].tracking_type,
+                tt,
+                f'Entry {idx} has unexpected tracking type {entries[idx].tracking_type}',
+            )
 
     def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
         """Partial merge reuses split transfer deltas on the merge tracking entry."""

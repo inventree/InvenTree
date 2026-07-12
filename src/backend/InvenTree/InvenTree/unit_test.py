@@ -380,13 +380,23 @@ class TestQueryMixin:
     ):
         """Context manager to check that the number of queries is less than a certain value.
 
+        Arguments:
+            value: The maximum number of queries allowed
+            using: The database connection to use (default = 'default')
+            verbose: If True, print the queries to the console (default = False)
+            url: Optional URL to print in the output (default = None)
+            log_to_file: If True, log the queries to a file (default = False)
+
+        Yields:
+            The CaptureQueriesContext object, which contains the captured queries
+
         Example:
         with self.assertNumQueriesLessThan(10):
             # Do some stuff
         Ref: https://stackoverflow.com/questions/1254170/django-is-there-a-way-to-count-sql-queries-from-an-unit-test/59089020#59089020
         """
         with CaptureQueriesContext(connections[using]) as context:
-            yield  # your test will be run here
+            yield context  # your test will be run here
 
         n = len(context.captured_queries)
 
@@ -492,12 +502,16 @@ class InvenTreeAPITestCase(
 
         expected_code = kwargs.pop('expected_code', None)
         msg = kwargs.pop('msg', None)
-        max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
+        max_query_count = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
         max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
+        benchmark = kwargs.pop('benchmark', False)
 
         t1 = time.time()
 
-        with self.assertNumQueriesLessThan(max_queries, url=url):
+        with (
+            self.assertNumQueriesLessThan(max_query_count, url=url) as context,
+            self.captureOnCommitCallbacks(execute=True),
+        ):
             response = method(url, data, **kwargs)
 
         t2 = time.time()
@@ -511,6 +525,11 @@ class InvenTreeAPITestCase(
             )
 
         self.assertLessEqual(dt, max_query_time)
+
+        if benchmark:
+            print(
+                f"Benchmark @ '{url}': {len(context.captured_queries)} queries (of {max_query_count}) in {dt:.4f}s (of {max_query_time}s max)"
+            )
 
         return response
 
