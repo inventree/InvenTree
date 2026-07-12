@@ -2004,7 +2004,6 @@ class StockItem(
                 new_item.set_status(status, custom_values=custom_status_values)
 
             # Ensure the tree structure is observed
-            new_item.tree_id = None
             new_item.save(add_note=False)
 
             deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
