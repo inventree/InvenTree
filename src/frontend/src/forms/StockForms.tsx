@@ -397,7 +397,8 @@ export function useStockItemInstallFields({
           in_stock: true,
           available: true,
           tracked: true,
-          part: selectedPart ? selectedPart : undefined
+          part: selectedPart ? selectedPart : undefined,
+          include_variants: false
         }
       },
       quantity: {},
