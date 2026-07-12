@@ -1637,14 +1637,7 @@ class StockItemTest(StockAPITestCase):
             self.assertIsNotNone(new_item.creation_date)
 
     def test_bulk_serialize_benchmark(self):
-        """Benchmark: measure the number of DB queries required to serialize 100 stock items at once.
-
-        This is not a strict regression test (query counts are printed, not asserted against
-        a fixed threshold) - it exists as a baseline comparison against the stock count/add/
-        remove/transfer benchmarks in StocktakeTest (see test_bulk_count_query_benchmark),
-        since serializeStock() already batches its StockItem and StockItemTracking writes via
-        bulk_create(). Run with -v2 to see the printed query count.
-        """
+        """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         part = Part.objects.create(
@@ -2490,13 +2483,7 @@ class StocktakeTest(StockAPITestCase):
         )
 
     def test_bulk_count_query_benchmark(self):
-        """Benchmark: measure the number of DB queries required to count 100 stock items at once.
-
-        This is not a strict regression test (query counts are printed, not asserted against
-        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
-        (e.g. batch_events()) on the stock count endpoint. Run with -v2 to see the printed
-        query count.
-        """
+        """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         part = Part.objects.create(
@@ -2536,12 +2523,7 @@ class StocktakeTest(StockAPITestCase):
         )
 
     def test_bulk_add_query_benchmark(self):
-        """Benchmark: measure the number of DB queries required to add stock to 100 items at once.
-
-        This is not a strict regression test (query counts are printed, not asserted against
-        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
-        on the stock add endpoint. Run with -v2 to see the printed query count.
-        """
+        """Benchmark: measure the number of DB queries required to add stock to 100 items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         part = Part.objects.create(
@@ -2577,12 +2559,7 @@ class StocktakeTest(StockAPITestCase):
         )
 
     def test_bulk_remove_query_benchmark(self):
-        """Benchmark: measure the number of DB queries required to remove stock from 100 items at once.
-
-        This is not a strict regression test (query counts are printed, not asserted against
-        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
-        on the stock remove endpoint. Run with -v2 to see the printed query count.
-        """
+        """Benchmark: measure the number of DB queries required to remove stock from 100 items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         part = Part.objects.create(
@@ -2618,15 +2595,7 @@ class StocktakeTest(StockAPITestCase):
         )
 
     def test_bulk_move_query_benchmark(self):
-        """Benchmark: measure the number of DB queries required to move 100 stock items at once.
-
-        This is not a strict regression test (query counts are printed, not asserted against
-        a fixed threshold) - it exists to measure the effect of bulk event/task offloading
-        on the stock transfer (move) endpoint. Run with -v2 to see the printed query count.
-
-        Each item is moved by its full quantity, to avoid the splitStock() branch used for
-        partial-quantity moves (which creates an additional StockItem per split).
-        """
+        """Benchmark: measure the number of DB queries required to move 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         part = Part.objects.create(
