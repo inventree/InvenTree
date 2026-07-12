@@ -6,8 +6,6 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import connection
-from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import pytest
@@ -1659,18 +1657,13 @@ class StockItemTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                # TODO: 2026-07-12 : Refactor this API call
-                response = self.post(url, data, max_query_count=1300, format='json')
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1300, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data), 100)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-stock-item-serialize]: serializing 100 stock items required {query_count} DB queries'
-        )
 
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
@@ -2509,18 +2502,13 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                # TODO: 2026-07-12 : Refactor this API call
-                response = self.post(url, data, max_query_count=2250, format='json')
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-stock-count]: counting 100 stock items required {query_count} DB queries'
-        )
 
     def test_bulk_add_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to add stock to 100 items at once."""
@@ -2545,18 +2533,13 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                # TODO: 2026-07-12 : Refactor this API call
-                response = self.post(url, data, max_query_count=2500, format='json')
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2500, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-stock-add]: adding stock to 100 items required {query_count} DB queries'
-        )
 
     def test_bulk_remove_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to remove stock from 100 items at once."""
@@ -2581,18 +2564,13 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                # TODO: 2026-07-12 : Refactor this API call
-                response = self.post(url, data, max_query_count=2250, format='json')
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-stock-remove]: removing stock from 100 items required {query_count} DB queries'
-        )
 
     def test_bulk_move_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to move 100 stock items at once."""
@@ -2623,18 +2601,13 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                # TODO: 2026-07-12 : Refactor this API call
-                response = self.post(url, data, max_query_count=1250, format='json')
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1250, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-stock-transfer]: moving 100 stock items required {query_count} DB queries'
-        )
 
 
 class StockTransferMergeTest(StockAPITestCase):

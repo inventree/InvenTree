@@ -1464,17 +1464,12 @@ class PurchaseOrderReceiveTest(OrderTest):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            with CaptureQueriesContext(connection) as ctx:
-                response = self.post(url, data, max_query_count=400, format='json')
+            response = self.post(
+                url, data, max_query_count=400, benchmark=True, format='json'
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data), N_LINES)
-
-        query_count = len(ctx.captured_queries)
-
-        print(
-            f'\nBenchmark [api-po-receive]: receiving 100 line items required {query_count} DB queries'
-        )
 
     def test_packaging(self):
         """Test that we can supply a 'packaging' value when receiving items."""
