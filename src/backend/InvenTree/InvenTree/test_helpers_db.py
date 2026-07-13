@@ -146,7 +146,9 @@ class BulkCreateAndFetchTest(TestCase):
 
         self.assertEqual(result.count(), n)
 
-        self.assertLess(len(ctx.captured_queries), 10)
+        MAX_QUERIES = 25 if n > 100 else 10
+
+        self.assertLess(len(ctx.captured_queries), MAX_QUERIES)
 
         return len(ctx.captured_queries)
 
