@@ -26,7 +26,12 @@ from InvenTree.unit_test import (
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
-from stock.models import StockItem, StockItemTestResult, StockLocation
+from stock.models import (
+    StockItem,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+)
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -641,6 +646,70 @@ class BuildTest(BuildTestBase):
 
         for output in outputs:
             self.assertFalse(output.is_building)
+
+    def test_complete_output_stale_build_instance(self):
+        """The 'completed' count is incremented atomically at the database level.
+
+        Simulates two concurrent processes completing different outputs of the
+        same build, each holding its own (stale) copy of the Build instance.
+        """
+        self.stock_1_1.quantity = 1000
+        self.stock_1_1.save()
+
+        self.stock_2_1.quantity = 30
+        self.stock_2_1.save()
+
+        self.build.issue_build()
+
+        # Allocate non-tracked parts
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: self.stock_1_1.quantity,
+                self.stock_1_2: 10,
+                self.stock_2_1: 30,
+            },
+        )
+
+        # Allocate tracked parts against each output
+        self.allocate_stock(self.output_1, {self.stock_3_1: 6})
+        self.allocate_stock(self.output_2, {self.stock_3_1: 14})
+
+        # Two independent in-memory copies of the same build
+        build_a = Build.objects.get(pk=self.build.pk)
+        build_b = Build.objects.get(pk=self.build.pk)
+
+        build_a.complete_build_output(self.output_1, None)
+        build_b.complete_build_output(self.output_2, None)
+
+        # Both completions must be counted
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.completed, 10)
+
+    def test_complete_allocation_stale_build_line(self):
+        """The 'consumed' count is incremented atomically at the database level.
+
+        Simulates two concurrent workers completing different allocations
+        against the same BuildLine, each holding its own (stale) copy of the line.
+        """
+        self.build.issue_build()
+
+        self.allocate_stock(None, {self.stock_1_1: 3, self.stock_1_2: 5})
+
+        alloc_a, alloc_b = BuildItem.objects.filter(build_line=self.line_1).order_by(
+            'pk'
+        )
+
+        # Cache a separate copy of the BuildLine on each allocation
+        self.assertEqual(alloc_a.build_line.consumed, 0)
+        self.assertEqual(alloc_b.build_line.consumed, 0)
+
+        alloc_a.complete_allocation(user=self.user)
+        alloc_b.complete_allocation(user=self.user)
+
+        # Both consumed quantities must be counted
+        self.line_1.refresh_from_db()
+        self.assertEqual(self.line_1.consumed, 8)
 
     def test_complete_with_required_tests(self):
         """Test the prevention completion when a required test is missing feature."""
@@ -1261,6 +1330,72 @@ class BuildTaskTests(BuildTestBase):
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)
+
+    # -----------------------------------------------------------------------
+    # complete_build_outputs / scrap_build_outputs tasks
+    # -----------------------------------------------------------------------
+
+    def test_complete_outputs_task_is_idempotent(self):
+        """Duplicate execution of the output completion task must not double-count.
+
+        Regression test: the task never re-checked 'is_building', so a duplicated
+        (or redelivered) task run completed the same outputs twice - inflating the
+        'completed' count for the build order and duplicating stock history.
+        """
+        self.build.issue_build()
+
+        outputs = [{'output_id': self.output_1.pk}, {'output_id': self.output_2.pk}]
+
+        build.tasks.complete_build_outputs(
+            self.build.pk,
+            outputs,
+            self.location.pk,
+            StockStatus.OK.value,
+            user_id=self.user.pk,
+        )
+
+        self.build.refresh_from_db()
+        self.output_1.refresh_from_db()
+
+        self.assertEqual(self.build.completed, 10)
+        self.assertFalse(self.output_1.is_building)
+
+        n_tracking = StockItemTracking.objects.count()
+
+        # Run the task again (simulating a duplicated / redelivered task)
+        build.tasks.complete_build_outputs(
+            self.build.pk,
+            outputs,
+            self.location.pk,
+            StockStatus.OK.value,
+            user_id=self.user.pk,
+        )
+
+        # The 'completed' count has not been double-counted,
+        # and no additional stock history has been generated
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.completed, 10)
+        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+
+    def test_complete_output_twice_rejected(self):
+        """Completing or scrapping an already-completed output must be rejected.
+
+        Regression test: neither complete_build_output() nor scrap_build_output()
+        re-checked the 'is_building' state of the output.
+        """
+        self.build.issue_build()
+
+        self.build.complete_build_output(self.output_1, None)
+
+        with self.assertRaises(ValidationError):
+            self.build.complete_build_output(self.output_1, None)
+
+        with self.assertRaises(ValidationError):
+            self.build.scrap_build_output(self.output_1, None, self.location)
+
+        # An output belonging to a *different* build order is also rejected
+        with self.assertRaises(ValidationError):
+            self.build.complete_build_output(self.stockitem_wo_required_test, None)
 
     # -----------------------------------------------------------------------
     # cancel_build task
