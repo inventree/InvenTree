@@ -26,7 +26,12 @@ from InvenTree.unit_test import (
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
-from stock.models import StockItem, StockItemTestResult, StockLocation
+from stock.models import (
+    StockItem,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+)
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -1261,6 +1266,72 @@ class BuildTaskTests(BuildTestBase):
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)
+
+    # -----------------------------------------------------------------------
+    # complete_build_outputs / scrap_build_outputs tasks
+    # -----------------------------------------------------------------------
+
+    def test_complete_outputs_task_is_idempotent(self):
+        """Duplicate execution of the output completion task must not double-count.
+
+        Regression test: the task never re-checked 'is_building', so a duplicated
+        (or redelivered) task run completed the same outputs twice - inflating the
+        'completed' count for the build order and duplicating stock history.
+        """
+        self.build.issue_build()
+
+        outputs = [{'output_id': self.output_1.pk}, {'output_id': self.output_2.pk}]
+
+        build.tasks.complete_build_outputs(
+            self.build.pk,
+            outputs,
+            self.location.pk,
+            StockStatus.OK.value,
+            user_id=self.user.pk,
+        )
+
+        self.build.refresh_from_db()
+        self.output_1.refresh_from_db()
+
+        self.assertEqual(self.build.completed, 10)
+        self.assertFalse(self.output_1.is_building)
+
+        n_tracking = StockItemTracking.objects.count()
+
+        # Run the task again (simulating a duplicated / redelivered task)
+        build.tasks.complete_build_outputs(
+            self.build.pk,
+            outputs,
+            self.location.pk,
+            StockStatus.OK.value,
+            user_id=self.user.pk,
+        )
+
+        # The 'completed' count has not been double-counted,
+        # and no additional stock history has been generated
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.completed, 10)
+        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+
+    def test_complete_output_twice_rejected(self):
+        """Completing or scrapping an already-completed output must be rejected.
+
+        Regression test: neither complete_build_output() nor scrap_build_output()
+        re-checked the 'is_building' state of the output.
+        """
+        self.build.issue_build()
+
+        self.build.complete_build_output(self.output_1, None)
+
+        with self.assertRaises(ValidationError):
+            self.build.complete_build_output(self.output_1, None)
+
+        with self.assertRaises(ValidationError):
+            self.build.scrap_build_output(self.output_1, None, self.location)
+
+        # An output belonging to a *different* build order is also rejected
+        with self.assertRaises(ValidationError):
+            self.build.complete_build_output(self.stockitem_wo_required_test, None)
 
     # -----------------------------------------------------------------------
     # cancel_build task
