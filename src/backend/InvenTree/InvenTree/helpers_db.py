@@ -53,7 +53,7 @@ def bulk_create_and_fetch(
     for item in items:
         item.metadata = metadata
 
-    model.objects.bulk_create(items)
+    model.objects.bulk_create(items, batch_size=250)
 
     instances = model.objects.filter(**lookup_filters)
 
