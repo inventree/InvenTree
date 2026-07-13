@@ -3641,6 +3641,58 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(line.transferred, 4)
         self.assertEqual(item.quantity, 0)
 
+    def test_transfer_order_complete_stale_instance(self):
+        """A second completion attempt with a stale instance must be rejected.
+
+        Regression test: _action_complete() only checked the *in-memory* status,
+        so two concurrent completion requests (each holding its own instance of
+        the order) could both observe status=ISSUED and each process every
+        allocation - duplicating all stock movements and double-counting the
+        'transferred' quantity. The status is now re-read (under lock) from the
+        database before the allocations are processed.
+        """
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+
+        to = models.TransferOrder.objects.create(
+            reference='TO-54323', description='Test TO', destination=destination
+        )
+
+        part = Part.objects.exclude(virtual=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+
+        to.issue_order()
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.ISSUED.value)
+
+        item = StockItem.objects.create(part=part, quantity=10, batch='to-stale')
+        models.TransferOrderAllocation.objects.create(quantity=10, line=line, item=item)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        instance_a = models.TransferOrder.objects.get(pk=to.pk)
+        instance_b = models.TransferOrder.objects.get(pk=to.pk)
+
+        self.assertTrue(instance_a.complete_order(None))
+
+        line.refresh_from_db()
+        self.assertEqual(line.transferred, 10)
+
+        # The second (stale) instance still believes the order is ISSUED,
+        # but completion must be rejected based on the database state
+        self.assertEqual(instance_b.status, TransferOrderStatus.ISSUED.value)
+
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+
+        self.assertIn('Order is already complete', str(err.exception))
+
+        # The transferred quantity has not been double-counted
+        line.refresh_from_db()
+        self.assertEqual(line.transferred, 10)
+
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
         self.run_output_test(

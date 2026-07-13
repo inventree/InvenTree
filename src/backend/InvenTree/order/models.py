@@ -3628,6 +3628,12 @@ class TransferOrder(Order):
         """
         user = kwargs.pop('user', None)
 
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe status=ISSUED, and each would process every allocation
+        # (duplicating all associated stock operations).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_complete(raise_error=True, **kwargs):
             return False
 
