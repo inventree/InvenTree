@@ -3541,6 +3541,106 @@ class TransferOrderTest(OrderTest):
                 location=destination,
             )
 
+    def test_transfer_order_depleted_allocation(self):
+        """Completion handles allocations whose stock was reduced after allocation.
+
+        Regression test: the 'transferred' quantity used to be incremented by the
+        *allocated* quantity even when less (or no) stock was actually moved.
+        """
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+
+        to = models.TransferOrder.objects.create(
+            reference='TO-54321', description='Test TO', destination=destination
+        )
+
+        part = Part.objects.exclude(virtual=True).first()
+
+        line_a = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+        line_b = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+
+        url = reverse('api-transfer-order-issue', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        item_a = StockItem.objects.create(part=part, quantity=10, batch='to-reduced')
+        item_b = StockItem.objects.create(part=part, quantity=10, batch='to-depleted')
+
+        models.TransferOrderAllocation.objects.create(
+            quantity=10, line=line_a, item=item_a
+        )
+        models.TransferOrderAllocation.objects.create(
+            quantity=10, line=line_b, item=item_b
+        )
+
+        # Reduce the available stock *after* the allocations have been made
+        item_a.quantity = 6
+        item_a.save()
+
+        item_b.quantity = 0
+        item_b.save()
+
+        url = reverse('api-transfer-order-complete', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.COMPLETE.value)
+
+        # Only the quantity which was actually available has been transferred
+        line_a.refresh_from_db()
+        item_a.refresh_from_db()
+        self.assertEqual(line_a.transferred, 6)
+        self.assertEqual(item_a.location, destination)
+        self.assertEqual(item_a.quantity, 6)
+
+        # The depleted allocation was skipped, without error
+        line_b.refresh_from_db()
+        item_b.refresh_from_db()
+        self.assertEqual(line_b.transferred, 0)
+        self.assertIsNone(item_b.location)
+
+    def test_transfer_order_consume_depleted_allocation(self):
+        """Consume-type completion only records the quantity actually consumed."""
+        self.assignRole('transfer_order.add')
+
+        to = models.TransferOrder.objects.create(
+            reference='TO-54322', description='Test TO', consume=True
+        )
+
+        part = Part.objects.exclude(virtual=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=10
+        )
+
+        url = reverse('api-transfer-order-issue', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        item = StockItem.objects.create(
+            part=part, quantity=100, batch='to-consume', delete_on_deplete=False
+        )
+
+        models.TransferOrderAllocation.objects.create(quantity=10, line=line, item=item)
+
+        # Reduce the available stock *after* the allocation has been made
+        item.quantity = 4
+        item.save()
+
+        url = reverse('api-transfer-order-complete', kwargs={'pk': to.pk})
+        self.post(url, {}, expected_code=201)
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.COMPLETE.value)
+
+        # Only the quantity which was actually available has been consumed
+        line.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(line.transferred, 4)
+        self.assertEqual(item.quantity, 0)
+
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
         self.run_output_test(

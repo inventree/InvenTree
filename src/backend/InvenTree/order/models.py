@@ -3946,6 +3946,10 @@ class TransferOrderAllocation(models.Model):
         - Move the StockItem to the new location
         - Updates the transferred qty
         - If order is marked as "consume", reduce quantity rather than move
+
+        Raises:
+            ValidationError: If the stock operation fails - the 'transferred' quantity
+            is only updated once the stock has actually been moved / consumed.
         """
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
@@ -3956,35 +3960,56 @@ class TransferOrderAllocation(models.Model):
         # This means allocations to transfer orders don't affect "available" stock
         # (otherwise it would permanently reduce available stock)
 
+        # The stock item may have been reduced since the allocation was made,
+        # so limit the transfer to the quantity which is actually available
+        transfer_quantity = min(self.quantity, self.item.quantity)
+
+        if transfer_quantity <= 0:
+            # Nothing available to transfer (e.g. the item has since been depleted)
+            return
+
         if order.consume:
             # rather than transferring the stock, we simply reduce its quantity to release it from tracked inventory
             # NOTE: if delete_on_deplete is enabled, this will result in the "transferred stock" panel being empty
-            #       after completion. A more sophesticated immutable tracking that doesn't rely on allocations
+            #       after completion. A more sophisticated immutable tracking that doesn't rely on allocations
             #       would be helpful here
-            self.item.take_stock(
-                quantity=self.quantity,
+            if not self.item.take_stock(
+                quantity=transfer_quantity,
                 user=user,
                 code=StockHistoryCode.STOCK_REMOVE,
                 transferorder=order,
-            )
-        else:
-            if self.quantity < self.item.quantity:
-                # update our own reference to the StockItem which was split
-                self.item = self.item.splitStock(
-                    quantity=self.quantity,
-                    location=order.destination,
-                    user=user,
-                    transferorder=order,
+            ):
+                raise ValidationError(
+                    _('Failed to consume stock item against transfer order')
                 )
-                self.save()
-            else:
-                # move item directly, we don't have to split
-                self.item.move(
-                    location=order.destination, user=user, transferorder=order, notes=''
+        elif transfer_quantity < self.item.quantity:
+            new_item = self.item.splitStock(
+                quantity=transfer_quantity,
+                location=order.destination,
+                user=user,
+                transferorder=order,
+            )
+
+            if new_item is None:
+                raise ValidationError(
+                    _('Failed to transfer stock item against transfer order')
+                )
+
+            # update our own reference to the StockItem which was split
+            self.item = new_item
+            self.save()
+        else:
+            # move item directly, we don't have to split
+            if not self.item.move(
+                location=order.destination, user=user, transferorder=order, notes=''
+            ):
+                raise ValidationError(
+                    _('Failed to transfer stock item against transfer order')
                 )
 
         # Update the transferred qty
-        self.line.transferred += self.quantity
+        # Note: use the quantity which was *actually* transferred
+        self.line.transferred += transfer_quantity
         self.line.save()
 
 
