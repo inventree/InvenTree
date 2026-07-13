@@ -1246,7 +1246,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Bulk create the stock items and fetch the newly created instances
             new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
 
-            stock_items.extend(bulk_create_items)
+            stock_items.extend(new_items)
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
