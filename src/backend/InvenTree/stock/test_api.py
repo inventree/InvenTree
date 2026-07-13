@@ -3349,8 +3349,19 @@ class StockTransferMergeTest(StockAPITestCase):
         )
 
         # An "in production" build output
+        self.part.assembly = True
+        self.part.save()
+
+        bo = build.models.Build.objects.create(
+            reference='BO-9999', part=self.part, title='Merge test build', quantity=50
+        )
+
         building = StockItem.objects.create(
-            part=self.part, location=self.source_loc, quantity=50, is_building=True
+            part=self.part,
+            location=self.source_loc,
+            quantity=50,
+            build=bo,
+            is_building=True,
         )
 
         self.post(

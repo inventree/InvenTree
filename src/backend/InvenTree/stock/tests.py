@@ -859,7 +859,16 @@ class StockTest(StockTestBase):
         target = StockItem.objects.create(part=part, quantity=10)
 
         # The incoming item is "in production" (a build output)
-        building = StockItem.objects.create(part=part, quantity=20, is_building=True)
+        part.assembly = True
+        part.save()
+
+        bo = Build.objects.create(
+            reference='BO-9998', part=part, title='Merge test build', quantity=20
+        )
+
+        building = StockItem.objects.create(
+            part=part, quantity=20, build=bo, is_building=True
+        )
 
         # Without raise_error, the merge is refused silently
         target.merge_stock_items([building])
