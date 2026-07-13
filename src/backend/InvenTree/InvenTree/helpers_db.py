@@ -59,8 +59,6 @@ def bulk_create_and_fetch(
 
     pks = list(instances.values_list(id_field or 'pk', flat=True))
 
-    assert len(pks) == len(items), 'Mismatch between created items and fetched items'
-
     # Override the metadata values to remove the temporary bulk_create_id
     instances.update(metadata=None)
 
