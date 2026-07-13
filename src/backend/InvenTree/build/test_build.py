@@ -527,15 +527,14 @@ class BuildTest(BuildTestBase):
 
         # Return a partial quantity of each item to stock
         for item in consumed_items:
-            self.assertEqual(item.get_descendant_count(), 0)
             q = item.quantity
             self.assertGreater(item.quantity, 1)
             item.return_to_stock(location, merge=False, quantity=1)
             item.refresh_from_db()
             self.assertEqual(item.quantity, q - 1)
-            self.assertEqual(item.get_descendant_count(), 1)
+            self.assertEqual(item.children.count(), 1)
             self.assertFalse(item.is_in_stock())
-            child = item.get_descendants().first()
+            child = item.children.first()
             self.assertTrue(child.is_in_stock())
 
     def test_change_part(self):
