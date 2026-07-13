@@ -416,21 +416,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
         allocations = []
         stock_items = []
 
-        tree_id = StockItem.objects.all().order_by('-tree_id').first().tree_id
-
         for idx in range(N_ITEMS):
-            tree_id += 1
-
-            stock_items.append(
-                StockItem(
-                    part=part,
-                    quantity=1 + idx % 5,
-                    level=0,
-                    lft=0,
-                    rght=0,
-                    tree_id=tree_id,
-                )
-            )
+            stock_items.append(StockItem(part=part, quantity=1 + idx % 5))
 
         StockItem.objects.bulk_create(stock_items)
 

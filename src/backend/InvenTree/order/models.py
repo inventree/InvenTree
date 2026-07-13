@@ -44,6 +44,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.helpers_model import notify_responsible
 from order.events import (
     PurchaseOrderEvents,
@@ -1224,15 +1225,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     stock_items.append(new_item)
 
             else:
-                new_item = stock.models.StockItem(
-                    **stock_data,
-                    serial='',
-                    tree_id=stock.models.StockItem.getNextTreeID(),
-                    parent=None,
-                    level=0,
-                    lft=1,
-                    rght=2,
-                )
+                new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
 
                 new_item.set_status(status, custom_values=custom_stock_status_values)
 
@@ -1250,18 +1243,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 # run validation for items plugin.validate_model_instance
                 item.run_plugin_validation()
 
-            stock.models.StockItem.objects.bulk_create(
-                bulk_create_items, batch_size=250
-            )
+            # Bulk create the stock items and fetch the newly created instances
+            new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
 
-            # Fetch them back again
-            tree_ids = [item.tree_id for item in bulk_create_items]
-
-            created_items = stock.models.StockItem.objects.filter(
-                tree_id__in=tree_ids, level=0, lft=1, rght=2, purchase_order=self
-            ).prefetch_related('location')
-
-            stock_items.extend(created_items)
+            stock_items.extend(new_items)
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
