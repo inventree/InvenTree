@@ -1041,6 +1041,15 @@ class Build(
         if not output:
             raise ValidationError(_('No build output specified'))
 
+        # Re-check the state of the output itself:
+        # It may have changed since the scrap request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         # If quantity is not specified, assume the entire output quantity
         if quantity is None:
             quantity = output.quantity
@@ -1111,6 +1120,15 @@ class Build(
         Raises:
             ValidationError: If the build output cannot be completed, with an appropriate message
         """
+        # Re-check the state of the output itself:
+        # It may have changed since the completion request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         prevent_incomplete = get_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
         )
