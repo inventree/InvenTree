@@ -42,6 +42,7 @@ from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -709,7 +710,6 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
-        part = data['part']
         parent = kwargs.pop('parent', None) or data.get('parent')
 
         data['parent'] = parent
@@ -729,10 +729,7 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        StockItem.objects.bulk_create(items, batch_size=250)
-
-        # Fetch the new StockItem objects from the database
-        items = StockItem.objects.filter(part=part, serial__in=serials)
+        items = bulk_create_and_fetch(StockItem, items)
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
