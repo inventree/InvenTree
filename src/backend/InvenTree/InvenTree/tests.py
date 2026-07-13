@@ -1102,7 +1102,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for _ in range(10):
+        for idx in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()
@@ -1114,7 +1114,7 @@ class CurrencyTests(TestCase):
             else:  # pragma: no cover
                 print('Exchange rate update failed - retrying')
                 print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
-                time.sleep(1)
+                time.sleep(1 + idx)
 
         self.assertTrue(update_successful)
 

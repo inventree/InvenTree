@@ -26,7 +26,7 @@ from order.models import (
     SalesOrderShipment,
 )
 from part.models import Part
-from stock.models import StockItem, StockLocation
+from stock.models import StockItem, StockItemTracking, StockLocation
 from users.models import Owner
 
 
@@ -344,6 +344,43 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
+
+    def test_complete_shipment_task_is_idempotent(self):
+        """Duplicate execution of the shipment completion task must not double-ship.
+
+        Regression test: two rapid completion requests could enqueue the background
+        completion task twice - each execution then completed every allocation again,
+        double-counting the 'shipped' quantity and re-assigning stock to the customer.
+        """
+        self.allocate_stock(True)
+
+        # Complete the shipment (the task runs inline during testing)
+        self.shipment.complete_shipment(None)
+
+        self.shipment.refresh_from_db()
+        self.line.refresh_from_db()
+
+        self.assertTrue(self.shipment.is_complete())
+        self.assertEqual(self.line.shipped, 50)
+
+        # A second completion request is rejected outright
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        n_items = StockItem.objects.count()
+        n_tracking = StockItemTracking.objects.count()
+
+        # Simulate a duplicated task execution
+        # (e.g. a second completion request submitted before the first task ran)
+        order.tasks.complete_sales_order_shipment(self.shipment.pk, None, None)
+
+        self.line.refresh_from_db()
+
+        # The 'shipped' quantity must not be double-counted
+        self.assertEqual(self.line.shipped, 50)
+
+        # No additional stock items or tracking entries have been created
+        self.assertEqual(StockItem.objects.count(), n_items)
+        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
 
     def test_shipment_many_items(self):
         """Test completion of a shipment with many items.
