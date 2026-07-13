@@ -2059,11 +2059,6 @@ class StockItem(
         return items
 
     @property
-    def children(self):
-        """Return a list of the child items which have been split from this stock item."""
-        return self.get_descendants(include_self=False)
-
-    @property
     def child_count(self):
         """Return the number of 'child' items associated with this StockItem.
 
