@@ -1779,6 +1779,11 @@ class StockItem(
         if self.belongs_to is None:
             return False
 
+        if location and location.structural:
+            raise ValidationError({
+                'location': _('Cannot assign stock to structural location')
+            })
+
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
