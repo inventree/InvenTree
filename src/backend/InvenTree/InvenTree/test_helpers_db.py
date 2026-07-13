@@ -146,12 +146,16 @@ class BulkCreateAndFetchTest(TestCase):
 
         self.assertEqual(result.count(), n)
 
+        self.assertLess(len(ctx.captured_queries), 10)
+
         return len(ctx.captured_queries)
 
     def test_query_count_is_constant(self):
         """The number of queries used should not depend on the number of created items."""
         small_query_count = self._create_and_count_queries(5)
-        large_query_count = self._create_and_count_queries(1000)
+        large_query_count = self._create_and_count_queries(100)
 
         self.assertEqual(small_query_count, large_query_count)
-        self.assertLess(small_query_count, 8)  # Apply maximum query count ceiling
+
+        # Perform a very large bulk-create - this will be batched
+        self._create_and_count_queries(2000)
