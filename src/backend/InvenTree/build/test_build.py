@@ -642,6 +642,70 @@ class BuildTest(BuildTestBase):
         for output in outputs:
             self.assertFalse(output.is_building)
 
+    def test_complete_output_stale_build_instance(self):
+        """The 'completed' count is incremented atomically at the database level.
+
+        Simulates two concurrent processes completing different outputs of the
+        same build, each holding its own (stale) copy of the Build instance.
+        """
+        self.stock_1_1.quantity = 1000
+        self.stock_1_1.save()
+
+        self.stock_2_1.quantity = 30
+        self.stock_2_1.save()
+
+        self.build.issue_build()
+
+        # Allocate non-tracked parts
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: self.stock_1_1.quantity,
+                self.stock_1_2: 10,
+                self.stock_2_1: 30,
+            },
+        )
+
+        # Allocate tracked parts against each output
+        self.allocate_stock(self.output_1, {self.stock_3_1: 6})
+        self.allocate_stock(self.output_2, {self.stock_3_1: 14})
+
+        # Two independent in-memory copies of the same build
+        build_a = Build.objects.get(pk=self.build.pk)
+        build_b = Build.objects.get(pk=self.build.pk)
+
+        build_a.complete_build_output(self.output_1, None)
+        build_b.complete_build_output(self.output_2, None)
+
+        # Both completions must be counted
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.completed, 10)
+
+    def test_complete_allocation_stale_build_line(self):
+        """The 'consumed' count is incremented atomically at the database level.
+
+        Simulates two concurrent workers completing different allocations
+        against the same BuildLine, each holding its own (stale) copy of the line.
+        """
+        self.build.issue_build()
+
+        self.allocate_stock(None, {self.stock_1_1: 3, self.stock_1_2: 5})
+
+        alloc_a, alloc_b = BuildItem.objects.filter(build_line=self.line_1).order_by(
+            'pk'
+        )
+
+        # Cache a separate copy of the BuildLine on each allocation
+        self.assertEqual(alloc_a.build_line.consumed, 0)
+        self.assertEqual(alloc_b.build_line.consumed, 0)
+
+        alloc_a.complete_allocation(user=self.user)
+        alloc_b.complete_allocation(user=self.user)
+
+        # Both consumed quantities must be counted
+        self.line_1.refresh_from_db()
+        self.assertEqual(self.line_1.consumed, 8)
+
     def test_complete_with_required_tests(self):
         """Test the prevention completion when a required test is missing feature."""
         # with required tests incompleted the save should fail
