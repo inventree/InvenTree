@@ -1006,7 +1006,11 @@ class BuildAllocationSerializer(serializers.Serializer):
                 }
 
                 try:
-                    if build_item := BuildItem.objects.filter(**params).first():
+                    # Lock the row, so concurrent allocations cannot both read
+                    # the same starting quantity (lost update)
+                    if build_item := (
+                        BuildItem.objects.select_for_update().filter(**params).first()
+                    ):
                         # Find an existing BuildItem for this stock item
                         # If it exists, increase the quantity
                         build_item.quantity += quantity
