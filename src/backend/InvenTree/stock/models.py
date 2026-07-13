@@ -571,12 +571,11 @@ class StockItem(
         return 'SI'
 
     def get_children(self):
-        """Return a queryset of all StockItem objects which are children of this StockItem.
+        """Return a queryset of all StockItem objects which are direct children of this StockItem.
 
-        As the StockItem model is no longer a MPTT model,
-        this function is implemented manually
+        Simply proxies the reverse foreign-key relation for the 'parent' field.
         """
-        return StockItem.objects.filter(parent=self).exclude(pk=self.pk)
+        return self.children.all()
 
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
@@ -2057,11 +2056,6 @@ class StockItem(
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
         return items
-
-    @property
-    def children(self):
-        """Return a list of the child items which have been split from this stock item."""
-        return self.get_descendants(include_self=False)
 
     @property
     def child_count(self):
