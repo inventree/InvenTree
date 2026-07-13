@@ -2955,6 +2955,64 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             self.assertIsNone(line.item.sales_order)
             self.assertEqual(line.item.location.pk, LOCATION_ID)
 
+    def test_receive_stale_line_instance(self):
+        """A second receipt attempt with a stale line instance must be a no-op.
+
+        Regression test: receive_line_item() checked received_date on the
+        caller's (potentially stale) instance, so two concurrent receipt
+        requests could both process the same line - splitting the source stock
+        item twice and orphaning one of the splits. The line is now re-read
+        (under lock) from the database before the check.
+        """
+        company = Company.objects.get(pk=4)
+
+        rma = models.ReturnOrder.objects.create(
+            customer=company, description='A return order'
+        )
+        rma.issue_order()
+
+        part = Part.objects.get(pk=25)
+
+        # An untracked item, where only part of the quantity is returned
+        # (forces the stock item to be split on receipt)
+        stock_item = StockItem.objects.create(part=part, customer=company, quantity=10)
+        line = models.ReturnOrderLineItem.objects.create(
+            order=rma, item=stock_item, quantity=4
+        )
+
+        location = StockLocation.objects.get(pk=1)
+
+        # Two "concurrent" requests each hold their own instance of the line
+        line_a = models.ReturnOrderLineItem.objects.get(pk=line.pk)
+        line_b = models.ReturnOrderLineItem.objects.get(pk=line.pk)
+
+        n_items = StockItem.objects.count()
+
+        rma.receive_line_item(line_a, location, None)
+
+        # The stock item has been split: 4 returned, 6 remain with the customer
+        self.assertEqual(StockItem.objects.count(), n_items + 1)
+
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.quantity, 6)
+
+        line.refresh_from_db()
+        self.assertIsNotNone(line.received_date)
+        self.assertEqual(line.item.quantity, 4)
+        self.assertEqual(line.item.location, location)
+
+        # The second (stale) instance still believes the line is unreceived -
+        # the receipt must be skipped based on the database state
+        self.assertIsNone(line_b.received_date)
+
+        rma.receive_line_item(line_b, location, None)
+
+        # No further stock item has been created, and the source is unchanged
+        self.assertEqual(StockItem.objects.count(), n_items + 1)
+
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.quantity, 6)
+
     def test_ro_calendar(self):
         """Test the calendar export endpoint."""
         # Full test is in test_po_calendar. Since these use the same backend, test only

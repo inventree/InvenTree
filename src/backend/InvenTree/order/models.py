@@ -3188,6 +3188,12 @@ class ReturnOrder(TotalPriceMixin, Order):
             - Adds a tracking entry to the StockItem
             - Removes the 'customer' reference from the StockItem
         """
+        # Lock the line item row against concurrent receipt, and re-read it
+        # from the database. Without this, two simultaneous receipt requests
+        # can both observe received_date=None, and each would split / process
+        # the associated stock item.
+        line = ReturnOrderLineItem.objects.select_for_update().get(pk=line.pk)
+
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
             logger.warning('receive_line_item called with item already returned')
