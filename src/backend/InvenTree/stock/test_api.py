@@ -2961,6 +2961,56 @@ class StocktakeTest(StockAPITestCase):
             str(response.data['location']),
         )
 
+    def test_count_unchanged_quantity_saves_field_changes(self):
+        """Location / status changes are saved even if the counted quantity is unchanged.
+
+        Regression test: counting an item to its *existing* quantity used to skip
+        the model save entirely, losing any location / status change while still
+        recording the change in stock history.
+        """
+        item = StockItem.objects.get(pk=1234)
+
+        quantity = item.quantity
+        self.assertEqual(item.location.pk, 5)
+        self.assertEqual(item.status, StockStatus.OK.value)
+
+        # Clear any existing stocktake date so we can verify it gets set
+        item.stocktake_date = None
+        item.save()
+
+        self.post(
+            reverse('api-stock-count'),
+            {
+                'items': [
+                    {
+                        'pk': item.pk,
+                        'quantity': float(quantity),
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # Quantity is unchanged, but the location and status changes must be saved
+        self.assertEqual(item.quantity, quantity)
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.status, StockStatus.DAMAGED.value)
+        self.assertIsNotNone(item.stocktake_date)
+
+        # The stock history entry must agree with the saved state
+        entry = StockItemTracking.objects.filter(
+            item=item, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertEqual(entry.deltas.get('quantity'), float(quantity))
+        self.assertEqual(entry.deltas.get('location'), 1)
+        self.assertEqual(entry.deltas.get('old_location'), 5)
+        self.assertEqual(entry.deltas.get('status'), StockStatus.DAMAGED.value)
+        self.assertEqual(entry.deltas.get('old_status'), StockStatus.OK.value)
+
     def test_bulk_count_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
@@ -3286,6 +3336,40 @@ class StockTransferMergeTest(StockAPITestCase):
                 tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
             ).exists()
         )
+
+    def test_transfer_merge_skips_protected_source(self):
+        """Merge-on-transfer must not absorb items in a protected state.
+
+        Regression test: only the *target* item used to be validated, so a
+        transfer with merge=True could absorb (and delete) an in-production
+        build output. Such items must be moved as a separate lot instead.
+        """
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+
+        # An "in production" build output
+        building = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50, is_building=True
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': building.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        # The build output must survive - transferred as a separate lot instead
+        building.refresh_from_db()
+        self.assertTrue(building.is_building)
+        self.assertEqual(building.location, self.dest)
+        self.assertEqual(building.quantity, 50)
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
 
 
 class StockItemDeletionTest(StockAPITestCase):
