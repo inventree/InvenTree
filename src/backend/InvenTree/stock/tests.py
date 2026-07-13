@@ -351,6 +351,83 @@ class StockTest(StockTestBase):
         stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
+    def test_uninstall_into_structural_location(self):
+        """Test that an item cannot be uninstalled into a structural location."""
+        parent = StockItem.objects.get(pk=1)
+
+        item = StockItem.objects.get(pk=2)
+        item.belongs_to = parent
+        item.save()
+
+        n_entries = item.tracking_info.count()
+        n_parent_entries = parent.tracking_info.count()
+
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        with self.assertRaises(ValidationError):
+            item.uninstall_into_location(structural, self.user, 'Uninstalling')
+
+        # The item remains installed, with no location change or tracking entries
+        item.refresh_from_db()
+        self.assertEqual(item.belongs_to, parent)
+        self.assertNotEqual(item.location, structural)
+        self.assertEqual(item.tracking_info.count(), n_entries)
+        self.assertEqual(parent.tracking_info.count(), n_parent_entries)
+
+        # Uninstalling into a non-structural location is still permitted
+        item.uninstall_into_location(self.drawer2, self.user, 'Uninstalling')
+
+        item.refresh_from_db()
+        self.assertIsNone(item.belongs_to)
+        self.assertEqual(item.location, self.drawer2)
+
+    def test_child_items(self):
+        """Test the 'children' reverse relation and 'child_count' property.
+
+        Regression test: StockItem previously defined a 'children' property
+        (shadowed by the reverse FK accessor, and referencing a method which no
+        longer exists on the model). The property has been removed - 'children'
+        must resolve to the reverse foreign-key manager for the 'parent' field.
+        """
+        part = Part.objects.create(
+            name='Child test part', description='A part for child item testing'
+        )
+
+        parent = StockItem.objects.create(part=part, quantity=100)
+
+        self.assertEqual(parent.children.count(), 0)
+        self.assertEqual(parent.child_count, 0)
+        self.assertEqual(parent.get_children().count(), 0)
+
+        # Split off two child items
+        child_1 = parent.splitStock(10, None, self.user)
+        child_2 = parent.splitStock(20, None, self.user)
+
+        parent.refresh_from_db()
+        self.assertEqual(parent.quantity, 70)
+
+        children = parent.children.all()
+
+        self.assertEqual(children.count(), 2)
+        self.assertEqual(parent.child_count, 2)
+        self.assertIn(child_1, children)
+        self.assertIn(child_2, children)
+
+        # get_children() proxies the same relation
+        self.assertEqual(
+            list(parent.get_children().order_by('pk')), list(children.order_by('pk'))
+        )
+
+        # Only *direct* children are included
+        grandchild = child_1.splitStock(5, None, self.user)
+
+        self.assertEqual(parent.child_count, 2)
+        self.assertEqual(child_1.child_count, 1)
+        self.assertIn(grandchild, child_1.children.all())
+        self.assertNotIn(grandchild, parent.children.all())
+
     def test_stocktake(self):
         """Test stocktake function."""
         # Perform stocktake

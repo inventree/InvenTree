@@ -42,6 +42,7 @@ from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -571,12 +572,11 @@ class StockItem(
         return 'SI'
 
     def get_children(self):
-        """Return a queryset of all StockItem objects which are children of this StockItem.
+        """Return a queryset of all StockItem objects which are direct children of this StockItem.
 
-        As the StockItem model is no longer a MPTT model,
-        this function is implemented manually
+        Simply proxies the reverse foreign-key relation for the 'parent' field.
         """
-        return StockItem.objects.filter(parent=self).exclude(pk=self.pk)
+        return self.children.all()
 
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
@@ -710,7 +710,6 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
-        part = data['part']
         parent = kwargs.pop('parent', None) or data.get('parent')
 
         data['parent'] = parent
@@ -730,10 +729,7 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        StockItem.objects.bulk_create(items, batch_size=250)
-
-        # Fetch the new StockItem objects from the database
-        items = StockItem.objects.filter(part=part, serial__in=serials)
+        items = bulk_create_and_fetch(StockItem, items)
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
@@ -1764,6 +1760,11 @@ class StockItem(
         if self.belongs_to is None:
             return False
 
+        if location and location.structural:
+            raise ValidationError({
+                'location': _('Cannot assign stock to structural location')
+            })
+
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
@@ -2057,11 +2058,6 @@ class StockItem(
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
         return items
-
-    @property
-    def children(self):
-        """Return a list of the child items which have been split from this stock item."""
-        return self.get_descendants(include_self=False)
 
     @property
     def child_count(self):

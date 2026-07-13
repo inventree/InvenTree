@@ -805,7 +805,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         if group:
             # Check if there is already a matching line item (for this PurchaseOrder)
-            matches = self.lines.filter(part=supplier_part)
+            # Lock the matching row, so concurrent additions cannot both read
+            # the same starting quantity (lost update)
+            matches = self.lines.select_for_update().filter(part=supplier_part)
 
             if matches.count() > 0:
                 line = matches.first()
@@ -1064,9 +1066,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Cache the custom status options for the StockItem model
         custom_stock_status_values = stock.models.StockItem.STATUS_CLASS.custom_values()
 
-        line_items = PurchaseOrderLineItem.objects.filter(
-            pk__in=line_items_ids
-        ).prefetch_related('part', 'part__part', 'order')
+        # Lock the line item rows, so that concurrent receipts against the same
+        # lines cannot both read the same 'received' value (lost update)
+        line_items = (
+            PurchaseOrderLineItem.objects
+            .select_for_update()
+            .filter(pk__in=line_items_ids)
+            .prefetch_related('part', 'part__part', 'order')
+        )
 
         # Map order line items to their corresponding stock items
         line_item_map = {line.pk: line for line in line_items}
@@ -1197,8 +1204,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     stock_data['is_building'] = False
 
                     # Increase the 'completed' quantity for the build order
-                    build_order.completed += stock_quantity
-                    build_order.save()
+                    # Increment at the database level to prevent lost updates
+                    build_order.completed = F('completed') + stock_quantity
+                    build_order.save(update_fields=['completed'])
+                    build_order.refresh_from_db(fields=['completed'])
                 elif build_order.status == BuildStatus.CANCELLED:
                     # A 'cancelled' build order is ignored
                     pass
@@ -2987,8 +2996,10 @@ class SalesOrderAllocation(models.Model):
         )
 
         # Update the 'shipped' quantity
-        self.line.shipped += self.quantity
-        self.line.save()
+        # Increment at the database level to prevent lost updates
+        self.line.shipped = F('shipped') + self.quantity
+        self.line.save(update_fields=['shipped'])
+        self.line.refresh_from_db(fields=['shipped'])
 
         # Update our own reference to the StockItem
         # (It may have changed if the stock was split)
@@ -4097,8 +4108,10 @@ class TransferOrderAllocation(models.Model):
 
         # Update the transferred qty
         # Note: use the quantity which was *actually* transferred
-        self.line.transferred += transfer_quantity
-        self.line.save()
+        # Increment at the database level to prevent lost updates
+        self.line.transferred = F('transferred') + transfer_quantity
+        self.line.save(update_fields=['transferred'])
+        self.line.refresh_from_db(fields=['transferred'])
 
 
 def _touch_order_updated_at(instance):

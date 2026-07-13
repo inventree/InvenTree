@@ -228,6 +228,29 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_complete_allocation_stale_line_instance(self):
+        """The 'shipped' count is incremented atomically at the database level.
+
+        Simulates two concurrent workers completing different allocations
+        against the same order line, each holding its own (stale) copy of the line.
+        """
+        self.allocate_stock(True)
+
+        alloc_a, alloc_b = SalesOrderAllocation.objects.filter(line=self.line).order_by(
+            'pk'
+        )
+
+        # Cache a separate copy of the line on each allocation
+        self.assertEqual(alloc_a.line.shipped, 0)
+        self.assertEqual(alloc_b.line.shipped, 0)
+
+        alloc_a.complete_allocation(None)
+        alloc_b.complete_allocation(None)
+
+        # Both shipped quantities must be counted
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 50)
+
     def test_allocate_variant(self):
         """Allocate a variant of the designated item."""
         SalesOrderAllocation.objects.create(
