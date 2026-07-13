@@ -255,14 +255,28 @@ def complete_sales_order_shipment(
     At this stage, the shipment is assumed to be complete,
     and we need to perform the required "processing" tasks.
     """
-    # Do not handle any lookup errors here
-    # If the shipment cannot be found, then we want the task to fail (and retry later)
-    shipment = order.models.SalesOrderShipment.objects.get(pk=shipment_id)
     user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    logger.info('Completing SalesOrderShipment <%s>', shipment)
+    logger.info('Completing SalesOrderShipment <%s>', shipment_id)
 
     with transaction.atomic():
+        # Lock the shipment row for the duration of the update,
+        # and re-check that it has not already been completed.
+        # This guards against duplicate task execution - e.g. if the completion
+        # request was submitted multiple times before the first task ran.
+        # Do not handle any lookup errors here:
+        # If the shipment cannot be found, then we want the task to fail (and retry later)
+        shipment = order.models.SalesOrderShipment.objects.select_for_update().get(
+            pk=shipment_id
+        )
+
+        if shipment.is_complete():
+            logger.warning(
+                'SalesOrderShipment <%s> has already been completed - skipping',
+                shipment_id,
+            )
+            return
+
         shipment.complete_allocations(shipment.allocations.all(), user=user)
 
         # Once all allocations have been completed, we can mark the shipment as complete
