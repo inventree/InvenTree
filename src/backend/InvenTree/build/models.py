@@ -1197,9 +1197,11 @@ class Build(
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
-        self.completed += output.quantity
-
-        self.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple outputs may be completed concurrently)
+        self.completed = F('completed') + output.quantity
+        self.save(update_fields=['completed'])
+        self.refresh_from_db(fields=['completed'])
 
     @transaction.atomic
     def auto_allocate_stock(
@@ -2025,8 +2027,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             )
 
         # Increase the "consumed" count for the associated BuildLine
-        self.build_line.consumed += quantity
-        self.build_line.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple allocations against the same BuildLine may complete concurrently)
+        self.build_line.consumed = F('consumed') + quantity
+        self.build_line.save(update_fields=['consumed'])
+        self.build_line.refresh_from_db(fields=['consumed'])
 
         # Decrease the allocated quantity
         self.quantity = max(0, self.quantity - quantity)
