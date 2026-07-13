@@ -416,6 +416,38 @@ class StockTest(StockTestBase):
         kid.refresh_from_db()
         self.assertEqual(kid.parent, grandparent)
 
+    def test_uninstall_into_structural_location(self):
+        """Test that an item cannot be uninstalled into a structural location."""
+        parent = StockItem.objects.get(pk=1)
+
+        item = StockItem.objects.get(pk=2)
+        item.belongs_to = parent
+        item.save()
+
+        n_entries = item.tracking_info.count()
+        n_parent_entries = parent.tracking_info.count()
+
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        with self.assertRaises(ValidationError):
+            item.uninstall_into_location(structural, self.user, 'Uninstalling')
+
+        # The item remains installed, with no location change or tracking entries
+        item.refresh_from_db()
+        self.assertEqual(item.belongs_to, parent)
+        self.assertNotEqual(item.location, structural)
+        self.assertEqual(item.tracking_info.count(), n_entries)
+        self.assertEqual(parent.tracking_info.count(), n_parent_entries)
+
+        # Uninstalling into a non-structural location is still permitted
+        item.uninstall_into_location(self.drawer2, self.user, 'Uninstalling')
+
+        item.refresh_from_db()
+        self.assertIsNone(item.belongs_to)
+        self.assertEqual(item.location, self.drawer2)
+
     def test_child_items(self):
         """Test the 'children' reverse relation and 'child_count' property.
 
