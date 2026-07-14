@@ -656,6 +656,52 @@ class ParameterAPITests(InvenTreeAPITestCase):
                 data='ABC123',
             ).full_clean()
 
+    def test_parameter_uniqueness_units(self):
+        """Test that uniqueness checks are unit-aware for templates which define units.
+
+        Values expressed in different (but compatible) units which represent the
+        same physical quantity must be detected as duplicates.
+        """
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Resistance',
+            units='ohm',
+            description='A globally unique resistance parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='1000',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # A value expressed as '1k' ohms is numerically identical to '1000' ohms
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_b.get_content_type(),
+                model_id=part_b.pk,
+                data='1k',
+            ).full_clean()
+
+        # A distinct value (in different units) is not a duplicate
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='2k',
+        )
+        param_b.full_clean()
+        param_b.save()
+
     def test_copy_unique_parameters(self):
         """Test that 'unique' parameters are skipped when copying parameters between model instances."""
         from part.models import Part

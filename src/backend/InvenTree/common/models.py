@@ -2968,13 +2968,24 @@ class Parameter(
         - NONE: No uniqueness check is performed
         - MODEL_TYPE: The value must be unique amongst other parameters (for this template) linked to the same model type
         - GLOBAL: The value must be unique amongst all other parameters linked to this template
+
+        Note: If the template defines a set of 'units', the comparison is performed against the
+        normalized 'data_numeric' value, so that equivalent values expressed in different
+        (but compatible) units are correctly detected as duplicates (e.g. '1k' and '1000' ohms).
         """
         uniqueness = self.template.unique
 
         if uniqueness == ParameterTemplate.UniqueOptions.NONE:
             return
 
-        query = Parameter.objects.filter(template=self.template, data__iexact=self.data)
+        if self.template.units and self.data_numeric is not None:
+            query = Parameter.objects.filter(
+                template=self.template, data_numeric=self.data_numeric
+            )
+        else:
+            query = Parameter.objects.filter(
+                template=self.template, data__iexact=self.data
+            )
 
         if self.pk:
             query = query.exclude(pk=self.pk)
