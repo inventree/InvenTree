@@ -92,6 +92,9 @@ Once the "Add Line Item" form opens, select a supplier part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Auto Pricing"
+    Enable the *Auto Pricing* option to automatically calculate the line item's *Unit Price* from the [supplier part pricing data](../part/pricing.md#supplier-pricing), based on the line item quantity. While enabled, the *Unit Price* field is calculated automatically and cannot be edited manually. This option is disabled by default.
+
 !!! info "Discount"
     An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
 
