@@ -20,6 +20,7 @@ import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
+  RevisionColumn,
   StatusColumn
 } from '../../components/tables/ColumnRenderers';
 import {
@@ -133,6 +134,9 @@ export default function SalesOrderAllocationTable({
         hidden: showPartInfo != true
       }),
       IPNColumn({
+        hidden: showPartInfo != true
+      }),
+      RevisionColumn({
         hidden: showPartInfo != true
       }),
       {
