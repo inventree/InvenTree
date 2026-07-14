@@ -656,6 +656,46 @@ class ParameterAPITests(InvenTreeAPITestCase):
                 data='ABC123',
             ).full_clean()
 
+    def test_copy_unique_parameters(self):
+        """Test that 'unique' parameters are skipped when copying parameters between model instances."""
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        normal_template = common.models.ParameterTemplate.objects.create(
+            name='Color', description='A normal (non-unique) parameter'
+        )
+
+        unique_template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number',
+            description='A globally unique parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        common.models.Parameter.objects.create(
+            template=normal_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='Red',
+        )
+
+        common.models.Parameter.objects.create(
+            template=unique_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+
+        # Copy parameters from part_a to part_b
+        part_b.copy_parameters_from(part_a)
+
+        # The non-unique parameter should have been copied
+        self.assertEqual(part_b.get_parameter('Color').data, 'Red')
+
+        # The unique parameter should *not* have been copied, to avoid a conflicting value
+        self.assertIsNone(part_b.get_parameter('Serial Number'))
+
     def test_parameter_annotation(self):
         """Test that we can annotate parameters against a queryset."""
         from company.models import Company
