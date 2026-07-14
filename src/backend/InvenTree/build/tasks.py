@@ -300,22 +300,33 @@ def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = Fal
     """
     from build.models import Build
     from build.status_codes import BuildStatus
-    from common.models import User
 
-    build = Build.objects.get(pk=build_id)
-    user = User.objects.filter(pk=user_id).first() if user_id else None
+    with transaction.atomic():
+        # Lock the build row: concurrent completion tasks (duplicate task
+        # delivery, or repeated completion requests while the build is still
+        # IN PRODUCTION) are serialized, and the status is re-checked below
+        build = Build.objects.select_for_update().get(pk=build_id)
 
-    if trim_allocated_stock:
-        build.trim_allocated_stock()
+        if build.status == BuildStatus.COMPLETE.value:
+            logger.warning(
+                'Build order <%s> is already complete - skipping completion task',
+                build.pk,
+            )
+            return
 
-    # Complete any remaining allocations for this build order
-    complete_build_allocations(build_id, user_id)
+        user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    # Mark the build as completed
-    build.completion_date = InvenTree.helpers.current_date()
-    build.completed_by = user
-    build.status = BuildStatus.COMPLETE.value
-    build.save()
+        if trim_allocated_stock:
+            build.trim_allocated_stock()
+
+        # Complete any remaining allocations for this build order
+        complete_build_allocations(build_id, user_id)
+
+        # Mark the build as completed
+        build.completion_date = InvenTree.helpers.current_date()
+        build.completed_by = user
+        build.status = BuildStatus.COMPLETE.value
+        build.save()
 
     # Register an event
     trigger_event(BuildEvents.COMPLETED, id=build.pk)

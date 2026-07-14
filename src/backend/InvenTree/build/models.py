@@ -677,9 +677,29 @@ class Build(
         notes = notes or ''
         quantities = quantities or {}
 
+        # Lock this build's database row: all allocate / consume / complete
+        # operations for a given build are serialized against each other,
+        # so the in-memory BuildItem and BuildLine arithmetic below cannot
+        # race against a concurrent operation on the same build
+        Build.objects.select_for_update().get(pk=self.pk)
+
         # Preselect related fields to avoid per-row database queries below
-        build_items = build_items.select_related(
-            'build_line', 'stock_item', 'stock_item__part', 'install_into'
+        build_items = list(
+            build_items.select_related(
+                'build_line', 'stock_item', 'stock_item__part', 'install_into'
+            )
+        )
+
+        # Lock the distinct StockItem rows (in pk order, to avoid deadlocks) and
+        # re-read their quantities, so the clamping arithmetic below operates on
+        # the current committed values. Stock adjustments elsewhere lock these
+        # same rows, so concurrent adjustments cannot be silently overwritten.
+        locked_quantities = dict(
+            stock.models.StockItem.objects
+            .select_for_update()
+            .filter(pk__in={item.stock_item_id for item in build_items})
+            .order_by('pk')
+            .values_list('pk', 'quantity')
         )
 
         split_items = []  # (source_item, new_item, quantity) - stock to split off
@@ -704,6 +724,13 @@ class Build(
             stock_item = (
                 seen_stock_items.get(build_item.stock_item_id) or build_item.stock_item
             )
+
+            if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
+                # First encounter: refresh the quantity from the locked database row
+                stock_item.quantity = locked_qty
+            elif stock_item.pk not in seen_stock_items:
+                # The stock item no longer exists in the database - skip
+                continue
 
             quantity = quantities.get(build_item.pk, build_item.quantity)
 
@@ -1496,6 +1523,11 @@ class Build(
         to_create = {}
         to_update = {}
 
+        # Lock this build's database row: allocation requests are serialized
+        # against each other (and against consume / complete operations),
+        # so concurrent requests cannot both read the same starting quantity
+        Build.objects.select_for_update().get(pk=self.pk)
+
         # Bulk-fetch any BuildItems which already exist for these (build_line, stock_item)
         # pairs, keyed by (build_line_id, stock_item_id, install_into_id). Looking these up
         # from a dict below avoids the one-query-per-item cost of a per-entry .filter().first()
@@ -1532,15 +1564,19 @@ class Build(
 
             # If a BuildItem already exists for this allocation, update it
             if build_item := existing_items.get(key):
-                # We may have already seen this
-                if build_item.pk in to_update:
-                    build_item = to_update[build_item.pk]
-
+                build_item.quantity += quantity
+                to_update[build_item.pk] = build_item
+            elif build_item := to_create.get(key):
+                # Duplicate entry within this request - merge the quantities
                 build_item.quantity += quantity
             else:
                 # This is a new BuildItem
-                build_item = BuildItem(quantity=quantity, **filters)
-                to_create[key] = build_item
+                to_create[key] = BuildItem(quantity=quantity, **filters)
+
+        # Run model-level validation against each new or updated allocation,
+        # as bulk_create / bulk_update below bypass BuildItem.save() and clean()
+        for build_item in [*to_create.values(), *to_update.values()]:
+            build_item.clean(raise_error=False)
 
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
