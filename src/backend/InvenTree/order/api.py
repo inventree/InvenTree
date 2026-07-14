@@ -80,6 +80,7 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('order')
+        queryset = self.serializer_class.annotate_queryset(queryset)
 
         return queryset
 
@@ -94,6 +95,16 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
     search_fields = ['quantity', 'notes', 'reference', 'description']
 
     filterset_fields = ['order']
+
+
+class GeneralExtraLineDetail:
+    """General template for ExtraLine detail API classes."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        return self.serializer_class.annotate_queryset(queryset)
 
 
 class OrderCreateMixin:
@@ -778,7 +789,7 @@ class PurchaseOrderExtraLineList(
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
+class PurchaseOrderExtraLineDetail(GeneralExtraLineDetail, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
@@ -1113,7 +1124,7 @@ class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCrea
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
+class SalesOrderExtraLineDetail(GeneralExtraLineDetail, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderExtraLine object."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1826,7 +1837,7 @@ class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCre
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
-class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
+class ReturnOrderExtraLineDetail(GeneralExtraLineDetail, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a ReturnOrderExtraLine object."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()

@@ -334,12 +334,26 @@ class AbstractExtraLineSerializer(
             'quantity',
             'reference',
             'target_date',
+            'total_price',
             # Filterable detail fields
             'order_detail',
             'project_code_label',
             'project_code_detail',
             *extra_fields,
         ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add annotations to the queryset.
+
+        - total_price: price * quantity, adjusted for the line discount
+        """
+        return queryset.annotate(
+            total_price=ExpressionWrapper(
+                F('price') * F('quantity') * (1 - F('discount') / Decimal(100)),
+                output_field=models.DecimalField(),
+            )
+        )
 
     quantity = serializers.FloatField()
 
@@ -348,6 +362,8 @@ class AbstractExtraLineSerializer(
     price = InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTreeCurrencySerializer()
+
+    total_price = serializers.FloatField(read_only=True)
 
     project_code_label = common.filters.enable_project_label_filter()
 
@@ -369,6 +385,7 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
+        'total_price',
         'link',
     ]
 
