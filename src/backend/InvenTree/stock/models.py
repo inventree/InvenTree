@@ -565,7 +565,9 @@ class StockItem(
         with transaction.atomic():
             # Re-link any child items to the parent of this item,
             # so the genealogy chain survives deletion of an intermediate item
-            StockItem.objects.filter(parent=self).update(parent=self.parent)
+
+            parent = StockItem.objects.filter(pk=self.parent_id).first()
+            StockItem.objects.filter(parent=self).update(parent=parent)
 
             super().delete(**kwargs)
 
