@@ -363,6 +363,71 @@ class StockTest(StockTestBase):
         self.assertIsNotNone(parent_entry)
         self.assertEqual(parent_entry.deltas.get('stockitem'), child.pk)
 
+    def test_delete_reparents_children(self):
+        """Test that deleting an intermediate item re-links children to the grandparent."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        parent = grandparent.splitStock(200, None, self.user)
+        child_a = parent.splitStock(50, None, self.user)
+        child_b = parent.splitStock(50, None, self.user)
+
+        self.assertEqual(parent.parent, grandparent)
+        self.assertEqual(child_a.parent, parent)
+        self.assertEqual(child_b.parent, parent)
+
+        # Deleting the intermediate item grafts its children onto the grandparent
+        parent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertEqual(child_a.parent, grandparent)
+        self.assertEqual(child_b.parent, grandparent)
+
+        # Deleting a top-level item leaves its children with no parent
+        grandparent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertIsNone(child_a.parent)
+        self.assertIsNone(child_b.parent)
+
+    def test_implicit_delete_reparents_children(self):
+        """Test child re-linking when items are deleted by depletion or merging."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        # An item depleted to zero with delete_on_deplete set is deleted
+        parent = grandparent.splitStock(200, None, self.user)
+        child = parent.splitStock(50, None, self.user)
+
+        parent.delete_on_deplete = True
+        parent.save()
+
+        self.assertTrue(parent.take_stock(150, self.user, notes='Deplete'))
+        self.assertFalse(StockItem.objects.filter(pk=parent.pk).exists())
+
+        child.refresh_from_db()
+        self.assertEqual(child.parent, grandparent)
+
+        # An item absorbed by a merge is also deleted
+        source = grandparent.splitStock(100, None, self.user)
+        kid = source.splitStock(25, None, self.user)
+
+        target = StockItem.objects.create(
+            part=grandparent.part,
+            supplier_part=grandparent.supplier_part,
+            quantity=10,
+            location=grandparent.location,
+        )
+
+        target.merge_stock_items([source], raise_error=True, user=self.user)
+
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
+
+        kid.refresh_from_db()
+        self.assertEqual(kid.parent, grandparent)
+
     def test_over_adjustment_quantities(self):
         """Stock adjustments are clamped to the available stock quantity.
 
@@ -1085,6 +1150,54 @@ class StockTest(StockTestBase):
 
         # Final purchase price should be the weighted average
         self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+
+    def test_merge_protected_items(self):
+        """Stock items in a protected state cannot be absorbed by a merge.
+
+        Regression test: merge_stock_items() used to run the generic state checks
+        (in production, assigned to customer, etc.) against the *target* item only,
+        allowing e.g. a build output to be merged away and deleted.
+        """
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        target = StockItem.objects.create(part=part, quantity=10)
+
+        # The incoming item is "in production" (a build output)
+        part.assembly = True
+        part.save()
+
+        bo = Build.objects.create(
+            reference='BO-9998', part=part, title='Merge test build', quantity=20
+        )
+
+        building = StockItem.objects.create(
+            part=part, quantity=20, build=bo, is_building=True
+        )
+
+        # Without raise_error, the merge is refused silently
+        target.merge_stock_items([building])
+
+        target.refresh_from_db()
+        building.refresh_from_db()
+
+        self.assertEqual(part.stock_items.count(), 2)
+        self.assertEqual(target.quantity, 10)
+        self.assertEqual(building.quantity, 20)
+
+        # With raise_error, the merge raises a ValidationError
+        with self.assertRaises(ValidationError):
+            target.merge_stock_items([building], raise_error=True)
+
+        # An item assigned to a customer is likewise protected
+        customer = Company.objects.create(name='MergeCust', is_customer=True)
+        assigned = StockItem.objects.create(part=part, quantity=5, customer=customer)
+
+        target.merge_stock_items([assigned])
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 10)
+        self.assertTrue(StockItem.objects.filter(pk=assigned.pk).exists())
 
     def test_notify_low_stock(self):
         """Test that the 'notify_low_stock' task is triggered correctly."""
