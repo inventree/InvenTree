@@ -5,6 +5,7 @@ import io
 import json
 from datetime import date, datetime, timedelta
 from typing import Optional
+from unittest import mock
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -3012,6 +3013,41 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
         stock_item.refresh_from_db()
         self.assertEqual(stock_item.quantity, 6)
+
+    def test_complete_stale_instance_is_noop(self):
+        """A second completion attempt with a stale instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests
+        could both run the completion side effects (duplicate COMPLETED events).
+        The status is now re-read (under lock) from the database before the check.
+        """
+        company = Company.objects.get(pk=4)
+
+        rma = models.ReturnOrder.objects.create(
+            customer=company, description='A return order'
+        )
+        rma.issue_order()
+
+        # Two "concurrent" requests each hold their own instance of the order
+        order_a = models.ReturnOrder.objects.get(pk=rma.pk)
+        order_b = models.ReturnOrder.objects.get(pk=rma.pk)
+
+        order_a.complete_order()
+
+        rma.refresh_from_db()
+        self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
+
+        # The second (stale) instance still believes the order is IN_PROGRESS -
+        # completion must be skipped based on the database state
+        self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            order_b.complete_order()
+            trigger.assert_not_called()
+
+        rma.refresh_from_db()
+        self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
 
     def test_ro_calendar(self):
         """Test the calendar export endpoint."""
