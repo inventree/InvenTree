@@ -19,6 +19,7 @@ class RuleSetEnum(StringEnum):
     PURCHASE_ORDER = 'purchase_order'
     SALES_ORDER = 'sales_order'
     RETURN_ORDER = 'return_order'
+    REPAIR_ORDER = 'repair_order'
     TRANSFER_ORDER = 'transfer_order'
 
 
@@ -35,6 +36,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.PURCHASE_ORDER, _('Purchase Orders')),
     (RuleSetEnum.SALES_ORDER, _('Sales Orders')),
     (RuleSetEnum.RETURN_ORDER, _('Return Orders')),
+    (RuleSetEnum.REPAIR_ORDER, _('Repair Orders')),
     (RuleSetEnum.TRANSFER_ORDER, _('Transfer Orders')),
 ]
 
@@ -162,6 +164,13 @@ def get_ruleset_models() -> dict:
             'order_returnorder',
             'order_returnorderlineitem',
             'order_returnorderextraline',
+        ],
+        RuleSetEnum.REPAIR_ORDER: [
+            'company_company',
+            'company_contact',
+            'company_address',
+            'order_repairorder',
+            'order_repairorderline',
         ],
         RuleSetEnum.TRANSFER_ORDER: [
             'order_transferorder',

@@ -55,6 +55,7 @@ from order import models, serializers
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
+    RepairOrderStatus,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatus,
@@ -1833,6 +1834,240 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
+# ─── Repair Order API ─────────────────────────────────────────────────────────
+
+
+class RepairOrderFilter(OrderFilter):
+    """Custom API filters for the RepairOrderList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.RepairOrder
+        fields = ['customer']
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
+
+
+class RepairOrderMixin(SerializerContextMixin):
+    """Mixin class for RepairOrder endpoints."""
+
+    queryset = models.RepairOrder.objects.all()
+    serializer_class = serializers.RepairOrderSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.RepairOrderSerializer.annotate_queryset(queryset)
+        queryset = queryset.prefetch_related(
+            'contact', 'created_by', 'customer', 'item', 'item__part', 'part', 'responsible'
+        )
+
+        return queryset
+
+
+class RepairOrderOutputOptions(OutputConfiguration):
+    """Output options for the RepairOrder endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='customer_detail'),
+        InvenTreeOutputOption(flag='item_detail'),
+        InvenTreeOutputOption(flag='part_detail'),
+    ]
+
+
+class RepairOrderList(
+    RepairOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of RepairOrder objects."""
+
+    filterset_class = RepairOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    output_options = RepairOrderOutputOptions
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
+    }
+
+    ordering_fields = [
+        'creation_date',
+        'created_by',
+        'reference',
+        'customer__name',
+        'customer_reference',
+        'line_items',
+        'status',
+        'start_date',
+        'target_date',
+        'complete_date',
+        'project_code',
+        'updated_at',
+    ]
+
+    search_fields = [
+        'customer__name',
+        'reference',
+        'description',
+        'customer_reference',
+        'serial',
+        'project_code__code',
+        'part__name',
+        'part__IPN',
+        'item__serial',
+    ]
+
+    ordering = '-reference'
+
+
+class RepairOrderDetail(RepairOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrder object."""
+
+    output_options = RepairOrderOutputOptions
+
+
+class RepairOrderContextMixin:
+    """Simple mixin class to add a RepairOrder to the serializer context."""
+
+    queryset = models.RepairOrder.objects.all()
+
+    def get_serializer_context(self):
+        """Add the RepairOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        try:
+            context['order'] = models.RepairOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except Exception:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class RepairOrderCancel(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a RepairOrder."""
+
+    serializer_class = serializers.RepairOrderCancelSerializer
+
+
+class RepairOrderHold(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to hold a RepairOrder."""
+
+    serializer_class = serializers.RepairOrderHoldSerializer
+
+
+class RepairOrderComplete(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to complete a RepairOrder."""
+
+    serializer_class = serializers.RepairOrderCompleteSerializer
+
+
+class RepairOrderIssue(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to issue a RepairOrder."""
+
+    serializer_class = serializers.RepairOrderIssueSerializer
+
+
+class RepairOrderLineFilter(LineItemFilter):
+    """Custom filters for the RepairOrderLineList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.RepairOrderLine
+        fields = ['order', 'part', 'stock_item']
+
+    consumed = rest_filters.BooleanFilter(label='consumed', method='filter_consumed')
+
+    def filter_consumed(self, queryset, name, value):
+        """Filter by consumed date."""
+        if str2bool(value):
+            return queryset.exclude(consumed_date=None)
+        return queryset.filter(consumed_date=None)
+
+
+class RepairOrderLineMixin(SerializerContextMixin):
+    """Mixin class for RepairOrderLine endpoints."""
+
+    queryset = models.RepairOrderLine.objects.all()
+    serializer_class = serializers.RepairOrderLineSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.prefetch_related(
+            'order', 'order__customer', 'part', 'stock_item', 'stock_item__part'
+        )
+        return queryset
+
+
+class RepairOrderLineOutputOptions(OutputConfiguration):
+    """Output options for the RepairOrderLine endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('stock_item_detail'),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
+class RepairOrderLineList(
+    RepairOrderLineMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of RepairOrderLine objects."""
+
+    filterset_class = RepairOrderLineFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    output_options = RepairOrderLineOutputOptions
+
+    ordering_fields = [
+        'line',
+        'quantity',
+        'reference',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {
+        'line': ['line_int', 'line'],
+    }
+
+    ordering = 'line'
+
+    search_fields = [
+        'reference',
+        'part__name',
+        'part__description',
+        'stock_item__serial',
+    ]
+
+
+class RepairOrderLineDetail(
+    RepairOrderLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a RepairOrderLine object."""
+
+    output_options = RepairOrderLineOutputOptions
+
+
 class TransferOrderFilter(OrderFilter):
     """Custom API filters for the TransferOrderList endpoint."""
 
@@ -2816,6 +3051,59 @@ order_api_urls = [
                 '',
                 ReturnOrderExtraLineList.as_view(),
                 name='api-return-order-extra-line-list',
+            ),
+        ]),
+    ),
+    # API endpoints for repair orders
+    path(
+        'repair/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'cancel/',
+                        RepairOrderCancel.as_view(),
+                        name='api-repair-order-cancel',
+                    ),
+                    path('hold/', RepairOrderHold.as_view(), name='api-repair-order-hold'),
+                    path(
+                        'complete/',
+                        RepairOrderComplete.as_view(),
+                        name='api-repair-order-complete',
+                    ),
+                    path(
+                        'issue/',
+                        RepairOrderIssue.as_view(),
+                        name='api-repair-order-issue',
+                    ),
+                    meta_path(models.RepairOrder),
+                    path(
+                        '', RepairOrderDetail.as_view(), name='api-repair-order-detail'
+                    ),
+                ]),
+            ),
+            # Repair Order list
+            path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+        ]),
+    ),
+    # API endpoints for repair order lines
+    path(
+        'repair-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.RepairOrderLine),
+                    path(
+                        '',
+                        RepairOrderLineDetail.as_view(),
+                        name='api-repair-order-line-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '', RepairOrderLineList.as_view(), name='api-repair-order-line-list'
             ),
         ]),
     ),
