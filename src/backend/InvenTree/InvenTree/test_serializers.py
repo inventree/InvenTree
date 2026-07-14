@@ -2,6 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 from django.urls import path, reverse
 
 from rest_framework.serializers import SerializerMethodField
@@ -163,3 +164,31 @@ class BarcodeSerializerMixinTest(InvenTreeAPITestCase):
                 fields['barcode_data'].read_only,
                 f"'barcode_data' must be read-only in {serializer.__name__}",
             )
+
+    def test_misconfiguration_raises(self):
+        """The mixin must reject serializers which are configured incorrectly."""
+        from part.models import Part
+
+        # Case 1: the model does not support custom barcodes
+        class NoBarcodeModelSerializer(
+            InvenTree.serializers.BarcodeSerializerMixin,
+            InvenTree.serializers.InvenTreeModelSerializer,
+        ):
+            class Meta:
+                model = User
+                fields = ['id', 'barcode_data']
+
+        with self.assertRaises(ImproperlyConfigured):
+            NoBarcodeModelSerializer()
+
+        # Case 2: 'barcode_data' is omitted from Meta.fields
+        class MissingFieldSerializer(
+            InvenTree.serializers.BarcodeSerializerMixin,
+            InvenTree.serializers.InvenTreeModelSerializer,
+        ):
+            class Meta:
+                model = Part
+                fields = ['pk']
+
+        with self.assertRaises(ImproperlyConfigured):
+            MissingFieldSerializer()
