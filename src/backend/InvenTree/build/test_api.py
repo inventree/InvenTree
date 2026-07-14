@@ -690,7 +690,7 @@ class BuildAllocationTest(BuildAPITest):
         wrong_line = None
 
         for line in lines:
-            if line.bom_item.sub_part.pk != si.pk:
+            if line.bom_item.sub_part.pk != si.part.pk:
                 wrong_line = line
                 break
 
