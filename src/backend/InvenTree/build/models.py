@@ -2047,6 +2047,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         if quantity > item.quantity:
             quantity = item.quantity
 
+        if quantity <= 0:
+            # There is nothing to consume or install:
+            # simply remove this (empty) allocation
+            self.delete()
+            return
+
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:
             item = item.splitStock(quantity, None, user, notes=notes)
