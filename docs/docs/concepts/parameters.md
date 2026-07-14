@@ -30,6 +30,7 @@ Parameter templates are used to define the different types of parameters which a
 | Choices | A comma-separated list of valid choices for parameter values linked to this template. |
 | Checkbox | If set, parameters linked to this template can only be assigned values *true* or *false* |
 | Selection List | If set, parameters linked to this template can only be assigned values from the linked [selection list](#selection-lists) |
+| Unique | Enforce a [uniqueness requirement](#parameter-uniqueness) on parameter values linked to this template |
 
 {{ image("concepts/parameter-template.png", "Parameters Template") }}
 
@@ -58,6 +59,23 @@ To add a parameter, navigate to a specific part detail page, click on the "Param
 {{ image("part/create_part_parameter.png", "Create Parameter Form") }}
 
 Select the parameter `Template` you would like to use for this parameter, fill-out the `Data` field (value of this specific parameter) and click the "Submit" button.
+
+### Parameter Uniqueness
+
+A parameter template can be configured to enforce a uniqueness requirement on the values of any parameters linked to it. This is useful for parameters which are expected to act as a unique identifier and prevents duplicate values from being entered by mistake.
+
+The `Unique` attribute on a parameter template supports the following options:
+
+| Option | Description |
+| --- | --- |
+| No uniqueness required | The default option - no restriction is placed on parameter values |
+| Unique for model type | A parameter value must be unique amongst all other parameters (linked to this template) which are assigned to the *same* model type. For example, a template with this option enabled could be used to enforce unique serial numbers across all `Part` instances, without preventing the same value from also being used against a `Company` instance |
+| Globally unique | A parameter value must be unique amongst *all* other parameters linked to this template, regardless of the model type to which they are assigned |
+
+!!! info "Case Insensitive"
+    Uniqueness checks are case-insensitive - for example, the values `ABC123` and `abc123` are considered to be duplicates of each other.
+
+If a parameter value is entered which does not satisfy the uniqueness requirement of its template, it will be rejected and an error message displayed.
 
 ## Parametric Tables
 
