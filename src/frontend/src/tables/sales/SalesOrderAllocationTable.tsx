@@ -129,14 +129,14 @@ export default function SalesOrderAllocationTable({
         hidden: showPartInfo != true,
         part: 'part_detail'
       }),
-      DescriptionColumn({
-        accessor: 'part_detail.description',
-        hidden: showPartInfo != true
-      }),
       IPNColumn({
         hidden: showPartInfo != true
       }),
       RevisionColumn({
+        hidden: showPartInfo != true
+      }),
+      DescriptionColumn({
+        accessor: 'part_detail.description',
         hidden: showPartInfo != true
       }),
       {
