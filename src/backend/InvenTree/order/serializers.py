@@ -1871,104 +1871,23 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         return shipment
 
-    def validate(self, data):
-        """Validation for the serializer.
+    def save(self):
+        """Allocate stock items against the sales order, by serial number."""
+        data = self.validated_data
 
-        - Ensure the serial_numbers and quantity fields match
-        - Check that all serial numbers exist
-        - Check that the serial numbers are not yet allocated
-        """
-        data = super().validate(data)
-
+        sales_order = self.context['order']
         line_item = data['line_item']
         quantity = data['quantity']
         serial_numbers = data['serial_numbers']
-
-        part = line_item.part
-
-        try:
-            data['serials'] = extract_serial_numbers(
-                serial_numbers, quantity, part.get_latest_serial_number(), part=part
-            )
-        except DjangoValidationError as e:
-            raise ValidationError({'serial_numbers': e.messages})
-
-        serials_not_exist = set()
-        serials_unavailable = set()
-        stock_items_to_allocate = []
-
-        for serial in data['serials']:
-            serial = str(serial).strip()
-
-            items = stock.models.StockItem.objects.filter(
-                part=part, serial=serial, quantity=1
-            )
-
-            if not items.exists():
-                serials_not_exist.add(str(serial))
-                continue
-
-            stock_item = items[0]
-
-            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serials_unavailable.add(str(serial))
-                    continue
-
-            if not stock_item.in_stock:
-                serials_unavailable.add(str(serial))
-                continue
-
-            if stock_item.unallocated_quantity() < 1:
-                serials_unavailable.add(str(serial))
-                continue
-
-            # At this point, the serial number is valid, and can be added to the list
-            stock_items_to_allocate.append(stock_item)
-
-        if len(serials_not_exist) > 0:
-            error_msg = _('No match found for the following serial numbers')
-            error_msg += ': '
-            error_msg += ','.join(sorted(serials_not_exist))
-
-            raise ValidationError({'serial_numbers': error_msg})
-
-        if len(serials_unavailable) > 0:
-            error_msg = _('The following serial numbers are unavailable')
-            error_msg += ': '
-            error_msg += ','.join(sorted(serials_unavailable))
-
-            raise ValidationError({'serial_numbers': error_msg})
-
-        data['stock_items'] = stock_items_to_allocate
-
-        return data
-
-    def save(self):
-        """Allocate stock items against the sales order."""
-        data = self.validated_data
-
-        line_item = data['line_item']
-        stock_items = data['stock_items']
         shipment = data.get('shipment', None)
 
-        allocations = []
-
-        for stock_item in stock_items:
-            # Create a new SalesOrderAllocation
-            allocations.append(
-                order.models.SalesOrderAllocation(
-                    line=line_item, item=stock_item, quantity=1, shipment=shipment
-                )
+        try:
+            return sales_order.allocate_serial_numbers(
+                line_item, quantity, serial_numbers, shipment=shipment
             )
-
-        with transaction.atomic():
-            order.models.SalesOrderAllocation.objects.bulk_create(
-                allocations, batch_size=250
-            )
+        except (ValidationError, DjangoValidationError) as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
