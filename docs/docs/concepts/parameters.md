@@ -77,6 +77,28 @@ The `Unique` attribute on a parameter template supports the following options:
 
 If a parameter value is entered which does not satisfy the uniqueness requirement of its template, it will be rejected and an error message displayed.
 
+#### Validation Against Numeric Value
+
+If a parameter template defines a set of [units](#parameter-units), uniqueness is checked against the *normalized numeric value* of the parameter, rather than the raw text entered. This ensures that equivalent values expressed in different (but compatible) units are correctly detected as duplicates.
+
+For example, if a *Resistance* template (with base units of `ohm`) enforces uniqueness, then a value of `1k` would be rejected as a duplicate of an existing value of `1000`, as they both represent the same physical quantity.
+
+Templates which do not define a set of units are compared using a direct (case-insensitive) text comparison of the raw parameter value.
+
+#### Copying Caveats
+
+Some workflows in InvenTree allow parameters to be copied from one object to another - for example, when duplicating a part, build order, or other object which supports parameters.
+
+Any parameter which is linked to a template with a uniqueness requirement is *skipped* when copying parameters in this way. This prevents the copy operation from creating a duplicate (and therefore invalid) value on the new object. If this occurs, the new object simply will not have a parameter created against that particular template - it can be added manually (with a distinct value) afterwards.
+
+#### Category Parameter Caveats
+
+A parameter template can be linked to a part category, along with a default value which is automatically applied to any new parts created within that category (or a sub-category).
+
+This default value system is not compatible with a template which enforces a uniqueness requirement - applying the *same* default value to every part in a category would immediately conflict with the "unique" requirement, as soon as more than one part exists in that category.
+
+For this reason, a category-based default value is *not* applied for any parameter template which has a uniqueness requirement configured. If you need to assign values for such parameters, this must be done manually (or via the API) on a per-part basis.
+
 ## Parametric Tables
 
 Parametric tables gather all parameters from all objects of a particular type, to be sorted and filtered.
