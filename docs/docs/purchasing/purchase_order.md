@@ -92,12 +92,19 @@ Once the "Add Line Item" form opens, select a supplier part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
 #### Upload File
 
 It is possible to upload an exported purchase order from the supplier instead of manually entering each line item. To start the process, click on <span class="badge inventree confirm">{{ icon("upload") }} Upload File</span> button next to the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button and follow the steps.
 
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular supplier part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
 
 ## Issue Order
 
