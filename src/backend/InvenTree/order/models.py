@@ -44,6 +44,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.helpers_model import notify_responsible
 from order.events import (
     PurchaseOrderEvents,
@@ -804,7 +805,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         if group:
             # Check if there is already a matching line item (for this PurchaseOrder)
-            matches = self.lines.filter(part=supplier_part)
+            # Lock the matching row, so concurrent additions cannot both read
+            # the same starting quantity (lost update)
+            matches = self.lines.select_for_update().filter(part=supplier_part)
 
             if matches.count() > 0:
                 line = matches.first()
@@ -1063,9 +1066,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Cache the custom status options for the StockItem model
         custom_stock_status_values = stock.models.StockItem.STATUS_CLASS.custom_values()
 
-        line_items = PurchaseOrderLineItem.objects.filter(
-            pk__in=line_items_ids
-        ).prefetch_related('part', 'part__part', 'order')
+        # Lock the line item rows, so that concurrent receipts against the same
+        # lines cannot both read the same 'received' value (lost update)
+        line_items = (
+            PurchaseOrderLineItem.objects
+            .select_for_update()
+            .filter(pk__in=line_items_ids)
+            .prefetch_related('part', 'part__part', 'order')
+        )
 
         # Map order line items to their corresponding stock items
         line_item_map = {line.pk: line for line in line_items}
@@ -1196,8 +1204,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     stock_data['is_building'] = False
 
                     # Increase the 'completed' quantity for the build order
-                    build_order.completed += stock_quantity
-                    build_order.save()
+                    # Increment at the database level to prevent lost updates
+                    build_order.completed = F('completed') + stock_quantity
+                    build_order.save(update_fields=['completed'])
+                    build_order.refresh_from_db(fields=['completed'])
                 elif build_order.status == BuildStatus.CANCELLED:
                     # A 'cancelled' build order is ignored
                     pass
@@ -1224,15 +1234,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     stock_items.append(new_item)
 
             else:
-                new_item = stock.models.StockItem(
-                    **stock_data,
-                    serial='',
-                    tree_id=stock.models.StockItem.getNextTreeID(),
-                    parent=None,
-                    level=0,
-                    lft=1,
-                    rght=2,
-                )
+                new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
 
                 new_item.set_status(status, custom_values=custom_stock_status_values)
 
@@ -1250,18 +1252,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 # run validation for items plugin.validate_model_instance
                 item.run_plugin_validation()
 
-            stock.models.StockItem.objects.bulk_create(
-                bulk_create_items, batch_size=250
-            )
+            # Bulk create the stock items and fetch the newly created instances
+            new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
 
-            # Fetch them back again
-            tree_ids = [item.tree_id for item in bulk_create_items]
-
-            created_items = stock.models.StockItem.objects.filter(
-                tree_id__in=tree_ids, level=0, lft=1, rght=2, purchase_order=self
-            ).prefetch_related('location')
-
-            stock_items.extend(created_items)
+            stock_items.extend(new_items)
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
@@ -2911,8 +2905,10 @@ class SalesOrderAllocation(models.Model):
         )
 
         # Update the 'shipped' quantity
-        self.line.shipped += self.quantity
-        self.line.save()
+        # Increment at the database level to prevent lost updates
+        self.line.shipped = F('shipped') + self.quantity
+        self.line.save(update_fields=['shipped'])
+        self.line.refresh_from_db(fields=['shipped'])
 
         # Update our own reference to the StockItem
         # (It may have changed if the stock was split)
@@ -3188,6 +3184,12 @@ class ReturnOrder(TotalPriceMixin, Order):
             - Adds a tracking entry to the StockItem
             - Removes the 'customer' reference from the StockItem
         """
+        # Lock the line item row against concurrent receipt, and re-read it
+        # from the database. Without this, two simultaneous receipt requests
+        # can both observe received_date=None, and each would split / process
+        # the associated stock item.
+        line = ReturnOrderLineItem.objects.select_for_update().get(pk=line.pk)
+
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
             logger.warning('receive_line_item called with item already returned')
@@ -3628,6 +3630,12 @@ class TransferOrder(Order):
         """
         user = kwargs.pop('user', None)
 
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe status=ISSUED, and each would process every allocation
+        # (duplicating all associated stock operations).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_complete(raise_error=True, **kwargs):
             return False
 
@@ -3946,6 +3954,10 @@ class TransferOrderAllocation(models.Model):
         - Move the StockItem to the new location
         - Updates the transferred qty
         - If order is marked as "consume", reduce quantity rather than move
+
+        Raises:
+            ValidationError: If the stock operation fails - the 'transferred' quantity
+            is only updated once the stock has actually been moved / consumed.
         """
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
@@ -3956,36 +3968,59 @@ class TransferOrderAllocation(models.Model):
         # This means allocations to transfer orders don't affect "available" stock
         # (otherwise it would permanently reduce available stock)
 
+        # The stock item may have been reduced since the allocation was made,
+        # so limit the transfer to the quantity which is actually available
+        transfer_quantity = min(self.quantity, self.item.quantity)
+
+        if transfer_quantity <= 0:
+            # Nothing available to transfer (e.g. the item has since been depleted)
+            return
+
         if order.consume:
             # rather than transferring the stock, we simply reduce its quantity to release it from tracked inventory
             # NOTE: if delete_on_deplete is enabled, this will result in the "transferred stock" panel being empty
-            #       after completion. A more sophesticated immutable tracking that doesn't rely on allocations
+            #       after completion. A more sophisticated immutable tracking that doesn't rely on allocations
             #       would be helpful here
-            self.item.take_stock(
-                quantity=self.quantity,
+            if not self.item.take_stock(
+                quantity=transfer_quantity,
                 user=user,
                 code=StockHistoryCode.STOCK_REMOVE,
                 transferorder=order,
-            )
-        else:
-            if self.quantity < self.item.quantity:
-                # update our own reference to the StockItem which was split
-                self.item = self.item.splitStock(
-                    quantity=self.quantity,
-                    location=order.destination,
-                    user=user,
-                    transferorder=order,
+            ):
+                raise ValidationError(
+                    _('Failed to consume stock item against transfer order')
                 )
-                self.save()
-            else:
-                # move item directly, we don't have to split
-                self.item.move(
-                    location=order.destination, user=user, transferorder=order, notes=''
+        elif transfer_quantity < self.item.quantity:
+            new_item = self.item.splitStock(
+                quantity=transfer_quantity,
+                location=order.destination,
+                user=user,
+                transferorder=order,
+            )
+
+            if new_item is None:
+                raise ValidationError(
+                    _('Failed to transfer stock item against transfer order')
+                )
+
+            # update our own reference to the StockItem which was split
+            self.item = new_item
+            self.save()
+        else:
+            # move item directly, we don't have to split
+            if not self.item.move(
+                location=order.destination, user=user, transferorder=order, notes=''
+            ):
+                raise ValidationError(
+                    _('Failed to transfer stock item against transfer order')
                 )
 
         # Update the transferred qty
-        self.line.transferred += self.quantity
-        self.line.save()
+        # Note: use the quantity which was *actually* transferred
+        # Increment at the database level to prevent lost updates
+        self.line.transferred = F('transferred') + transfer_quantity
+        self.line.save(update_fields=['transferred'])
+        self.line.refresh_from_db(fields=['transferred'])
 
 
 def _touch_order_updated_at(instance):

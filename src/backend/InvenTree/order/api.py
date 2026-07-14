@@ -6,6 +6,7 @@ from typing import cast
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -684,18 +685,26 @@ class PurchaseOrderLineItemList(
         # possibly merge duplicate items
         line_item = None
         if data.get('merge_items', True):
-            other_line = models.PurchaseOrderLineItem.objects.filter(
-                part=data.get('part'),
-                order=data.get('order'),
-                target_date=data.get('target_date'),
-                destination=data.get('destination'),
-            ).first()
+            with transaction.atomic():
+                # Lock the matching row, so concurrent line creations cannot
+                # both read the same starting quantity (lost update)
+                other_line = (
+                    models.PurchaseOrderLineItem.objects
+                    .select_for_update()
+                    .filter(
+                        part=data.get('part'),
+                        order=data.get('order'),
+                        target_date=data.get('target_date'),
+                        destination=data.get('destination'),
+                    )
+                    .first()
+                )
 
-            if other_line is not None:
-                other_line.quantity += Decimal(data.get('quantity', 0))
-                other_line.save()
+                if other_line is not None:
+                    other_line.quantity += Decimal(data.get('quantity', 0))
+                    other_line.save()
 
-                line_item = other_line
+                    line_item = other_line
 
         # otherwise create a new line item
         if line_item is None:
