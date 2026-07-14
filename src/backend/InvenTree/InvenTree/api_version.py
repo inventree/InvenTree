@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 522
 
 INVENTREE_API_TEXT = """
 
-v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/TODO
+v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
     - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)
     - Adds "bulk delete" support for order extra line item API endpoints
 
