@@ -2,6 +2,7 @@
 
 import io
 
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -73,6 +74,7 @@ class ParameterAPITests(InvenTreeAPITestCase):
             'model_type',
             'selectionlist',
             'enabled',
+            'unique',
         ]:
             self.assertIn(
                 field,
@@ -566,6 +568,93 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
+
+    def test_parameter_uniqueness(self):
+        """Test the uniqueness options which can be applied to a ParameterTemplate."""
+        from company.models import Company
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+        part_c = Part.objects.create(name='Part C', description='A part for testing')
+        company = Company.objects.create(
+            name='Test Company', description='A company for testing'
+        )
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number', description='A serial number parameter'
+        )
+
+        self.assertEqual(
+            template.unique, common.models.ParameterTemplate.UniqueOptions.NONE
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # No uniqueness requirement - a duplicate value against a different part is fine
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='ABC123',
+        )
+        param_b.full_clean()
+        param_b.save()
+
+        # Re-saving the existing instance (unchanged) should not raise any errors
+        param_a.full_clean()
+        param_a.save()
+
+        # Now, require uniqueness *per model type*
+        template.unique = common.models.ParameterTemplate.UniqueOptions.MODEL_TYPE
+        template.save()
+
+        # A new Part with the same value should be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
+
+        # A case-insensitive match should also be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='abc123',
+            ).full_clean()
+
+        # A different model type entirely is not affected by the 'model type' restriction
+        param_company = common.models.Parameter(
+            template=template,
+            model_type=company.get_content_type(),
+            model_id=company.pk,
+            data='ABC123',
+        )
+        param_company.full_clean()
+        param_company.save()
+
+        # Finally, require the value to be *globally* unique
+        template.unique = common.models.ParameterTemplate.UniqueOptions.GLOBAL
+        template.save()
+
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
 
     def test_parameter_annotation(self):
         """Test that we can annotate parameters against a queryset."""
