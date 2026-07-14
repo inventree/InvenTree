@@ -351,6 +351,124 @@ class StockTest(StockTestBase):
         stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
+    def test_over_adjustment_quantities(self):
+        """Stock adjustments are clamped to the available stock quantity.
+
+        Regression test: take_stock / allocateToCustomer / installStockItem
+        previously recorded the *requested* quantity in the stock history,
+        even when less stock was actually removed / allocated / installed.
+        """
+        part = Part.objects.create(
+            name='Clamp part',
+            description='A part for quantity clamping tests',
+            salable=True,
+            component=True,
+        )
+
+        # --- take_stock: remove more than available ---
+        item = StockItem.objects.create(part=part, quantity=10, delete_on_deplete=False)
+
+        self.assertTrue(item.take_stock(25, self.user, notes='over-remove'))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 0)
+
+        # History records the quantity which was *actually* removed
+        entry = item.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['removed'], 10.0)
+        self.assertEqual(entry.deltas['quantity'], 0.0)
+
+        # Removing stock from an empty item fails, and adds no history
+        n = item.tracking_info.count()
+        self.assertFalse(item.take_stock(5, self.user))
+        self.assertEqual(item.tracking_info.count(), n)
+
+        # --- allocateToCustomer: allocate more than available ---
+        customer = Company.objects.create(name='Clamp customer', is_customer=True)
+
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        allocated = item.allocateToCustomer(customer, quantity=25, user=self.user)
+
+        # The whole item is allocated (no split occurs)
+        self.assertEqual(allocated.pk, item.pk)
+        self.assertEqual(allocated.customer, customer)
+
+        # History records the quantity which was *actually* allocated
+        entry = allocated.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        with self.assertRaises(ValidationError):
+            item.allocateToCustomer(customer, quantity=0, user=self.user)
+
+        # --- installStockItem: install more than available ---
+        assembly = Part.objects.create(
+            name='Clamp assembly',
+            description='An assembly for quantity clamping tests',
+            assembly=True,
+        )
+
+        parent_item = StockItem.objects.create(part=assembly, quantity=1)
+        component = StockItem.objects.create(part=part, quantity=10)
+
+        parent_item.installStockItem(component, 25, self.user, 'over-install')
+
+        component.refresh_from_db()
+        self.assertEqual(component.belongs_to, parent_item)
+        self.assertEqual(component.quantity, 10)
+
+        # Both history entries record the quantity which was *actually* installed
+        entry = component.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        entry = parent_item.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        other = StockItem.objects.create(part=part, quantity=5)
+
+        with self.assertRaises(ValidationError):
+            parent_item.installStockItem(other, 0, self.user, 'bad install')
+
+    def test_uninstall_into_structural_location(self):
+        """Test that an item cannot be uninstalled into a structural location."""
+        parent = StockItem.objects.get(pk=1)
+
+        item = StockItem.objects.get(pk=2)
+        item.belongs_to = parent
+        item.save()
+
+        n_entries = item.tracking_info.count()
+        n_parent_entries = parent.tracking_info.count()
+
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        with self.assertRaises(ValidationError):
+            item.uninstall_into_location(structural, self.user, 'Uninstalling')
+
+        # The item remains installed, with no location change or tracking entries
+        item.refresh_from_db()
+        self.assertEqual(item.belongs_to, parent)
+        self.assertNotEqual(item.location, structural)
+        self.assertEqual(item.tracking_info.count(), n_entries)
+        self.assertEqual(parent.tracking_info.count(), n_parent_entries)
+
+        # Uninstalling into a non-structural location is still permitted
+        item.uninstall_into_location(self.drawer2, self.user, 'Uninstalling')
+
+        item.refresh_from_db()
+        self.assertIsNone(item.belongs_to)
+        self.assertEqual(item.location, self.drawer2)
+
     def test_child_items(self):
         """Test the 'children' reverse relation and 'child_count' property.
 

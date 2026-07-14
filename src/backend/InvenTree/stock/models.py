@@ -1381,8 +1381,15 @@ class StockItem(
         if not self.lock_quantity():
             raise ValidationError(_('Stock item no longer exists'))
 
-        if quantity is None:
+        if quantity is None or self.serialized:
             quantity = self.quantity
+
+        # Cannot allocate more than the available quantity
+        # (also ensures the recorded history matches the actual allocation)
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity >= self.quantity:
             item = self
@@ -1717,6 +1724,18 @@ class StockItem(
         if not other_item.lock_quantity():
             raise ValidationError(_('Stock item no longer exists'))
 
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, TypeError):
+            raise ValidationError({'quantity': _('Invalid quantity value')})
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        # Cannot install more than the available quantity
+        # (also ensures the recorded history matches the actual installation)
+        quantity = min(quantity, other_item.quantity)
+
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
@@ -1768,6 +1787,11 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
+
+        if location and location.structural:
+            raise ValidationError({
+                'location': _('Cannot assign stock to structural location')
+            })
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -3146,6 +3170,10 @@ class StockItem(
             quantity = Decimal(quantity)
         except InvalidOperation:
             return False
+
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        quantity = min(quantity, self.quantity)
 
         if quantity <= 0:
             return False
