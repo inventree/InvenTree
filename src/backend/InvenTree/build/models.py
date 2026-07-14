@@ -1281,6 +1281,15 @@ class Build(
         if not output:
             raise ValidationError(_('No build output specified'))
 
+        # Re-check the state of the output itself:
+        # It may have changed since the scrap request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         # If quantity is not specified, assume the entire output quantity
         if quantity is None:
             quantity = output.quantity
@@ -1350,6 +1359,15 @@ class Build(
         Raises:
             ValidationError: If the build output cannot be completed, with an appropriate message
         """
+        # Re-check the state of the output itself:
+        # It may have changed since the completion request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         prevent_incomplete = get_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
         )
@@ -1456,9 +1474,11 @@ class Build(
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
-        self.completed += output.quantity
-
-        self.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple outputs may be completed concurrently)
+        self.completed = F('completed') + output.quantity
+        self.save(update_fields=['completed'])
+        self.refresh_from_db(fields=['completed'])
 
     @transaction.atomic
     def allocate_stock(self, items: list[dict]):

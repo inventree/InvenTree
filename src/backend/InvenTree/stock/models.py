@@ -42,6 +42,7 @@ from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -571,12 +572,11 @@ class StockItem(
         return 'SI'
 
     def get_children(self):
-        """Return a queryset of all StockItem objects which are children of this StockItem.
+        """Return a queryset of all StockItem objects which are direct children of this StockItem.
 
-        As the StockItem model is no longer a MPTT model,
-        this function is implemented manually
+        Simply proxies the reverse foreign-key relation for the 'parent' field.
         """
-        return StockItem.objects.filter(parent=self).exclude(pk=self.pk)
+        return self.children.all()
 
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
@@ -710,7 +710,6 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
-        part = data['part']
         parent = kwargs.pop('parent', None) or data.get('parent')
 
         data['parent'] = parent
@@ -730,10 +729,7 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        StockItem.objects.bulk_create(items, batch_size=250)
-
-        # Fetch the new StockItem objects from the database
-        items = StockItem.objects.filter(part=part, serial__in=serials)
+        items = bulk_create_and_fetch(StockItem, items)
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
@@ -1364,6 +1360,7 @@ class StockItem(
         # Delete outstanding BuildOrder allocations
         self.allocations.all().delete()
 
+    @transaction.atomic
     def allocateToCustomer(
         self, customer, quantity=None, order=None, user=None, notes=None
     ):
@@ -1380,8 +1377,19 @@ class StockItem(
             user: User that performed the action
             notes: Notes field
         """
-        if quantity is None:
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
+        if quantity is None or self.serialized:
             quantity = self.quantity
+
+        # Cannot allocate more than the available quantity
+        # (also ensures the recorded history matches the actual allocation)
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity >= self.quantity:
             item = self
@@ -1759,6 +1767,22 @@ class StockItem(
             notes: Any notes associated with the operation
             build: The BuildOrder to associate with the operation (optional)
         """
+        # Lock the database row, so concurrent adjustments are serialized
+        if not other_item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, TypeError):
+            raise ValidationError({'quantity': _('Invalid quantity value')})
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        # Cannot install more than the available quantity
+        # (also ensures the recorded history matches the actual installation)
+        quantity = min(quantity, other_item.quantity)
+
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
@@ -1810,6 +1834,11 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
+
+        if location and location.structural:
+            raise ValidationError({
+                'location': _('Cannot assign stock to structural location')
+            })
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -1961,6 +1990,10 @@ class StockItem(
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
         if quantity > self.quantity:
             raise ValidationError({
                 'quantity': _('Quantity must not exceed available stock quantity')
@@ -2104,11 +2137,6 @@ class StockItem(
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
         return items
-
-    @property
-    def children(self):
-        """Return a list of the child items which have been split from this stock item."""
-        return self.get_descendants(include_self=False)
 
     @property
     def child_count(self):
@@ -2284,6 +2312,10 @@ class StockItem(
 
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
 
         if quantity > self.quantity:
             raise ValidationError({
@@ -2546,6 +2578,29 @@ class StockItem(
         if len(other_items) == 0:
             return
 
+        # Lock all database rows (in pk order, to avoid deadlocks between
+        # concurrent merges) and refresh the quantity of each item
+        items_to_merge = sorted([self, *other_items], key=lambda item: item.pk)
+
+        locked_quantities = dict(
+            StockItem.objects
+            .select_for_update()
+            .filter(pk__in=[item.pk for item in items_to_merge])
+            .values_list('pk', 'quantity')
+        )
+
+        for item in items_to_merge:
+            if item.pk not in locked_quantities:
+                if raise_error:
+                    raise ValidationError(_('Stock item no longer exists'))
+
+                logger.warning(
+                    'Stock item <%s> no longer exists - merge cancelled', item.pk
+                )
+                return
+
+            item.quantity = locked_quantities[item.pk]
+
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
         notes = kwargs.get('notes') or ''
@@ -2697,6 +2752,10 @@ class StockItem(
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
+            return None
+
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
             return None
 
         # Also doesn't make sense to split the full amount
@@ -2867,6 +2926,10 @@ class StockItem(
         """
         current_location = self.location
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return False
+
         try:
             quantity = Decimal(kwargs.pop('quantity', self.quantity))
         except InvalidOperation:
@@ -2936,6 +2999,37 @@ class StockItem(
 
         return True
 
+    def lock_quantity(self) -> bool:
+        """Acquire a database row-level lock on this StockItem.
+
+        Once the lock is held, the 'quantity' field is refreshed from the database,
+        so that read-modify-write adjustments operate on the current committed value
+        rather than a (potentially stale) in-memory copy.
+
+        Note: Must be called from within a database transaction,
+        and the lock is held until that transaction completes.
+
+        Returns:
+            False if this StockItem no longer exists in the database.
+        """
+        if not self.pk:
+            return False
+
+        quantity = (
+            StockItem.objects
+            .select_for_update()
+            .filter(pk=self.pk)
+            .values_list('quantity', flat=True)
+            .first()
+        )
+
+        if quantity is None:
+            return False
+
+        self.quantity = quantity
+
+        return True
+
     @transaction.atomic
     def updateQuantity(self, quantity):
         """Update stock quantity for this item.
@@ -2996,6 +3090,10 @@ class StockItem(
             return
 
         if count < 0:
+            return False
+
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
             return False
 
         tracking_info = {}
@@ -3068,6 +3166,10 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return False
+
         tracking_info = {}
 
         status = self._resolve_status_kwarg(kwargs)
@@ -3117,7 +3219,15 @@ class StockItem(
         except InvalidOperation:
             return False
 
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        quantity = min(quantity, self.quantity)
+
         if quantity <= 0:
+            return False
+
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
             return False
 
         deltas = {}

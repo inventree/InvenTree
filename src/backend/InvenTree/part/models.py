@@ -2348,6 +2348,14 @@ class Part(
             if category_template.template.pk in template_ids:
                 continue
 
+            # Skip templates which enforce a uniqueness requirement - applying the same
+            # default value to every part in the category would create conflicting values
+            if (
+                category_template.template.unique
+                != common.models.ParameterTemplate.UniqueOptions.NONE
+            ):
+                continue
+
             template_ids.add(category_template.template.pk)
 
             parameters.append(

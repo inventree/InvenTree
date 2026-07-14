@@ -111,9 +111,21 @@ def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
 
     with transaction.atomic():
         for output_id in output_ids:
-            output = StockItem.objects.filter(pk=output_id).first()
-            if output:
-                build.delete_output(output)
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = StockItem.objects.select_for_update().filter(pk=output_id).first()
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping deletion',
+                    output.pk,
+                )
+                continue
+
+            build.delete_output(output)
 
 
 @tracer.start_as_current_span('scrap_build_outputs')
@@ -145,16 +157,33 @@ def scrap_build_outputs(
 
     with transaction.atomic():
         for item in outputs:
-            output = StockItem.objects.filter(pk=item['output_id']).first()
-            if output:
-                build.scrap_build_output(
-                    output,
-                    item.get('quantity'),
-                    location,
-                    user=user,
-                    notes=notes,
-                    discard_allocations=discard_allocations,
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping scrap',
+                    output.pk,
                 )
+                continue
+
+            build.scrap_build_output(
+                output,
+                item.get('quantity'),
+                location,
+                user=user,
+                notes=notes,
+                discard_allocations=discard_allocations,
+            )
 
 
 @tracer.start_as_current_span('complete_build_outputs')
@@ -190,17 +219,34 @@ def complete_build_outputs(
 
     with transaction.atomic():
         for item in outputs:
-            output = StockItem.objects.filter(pk=item['output_id']).first()
-            if output:
-                build.complete_build_output(
-                    output,
-                    user,
-                    quantity=item.get('quantity'),
-                    location=location,
-                    status=status,
-                    notes=notes,
-                    required_tests=required_tests,
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping completion',
+                    output.pk,
                 )
+                continue
+
+            build.complete_build_output(
+                output,
+                user,
+                quantity=item.get('quantity'),
+                location=location,
+                status=status,
+                notes=notes,
+                required_tests=required_tests,
+            )
 
 
 @tracer.start_as_current_span('cancel_build')

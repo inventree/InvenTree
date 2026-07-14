@@ -597,12 +597,21 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         content_type = ContentType.objects.get_for_model(self.__class__)
 
-        template_ids = [parameter.template.pk for parameter in other.parameters.all()]
+        # Skip any parameters which are linked to a template with a uniqueness requirement,
+        # as copying these values would create conflicting (duplicate) values
+        copyable_parameters = [
+            parameter
+            for parameter in other.parameters.all().select_related('template')
+            if parameter.template.unique
+            == common.models.ParameterTemplate.UniqueOptions.NONE
+        ]
+
+        template_ids = [parameter.template.pk for parameter in copyable_parameters]
 
         # Remove all conflicting parameters first
         self.parameters_list.filter(template__pk__in=template_ids).delete()
 
-        for parameter in other.parameters.all():
+        for parameter in copyable_parameters:
             parameter.pk = None
             parameter.model_id = self.pk
             parameter.model_type = content_type

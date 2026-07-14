@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+
+- [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
 - [#12310](https://github.com/inventree/InvenTree/pull/12310) adds the ability to disassemble (or break apart) assembled stock items into their component parts, based on the Bill of Materials (BOM) associated with the stock item. This allows users to easily break down assembled items into their constituent parts, which can be useful for inventory management and tracking purposes.
 - [#12117](https://github.com/inventree/InvenTree/pull/12117) adds a "preview" drawer to the InvenTree table component, allowing users to preview the details of a selected row without navigating away from the table view. This feature is optional and can be enabled or disabled via the `PREVIEW_DRAWER_ENABLED` system setting.
 - [#12341](https://github.com/inventree/InvenTree/pull/12341) adds support for importing internal part prices.
