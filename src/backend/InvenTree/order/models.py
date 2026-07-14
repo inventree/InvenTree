@@ -3113,6 +3113,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe status=IN_PROGRESS, and each would run the completion
+        # side effects (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.status == ReturnOrderStatus.IN_PROGRESS.value:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
