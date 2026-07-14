@@ -396,6 +396,71 @@ class StockTest(StockTestBase):
         self.assertIn(grandchild, child_1.children.all())
         self.assertNotIn(grandchild, parent.children.all())
 
+    def test_adjustment_stale_quantity(self):
+        """Stock adjustments operate on database quantities, not stale in-memory copies.
+
+        Simulates concurrent adjustment operations, where each worker holds
+        its own (stale) in-memory copy of the same StockItem.
+        """
+        item = StockItem.objects.get(pk=1234)
+        self.assertEqual(item.quantity, 1234)
+
+        # Remove stock via two independent in-memory copies
+        item_a = StockItem.objects.get(pk=item.pk)
+        item_b = StockItem.objects.get(pk=item.pk)
+
+        self.assertTrue(item_a.take_stock(100, self.user))
+        self.assertTrue(item_b.take_stock(200, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 934)
+
+        # Add stock via a stale copy
+        item_c = StockItem.objects.get(pk=item.pk)
+        item.take_stock(34, self.user)
+
+        self.assertTrue(item_c.add_stock(100, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 1000)
+
+        # Split stock via a stale copy
+        item_d = StockItem.objects.get(pk=item.pk)
+        item.take_stock(500, self.user)
+
+        child = item_d.splitStock(300, None, self.user)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 200)
+        self.assertEqual(child.quantity, 300)
+
+        # A full-quantity move via a stale copy must not resurrect removed stock
+        item_e = StockItem.objects.get(pk=item.pk)
+        item.take_stock(50, self.user)
+
+        self.assertTrue(item_e.move(self.diningroom, 'Move', self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 150)
+        self.assertEqual(item.location, self.diningroom)
+
+    def test_merge_stale_quantity(self):
+        """Merging stock items uses database quantities, not stale in-memory values."""
+        part = Part.objects.get(pk=3)
+
+        target = StockItem.objects.create(part=part, quantity=100)
+        source = StockItem.objects.create(part=part, quantity=50)
+
+        # Hold a stale copy of the target, and adjust the real row underneath it
+        stale_target = StockItem.objects.get(pk=target.pk)
+        target.take_stock(60, self.user)
+
+        stale_target.merge_stock_items([source], user=self.user)
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 90)
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
+
     def test_stocktake(self):
         """Test stocktake function."""
         # Perform stocktake

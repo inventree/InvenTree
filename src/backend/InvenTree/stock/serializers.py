@@ -1984,6 +1984,10 @@ class StockAdjustmentSerializer(serializers.Serializer):
         if len(items) == 0:
             raise ValidationError(_('A list of stock items must be provided'))
 
+        # Process items in stable (pk) order, so that concurrent multi-item
+        # requests acquire database row locks in the same order (deadlock avoidance)
+        data['items'] = sorted(items, key=lambda entry: entry['pk'].pk)
+
         return data
 
 
