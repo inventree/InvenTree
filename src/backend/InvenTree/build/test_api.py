@@ -2937,11 +2937,7 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         for _i in range(4):
             for component in components:
                 # Total of 160 stock for each component
-                stock_items.append(
-                    StockItem(
-                        part=component, quantity=40, level=0, tree_id=0, lft=0, rght=0
-                    )
-                )
+                stock_items.append(StockItem(part=component, quantity=40))
 
         StockItem.objects.bulk_create(stock_items)
 
