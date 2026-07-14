@@ -550,6 +550,9 @@ class StockItem(
     def delete(self, ignore_serial_check: bool = False, **kwargs):
         """Custom delete method for StockItem model.
 
+        Any child items are re-linked to the parent of this item,
+        to preserve the stock item genealogy chain.
+
         Arguments:
             ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
         """
@@ -559,7 +562,14 @@ class StockItem(
             if self.serialized:
                 raise ValidationError(_('Serialized stock items cannot be deleted'))
 
-        super().delete(**kwargs)
+        with transaction.atomic():
+            # Re-link any child items to the parent of this item,
+            # so the genealogy chain survives deletion of an intermediate item
+
+            parent = StockItem.objects.filter(pk=self.parent_id).first()
+            StockItem.objects.filter(parent=self).update(parent=parent)
+
+            super().delete(**kwargs)
 
     @staticmethod
     def get_api_url():
@@ -1036,7 +1046,7 @@ class StockItem(
         """Returns part name."""
         return self.part.full_name
 
-    # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
+    # Note: When a StockItem is deleted, child items are re-linked to its parent (see delete())
     parent = models.ForeignKey(
         'stock.StockItem',
         verbose_name=_('Parent Stock Item'),

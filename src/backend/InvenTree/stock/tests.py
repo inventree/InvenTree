@@ -351,6 +351,71 @@ class StockTest(StockTestBase):
         stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
+    def test_delete_reparents_children(self):
+        """Test that deleting an intermediate item re-links children to the grandparent."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        parent = grandparent.splitStock(200, None, self.user)
+        child_a = parent.splitStock(50, None, self.user)
+        child_b = parent.splitStock(50, None, self.user)
+
+        self.assertEqual(parent.parent, grandparent)
+        self.assertEqual(child_a.parent, parent)
+        self.assertEqual(child_b.parent, parent)
+
+        # Deleting the intermediate item grafts its children onto the grandparent
+        parent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertEqual(child_a.parent, grandparent)
+        self.assertEqual(child_b.parent, grandparent)
+
+        # Deleting a top-level item leaves its children with no parent
+        grandparent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertIsNone(child_a.parent)
+        self.assertIsNone(child_b.parent)
+
+    def test_implicit_delete_reparents_children(self):
+        """Test child re-linking when items are deleted by depletion or merging."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        # An item depleted to zero with delete_on_deplete set is deleted
+        parent = grandparent.splitStock(200, None, self.user)
+        child = parent.splitStock(50, None, self.user)
+
+        parent.delete_on_deplete = True
+        parent.save()
+
+        self.assertTrue(parent.take_stock(150, self.user, notes='Deplete'))
+        self.assertFalse(StockItem.objects.filter(pk=parent.pk).exists())
+
+        child.refresh_from_db()
+        self.assertEqual(child.parent, grandparent)
+
+        # An item absorbed by a merge is also deleted
+        source = grandparent.splitStock(100, None, self.user)
+        kid = source.splitStock(25, None, self.user)
+
+        target = StockItem.objects.create(
+            part=grandparent.part,
+            supplier_part=grandparent.supplier_part,
+            quantity=10,
+            location=grandparent.location,
+        )
+
+        target.merge_stock_items([source], raise_error=True, user=self.user)
+
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
+
+        kid.refresh_from_db()
+        self.assertEqual(kid.parent, grandparent)
+
     def test_over_adjustment_quantities(self):
         """Stock adjustments are clamped to the available stock quantity.
 
