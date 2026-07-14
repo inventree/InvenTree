@@ -111,7 +111,8 @@ export function useParameterTemplateFields(): ApiFormFieldSet {
           active: true
         }
       },
-      enabled: {}
+      enabled: {},
+      unique: {}
     };
   }, []);
 }
