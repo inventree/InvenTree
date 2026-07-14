@@ -1636,6 +1636,97 @@ class SalesOrder(TotalPriceMixin, Order):
 
         SalesOrderAllocation.objects.bulk_create(new_allocations, batch_size=250)
 
+    @transaction.atomic
+    def allocate_serial_numbers(
+        self,
+        line_item: 'SalesOrderLineItem',
+        quantity: int,
+        serial_numbers: str,
+        shipment: Optional['SalesOrderShipment'] = None,
+    ) -> list['SalesOrderAllocation']:
+        """Allocate stock items against this SalesOrder, by serial number.
+
+        Arguments:
+            line_item: The SalesOrderLineItem to allocate against
+            quantity: The number of serial numbers expected
+            serial_numbers: A string of serial numbers to allocate (e.g. "1,2,3-5")
+            shipment: Optional shipment to assign the allocations to
+
+        Raises:
+            ValidationError: If the line item does not belong to this order,
+                the serial numbers cannot be parsed, or any of the requested
+                serial numbers do not exist or are unavailable for allocation.
+        """
+        if line_item.order != self:
+            raise ValidationError(_('Line item is not associated with this order'))
+
+        part = line_item.part
+
+        serials = InvenTree.helpers.extract_serial_numbers(
+            serial_numbers, quantity, part.get_latest_serial_number(), part=part
+        )
+
+        serials_not_exist = set()
+        serials_unavailable = set()
+        stock_items_to_allocate = []
+
+        for serial in serials:
+            serial = str(serial).strip()
+
+            items = stock.models.StockItem.objects.filter(
+                part=part, serial=serial, quantity=1
+            )
+
+            if not items.exists():
+                serials_not_exist.add(serial)
+                continue
+
+            stock_item = items[0]
+
+            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
+                if (
+                    stock_item.hasRequiredTests()
+                    and not stock_item.passedAllRequiredTests()
+                ):
+                    serials_unavailable.add(serial)
+                    continue
+
+            if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(serial)
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
+
+        if len(serials_not_exist) > 0:
+            error_msg = _('No match found for the following serial numbers')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_not_exist))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_unavailable))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        allocations = [
+            SalesOrderAllocation(
+                line=line_item, item=stock_item, quantity=1, shipment=shipment
+            )
+            for stock_item in stock_items_to_allocate
+        ]
+
+        SalesOrderAllocation.objects.bulk_create(allocations, batch_size=250)
+
+        return allocations
+
     def is_completed(self) -> bool:
         """Check if this order is "shipped" (all line items delivered).
 
@@ -3246,6 +3337,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe status=IN_PROGRESS, and each would run the completion
+        # side effects (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.status == ReturnOrderStatus.IN_PROGRESS.value:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()

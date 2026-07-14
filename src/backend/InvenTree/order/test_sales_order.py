@@ -505,6 +505,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 max_query_time=5,
                 max_query_count=100,
             )
+
         self.assertEqual(response.status_code, 200)
 
         shipment.refresh_from_db()

@@ -938,6 +938,15 @@ class UninstallStockItemSerializer(serializers.Serializer):
         allow_blank=True,
     )
 
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
+
     def save(self):
         """Uninstall stock item."""
         item = self.context.get('item')
@@ -1983,6 +1992,10 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
         if len(items) == 0:
             raise ValidationError(_('A list of stock items must be provided'))
+
+        # Process items in stable (pk) order, so that concurrent multi-item
+        # requests acquire database row locks in the same order (deadlock avoidance)
+        data['items'] = sorted(items, key=lambda entry: entry['pk'].pk)
 
         return data
 
