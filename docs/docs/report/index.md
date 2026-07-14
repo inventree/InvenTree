@@ -53,28 +53,42 @@ To read more about the capabilities of the report templating engine, and how to 
 
 ## Creating Templates
 
-Report and label templates can be created (and edited) via the [admin interface](../settings/admin.md), under the *Report* section.
+Report and label templates are managed from the [Admin Center](../settings/admin.md#admin-center), which provides dedicated panels (under the *Reporting* group) for each template type:
 
-Select the type of template you are wanting to create (a *Report Template* or *Label Template*) and press the *Add* button in the top right corner:
+- **Label Templates** - Create and edit [label templates](./labels.md)
+- **Report Templates** - Create and edit [report templates](./report.md)
+- **Report Snippets** - Manage reusable [snippet](#report-snippets) files
+- **Report Assets** - Manage uploaded [asset](#report-assets) files
 
-{{ image("report/report_template_admin.png", "Report template admin") }}
+Label and report templates are created and edited using the built-in [template editor](./template_editor.md), which allows templates to be written directly within the browser, with a live preview of the rendered output.
 
 !!! tip "Staff Access Only"
-    Only users with staff access can upload or edit report template files.
+    Only users with staff access can create, upload or edit templates, snippets and assets.
 
-!!! info "Editing Reports"
-    Existing reports can be edited from the admin interface, in the same location as described above. To change the contents of the template, re-upload a template file, to override the existing template data.
-
-!!! tip "Template Editor"
-    InvenTree also provides a powerful [template editor](./template_editor.md) which allows for the creation and editing of report templates directly within the browser.
+!!! info "Database Admin Interface"
+    Templates can also be managed at a lower level via the [Database Admin interface](../settings/db_admin.md), under the *Report* section. This is recommended for advanced users only.
 
 ### Name and Description
 
 Each report template requires a name and description, which identify and describe the report template.
 
+### Revision
+
+Each template has a revision number, which is automatically incremented each time the template is updated. This provides a simple mechanism for tracking changes to a template over time. The revision number is read-only, and cannot be edited directly.
+
+!!! info "Template Revision Context"
+    The revision number of the template is made available when rendering, via the `template_revision` [context variable](./context_variables.md#global-context).
+
 ### Enabled Status
 
 Boolean field which determines if the specific report template is enabled, and available for use. Reports can be disabled to remove them from the list of available templates, but without deleting them from the database.
+
+### Attach to Model
+
+If the *Attach to Model on Print* option is enabled, a copy of the generated report is automatically saved as a file attachment against the item (model instance) for which it was generated, each time the template is printed.
+
+!!! warning "Attachment Support"
+    The report output is only attached if the target model type supports file attachments.
 
 ### Filename Pattern
 
@@ -147,86 +161,44 @@ Setting the *Debug Mode* option renders the template as raw HTML instead of PDF,
 
 ## Report Assets
 
-User can upload asset files (e.g. images) which can be used when generating reports. For example, you may wish to generate a report with your company logo in the header. Asset files are uploaded via the admin interface.
+User can upload asset files (e.g. images) which can be used when generating reports. For example, you may wish to generate a report with your company logo in the header.
 
-Asset files can be rendered directly into the template as follows
-
-```html
-{% raw %}
-<!-- Need to include the report template tags at the start of the template file -->
-{% load report %}
-
-<!-- Simple stylesheet -->
-<head>
-  <style>
-    .company-logo {
-      height: 50px;
-    }
-  </style>
-</head>
-
-<body>
-<!-- Report template code here -->
-
-<!-- Render an uploaded asset image -->
-<img src="{% asset 'company_image.png' %}" class="company-logo">
-
-<!-- ... -->
-</body>
-
-{% endraw %}
-```
-
-!!! warning "Asset Naming"
-    If the requested asset name does not match the name of an uploaded asset, the template will continue without loading the image.
-
-!!! info "Assets location"
-    Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
-
+Refer to the [report assets](./assets.md) documentation for further information.
 
 ## Report Snippets
 
-A powerful feature provided by the django / WeasyPrint templating framework is the ability to include external template files. This allows commonly used template features to be broken out into separate files and reused across multiple templates.
+InvenTree provides report "snippets" - reusable template files which cannot be rendered by themselves, but can be included in other templates.
 
-To support this, InvenTree provides report "snippets" - short (or not so short) template files which cannot be rendered by themselves, but can be called from other templates.
+Refer to the [report snippets](./snippets.md) documentation for further information.
 
-Similar to assets files, snippet template files are uploaded via the admin interface.
+## Security
 
-Snippets are included in a template as follows:
+Report templates are powerful by design — they have access to the full Django template language and to model data across the InvenTree database. For this reason, **template upload is restricted to staff users only**.
 
-```
-{% raw %}{% include 'snippets/<snippet_name.html>' %}{% endraw %}
-```
+### URL Fetching
 
-For example, consider a custom stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
+When WeasyPrint renders a template to PDF it can make outbound requests to load images, stylesheets, and fonts referenced in the HTML. InvenTree restricts this through a custom URL fetcher with the following rules:
 
-```html
-{% raw %}
+| URL Type | Behavior |
+|---|---|
+| `data:` URIs | Always permitted — self-contained, no network access |
+| `file://` | Always blocked — assets and images must be inlined as `data:` URIs before reaching WeasyPrint |
+| `http` / `https` | Disabled by default, but can be enabled - see *Remote URL Fetching* below |
+| Any other scheme | Always blocked |
 
-<table class='stock-table'>
-  <thead>
-    <!-- table header data -->
-  </thead>
-  <tbody>
-    {% for item in location.stock_items %}
-    {% include 'snippets/stock_row.html' with item=item %}
-    {% endfor %}
-  </tbody>
+HTTP redirects are also disabled: a URL that passes validation cannot redirect to an internal address.
 
-{% endraw %}
-```
+### Remote URL Fetching
 
-!!! info "Snippet Arguments"
-    Note above that named argument variables can be passed through to the snippet!
+The **Report URL Fetching** system setting (`REPORT_FETCH_URLS`) controls whether `http://` and `https://` URLs in templates are permitted. It defaults to **disabled**.
 
-And the snippet file `stock_row.html` may be written as follows:
+When enabled, URLs are still validated against private, loopback, link-local, and reserved IP ranges before the request is made, preventing templates from being used as a vector for [Server-Side Request Forgery (SSRF)](https://owasp.org/www-community/attacks/Server_Side_Request_Forgery) attacks against internal network services.
 
-```html
-{% raw %}
-<!-- stock_row snippet -->
-<tr>
-  <td>{{ item.part.full_name }}</td>
-  <td>{{ item.quantity }}</td>
-</tr>
-{% endraw %}
-```
+!!! warning "Enable with care"
+    Enabling remote URL fetching allows report templates to trigger outbound HTTP requests from the InvenTree server. Only enable this if your templates genuinely require it, and ensure that templates are reviewed before deployment.
+
+### Asset Files
+
+[Asset files](./assets.md) uploaded through the admin interface are embedded directly into the rendered PDF as base64 `data:` URIs — they are read via the Django storage API and never loaded through WeasyPrint's URL fetcher. This means assets work correctly regardless of whether remote URL fetching is enabled, and also work with remote storage backends such as S3.
+
+There are various [helper functions](./helpers.md#report-assets) available to assist with embedding assets into templates.

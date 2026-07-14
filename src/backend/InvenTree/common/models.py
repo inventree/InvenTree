@@ -181,6 +181,12 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Project description'),
     )
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this project code active?'),
+    )
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,
@@ -1382,21 +1388,27 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
-    def convert_to(self, currency_code):
+    def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 
-        Args:
+        Arguments:
             currency_code: The currency code to convert to (e.g "USD" or "AUD")
+            raise_error: If True, raise an error if the conversion fails. If False, return None.
         """
         try:
             converted = convert_money(self.price, currency_code)
-        except MissingRate:
+        except MissingRate:  # pragma: no cover
+            InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
-            return self.price.amount
+
+            if raise_error:
+                raise
+
+            return None
 
         return converted.amount
 
@@ -1578,7 +1590,7 @@ class WebhookMessage(models.Model):
         worked_on: Was the work on this message finished?
     """
 
-    message_id = models.UUIDField(
+    message_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Message ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -1678,7 +1690,7 @@ class NotificationMessage(models.Model):
         ContentType, on_delete=models.CASCADE, related_name='notification_target'
     )
 
-    target_object_id = models.PositiveIntegerField()
+    target_object_id = models.CharField(max_length=255)
 
     target_object = GenericForeignKey('target_content_type', 'target_object_id')
 
@@ -1691,7 +1703,7 @@ class NotificationMessage(models.Model):
         blank=True,
     )
 
-    source_object_id = models.PositiveIntegerField(null=True, blank=True)
+    source_object_id = models.CharField(max_length=255, null=True, blank=True)
 
     source_object = GenericForeignKey('source_content_type', 'source_object_id')
 
@@ -2628,6 +2640,19 @@ class ParameterTemplate(
 
         choice_fnc = common.validators.parameter_template_model_options
 
+    class UniqueOptions(models.IntegerChoices):
+        """Enumeration of uniqueness options for a ParameterTemplate.
+
+        Attributes:
+            NONE: No uniqueness requirement is enforced (default)
+            MODEL_TYPE: Linked parameter values must be unique for a given model type
+            GLOBAL: Linked parameter values must be unique across all model types
+        """
+
+        NONE = 0, _('No uniqueness required')
+        MODEL_TYPE = 1, _('Unique for model type')
+        GLOBAL = 2, _('Globally unique')
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the ParameterTemplate model."""
@@ -2771,6 +2796,15 @@ class ParameterTemplate(
         help_text=_('Is this parameter template enabled?'),
     )
 
+    unique = models.PositiveIntegerField(
+        default=UniqueOptions.NONE,
+        choices=UniqueOptions.choices,
+        verbose_name=_('Uniqueness'),
+        help_text=_(
+            'Enforce uniqueness of linked parameter values against this template'
+        ),
+    )
+
 
 @receiver(
     post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
@@ -2876,6 +2910,9 @@ class Parameter(
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
 
+        # Validate the parameter data against any uniqueness requirements imposed by the template
+        self.validate_uniqueness()
+
         if InvenTree.ready.isReadOnlyCommand():
             # Skip plugin validation checks during read-only management commands
             return
@@ -2922,6 +2959,42 @@ class Parameter(
             # Ref: https://github.com/inventree/InvenTree/issues/7593
             if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
                 self.data_numeric = None
+
+    def validate_uniqueness(self):
+        """Ensure that this Parameter satisfies any uniqueness requirements imposed by its template.
+
+        The ParameterTemplate.unique field determines the scope of the uniqueness check:
+
+        - NONE: No uniqueness check is performed
+        - MODEL_TYPE: The value must be unique amongst other parameters (for this template) linked to the same model type
+        - GLOBAL: The value must be unique amongst all other parameters linked to this template
+
+        Note: If the template defines a set of 'units', the comparison is performed against the
+        normalized 'data_numeric' value, so that equivalent values expressed in different
+        (but compatible) units are correctly detected as duplicates (e.g. '1k' and '1000' ohms).
+        """
+        uniqueness = self.template.unique
+
+        if uniqueness == ParameterTemplate.UniqueOptions.NONE:
+            return
+
+        if self.template.units and self.data_numeric is not None:
+            query = Parameter.objects.filter(
+                template=self.template, data_numeric=self.data_numeric
+            )
+        else:
+            query = Parameter.objects.filter(
+                template=self.template, data__iexact=self.data
+            )
+
+        if self.pk:
+            query = query.exclude(pk=self.pk)
+
+        if uniqueness == ParameterTemplate.UniqueOptions.MODEL_TYPE:
+            query = query.filter(model_type=self.model_type)
+
+        if query.exists():
+            raise ValidationError({'data': _('Parameter value must be unique')})
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
@@ -3260,7 +3333,7 @@ class EmailMessage(models.Model):
         TRACK_READ = 'track_read', _('Track Read')
         TRACK_CLICK = 'track_click', _('Track Click')
 
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3368,7 +3441,7 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this thread'),
         primary_key=True,

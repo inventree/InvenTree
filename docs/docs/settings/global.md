@@ -144,6 +144,7 @@ Configuration of report generation:
 {{ globalsetting("REPORT_ENABLE") }}
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
+{{ globalsetting("REPORT_FETCH_URLS") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
 
 ### Label Printing
@@ -225,6 +226,7 @@ Configuration of stock item options
 {{ globalsetting("STOCK_SHOW_INSTALLED_ITEMS") }}
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
+{{ globalsetting("STOCK_MERGE_ON_TRANSFER") }}
 {{ globalsetting("TEST_STATION_DATA") }}
 
 ### Build Orders

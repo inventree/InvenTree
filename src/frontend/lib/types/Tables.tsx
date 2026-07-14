@@ -70,6 +70,11 @@ export type TableState = {
   idAccessor?: string;
 };
 
+export type TableColumnFilterType =
+  | string
+  | string[]
+  | (({ close }: { close: () => void }) => ReactNode);
+
 /**
  * Table column properties
  *
@@ -109,10 +114,7 @@ export type TableColumnProps<T = any> = {
   editable?: boolean;
   definition?: ApiFormFieldType;
   render?: (record: T, index?: number) => any;
-  filter?:
-    | string
-    | string[]
-    | (({ close }: { close: () => void }) => ReactNode);
+  filter?: TableColumnFilterType;
   filtering?: boolean;
   width?: number;
   minWidth?: string | number;
@@ -152,7 +154,12 @@ type RowModelProps = {
   navigate: NavigateFunction;
 };
 
-export type RowViewProps = RowAction & RowModelProps;
+type RowViewBehaviorProps = {
+  isPreviewEnabled?: () => boolean;
+  openPreview?: (modelType: ModelType, modelId: number) => void;
+};
+
+export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component

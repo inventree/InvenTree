@@ -23,7 +23,15 @@ class DataImportColumnMapSerializer(InvenTreeModelSerializer):
         """Meta class options for the serializer."""
 
         model = importer.models.DataImportColumnMap
-        fields = ['pk', 'session', 'column', 'field', 'label', 'description']
+        fields = [
+            'pk',
+            'session',
+            'column',
+            'field',
+            'label',
+            'description',
+            'lookup_field',
+        ]
         read_only_fields = ['field', 'session']
 
     label = serializers.CharField(read_only=True)
@@ -54,6 +62,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'field_filters',
             'row_count',
             'completed_row_count',
+            'completed_row_count_history',
+            'row_count_history',
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
@@ -212,6 +222,8 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
             row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
+            # ensure current state is available
+            session.refresh_from_db()
             session.check_complete()
 
         return rows

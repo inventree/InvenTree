@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import F, Q
+from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
+from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -394,9 +395,7 @@ class BuildList(
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        build = serializer.save()
-        build.issued_by = request.user
-        build.save()
+        serializer.save(issued_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -458,8 +457,21 @@ class BuildLineFilter(FilterSet):
 
     # Fields on related models
     consumable = rest_filters.BooleanFilter(
-        label=_('Consumable'), field_name='bom_item__consumable'
+        label=_('Consumable'), method='filter_consumable'
     )
+
+    def filter_consumable(self, queryset, name, value):
+        """Filter the queryset based on the "effective" consumable status of the BOM item.
+
+        A BuildLine is considered "consumable" if either the BOM item itself,
+        or the underlying part, is marked as consumable.
+        """
+        return queryset.filter(
+            part_models.BomItem.consumable_filter(
+                consumable=str2bool(value), prefix='bom_item__'
+            )
+        )
+
     optional = rest_filters.BooleanFilter(
         label=_('Optional'), field_name='bom_item__optional'
     )
@@ -495,9 +507,25 @@ class BuildLineFilter(FilterSet):
 
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated."""
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
+        )
+
         if str2bool(value):
-            return queryset.filter(allocated__gte=F('quantity') - F('consumed'))
-        return queryset.filter(allocated__lt=F('quantity') - F('consumed'))
+            return queryset.filter(
+                allocated_quantity__gte=F('quantity') - F('consumed')
+            )
+        return queryset.filter(allocated_quantity__lt=F('quantity') - F('consumed'))
 
     consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
 
@@ -520,8 +548,24 @@ class BuildLineFilter(FilterSet):
         - The quantity available for each BuildLine (including variants and substitutes)
         - The quantity allocated for each BuildLine
         """
-        flt = Q(
-            quantity__lte=F('allocated')
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
+        )
+
+        # A query filter construct to determine the total quantity available for this BuildLine,
+        # taking into account any stock which is already allocated or consumed
+        available = (
+            F('allocated_quantity')
             + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
@@ -529,8 +573,9 @@ class BuildLineFilter(FilterSet):
         )
 
         if str2bool(value):
-            return queryset.filter(flt)
-        return queryset.exclude(flt)
+            return queryset.filter(quantity__lte=available)
+
+        return queryset.filter(quantity__gt=available)
 
     on_order = rest_filters.BooleanFilter(label=_('On Order'), method='filter_on_order')
 

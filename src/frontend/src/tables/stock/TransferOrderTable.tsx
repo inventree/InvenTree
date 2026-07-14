@@ -5,9 +5,6 @@ import { AddItemButton, UserRoles, useTable } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useTransferOrderFields } from '../../forms/TransferOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompletionDateColumn,
@@ -21,8 +18,11 @@ import {
   StartDateColumn,
   StatusColumn,
   TargetDateColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useTransferOrderFields } from '../../forms/TransferOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import TransferOrderFilters from './TransferOrderFilters';
 
 export function TransferOrderTable({

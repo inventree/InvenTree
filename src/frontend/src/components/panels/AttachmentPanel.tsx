@@ -19,6 +19,7 @@ export default function AttachmentPanel({
     name: 'attachments',
     label: t`Attachments`,
     icon: <IconPaperclip />,
+    hotkey: 'mod+Shift+A',
     notification_dot: async () => {
       if (!model_type || !model_id) {
         return null;

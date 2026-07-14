@@ -37,10 +37,7 @@ from build.validators import (
     validate_build_order_reference,
 )
 from common.models import ProjectCode
-from common.settings import (
-    get_global_setting,
-    prevent_build_output_complete_on_incompleted_tests,
-)
+from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
@@ -965,7 +962,7 @@ class Build(
 
         # Remove the build output from the database
         # This is a special case where serialized stock can be deleted,
-        # independedent of the global setting which normally prevents deletion of serialized stock items
+        # independent of the global setting which normally prevents deletion of serialized stock items
         output.delete(ignore_serial_check=True)
 
     @transaction.atomic
@@ -977,7 +974,9 @@ class Build(
         items_to_delete = []
 
         lines = self.untracked_line_items.all()
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
         lines = lines.annotate(allocated=annotate_allocated_quantity())
 
         for build_line in lines:
@@ -1042,6 +1041,15 @@ class Build(
         if not output:
             raise ValidationError(_('No build output specified'))
 
+        # Re-check the state of the output itself:
+        # It may have changed since the scrap request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         # If quantity is not specified, assume the entire output quantity
         if quantity is None:
             quantity = output.quantity
@@ -1093,6 +1101,70 @@ class Build(
             },
         )
 
+    def can_complete_output(
+        self,
+        output: stock.models.StockItem,
+        quantity: Optional[decimal.Decimal] = None,
+        required_tests=None,
+    ) -> bool:
+        """Determine if the given build output can be completed.
+
+        Arguments:
+            output: The StockItem instance (build output) to check
+            quantity: The quantity to complete (defaults to entire output quantity)
+            required_tests: Optional list of required tests to check against (defaults to the part's required tests)
+
+        Returns:
+            True if the build output can be completed, False otherwise
+
+        Raises:
+            ValidationError: If the build output cannot be completed, with an appropriate message
+        """
+        # Re-check the state of the output itself:
+        # It may have changed since the completion request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
+        prevent_incomplete = get_global_setting(
+            'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+        )
+
+        if prevent_incomplete and not output.passedAllRequiredTests(
+            required_tests=required_tests
+        ):
+            raise ValidationError(_('Build output has not passed all required tests'))
+
+        # Ensure that none of the allocated items are themselves still "in production"
+        allocated_items = output.items_to_install.all().filter(
+            stock_item__is_building=True
+        )
+
+        if allocated_items.exists():
+            raise ValidationError(_('Allocated stock items are still in production'))
+
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if output.items_to_install.exists():
+                raise ValidationError({
+                    'quantity': _(
+                        'Cannot partially complete a build output with allocated items'
+                    )
+                })
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
     @transaction.atomic
     def complete_build_output(
         self,
@@ -1118,51 +1190,19 @@ class Build(
         notes = kwargs.get('notes', '')
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
-        prevent_on_incomplete = kwargs.get(
-            'prevent_on_incomplete',
-            prevent_build_output_complete_on_incompleted_tests(),
+
+        self.can_complete_output(
+            output, quantity=quantity, required_tests=required_tests
         )
-
-        if prevent_on_incomplete and not output.passedAllRequiredTests(
-            required_tests=required_tests
-        ):
-            msg = _('Build output has not passed all required tests')
-
-            if serial := output.serial:
-                msg = _(f'Build output {serial} has not passed all required tests')
-
-            raise ValidationError(msg)
-
-        # List the allocated BuildItem objects for the given output
-        allocated_items = output.items_to_install.all()
-
-        # Ensure that none of the allocated items are themselves still "in production"
-        for build_item in allocated_items:
-            if build_item.stock_item.is_building:
-                raise ValidationError(
-                    _('Allocated stock items are still in production')
-                )
 
         # If a partial quantity is provided, split the stock output
         if quantity is not None and quantity != output.quantity:
-            # Cannot split a build output with allocated items
-            if allocated_items.count() > 0:
-                raise ValidationError(
-                    _('Cannot partially complete a build output with allocated items')
-                )
-
-            if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
-
-            if quantity > output.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity cannot be greater than the output quantity')
-                })
-
             # Split the stock item
             output = output.splitStock(quantity, user=user, allow_production=True)
+
+        allocated_items = output.items_to_install.all().select_related(
+            'stock_item', 'stock_item__part'
+        )
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
@@ -1197,9 +1237,11 @@ class Build(
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
-        self.completed += output.quantity
-
-        self.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple outputs may be completed concurrently)
+        self.completed = F('completed') + output.quantity
+        self.save(update_fields=['completed'])
+        self.refresh_from_db(fields=['completed'])
 
     @transaction.atomic
     def auto_allocate_stock(
@@ -1234,13 +1276,16 @@ class Build(
             return allocations
 
         tracked_line_items = self.tracked_line_items.filter(
-            bom_item__consumable=False, bom_item__sub_part__virtual=False
+            part.models.BomItem.consumable_filter(
+                consumable=False, prefix='bom_item__'
+            ),
+            bom_item__sub_part__virtual=False,
         )
 
         for line_item in tracked_line_items:
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1364,7 +1409,7 @@ class Build(
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1484,7 +1529,9 @@ class Build(
         lines = self.build_lines.all()
 
         # Remove any 'consumable' line items
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         if tracked is True:
             lines = lines.filter(bom_item__sub_part__trackable=True)
@@ -1521,7 +1568,9 @@ class Build(
         we need to test all "trackable" BuildLine objects
         """
         lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         # Find any lines which have not been fully allocated
         for line in lines:
@@ -1545,7 +1594,9 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-        lines = self.build_lines.all().exclude(bom_item__consumable=True)
+        lines = self.build_lines.all().exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         lines = lines.prefetch_related('allocations')
 
@@ -1774,7 +1825,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     def is_fully_allocated(self) -> bool:
         """Return True if this BuildLine is fully allocated."""
-        if self.bom_item.consumable:
+        if self.bom_item.is_consumable:
             return True
 
         required = max(0, self.quantity - self.consumed)
@@ -1996,6 +2047,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         if quantity > item.quantity:
             quantity = item.quantity
 
+        if quantity <= 0:
+            # There is nothing to consume or install:
+            # simply remove this (empty) allocation
+            self.delete()
+            return
+
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:
             item = item.splitStock(quantity, None, user, notes=notes)
@@ -2025,8 +2082,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             )
 
         # Increase the "consumed" count for the associated BuildLine
-        self.build_line.consumed += quantity
-        self.build_line.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple allocations against the same BuildLine may complete concurrently)
+        self.build_line.consumed = F('consumed') + quantity
+        self.build_line.save(update_fields=['consumed'])
+        self.build_line.refresh_from_db(fields=['consumed'])
 
         # Decrease the allocated quantity
         self.quantity = max(0, self.quantity - quantity)

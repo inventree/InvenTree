@@ -1,6 +1,11 @@
+import { Boundary } from '@lib/components/Boundary';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
+  Button,
   CloseButton,
   Group,
   List,
@@ -24,11 +29,6 @@ import {
 import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { Boundary } from '@lib/components/Boundary';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../App';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
@@ -78,26 +78,38 @@ export type PreviewArea = {
 
 export type TemplateEditorProps = {
   templateUrl: string;
-  printingUrl: string;
+  printingUrl?: string;
   editors: Editor[];
   previewAreas: PreviewArea[];
   template: TemplateI;
+  // Name of the file field on the template model (e.g. 'template' or 'snippet')
+  fileField?: string;
 };
 
 export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
-  const { templateUrl, editors, previewAreas, template } = props;
+  const {
+    templateUrl,
+    editors,
+    previewAreas,
+    template,
+    fileField = 'template'
+  } = props;
   const editorRef = useRef<EditorRef | null>(null);
   const previewRef = useRef<PreviewAreaRef | null>(null);
+
+  // If no preview areas are provided, the template is saved directly
+  const hasPreview = previewAreas.length > 0;
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
   const [previewItem, setPreviewItem] = useState<string>('');
   const [renderingErrors, setRenderingErrors] = useState<string[] | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [editorValue, setEditorValue] = useState<null | string>(editors[0].key);
   const [previewValue, setPreviewValue] = useState<null | string>(
-    previewAreas[0].key
+    previewAreas[0]?.key ?? null
   );
 
   const codeRef = useRef<string | undefined>(undefined);
@@ -131,12 +143,12 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     if (!templateUrl) return;
 
     api.get(templateUrl).then((response: any) => {
-      if (response.data?.template) {
+      if (response.data?.[fileField]) {
         // Fetch the raw template file from the server
         // Request that it is provided without any caching,
         // to ensure that we always get the latest version
         api
-          .get(response.data.template, {
+          .get(response.data[fileField], {
             headers: {
               'Cache-Control': 'no-cache',
               Pragma: 'no-cache',
@@ -149,7 +161,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           })
           .catch(() => {
             console.error(
-              `ERR: Could not load template from ${response.data.template}`
+              `ERR: Could not load template from ${response.data[fileField]}`
             );
             codeRef.current = undefined;
             hideNotification('template-load-error');
@@ -223,7 +235,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           });
         })
         .catch((error) => {
-          const msg = error?.message;
+          const msg = error?.message || error?.toString();
 
           if (msg) {
             if (Array.isArray(msg)) {
@@ -244,6 +256,45 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     [previewItem]
   );
 
+  // Save the template file directly to the server, without any preview
+  const saveTemplate = useCallback(async () => {
+    const code = await getCodeFromEditor();
+
+    if (code === undefined) return;
+
+    const filename =
+      (template as any)[fileField]?.split('/').pop() ?? 'template.html';
+
+    const formData = new FormData();
+    formData.append(fileField, new File([code], filename));
+
+    setIsSaving(true);
+
+    api
+      .patch(templateUrl, formData)
+      .then(() => {
+        hideNotification('template-save');
+        showNotification({
+          id: 'template-save',
+          title: t`Saved`,
+          message: t`Template file has been updated`,
+          color: 'green'
+        });
+      })
+      .catch(() => {
+        hideNotification('template-save');
+        showNotification({
+          id: 'template-save',
+          title: t`Error`,
+          message: t`Could not save the template to the server.`,
+          color: 'red'
+        });
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
+  }, [getCodeFromEditor, template, templateUrl, fileField]);
+
   const previewApiUrl = useMemo(
     () =>
       ModelInformationDict[template.model_type ?? ModelType.stockitem]
@@ -261,18 +312,20 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   }, [template]);
 
   useEffect(() => {
+    if (!hasPreview) return;
+
     api
       .get(apiUrl(previewApiUrl), { params: { limit: 1, ...templateFilters } })
       .then((res) => {
         if (res.data.results.length === 0) return;
         setPreviewItem(res.data.results[0].pk);
       });
-  }, [previewApiUrl, templateFilters]);
+  }, [hasPreview, previewApiUrl, templateFilters]);
 
   return (
     <Boundary label='TemplateEditor'>
       <Stack style={{ height: '100%', flex: '1' }}>
-        <Split style={{ gap: '10px' }}>
+        <Split visible={hasPreview} style={{ flex: 1 }}>
           <Tabs
             value={editorValue}
             onChange={async (v) => {
@@ -282,7 +335,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             keepMounted={false}
             style={{
               minWidth: '300px',
-              flex: '1',
+              width: hasPreview ? '50%' : '100%',
               display: 'flex',
               flexDirection: 'column'
             }}
@@ -301,29 +354,39 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
               })}
 
               <Group justify='right' style={{ flex: '1' }} wrap='nowrap'>
-                <SplitButton
-                  loading={isPreviewLoading}
-                  defaultSelected='preview_save'
-                  name='preview-options'
-                  options={[
-                    {
-                      key: 'preview',
-                      name: t`Reload preview`,
-                      tooltip: t`Use the currently stored template from the server`,
-                      icon: IconRefresh,
-                      onClick: () => updatePreview(true, false),
-                      disabled: !previewItem || isPreviewLoading
-                    },
-                    {
-                      key: 'preview_save',
-                      name: t`Save & Reload Preview`,
-                      tooltip: t`Save the current template and reload the preview`,
-                      icon: IconDeviceFloppy,
-                      onClick: () => updatePreview(hasSaveConfirmed),
-                      disabled: !previewItem || isPreviewLoading
-                    }
-                  ]}
-                />
+                {hasPreview ? (
+                  <SplitButton
+                    loading={isPreviewLoading}
+                    defaultSelected='preview_save'
+                    name='preview-options'
+                    options={[
+                      {
+                        key: 'preview',
+                        name: t`Reload preview`,
+                        tooltip: t`Use the currently stored template from the server`,
+                        icon: IconRefresh,
+                        onClick: () => updatePreview(true, false),
+                        disabled: !previewItem || isPreviewLoading
+                      },
+                      {
+                        key: 'preview_save',
+                        name: t`Save & Reload Preview`,
+                        tooltip: t`Save the current template and reload the preview`,
+                        icon: IconDeviceFloppy,
+                        onClick: () => updatePreview(hasSaveConfirmed),
+                        disabled: !previewItem || isPreviewLoading
+                      }
+                    ]}
+                  />
+                ) : (
+                  <Button
+                    leftSection={<IconDeviceFloppy size={18} />}
+                    loading={isSaving}
+                    onClick={() => saveTemplate()}
+                  >
+                    {t`Save`}
+                  </Button>
+                )}
               </Group>
             </Tabs.List>
 
@@ -342,99 +405,102 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             ))}
           </Tabs>
 
-          <Tabs
-            value={previewValue}
-            onChange={setPreviewValue}
-            keepMounted={false}
-            style={{
-              minWidth: '200px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-          >
-            <Tabs.List>
-              {previewAreas.map((PreviewArea) => (
-                <Tabs.Tab
-                  key={PreviewArea.key}
-                  value={PreviewArea.key}
-                  leftSection={PreviewArea.icon}
-                >
-                  {PreviewArea.name}
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-
-            <div
+          {hasPreview && (
+            <Tabs
+              value={previewValue}
+              onChange={setPreviewValue}
+              keepMounted={false}
               style={{
-                minWidth: '100%',
-                paddingBottom: '10px',
-                paddingTop: '10px'
+                minWidth: '200px',
+                width: '50%',
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
-              <StandaloneField
-                fieldDefinition={{
-                  field_type: 'related field',
-                  api_url: apiUrl(previewApiUrl),
-                  description: '',
-                  label: t`Select instance to preview`,
-                  model: template.model_type,
-                  value: previewItem,
-                  filters: templateFilters,
-                  onValueChange: (value) => setPreviewItem(value)
-                }}
-              />
-            </div>
+              <Tabs.List>
+                {previewAreas.map((PreviewArea) => (
+                  <Tabs.Tab
+                    key={PreviewArea.key}
+                    value={PreviewArea.key}
+                    leftSection={PreviewArea.icon}
+                  >
+                    {PreviewArea.name}
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
 
-            {previewAreas.map((PreviewArea) => (
-              <Tabs.Panel
-                key={PreviewArea.key}
-                value={PreviewArea.key}
+              <div
                 style={{
-                  display: 'flex',
-                  flex: previewValue === PreviewArea.key ? 1 : 0
+                  minWidth: '100%',
+                  paddingBottom: '10px',
+                  paddingTop: '10px'
                 }}
               >
-                <div
+                <StandaloneField
+                  fieldDefinition={{
+                    field_type: 'related field',
+                    api_url: apiUrl(previewApiUrl),
+                    description: '',
+                    label: t`Select instance to preview`,
+                    model: template.model_type,
+                    value: previewItem,
+                    filters: templateFilters,
+                    onValueChange: (value) => setPreviewItem(value)
+                  }}
+                />
+              </div>
+
+              {previewAreas.map((PreviewArea) => (
+                <Tabs.Panel
+                  key={PreviewArea.key}
+                  value={PreviewArea.key}
                   style={{
-                    height: '100%',
-                    position: 'relative',
                     display: 'flex',
-                    flex: '1'
+                    flex: previewValue === PreviewArea.key ? 1 : 0
                   }}
                 >
-                  {/* @ts-ignore-next-line */}
-                  <PreviewArea.component ref={previewRef} />
+                  <div
+                    style={{
+                      height: '100%',
+                      position: 'relative',
+                      display: 'flex',
+                      flex: '1'
+                    }}
+                  >
+                    {/* @ts-ignore-next-line */}
+                    <PreviewArea.component ref={previewRef} />
 
-                  {renderingErrors && (
-                    <Overlay color='red' center blur={0.2}>
-                      <CloseButton
-                        onClick={() => setRenderingErrors(null)}
-                        style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          color: '#fff'
-                        }}
-                        variant='filled'
-                      />
-                      <Alert
-                        color='red'
-                        icon={<IconExclamationCircle />}
-                        title={t`Error rendering template`}
-                        mx='10px'
-                      >
-                        <List>
-                          {renderingErrors.map((error, index) => (
-                            <ListItem key={index}>{error}</ListItem>
-                          ))}
-                        </List>
-                      </Alert>
-                    </Overlay>
-                  )}
-                </div>
-              </Tabs.Panel>
-            ))}
-          </Tabs>
+                    {renderingErrors && (
+                      <Overlay color='red' center blur={0.2}>
+                        <CloseButton
+                          onClick={() => setRenderingErrors(null)}
+                          style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            color: '#fff'
+                          }}
+                          variant='filled'
+                        />
+                        <Alert
+                          color='red'
+                          icon={<IconExclamationCircle />}
+                          title={t`Error rendering template`}
+                          mx='10px'
+                        >
+                          <List>
+                            {renderingErrors.map((error, index) => (
+                              <ListItem key={index}>{error}</ListItem>
+                            ))}
+                          </List>
+                        </Alert>
+                      </Overlay>
+                    )}
+                  </div>
+                </Tabs.Panel>
+              ))}
+            </Tabs>
+          )}
         </Split>
       </Stack>
     </Boundary>

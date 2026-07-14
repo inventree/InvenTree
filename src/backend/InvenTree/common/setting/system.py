@@ -677,6 +677,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPORT_FETCH_URLS': {
+        'name': _('Report URL Fetching'),
+        'description': _('Allow fetching of remote URLs when generating reports'),
+        'default': False,
+        'validator': bool,
+    },
     'REPORT_LOG_ERRORS': {
         'name': _('Log Report Errors'),
         'description': _('Log errors which occur when generating reports'),
@@ -783,6 +789,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Allow Out of Stock Transfer'),
         'description': _(
             'Allow stock items which are not in stock to be transferred between stock locations'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCK_MERGE_ON_TRANSFER': {
+        'name': _('Merge stock with existing stock on transfer by default'),
+        'description': _(
+            'Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)'
         ),
         'default': False,
         'validator': bool,

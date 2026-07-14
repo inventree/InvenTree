@@ -585,15 +585,9 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                # On python 3.12 use new loader method
-                if sys.version_info < (3, 12):
-                    raw_module = _load_source(
-                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                    )
-                else:
-                    raw_module = SourceFileLoader(
-                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                    ).load_module()
+                raw_module = SourceFileLoader(
+                    plugin_dir, str(parent_obj.joinpath('__init__.py'))
+                ).load_module()
             else:
                 raw_module = importlib.import_module(plugin_dir)
 
@@ -683,6 +677,11 @@ class PluginsRegistry:
 
         if plg_key in configs:
             plg_db = configs[plg_key]
+
+            # Handle edge case where PluginConfig has been created without a valid name
+            if plg_name and plg_db and plg_db.name != plg_name:
+                plg_db.name = plg_name
+                plg_db.save()
         else:
             plg_db = self.get_plugin_config(plg_key, plg_name)
 
@@ -1027,7 +1026,11 @@ class PluginsRegistry:
         data = md5()
 
         # Hash for all loaded plugins
-        for slug, plug in self.plugins.items():
+        # Note: Sort by slug, so the hash is independent of discovery order.
+        # Different processes can discover the same plugins in a different
+        # order, and the hash must represent the registry *state*, not the
+        # iteration order of any particular process.
+        for slug, plug in sorted(self.plugins.items(), key=lambda item: item[0]):
             data.update(str(slug).encode())
             data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())

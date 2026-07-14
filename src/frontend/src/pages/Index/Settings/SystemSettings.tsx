@@ -199,6 +199,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
+              'REPORT_FETCH_URLS',
               'REPORT_LOG_ERRORS',
               'LABEL_ENABLE',
               'LABEL_DPI'
@@ -272,6 +273,7 @@ export default function SystemSettings() {
                 'STOCK_SHOW_INSTALLED_ITEMS',
                 'STOCK_ENFORCE_BOM_INSTALLATION',
                 'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
+                'STOCK_MERGE_ON_TRANSFER',
                 'TEST_STATION_DATA'
               ]}
             />

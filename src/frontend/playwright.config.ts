@@ -43,7 +43,12 @@ export default defineConfig({
   retries: MAX_RETRIES,
   workers: MAX_WORKERS,
   reporter: IS_CI
-    ? [['html', { open: 'never' }], ['blob'], ['github']]
+    ? [
+        ['html', { open: 'never' }],
+        ['blob'],
+        ['github'],
+        ['@flakiness/playwright', { flakinessProject: 'InvenTree/InvenTree' }]
+      ]
     : 'list',
 
   /* Configure projects for major browsers */
@@ -85,7 +90,7 @@ export default defineConfig({
         INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
-        INVENTREE_LOGIN_ATTEMPTS: '100',
+        INVENTREE_LOGIN_ATTEMPTS: '3',
         INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
         INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png',
         INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png'

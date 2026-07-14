@@ -21,7 +21,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
   PartColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 

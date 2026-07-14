@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 
+import part.models
 from build.events import BuildEvents
 from build.models import Build
 from build.status_codes import BuildStatus
@@ -56,7 +57,8 @@ class AutoCreateBuildsPlugin(EventMixin, InvenTreePlugin):
         """Process a build order when it is issued."""
         # Iterate through all sub-assemblies for the build order
         for bom_item in build.part.get_bom_items().filter(
-            consumable=False, sub_part__assembly=True
+            part.models.BomItem.consumable_filter(consumable=False),
+            sub_part__assembly=True,
         ):
             subassembly = bom_item.sub_part
 

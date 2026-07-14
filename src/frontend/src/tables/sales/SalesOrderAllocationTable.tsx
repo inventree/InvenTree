@@ -2,11 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import {
-  type RowAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -18,6 +14,21 @@ import type { TableColumn } from '@lib/types/Tables';
 import { Alert } from '@mantine/core';
 import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
@@ -27,16 +38,6 @@ import {
 } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  LocationColumn,
-  PartColumn,
-  ReferenceColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderAllocationTable({
   partId,
@@ -256,7 +257,7 @@ export default function SalesOrderAllocationTable({
             deleteAllocation.open();
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           tooltip: t`View Shipment`,
           title: t`View Shipment`,
           hidden: !record.shipment || !!shipmentId,
@@ -285,7 +286,6 @@ export default function SalesOrderAllocationTable({
 
     return {
       items: stockItems,
-      model: ModelType.stockitem,
       refresh: table.refreshTable
     };
   }, [table.selectedRecords, table.refreshTable]);

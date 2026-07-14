@@ -26,6 +26,7 @@ export default function NotesPanel({
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
+    hotkey: 'mod+Shift+N',
     notification_dot: has_note ? 'info' : null,
     content:
       model_type && model_id ? (

@@ -21,9 +21,21 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DefaultLocationColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { DuplicateField } from '../../forms/CommonFields';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -36,17 +48,6 @@ import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CategoryColumn,
-  DefaultLocationColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LinkColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import { PartTableFilters } from './PartTableFilters';
 
 /**
@@ -181,7 +182,9 @@ function partTableColumns(): TableColumn[] {
           <TableHoverCard
             value={
               <Group gap='xs' justify='left' wrap='nowrap'>
-                <Text c={color}>{text}</Text>
+                <Text c={color} size='sm'>
+                  {text}
+                </Text>
                 {record.units && (
                   <Text size='xs' c={color}>
                     [{record.units}]
@@ -211,6 +214,10 @@ function partTableColumns(): TableColumn[] {
     }),
     BooleanColumn({
       accessor: 'virtual',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'consumable',
       defaultVisible: false
     }),
     LinkColumn({})
@@ -310,12 +317,9 @@ export function PartListTable({
   const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
     return {
       ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: selectedPart.pk,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: selectedPart.pk,
+        extraFields: {
           copy_image: {
             value: true
           },
@@ -335,7 +339,7 @@ export function PartListTable({
             hidden: !selectedPart.testable
           }
         }
-      }
+      })
     };
   }, [createPartFields, globalSettings, selectedPart]);
 

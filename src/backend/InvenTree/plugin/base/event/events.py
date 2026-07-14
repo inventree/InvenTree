@@ -1,5 +1,9 @@
 """Functions for triggering and responding to server side events."""
 
+import contextvars
+from collections import defaultdict
+from contextlib import contextmanager
+
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
@@ -11,12 +15,78 @@ from opentelemetry import trace
 import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
-from InvenTree.tasks import offload_task
+from InvenTree.tasks import bulk_offload_task, offload_task
 from plugin import PluginMixinEnum
 from plugin.registry import registry
 
 tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
+
+# Active event batch for the current context (see batch_events()), if any
+_event_batch: contextvars.ContextVar = contextvars.ContextVar(
+    'event_batch', default=None
+)
+
+
+class EventBatch:
+    """Collects trigger_event() calls made within a batch_events() scope.
+
+    Entries are grouped by event name, so that each distinct event triggered
+    within the batch is flushed via its own bulk_trigger_event() call.
+    """
+
+    def __init__(self):
+        """Initialize an empty batch."""
+        self.entries: dict[str, list] = defaultdict(list)
+
+    def add(self, event: str, *args, **kwargs) -> None:
+        """Record a single trigger_event() call against this batch."""
+        self.entries[event].append((args, kwargs))
+
+    def flush(self) -> None:
+        """Fire a bulk_trigger_event() call for each event name collected so far."""
+        entries, self.entries = self.entries, defaultdict(list)
+
+        for event, event_entries in entries.items():
+            bulk_trigger_event(event, event_entries)
+
+
+@contextmanager
+def batch_events():
+    """Batch trigger_event() calls made within this scope into bulk_trigger_event() calls.
+
+    Any trigger_event() call made (directly, or indirectly via a nested function call)
+    while this context is active is queued instead of immediately offloaded. The queued
+    events are flushed - grouped by event name, one bulk_trigger_event() call per name -
+    when the current database transaction commits (or immediately, if no transaction is
+    active). If the transaction is instead rolled back, the queued events are discarded,
+    rather than being fired for a write that never happened.
+
+    Nesting is not supported: a nested batch_events() call reuses the outer batch, and
+    only the outermost call schedules a flush.
+
+    This does not change the behavior of code that triggers events *outside* of this
+    context - trigger_event() still fires immediately in that case. This allows existing
+    single-item entrypoints (e.g. StockItem.stocktake()) to be reused unmodified by both
+    single-item and bulk callers: bulk callers simply wrap their loop in batch_events().
+
+    Yields:
+        EventBatch: The current event batch, which can be used to add events directly.
+
+    """
+    if _event_batch.get() is not None:
+        # Already inside a batch - extend it, rather than creating a nested one
+        yield _event_batch.get()
+        return
+
+    batch = EventBatch()
+    token = _event_batch.set(batch)
+
+    try:
+        yield batch
+    finally:
+        _event_batch.reset(token)
+        transaction.on_commit(batch.flush)
 
 
 @tracer.start_as_current_span('trigger_event')
@@ -45,6 +115,11 @@ def trigger_event(event: str, *args, **kwargs) -> None:
         logger.debug("Ignoring triggered event '%s' - database not ready", event)
         return
 
+    if (batch := _event_batch.get()) is not None:
+        # A batch_events() context is active - queue this event rather than firing it now
+        batch.add(event, *args, **kwargs)
+        return
+
     logger.debug("Event triggered: '%s'", event)
 
     force_async = kwargs.pop('force_async', True)
@@ -56,6 +131,60 @@ def trigger_event(event: str, *args, **kwargs) -> None:
     kwargs['force_async'] = force_async
 
     offload_task(register_event, event, *args, group='plugin', **kwargs)
+
+
+@tracer.start_as_current_span('bulk_trigger_event')
+def bulk_trigger_event(event: str, entries: list) -> None:
+    """Trigger the same event multiple times, in a single bulk database write.
+
+    Equivalent to calling trigger_event(event, *args, **kwargs) once per (args, kwargs)
+    pair in 'entries', but queues all of the resulting background tasks via a single
+    bulk_offload_task() call, rather than one INSERT per event.
+
+    Arguments:
+        event: The event to trigger
+        entries: List of (args, kwargs) tuples, one per event instance to register
+
+    These events will be stored in the database, and the worker will respond to them later on.
+    """
+    if not entries:
+        return
+
+    if not get_global_setting('ENABLE_PLUGINS_EVENTS', False):
+        # Do nothing if plugin events are not enabled
+        return
+
+    # Ensure event name is stringified
+    event = str(event).strip()
+
+    # Make sure the database can be accessed and is not being tested rn
+    if (
+        not canAppAccessDatabase(allow_shell=True)
+        and not settings.PLUGIN_TESTING_EVENTS
+    ):
+        logger.debug("Ignoring bulk triggered event '%s' - database not ready", event)
+        return
+
+    logger.debug("Bulk event triggered: '%s' (%s entries)", event, len(entries))
+
+    force_async = True
+
+    # If we are running in testing mode, we can enable or disable async processing
+    if settings.PLUGIN_TESTING_EVENTS:
+        force_async = settings.PLUGIN_TESTING_EVENTS_ASYNC
+
+    task_entries = []
+
+    for args, kwargs in entries:
+        kwargs = dict(kwargs)
+        # 'force_async' is a bulk_offload_task() control flag, not event data - it is
+        # resolved once for the whole batch above, so strip any per-entry override
+        kwargs.pop('force_async', None)
+        task_entries.append(((event, *args), kwargs))
+
+    bulk_offload_task(
+        register_event, task_entries, group='plugin', force_async=force_async
+    )
 
 
 @tracer.start_as_current_span('register_event')

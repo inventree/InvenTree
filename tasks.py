@@ -906,6 +906,23 @@ def backend_trans(c, verbose: bool = False):
     success('Backend translations compiled successfully')
 
 
+@task(help={'verbose': 'Print verbose output'})
+@state_logger('backend_compilemessages')
+def backend_compilemessages(c, verbose: bool = False):
+    """Compile backend Django translation files without loading InvenTree settings."""
+    info('Compiling backend translations...')
+
+    cmd = 'python3 -m django compilemessages'
+
+    if verbose:
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
+    run(c, cmd, manage_py_dir())
+    success('Backend translations compiled successfully')
+
+
 @task(
     help={
         'clean': 'Clean up old backup files',
@@ -1053,10 +1070,13 @@ def listbackups(c):
     },
 )
 @state_logger
-def migrate(c, detect: bool = True, verbose: bool = False):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
@@ -1603,6 +1623,67 @@ def worker(c, verbose: bool = False):
     manage(c, 'qcluster', pty=True, verbose=verbose)
 
 
+@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 3)'})
+def worker_health(c, timeout: int = 3):
+    """Check if the background worker is healthy by reading the heartbeat file.
+
+    Exits 0 if the worker has run within the last TIMEOUT minutes, 1 otherwise.
+    No Django startup or database access is required.
+    """
+    heartbeat_file = Path(tempfile.gettempdir()) / 'inventree_worker_heartbeat'
+
+    if heartbeat_file.exists():
+        try:
+            age_seconds = time.time() - float(heartbeat_file.read_text().strip())
+            if age_seconds < timeout * 60:
+                success(
+                    f'Worker is healthy (last heartbeat {int(age_seconds) // 60}m {int(age_seconds) % 60}s ago)'
+                )
+                return
+            warning(
+                f'Heartbeat file is stale ({int(age_seconds) // 60}m {int(age_seconds) % 60}s old)'
+            )
+        except Exception as e:
+            warning(f'Could not read heartbeat file: {e}')
+    else:
+        warning(f'Heartbeat file not found: {heartbeat_file}')
+
+    error('Worker health check failed')
+    raise Exit(code=1)
+
+
+@task(
+    help={
+        'address': 'Server address to check (default: http://localhost:8000)',
+        'timeout': 'Request timeout in seconds (default: 5)',
+    }
+)
+def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
+    """Check if the web server is healthy by requesting /api/system/health/.
+
+    Exits 0 on HTTP 200, 1 otherwise.
+    No Django startup required.
+    """
+    import urllib.error
+    import urllib.request
+
+    url = f'{address.rstrip("/")}/api/system/health/'
+
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            if response.status == 200:
+                success(f'Server is healthy ({url})')
+                return
+            warning(f'Unexpected status {response.status} from {url}')
+    except urllib.error.URLError as e:
+        warning(f'Could not reach server at {url}: {e.reason}')
+    except Exception as e:
+        warning(f'Unexpected error checking {url}: {e}')
+
+    error('Server health check failed')
+    raise Exit(code=1)
+
+
 @task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
@@ -1762,6 +1843,7 @@ def test(
 @task(
     help={
         'dev': 'Set up development environment at the end',
+        'keep': 'Keep existing demo dataset (do not re-clone)',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone (default = main)',
@@ -1770,12 +1852,13 @@ def test(
 )
 def setup_test(
     c,
-    ignore_update=False,
-    dev=False,
-    validate_files=False,
-    use_ssh=False,
-    verbose=False,
-    path='inventree-demo-dataset',
+    ignore_update: bool = False,
+    dev: bool = False,
+    keep: bool = False,
+    validate_files: bool = False,
+    use_ssh: bool = False,
+    verbose: bool = False,
+    path: str = 'inventree-demo-dataset',
     branch='main',
 ):
     """Setup a testing environment."""
@@ -1788,19 +1871,20 @@ def setup_test(
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
-    if template_dir.exists():
-        run(c, f'rm {template_dir} -r')
+    if not keep:
+        # Remove old data directory
+        if template_dir.exists():
+            run(c, f'rm {template_dir} -r')
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+        # Get test data
+        info('Cloning demo dataset ...')
+        run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -2429,6 +2513,7 @@ internal = Collection(
     clear_generated,
     export_settings_definitions,
     export_definitions,
+    backend_compilemessages,
     frontend_build,
     frontend_check,
     frontend_compile,
@@ -2457,6 +2542,8 @@ ns = Collection(
     version,
     wait,
     worker,
+    worker_health,
+    server_health,
     monitor,
     build_docs,
 )

@@ -1495,6 +1495,40 @@ class PartCreationTests(PartAPITestBase):
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
 
+    def test_notes_on_create(self):
+        """Test that notes can be set when creating a Part."""
+        list_url = reverse('api-part-list')
+
+        notes = """
+        ### Created from importer
+
+        Notes should persist during part creation.
+        """
+        expected_notes = notes.strip()
+
+        response = self.post(
+            list_url,
+            {
+                'name': 'part with notes',
+                'description': 'Part notes are created in the same request',
+                'category': 1,
+                'notes': notes,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['notes'], expected_notes)
+
+        part = Part.objects.get(pk=response.data['pk'])
+        self.assertEqual(part.notes, expected_notes)
+
+        detail_url = reverse('api-part-detail', kwargs={'pk': part.pk})
+        response = self.get(detail_url, expected_code=200)
+        self.assertEqual(response.data['notes'], expected_notes)
+
+        response = self.get(list_url, {'limit': 1}, expected_code=200)
+        self.assertNotIn('notes', response.data['results'][0])
+
     def test_initial_stock(self):
         """Tests for initial stock quantity creation."""
 
@@ -1649,7 +1683,7 @@ class PartCreationTests(PartAPITestBase):
                     'testable': do_copy,
                     'assembly': do_copy,
                     'duplicate': {
-                        'part': 100,
+                        'original': 100,
                         'copy_bom': do_copy,
                         'copy_notes': do_copy,
                         'copy_image': do_copy,
@@ -1711,6 +1745,51 @@ class PartCreationTests(PartAPITestBase):
 
         prt = Part.objects.get(pk=data['pk'])
         self.assertEqual(prt.parameters.count(), 3)
+
+    def test_category_parameters_unique(self):
+        """Test that category parameters with a uniqueness requirement are not applied.
+
+        Applying the same default value to every part created in a category
+        would immediately conflict with a 'unique' parameter template.
+        """
+        cat = PartCategory.objects.get(pk=1)
+
+        normal_template = ParameterTemplate.objects.get(pk=1)
+
+        unique_template = ParameterTemplate.objects.create(
+            name='Serial Number',
+            description='A globally unique parameter',
+            unique=ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        PartCategoryParameterTemplate.objects.create(
+            template=normal_template, category=cat, default_value='Normal Value'
+        )
+
+        PartCategoryParameterTemplate.objects.create(
+            template=unique_template, category=cat, default_value='Fixed Value'
+        )
+
+        # Create two parts in this category, copying category parameters
+        for name in ['Part A', 'Part B']:
+            data = self.post(
+                reverse('api-part-list'),
+                {
+                    'category': cat.pk,
+                    'name': name,
+                    'description': 'A part for testing unique category parameters',
+                    'copy_category_parameters': True,
+                },
+                expected_code=201,
+            ).data
+
+            prt = Part.objects.get(pk=data['pk'])
+
+            # The 'normal' parameter should have been copied for each part
+            self.assertIsNotNone(prt.get_parameter(normal_template.name))
+
+            # The 'unique' parameter template should *not* have been applied
+            self.assertIsNone(prt.get_parameter(unique_template.name))
 
 
 class PartDetailTests(PartImageTestMixin, PartAPITestBase):
