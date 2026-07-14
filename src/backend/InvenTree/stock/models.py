@@ -2491,6 +2491,11 @@ class StockItem(
         if location is None:
             return None
 
+        # This item must itself be in a state which allows merging
+        # (e.g. not serialized, in production, installed, or assigned to an order / customer)
+        if not self.can_merge():
+            return None
+
         candidates = list(
             StockItem.objects
             .filter(part=self.part, location=location)
@@ -2567,10 +2572,14 @@ class StockItem(
             pricing_data.append([self.purchase_price, self.quantity])
 
         for other in other_items:
-            # If the stock item cannot be merged, return
-            if not self.can_merge(other, raise_error=raise_error, **kwargs):
+            # Check the merge in both directions, so that the generic state checks
+            # (serialized, in production, installed, assigned to an order / customer)
+            # are applied to the incoming items as well as this one
+            if not self.can_merge(
+                other, raise_error=raise_error, **kwargs
+            ) or not other.can_merge(self, raise_error=raise_error, **kwargs):
                 logger.warning(
-                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                    'Stock item <%s> could not be merged into <%s>', other.pk, self.pk
                 )
                 return
 
@@ -3060,6 +3069,15 @@ class StockItem(
 
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, tracking_info)
+
+        # Optional fields which can be supplied in a 'stocktake' call
+        self._apply_optional_transfer_fields(kwargs, tracking_info)
+
+        # Have any fields (other than quantity) been updated?
+        # Must be determined *before* model reference deltas are extracted,
+        # as those only affect the tracking entry (not the model instance)
+        fields_updated = len(tracking_info) > 0
+
         self._apply_model_reference_fields(kwargs, tracking_info)
 
         quantity_updated = self.serialized or self.updateQuantity(count)
@@ -3068,12 +3086,12 @@ class StockItem(
         # (self.quantity is updated by updateQuantity() even if the item was deleted)
         tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
 
-        if quantity_updated:
+        # Save if the quantity or any other field was changed.
+        # Note that updateQuantity() may have *deleted* the item (depleted to zero),
+        # in which case there is nothing left to save.
+        if self.pk and (quantity_updated or fields_updated):
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
-
-            # Optional fields which can be supplied in a 'stocktake' call
-            self._apply_optional_transfer_fields(kwargs, tracking_info)
 
             self.save(add_note=False)
 

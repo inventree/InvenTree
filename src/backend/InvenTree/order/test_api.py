@@ -1369,6 +1369,43 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item.quantity, 10)
         self.assertEqual(item.batch, 'B-xyz-789')
 
+    def test_duplicate_serial_numbers_across_items(self):
+        """Duplicate serial numbers across line items in a single request are rejected.
+
+        Regression test: each line's serials used to be validated against the
+        database only, so two lines could claim the same serial number and create
+        duplicate serialized stock items.
+        """
+        data = {
+            'items': [
+                {'line_item': 1, 'quantity': 3, 'serial_numbers': '100-102'},
+                {'line_item': 1, 'quantity': 3, 'serial_numbers': '102-104'},
+            ],
+            'location': 1,
+        }
+
+        # Serial 102 is claimed by both entries - request must be rejected
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn('Supplied serial numbers must be unique', str(response.data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+        # Non-overlapping serial numbers are accepted
+        data['items'][1]['serial_numbers'] = '103-105'
+
+        self.post(self.url, data, expected_code=201, max_query_count=250)
+
+        self.assertEqual(self.n + 6, StockItem.objects.count())
+
+        for serial in range(100, 106):
+            self.assertEqual(
+                StockItem.objects.filter(serial=str(serial)).count(),
+                1,
+                f'Expected exactly one stock item with serial {serial}',
+            )
+
     def test_receive_large_quantity(self):
         """Test receipt of a large number of items."""
         from stock.status_codes import StockStatus

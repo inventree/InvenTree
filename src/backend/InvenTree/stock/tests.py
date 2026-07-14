@@ -1074,6 +1074,54 @@ class StockTest(StockTestBase):
         # Final purchase price should be the weighted average
         self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
 
+    def test_merge_protected_items(self):
+        """Stock items in a protected state cannot be absorbed by a merge.
+
+        Regression test: merge_stock_items() used to run the generic state checks
+        (in production, assigned to customer, etc.) against the *target* item only,
+        allowing e.g. a build output to be merged away and deleted.
+        """
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        target = StockItem.objects.create(part=part, quantity=10)
+
+        # The incoming item is "in production" (a build output)
+        part.assembly = True
+        part.save()
+
+        bo = Build.objects.create(
+            reference='BO-9998', part=part, title='Merge test build', quantity=20
+        )
+
+        building = StockItem.objects.create(
+            part=part, quantity=20, build=bo, is_building=True
+        )
+
+        # Without raise_error, the merge is refused silently
+        target.merge_stock_items([building])
+
+        target.refresh_from_db()
+        building.refresh_from_db()
+
+        self.assertEqual(part.stock_items.count(), 2)
+        self.assertEqual(target.quantity, 10)
+        self.assertEqual(building.quantity, 20)
+
+        # With raise_error, the merge raises a ValidationError
+        with self.assertRaises(ValidationError):
+            target.merge_stock_items([building], raise_error=True)
+
+        # An item assigned to a customer is likewise protected
+        customer = Company.objects.create(name='MergeCust', is_customer=True)
+        assigned = StockItem.objects.create(part=part, quantity=5, customer=customer)
+
+        target.merge_stock_items([assigned])
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 10)
+        self.assertTrue(StockItem.objects.filter(pk=assigned.pk).exists())
+
     def test_notify_low_stock(self):
         """Test that the 'notify_low_stock' task is triggered correctly."""
         FUNC_NAME = 'part.tasks.notify_low_stock_if_required'
