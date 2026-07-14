@@ -3422,6 +3422,79 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.assertEqual(float(line.price.amount), 15.75)
 
 
+class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
+    """Unit tests for the 'total_price' field on ExtraLine API endpoints.
+
+    Covers PurchaseOrderExtraLine, SalesOrderExtraLine and ReturnOrderExtraLine,
+    which all share the same 'total_price' annotation via AbstractExtraLineSerializer.
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+    ]
+
+    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
+
+    def check_total_price(
+        self, order, extra_line_model, list_url_name, detail_url_name
+    ):
+        """Create an ExtraLine with a known price/quantity/discount, and check total_price."""
+        line = extra_line_model.objects.create(
+            order=order, quantity=5, price=Money(10, 'USD'), discount=20
+        )
+
+        # 5 * 10 = 50, less 20% discount = 40
+        expected = 40
+
+        # List endpoint
+        response = self.get(
+            reverse(list_url_name), {'order': order.pk}, expected_code=200
+        )
+        result = next(r for r in response.data if r['pk'] == line.pk)
+        self.assertEqual(float(result['total_price']), expected)
+
+        # Detail endpoint
+        response = self.get(
+            reverse(detail_url_name, kwargs={'pk': line.pk}), expected_code=200
+        )
+        self.assertEqual(float(response.data['total_price']), expected)
+
+    def test_po_extra_line_total_price(self):
+        """Check 'total_price' for a PurchaseOrderExtraLine."""
+        self.check_total_price(
+            models.PurchaseOrder.objects.get(pk=1),
+            models.PurchaseOrderExtraLine,
+            'api-po-extra-line-list',
+            'api-po-extra-line-detail',
+        )
+
+    def test_so_extra_line_total_price(self):
+        """Check 'total_price' for a SalesOrderExtraLine."""
+        self.check_total_price(
+            models.SalesOrder.objects.get(pk=1),
+            models.SalesOrderExtraLine,
+            'api-so-extra-line-list',
+            'api-so-extra-line-detail',
+        )
+
+    def test_return_order_extra_line_total_price(self):
+        """Check 'total_price' for a ReturnOrderExtraLine."""
+        self.check_total_price(
+            models.ReturnOrder.objects.get(pk=1),
+            models.ReturnOrderExtraLine,
+            'api-return-order-extra-line-list',
+            'api-return-order-extra-line-detail',
+        )
+
+
 class TransferOrderTest(OrderTest):
     """Tests for the TransferOrder API."""
 
