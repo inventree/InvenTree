@@ -1746,6 +1746,51 @@ class PartCreationTests(PartAPITestBase):
         prt = Part.objects.get(pk=data['pk'])
         self.assertEqual(prt.parameters.count(), 3)
 
+    def test_category_parameters_unique(self):
+        """Test that category parameters with a uniqueness requirement are not applied.
+
+        Applying the same default value to every part created in a category
+        would immediately conflict with a 'unique' parameter template.
+        """
+        cat = PartCategory.objects.get(pk=1)
+
+        normal_template = ParameterTemplate.objects.get(pk=1)
+
+        unique_template = ParameterTemplate.objects.create(
+            name='Serial Number',
+            description='A globally unique parameter',
+            unique=ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        PartCategoryParameterTemplate.objects.create(
+            template=normal_template, category=cat, default_value='Normal Value'
+        )
+
+        PartCategoryParameterTemplate.objects.create(
+            template=unique_template, category=cat, default_value='Fixed Value'
+        )
+
+        # Create two parts in this category, copying category parameters
+        for name in ['Part A', 'Part B']:
+            data = self.post(
+                reverse('api-part-list'),
+                {
+                    'category': cat.pk,
+                    'name': name,
+                    'description': 'A part for testing unique category parameters',
+                    'copy_category_parameters': True,
+                },
+                expected_code=201,
+            ).data
+
+            prt = Part.objects.get(pk=data['pk'])
+
+            # The 'normal' parameter should have been copied for each part
+            self.assertIsNotNone(prt.get_parameter(normal_template.name))
+
+            # The 'unique' parameter template should *not* have been applied
+            self.assertIsNone(prt.get_parameter(unique_template.name))
+
 
 class PartDetailTests(PartImageTestMixin, PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""

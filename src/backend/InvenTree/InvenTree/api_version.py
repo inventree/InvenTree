@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 522
+INVENTREE_API_VERSION = 523
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12393
+v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12393
     - Adds "discount" field to order line items (and extra line items)
+
+v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12388
+    - Adds "unique" field to the ParameterTemplate model
 
 v521 -> 2026-07-12 : https://github.com/inventree/InvenTree/pull/12360
     - Removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database.
