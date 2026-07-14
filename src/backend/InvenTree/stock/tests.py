@@ -416,6 +416,92 @@ class StockTest(StockTestBase):
         kid.refresh_from_db()
         self.assertEqual(kid.parent, grandparent)
 
+    def test_over_adjustment_quantities(self):
+        """Stock adjustments are clamped to the available stock quantity.
+
+        Regression test: take_stock / allocateToCustomer / installStockItem
+        previously recorded the *requested* quantity in the stock history,
+        even when less stock was actually removed / allocated / installed.
+        """
+        part = Part.objects.create(
+            name='Clamp part',
+            description='A part for quantity clamping tests',
+            salable=True,
+            component=True,
+        )
+
+        # --- take_stock: remove more than available ---
+        item = StockItem.objects.create(part=part, quantity=10, delete_on_deplete=False)
+
+        self.assertTrue(item.take_stock(25, self.user, notes='over-remove'))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 0)
+
+        # History records the quantity which was *actually* removed
+        entry = item.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['removed'], 10.0)
+        self.assertEqual(entry.deltas['quantity'], 0.0)
+
+        # Removing stock from an empty item fails, and adds no history
+        n = item.tracking_info.count()
+        self.assertFalse(item.take_stock(5, self.user))
+        self.assertEqual(item.tracking_info.count(), n)
+
+        # --- allocateToCustomer: allocate more than available ---
+        customer = Company.objects.create(name='Clamp customer', is_customer=True)
+
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        allocated = item.allocateToCustomer(customer, quantity=25, user=self.user)
+
+        # The whole item is allocated (no split occurs)
+        self.assertEqual(allocated.pk, item.pk)
+        self.assertEqual(allocated.customer, customer)
+
+        # History records the quantity which was *actually* allocated
+        entry = allocated.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        with self.assertRaises(ValidationError):
+            item.allocateToCustomer(customer, quantity=0, user=self.user)
+
+        # --- installStockItem: install more than available ---
+        assembly = Part.objects.create(
+            name='Clamp assembly',
+            description='An assembly for quantity clamping tests',
+            assembly=True,
+        )
+
+        parent_item = StockItem.objects.create(part=assembly, quantity=1)
+        component = StockItem.objects.create(part=part, quantity=10)
+
+        parent_item.installStockItem(component, 25, self.user, 'over-install')
+
+        component.refresh_from_db()
+        self.assertEqual(component.belongs_to, parent_item)
+        self.assertEqual(component.quantity, 10)
+
+        # Both history entries record the quantity which was *actually* installed
+        entry = component.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        entry = parent_item.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        other = StockItem.objects.create(part=part, quantity=5)
+
+        with self.assertRaises(ValidationError):
+            parent_item.installStockItem(other, 0, self.user, 'bad install')
+
     def test_uninstall_into_structural_location(self):
         """Test that an item cannot be uninstalled into a structural location."""
         parent = StockItem.objects.get(pk=1)
@@ -492,6 +578,71 @@ class StockTest(StockTestBase):
         self.assertEqual(child_1.child_count, 1)
         self.assertIn(grandchild, child_1.children.all())
         self.assertNotIn(grandchild, parent.children.all())
+
+    def test_adjustment_stale_quantity(self):
+        """Stock adjustments operate on database quantities, not stale in-memory copies.
+
+        Simulates concurrent adjustment operations, where each worker holds
+        its own (stale) in-memory copy of the same StockItem.
+        """
+        item = StockItem.objects.get(pk=1234)
+        self.assertEqual(item.quantity, 1234)
+
+        # Remove stock via two independent in-memory copies
+        item_a = StockItem.objects.get(pk=item.pk)
+        item_b = StockItem.objects.get(pk=item.pk)
+
+        self.assertTrue(item_a.take_stock(100, self.user))
+        self.assertTrue(item_b.take_stock(200, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 934)
+
+        # Add stock via a stale copy
+        item_c = StockItem.objects.get(pk=item.pk)
+        item.take_stock(34, self.user)
+
+        self.assertTrue(item_c.add_stock(100, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 1000)
+
+        # Split stock via a stale copy
+        item_d = StockItem.objects.get(pk=item.pk)
+        item.take_stock(500, self.user)
+
+        child = item_d.splitStock(300, None, self.user)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 200)
+        self.assertEqual(child.quantity, 300)
+
+        # A full-quantity move via a stale copy must not resurrect removed stock
+        item_e = StockItem.objects.get(pk=item.pk)
+        item.take_stock(50, self.user)
+
+        self.assertTrue(item_e.move(self.diningroom, 'Move', self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 150)
+        self.assertEqual(item.location, self.diningroom)
+
+    def test_merge_stale_quantity(self):
+        """Merging stock items uses database quantities, not stale in-memory values."""
+        part = Part.objects.get(pk=3)
+
+        target = StockItem.objects.create(part=part, quantity=100)
+        source = StockItem.objects.create(part=part, quantity=50)
+
+        # Hold a stale copy of the target, and adjust the real row underneath it
+        stale_target = StockItem.objects.get(pk=target.pk)
+        target.take_stock(60, self.user)
+
+        stale_target.merge_stock_items([source], user=self.user)
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 90)
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
 
     def test_stocktake(self):
         """Test stocktake function."""
