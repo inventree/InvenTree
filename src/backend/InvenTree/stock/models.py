@@ -1376,8 +1376,15 @@ class StockItem(
             user: User that performed the action
             notes: Notes field
         """
-        if quantity is None:
+        if quantity is None or self.serialized:
             quantity = self.quantity
+
+        # Cannot allocate more than the available quantity
+        # (also ensures the recorded history matches the actual allocation)
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity >= self.quantity:
             item = self
@@ -1708,6 +1715,18 @@ class StockItem(
             notes: Any notes associated with the operation
             build: The BuildOrder to associate with the operation (optional)
         """
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, TypeError):
+            raise ValidationError({'quantity': _('Invalid quantity value')})
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        # Cannot install more than the available quantity
+        # (also ensures the recorded history matches the actual installation)
+        quantity = min(quantity, other_item.quantity)
+
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
@@ -3064,6 +3083,10 @@ class StockItem(
             quantity = Decimal(quantity)
         except InvalidOperation:
             return False
+
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        quantity = min(quantity, self.quantity)
 
         if quantity <= 0:
             return False
