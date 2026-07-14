@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { readeruser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -1115,4 +1116,76 @@ test('Parts - Import supplier part', async ({ browser }) => {
   // cleanup imported part if it exists
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
+});
+
+test('Parts - Add button visible in Parametric View (admin)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toBeVisible();
+});
+
+test('Parts - Add button opens Create Part form in Parametric View', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await expect(page.getByText('Add Part')).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Add button hidden in Parametric View (reader)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/4/parts',
+    user: readeruser
+  });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toHaveCount(0);
+});
+
+test('Parts - Create part via Parametric View submits to API', async ({
+  browser
+}) => {
+  const testPartName = 'TEST-PARAMETRIC-ADD-PART';
+
+  await deletePart(testPartName);
+
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(testPartName);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('Created from Parametric View integration test');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  await page.getByText(testPartName).first().waitFor();
+
+  await deletePart(testPartName);
 });
