@@ -1573,11 +1573,6 @@ class Build(
                 # This is a new BuildItem
                 to_create[key] = BuildItem(quantity=quantity, **filters)
 
-        # Run model-level validation against each new or updated allocation,
-        # as bulk_create / bulk_update below bypass BuildItem.save() and clean()
-        for build_item in [*to_create.values(), *to_update.values()]:
-            build_item.clean(raise_error=False)
-
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
 
