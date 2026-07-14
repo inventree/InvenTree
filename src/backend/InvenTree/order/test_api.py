@@ -4185,8 +4185,11 @@ class TransferOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple TransferOrderLineItems via the API."""
         n = models.TransferOrderLineItem.objects.count()
 
+        # Select lines from orders which are not completed (and thus not locked)
         items = list(
-            models.TransferOrderLineItem.objects.values_list('pk', flat=True)[:2]
+            models.TransferOrderLineItem.objects.exclude(
+                order__status__in=TransferOrderStatusGroups.COMPLETE
+            ).values_list('pk', flat=True)[:2]
         )
 
         # Deletion should fail without the correct role
@@ -4198,6 +4201,42 @@ class TransferOrderLineItemTest(OrderTest):
 
         # We should have 2 less TransferOrderLineItems after deleting them
         self.assertEqual(models.TransferOrderLineItem.objects.count(), n - 2)
+
+    def test_completed_order_locked(self):
+        """Test that line items cannot be deleted from a completed TransferOrder."""
+        self.assignRole('transfer_order.delete')
+
+        set_global_setting(models.TransferOrder.UNLOCK_SETTING, False)
+
+        order = models.TransferOrder.objects.filter(
+            status=TransferOrderStatus.PENDING.value, lines__isnull=False
+        ).first()
+        assert order
+
+        # Mark the order as complete
+        order.status = TransferOrderStatus.COMPLETE.value
+        order.save()
+
+        n = order.lines.count()
+        self.assertGreater(n, 1)
+
+        line = order.lines.first()
+        detail_url = reverse('api-transfer-order-line-detail', kwargs={'pk': line.pk})
+
+        # Single deletion of a line item should fail
+        self.delete(detail_url, expected_code=400)
+
+        # Bulk deletion should also fail (and roll back atomically)
+        items = list(order.lines.values_list('pk', flat=True))
+        self.delete(self.url, {'items': items}, expected_code=400)
+
+        self.assertEqual(order.lines.count(), n)
+
+        # Unlocking completed orders should allow deletion again
+        set_global_setting(models.TransferOrder.UNLOCK_SETTING, True)
+
+        self.delete(detail_url, expected_code=204)
+        self.assertEqual(order.lines.count(), n - 1)
 
     def test_transfer_order_line_allocated_filters(self):
         """Test filtering by allocation status for a TransferOrderLineItem."""
