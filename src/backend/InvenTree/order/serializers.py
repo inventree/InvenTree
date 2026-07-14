@@ -305,6 +305,8 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         required=False, allow_null=True, label=_('Target Date')
     )
 
+    discount = InvenTreeDecimalField(required=False)
+
     project_code_label = common.filters.enable_project_label_filter()
 
     project_code_detail = common.filters.enable_project_code_filter()
@@ -322,6 +324,7 @@ class AbstractExtraLineSerializer(
             'pk',
             'line',
             'description',
+            'discount',
             'link',
             'notes',
             'order',
@@ -340,6 +343,8 @@ class AbstractExtraLineSerializer(
 
     quantity = serializers.FloatField()
 
+    discount = InvenTreeDecimalField(required=False)
+
     price = InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTreeCurrencySerializer()
@@ -355,6 +360,7 @@ class AbstractExtraLineMeta:
     fields = [
         'pk',
         'description',
+        'discount',
         'quantity',
         'reference',
         'notes',
@@ -558,6 +564,7 @@ class PurchaseOrderLineItemSerializer(
         fields = AbstractLineItemSerializer.line_fields([
             'part',
             'build_order',
+            'discount',
             'overdue',
             'received',
             'purchase_price',
@@ -604,7 +611,10 @@ class PurchaseOrderLineItemSerializer(
 
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
-                F('purchase_price') * F('quantity'), output_field=models.DecimalField()
+                F('purchase_price')
+                * F('quantity')
+                * (1 - F('discount') / Decimal(100)),
+                output_field=models.DecimalField(),
             )
         )
 
@@ -1208,6 +1218,7 @@ class SalesOrderLineItemSerializer(
         fields = AbstractLineItemSerializer.line_fields([
             'allocated',
             'customer_detail',
+            'discount',
             'overdue',
             'part',
             'part_detail',
@@ -2305,6 +2316,7 @@ class ReturnOrderLineItemSerializer(
             'item',
             'received_date',
             'outcome',
+            'discount',
             'price',
             'price_currency',
             # Filterable detail fields
