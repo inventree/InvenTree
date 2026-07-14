@@ -1977,6 +1977,20 @@ class StockItemTest(StockAPITestCase):
 
         url = reverse('api-stock-item-uninstall', kwargs={'pk': sub_item.pk})
 
+        # An uninstalled item cannot be moved into a structural location
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        response = self.post(url, {'location': structural.pk}, expected_code=400)
+
+        self.assertIn(
+            'Structural locations cannot be assigned stock items', str(response.data)
+        )
+
+        sub_item.refresh_from_db()
+        self.assertEqual(sub_item.belongs_to, item)
+
         self.post(url, {'location': 1}, expected_code=201)
 
         sub_item.refresh_from_db()

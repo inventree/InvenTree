@@ -5,6 +5,7 @@ import io
 import json
 from datetime import date, datetime, timedelta
 from typing import Optional
+from unittest import mock
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -2735,6 +2736,184 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.post(self.url, data, expected_code=201)
 
 
+class SalesOrderAllocateSerialsTest(OrderTest):
+    """Unit tests for allocating stock items against a SalesOrder, by serial number."""
+
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
+    def setUp(self):
+        """Init routines for this unit testing class."""
+        super().setUp()
+
+        self.assignRole('sales_order.add')
+
+        self.url = reverse('api-so-allocate-serials', kwargs={'pk': 1})
+
+        self.order = models.SalesOrder.objects.get(pk=1)
+
+        self.part = Part.objects.create(
+            name='Serial Allocation Part',
+            salable=True,
+            trackable=True,
+            description='A trackable part for serial allocation tests',
+        )
+
+        self.line = models.SalesOrderLineItem.objects.create(
+            order=self.order, part=self.part, quantity=5
+        )
+
+        # Create some serialized stock items for this part
+        self.stock_items = [
+            StockItem.objects.create(part=self.part, quantity=1, serial=str(n))
+            for n in range(1, 6)
+        ]
+
+        self.shipment = models.SalesOrderShipment.objects.create(order=self.order)
+
+    def test_allocate(self):
+        """Test that we can allocate stock items to a SalesOrder line, by serial number."""
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+        data = {'line_item': self.line.pk, 'quantity': 3, 'serial_numbers': '1,2,3'}
+
+        self.post(self.url, data, expected_code=201)
+
+        self.assertEqual(self.order.stock_allocations.count(), 3)
+
+        allocated_serials = {
+            allocation.item.serial for allocation in self.order.stock_allocations.all()
+        }
+        self.assertEqual(allocated_serials, {'1', '2', '3'})
+
+        for allocation in self.order.stock_allocations.all():
+            self.assertEqual(allocation.quantity, 1)
+            self.assertIsNone(allocation.shipment)
+
+    def test_allocate_with_shipment(self):
+        """Test that allocations are correctly assigned to a provided shipment."""
+        data = {
+            'line_item': self.line.pk,
+            'quantity': 2,
+            'serial_numbers': '4,5',
+            'shipment': self.shipment.pk,
+        }
+
+        self.post(self.url, data, expected_code=201)
+
+        for allocation in self.order.stock_allocations.all():
+            self.assertEqual(allocation.shipment, self.shipment)
+
+    def test_invalid_line_item(self):
+        """Test that a line item belonging to a different order is rejected."""
+        other_order = models.SalesOrder.objects.exclude(pk=self.order.pk).first()
+        other_line = models.SalesOrderLineItem.objects.create(
+            order=other_order, part=self.part, quantity=5
+        )
+
+        data = {'line_item': other_line.pk, 'quantity': 1, 'serial_numbers': '1'}
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn('Line item is not associated with this order', str(response.data))
+
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+    def test_shipment_already_shipped(self):
+        """Test that a shipment which has already been shipped is rejected."""
+        self.shipment.shipment_date = date.today()
+        self.shipment.save()
+
+        data = {
+            'line_item': self.line.pk,
+            'quantity': 1,
+            'serial_numbers': '1',
+            'shipment': self.shipment.pk,
+        }
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn('Shipment has already been shipped', str(response.data))
+
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+    def test_shipment_wrong_order(self):
+        """Test that a shipment belonging to a different order is rejected."""
+        other_order = models.SalesOrder.objects.exclude(pk=self.order.pk).first()
+        other_shipment = models.SalesOrderShipment.objects.create(order=other_order)
+
+        data = {
+            'line_item': self.line.pk,
+            'quantity': 1,
+            'serial_numbers': '1',
+            'shipment': other_shipment.pk,
+        }
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn('Shipment is not associated with this order', str(response.data))
+
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+    def test_serial_not_exist(self):
+        """Test that non-existent serial numbers are rejected."""
+        data = {'line_item': self.line.pk, 'quantity': 1, 'serial_numbers': '999'}
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn(
+            'No match found for the following serial numbers', str(response.data)
+        )
+        self.assertIn('999', str(response.data))
+
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+    def test_serial_unavailable(self):
+        """Test that an already-allocated serial number is rejected as unavailable."""
+        # Fully allocate stock item with serial '1' against some other line
+        models.SalesOrderAllocation.objects.create(
+            line=self.line, item=self.stock_items[0], quantity=1
+        )
+
+        data = {'line_item': self.line.pk, 'quantity': 1, 'serial_numbers': '1'}
+
+        response = self.post(self.url, data, expected_code=400)
+
+        self.assertIn(
+            'The following serial numbers are unavailable', str(response.data)
+        )
+        self.assertIn('1', str(response.data))
+
+        # No *additional* allocation should have been created
+        self.assertEqual(self.order.stock_allocations.count(), 1)
+
+    def test_block_on_required_tests(self):
+        """Test the SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS setting."""
+        from part.models import PartTestTemplate
+
+        self.part.testable = True
+        self.part.save()
+
+        PartTestTemplate.objects.create(
+            part=self.part, test_name='A required test', required=True
+        )
+
+        data = {'line_item': self.line.pk, 'quantity': 1, 'serial_numbers': '1'}
+
+        set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', True)
+
+        response = self.post(self.url, data, expected_code=400)
+        self.assertIn(
+            'The following serial numbers are unavailable', str(response.data)
+        )
+
+        set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', False)
+
+        self.post(self.url, data, expected_code=201)
+
+
 class ReturnOrderTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrder API endpoints."""
 
@@ -3102,6 +3281,41 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
         stock_item.refresh_from_db()
         self.assertEqual(stock_item.quantity, 6)
+
+    def test_complete_stale_instance_is_noop(self):
+        """A second completion attempt with a stale instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests
+        could both run the completion side effects (duplicate COMPLETED events).
+        The status is now re-read (under lock) from the database before the check.
+        """
+        company = Company.objects.get(pk=4)
+
+        rma = models.ReturnOrder.objects.create(
+            customer=company, description='A return order'
+        )
+        rma.issue_order()
+
+        # Two "concurrent" requests each hold their own instance of the order
+        order_a = models.ReturnOrder.objects.get(pk=rma.pk)
+        order_b = models.ReturnOrder.objects.get(pk=rma.pk)
+
+        order_a.complete_order()
+
+        rma.refresh_from_db()
+        self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
+
+        # The second (stale) instance still believes the order is IN_PROGRESS -
+        # completion must be skipped based on the database state
+        self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            order_b.complete_order()
+            trigger.assert_not_called()
+
+        rma.refresh_from_db()
+        self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
 
     def test_ro_calendar(self):
         """Test the calendar export endpoint."""
