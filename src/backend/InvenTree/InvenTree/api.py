@@ -6,6 +6,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
@@ -595,12 +596,17 @@ class BulkUpdateMixin(BulkOperationMixin):
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
 
-            # Grab and lock the instance values
-            instances = (
-                queryset.select_for_update().filter(pk__in=pk_values).order_by('pk')
-            )
+            # Run validation first
+            for pk in pk_values:
+                try:
+                    instance = queryset.get(pk=pk)
+                except ObjectDoesNotExist:
+                    raise ValidationError({
+                        'non_field_errors': _(
+                            'Item no longer matches the provided criteria'
+                        )
+                    })
 
-            for instance in instances:
                 serializer = self.get_serializer(instance, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()

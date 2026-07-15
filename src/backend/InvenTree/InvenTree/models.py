@@ -890,7 +890,6 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         """Instance filters for InvenTreeTree models."""
         return {self.NODE_PARENT_KEY: {'exclude_tree': self.pk}}
 
-    @transaction.atomic
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model."""
         db_instance = None
