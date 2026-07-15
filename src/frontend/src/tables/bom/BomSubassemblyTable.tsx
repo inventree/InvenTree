@@ -4,14 +4,14 @@ import { Group, Paper } from '@mantine/core';
 import { IconCornerLeftUp } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import Expand from '../../components/items/Expand';
-import { useUserSettingsState } from '../../states/SettingsStates';
 import {
   IPNColumn,
   ReferenceColumn,
   RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { useUserSettingsState } from '../../states/SettingsStates';
 
 export function subassemblyRowExpansion({
   table

@@ -979,6 +979,7 @@ class ParameterTemplateSerializer(
             'choices',
             'selectionlist',
             'enabled',
+            'unique',
         ]
 
     # Note: The choices are overridden at run-time on class initialization

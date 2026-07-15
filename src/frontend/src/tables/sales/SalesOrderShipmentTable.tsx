@@ -11,8 +11,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowCancelAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -22,6 +21,16 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  CompanyColumn,
+  DateColumn,
+  LinkColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
@@ -34,14 +43,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  CompanyColumn,
-  DateColumn,
-  LinkColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
   showOrderInfo = false,
@@ -255,7 +256,7 @@ export default function SalesOrderShipmentTable({
             deleteShipment.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,

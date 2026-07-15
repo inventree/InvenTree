@@ -1,6 +1,6 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
+import { RowEditAction } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -25,6 +25,23 @@ import {
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DecimalColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  RevisionColumn
+} from '../../components/tables/ColumnRenderers';
+import { PartCategoryFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
@@ -40,20 +57,6 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CategoryColumn,
-  DecimalColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LocationColumn,
-  PartColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { PartCategoryFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Return true if the given build line record is "effectively consumable" -
@@ -132,7 +135,7 @@ export function BuildLineSubTable({
             onDeleteAllocation?.(record.pk);
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Stock Item`,
           modelType: ModelType.stockitem,
           modelId: record.stock_item,
@@ -349,6 +352,7 @@ export default function BuildLineTable({
         }
       }),
       IPNColumn({}),
+      RevisionColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -866,7 +870,7 @@ export default function BuildLineTable({
             newBuildOrder.open();
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Part`,
           modelType: ModelType.part,
           modelId: record.part,

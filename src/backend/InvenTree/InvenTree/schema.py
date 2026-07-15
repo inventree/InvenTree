@@ -223,12 +223,18 @@ def postprocess_schema_enums(result, generator, **kwargs):
         """Custom patch to ignore some drf-spectacular warnings.
 
         - Some warnings are unavoidable due to the way that InvenTree implements generic relationships (via ContentType).
+        - Some warnings are unavoidable due to the way that InvenTree implements custom (database-editable) status codes:
+          multiple serializers legitimately expose a 'status' field backed by the same dynamic StockStatus choice set
+          (e.g. stock adjustment, receiving a purchase order line, disassembling a stock item), and drf-spectacular
+          cannot settle on a single stable name for the shared, runtime-dependent choice set.
         - The cleanest way to handle this appears to be to override the 'warn' function from drf-spectacular.
 
         Ref: https://github.com/inventree/InvenTree/pull/10699
         """
         ignore_patterns = [
-            'enum naming encountered a non-optimally resolvable collision for fields named "model_type"'
+            'enum naming encountered a non-optimally resolvable collision for fields named "model_type"',
+            'enum naming encountered a non-optimally resolvable collision for fields named "status"',
+            'encountered multiple names for the same choice set (StatusCustomKeyEnum)',
         ]
 
         if any(pattern in msg for pattern in ignore_patterns):

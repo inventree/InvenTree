@@ -53,7 +53,7 @@ from common.settings import get_global_setting
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.helpers import decimal2string, normalize
 from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
@@ -2214,150 +2214,6 @@ class Part(
             # which can cause issues down the track
             pass
 
-    def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
-        """Return a simplified pricing string for this part.
-
-        Args:
-            quantity: Number of units to calculate price for
-            buy: Include supplier pricing (default = True)
-            bom: Include BOM pricing (default = True)
-            internal: Include internal pricing (default = False)
-        """
-        price_range = self.get_price_range(quantity, buy, bom, internal)
-
-        if price_range is None:
-            return None
-
-        min_price, max_price = price_range
-
-        if min_price == max_price:
-            return min_price
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return f'{min_price} - {max_price}'
-
-    def get_supplier_price_range(self, quantity=1):
-        """Return the supplier price range of this part.
-
-        Actions:
-        - Checks if there is any supplier pricing information associated with this Part
-        - Iterate through available supplier pricing and select (min, max)
-        - Returns tuple of (min, max)
-
-        Arguments:
-            quantity: Quantity at which to calculate price (default=1)
-
-        Returns: (min, max) tuple or (None, None) if no supplier pricing available
-        """
-        min_price = None
-        max_price = None
-
-        for supplier in self.supplier_parts.all():
-            price = supplier.get_price(quantity)
-
-            if price is None:
-                continue
-
-            if min_price is None or price < min_price:
-                min_price = price
-
-            if max_price is None or price > max_price:
-                max_price = price
-
-        if min_price is None or max_price is None:
-            return None
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return (min_price, max_price)
-
-    def get_bom_price_range(self, quantity=1, internal=False, purchase=False):
-        """Return the price range of the BOM for this part.
-
-        Adds the minimum price for all components in the BOM.
-        Note: If the BOM contains items without pricing information,
-        these items cannot be included in the BOM!
-        """
-        min_price = None
-        max_price = None
-
-        for item in self.get_bom_items().select_related('sub_part'):
-            if item.sub_part.pk == self.pk:
-                logger.warning('WARNING: BomItem ID %s contains itself in BOM', item.pk)
-                continue
-
-            q = Decimal(quantity)
-            i = Decimal(item.quantity)
-
-            prices = item.sub_part.get_price_range(
-                q * i, internal=internal, purchase=purchase
-            )
-
-            if prices is None:
-                continue
-
-            low, high = prices
-
-            if min_price is None:
-                min_price = 0
-
-            if max_price is None:
-                max_price = 0
-
-            min_price += low
-            max_price += high
-
-        if min_price is None or max_price is None:
-            return None
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return (min_price, max_price)
-
-    def get_price_range(
-        self, quantity=1, buy=True, bom=True, internal=False, purchase=False
-    ):
-        """Return the price range for this part.
-
-        This price can be either:
-        - Supplier price (if purchased from suppliers)
-        - BOM price (if built from other parts)
-        - Internal price (if set for the part)
-        - Purchase price (if set for the part)
-
-        Returns:
-            Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
-        """
-        # only get internal price if set and should be used
-        if internal and self.has_internal_price_breaks:
-            internal_price = self.get_internal_price(quantity)
-            return internal_price, internal_price
-
-        # only get purchase price if set and should be used
-        if purchase:
-            purchase_price = self.get_purchase_price(quantity)
-            if purchase_price:
-                return purchase_price
-
-        buy_price_range = self.get_supplier_price_range(quantity) if buy else None
-        bom_price_range = (
-            self.get_bom_price_range(quantity, internal=internal) if bom else None
-        )
-
-        if buy_price_range is None:
-            return bom_price_range
-
-        elif bom_price_range is None:
-            return buy_price_range
-        return (
-            min(buy_price_range[0], bom_price_range[0]),
-            max(buy_price_range[1], bom_price_range[1]),
-        )
-
     base_cost = models.DecimalField(
         max_digits=19,
         decimal_places=6,
@@ -2373,73 +2229,6 @@ class Part(
         verbose_name=_('multiple'),
         help_text=_('Sell multiple'),
     )
-
-    get_price = common.currency.get_price
-
-    @property
-    def has_price_breaks(self):
-        """Return True if this part has sale price breaks."""
-        return self.price_breaks.exists()
-
-    @property
-    def price_breaks(self):
-        """Return the associated price breaks in the correct order."""
-        return self.salepricebreaks.order_by('quantity').all()
-
-    @property
-    def unit_pricing(self):
-        """Returns the price of this Part at quantity=1."""
-        return self.get_price(1)
-
-    def add_price_break(self, quantity, price):
-        """Create a new price break for this part.
-
-        Args:
-            quantity: Numerical quantity
-            price: Must be a Money object
-        """
-        # Check if a price break at that quantity already exists...
-        if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
-            return
-
-        PartSellPriceBreak.objects.create(part=self, quantity=quantity, price=price)
-
-    def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
-        """Return the internal price of this Part at the specified quantity."""
-        return common.currency.get_price(
-            self, quantity, moq, multiples, currency, break_name='internal_price_breaks'
-        )
-
-    @property
-    def has_internal_price_breaks(self):
-        """Return True if this Part has internal pricing information."""
-        return self.internal_price_breaks.exists()
-
-    @property
-    def internal_price_breaks(self):
-        """Return the associated price breaks in the correct order."""
-        return self.internalpricebreaks.order_by('quantity').all()
-
-    def get_purchase_price(self, quantity):
-        """Calculate the purchase price for this part at the specified quantity.
-
-        - Looks at available supplier pricing data
-        - Calculates the price base on the closest price point
-        """
-        currency = currency_code_default()
-        try:
-            prices = [
-                convert_money(item.purchase_price, currency).amount
-                for item in self.stock_items.all()
-                if item.purchase_price
-            ]
-        except MissingRate:
-            prices = None
-
-        if prices:
-            return min(prices) * quantity, max(prices) * quantity
-
-        return None
 
     @transaction.atomic
     def copy_bom_from(self, other, clear: bool = True, **kwargs):
@@ -2557,6 +2346,14 @@ class Part(
 
             # Ensure we do not create duplicate parameters if multiple categories have the same template
             if category_template.template.pk in template_ids:
+                continue
+
+            # Skip templates which enforce a uniqueness requirement - applying the same
+            # default value to every part in the category would create conflicting values
+            if (
+                category_template.template.unique
+                != common.models.ParameterTemplate.UniqueOptions.NONE
+            ):
                 continue
 
             template_ids.add(category_template.template.pk)
@@ -3001,15 +2798,12 @@ class PartPricing(common.models.MetaMixin):
 
         try:
             self.update_overall_cost()
-        except Exception:
-            # If something has happened to the Part model, might throw an error
-            pass
-
-        try:
             super().save(*args, **kwargs)
         except Exception:
-            # This error may be thrown if there is already duplicate pricing data
-            pass
+            log_error('PartPricing.save')
+            logger.error(
+                "Could not save PartPricing for part '%s' to the database", self.part
+            )
 
     def update_bom_cost(self, save=True):
         """Recalculate BOM cost for the referenced Part instance.
@@ -3381,7 +3175,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.currency.currency_code_mappings(),
+        validators=[validators.validate_currency_code],
     )
 
     scheduled_for_update = models.BooleanField(default=False)
@@ -3602,6 +3396,7 @@ class PartInternalPriceBreak(common.models.PriceBreak):
         """Metaclass providing extra model definition."""
 
         unique_together = ('part', 'quantity')
+        verbose_name = _('Part Internal Price Break')
 
     @staticmethod
     def get_api_url():
@@ -4425,29 +4220,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
                 log_error('bom_item.get_required_quantity')
 
         return required
-
-    @property
-    def price_range(self, internal=False):
-        """Return the price-range for this BOM item."""
-        # get internal price setting
-        use_internal = get_global_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        p_range = self.sub_part.get_price_range(
-            self.quantity, internal=use_internal and internal
-        )
-
-        if p_range is None:
-            return p_range
-
-        p_min, p_max = p_range
-
-        if p_min == p_max:
-            return decimal2money(p_min)
-
-        # Convert to better string representation
-        p_min = decimal2money(p_min)
-        p_max = decimal2money(p_max)
-
-        return f'{p_min} to {p_max}'
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')

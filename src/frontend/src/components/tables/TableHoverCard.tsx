@@ -10,7 +10,7 @@ import {
 import { type ReactNode, useMemo } from 'react';
 
 import type { InvenTreeIconType } from '@lib/types/Icons';
-import { InvenTreeIcon } from '../functions/icons';
+import { InvenTreeIcon } from '../../functions/icons';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.

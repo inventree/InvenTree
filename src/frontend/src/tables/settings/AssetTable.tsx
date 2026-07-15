@@ -10,13 +10,13 @@ import { Alert, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export type AssetI = {
   pk: number;

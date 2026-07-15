@@ -3,6 +3,7 @@ import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormAdjustFilterType,
@@ -14,18 +15,24 @@ import type {
 import { t } from '@lingui/core/macro';
 import {
   Alert,
+  Collapse,
   Flex,
   Group,
   List,
+  NumberInput,
+  Paper,
   Skeleton,
   Stack,
   Table,
-  Text
+  Text,
+  UnstyledButton
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
   IconCalendarExclamation,
+  IconChevronDown,
+  IconChevronUp,
   IconCoins,
   IconCopy,
   IconCurrencyDollar,
@@ -38,6 +45,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
   type JSX,
+  type ReactNode,
   Suspense,
   useCallback,
   useEffect,
@@ -45,7 +53,7 @@ import {
   useRef,
   useState
 } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -55,8 +63,15 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { StatusRenderer } from '../components/render/StatusRenderer';
-import { RenderStockLocation } from '../components/render/Stock';
+import {
+  StatusRenderer,
+  getStatusCodeOptions
+} from '../components/render/StatusRenderer';
+import {
+  RenderStockItem,
+  RenderStockLocation
+} from '../components/render/Stock';
+import { StatusFilterOptions } from '../components/tables/Filter';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -70,7 +85,6 @@ import {
 } from '../hooks/UseGenerator';
 import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { StatusFilterOptions } from '../tables/Filter';
 import { TagsField } from './CommonFields';
 
 /**
@@ -459,6 +473,497 @@ export function useStockItemSerializeFields({
       destination: {}
     };
   }, [serialGenerator.result]);
+}
+
+function DisassemblyLineRow({
+  props,
+  record,
+  installedItems,
+  serialized,
+  statuses
+}: Readonly<{
+  props: TableFieldRowProps;
+  record: any;
+  installedItems: any[];
+  serialized: boolean;
+  statuses: any;
+}>) {
+  // Number of assemblies being disassembled (top-level form field)
+  const assemblies = useWatch({ name: 'quantity' });
+
+  // Once the user manually edits the row quantity, stop auto-scaling it
+  const [edited, setEdited] = useState<boolean>(false);
+
+  const [installedOpen, installedHandlers] = useDisclosure(false);
+
+  const [locationOpen, locationHandlers] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.rowId, 'location', undefined)
+  });
+
+  const [statusOpen, statusHandlers] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.rowId, 'status', undefined)
+  });
+
+  useEffect(() => {
+    if (edited) {
+      return;
+    }
+
+    const n = Number(assemblies);
+    const unit = Number(record.quantity);
+
+    if (Number.isFinite(n) && Number.isFinite(unit)) {
+      const expected = unit * n;
+
+      if (props.item.quantity !== expected) {
+        props.changeFn(props.rowId, 'quantity', expected);
+      }
+    }
+  }, [assemblies, edited]);
+
+  return (
+    <>
+      <Table.Tr>
+        <Table.Td>
+          <Group gap='xs' justify='left' wrap='nowrap'>
+            <Thumbnail
+              size={32}
+              src={record.sub_part_detail?.thumbnail}
+              align='center'
+            />
+            <Stack gap={2}>
+              <div>{record.sub_part_detail?.name}</div>
+              {installedItems.length > 0 && (
+                <UnstyledButton
+                  onClick={() => installedHandlers.toggle()}
+                  aria-label={`toggle-installed-items-${props.rowId}`}
+                >
+                  <Group gap={4} wrap='nowrap'>
+                    {installedOpen ? (
+                      <IconChevronUp size={14} />
+                    ) : (
+                      <IconChevronDown size={14} />
+                    )}
+                    <Text size='xs' c='blue'>
+                      {t`Installed Items`}: {installedItems.length}
+                    </Text>
+                  </Group>
+                </UnstyledButton>
+              )}
+            </Stack>
+          </Group>
+        </Table.Td>
+        <Table.Td>{record.quantity}</Table.Td>
+        <Table.Td style={{ whiteSpace: 'nowrap' }}>
+          {serialized ? (
+            // Quantity is fixed when disassembling a serialized stock item
+            <Text size='sm' aria-label='text-field-quantity'>
+              {formatDecimal(props.item.quantity)}
+            </Text>
+          ) : (
+            <TableFieldQuantityInput
+              min={0}
+              value={props.item.quantity ?? ''}
+              onChange={(value) => {
+                setEdited(true);
+                props.changeFn(props.rowId, 'quantity', value);
+              }}
+              error={props.rowErrors?.quantity?.message}
+            />
+          )}
+        </Table.Td>
+        <Table.Td style={{ whiteSpace: 'nowrap' }}>
+          <NumberInput
+            radius='sm'
+            aria-label='number-field-purchase_price'
+            placeholder={t`Automatic`}
+            min={0}
+            decimalScale={6}
+            value={props.item.purchase_price ?? ''}
+            onChange={(value) => {
+              props.changeFn(
+                props.rowId,
+                'purchase_price',
+                value === '' ? null : value
+              );
+            }}
+            error={props.rowErrors?.purchase_price?.message}
+          />
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+          <Flex gap='1px'>
+            <ActionButton
+              size='sm'
+              onClick={() => locationHandlers.toggle()}
+              icon={<InvenTreeIcon icon='location' />}
+              tooltip={t`Set Location`}
+              tooltipAlignment='top'
+              variant={locationOpen ? 'outline' : 'transparent'}
+            />
+            <ActionButton
+              size='sm'
+              onClick={() => statusHandlers.toggle()}
+              icon={<InvenTreeIcon icon='status' />}
+              tooltip={t`Change Status`}
+              tooltipAlignment='top'
+              variant={statusOpen ? 'outline' : 'transparent'}
+            />
+          </Flex>
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton
+            onClick={() => props.removeFn(props.rowId)}
+            disabled={installedItems.length > 0}
+            tooltip={
+              installedItems.length > 0
+                ? t`This row cannot be removed as it has installed items`
+                : undefined
+            }
+          />
+        </Table.Td>
+      </Table.Tr>
+      {installedItems.length > 0 && (
+        <Table.Tr>
+          <Table.Td colSpan={6} style={{ padding: 0, borderBottom: 'none' }}>
+            <Collapse expanded={installedOpen}>
+              <Paper p='xs' pl='xl'>
+                <Stack gap='xs'>
+                  <Text size='xs' c='dimmed'>
+                    {t`The following installed items will be uninstalled during disassembly`}
+                  </Text>
+                  {installedItems.map((item: any) => (
+                    <RenderStockItem key={item.pk} instance={item} />
+                  ))}
+                </Stack>
+              </Paper>
+            </Collapse>
+          </Table.Td>
+        </Table.Tr>
+      )}
+      <TableFieldExtraRow
+        visible={locationOpen}
+        fieldName='location'
+        onValueChange={(value) =>
+          props.changeFn(props.rowId, 'location', value)
+        }
+        fieldDefinition={{
+          field_type: 'related field',
+          model: ModelType.stocklocation,
+          api_url: apiUrl(ApiEndpoints.stock_location_list),
+          filters: {
+            structural: false
+          },
+          value: props.item.location,
+          label: t`Location`,
+          description: t`Custom location for the component items`,
+          icon: <InvenTreeIcon icon='location' />
+        }}
+        error={props.rowErrors?.location?.message}
+      />
+      <TableFieldExtraRow
+        visible={statusOpen}
+        fieldName='status'
+        defaultValue={10}
+        onValueChange={(value) => props.changeFn(props.rowId, 'status', value)}
+        fieldDefinition={{
+          field_type: 'choice',
+          api_url: apiUrl(ApiEndpoints.stock_status),
+          choices: statuses,
+          label: t`Status`,
+          description: t`Status for the component items`
+        }}
+        error={props.rowErrors?.status?.message}
+      />
+    </>
+  );
+}
+
+/**
+ * Display a summary of the stock item which is about to be disassembled.
+ */
+function DisassemblyItemInfo({
+  stockItem
+}: Readonly<{
+  stockItem: any;
+}>) {
+  const serialized: boolean =
+    !!stockItem.serial && Number(stockItem.quantity) == 1;
+
+  const details: { label: string; value: ReactNode }[] = useMemo(() => {
+    const rows = [
+      {
+        label: t`Location`,
+        value: stockItem.location_detail?.pathstring ?? t`No location set`
+      }
+    ];
+
+    if (serialized) {
+      rows.push({
+        label: t`Serial Number`,
+        value: stockItem.serial
+      });
+    } else {
+      rows.push({
+        label: t`Quantity`,
+        value: formatDecimal(stockItem.quantity)
+      });
+    }
+
+    if (stockItem.batch) {
+      rows.push({
+        label: t`Batch Code`,
+        value: stockItem.batch
+      });
+    }
+
+    return rows;
+  }, [stockItem, serialized]);
+
+  return (
+    <Paper withBorder p='sm'>
+      <Group gap='md' wrap='nowrap' align='center'>
+        <Thumbnail
+          size={56}
+          src={stockItem.part_detail?.thumbnail}
+          align='center'
+        />
+        <Group grow wrap='nowrap'>
+          <Stack gap={2}>
+            <Text fw={700}>
+              {stockItem.part_detail?.full_name ?? stockItem.part_detail?.name}
+            </Text>
+            {stockItem.part_detail?.description && (
+              <Text size='sm' c='dimmed'>
+                {stockItem.part_detail.description}
+              </Text>
+            )}
+          </Stack>
+          <Table withRowBorders={false} verticalSpacing={2}>
+            <Table.Tbody>
+              {details.map((row) => (
+                <Table.Tr key={row.label}>
+                  <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+                    <Text size='sm' c='dimmed'>
+                      {row.label}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text size='sm'>{row.value}</Text>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Group>
+      </Group>
+    </Paper>
+  );
+}
+
+/**
+ * Display any installed stock items which could not be matched
+ * against a BOM line item for the disassembly operation.
+ */
+function DisassemblyLeftoverItems({
+  items
+}: Readonly<{
+  items: any[];
+}>) {
+  if (items.length == 0) {
+    return null;
+  }
+
+  return (
+    <Alert
+      color='yellow'
+      icon={<IconPackage />}
+      title={t`Additional Installed Items`}
+    >
+      <Stack gap='xs'>
+        <Text size='sm'>
+          {t`The following items are installed within this stock item, but do not match a listed component. They will be uninstalled during disassembly.`}
+        </Text>
+        {items.map((item: any) => (
+          <RenderStockItem key={item.pk} instance={item} />
+        ))}
+      </Stack>
+    </Alert>
+  );
+}
+
+/**
+ * Form for disassembling a stock item into its component parts,
+ * based on the Bill of Materials for the associated part.
+ */
+export function useDisassembleStockItem({
+  stockItem,
+  refresh
+}: {
+  stockItem: any;
+  refresh: () => void;
+}) {
+  // Fetch BOM lines for the part associated with the stock item
+  const bomQuery = useQuery({
+    queryKey: ['bom-items-disassemble', stockItem.pk, stockItem.part],
+    enabled: !!stockItem.part && (stockItem.part_detail?.assembly ?? false),
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.bom_list), {
+          params: {
+            part: stockItem.part,
+            sub_part_detail: true,
+            substitutes: true
+          }
+        })
+        .then((response) => response.data ?? [])
+  });
+
+  // Fetch any stock items which are installed within this stock item
+  const installedQuery = useQuery({
+    queryKey: ['installed-items-disassemble', stockItem.pk],
+    enabled: !!stockItem.pk && (stockItem.part_detail?.assembly ?? false),
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiEndpoints.stock_item_list), {
+          params: {
+            belongs_to: stockItem.pk,
+            part_detail: true
+          }
+        })
+        .then((response) => response.data ?? [])
+  });
+
+  const bomItems: any[] = useMemo(() => {
+    // Consumable BOM lines are excluded from disassembly,
+    // as are any lines which point to a virtual part
+    return (bomQuery.data ?? []).filter(
+      (elem: any) =>
+        !elem.consumable &&
+        !elem.sub_part_detail?.consumable &&
+        !elem.sub_part_detail?.virtual
+    );
+  }, [bomQuery.data]);
+
+  const records = useMemo(
+    () => Object.fromEntries(bomItems.map((elem: any) => [elem.pk, elem])),
+    [bomItems]
+  );
+
+  // Map installed stock items against the available BOM lines.
+  // Note: This mirrors the matching performed by the server during disassembly,
+  // matching against the referenced sub_part or any designated substitute parts.
+  // Variants of the sub_part cannot be resolved client-side, so any such items
+  // are reported as "leftover" items instead.
+  const { installedMap, leftoverItems } = useMemo(() => {
+    const map: Record<number, any[]> = {};
+    const leftover: any[] = [];
+
+    for (const item of installedQuery.data ?? []) {
+      const bomItem = bomItems.find(
+        (elem: any) =>
+          elem.sub_part === item.part ||
+          elem.substitutes?.some((sub: any) => sub.part === item.part)
+      );
+
+      if (bomItem) {
+        map[bomItem.pk] = [...(map[bomItem.pk] ?? []), item];
+      } else {
+        leftover.push(item);
+      }
+    }
+
+    return { installedMap: map, leftoverItems: leftover };
+  }, [bomItems, installedQuery.data]);
+
+  // A serialized stock item must be disassembled in its entirety
+  const serialized: boolean =
+    !!stockItem.serial && Number(stockItem.quantity) == 1;
+
+  const stockStatusCodes = useMemo(
+    () => getStatusCodeOptions(ModelType.stockitem),
+    []
+  );
+
+  const fields: ApiFormFieldSet = useMemo(() => {
+    return {
+      quantity: {
+        disabled: serialized
+      },
+      location: {
+        filters: {
+          structural: false
+        }
+      },
+      items: {
+        field_type: 'table',
+        value: bomItems.map((elem: any) => {
+          return {
+            id: elem.pk,
+            bom_item: elem.pk,
+            quantity:
+              (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
+            purchase_price: null,
+            purchase_price_currency:
+              stockItem.purchase_price_currency ?? undefined
+          };
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = records[row.item.bom_item];
+
+          if (!record) {
+            return null;
+          }
+
+          return (
+            <DisassemblyLineRow
+              props={row}
+              record={record}
+              installedItems={installedMap[row.item.bom_item] ?? []}
+              serialized={serialized}
+              statuses={stockStatusCodes}
+              key={row.rowId}
+            />
+          );
+        },
+        headers: [
+          { title: t`Component`, style: { minWidth: '200px' } },
+          { title: t`Unit Quantity`, style: { width: '100px' } },
+          { title: t`Quantity`, style: { width: '200px' } },
+          { title: t`Unit Price`, style: { width: '200px' } },
+          { title: t`Actions` },
+          { title: '', style: { width: '50px' } }
+        ]
+      },
+      notes: {}
+    };
+  }, [
+    bomItems,
+    records,
+    installedMap,
+    stockItem,
+    serialized,
+    stockStatusCodes
+  ]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.stock_disassemble,
+    pk: stockItem.pk,
+    title: t`Disassemble Stock Item`,
+    fields: fields,
+    preFormContent: <DisassemblyItemInfo stockItem={stockItem} />,
+    postFormContent: <DisassemblyLeftoverItems items={leftoverItems} />,
+    initialData: {
+      quantity: stockItem.quantity,
+      location: stockItem.location
+    },
+    size: '80%',
+    successMessage: t`Stock item disassembled`,
+    onFormSuccess: refresh,
+    onOpen: () => {
+      // Ensure the installed items data is up to date when the form is opened
+      installedQuery.refetch();
+    }
+  });
 }
 
 function StockItemDefaultMove({

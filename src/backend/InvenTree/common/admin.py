@@ -10,7 +10,7 @@ import common.validators
 class ParameterTemplateAdmin(admin.ModelAdmin):
     """Admin interface for ParameterTemplate objects."""
 
-    list_display = ('name', 'description', 'model_type', 'units')
+    list_display = ('name', 'description', 'model_type', 'units', 'unique')
     search_fields = ('name', 'description')
 
 
