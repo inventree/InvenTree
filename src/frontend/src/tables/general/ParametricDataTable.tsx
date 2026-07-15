@@ -174,7 +174,7 @@ export default function ParametricDataTable({
     if (refreshRef) {
       refreshRef.current = table.refreshTable;
     }
-  }, [refreshRef, table.refreshTable]);
+  }, [table.refreshTable]);
 
   // Fetch all active parameter templates for the given model type
   const parameterTemplates = useQuery({
