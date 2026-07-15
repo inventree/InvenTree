@@ -2909,7 +2909,7 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         components = [
-            Part(
+            Part.objects.create(
                 name=f'AutoAlloc Bulk Component {i}',
                 description='',
                 component=True,
@@ -2920,8 +2920,6 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
             )
             for i in range(100)
         ]
-
-        Part.objects.bulk_create(components)
 
         # Create BomItem for each component, and a stock item with sufficient quantity to cover the build
         bom_items = [
