@@ -2292,7 +2292,7 @@ class StockItemTest(StockAPITestCase):
 
         data = response.data
 
-        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(data['success'], 'Updated multiple items')
         self.assertEqual(len(data['items']), 10)
 
         for item in data['items']:

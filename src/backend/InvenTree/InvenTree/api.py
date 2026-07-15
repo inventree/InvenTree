@@ -535,7 +535,11 @@ class BulkUpdateMixin(BulkOperationMixin):
 
     Bulk update allows for multiple items to be updated in a single API query,
     rather than using multiple API calls to the various detail endpoints.
+
+    Each instance is validated and saved individually, so that any custom save methods are triggered.
     """
+
+    BULK_ID_FIELD: str = 'pk'
 
     def validate_update(self, queryset, request) -> None:
         """Perform validation right before updating.
@@ -587,7 +591,7 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Saving a stale instance can result in database corruption (and it must
         # be the *instance* that is fresh - refresh_from_db is not sufficient here,
         # as MPTT caches original field values when the instance is loaded).
-        pk_values = list(queryset.values_list('pk', flat=True))
+        pk_values = sorted(queryset.values_list(self.BULK_ID_FIELD, flat=True))
 
         instance_data = []
 
@@ -599,7 +603,9 @@ class BulkUpdateMixin(BulkOperationMixin):
             # Run validation first
             for pk in pk_values:
                 try:
-                    instance = queryset.get(pk=pk)
+                    instance = queryset.select_for_update(of=('self',)).get(**{
+                        self.BULK_ID_FIELD: pk
+                    })
                 except ObjectDoesNotExist:
                     raise ValidationError({
                         'non_field_errors': _(
