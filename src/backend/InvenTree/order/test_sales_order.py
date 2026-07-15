@@ -502,7 +502,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 url,
                 expected_code=200,
                 benchmark=True,
-                max_query_time=5,
+                max_query_time=2.5,
                 max_query_count=100,
             )
 

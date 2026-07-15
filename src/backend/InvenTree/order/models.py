@@ -2862,8 +2862,15 @@ class SalesOrderShipment(
 
         # Bulk-create the newly split-off stock items - this resolves their primary keys,
         # which the tracking entries below need
-        new_stock_items = [new_item for _, new_item, _ in split_items]
-        stock.models.StockItem.objects.bulk_create(new_stock_items)
+        new_stock_item_data = [new_item for _, new_item, _ in split_items]
+
+        new_stock_items = bulk_create_and_fetch(
+            stock.models.StockItem, new_stock_item_data
+        )
+
+        # Backfill the newly created StockItem objects into the split_items list
+        for i, (source, _item, quantity) in enumerate(split_items):
+            split_items[i] = (source, new_stock_items[i], quantity)
 
         tracking_entries = []
         split_events = []
