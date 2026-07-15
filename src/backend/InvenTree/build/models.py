@@ -808,8 +808,8 @@ class Build(
         )
 
         # Back-populate the newly created stock items into the split_items list, so that the tracking entries can be created
-        for i, (_stock_item, _split_item, _quantity) in enumerate(split_items):
-            split_items[i] = (split_items[i][0], new_stock_items[i], split_items[i][2])
+        for i, (stock_item, _split_item, quantity) in enumerate(split_items):
+            split_items[i] = (stock_item, new_stock_items[i], quantity)
 
         tracking_entries = []
         split_events = []
