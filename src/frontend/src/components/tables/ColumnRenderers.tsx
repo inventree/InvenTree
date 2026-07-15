@@ -129,6 +129,18 @@ export function IPNColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function RevisionColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'part_detail.revision',
+    sortable: true,
+    switchable: true,
+    title: t`Revision`,
+    copyable: true,
+    defaultVisible: false,
+    ...props
+  };
+}
+
 export type StockColumnProps = TableColumnProps & {
   nullMessage?: string | ReactNode;
 };

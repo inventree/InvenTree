@@ -39,7 +39,8 @@ import {
   PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
-  RenderPartColumn
+  RenderPartColumn,
+  RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
@@ -104,6 +105,7 @@ export default function SalesOrderLineItemTable({
         }
       },
       IPNColumn({}),
+      RevisionColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
