@@ -1089,9 +1089,7 @@ class PathStringMixin(models.Model):
             super().save(*args, **kwargs)
 
             # Bulk-update any child nodes, if applicable
-            lower_nodes = list(
-                self.get_descendants(include_self=False).values_list('pk', flat=True)
-            )
+            lower_nodes = self.get_lower_nodes()
 
             self.rebuild_lower_nodes(lower_nodes)
 
@@ -1111,9 +1109,7 @@ class PathStringMixin(models.Model):
             )
 
         # Store the node ID values for lower nodes, before we delete this one
-        lower_nodes = list(
-            self.get_descendants(include_self=False).values_list('pk', flat=True)
-        )
+        lower_nodes = self.get_lower_nodes()
 
         # Delete this node - after which we expect the tree structure will be updated
         super().delete(*args, **kwargs)
@@ -1124,6 +1120,12 @@ class PathStringMixin(models.Model):
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return f'{self.pathstring} - {self.description}'
+
+    def get_lower_nodes(self) -> list[int]:
+        """Return a list of all lower nodes in the tree."""
+        return list(
+            self.get_descendants(include_self=False).values_list('pk', flat=True)
+        )
 
     def rebuild_lower_nodes(self, lower_nodes: list[int]):
         """Rebuild the pathstring for lower nodes in the tree.
