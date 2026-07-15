@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("stock", "0123_remove_stockitem_review_needed"),
-        ("common", "0049_remove_notesimage_model_id_and_more")
+        ("part", "0152_alter_partpricing_currency"),
+        ("common", "0050_remove_notesimage_model_id_and_more")
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name="stockitem",
+            model_name="part",
             name="notes",
         ),
     ]

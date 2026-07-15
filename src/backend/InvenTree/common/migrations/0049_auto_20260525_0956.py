@@ -123,11 +123,11 @@ class Migration(migrations.Migration):
     # Ensure that each app which supports 'notes' is up-to-date first
     dependencies = [
         ("build", "0059_build_tags"),
-        ("common", "0047_note"),
-        ("company", "0079_auto_20260212_1054"),
-        ("order", "0119_transferorderlineitem_line_int"),
+        ("common", "0048_note"),
+        ("company", "0080_company_tags"),
+        ("order", "0120_purchaseorder_tags_returnorder_tags_salesorder_tags_and_more"),
         ("part", "0151_part_consumable"),
-        ("stock", "0123_remove_stockitem_review_needed")
+        ("stock", "0125_remove_mptt_fields")
     ]
 
     operations = [
