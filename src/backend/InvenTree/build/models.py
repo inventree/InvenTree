@@ -42,6 +42,7 @@ from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import StateTransitionMixin, StatusCodeMixin
+from InvenTree.helpers_db import bulk_create_and_fetch
 from plugin.events import bulk_trigger_event, trigger_event
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -800,8 +801,15 @@ class Build(
 
         # Bulk-create the newly split-off stock items - this resolves their primary keys,
         # which the tracking entries and (for installed items) BuildItem records need below
-        new_stock_items = [new_item for _, new_item, _ in split_items]
-        stock.models.StockItem.objects.bulk_create(new_stock_items)
+        new_stock_item_data = [new_item for _, new_item, _ in split_items]
+
+        new_stock_items = bulk_create_and_fetch(
+            stock.models.StockItem, new_stock_item_data
+        )
+
+        # Back-populate the newly created stock items into the split_items list, so that the tracking entries can be created
+        for i, (_stock_item, _split_item, _quantity) in enumerate(split_items):
+            split_items[i] = (split_items[i][0], new_stock_items[i], split_items[i][2])
 
         tracking_entries = []
         split_events = []

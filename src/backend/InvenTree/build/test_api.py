@@ -2229,6 +2229,9 @@ class BuildConsumeTest(BuildAPITest):
                     )
                 ])
 
+        # Starting point (before splitting stock)
+        N_STOCK_ITEMS = StockItem.objects.count()
+
         # Allocate stock against each build line - lines with multiple stock items get
         # one allocation entry per stock item, with quantities summing to the required amount
         allocation_items = []
@@ -2255,6 +2258,7 @@ class BuildConsumeTest(BuildAPITest):
             data,
             expected_code=201,
             benchmark=True,
+            max_query_time=0.5,
             max_query_count=50,
         )
 
@@ -2274,6 +2278,8 @@ class BuildConsumeTest(BuildAPITest):
                 'status': StockStatus.OK.value,
             },
             expected_code=200,
+            benchmark=True,
+            max_query_time=0.5,
             max_query_count=200,
         )
 
@@ -2297,7 +2303,8 @@ class BuildConsumeTest(BuildAPITest):
                 {},
                 expected_code=201,
                 benchmark=True,
-                max_query_count=200,
+                max_query_count=250,
+                max_query_time=1.0,
             )
 
         build.refresh_from_db()
@@ -2448,6 +2455,9 @@ class BuildConsumeTest(BuildAPITest):
                 total=Sum('quantity')
             )['total']
             self.assertEqual(total_quantity, required_quantity + (25 if idx % 2 else 0))
+
+        # The total number of StockItem instances in the DB has also increased
+        self.assertEqual(StockItem.objects.count(), N_STOCK_ITEMS + 1 + (N // 2))
 
     def test_consume_tracked_allocations(self):
         """Test consuming of tracked allocations against a BuildOrder."""
