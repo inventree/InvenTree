@@ -22,7 +22,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(Contact, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result), 10)
 
         pks = [c.pk for c in result]
 
@@ -100,7 +100,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(PurchaseOrder, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result), 10)
 
         pks = [o.pk for o in result]
         self.assertTrue(all(pk is not None for pk in pks))
@@ -121,7 +121,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(StockItem, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result.count), 10)
 
         pks = [si.pk for si in result]
         self.assertTrue(all(pk is not None for pk in pks))
