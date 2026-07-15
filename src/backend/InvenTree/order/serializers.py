@@ -1010,6 +1010,13 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Ensure barcodes are unique
         unique_barcodes = set()
 
+        # Ensure serial numbers are unique across all line items in this request
+        # (each line is only validated against the *database* individually)
+        unique_serials = set()
+        serials_globally_unique = get_global_setting(
+            'SERIAL_NUMBER_GLOBALLY_UNIQUE', False
+        )
+
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
@@ -1034,6 +1041,25 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(_('Supplied barcode values must be unique'))
                 else:
                     unique_barcodes.add(barcode)
+
+            if serials := item.get('serials'):
+                if line.part:
+                    # Scope uniqueness the same way as the database check:
+                    # per part tree, or globally (if so configured)
+                    for serial in serials:
+                        key = (
+                            str(serial)
+                            if serials_globally_unique
+                            else (line.part.part.tree_id, str(serial))
+                        )
+
+                        if key in unique_serials:
+                            raise ValidationError(
+                                _('Supplied serial numbers must be unique')
+                                + f': {serial}'
+                            )
+
+                        unique_serials.add(key)
 
         return data
 
