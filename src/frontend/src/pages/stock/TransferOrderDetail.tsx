@@ -69,13 +69,11 @@ export default function TransferOrderDetail() {
     const orderOpen: boolean =
       order.status != toStatus.COMPLETE && order.status != toStatus.CANCELLED;
 
-    return orderOpen;
-    // TODO: does this setting make any sense for Transfer Orders???
-    // if (orderOpen) {
-    //     return true;
-    // } else {
-    //     return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
-    // }
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
+    }
   }, [globalSettings, order.status, toStatus]);
 
   // for now, only permit editing allocations when line items can be edited
