@@ -144,7 +144,7 @@ class BulkCreateAndFetchTest(TestCase):
         with CaptureQueriesContext(connection) as ctx:
             result = bulk_create_and_fetch(Contact, items)
 
-        self.assertEqual(result.count(), n)
+        self.assertEqual(len(result), n)
 
         MAX_QUERIES = 25 if n > 100 else 10
 
