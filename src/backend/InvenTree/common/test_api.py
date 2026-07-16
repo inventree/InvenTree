@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from PIL import Image
@@ -13,6 +14,7 @@ from taggit.models import Tag
 
 import common.models
 from common.models import SelectionList, SelectionListEntry
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
@@ -569,11 +571,18 @@ class ParameterAPITests(InvenTreeAPITestCase):
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
     def test_bulk_create_parameters(self):
         """Test bulk creation of parameters via the API."""
         from part.models import Part
 
         self.assignRole('part.add')
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
         template = common.models.ParameterTemplate.objects.create(
             name='Test Parameter',
@@ -616,6 +625,8 @@ class ParameterAPITests(InvenTreeAPITestCase):
         # There should be a parameter for each part
         for part in parts:
             self.assertEqual(part.parameters.count(), 1)
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_parameter_uniqueness(self):
         """Test the uniqueness options which can be applied to a ParameterTemplate."""

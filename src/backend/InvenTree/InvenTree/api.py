@@ -31,6 +31,7 @@ from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
@@ -511,7 +512,7 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic():
+            with transaction.atomic(), batch_events():
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():
