@@ -72,6 +72,71 @@ class StockLocationTest(StockAPITestCase):
         for ordering in ['name', 'pathstring', 'level', 'tree_id']:
             self.run_ordering_test(self.list_url, ordering)
 
+    def test_bulk_set_parent(self):
+        """Test that bulk re-parenting of locations correctly rebuilds the tree.
+
+        Re-parenting multiple locations in a single 'bulk update' API call must
+        leave the tree structure and the 'pathstring' values fully consistent.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12394
+        """
+        parent_a = StockLocation.objects.create(name='Parent A')
+        parent_b = StockLocation.objects.create(name='Parent B')
+
+        # Create a number of sub-locations under 'Parent A',
+        # some of which have their own child locations
+        locations = []
+
+        for i in range(25):
+            location = StockLocation.objects.create(name=f'Sub{i:02d}', parent=parent_a)
+            locations.append(location)
+
+            if i % 5 == 0:
+                child = StockLocation.objects.create(
+                    name=f'Sub{i:02d}-child', parent=location
+                )
+                StockLocation.objects.create(
+                    name=f'Sub{i:02d}-grandchild', parent=child
+                )
+
+        # Move all sub-locations to 'Parent B' in a single bulk update.
+        # The query count must scale linearly with the number of items.
+        # Note: when the background worker is not running (e.g. in tests), each
+        # item save runs the (de-duplicated) tree rebuild task synchronously
+        self.patch(
+            self.list_url,
+            {'items': [location.pk for location in locations], 'parent': parent_b.pk},
+            expected_code=200,
+            max_query_count=60 * len(locations),
+        )
+
+        for location in locations:
+            location.refresh_from_db()
+            self.assertEqual(location.parent, parent_b)
+
+        parent_a.refresh_from_db()
+        parent_b.refresh_from_db()
+
+        # Check *all* locations in the affected trees
+        # (fixture data outside these trees does not have pathstring values set)
+        affected_trees = StockLocation.objects.filter(
+            tree_id__in=[parent_a.tree_id, parent_b.tree_id]
+        )
+
+        for location in affected_trees:
+            # The stored pathstring must match the 'parent' chain for the node
+            chain = []
+            node = location
+
+            while node is not None:
+                chain.insert(0, node)
+                node = node.parent
+
+            self.assertEqual(location.pathstring, '/'.join(node.name for node in chain))
+
+            # The MPTT tree data must match the 'parent' chain, too
+            self.assertEqual(list(location.get_ancestors()), chain[:-1])
+
     def test_list(self):
         """Test the StockLocationList API endpoint."""
         test_cases = [
@@ -2203,7 +2268,7 @@ class StockItemTest(StockAPITestCase):
 
         data = response.data
 
-        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(data['success'], 'Updated multiple items')
         self.assertEqual(len(data['items']), 10)
 
         for item in data['items']:
