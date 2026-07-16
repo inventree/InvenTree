@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.test.utils import override_settings
 from django.urls import reverse
 
 import pytest
@@ -18,7 +19,11 @@ import order.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
+from InvenTree.unit_test import (
+    InvenTreeAPIPerformanceTestCase,
+    InvenTreeAPITestCase,
+    findOffloadedEvent,
+)
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -72,6 +77,71 @@ class StockLocationTest(StockAPITestCase):
         """Test ordering options for the StockLocation list endpoint."""
         for ordering in ['name', 'pathstring', 'level', 'tree_id']:
             self.run_ordering_test(self.list_url, ordering)
+
+    def test_bulk_set_parent(self):
+        """Test that bulk re-parenting of locations correctly rebuilds the tree.
+
+        Re-parenting multiple locations in a single 'bulk update' API call must
+        leave the tree structure and the 'pathstring' values fully consistent.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12394
+        """
+        parent_a = StockLocation.objects.create(name='Parent A')
+        parent_b = StockLocation.objects.create(name='Parent B')
+
+        # Create a number of sub-locations under 'Parent A',
+        # some of which have their own child locations
+        locations = []
+
+        for i in range(25):
+            location = StockLocation.objects.create(name=f'Sub{i:02d}', parent=parent_a)
+            locations.append(location)
+
+            if i % 5 == 0:
+                child = StockLocation.objects.create(
+                    name=f'Sub{i:02d}-child', parent=location
+                )
+                StockLocation.objects.create(
+                    name=f'Sub{i:02d}-grandchild', parent=child
+                )
+
+        # Move all sub-locations to 'Parent B' in a single bulk update.
+        # The query count must scale linearly with the number of items.
+        # Note: when the background worker is not running (e.g. in tests), each
+        # item save runs the (de-duplicated) tree rebuild task synchronously
+        self.patch(
+            self.list_url,
+            {'items': [location.pk for location in locations], 'parent': parent_b.pk},
+            expected_code=200,
+            max_query_count=60 * len(locations),
+        )
+
+        for location in locations:
+            location.refresh_from_db()
+            self.assertEqual(location.parent, parent_b)
+
+        parent_a.refresh_from_db()
+        parent_b.refresh_from_db()
+
+        # Check *all* locations in the affected trees
+        # (fixture data outside these trees does not have pathstring values set)
+        affected_trees = StockLocation.objects.filter(
+            tree_id__in=[parent_a.tree_id, parent_b.tree_id]
+        )
+
+        for location in affected_trees:
+            # The stored pathstring must match the 'parent' chain for the node
+            chain = []
+            node = location
+
+            while node is not None:
+                chain.insert(0, node)
+                node = node.parent
+
+            self.assertEqual(location.pathstring, '/'.join(node.name for node in chain))
+
+            # The MPTT tree data must match the 'parent' chain, too
+            self.assertEqual(list(location.get_ancestors()), chain[:-1])
 
     def test_list(self):
         """Test the StockLocationList API endpoint."""
@@ -2227,7 +2297,7 @@ class StockItemTest(StockAPITestCase):
 
         data = response.data
 
-        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(data['success'], 'Updated multiple items')
         self.assertEqual(len(data['items']), 10)
 
         for item in data['items']:
@@ -2945,6 +3015,56 @@ class StocktakeTest(StockAPITestCase):
             str(response.data['location']),
         )
 
+    def test_count_unchanged_quantity_saves_field_changes(self):
+        """Location / status changes are saved even if the counted quantity is unchanged.
+
+        Regression test: counting an item to its *existing* quantity used to skip
+        the model save entirely, losing any location / status change while still
+        recording the change in stock history.
+        """
+        item = StockItem.objects.get(pk=1234)
+
+        quantity = item.quantity
+        self.assertEqual(item.location.pk, 5)
+        self.assertEqual(item.status, StockStatus.OK.value)
+
+        # Clear any existing stocktake date so we can verify it gets set
+        item.stocktake_date = None
+        item.save()
+
+        self.post(
+            reverse('api-stock-count'),
+            {
+                'items': [
+                    {
+                        'pk': item.pk,
+                        'quantity': float(quantity),
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # Quantity is unchanged, but the location and status changes must be saved
+        self.assertEqual(item.quantity, quantity)
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.status, StockStatus.DAMAGED.value)
+        self.assertIsNotNone(item.stocktake_date)
+
+        # The stock history entry must agree with the saved state
+        entry = StockItemTracking.objects.filter(
+            item=item, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertEqual(entry.deltas.get('quantity'), float(quantity))
+        self.assertEqual(entry.deltas.get('location'), 1)
+        self.assertEqual(entry.deltas.get('old_location'), 5)
+        self.assertEqual(entry.deltas.get('status'), StockStatus.DAMAGED.value)
+        self.assertEqual(entry.deltas.get('old_status'), StockStatus.OK.value)
+
     def test_bulk_count_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
@@ -3271,6 +3391,51 @@ class StockTransferMergeTest(StockAPITestCase):
             ).exists()
         )
 
+    def test_transfer_merge_skips_protected_source(self):
+        """Merge-on-transfer must not absorb items in a protected state.
+
+        Regression test: only the *target* item used to be validated, so a
+        transfer with merge=True could absorb (and delete) an in-production
+        build output. Such items must be moved as a separate lot instead.
+        """
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+
+        # An "in production" build output
+        self.part.assembly = True
+        self.part.save()
+
+        bo = build.models.Build.objects.create(
+            reference='BO-9999', part=self.part, title='Merge test build', quantity=50
+        )
+
+        building = StockItem.objects.create(
+            part=self.part,
+            location=self.source_loc,
+            quantity=50,
+            build=bo,
+            is_building=True,
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': building.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        # The build output must survive - transferred as a separate lot instead
+        building.refresh_from_db()
+        self.assertTrue(building.is_building)
+        self.assertEqual(building.location, self.dest)
+        self.assertEqual(building.quantity, 50)
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
+
 
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
@@ -3535,11 +3700,20 @@ class StockTestResultTest(StockAPITestCase):
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
     def test_bulk_delete(self):
         """Test that the BulkDelete endpoint works for this model."""
+        from django_q.models import OrmQ
+
         n = StockItemTestResult.objects.count()
 
         tests = []
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
         url = reverse('api-stock-test-result-list')
 
@@ -3580,10 +3754,31 @@ class StockTestResultTest(StockAPITestCase):
         # Attempt a delete without providing items
         self.delete(url, {}, expected_code=400)
 
+        OrmQ.objects.all().delete()
+
         # Now, let's delete all the newly created items with a single API request
-        response = self.delete(url, {'items': tests}, expected_code=200)
+        response = self.delete(
+            url,
+            {'items': tests},
+            expected_code=200,
+            max_query_count=100,
+            benchmark=True,
+            max_query_time=0.5,
+        )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
+
+        self.assertGreaterEqual(OrmQ.objects.count(), len(tests))
+
+        # Ensure that an associated 'deleted' event has been offloaded
+        for test in tests:
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'stock_stockitemtestresult.deleted', matching_kwargs={'id': test}
+                )
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_value_choices(self):
         """Test that the 'value' field is correctly validated."""

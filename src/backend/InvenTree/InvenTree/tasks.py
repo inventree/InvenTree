@@ -617,6 +617,40 @@ def scheduled_task(
     return _task_wrapper
 
 
+@tracer.start_as_current_span('rebuild_model_tree')
+def rebuild_model_tree(model: str, tree_id: int) -> None:
+    """Rebuild the tree structure (and pathstring values) for a tree model.
+
+    This task is offloaded to the background worker whenever nodes are
+    restructured (e.g. re-parented), to avoid expensive tree rebuild
+    operations blocking the calling thread.
+
+    Arguments:
+        model: Label of the model class to rebuild, e.g. 'stock.stocklocation'
+        tree_id: ID of the tree to rebuild
+    """
+    from django.apps import apps
+
+    import InvenTree.models
+
+    try:
+        model_class = apps.get_model(model)
+    except (LookupError, ValueError):
+        logger.warning("rebuild_model_tree: Model '%s' does not exist", model)
+        return
+
+    if not issubclass(model_class, InvenTree.models.InvenTreeTree):
+        logger.warning("rebuild_model_tree: Model '%s' is not a tree model", model)
+        return
+
+    # Rebuild the tree structure, based on the parent-child relationships
+    model_class.rebuild_trees([tree_id])
+
+    # Rebuild the 'pathstring' values for the entire tree (if applicable)
+    if issubclass(model_class, InvenTree.models.PathStringMixin):
+        model_class.rebuild_tree_pathstring_values([tree_id])
+
+
 @tracer.start_as_current_span('heartbeat')
 @scheduled_task(ScheduledTask.MINUTES, 1)
 def heartbeat():
