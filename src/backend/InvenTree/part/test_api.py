@@ -104,6 +104,72 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         'part_category.delete',
     ]
 
+    def test_bulk_set_parent(self):
+        """Test that bulk re-parenting of categories correctly rebuilds the tree.
+
+        Re-parenting multiple categories in a single 'bulk update' API call must
+        leave the tree structure and the 'pathstring' values fully consistent.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12394
+        """
+        url = reverse('api-part-category-list')
+
+        parent_a = PartCategory.objects.create(name='Parent A')
+        parent_b = PartCategory.objects.create(name='Parent B')
+
+        # Create a number of subcategories under 'Parent A',
+        # some of which have their own child categories
+        categories = []
+
+        for i in range(50):
+            category = PartCategory.objects.create(name=f'Cat{i:02d}', parent=parent_a)
+            categories.append(category)
+
+            if i % 5 == 0:
+                child = PartCategory.objects.create(
+                    name=f'Cat{i:02d}-child', parent=category
+                )
+                PartCategory.objects.create(name=f'Cat{i:02d}-grandchild', parent=child)
+
+        # Move all subcategories to 'Parent B' in a single bulk update.
+        # The query count must scale linearly with the number of items.
+        # Note: when the background worker is not running (e.g. in tests), each
+        # item save runs the (de-duplicated) tree rebuild task synchronously
+        self.patch(
+            url,
+            {'items': [category.pk for category in categories], 'parent': parent_b.pk},
+            expected_code=200,
+            max_query_count=60 * len(categories),
+            max_query_time=10,  # Note: in production this is offloaded to the background worker
+        )
+
+        for category in categories:
+            category.refresh_from_db()
+            self.assertEqual(category.parent, parent_b)
+
+        parent_a.refresh_from_db()
+        parent_b.refresh_from_db()
+
+        # Check *all* categories in the affected trees
+        # (fixture data outside these trees does not have pathstring values set)
+        affected_trees = PartCategory.objects.filter(
+            tree_id__in=[parent_a.tree_id, parent_b.tree_id]
+        )
+
+        for category in affected_trees:
+            # The stored pathstring must match the 'parent' chain for the node
+            chain = []
+            node = category
+
+            while node is not None:
+                chain.insert(0, node)
+                node = node.parent
+
+            self.assertEqual(category.pathstring, '/'.join(node.name for node in chain))
+
+            # The MPTT tree data must match the 'parent' chain, too
+            self.assertEqual(list(category.get_ancestors()), chain[:-1])
+
     def test_category_list(self):
         """Test the PartCategoryList API endpoint."""
         url = reverse('api-part-category-list')
