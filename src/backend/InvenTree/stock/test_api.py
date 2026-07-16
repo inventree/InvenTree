@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.test.utils import override_settings
 from django.urls import reverse
 
 import pytest
@@ -18,7 +19,11 @@ import order.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
+from InvenTree.unit_test import (
+    InvenTreeAPIPerformanceTestCase,
+    InvenTreeAPITestCase,
+    findOffloadedEvent,
+)
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -3695,11 +3700,20 @@ class StockTestResultTest(StockAPITestCase):
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
     def test_bulk_delete(self):
         """Test that the BulkDelete endpoint works for this model."""
+        from django_q.models import OrmQ
+
         n = StockItemTestResult.objects.count()
 
         tests = []
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
         url = reverse('api-stock-test-result-list')
 
@@ -3740,10 +3754,31 @@ class StockTestResultTest(StockAPITestCase):
         # Attempt a delete without providing items
         self.delete(url, {}, expected_code=400)
 
+        OrmQ.objects.all().delete()
+
         # Now, let's delete all the newly created items with a single API request
-        response = self.delete(url, {'items': tests}, expected_code=200)
+        response = self.delete(
+            url,
+            {'items': tests},
+            expected_code=200,
+            max_query_count=100,
+            benchmark=True,
+            max_query_time=0.5,
+        )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
+
+        self.assertGreaterEqual(OrmQ.objects.count(), len(tests))
+
+        # Ensure that an associated 'deleted' event has been offloaded
+        for test in tests:
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'stock_stockitemtestresult.deleted', matching_kwargs={'id': test}
+                )
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_value_choices(self):
         """Test that the 'value' field is correctly validated."""
