@@ -283,7 +283,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   // Check the "printing" actions for the selected outputs
-  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('tabpanel', { name: 'Incomplete Outputs' })
     .getByLabel('action-menu-printing-actions')
