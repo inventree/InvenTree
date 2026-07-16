@@ -694,7 +694,7 @@ class CommonBulkDeleteMixin(BulkOperationMixin):
         # Keep track of how many items we deleted
         n_deleted = queryset.count()
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object deletion
             # Note that we do not perform a bulk-delete operation here,
             # as we want to trigger any custom post_delete methods on the model
