@@ -233,10 +233,10 @@ test('Forms - DateTime Field', async ({ browser }) => {
     hour: string,
     minute: string
   ) => {
-    const field = page.getByLabel(fieldLabel);
+    const field = page.getByLabel(fieldLabel).first();
     await expect(field).toBeVisible();
     await field.click();
-    await page.getByRole('button', { name: day }).click();
+    await page.getByRole('button', { name: day }).first().click();
 
     const spinbuttons = page.getByRole('spinbutton');
     await spinbuttons.nth(0).fill(hour);

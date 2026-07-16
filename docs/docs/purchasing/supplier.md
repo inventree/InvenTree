@@ -89,3 +89,6 @@ Supplier parts can have a pack size defined. This value is defined when creating
 When buying parts, they are bought in packs. This is taken into account in Purchase Orders: if a supplier part with a pack size of 5 is bought in a quantity of 4, 20 parts will be added to stock when the parts are received.
 
 When adding stock manually, the supplier part can be added in packs or in individual parts. This is to allow the addition of items in opened packages. Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs.
+
+!!! tip "Bundled Items"
+    A pack size only ever represents multiple units of the *same* part. If a supplier instead sells a kit or assortment of *different* components as a single purchasable item, refer to the [bundled items](./purchase_order.md#bundled-items) documentation instead.

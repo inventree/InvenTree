@@ -75,6 +75,10 @@ class StockHistoryCode(StatusCode):
     # Stock merging operations
     MERGED_STOCK_ITEMS = 45, _('Merged stock items')
 
+    # Stock disassembly operations
+    DISASSEMBLED = 46, _('Disassembled into components')
+    CREATED_FROM_DISASSEMBLY = 47, _('Created from disassembly')
+
     # Convert stock item to variant
     CONVERTED_TO_VARIANT = 48, _('Converted to variant')
 

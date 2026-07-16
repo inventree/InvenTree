@@ -91,7 +91,12 @@ nav:
       - Privacy: privacy.md
   - Concepts:
     - Terminology: concepts/terminology.md
-    - User Interface: concepts/user_interface.md
+    - User Interface:
+      - Overview: concepts/ui/index.md
+      - Tables: concepts/ui/tables.md
+      - Preview Panels: concepts/ui/preview_panels.md
+      - Forms: concepts/ui/forms.md
+      - Global Search: concepts/ui/global_search.md
     - Threat Model: concepts/threat_model.md
     - Physical Units: concepts/units.md
     - Companies: concepts/company.md
@@ -146,6 +151,7 @@ nav:
     - Stock Tracking: stock/tracking.md
     - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md
+    - Stock Disassembly: stock/disassemble.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md

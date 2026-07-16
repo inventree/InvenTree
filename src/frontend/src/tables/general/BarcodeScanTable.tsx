@@ -1,5 +1,5 @@
 import { ActionButton } from '@lib/components/ActionButton';
-import { type RowAction, RowViewAction } from '@lib/components/RowActions';
+import type { RowAction } from '@lib/components/RowActions';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { RenderInstance } from '../../components/render/Instance';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -71,7 +73,7 @@ export default function BarcodeScanTable({
 
     if (record.model && record.pk && record.instance) {
       actions.push(
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Item`,
           modelId: record.instance?.pk,
           modelType: record.model,

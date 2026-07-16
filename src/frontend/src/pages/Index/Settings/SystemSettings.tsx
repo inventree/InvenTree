@@ -390,7 +390,8 @@ export default function SystemSettings() {
             keys={[
               'TRANSFERORDER_ENABLED',
               'TRANSFERORDER_REFERENCE_PATTERN',
-              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE',
+              'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />
         )

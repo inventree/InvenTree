@@ -14,6 +14,7 @@ from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 from rest_framework.fields import URLField as RestURLField
 from rest_framework.fields import empty
+from rest_framework.relations import PrimaryKeyRelatedField
 
 import InvenTree.helpers
 import InvenTree.ready
@@ -46,6 +47,42 @@ class InvenTreeRestURLField(RestURLField):
                 data = 'http://' + data
 
         return super().run_validation(data=data)
+
+
+class PrefetchedPrimaryKeyRelatedField(PrimaryKeyRelatedField):
+    """A PrimaryKeyRelatedField which resolves against a pre-fetched {pk: instance} map.
+
+    PrimaryKeyRelatedField normally issues one .get() query per list entry when used
+    inside a many=True nested serializer - for large lists (hundreds of related objects)
+    that becomes an O(n) query cost just to validate the request. The parent serializer
+    should instead bulk-fetch all referenced objects in a single query and stash the
+    {pk: instance} map in self.context[cache_key] (typically from an overridden
+    to_internal_value()); this field then does an O(1) dict lookup instead of hitting
+    the database.
+
+    Falls back to the default per-item query if no cache has been populated (or the pk
+    is missing from it), so this field remains safe to use standalone - e.g. in tests
+    constructing the child serializer directly, or for a pk that's genuinely invalid.
+    """
+
+    def __init__(self, cache_key: str, **kwargs):
+        """Store the context key under which the parent serializer stashes its prefetch cache."""
+        self.cache_key = cache_key
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        """Resolve 'data' (a raw pk value) against the prefetch cache, if available."""
+        cache = self.context.get(self.cache_key)
+
+        try:
+            pk = int(data)
+        except (TypeError, ValueError):
+            pk = None
+
+        if not cache or pk not in cache:
+            return super().to_internal_value(data)
+
+        return cache[pk]
 
 
 class InvenTreeURLField(models.URLField):
