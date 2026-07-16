@@ -711,6 +711,58 @@ class BuildTest(BuildTestBase):
         self.line_1.refresh_from_db()
         self.assertEqual(self.line_1.consumed, 8)
 
+    def test_complete_zero_quantity_allocation(self):
+        """A zero-quantity allocation is removed cleanly on completion.
+
+        Regression test: completing a BuildItem with quantity=0 (permitted by
+        the model validators) crashed with an AttributeError, blocking build
+        completion until the empty allocation was manually removed.
+        """
+        self.build.issue_build()
+
+        # An allocation with zero quantity, against an item with stock available
+        alloc = BuildItem.objects.create(
+            build_line=self.line_1, stock_item=self.stock_1_2, quantity=0
+        )
+
+        n_items = StockItem.objects.count()
+
+        alloc.complete_allocation(user=self.user)
+
+        # The empty allocation is deleted, with no stock operations performed
+        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
+        self.assertEqual(StockItem.objects.count(), n_items)
+
+        self.stock_1_2.refresh_from_db()
+        self.assertEqual(self.stock_1_2.quantity, 100)
+        self.assertIsNone(self.stock_1_2.consumed_by)
+
+        self.line_1.refresh_from_db()
+        self.assertEqual(self.line_1.consumed, 0)
+
+        # An allocation whose stock item has been depleted elsewhere
+        # is also removed cleanly (allocated quantity clamps to zero)
+        depleted = StockItem.objects.create(
+            part=self.sub_part_1, quantity=5, delete_on_deplete=False
+        )
+        alloc = BuildItem.objects.create(
+            build_line=self.line_1, stock_item=depleted, quantity=5
+        )
+
+        depleted.take_stock(5, self.user)
+        depleted.refresh_from_db()
+        self.assertEqual(depleted.quantity, 0)
+
+        alloc.complete_allocation(user=self.user)
+
+        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
+
+        depleted.refresh_from_db()
+        self.assertIsNone(depleted.consumed_by)
+
+        self.line_1.refresh_from_db()
+        self.assertEqual(self.line_1.consumed, 0)
+
     def test_complete_with_required_tests(self):
         """Test the prevention completion when a required test is missing feature."""
         # with required tests incompleted the save should fail

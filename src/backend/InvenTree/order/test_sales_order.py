@@ -6,13 +6,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.urls import reverse
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from common.settings import set_global_setting
 from company.models import Address, Company
 from InvenTree import status_codes as status
-from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    addUserPermission,
+)
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -25,14 +30,17 @@ from stock.models import StockItem, StockItemTracking, StockLocation
 from users.models import Owner
 
 
-class SalesOrderTest(InvenTreeTestCase):
+class SalesOrderTest(InvenTreeAPITestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
     fixtures = ['company', 'users']
+    roles = ['sales_order.add']
 
     @classmethod
     def setUpTestData(cls):
         """Initial setup for this set of unit tests."""
+        super().setUpTestData()
+
         # Create a Company to ship the goods to
         cls.customer = Company.objects.create(
             name='ABC Co', description='My customer', is_customer=True
@@ -455,8 +463,18 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertFalse(shipment.is_complete())
         self.assertTrue(shipment.check_can_complete(raise_error=False))
 
-        # Complete the shipment
-        shipment.complete_shipment(None)
+        # Complete the shipment via the API
+        self.assignRole('sales_order.add')
+
+        url = reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk})
+        response = self.post(
+            url,
+            expected_code=200,
+            benchmark=True,
+            max_query_time=100,
+            max_query_count=10000,
+        )
+        self.assertEqual(response.status_code, 200)
 
         shipment.refresh_from_db()
         self.assertIsNotNone(shipment.shipment_date)
