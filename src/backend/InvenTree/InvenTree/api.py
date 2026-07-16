@@ -6,6 +6,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
@@ -534,7 +535,11 @@ class BulkUpdateMixin(BulkOperationMixin):
 
     Bulk update allows for multiple items to be updated in a single API query,
     rather than using multiple API calls to the various detail endpoints.
+
+    Each instance is validated and saved individually, so that any custom save methods are triggered.
     """
+
+    BULK_ID_FIELD: str = 'pk'
 
     def validate_update(self, queryset, request) -> None:
         """Perform validation right before updating.
@@ -579,7 +584,14 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Perform the update operation
         data = request.data
 
-        n = queryset.count()
+        # Extract the primary key values up-front:
+        # Each instance is re-fetched from the database immediately before it is
+        # updated, as saving one instance may alter database state which other
+        # instances in the queryset depend on (e.g. MPTT tree structure fields).
+        # Saving a stale instance can result in database corruption (and it must
+        # be the *instance* that is fresh - refresh_from_db is not sufficient here,
+        # as MPTT caches original field values when the instance is loaded).
+        pk_values = sorted(queryset.values_list(self.BULK_ID_FIELD, flat=True))
 
         instance_data = []
 
@@ -589,7 +601,18 @@ class BulkUpdateMixin(BulkOperationMixin):
             # as we want to trigger any custom post_save methods on the model
 
             # Run validation first
-            for instance in queryset:
+            for pk in pk_values:
+                try:
+                    instance = queryset.select_for_update(of=('self',)).get(**{
+                        self.BULK_ID_FIELD: pk
+                    })
+                except ObjectDoesNotExist:
+                    raise ValidationError({
+                        'non_field_errors': _(
+                            'Item no longer matches the provided criteria'
+                        )
+                    })
+
                 serializer = self.get_serializer(instance, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
@@ -597,7 +620,7 @@ class BulkUpdateMixin(BulkOperationMixin):
                 instance_data.append(serializer.data)
 
         return Response(
-            {'success': f'Updated {n} items', 'items': instance_data}, status=200
+            {'success': 'Updated multiple items', 'items': instance_data}, status=200
         )
 
 
