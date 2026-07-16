@@ -7,7 +7,7 @@ from random import randint
 
 from django.core.exceptions import ValidationError
 from django.db import connection
-from django.test.utils import CaptureQueriesContext
+from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 import pytest
@@ -19,9 +19,15 @@ import company.models
 import order.models
 from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting, ParameterTemplate
+from common.settings import set_global_setting
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
-from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
+from InvenTree.unit_test import (
+    InvenTreeAPIPerformanceTestCase,
+    InvenTreeAPITestCase,
+    findOffloadedEvent,
+    findOffloadedTask,
+)
 from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
     BomItem,
@@ -1505,6 +1511,75 @@ class PartAPITest(PartAPITestBase):
 
             for field in ['name', 'description', 'structural']:
                 self.assertIn(field, category)
+
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
+    def test_bulk_update(self):
+        """Test that we can bulk-update a set of parts via the API.
+
+        Test that:
+            - All parts are updated correctly
+            - Instance saved events are offloaded to the background worker
+        """
+        from django_q.models import OrmQ
+
+        self.assignRole('part.change')
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        # Create a bunch of parts
+        parts = [
+            Part.objects.create(
+                name=f'Bulk part {i}',
+                description='A part for bulk update testing',
+                category=PartCategory.objects.first(),
+                active=True,
+            )
+            for i in range(10)
+        ]
+
+        for part in parts:
+            self.assertTrue(part.active)
+
+        # Clear out event registry
+        OrmQ.objects.all().delete()
+
+        # Bulk update all parts to be inactive
+        response = self.patch(
+            reverse('api-part-list'),
+            {'active': False, 'items': [part.pk for part in parts]},
+            expected_code=200,
+            benchmark=True,
+            max_query_count=250,
+            max_query_time=2.0,
+        )
+
+        self.assertEqual(len(response.data['items']), len(parts))
+
+        # Check that events have been registered
+        self.assertGreaterEqual(OrmQ.objects.count(), 2 * len(parts))
+
+        # Check that 'active' parameter has been updated for all parts
+        for part in parts:
+            part.refresh_from_db()
+            self.assertFalse(part.active)
+
+            self.assertIsNotNone(
+                findOffloadedEvent('part_part.saved', matching_kwargs={'id': part.pk}),
+                f'part_part.saved event not found for part {part.pk} not found in offloaded events',
+            )
+
+            self.assertIsNotNone(
+                findOffloadedTask(
+                    'part.tasks.rebuild_supplier_parts', matching_args=[part.pk]
+                ),
+                f'rebuild_supplier_parts task not found for part {part.pk} not found in offloaded tasks',
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
 
 class PartCreationTests(PartAPITestBase):
