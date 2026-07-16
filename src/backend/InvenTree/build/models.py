@@ -974,7 +974,9 @@ class Build(
         items_to_delete = []
 
         lines = self.untracked_line_items.all()
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
         lines = lines.annotate(allocated=annotate_allocated_quantity())
 
         for build_line in lines:
@@ -1038,6 +1040,15 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # Re-check the state of the output itself:
+        # It may have changed since the scrap request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
 
         # If quantity is not specified, assume the entire output quantity
         if quantity is None:
@@ -1109,6 +1120,15 @@ class Build(
         Raises:
             ValidationError: If the build output cannot be completed, with an appropriate message
         """
+        # Re-check the state of the output itself:
+        # It may have changed since the completion request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         prevent_incomplete = get_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
         )
@@ -1217,9 +1237,11 @@ class Build(
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
-        self.completed += output.quantity
-
-        self.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple outputs may be completed concurrently)
+        self.completed = F('completed') + output.quantity
+        self.save(update_fields=['completed'])
+        self.refresh_from_db(fields=['completed'])
 
     @transaction.atomic
     def auto_allocate_stock(
@@ -1254,13 +1276,16 @@ class Build(
             return allocations
 
         tracked_line_items = self.tracked_line_items.filter(
-            bom_item__consumable=False, bom_item__sub_part__virtual=False
+            part.models.BomItem.consumable_filter(
+                consumable=False, prefix='bom_item__'
+            ),
+            bom_item__sub_part__virtual=False,
         )
 
         for line_item in tracked_line_items:
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1384,7 +1409,7 @@ class Build(
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
-            if bom_item.consumable:
+            if bom_item.is_consumable:
                 # Do not auto-allocate stock to consumable BOM items
                 continue
 
@@ -1504,7 +1529,9 @@ class Build(
         lines = self.build_lines.all()
 
         # Remove any 'consumable' line items
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         if tracked is True:
             lines = lines.filter(bom_item__sub_part__trackable=True)
@@ -1541,7 +1568,9 @@ class Build(
         we need to test all "trackable" BuildLine objects
         """
         lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
-        lines = lines.exclude(bom_item__consumable=True)
+        lines = lines.exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         # Find any lines which have not been fully allocated
         for line in lines:
@@ -1565,7 +1594,9 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-        lines = self.build_lines.all().exclude(bom_item__consumable=True)
+        lines = self.build_lines.all().exclude(
+            part.models.BomItem.consumable_filter(prefix='bom_item__')
+        )
 
         lines = lines.prefetch_related('allocations')
 
@@ -1794,7 +1825,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     def is_fully_allocated(self) -> bool:
         """Return True if this BuildLine is fully allocated."""
-        if self.bom_item.consumable:
+        if self.bom_item.is_consumable:
             return True
 
         required = max(0, self.quantity - self.consumed)
@@ -2016,6 +2047,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         if quantity > item.quantity:
             quantity = item.quantity
 
+        if quantity <= 0:
+            # There is nothing to consume or install:
+            # simply remove this (empty) allocation
+            self.delete()
+            return
+
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:
             item = item.splitStock(quantity, None, user, notes=notes)
@@ -2045,8 +2082,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             )
 
         # Increase the "consumed" count for the associated BuildLine
-        self.build_line.consumed += quantity
-        self.build_line.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple allocations against the same BuildLine may complete concurrently)
+        self.build_line.consumed = F('consumed') + quantity
+        self.build_line.save(update_fields=['consumed'])
+        self.build_line.refresh_from_db(fields=['consumed'])
 
         # Decrease the allocated quantity
         self.quantity = max(0, self.quantity - quantity)

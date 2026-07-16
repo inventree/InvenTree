@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
 import { isTrue } from '@lib/functions/Conversion';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import {
   type NestedDict,
   constructFormUrl,
@@ -40,6 +41,7 @@ import type {
   ApiFormProps
 } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
+import { isEquivalent } from '../../functions/comparison';
 import { constructField, extractAvailableFields } from '../../functions/forms';
 import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
 import { ApiFormField } from './fields/ApiFormField';
@@ -121,15 +123,23 @@ export function OptionsApiForm({
     }
   }, [opened]);
 
+  // Preserve the previous reference for any field whose constructed
+  // definition did not actually change, so unrelated fields don't force a
+  // fields-object replacement (and cascade a re-render to every field)
+  // whenever this recomputes for an unrelated reason (e.g. options data or
+  // the caller's own fields hook re-running with equivalent output)
+  const previousConstructedFieldsRef = useRef<ApiFormFieldSet>({});
+
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
 
     if (!_props.fields) return _props;
 
-    _props.fields = { ..._props.fields };
+    const prevFields = previousConstructedFieldsRef.current;
+    const nextFields: ApiFormFieldSet = {};
 
     for (const [k, v] of Object.entries(_props.fields)) {
-      _props.fields[k] = constructField({
+      const constructed = constructField({
         field: v,
         definition: optionsQuery?.data?.[k]
       });
@@ -138,9 +148,16 @@ export function OptionsApiForm({
       const value = _props?.initialData?.[k];
 
       if (value) {
-        _props.fields[k].value = value;
+        constructed.value = value;
       }
+
+      const prev = prevFields[k];
+      nextFields[k] =
+        prev && isEquivalent(prev, constructed) ? prev : constructed;
     }
+
+    previousConstructedFieldsRef.current = nextFields;
+    _props.fields = nextFields;
 
     return _props;
   }, [optionsQuery.data, props]);
@@ -313,7 +330,21 @@ export function ApiForm({
       }
     }
 
-    setFields(_fields);
+    // Preserve the previous reference for any field whose definition did not
+    // actually change, so unrelated fields don't re-render just because the
+    // fields hook rebuilt its entire output (e.g. in response to some other
+    // field's onValueChange updating local state elsewhere in that hook)
+    setFields((prevFields) => {
+      const nextFields: ApiFormFieldSet = {};
+
+      for (const k of Object.keys(_fields)) {
+        const prev = prevFields[k];
+        const next = _fields[k];
+        nextFields[k] = prev && isEquivalent(prev, next) ? prev : next;
+      }
+
+      return nextFields;
+    });
   }, [props.fields, props.initialData, defaultValues, initialDataQuery.data]);
 
   // Fetch initial data on form load
@@ -599,6 +630,41 @@ export function ApiForm({
     [props.onFormError]
   );
 
+  // Submit the form when "Enter" is pressed in a field.
+  // Routed through a ref so that the callback identity passed down to every
+  // field stays stable across renders - isValid / isDirty change on every
+  // keystroke anywhere in the form, and a fresh onKeyDown reference here
+  // would force every field (not just the one being edited) to re-render.
+  const submitOnEnterRef = useRef<() => void>(() => {});
+  submitOnEnterRef.current = () => {
+    if (!isLoading && (!props.fetchInitialData || isDirty)) {
+      form.handleSubmit(submitForm, onFormError)();
+    }
+  };
+
+  const onFieldKeyDown = useCallback((value: any) => {
+    if (value === 'Enter') {
+      submitOnEnterRef.current();
+    }
+  }, []);
+
+  // Submit the form with Ctrl+Enter (Cmd+Enter on Mac) while it is open.
+  // An empty tagsToIgnore list allows the hotkey to fire from within form inputs.
+  useInvenTreeHotkeys(
+    [
+      [
+        'mod+Enter',
+        t`Submit form`,
+        () => {
+          if (!isLoading && (!props.fetchInitialData || isDirty)) {
+            form.handleSubmit(submitForm, onFormError)();
+          }
+        }
+      ]
+    ],
+    []
+  );
+
   if (optionsLoading || initialDataQuery.isFetching) {
     return (
       <Paper mah={'65vh'}>
@@ -667,15 +733,7 @@ export function ApiForm({
                           url={url}
                           navigate={navigate}
                           setFields={setFields}
-                          onKeyDown={(value) => {
-                            if (
-                              value == 'Enter' &&
-                              !isLoading &&
-                              (!props.fetchInitialData || isDirty)
-                            ) {
-                              form.handleSubmit(submitForm, onFormError)();
-                            }
-                          }}
+                          onKeyDown={onFieldKeyDown}
                         />
                       );
                     })}

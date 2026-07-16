@@ -996,7 +996,7 @@ class BuildAllocationSerializer(serializers.Serializer):
                 output = item.get('output', None)
 
                 # Ignore allocation for consumable BOM items
-                if build_line.bom_item.consumable:
+                if build_line.bom_item.is_consumable:
                     continue
 
                 params = {
@@ -1006,7 +1006,11 @@ class BuildAllocationSerializer(serializers.Serializer):
                 }
 
                 try:
-                    if build_item := BuildItem.objects.filter(**params).first():
+                    # Lock the row, so concurrent allocations cannot both read
+                    # the same starting quantity (lost update)
+                    if build_item := (
+                        BuildItem.objects.select_for_update().filter(**params).first()
+                    ):
                         # Find an existing BuildItem for this stock item
                         # If it exists, increase the quantity
                         build_item.quantity += quantity
@@ -1389,7 +1393,7 @@ class BuildLineSerializer(
         source='bom_item.reference', label=_('Reference'), read_only=True
     )
     consumable = serializers.BooleanField(
-        source='bom_item.consumable', label=_('Consumable'), read_only=True
+        source='bom_item.is_consumable', label=_('Consumable'), read_only=True
     )
     optional = serializers.BooleanField(
         source='bom_item.optional', label=_('Optional'), read_only=True

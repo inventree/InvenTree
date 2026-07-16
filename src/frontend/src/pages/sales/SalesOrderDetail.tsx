@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { Accordion, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconCubeSend,
@@ -11,7 +11,6 @@ import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
-import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -20,12 +19,6 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -40,9 +33,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
-import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -57,6 +48,7 @@ import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
+import { SalesOrderDetailsPanel } from './SalesOrderDetailsPanel';
 
 /**
  * Detail page for a single SalesOrder
@@ -88,227 +80,6 @@ export default function SalesOrderDetail() {
       globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
     );
   }, [order, globalSettings]);
-
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'reference',
-        label: t`Reference`,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'customer_reference',
-        label: t`Customer Reference`,
-        copy: true,
-        icon: 'reference',
-        hidden: !order.customer_reference
-      },
-      {
-        type: 'link',
-        name: 'customer',
-        icon: 'customers',
-        label: t`Customer`,
-        model: ModelType.company
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'status',
-        name: 'status',
-        label: t`Status`,
-        model: ModelType.salesorder
-      },
-      {
-        type: 'status',
-        name: 'status_custom_key',
-        label: t`Custom Status`,
-        model: ModelType.salesorder,
-        icon: 'status',
-        hidden:
-          !order.status_custom_key || order.status_custom_key == order.status
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'progressbar',
-        name: 'completed',
-        icon: 'progress',
-        label: t`Completed Line Items`,
-        total: order.line_items,
-        progress: order.completed_lines,
-        hidden: !order.line_items
-      },
-      {
-        type: 'progressbar',
-        name: 'shipments',
-        icon: 'shipment',
-        label: t`Completed Shipments`,
-        total: order.shipments_count,
-        progress: order.completed_shipments_count,
-        hidden: !order.shipments_count
-      },
-      {
-        type: 'text',
-        name: 'currency',
-        label: t`Order Currency`,
-        value_formatter: () => orderCurrency
-      },
-      {
-        type: 'text',
-        name: 'total_price',
-        label: t`Total Cost`,
-        value_formatter: () => {
-          return formatCurrency(order?.total_price, {
-            currency: orderCurrency
-          });
-        }
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !order.link
-      },
-      {
-        type: 'text',
-        name: 'address',
-        label: t`Shipping Address`,
-        icon: 'address',
-        value_formatter: () =>
-          order.address_detail ? (
-            <RenderAddress instance={order.address_detail} />
-          ) : (
-            <Text size='sm' c='red'>{t`Not specified`}</Text>
-          )
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.name',
-        label: t`Contact`,
-        icon: 'user',
-        copy: true,
-        hidden: !order.contact
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.email',
-        label: t`Contact Email`,
-        icon: 'email',
-        copy: true,
-        hidden: !order.contact_detail?.email
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.phone',
-        label: t`Contact Phone`,
-        icon: 'phone',
-        copy: true,
-        hidden: !order.contact_detail?.phone
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !order.project_code
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Creation Date`,
-        copy: true,
-        hidden: !order.creation_date
-      },
-      {
-        type: 'date',
-        name: 'issue_date',
-        label: t`Issue Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.issue_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        hidden: !order.start_date,
-        copy: true
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        hidden: !order.target_date,
-        copy: true
-      },
-      {
-        type: 'date',
-        name: 'shipment_date',
-        label: t`Completion Date`,
-        hidden: !order.shipment_date,
-        copy: true
-      },
-      {
-        type: 'date',
-        name: 'updated_at',
-        label: t`Last Updated`,
-        icon: 'calendar',
-        copy: true,
-        showTime: true,
-        hidden: !order.updated_at
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={order.customer_detail?.image}
-              pk={order.customer}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={order} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={order.tags} />
-        </Stack>
-        <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
-      </ItemDetailsGrid>
-    );
-  }, [order, orderCurrency, instanceQuery]);
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
@@ -364,7 +135,13 @@ export default function SalesOrderDetail() {
         name: 'detail',
         label: t`Order Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <SalesOrderDetailsPanel
+            instance={order}
+            allowImageEdit
+            refreshInstance={refreshInstance}
+          />
+        )
       },
       {
         name: 'line-items',

@@ -11,6 +11,14 @@ import { ActionButton, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { IconExclamationCircle, IconReplace } from '@tabler/icons-react';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  ReferenceColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDecimal } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
 import {
@@ -18,14 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  PartColumn,
-  ReferenceColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * For a given part, render a table showing all the assemblies the part is used in

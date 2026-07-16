@@ -22,6 +22,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from rest_framework import serializers
 from sesame.utils import get_user
 from stdimage.models import StdImageFieldFile
 
@@ -103,10 +104,9 @@ class TreeFixtureTest(TestCase):
         self.run_tree_test(Build)
 
     def test_stock(self):
-        """Test MPTT tree structure for Stock model."""
-        from stock.models import StockItem, StockLocation
+        """Test MPTT tree structure for StockLocation model."""
+        from stock.models import StockLocation
 
-        self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
 
 
@@ -1093,7 +1093,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for _ in range(10):
+        for idx in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()
@@ -1105,7 +1105,7 @@ class CurrencyTests(TestCase):
             else:  # pragma: no cover
                 print('Exchange rate update failed - retrying')
                 print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
-                time.sleep(1)
+                time.sleep(1 + idx)
 
         self.assertTrue(update_successful)
 
@@ -1808,6 +1808,35 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+    def test_file_field_request_schema_binary(self):
+        """Verify only request file fields are exposed as binary."""
+        auto_schema = object.__new__(schema.ExtendedAutoSchema)
+
+        mapped_schemas = [
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+            {'type': 'string', 'format': 'uri'},
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+        ]
+
+        with mock.patch(
+            'drf_spectacular.openapi.AutoSchema._map_serializer_field',
+            side_effect=mapped_schemas,
+        ):
+            file_request = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'request'
+            )
+            url_request = auto_schema._map_serializer_field(
+                serializers.URLField(), 'request'
+            )
+            file_response = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'response'
+            )
+
+        self.assertEqual(file_request['format'], 'binary')
+        self.assertTrue(file_request['nullable'])
+        self.assertEqual(url_request['format'], 'uri')
+        self.assertEqual(file_response['format'], 'uri')
 
 
 class URLCompatibilityTest(InvenTreeTestCase):

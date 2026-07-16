@@ -9,8 +9,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -22,14 +21,19 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
   partId,
@@ -205,7 +209,7 @@ export default function PartTestTemplateTable({
       if (record.part != partId) {
         // This test is defined for a parent part
         return [
-          RowViewAction({
+          AppRowViewAction({
             title: t`View Parent Part`,
             modelType: ModelType.part,
             modelId: record.part,

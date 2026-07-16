@@ -9,10 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#12360](https://github.com/inventree/InvenTree/pull/12360) removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database. This change was made to simplify the StockItem model and improve performance, as the MPTT tree structure was causing significant overhead in certain operations. Any external client applications which made use of the MPTT functionality will need to be updated to account for this change.
+- [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
 - [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
 
 ### Added
 
+- [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders
+- [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
+- [#12310](https://github.com/inventree/InvenTree/pull/12310) adds the ability to disassemble (or break apart) assembled stock items into their component parts, based on the Bill of Materials (BOM) associated with the stock item. This allows users to easily break down assembled items into their constituent parts, which can be useful for inventory management and tracking purposes.
+- [#12117](https://github.com/inventree/InvenTree/pull/12117) adds a "preview" drawer to the InvenTree table component, allowing users to preview the details of a selected row without navigating away from the table view. This feature is optional and can be enabled or disabled via the `PREVIEW_DRAWER_ENABLED` system setting.
+- [#12341](https://github.com/inventree/InvenTree/pull/12341) adds support for importing internal part prices.
+- [#12295](https://github.com/inventree/InvenTree/pull/12295) adds "consumable" field to the Part model and API endpoints
 - [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
 
 ### Changed

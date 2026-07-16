@@ -1,8 +1,7 @@
 import {
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -30,6 +29,19 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RenderPart } from '../../components/render/Part';
+import {
+  DateColumn,
+  DecimalColumn,
+  DescriptionColumn,
+  LinkColumn,
+  ProjectCodeColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
@@ -43,17 +55,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DecimalColumn,
-  DescriptionColumn,
-  LinkColumn,
-  ProjectCodeColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 import TransferOrderAllocationTable from './TransferOrderAllocationTable';
 
 export default function TransferOrderLineItemTable({
@@ -445,7 +446,7 @@ export default function TransferOrderLineItemTable({
             deleteLine.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Part`,
           modelType: ModelType.part,
           modelId: record.part,
@@ -516,6 +517,9 @@ export default function TransferOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.transfer_order),
+          afterBulkDelete: orderDetailRefresh,
           params: {
             order: orderId,
             part_detail: true

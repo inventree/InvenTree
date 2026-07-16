@@ -39,6 +39,13 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatDate } from '../../defaults/formatters';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -49,13 +56,6 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  DescriptionColumn,
-  UserColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 export type TemplateI = {
   pk: number;
