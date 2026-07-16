@@ -744,6 +744,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
 
         order_insertion_by = ['name']
 
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         """Handle the deletion of a tree node.
 
@@ -814,18 +815,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             next_tree_id += 1
 
         # 3. Rebuild the model tree(s) as required
-        #  - If any partial rebuilds fail, we will rebuild the entire tree
-
-        result = True
-
-        for tree_id in trees:
-            if tree_id:
-                if not self.partial_rebuild(tree_id):
-                    result = False
-
-        if not result:
-            # Rebuild the entire tree (expensive!!!)
-            self.__class__.objects.rebuild()
+        self.__class__.rebuild_trees(trees)
 
     def handle_tree_delete(self, delete_children=False, delete_items=False):
         """Delete a single instance of the tree, based on provided kwargs.
@@ -942,40 +932,89 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             # New instance, so we need to rebuild the tree (if it has a parent)
             trees.add(self.tree_id)
 
-        for tree_id in trees:
-            if tree_id:
-                self.partial_rebuild(tree_id)
+        # Flag to indicate that a tree rebuild task was triggered by this save
+        self._tree_rebuild_offloaded = False
 
         if len(trees) > 0:
-            # A tree update was performed, so we need to refresh the instance
-            try:
-                self.refresh_from_db()
-            except TransactionManagementError:
-                # If we are inside a transaction block, we cannot refresh from db
-                pass
-            except Exception as e:
-                # Any other error is unexpected
-                InvenTree.sentry.report_exception(e)
-                InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
+            # Offload the tree rebuild(s) to the background worker.
+            # Note that repeated calls are de-duplicated (per tree),
+            # so a bulk operation results in a single rebuild per affected tree.
+            ran_sync = self.__class__.offload_tree_rebuild(trees)
+            self._tree_rebuild_offloaded = True
 
-    def partial_rebuild(self, tree_id: int) -> bool:
+            if ran_sync:
+                # The tree was rebuilt synchronously, so refresh the instance
+                try:
+                    self.refresh_from_db()
+                except TransactionManagementError:
+                    # If we are inside a transaction block, we cannot refresh from db
+                    pass
+                except Exception as e:
+                    # Any other error is unexpected
+                    InvenTree.sentry.report_exception(e)
+                    InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
+
+    @classmethod
+    def offload_tree_rebuild(cls, tree_ids) -> bool:
+        """Offload a rebuild of the specified trees to the background worker.
+
+        - The tree structure (and pathstring values, where applicable) are rebuilt for each tree
+        - If the background worker is not running, the rebuild is performed synchronously
+        - Identical pending tasks are skipped, so repeated calls (e.g. during a bulk
+          operation) result in (at most) a single queued rebuild per affected tree
+
+        Returns:
+            bool: True if any rebuild was performed synchronously (in the calling thread)
+        """
+        from InvenTree.tasks import offload_task
+
+        ran_sync = False
+
+        for tree_id in tree_ids:
+            if tree_id:
+                result = offload_task(
+                    'InvenTree.tasks.rebuild_model_tree', cls._meta.label_lower, tree_id
+                )
+
+                if result is True:
+                    # offload_task returns True if the task ran synchronously
+                    ran_sync = True
+
+        return ran_sync
+
+    @classmethod
+    def rebuild_trees(cls, tree_ids) -> None:
+        """Rebuild the specified trees, with fallback to a full rebuild.
+
+        - Perform a partial rebuild for each provided tree_id
+        - If any partial rebuild fails, rebuild the entire tree (expensive!!!)
+        """
+        result = True
+
+        for tree_id in tree_ids:
+            if tree_id and not cls.partial_rebuild(tree_id):
+                result = False
+
+        if not result:
+            # Rebuild the entire tree (expensive!!!)
+            cls.objects.rebuild()
+
+    @classmethod
+    def partial_rebuild(cls, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
 
         If a failure occurs, log the error and return False.
         """
         try:
-            self.__class__.objects.partial_rebuild(tree_id)
+            cls.objects.partial_rebuild(tree_id)
             return True
         except Exception as e:
             # This is a critical error, explicitly report to sentry
             InvenTree.sentry.report_exception(e)
 
-            InvenTree.exceptions.log_error(f'{self.__class__.__name__}.partial_rebuild')
+            InvenTree.exceptions.log_error(f'{cls.__name__}.partial_rebuild')
             logger.exception(
-                'Failed to rebuild tree for %s <%s>: %s',
-                self.__class__.__name__,
-                self.pk,
-                e,
+                'Failed to rebuild tree <%s> for %s: %s', tree_id, cls.__name__, e
             )
             return False
 
@@ -1078,6 +1117,11 @@ class PathStringMixin(models.Model):
         # Rebuild upper first, to ensure the lower nodes are updated correctly
         super().save(*args, **kwargs)
 
+        # Determine if a tree rebuild task was already triggered by this save
+        # (e.g. if the node was re-parented) - if so, the pathstring values
+        # for any lower nodes are updated by that task
+        rebuild_offloaded = getattr(self, '_tree_rebuild_offloaded', False)
+
         # Ensure that the pathstring is correctly constructed
         pathstring = self.construct_pathstring(refresh=True)
 
@@ -1088,12 +1132,10 @@ class PathStringMixin(models.Model):
             self.pathstring = pathstring
             super().save(*args, **kwargs)
 
-            # Bulk-update any child nodes, if applicable
-            lower_nodes = list(
-                self.get_descendants(include_self=False).values_list('pk', flat=True)
-            )
-
-            self.rebuild_lower_nodes(lower_nodes)
+            # Update the pathstring values for any lower nodes,
+            # by offloading the update to the background worker
+            if not rebuild_offloaded and self.get_descendant_count() > 0:
+                self.__class__.offload_tree_rebuild([self.tree_id])
 
     def delete(self, *args, **kwargs):
         """Custom delete method for PathStringMixin.
@@ -1111,9 +1153,7 @@ class PathStringMixin(models.Model):
             )
 
         # Store the node ID values for lower nodes, before we delete this one
-        lower_nodes = list(
-            self.get_descendants(include_self=False).values_list('pk', flat=True)
-        )
+        lower_nodes = self.get_lower_nodes()
 
         # Delete this node - after which we expect the tree structure will be updated
         super().delete(*args, **kwargs)
@@ -1124,6 +1164,12 @@ class PathStringMixin(models.Model):
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return f'{self.pathstring} - {self.description}'
+
+    def get_lower_nodes(self) -> list[int]:
+        """Return a list of all lower nodes in the tree."""
+        return list(
+            self.get_descendants(include_self=False).values_list('pk', flat=True)
+        )
 
     def rebuild_lower_nodes(self, lower_nodes: list[int]):
         """Rebuild the pathstring for lower nodes in the tree.
@@ -1144,6 +1190,52 @@ class PathStringMixin(models.Model):
 
         if len(nodes_to_update) > 0:
             self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
+
+    @classmethod
+    def rebuild_tree_pathstring_values(cls, tree_ids) -> None:
+        """Rebuild the 'pathstring' values for all nodes in the specified trees.
+
+        Each tree is processed in a single pass:
+        the pathstring for each node is constructed from its parent node,
+        and any changed values are written back in a single bulk update.
+        """
+        tree_nodes = list(cls.objects.filter(tree_id__in=tree_ids))
+        node_map = {node.pk: node for node in tree_nodes}
+
+        # Cache of node ID -> list of path elements (from the top level down)
+        path_cache: dict[int, list[str]] = {}
+
+        def path_names(node) -> list[str]:
+            """Construct the path (list of names) for a node, via its parent chain."""
+            if node.pk in path_cache:
+                return path_cache[node.pk]
+
+            names = [str(getattr(node, cls.PATH_FIELD, node.pk))]
+
+            if node.parent_id:
+                parent = node_map.get(node.parent_id)
+
+                if parent is None:
+                    # Parent node exists outside the selected trees
+                    parent = cls.objects.get(pk=node.parent_id)
+                    node_map[node.parent_id] = parent
+
+                names = [*path_names(parent), *names]
+
+            path_cache[node.pk] = names
+            return names
+
+        nodes_to_update = []
+
+        for node in tree_nodes:
+            pathstring = InvenTree.helpers.constructPathString(path_names(node))
+
+            if pathstring != node.pathstring:
+                node.pathstring = pathstring
+                nodes_to_update.append(node)
+
+        if len(nodes_to_update) > 0:
+            cls.objects.bulk_update(nodes_to_update, ['pathstring'], batch_size=250)
 
     def construct_pathstring(self, refresh: bool = False) -> str:
         """Construct the pathstring for this tree node.

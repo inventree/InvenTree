@@ -435,6 +435,9 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.purchase_order),
+          afterBulkDelete: orderDetailRefresh,
           defaultSortColumn: 'line',
           params: {
             ...params,
