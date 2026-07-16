@@ -15,7 +15,7 @@ from taggit.models import Tag
 import common.models
 from common.models import SelectionList, SelectionListEntry
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
 
 
 class DataOutputAPITests(InvenTreeAPITestCase):
@@ -577,10 +577,19 @@ class ParameterAPITests(InvenTreeAPITestCase):
         PLUGIN_TESTING_EVENTS_ASYNC=True,
     )
     def test_bulk_create_parameters(self):
-        """Test bulk creation of parameters via the API."""
+        """Test bulk creation of parameters via the API.
+
+        Test that:
+            - The correct number of items are created
+            - Instance creation events are offloaded to the background worker
+        """
+        from django_q.models import OrmQ
+
         from part.models import Part
 
         self.assignRole('part.add')
+
+        OrmQ.objects.all().delete()
 
         set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
@@ -613,7 +622,7 @@ class ParameterAPITests(InvenTreeAPITestCase):
                 for part in parts
             ],
             benchmark=True,
-            max_query_count=750,
+            max_query_count=500,
             max_query_time=2.0,
         )
 
@@ -622,9 +631,33 @@ class ParameterAPITests(InvenTreeAPITestCase):
         # Check that the parameters have been created
         self.assertEqual(common.models.Parameter.objects.count(), N + len(parts))
 
+        # We expect that 50 events have been offloaded to the background worker
+        self.assertGreaterEqual(OrmQ.objects.count(), len(parts))
+
         # There should be a parameter for each part
         for part in parts:
             self.assertEqual(part.parameters.count(), 1)
+            parameter = part.parameters.first()
+            self.assertIsNotNone(parameter)
+            self.assertIsNotNone(parameter.updated)
+            self.assertIsNotNone(parameter.updated_by)
+            self.assertEqual(parameter.updated_by, self.user)
+
+            # Check that an associated event has been offloaded
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'part_partparameter.created', matching_kwargs={'id': parameter.pk}
+                ),
+                f'No created event found for parameter {parameter.pk}',
+            )
+
+            # Check that an extra 'saved' event is *NOT* generated
+            self.assertIsNone(
+                findOffloadedEvent(
+                    'part_partparameter.saved', matching_kwargs={'id': parameter.pk}
+                ),
+                f'Unexpected saved event found for parameter {parameter.pk}',
+            )
 
         set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
