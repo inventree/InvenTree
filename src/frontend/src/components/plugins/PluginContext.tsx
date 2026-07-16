@@ -1,5 +1,5 @@
 import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { useMemo } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../App';
@@ -46,12 +46,28 @@ import {
   openGlobalImporter
 } from '../../states/ImporterState';
 import { usePluginState } from '../../states/PluginState';
+import {
+  closeGlobalPreview,
+  getGlobalPreviewState,
+  openGlobalPreview
+} from '../../states/PreviewDrawerState';
 import { useServerApiState } from '../../states/ServerApiState';
 import { EditApiForm } from '../forms/ApiForm';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
 import { RenderInlineModel } from '../render/Instance';
-import { InvenTreeTableInternal } from '../tables/InvenTreeTable';
+
+// Lazy loaded: useInvenTreeContext is used by the always-mounted nav Layout
+// to build the context handed to plugins, but tables.renderTable is only
+// ever actually called by a plugin that chooses to render a table - which
+// is rare. Loading InvenTreeTable's (sizeable) module here unconditionally
+// would mean every page load pays for it regardless of whether any plugin
+// uses it.
+const InvenTreeTableInternal = lazy(() =>
+  import('../tables/InvenTreeTable').then((m) => ({
+    default: m.InvenTreeTableInternal
+  }))
+);
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -97,12 +113,20 @@ export const useInvenTreeContext = () => {
         isOpen: () => getGlobalImporterState().isOpen,
         sessionId: () => getGlobalImporterState().sessionId
       },
+      preview: {
+        open: (modelType, id?, instance?, onClose?) =>
+          openGlobalPreview(modelType, id, instance, undefined, onClose),
+        close: () => closeGlobalPreview(),
+        isOpen: () => getGlobalPreviewState().isOpen
+      },
       tables: {
         renderTable: (props: InvenTreeTableRenderProps<any>) => (
-          <InvenTreeTableInternal
-            {...props}
-            showContextMenu={showContextMenu}
-          />
+          <Suspense fallback={null}>
+            <InvenTreeTableInternal
+              {...props}
+              showContextMenu={showContextMenu}
+            />
+          </Suspense>
         )
       },
       forms: {

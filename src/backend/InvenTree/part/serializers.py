@@ -276,7 +276,10 @@ class PartSalePriceSerializer(
     )
 
 
-class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartInternalPriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for internal prices for Part model."""
 
     class Meta:
@@ -1035,12 +1038,13 @@ class PartSerializer(
         initial_supplier = validated_data.pop('initial_supplier', None)
         copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
-        instance = super().create(validated_data)
+        # Additional data to apply to the serializer
+        extra_data = {}
 
-        # Save user information
         if request := self.context.get('request'):
-            instance.creation_user = request.user
-            instance.save()
+            extra_data['creation_user'] = request.user
+
+        instance = super().create({**validated_data, **extra_data})
 
         # Copy data from original Part
         if duplicate:

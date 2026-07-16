@@ -6,6 +6,7 @@ from typing import cast
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -36,6 +37,7 @@ from InvenTree.api import (
     BulkDeleteMixin,
     BulkDeleteViewsetMixin,
     BulkUpdateMixin,
+    ListCreateDestroyAPIView,
     ParameterListMixin,
     meta_path,
 )
@@ -672,6 +674,52 @@ class PurchaseOrderLineItemViewSet(
     filterset_class = PurchaseOrderLineItemFilter
     output_options = PurchaseOrderLineItemOutputOptions
 
+    def create(self, request, *args, **kwargs):
+        """Create or update a new PurchaseOrderLineItem object."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = cast(dict, serializer.validated_data)
+
+        # possibly merge duplicate items
+        line_item = None
+        if data.get('merge_items', True):
+            with transaction.atomic():
+                # Lock the matching row, so concurrent line creations cannot
+                # both read the same starting quantity (lost update)
+                other_line = (
+                    models.PurchaseOrderLineItem.objects
+                    .select_for_update()
+                    .filter(
+                        part=data.get('part'),
+                        order=data.get('order'),
+                        target_date=data.get('target_date'),
+                        destination=data.get('destination'),
+                    )
+                    .first()
+                )
+
+                if other_line is not None:
+                    other_line.quantity += Decimal(data.get('quantity', 0))
+                    other_line.save()
+
+                    line_item = other_line
+
+        # otherwise create a new line item
+        if line_item is None:
+            line_item = serializer.save()
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if data.get('auto_pricing', True) and isinstance(
+            line_item, models.PurchaseOrderLineItem
+        ):
+            line_item.update_pricing()
+
+        serializer = serializers.PurchaseOrderLineItemSerializer(line_item)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
@@ -725,43 +773,6 @@ class PurchaseOrderLineItemViewSet(
         # possibly auto-update pricing based on the supplier part pricing data
         if serializer.validated_data.get('auto_pricing', True):
             serializer.instance.update_pricing()
-
-    def create(self, request, *args, **kwargs):
-        """Create or update a new PurchaseOrderLineItem object."""
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = cast(dict, serializer.validated_data)
-
-        # possibly merge duplicate items
-        line_item = None
-        if data.get('merge_items', True):
-            other_line = models.PurchaseOrderLineItem.objects.filter(
-                part=data.get('part'),
-                order=data.get('order'),
-                target_date=data.get('target_date'),
-                destination=data.get('destination'),
-            ).first()
-
-            if other_line is not None:
-                other_line.quantity += Decimal(data.get('quantity', 0))
-                other_line.save()
-                line_item = other_line
-
-        # otherwise create a new line item
-        if line_item is None:
-            line_item = serializer.save()
-
-        # possibly auto-update pricing based on the supplier part pricing data
-        if data.get('auto_pricing', True) and isinstance(
-            line_item, models.PurchaseOrderLineItem
-        ):
-            line_item.update_pricing()
-
-        serializer = serializers.PurchaseOrderLineItemSerializer(line_item)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
 
 order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-line')
@@ -1063,7 +1074,10 @@ class SalesOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class SalesOrderLineItemList(
-    SalesOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    SalesOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
@@ -1107,7 +1121,9 @@ class SalesOrderLineItemDetail(
     output_options = SalesOrderLineItemOutputOptions
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class SalesOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1777,7 +1793,10 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class ReturnOrderLineItemList(
-    ReturnOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    ReturnOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
@@ -1820,7 +1839,9 @@ class ReturnOrderLineItemDetail(
     output_options = ReturnOrderLineItemOutputOptions
 
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class ReturnOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
@@ -2315,7 +2336,10 @@ class TransferOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class TransferOrderLineItemList(
-    TransferOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    TransferOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of TransferOrderLineItem objects."""
 

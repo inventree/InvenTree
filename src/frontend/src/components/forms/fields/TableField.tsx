@@ -26,6 +26,7 @@ import {
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { isEquivalent } from '../../../functions/comparison';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 
@@ -97,42 +98,13 @@ function TableFieldRow({
 }
 
 // Memoize each table field row, so that we don't re-render the entire table when a single row is updated
-function areShallowEqual(previousValue: any, nextValue: any): boolean {
-  if (previousValue === nextValue) {
-    return true;
-  }
-
-  if (!previousValue || !nextValue) {
-    return false;
-  }
-
-  if (typeof previousValue !== 'object' || typeof nextValue !== 'object') {
-    return previousValue === nextValue;
-  }
-
-  const previousKeys = Object.keys(previousValue);
-  const nextKeys = Object.keys(nextValue);
-
-  if (previousKeys.length !== nextKeys.length) {
-    return false;
-  }
-
-  for (const key of previousKeys) {
-    if (previousValue[key] !== nextValue[key]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 const MemoizedTableFieldRow = memo(
   TableFieldRow,
   (previousProps, nextProps) => {
     return (
       previousProps.rowId === nextProps.rowId &&
-      areShallowEqual(previousProps.item, nextProps.item) &&
-      areShallowEqual(previousProps.rowErrors, nextProps.rowErrors) &&
+      isEquivalent(previousProps.item, nextProps.item) &&
+      isEquivalent(previousProps.rowErrors, nextProps.rowErrors) &&
       previousProps.modelRenderer === nextProps.modelRenderer &&
       previousProps.changeFn === nextProps.changeFn &&
       previousProps.removeFn === nextProps.removeFn &&
@@ -388,8 +360,8 @@ export const TableField = memo(
     return (
       previousProps.definition === nextProps.definition &&
       previousProps.fieldName === nextProps.fieldName &&
-      areShallowEqual(previousProps.value, nextProps.value) &&
-      areShallowEqual(previousProps.error, nextProps.error) &&
+      isEquivalent(previousProps.value, nextProps.value) &&
+      isEquivalent(previousProps.error, nextProps.error) &&
       previousProps.onChange === nextProps.onChange
     );
   }

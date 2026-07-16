@@ -5,7 +5,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { eventModified, getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
@@ -37,6 +37,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { extractAvailableFields } from '../../functions/forms';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useLocalState } from '../../states/LocalState';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
@@ -104,6 +105,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const userSettings = useUserSettingsState();
+
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
 
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
@@ -700,6 +705,18 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     tableState.setRecords(tableData ?? apiData ?? []);
   }, [tableData, apiData]);
 
+  const previewDrawer = usePreviewDrawerState();
+
+  // Callback to display "preview" view for a row (if available)
+  const showRowPreview = useCallback(
+    (pk: string | number) => {
+      if (tableProps.modelType && pk) {
+        previewDrawer.openPreview(tableProps.modelType, Number(pk));
+      }
+    },
+    [tableProps.modelType]
+  );
+
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
     ({
@@ -732,11 +749,16 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
           const url = getDetailUrl(tableProps.modelType, pk);
-          navigateToLink(url, navigate, event);
+
+          if (!showPreviewPanel || eventModified(event as any)) {
+            navigateToLink(url, navigate, event);
+          } else {
+            showRowPreview(pk);
+          }
         }
       }
     },
-    [props.onRowClick, props.onCellClick]
+    [props.onRowClick, props.onCellClick, showPreviewPanel]
   );
 
   const supportsContextMenu = useMemo(() => {
@@ -796,7 +818,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         icon: <IconArrowRight />,
         onClick: (event: any) => {
           cancelEvent(event);
-          navigateToLink(url, navigate, event);
+          if (eventModified(event as any)) {
+            navigateToLink(url, navigate, event);
+          } else {
+            showRowPreview(pk);
+          }
         }
       });
     }

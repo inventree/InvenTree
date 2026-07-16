@@ -837,9 +837,7 @@ class BuildAllocationTest(BuildAPITest):
         )
 
         # Test a fractional quantity when the *available* quantity is less than 1
-        si = StockItem.objects.create(
-            part=si.part, quantity=0.3159, tree_id=0, level=0, lft=0, rght=0
-        )
+        si = StockItem.objects.create(part=si.part, quantity=0.3159)
 
         self.post(
             self.url,

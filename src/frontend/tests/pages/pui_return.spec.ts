@@ -14,7 +14,10 @@ test('Return Orders - Receive Items', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'WID-REV-A' }).first().waitFor();
 
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('Select all records')
+    .click();
   await page.getByRole('button', { name: 'action-button-receive-' }).click();
   await page.getByRole('banner').getByText('Receive Items').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
