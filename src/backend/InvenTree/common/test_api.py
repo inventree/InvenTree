@@ -569,6 +569,54 @@ class ParameterAPITests(InvenTreeAPITestCase):
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
 
+    def test_bulk_create_parameters(self):
+        """Test bulk creation of parameters via the API."""
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Test Parameter',
+            description='A parameter template for testing bulk creation',
+            model_type=None,
+        )
+
+        # Generate a set of parts
+        parts = [
+            Part.objects.create(
+                name=f'Test Part {ii}', description='A part for testing'
+            )
+            for ii in range(50)
+        ]
+
+        N = common.models.Parameter.objects.count()
+
+        # Bulk-create parameters
+        response = self.post(
+            reverse('api-parameter-list'),
+            data=[
+                {
+                    'template': template.pk,
+                    'model_type': 'part.part',
+                    'model_id': part.pk,
+                    'data': f'Test data {part.pk}',
+                }
+                for part in parts
+            ],
+            benchmark=True,
+            max_query_count=750,
+            max_query_time=2.0,
+        )
+
+        self.assertEqual(len(response.data), 50)
+
+        # Check that the parameters have been created
+        self.assertEqual(common.models.Parameter.objects.count(), N + len(parts))
+
+        # There should be a parameter for each part
+        for part in parts:
+            self.assertEqual(part.parameters.count(), 1)
+
     def test_parameter_uniqueness(self):
         """Test the uniqueness options which can be applied to a ParameterTemplate."""
         from company.models import Company
