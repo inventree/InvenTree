@@ -1,5 +1,9 @@
 import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -28,6 +32,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
 import {
   PARAMETER_FILTER_OPERATORS,
@@ -471,9 +476,12 @@ export default function ParametricDataTable({
               const col = column as any;
               onParameterClick(col.extra.template, record);
             } else if (record?.pk) {
-              // Navigate through to the detail page
               const url = getDetailUrl(modelType, record.pk);
-              navigateToLink(url, navigate, event);
+              if (eventModified(event as any)) {
+                navigateToLink(url, navigate, event);
+              } else {
+                openGlobalPreview(modelType, record.pk);
+              }
             }
           }
         }}

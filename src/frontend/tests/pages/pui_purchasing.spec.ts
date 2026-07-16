@@ -179,7 +179,7 @@ test('Purchase Orders - General', async ({ browser }) => {
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByRole('cell', { name: 'PO0012' }).click();
-  await page.waitForTimeout(200);
+  await page.waitForLoadState('networkidle');
 
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Received Stock');
@@ -507,7 +507,12 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await loadTab(page, 'Line Items');
 
   await page.getByRole('cell', { name: '002.02-PCB' }).waitFor();
-  await page.getByLabel('Select all records').click();
+
+  // Select all line items to receive
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('Select all records')
+    .click();
   await page.waitForTimeout(100);
   await page.getByLabel('action-button-receive-items').click();
 
@@ -619,7 +624,10 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
   await loadTab(page, 'Line Items');
   await page.getByRole('cell', { name: 'Thumbnail CRM license' }).waitFor();
 
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('Select all records')
+    .click();
   await page
     .getByRole('button', { name: 'action-button-receive-items' })
     .click();

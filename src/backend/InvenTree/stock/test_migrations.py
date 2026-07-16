@@ -584,3 +584,82 @@ class TestCreationDateMigration(MigratorTestCase):
         # Scenario 6: updated=NULL, no stocktake, no tracking → creation_date stays NULL
         item = StockItem.objects.get(pk=self.pk_s6)
         self.assertIsNone(item.creation_date)
+
+
+class TestRemoveMpttFieldsMigration(MigratorTestCase):
+    """Test data migration which removes MPTT fields (level, lft, rght, tree_id) from StockItem.
+
+    The 'parent' field itself is untouched by this migration - only the MPTT
+    bookkeeping fields are removed. This test ensures that parent-child
+    relationships between StockItem objects survive the migration boundary.
+    """
+
+    migrate_from = ('stock', '0123_remove_stockitem_review_needed')
+    migrate_to = ('stock', '0125_remove_mptt_fields')
+
+    def prepare(self):
+        """Create a tree of StockItem objects with parent-child relationships."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+
+        part = Part.objects.create(
+            name='Migration Test Part', level=0, tree_id=0, lft=0, rght=0
+        )
+
+        # Root stock item, with no parent
+        root = StockItem.objects.create(
+            part=part, quantity=100, level=0, tree_id=0, lft=0, rght=0
+        )
+
+        # A set of child items, parented to the root item
+        children = [
+            StockItem.objects.create(
+                part=part, quantity=10, parent=root, level=1, tree_id=0, lft=0, rght=0
+            )
+            for _ in range(3)
+        ]
+
+        # A grandchild item, parented to the first child item
+        grandchild = StockItem.objects.create(
+            part=part, quantity=1, parent=children[0], level=2, tree_id=0, lft=0, rght=0
+        )
+
+        # An unrelated top-level item, with no parent
+        orphan = StockItem.objects.create(
+            part=part, quantity=5, level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.root_pk = root.pk
+        self.child_pks = [child.pk for child in children]
+        self.grandchild_pk = grandchild.pk
+        self.orphan_pk = orphan.pk
+
+        self.assertEqual(StockItem.objects.count(), 6)
+
+    def test_migration(self):
+        """Test that parent associations are preserved after MPTT fields are removed."""
+        StockItem = self.new_state.apps.get_model('stock', 'stockitem')
+
+        self.assertEqual(StockItem.objects.count(), 6)
+
+        # The MPTT bookkeeping fields should no longer exist on the model
+        field_names = {field.name for field in StockItem._meta.get_fields()}
+        for removed_field in ['level', 'lft', 'rght', 'tree_id']:
+            self.assertNotIn(removed_field, field_names)
+
+        # The root item still has no parent
+        root = StockItem.objects.get(pk=self.root_pk)
+        self.assertIsNone(root.parent_id)
+
+        # Each child item is still correctly parented to the root item
+        for pk in self.child_pks:
+            child = StockItem.objects.get(pk=pk)
+            self.assertEqual(child.parent_id, self.root_pk)
+
+        # The grandchild item is still correctly parented to the first child item
+        grandchild = StockItem.objects.get(pk=self.grandchild_pk)
+        self.assertEqual(grandchild.parent_id, self.child_pks[0])
+
+        # The orphan item still has no parent
+        orphan = StockItem.objects.get(pk=self.orphan_pk)
+        self.assertIsNone(orphan.parent_id)
