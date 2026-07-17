@@ -19,6 +19,7 @@ from typing import Optional
 import invoke
 from invoke import Collection, task
 from invoke.exceptions import Exit, UnexpectedExit
+from cli_error_handling import build_structured_error, format_structured_error
 
 
 def safe_value(fnc):
