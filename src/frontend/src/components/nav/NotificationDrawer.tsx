@@ -49,18 +49,23 @@ function NotificationEntry({
 
   let link = notification.target?.link;
 
+  const isExternal =
+    link?.startsWith('http://') || link?.startsWith('https://');
+
   const model_type = notification.target?.model_type;
   const model_id = notification.target?.model_id;
 
   // If a valid model type is provided, that overrides the specified link
   if (model_type as ModelType) {
     const model_info = ModelInformationDict[model_type as ModelType];
-    if (model_info?.url_detail && model_id) {
+    if (model_info?.url_detail && model_id && !isExternal) {
       link = getDetailUrl(model_type as ModelType, model_id);
-    } else if (model_info?.url_overview) {
+    } else if (model_info?.url_overview && !isExternal) {
       link = model_info.url_overview;
     }
   }
+
+  const href = isExternal ? link : link ? `/${getBaseUrl()}${link}` : '#';
 
   return (
     <Paper p='xs' shadow='xs'>
@@ -72,7 +77,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              href={href}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {
@@ -81,7 +86,7 @@ function NotificationEntry({
                   onRead();
                 }
 
-                if (link.startsWith('/')) {
+                if (link?.startsWith('/')) {
                   navigateToLink(link, navigate, event);
                 }
               }}

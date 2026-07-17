@@ -1,7 +1,9 @@
 """Unit tests for task management."""
 
+import json
 import os
 from datetime import timedelta
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,7 +17,7 @@ from django_q.models import OrmQ, Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
-from common.models import InvenTreeSetting, InvenTreeUserSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationEntry, NotificationMessage
 from InvenTree.unit_test import PluginRegistryMixin
 
 threshold = timezone.now() - timedelta(days=30)
@@ -167,6 +169,47 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         # Check that it is empty again
         errors = Error.objects.filter(when__lte=threshold)
         self.assertEqual(len(errors), 0)
+
+    @mock.patch('InvenTree.tasks.check_daily_holdoff', return_value=True)
+    @mock.patch('InvenTree.tasks.requests.get')
+    def test_task_check_for_updates_notification(self, mock_get, mock_holdoff):
+        """Test update notification path for check_for_updates (#12399)."""
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.text = json.dumps(
+            {
+                'tag_name': '9.9.9',
+                'html_url': 'https://github.com/inventree/InvenTree/releases/tag/9.9.9',
+            }
+        )
+
+        NotificationMessage.objects.filter(category='update_available').delete()
+        NotificationEntry.objects.filter(key='update_available').delete()
+
+        InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION', '')
+        InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION_URL', '')
+
+        self.assertTrue(User.objects.filter(is_superuser=True).exists())
+
+        InvenTree.tasks.check_for_updates()
+
+        self.assertEqual(InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '9.9.9')
+        self.assertEqual(
+            InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION_URL'),
+            'https://github.com/inventree/InvenTree/releases/tag/9.9.9',
+        )
+        self.assertEqual(
+            NotificationMessage.objects.filter(category='update_available').count(), 1
+        )
+        self.assertEqual(NotificationEntry.objects.filter(key='update_available').count(), 1)
+
+        entry = NotificationEntry.objects.get(key='update_available')
+        self.assertIsNotNone(entry.uid)
+
+        # Second run should be deduplicated within the notification window
+        InvenTree.tasks.check_for_updates()
+        self.assertEqual(
+            NotificationMessage.objects.filter(category='update_available').count(), 1
+        )
 
     def test_task_check_for_updates(self):
         """Test the task check_for_updates."""

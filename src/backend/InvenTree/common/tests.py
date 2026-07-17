@@ -22,7 +22,7 @@ from django.urls import reverse
 from PIL import Image
 
 import common.validators
-from common.notifications import trigger_notification
+from common.notifications import notification_dedup_uid, trigger_notification
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import (
@@ -1461,6 +1461,46 @@ class NotificationTest(InvenTreeAPITestCase):
             trigger_notification(
                 grp, category='core', context={'name': 'test'}, targets=[self.user]
             )
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+        self.assertIn('as recently been sent for', str(cm[1]))
+
+    def test_global_notification_dedup_uid(self):
+        """Test global notifications with explicit dedup UID (#12399)."""
+        from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
+
+        NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
+
+        uid = notification_dedup_uid('update_available:9.9.9')
+
+        trigger_notification(
+            None,
+            'update_available',
+            targets=[self.user],
+            delivery_methods={InvenTreeUINotifications},
+            dedup_uid=uid,
+            context={
+                'name': 'Update Available',
+                'message': 'Test update',
+                'link': 'https://github.com/inventree/InvenTree/releases/tag/9.9.9',
+            },
+        )
+
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+        self.assertEqual(NotificationEntry.objects.count(), 1)
+        entry = NotificationEntry.objects.get(key='update_available')
+        self.assertEqual(entry.uid, uid)
+
+        with self.assertLogs(logger='inventree') as cm:
+            trigger_notification(
+                None,
+                'update_available',
+                targets=[self.user],
+                delivery_methods={InvenTreeUINotifications},
+                dedup_uid=uid,
+                context={'name': 'Update Available', 'message': 'Test update'},
+            )
+
         self.assertEqual(NotificationMessage.objects.count(), 1)
         self.assertIn('as recently been sent for', str(cm[1]))
 

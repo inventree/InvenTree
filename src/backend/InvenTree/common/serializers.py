@@ -316,6 +316,14 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
     def get_target(self, obj) -> dict:
         """Function to resolve generic object reference to target."""
+        if obj.category == 'update_available':
+            from common.settings import get_global_setting
+
+            link = get_global_setting('_INVENTREE_LATEST_VERSION_URL', create=False)
+
+            if link:
+                return {'link': link, 'name': obj.name}
+
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:

@@ -1,5 +1,6 @@
 """Base classes and functions for notifications."""
 
+import zlib
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Optional
@@ -19,6 +20,11 @@ from users.models import Owner
 from users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
+
+
+def notification_dedup_uid(value: str) -> int:
+    """Return a stable positive integer UID for notification deduplication."""
+    return zlib.crc32(value.encode('utf-8')) & 0x7FFFFFFF
 
 
 # region methods
@@ -105,6 +111,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods')
     check_recent = kwargs.get('check_recent', True)
+    dedup_uid = kwargs.get('dedup_uid')
 
     # Resolve object reference
     refs = [obj_ref, 'pk', 'id', 'uid']
@@ -122,12 +129,16 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
             raise KeyError(
                 f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
             )
+    elif dedup_uid is not None:
+        obj_ref_value = dedup_uid
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if check_recent and common.models.NotificationEntry.check_recent(
-        category, obj_ref_value, delta
+    if (
+        check_recent
+        and obj_ref_value is not None
+        and common.models.NotificationEntry.check_recent(category, obj_ref_value, delta)
     ):
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
@@ -214,5 +225,5 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
             log_error('send_notification', plugin=plugin.slug)
 
     # Log the notification entry
-    if result:
+    if result and obj_ref_value is not None:
         common.models.NotificationEntry.notify(category, obj_ref_value)

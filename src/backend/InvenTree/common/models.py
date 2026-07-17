@@ -1670,6 +1670,12 @@ class NotificationEntry(MetaMixin):
     @classmethod
     def notify(cls, key: str, uid: int):
         """Notify the database that a particular notification has been sent out."""
+        if uid is None:
+            logger.warning(
+                "Skipping NotificationEntry for key=%s with NULL uid", key
+            )
+            return
+
         entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
         entry.save()

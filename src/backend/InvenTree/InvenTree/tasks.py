@@ -815,7 +815,7 @@ def delete_old_emails():
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        from common.notifications import trigger_notification
+        from common.notifications import notification_dedup_uid, trigger_notification
         from plugin.builtin.integration.core_notifications import (
             InvenTreeUINotifications,
         )
@@ -856,6 +856,7 @@ def check_for_updates():
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
+    html_url = data.get('html_url', None)
 
     if not tag:
         raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
@@ -876,8 +877,8 @@ def check_for_updates():
     # Save the version to the database
     set_global_setting('_INVENTREE_LATEST_VERSION', tag, None)
 
-    # Record that this task was successful
-    record_task_success('check_for_updates')
+    if html_url:
+        set_global_setting('_INVENTREE_LATEST_VERSION_URL', html_url, None)
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
@@ -887,11 +888,18 @@ def check_for_updates():
             'update_available',
             targets=get_user_model().objects.filter(is_superuser=True),
             delivery_methods={InvenTreeUINotifications},
+            dedup_uid=notification_dedup_uid(f'update_available:{tag}'),
             context={
                 'name': _('Update Available'),
-                'message': _('An update for InvenTree is available'),
+                'message': _('An update for InvenTree is available: {version}').format(
+                    version=tag
+                ),
+                'link': html_url,
             },
         )
+
+    # Record that this task was successful
+    record_task_success('check_for_updates')
 
 
 @tracer.start_as_current_span('update_exchange_rates')
