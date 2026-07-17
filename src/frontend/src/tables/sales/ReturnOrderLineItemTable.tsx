@@ -16,6 +16,20 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  DateColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  NoteColumn,
+  PartColumn,
+  ProjectCodeColumn,
+  ReferenceColumn,
+  StatusColumn,
+  StockColumn
+} from '../../components/tables/ColumnRenderers';
+import { StatusFilterOptions } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   useReceiveReturnOrderLineItems,
@@ -28,20 +42,6 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DescriptionColumn,
-  LineItemColumn,
-  LinkColumn,
-  NoteColumn,
-  PartColumn,
-  ProjectCodeColumn,
-  ReferenceColumn,
-  StatusColumn,
-  StockColumn
-} from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -274,6 +274,9 @@ export default function ReturnOrderLineItemTable({
           defaultSortColumn: 'line',
           enableSelection:
             inProgress && user.hasChangeRole(UserRoles.return_order),
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.return_order),
+          afterBulkDelete: orderDetailRefresh,
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,

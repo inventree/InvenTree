@@ -55,6 +55,7 @@ export default function UserSettings() {
               'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'STICKY_TABLE_HEADER',
+              'ENABLE_PREVIEW_PANEL',
               'SHOW_SPOTLIGHT',
               'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',

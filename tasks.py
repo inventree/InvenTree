@@ -1070,10 +1070,13 @@ def listbackups(c):
     },
 )
 @state_logger
-def migrate(c, detect: bool = True, verbose: bool = False):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
@@ -1840,6 +1843,7 @@ def test(
 @task(
     help={
         'dev': 'Set up development environment at the end',
+        'keep': 'Keep existing demo dataset (do not re-clone)',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone (default = main)',
@@ -1848,12 +1852,13 @@ def test(
 )
 def setup_test(
     c,
-    ignore_update=False,
-    dev=False,
-    validate_files=False,
-    use_ssh=False,
-    verbose=False,
-    path='inventree-demo-dataset',
+    ignore_update: bool = False,
+    dev: bool = False,
+    keep: bool = False,
+    validate_files: bool = False,
+    use_ssh: bool = False,
+    verbose: bool = False,
+    path: str = 'inventree-demo-dataset',
     branch='main',
 ):
     """Setup a testing environment."""
@@ -1866,19 +1871,20 @@ def setup_test(
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
-    if template_dir.exists():
-        run(c, f'rm {template_dir} -r')
+    if not keep:
+        # Remove old data directory
+        if template_dir.exists():
+            run(c, f'rm {template_dir} -r')
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+        # Get test data
+        info('Cloning demo dataset ...')
+        run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:

@@ -26,11 +26,11 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderUser } from '../../components/render/User';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Render detail information for a particular barcode scan result.

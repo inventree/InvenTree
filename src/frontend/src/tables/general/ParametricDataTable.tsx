@@ -1,4 +1,9 @@
 import { cancelEvent } from '@lib/functions/Events';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -7,9 +12,7 @@ import {
   UserRoles,
   YesNoButton,
   apiUrl,
-  formatDecimal,
-  getDetailUrl,
-  navigateToLink
+  formatDecimal
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
@@ -20,6 +23,8 @@ import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useParameterFields } from '../../forms/CommonForms';
@@ -27,9 +32,8 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import {
   PARAMETER_FILTER_OPERATORS,
   ParameterFilter
@@ -472,9 +476,12 @@ export default function ParametricDataTable({
               const col = column as any;
               onParameterClick(col.extra.template, record);
             } else if (record?.pk) {
-              // Navigate through to the detail page
               const url = getDetailUrl(modelType, record.pk);
-              navigateToLink(url, navigate, event);
+              if (eventModified(event as any)) {
+                navigateToLink(url, navigate, event);
+              } else {
+                openGlobalPreview(modelType, record.pk);
+              }
             }
           }
         }}

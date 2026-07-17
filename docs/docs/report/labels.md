@@ -128,6 +128,25 @@ As an example, consider a label template for a StockItem. A user may wish to def
 
 To restrict the label accordingly, we could set the *filters* value to `part__IPN=IPN123`.
 
+## Printing Labels
+
+Labels are printed directly from the web interface, from the pages where the target items are displayed. To print labels against one or more items:
+
+1. Select the items to print - either from a table (using the row checkboxes), or by viewing the detail page of a single item
+2. Select the *Print* action, and choose the *Print Label* option
+3. Select the desired label template - only *enabled* templates which match the selected model type (and pass any template filters) are available for selection
+4. Select the *printer* (plugin) to use for printing the labels
+
+### Label Printing Plugins
+
+The actual printing of labels is handled by a [label printing plugin](../plugins/mixins/label.md). InvenTree provides a number of built-in printing plugins:
+
+- The default [InvenTree Label Printer](../plugins/builtin/inventree_label.md) plugin generates a PDF file, which is then made available for download.
+- The [Label Sheet](../plugins/builtin/inventree_label_sheet.md) plugin arranges multiple labels onto a single sheet for printing.
+- The [Label Machine](../plugins/builtin/inventree_label_machine.md) plugin sends the label to an external [label printer machine](../plugins/machines/label_printer.md).
+
+Custom label printing plugins (e.g. for driving a specific hardware printer) can be installed to extend this list - refer to the [label mixin documentation](../plugins/mixins/label.md) for further information.
+
 ## Built-In Templates
 
 The InvenTree installation provides a number of simple *default* templates which can be used as a starting point for creating custom labels. These built-in templates can be disabled if they are not required.

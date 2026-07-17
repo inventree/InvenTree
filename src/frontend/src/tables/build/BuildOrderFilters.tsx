@@ -25,7 +25,7 @@ import {
   TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 /**
  * Generate a set of common filters for the build order views
