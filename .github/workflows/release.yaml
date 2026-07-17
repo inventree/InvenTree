@@ -20,7 +20,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Version Check
@@ -28,7 +28,7 @@ jobs:
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # pin@v1.3.0
+        uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # v1.3.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
       artifact-metadata: write
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -57,7 +57,7 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # pin@v0
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
@@ -75,7 +75,7 @@ jobs:
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # pin@v4
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
@@ -85,7 +85,7 @@ jobs:
           REF: ${{ github.ref_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload frontend to artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
@@ -115,7 +115,7 @@ jobs:
       INVENTREE_DEBUG: true
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -156,12 +156,12 @@ jobs:
           - debian:13
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Get frontend artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: frontend-build
       - name: Setup
@@ -216,7 +216,7 @@ jobs:
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Package - current release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
         id: package
         with:
           target: ${{ matrix.target }}
@@ -234,7 +234,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - current release channel
-        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
@@ -249,7 +249,7 @@ jobs:
           PACKAGE_NAME: ${{ matrix.target }}-${{ steps.setup.outputs.version }}.tar.gz
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package - stable release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
         id: package-stable
         with:
           target: ${{ matrix.target }}
@@ -267,7 +267,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - stable release channel
-        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}

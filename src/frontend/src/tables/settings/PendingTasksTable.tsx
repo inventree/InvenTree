@@ -10,8 +10,8 @@ import type { TableColumn } from '@lib/types/Tables';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconTrashXFilled, IconX } from '@tabler/icons-react';
 import { api } from '../../App';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PendingTasksTable({
   onRecordsUpdated

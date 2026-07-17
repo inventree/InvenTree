@@ -21,7 +21,7 @@ import {
   TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 export default function TransferOrderFilters({
   partId,

@@ -13,6 +13,12 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/index';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  ResponsibleColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { projectCodeFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -20,12 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  DescriptionColumn,
-  ResponsibleColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of project codes

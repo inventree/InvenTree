@@ -874,6 +874,7 @@ class ParameterTemplateSerializer(
             'choices',
             'selectionlist',
             'enabled',
+            'unique',
         ]
 
     # Note: The choices are overridden at run-time on class initialization
@@ -946,9 +947,7 @@ class ParameterSerializer(
         if not target_model_class.check_related_permission('change', user):
             raise PermissionDenied(permission_error_msg)
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save()
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 

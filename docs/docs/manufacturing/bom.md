@@ -50,6 +50,8 @@ In the example below, see that the *Wood Screw* line item is marked as consumabl
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
 
+Marking a BOM line item as consumable is a per-assembly override - it only affects how the part is treated within *this* particular BOM, and does not change the underlying part definition. A part can also be marked as consumable directly - refer to the [consumable parts documentation](../part/consumable.md) for more information on the distinction between the two, and reasons why a part may be marked as consumable.
+
 ### Optional BOM Line Items
 
 If a BOM line item is marked as *optional*, this means that the part and quantity information is tracked in the BOM, but this line item is not required to be allocated to a [Build Order](./build.md). This may be useful for certain items which are not strictly required for the build process to be completed.

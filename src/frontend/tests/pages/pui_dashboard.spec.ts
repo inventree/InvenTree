@@ -159,8 +159,6 @@ test('Dashboard - Preserve widget sizes', async ({ browser }) => {
   for (const [bp, items] of Object.entries(await readLayouts(page))) {
     const entry = (items as any[]).find((i) => i?.i === 'ovr-so');
 
-    console.log('entry:', bp, entry);
-
     expect(entry?.w, `${bp}: ovr-so missing or wrong w`).toBe(TARGET_W);
     expect(entry?.h, `${bp}: ovr-so missing or wrong h`).toBe(TARGET_H);
   }

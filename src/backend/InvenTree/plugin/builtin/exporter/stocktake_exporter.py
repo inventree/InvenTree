@@ -49,7 +49,7 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
     SLUG = 'inventree-stocktake-exporter'
     TITLE = _('Part Stocktake Exporter')
     DESCRIPTION = _('Exporter for part stocktake data')
-    VERSION = '1.1.0'
+    VERSION = '1.1.1'
     AUTHOR = _('InvenTree contributors')
 
     ExportOptionsSerializer = PartStocktakeExportOptionsSerializer
@@ -155,6 +155,9 @@ class PartStocktakeExporter(DataExportMixin, InvenTreePlugin):
 
                 if exclude_zero_stock:
                     continue
+
+            # Update the 'total in stock' count for this row
+            row['total_in_stock'] = float(quantity)
 
             if export_pricing_data:
                 pricing_min = row.get('pricing_min', None) or row.get(
