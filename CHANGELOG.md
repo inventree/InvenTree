@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12124](https://github.com/inventree/InvenTree/pull/12124) adds Docker Compose health checks for production deployments, allowing container orchestrators and monitoring tools to detect stalled services such as the background worker
 - [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders
 - [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
 - [#12310](https://github.com/inventree/InvenTree/pull/12310) adds the ability to disassemble (or break apart) assembled stock items into their component parts, based on the Bill of Materials (BOM) associated with the stock item. This allows users to easily break down assembled items into their constituent parts, which can be useful for inventory management and tracking purposes.
