@@ -55,6 +55,12 @@ services:
             # Map 'data' volume such that postgres database is stored externally
             - ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}:/var/lib/postgresql/data/:z
         restart: unless-stopped
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
 
     # redis acts as database cache manager
     inventree-cache:
@@ -67,6 +73,12 @@ services:
         volumes:
             - ${INVENTREE_EXT_VOLUME}/redis:/data
         restart: always
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
 
     # InvenTree web server service
     # Uses gunicorn as the web server
@@ -78,8 +90,10 @@ services:
         expose:
             - ${INVENTREE_WEB_PORT:-8000}
         depends_on:
-            - inventree-db
-            - inventree-cache
+            inventree-db:
+                condition: service_healthy
+            inventree-cache:
+                condition: service_healthy
         env_file:
             - .env
         environment:
@@ -88,6 +102,12 @@ services:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -fsS "http://127.0.0.1:$${INVENTREE_WEB_PORT:-8000}/api/system/health/" | grep -Fq ''"status": "ok"''']
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 90s
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
@@ -96,13 +116,20 @@ services:
         container_name: inventree-worker
         command: invoke worker
         depends_on:
-            - inventree-server
+            inventree-server:
+                condition: service_healthy
         env_file:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
+        healthcheck:
+            test: ['CMD-SHELL', 'python3 -c "import time; from pathlib import Path; p=Path(''/tmp/inventree_worker_heartbeat''); ts=float(p.read_text()) if p.is_file() else 0; exit(0 if ts and time.time()-ts < 900 else 1)"']
+            interval: 60s
+            timeout: 10s
+            retries: 3
+            start_period: 120s
 
     # caddy acts as reverse proxy and static file server
     # You can adjust the ports that the proxy listens on via the .env file
@@ -112,7 +139,8 @@ services:
         image: caddy:alpine
         restart: always
         depends_on:
-            - inventree-server
+            inventree-server:
+                condition: service_healthy
         ports:
             - ${INVENTREE_HTTP_PORT:-80}:80
             - ${INVENTREE_HTTPS_PORT:-443}:443
