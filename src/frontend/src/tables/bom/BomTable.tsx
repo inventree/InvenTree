@@ -251,6 +251,32 @@ export function BomTable({
         }
       },
       {
+        accessor: 'piece_count',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const piece_count = record.piece_count;
+          if (piece_count == null || piece_count <= 1) {
+            return '-';
+          } else {
+            return <Text size='xs'>{piece_count}</Text>;
+          }
+        }
+      },
+      {
+        accessor: 'piece_size',
+        defaultVisible: false,
+        sortable: false,
+        render: (record: any) => {
+          const piece_size = record.piece_size;
+          if (!piece_size) {
+            return '-';
+          } else {
+            return <Text size='xs'>{piece_size}</Text>;
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
         render: (row: any) => {
