@@ -174,6 +174,41 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.supplier_price_max)
 
     @override_settings(TESTING_PRICING=True)
+    def test_supplier_part_pack_quantity_update(self):
+        """Test that changing pack_quantity on a SupplierPart triggers pricing recalculation."""
+        pricing = self.part.pricing
+
+        supplier = company.models.Company.objects.create(
+            name='Pack Test Supplier', is_supplier=True
+        )
+
+        sp = company.models.SupplierPart.objects.create(
+            supplier=supplier,
+            part=self.part,
+            SKU='PACK_TEST',
+            pack_quantity='1',
+        )
+
+        company.models.SupplierPriceBreak.objects.create(
+            part=sp, quantity=1, price=50, price_currency='USD'
+        )
+
+        pricing.refresh_from_db()
+
+        # Price per unit should be $50 / 1 = $50
+        self.assertEqual(pricing.supplier_price_min, Money(50, 'USD'))
+
+        # Now update pack_quantity to 100 (i.e. 100 units per pack)
+        sp.pack_quantity = '100'
+        sp.save()
+
+        pricing.refresh_from_db()
+
+        # Price per unit should now be $50 / 100 = $0.50
+        self.assertEqual(pricing.supplier_price_min, Money('0.5', 'USD'))
+        self.assertEqual(pricing.supplier_price_max, Money('0.5', 'USD'))
+
+    @override_settings(TESTING_PRICING=True)
     def test_internal_pricing(self):
         """Tests for internal price breaks."""
         # Ensure internal pricing is enabled
