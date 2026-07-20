@@ -18,6 +18,7 @@ import report.models as report_models
 from build.models import Build
 from common.models import Attachment
 from common.settings import set_global_setting
+from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
@@ -1073,3 +1074,20 @@ class URLFetcherTest(TestCase):
         with patch('weasyprint.urls.URLFetcher.fetch', return_value={}):
             self.fetcher.fetch('data:image/png;base64,abc123')
             self.fetcher.fetch('data:text/css;base64,abc123')
+
+
+class DefaultTemplateFileTest(TestCase):
+    """Unit tests for building the default report and label template files."""
+
+    def test_file_size_matches_bytes(self):
+        """file_from_template must size the ContentFile by byte length.
+
+        Reading the template in text mode makes the size a character count,
+        which is smaller than the byte length for multi-byte content and breaks
+        uploads to S3 backends that enforce Content-Length.
+        """
+        config = apps.get_app_config('report')
+        filename = 'inventree_transfer_order_report.html'
+        content_file = config.file_from_template('report', filename)
+        path = get_base_dir().joinpath('report', 'templates', 'report', filename)
+        self.assertEqual(content_file.size, path.stat().st_size)
