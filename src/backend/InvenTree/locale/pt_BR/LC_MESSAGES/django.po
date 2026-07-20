@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-16 04:25+0000\n"
-"PO-Revision-Date: 2026-07-16 04:28\n"
+"PO-Revision-Date: 2026-07-16 21:55\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -51,7 +51,7 @@ msgstr "Este campo deve ser único."
 
 #: InvenTree/api.py:614
 msgid "Item no longer matches the provided criteria"
-msgstr ""
+msgstr "O item não corresponde mais aos critérios fornecidos"
 
 #: InvenTree/api.py:861 InvenTree/models.py:1446
 msgid "User does not have permission to view this model"
@@ -3520,11 +3520,11 @@ msgstr "Padrão obrigatório para gerar o campo de referência do pedido de tran
 
 #: common/setting/system.py:955
 msgid "Edit Completed Transfer Orders"
-msgstr ""
+msgstr "Editar pedidos de transferência concluídos"
 
 #: common/setting/system.py:957
 msgid "Allow editing of transfer orders after they have been completed"
-msgstr ""
+msgstr "Permitir a edição de pedidos de transferência depois de concluídos"
 
 #: common/setting/system.py:963
 msgid "Block Incomplete Item Tests"
