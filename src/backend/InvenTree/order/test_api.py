@@ -3583,7 +3583,7 @@ class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
     """Unit tests for the 'total_price' field on ExtraLine API endpoints.
 
     Covers PurchaseOrderExtraLine, SalesOrderExtraLine and ReturnOrderExtraLine,
-    which all share the same 'total_price' annotation via AbstractExtraLineSerializer.
+    which all share the same 'total_price' field via AbstractExtraLineSerializer.
     """
 
     fixtures = [

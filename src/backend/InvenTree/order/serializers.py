@@ -342,19 +342,6 @@ class AbstractExtraLineSerializer(
             *extra_fields,
         ]
 
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Add annotations to the queryset.
-
-        - total_price: price * quantity, adjusted for the line discount
-        """
-        return queryset.annotate(
-            total_price=ExpressionWrapper(
-                F('price') * F('quantity') * (1 - F('discount') / Decimal(100)),
-                output_field=models.DecimalField(),
-            )
-        )
-
     quantity = serializers.FloatField()
 
     discount = InvenTreeDecimalField(required=False)
@@ -363,7 +350,9 @@ class AbstractExtraLineSerializer(
 
     price_currency = InvenTreeCurrencySerializer()
 
-    total_price = serializers.FloatField(read_only=True)
+    total_price = InvenTreeMoneySerializer(
+        source='total_line_price', allow_null=True, read_only=True
+    )
 
     project_code_label = common.filters.enable_project_label_filter()
 
@@ -610,7 +599,6 @@ class PurchaseOrderLineItemSerializer(
     def annotate_queryset(queryset):
         """Add some extra annotations to this queryset.
 
-        - "total_price" = purchase_price * quantity
         - "overdue" status (boolean field)
         """
         queryset = queryset.prefetch_related(
@@ -624,15 +612,6 @@ class PurchaseOrderLineItemSerializer(
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
-        )
-
-        queryset = queryset.annotate(
-            total_price=ExpressionWrapper(
-                F('purchase_price')
-                * F('quantity')
-                * (1 - F('discount') / Decimal(100)),
-                output_field=models.DecimalField(),
-            )
         )
 
         queryset = queryset.annotate(
@@ -675,7 +654,9 @@ class PurchaseOrderLineItemSerializer(
 
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
-    total_price = serializers.FloatField(read_only=True)
+    total_price = InvenTreeMoneySerializer(
+        source='total_line_price', allow_null=True, read_only=True
+    )
 
     part_detail = OptionalField(
         serializer_class=PartBriefSerializer,
