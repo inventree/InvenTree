@@ -212,6 +212,38 @@ class PluginsRegistry:
 
         return plg
 
+    def get_plugin_configs(self) -> Optional[dict[str, Any]]:
+        """Return a per-request cached mapping of {slug: PluginConfig} for all plugins.
+
+        This is a general-purpose cache, shared by any registry method which needs to
+        look up (potentially many) PluginConfig instances - e.g. get_plugin_config(),
+        with_mixin(), calculate_plugin_hash() - so that a single request only ever
+        pre-fetches the full PluginConfig table once, rather than issuing a
+        per-plugin database query.
+
+        Returns:
+            dict[str, PluginConfig]: Mapping of plugin slug to PluginConfig instance.
+            None if the database is not ready to be queried.
+        """
+        # As we have already checked the registry hash, this is a valid cache key
+        cache_key = f'plugin_configs:{self.registry_hash}'
+
+        configs = InvenTree.cache.get_session_cache(cache_key)
+
+        if configs is None:
+            try:
+                # Pre-fetch the PluginConfig objects to avoid multiple database queries
+                from plugin.models import PluginConfig
+
+                configs = {config.key: config for config in PluginConfig.objects.all()}
+                InvenTree.cache.set_session_cache(cache_key, configs)
+            except (ProgrammingError, OperationalError):
+                # The database is not ready yet
+                logger.warning('plugin.registry.get_plugin_configs: Database not ready')
+                return None
+
+        return configs
+
     def get_plugin_config(self, slug: str, name: str | None = None):
         """Return the matching PluginConfig instance for a given plugin.
 
@@ -222,29 +254,39 @@ class PluginsRegistry:
         import InvenTree.ready
         from plugin.models import PluginConfig
 
-        # Under certain circumstances, we want to avoid creating new PluginConfig instances in the database
-        can_create = (
-            InvenTree.ready.canAppAccessDatabase(
-                allow_plugins=False, allow_shell=True, allow_test=True
-            )
-            and not InvenTree.ready.isReadOnlyCommand()
-        )
+        configs = self.get_plugin_configs()
+        cfg = configs.get(slug) if configs is not None else None
 
-        try:
-            cfg = PluginConfig.objects.filter(key=slug).first()
-
-            if not cfg and can_create:
-                logger.debug(
-                    "get_plugin_config: Creating new PluginConfig for '%s'", slug
+        if not cfg:
+            # Under certain circumstances, we want to avoid creating new PluginConfig instances in the database
+            can_create = (
+                InvenTree.ready.canAppAccessDatabase(
+                    allow_plugins=False, allow_shell=True, allow_test=True
                 )
-                cfg = PluginConfig.objects.create(key=slug)
+                and not InvenTree.ready.isReadOnlyCommand()
+            )
 
-        except PluginConfig.DoesNotExist:  # pragma: no cover
-            return None
-        except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
-            return None
+            try:
+                cfg = PluginConfig.objects.filter(key=slug).first()
 
-        if name and cfg.name != name:
+                if not cfg and can_create:
+                    logger.debug(
+                        "get_plugin_config: Creating new PluginConfig for '%s'", slug
+                    )
+                    cfg = PluginConfig.objects.create(key=slug)
+
+            except (
+                IntegrityError,
+                OperationalError,
+                ProgrammingError,
+            ):  # pragma: no cover
+                return None
+
+            if cfg is not None and configs is not None:
+                # Backfill the cache, so repeated lookups this request are free
+                configs[slug] = cfg
+
+        if cfg and name and cfg.name != name:
             # Update the name if it has changed
             try:
                 cfg.name = name
@@ -313,25 +355,12 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        # We can store the PluginConfig objects against the session cache,
-        # which allows us to avoid hitting the database multiple times (per session)
-        # As we have already checked the registry hash, this is a valid cache key
-        cache_key = f'plugin_configs:{self.registry_hash}'
-
-        configs = InvenTree.cache.get_session_cache(cache_key)
-
-        if not configs:
-            try:
-                # Pre-fetch the PluginConfig objects to avoid multiple database queries
-                from plugin.models import PluginConfig
-
-                plugin_configs = PluginConfig.objects.all()
-                configs = {config.key: config for config in plugin_configs}
-                InvenTree.cache.set_session_cache(cache_key, configs)
-            except (ProgrammingError, OperationalError):
-                # The database is not ready yet
-                logger.warning('plugin.registry.with_mixin: Database not ready')
-                return []
+        # Pre-fetch (and cache) the PluginConfig objects, to avoid hitting the
+        # database multiple times (per plugin) below
+        if self.get_plugin_configs() is None:
+            # The database is not ready yet
+            logger.warning('plugin.registry.with_mixin: Database not ready')
+            return []
 
         mixin = str(mixin).lower().strip()
 
@@ -344,7 +373,7 @@ class PluginsRegistry:
             except MixinNotImplementedError:
                 continue
 
-            config = configs.get(plugin.slug) or plugin.plugin_config()
+            config = self.get_plugin_config(plugin.slug)
 
             # No config - cannot use this plugin
             if not config:
@@ -1025,6 +1054,10 @@ class PluginsRegistry:
 
         data = md5()
 
+        # Pre-fetch (and cache) the PluginConfig objects, to avoid hitting the
+        # database once per plugin below
+        configs = self.get_plugin_configs() or {}
+
         # Hash for all loaded plugins
         # Note: Sort by slug, so the hash is independent of discovery order.
         # Different processes can discover the same plugins in a different
@@ -1034,7 +1067,10 @@ class PluginsRegistry:
             data.update(str(slug).encode())
             data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
-            data.update(str(plug.is_active()).encode())
+
+            config = configs.get(slug) or self.get_plugin_config(slug)
+            active = config.is_active() if config else False
+            data.update(str(active).encode())
 
         for k in self.plugin_settings_keys():
             try:
