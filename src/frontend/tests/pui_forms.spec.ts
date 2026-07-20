@@ -343,7 +343,6 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
 
   await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
-  await page.getByText('Initial Stock').waitFor();
   const quantityField = page.getByLabel('number-field-initial_stock.quantity');
   await expect(quantityField).toBeVisible();
 
@@ -382,8 +381,10 @@ test('Forms - Initial Stock hidden when setting disabled', async ({
     .getByLabel('text-field-name', { exact: true })
     .fill('No Initial Stock');
 
-  await expect(page.getByText('Initial Stock')).toBeHidden();
   await expect(
     page.getByLabel('number-field-initial_stock.quantity')
+  ).toBeHidden();
+  await expect(
+    page.getByLabel('tree-field-initial_stock.location')
   ).toBeHidden();
 });
