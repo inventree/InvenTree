@@ -244,17 +244,25 @@ class PluginsRegistry:
 
         return configs
 
-    def get_plugin_config(self, slug: str, name: str | None = None):
+    def get_plugin_config(
+        self, slug: str, name: str | None = None, configs: dict | None = None
+    ):
         """Return the matching PluginConfig instance for a given plugin.
 
         Arguments:
             slug: The plugin slug
             name: The plugin name (optional)
+            configs: A pre-fetched mapping of {slug: PluginConfig} to avoid multiple database queries (optional)
+
+        Returns:
+            PluginConfig | None: The matching PluginConfig instance, or None if not found.
         """
         import InvenTree.ready
         from plugin.models import PluginConfig
 
-        configs = self.get_plugin_configs()
+        if configs is None:
+            configs = self.get_plugin_configs()
+
         cfg = configs.get(slug) if configs is not None else None
 
         if not cfg:
@@ -357,7 +365,10 @@ class PluginsRegistry:
         """
         # Pre-fetch (and cache) the PluginConfig objects, to avoid hitting the
         # database multiple times (per plugin) below
-        if self.get_plugin_configs() is None:
+
+        configs = self.get_plugin_configs()
+
+        if configs is None:
             # The database is not ready yet
             logger.warning('plugin.registry.with_mixin: Database not ready')
             return []
@@ -373,7 +384,7 @@ class PluginsRegistry:
             except MixinNotImplementedError:
                 continue
 
-            config = self.get_plugin_config(plugin.slug)
+            config = self.get_plugin_config(plugin.slug, configs=configs)
 
             # No config - cannot use this plugin
             if not config:
