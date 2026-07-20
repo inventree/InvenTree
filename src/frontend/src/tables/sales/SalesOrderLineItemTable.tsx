@@ -615,6 +615,9 @@ export default function SalesOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.sales_order),
+          afterBulkDelete: orderDetailRefresh,
           params: {
             order: orderId,
             part_detail: true

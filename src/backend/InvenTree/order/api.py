@@ -781,7 +781,7 @@ class PurchaseOrderLineItemDetail(
 
 
 class PurchaseOrderExtraLineList(
-    GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
 ):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
@@ -1073,7 +1073,10 @@ class SalesOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class SalesOrderLineItemList(
-    SalesOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    SalesOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
@@ -1117,7 +1120,9 @@ class SalesOrderLineItemDetail(
     output_options = SalesOrderLineItemOutputOptions
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class SalesOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1787,7 +1792,10 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class ReturnOrderLineItemList(
-    ReturnOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    ReturnOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
@@ -1830,7 +1838,9 @@ class ReturnOrderLineItemDetail(
     output_options = ReturnOrderLineItemOutputOptions
 
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class ReturnOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
@@ -2325,7 +2335,10 @@ class TransferOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class TransferOrderLineItemList(
-    TransferOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    TransferOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of TransferOrderLineItem objects."""
 

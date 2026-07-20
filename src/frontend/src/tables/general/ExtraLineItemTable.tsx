@@ -184,6 +184,9 @@ export default function ExtraLineItemTable({
           params: {
             order: orderId
           },
+          enableSelection: true,
+          enableBulkDelete: editable && user.hasDeleteRole(role),
+          afterBulkDelete: orderDetailRefresh,
           defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions

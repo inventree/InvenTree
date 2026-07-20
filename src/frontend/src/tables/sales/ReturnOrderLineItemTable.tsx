@@ -280,6 +280,9 @@ export default function ReturnOrderLineItemTable({
           defaultSortColumn: 'line',
           enableSelection:
             inProgress && user.hasChangeRole(UserRoles.return_order),
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.return_order),
+          afterBulkDelete: orderDetailRefresh,
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,
