@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-16 05:44\n"
+"PO-Revision-Date: 2026-07-19 23:53\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2616,12 +2616,12 @@ msgstr "Geen artikelen"
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:97
 #: src/components/tables/ColumnRenderers.tsx:265
+#: src/components/tables/PartStockCell.tsx:79
 #: src/pages/part/PartDetail.tsx:571
 #: src/pages/stock/StockDetail.tsx:669
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
 #: src/tables/build/BuildLineTable.tsx:211
-#: src/tables/part/PartTable.tsx:159
 #: src/tables/stock/StockItemTable.tsx:218
 msgid "Available"
 msgstr "Beschikbaar"
@@ -3427,12 +3427,13 @@ msgid "Virtual"
 msgstr "Virtueel"
 
 #: src/components/render/Part.tsx:34
+#: src/components/tables/PartStockCell.tsx:107
 #: src/tables/bom/BomTable.tsx:335
-#: src/tables/part/PartTable.tsx:174
 msgid "No stock"
 msgstr "Geen voorraad"
 
 #: src/components/render/Part.tsx:51
+#: src/components/tables/PartStockCell.tsx:50
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
@@ -3440,7 +3441,6 @@ msgstr "Geen voorraad"
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/part/PartTable.tsx:130
 msgid "On Order"
 msgstr "In bestelling"
 
@@ -3782,8 +3782,8 @@ msgid "This stock item has been depleted"
 msgstr "Dit voorraadartikel is leeg"
 
 #: src/components/tables/ColumnRenderers.tsx:301
+#: src/components/tables/PartStockCell.tsx:128
 #: src/tables/bom/BomTable.tsx:386
-#: src/tables/part/PartTable.tsx:195
 #: src/tables/sales/SalesOrderLineItemTable.tsx:191
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -4385,6 +4385,60 @@ msgstr "Gegevens vernieuwen"
 msgid "Active Filters"
 msgstr "Actieve filters"
 
+#: src/components/tables/PartStockCell.tsx:11
+#: src/tables/bom/BomTable.tsx:330
+#: src/tables/sales/SalesOrderLineItemTable.tsx:143
+#: src/tables/sales/SalesOrderLineItemTable.tsx:201
+#: src/tables/sales/SalesOrderLineItemTable.tsx:218
+#: src/tables/stock/TransferOrderLineItemTable.tsx:124
+#: src/tables/stock/TransferOrderLineItemTable.tsx:183
+#: src/tables/stock/TransferOrderLineItemTable.tsx:201
+msgid "Virtual part"
+msgstr "Virtueel deel"
+
+#: src/components/tables/PartStockCell.tsx:33
+msgid "Minimum stock"
+msgstr "Minimale voorraad"
+
+#: src/components/tables/PartStockCell.tsx:43
+msgid "Maximum stock"
+msgstr ""
+
+#: src/components/tables/PartStockCell.tsx:56
+#: src/tables/bom/BomTable.tsx:377
+msgid "Building"
+msgstr "Bouwen"
+
+#: src/components/tables/PartStockCell.tsx:63
+#: src/pages/part/PartAllocationPanel.tsx:21
+#: src/pages/stock/StockDetail.tsx:225
+msgid "Build Order Allocations"
+msgstr "Productie-opdracht toewijzingen"
+
+#: src/components/tables/PartStockCell.tsx:71
+#: src/pages/part/PartAllocationPanel.tsx:31
+#: src/pages/stock/StockDetail.tsx:240
+msgid "Sales Order Allocations"
+msgstr "Verkoopordertoewijzingen"
+
+#: src/components/tables/PartStockCell.tsx:87
+#: src/tables/bom/BomTable.tsx:343
+#: src/tables/build/BuildLineTable.tsx:295
+msgid "External stock"
+msgstr "Externe voorraad"
+
+#: src/components/tables/PartStockCell.tsx:95
+#: src/tables/bom/BomTable.tsx:360
+#: src/tables/build/BuildLineTable.tsx:268
+#: src/tables/sales/SalesOrderLineItemTable.tsx:168
+#: src/tables/stock/TransferOrderLineItemTable.tsx:149
+msgid "Includes variant stock"
+msgstr "Bevat variant voorraad"
+
+#: src/components/tables/PartStockCell.tsx:100
+msgid "Direct stock"
+msgstr ""
+
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
 #~ msgstr "Validate"
@@ -4792,7 +4846,7 @@ msgstr "Volgende"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:644
-#: src/tables/part/PartTable.tsx:310
+#: src/tables/part/PartTable.tsx:197
 msgid "Edit Part"
 msgstr "Onderdeel bewerken"
 
@@ -4968,7 +5022,7 @@ msgstr "Corrigeer de fouten in de geselecteerde onderdelen"
 
 #: src/components/wizards/OrderPartsWizard.tsx:625
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:421
+#: src/tables/part/PartTable.tsx:308
 #: src/tables/sales/SalesOrderLineItemTable.tsx:420
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -8761,18 +8815,6 @@ msgstr "Categorie details"
 msgid "Subcategories"
 msgstr "Subcategorieën"
 
-#: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:225
-#: src/tables/part/PartTable.tsx:143
-msgid "Build Order Allocations"
-msgstr "Productie-opdracht toewijzingen"
-
-#: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:240
-#: src/tables/part/PartTable.tsx:151
-msgid "Sales Order Allocations"
-msgstr "Verkoopordertoewijzingen"
-
 #: src/pages/part/PartCategoryDetailsPanel.tsx:50
 msgid "Parent Category"
 msgstr "Bovenliggende categorie"
@@ -8880,8 +8922,8 @@ msgid "Consumable"
 msgstr "Verbruiksartikelen"
 
 #: src/pages/part/PartDetail.tsx:657
-#: src/tables/part/PartTable.tsx:297
-#: src/tables/part/PartTable.tsx:348
+#: src/tables/part/PartTable.tsx:184
+#: src/tables/part/PartTable.tsx:235
 msgid "Add Part"
 msgstr "Onderdeel toevoegen"
 
@@ -8913,7 +8955,7 @@ msgid "Search by serial number"
 msgstr "Zoek op serienummer"
 
 #: src/pages/part/PartDetail.tsx:763
-#: src/tables/part/PartTable.tsx:405
+#: src/tables/part/PartTable.tsx:292
 msgid "Part Actions"
 msgstr "Acties van onderdeel"
 
@@ -9032,7 +9074,7 @@ msgstr "Dagen"
 #: src/pages/part/PartDetailsPanel.tsx:308
 #: src/pages/part/pricing/BomPricingPanel.tsx:82
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
-#: src/tables/part/PartTable.tsx:203
+#: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
 msgstr "Prijs bereik"
 
@@ -10278,17 +10320,6 @@ msgstr "Vervanging"
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:330
-#: src/tables/part/PartTable.tsx:91
-#: src/tables/sales/SalesOrderLineItemTable.tsx:143
-#: src/tables/sales/SalesOrderLineItemTable.tsx:201
-#: src/tables/sales/SalesOrderLineItemTable.tsx:218
-#: src/tables/stock/TransferOrderLineItemTable.tsx:124
-#: src/tables/stock/TransferOrderLineItemTable.tsx:183
-#: src/tables/stock/TransferOrderLineItemTable.tsx:201
-msgid "Virtual part"
-msgstr "Virtueel deel"
-
 #: src/tables/bom/BomTable.tsx:331
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
@@ -10296,12 +10327,6 @@ msgstr "Virtueel deel"
 #: src/tables/bom/BomTable.tsx:333
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
-
-#: src/tables/bom/BomTable.tsx:343
-#: src/tables/build/BuildLineTable.tsx:295
-#: src/tables/part/PartTable.tsx:167
-msgid "External stock"
-msgstr "Externe voorraad"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -10324,24 +10349,12 @@ msgstr "Inclusief vervangend voorraad"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:360
-#: src/tables/build/BuildLineTable.tsx:268
-#: src/tables/sales/SalesOrderLineItemTable.tsx:168
-#: src/tables/stock/TransferOrderLineItemTable.tsx:149
-msgid "Includes variant stock"
-msgstr "Bevat variant voorraad"
-
 #: src/tables/bom/BomTable.tsx:369
 #: src/tables/build/BuildLineTable.tsx:286
 #: src/tables/sales/SalesOrderLineItemTable.tsx:182
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "In bestelling"
-
-#: src/tables/bom/BomTable.tsx:377
-#: src/tables/part/PartTable.tsx:136
-msgid "Building"
-msgstr "Bouwen"
 
 #: src/tables/bom/BomTable.tsx:428
 #: src/tables/build/BuildLineTable.tsx:527
@@ -10487,7 +10500,7 @@ msgstr "Voeg een enkel BOM artikel toe"
 
 #: src/tables/bom/BomTable.tsx:670
 #: src/tables/general/ParameterTable.tsx:203
-#: src/tables/part/PartTable.tsx:445
+#: src/tables/part/PartTable.tsx:332
 msgid "Import from File"
 msgstr "Importeren uit bestand"
 
@@ -11653,21 +11666,30 @@ msgstr "Toon ontvangen items"
 msgid "View Sales Order"
 msgstr "Bekijk verkooporder"
 
-#: src/tables/part/PartTable.tsx:113
-msgid "Minimum stock"
-msgstr "Minimale voorraad"
-
-#: src/tables/part/PartTable.tsx:123
-msgid "Maximum stock"
-msgstr ""
-
-#: src/tables/part/PartTable.tsx:277
+#: src/tables/part/PartTable.tsx:164
 msgid "Import Parts"
 msgstr "Importeren onderdelen"
+
+#: src/tables/part/PartTable.tsx:250
+#: src/tables/part/PartTable.tsx:298
+msgid "Set Category"
+msgstr "Categorie instellen"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
+
+#: src/tables/part/PartTable.tsx:300
+msgid "Set category for selected parts"
+msgstr "Categorie voor geselecteerde onderdelen instellen"
+
+#: src/tables/part/PartTable.tsx:310
+msgid "Order selected parts"
+msgstr "Geselecteerde delen bestellen"
+
+#: src/tables/part/PartTable.tsx:320
+msgid "Add Parts"
+msgstr "Voeg onderdelen toe"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -11677,40 +11699,23 @@ msgstr "Importeren onderdelen"
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:363
-#: src/tables/part/PartTable.tsx:411
-msgid "Set Category"
-msgstr "Categorie instellen"
-
-#: src/tables/part/PartTable.tsx:413
-msgid "Set category for selected parts"
-msgstr "Categorie voor geselecteerde onderdelen instellen"
-
-#: src/tables/part/PartTable.tsx:423
-msgid "Order selected parts"
-msgstr "Geselecteerde delen bestellen"
-
-#: src/tables/part/PartTable.tsx:433
-msgid "Add Parts"
-msgstr "Voeg onderdelen toe"
-
-#: src/tables/part/PartTable.tsx:439
+#: src/tables/part/PartTable.tsx:326
 msgid "Create Part"
 msgstr "Onderdeel maken"
 
-#: src/tables/part/PartTable.tsx:441
+#: src/tables/part/PartTable.tsx:328
 msgid "Create a new part"
 msgstr "Maak een nieuw onderdeel maken"
 
-#: src/tables/part/PartTable.tsx:447
+#: src/tables/part/PartTable.tsx:334
 msgid "Import parts from a file"
 msgstr "Importeer onderdelen van een bestand"
 
-#: src/tables/part/PartTable.tsx:452
+#: src/tables/part/PartTable.tsx:339
 msgid "Import from Supplier"
 msgstr "Importeren van leverancier"
 
-#: src/tables/part/PartTable.tsx:454
+#: src/tables/part/PartTable.tsx:341
 msgid "Import parts from a supplier plugin"
 msgstr "Onderdelen van een leverancierspagina importeren"
 

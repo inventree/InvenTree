@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-16 05:44\n"
+"PO-Revision-Date: 2026-07-19 23:53\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -2616,12 +2616,12 @@ msgstr "لا عناصر"
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:97
 #: src/components/tables/ColumnRenderers.tsx:265
+#: src/components/tables/PartStockCell.tsx:79
 #: src/pages/part/PartDetail.tsx:571
 #: src/pages/stock/StockDetail.tsx:669
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
 #: src/tables/build/BuildLineTable.tsx:211
-#: src/tables/part/PartTable.tsx:159
 #: src/tables/stock/StockItemTable.tsx:218
 msgid "Available"
 msgstr "متاح"
@@ -3427,12 +3427,13 @@ msgid "Virtual"
 msgstr "افتراضي"
 
 #: src/components/render/Part.tsx:34
+#: src/components/tables/PartStockCell.tsx:107
 #: src/tables/bom/BomTable.tsx:335
-#: src/tables/part/PartTable.tsx:174
 msgid "No stock"
 msgstr "لا مخزون"
 
 #: src/components/render/Part.tsx:51
+#: src/components/tables/PartStockCell.tsx:50
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
@@ -3440,7 +3441,6 @@ msgstr "لا مخزون"
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/part/PartTable.tsx:130
 msgid "On Order"
 msgstr "قيد الطلب"
 
@@ -3782,8 +3782,8 @@ msgid "This stock item has been depleted"
 msgstr "هذا عنصر المخزون لديه تم نافد"
 
 #: src/components/tables/ColumnRenderers.tsx:301
+#: src/components/tables/PartStockCell.tsx:128
 #: src/tables/bom/BomTable.tsx:386
-#: src/tables/part/PartTable.tsx:195
 #: src/tables/sales/SalesOrderLineItemTable.tsx:191
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -4385,6 +4385,60 @@ msgstr "تحديث بيانات"
 msgid "Active Filters"
 msgstr "نشط مرشحات"
 
+#: src/components/tables/PartStockCell.tsx:11
+#: src/tables/bom/BomTable.tsx:330
+#: src/tables/sales/SalesOrderLineItemTable.tsx:143
+#: src/tables/sales/SalesOrderLineItemTable.tsx:201
+#: src/tables/sales/SalesOrderLineItemTable.tsx:218
+#: src/tables/stock/TransferOrderLineItemTable.tsx:124
+#: src/tables/stock/TransferOrderLineItemTable.tsx:183
+#: src/tables/stock/TransferOrderLineItemTable.tsx:201
+msgid "Virtual part"
+msgstr "افتراضي صنف"
+
+#: src/components/tables/PartStockCell.tsx:33
+msgid "Minimum stock"
+msgstr "أدنى مخزون"
+
+#: src/components/tables/PartStockCell.tsx:43
+msgid "Maximum stock"
+msgstr "أقصى مخزون"
+
+#: src/components/tables/PartStockCell.tsx:56
+#: src/tables/bom/BomTable.tsx:377
+msgid "Building"
+msgstr ""
+
+#: src/components/tables/PartStockCell.tsx:63
+#: src/pages/part/PartAllocationPanel.tsx:21
+#: src/pages/stock/StockDetail.tsx:225
+msgid "Build Order Allocations"
+msgstr "أمر الإنتاج تخصيصات"
+
+#: src/components/tables/PartStockCell.tsx:71
+#: src/pages/part/PartAllocationPanel.tsx:31
+#: src/pages/stock/StockDetail.tsx:240
+msgid "Sales Order Allocations"
+msgstr "طلب البيع تخصيصات"
+
+#: src/components/tables/PartStockCell.tsx:87
+#: src/tables/bom/BomTable.tsx:343
+#: src/tables/build/BuildLineTable.tsx:295
+msgid "External stock"
+msgstr "خارجي مخزون"
+
+#: src/components/tables/PartStockCell.tsx:95
+#: src/tables/bom/BomTable.tsx:360
+#: src/tables/build/BuildLineTable.tsx:268
+#: src/tables/sales/SalesOrderLineItemTable.tsx:168
+#: src/tables/stock/TransferOrderLineItemTable.tsx:149
+msgid "Includes variant stock"
+msgstr "Includes متغير مخزون"
+
+#: src/components/tables/PartStockCell.tsx:100
+msgid "Direct stock"
+msgstr ""
+
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
 #~ msgstr "Validate"
@@ -4792,7 +4846,7 @@ msgstr "التالي"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:644
-#: src/tables/part/PartTable.tsx:310
+#: src/tables/part/PartTable.tsx:197
 msgid "Edit Part"
 msgstr "تعديل الصنف"
 
@@ -4968,7 +5022,7 @@ msgstr "يرجى صحيح ال أخطاء في ال محدد أصناف"
 
 #: src/components/wizards/OrderPartsWizard.tsx:625
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:421
+#: src/tables/part/PartTable.tsx:308
 #: src/tables/sales/SalesOrderLineItemTable.tsx:420
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -8761,18 +8815,6 @@ msgstr "تفاصيل الفئة"
 msgid "Subcategories"
 msgstr "فئات فرعية"
 
-#: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:225
-#: src/tables/part/PartTable.tsx:143
-msgid "Build Order Allocations"
-msgstr "أمر الإنتاج تخصيصات"
-
-#: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:240
-#: src/tables/part/PartTable.tsx:151
-msgid "Sales Order Allocations"
-msgstr "طلب البيع تخصيصات"
-
 #: src/pages/part/PartCategoryDetailsPanel.tsx:50
 msgid "Parent Category"
 msgstr "الأصل فئة"
@@ -8880,8 +8922,8 @@ msgid "Consumable"
 msgstr "قابل للاستهلاك"
 
 #: src/pages/part/PartDetail.tsx:657
-#: src/tables/part/PartTable.tsx:297
-#: src/tables/part/PartTable.tsx:348
+#: src/tables/part/PartTable.tsx:184
+#: src/tables/part/PartTable.tsx:235
 msgid "Add Part"
 msgstr "إضافة الصنف"
 
@@ -8913,7 +8955,7 @@ msgid "Search by serial number"
 msgstr "بحث حسب الرقم التسلسلي"
 
 #: src/pages/part/PartDetail.tsx:763
-#: src/tables/part/PartTable.tsx:405
+#: src/tables/part/PartTable.tsx:292
 msgid "Part Actions"
 msgstr "صنف إجراءات"
 
@@ -9032,7 +9074,7 @@ msgstr "أيام"
 #: src/pages/part/PartDetailsPanel.tsx:308
 #: src/pages/part/pricing/BomPricingPanel.tsx:82
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
-#: src/tables/part/PartTable.tsx:203
+#: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
 msgstr "سعر Range"
 
@@ -10278,17 +10320,6 @@ msgstr ""
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:330
-#: src/tables/part/PartTable.tsx:91
-#: src/tables/sales/SalesOrderLineItemTable.tsx:143
-#: src/tables/sales/SalesOrderLineItemTable.tsx:201
-#: src/tables/sales/SalesOrderLineItemTable.tsx:218
-#: src/tables/stock/TransferOrderLineItemTable.tsx:124
-#: src/tables/stock/TransferOrderLineItemTable.tsx:183
-#: src/tables/stock/TransferOrderLineItemTable.tsx:201
-msgid "Virtual part"
-msgstr "افتراضي صنف"
-
 #: src/tables/bom/BomTable.tsx:331
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
@@ -10296,12 +10327,6 @@ msgstr "افتراضي صنف"
 #: src/tables/bom/BomTable.tsx:333
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
-
-#: src/tables/bom/BomTable.tsx:343
-#: src/tables/build/BuildLineTable.tsx:295
-#: src/tables/part/PartTable.tsx:167
-msgid "External stock"
-msgstr "خارجي مخزون"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -10324,24 +10349,12 @@ msgstr "Includes بديل مخزون"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:360
-#: src/tables/build/BuildLineTable.tsx:268
-#: src/tables/sales/SalesOrderLineItemTable.tsx:168
-#: src/tables/stock/TransferOrderLineItemTable.tsx:149
-msgid "Includes variant stock"
-msgstr "Includes متغير مخزون"
-
 #: src/tables/bom/BomTable.tsx:369
 #: src/tables/build/BuildLineTable.tsx:286
 #: src/tables/sales/SalesOrderLineItemTable.tsx:182
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "على طلب"
-
-#: src/tables/bom/BomTable.tsx:377
-#: src/tables/part/PartTable.tsx:136
-msgid "Building"
-msgstr ""
 
 #: src/tables/bom/BomTable.tsx:428
 #: src/tables/build/BuildLineTable.tsx:527
@@ -10487,7 +10500,7 @@ msgstr "إضافة مفرد BOM عنصر"
 
 #: src/tables/bom/BomTable.tsx:670
 #: src/tables/general/ParameterTable.tsx:203
-#: src/tables/part/PartTable.tsx:445
+#: src/tables/part/PartTable.tsx:332
 msgid "Import from File"
 msgstr "استيراد من ملف"
 
@@ -11653,21 +11666,30 @@ msgstr "عرض مستلم عناصر"
 msgid "View Sales Order"
 msgstr "عرض طلب بيع"
 
-#: src/tables/part/PartTable.tsx:113
-msgid "Minimum stock"
-msgstr "أدنى مخزون"
-
-#: src/tables/part/PartTable.tsx:123
-msgid "Maximum stock"
-msgstr "أقصى مخزون"
-
-#: src/tables/part/PartTable.tsx:277
+#: src/tables/part/PartTable.tsx:164
 msgid "Import Parts"
 msgstr "استيراد أصناف"
+
+#: src/tables/part/PartTable.tsx:250
+#: src/tables/part/PartTable.tsx:298
+msgid "Set Category"
+msgstr "تعيين فئة"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
+
+#: src/tables/part/PartTable.tsx:300
+msgid "Set category for selected parts"
+msgstr "تعيين فئة لـ محدد أصناف"
+
+#: src/tables/part/PartTable.tsx:310
+msgid "Order selected parts"
+msgstr "طلب محدد أصناف"
+
+#: src/tables/part/PartTable.tsx:320
+msgid "Add Parts"
+msgstr "إضافة الأصناف"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -11677,40 +11699,23 @@ msgstr "استيراد أصناف"
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:363
-#: src/tables/part/PartTable.tsx:411
-msgid "Set Category"
-msgstr "تعيين فئة"
-
-#: src/tables/part/PartTable.tsx:413
-msgid "Set category for selected parts"
-msgstr "تعيين فئة لـ محدد أصناف"
-
-#: src/tables/part/PartTable.tsx:423
-msgid "Order selected parts"
-msgstr "طلب محدد أصناف"
-
-#: src/tables/part/PartTable.tsx:433
-msgid "Add Parts"
-msgstr "إضافة الأصناف"
-
-#: src/tables/part/PartTable.tsx:439
+#: src/tables/part/PartTable.tsx:326
 msgid "Create Part"
 msgstr "إنشاء الصنف"
 
-#: src/tables/part/PartTable.tsx:441
+#: src/tables/part/PartTable.tsx:328
 msgid "Create a new part"
 msgstr "إنشاء جديد صنف"
 
-#: src/tables/part/PartTable.tsx:447
+#: src/tables/part/PartTable.tsx:334
 msgid "Import parts from a file"
 msgstr "استيراد أصناف من ملف"
 
-#: src/tables/part/PartTable.tsx:452
+#: src/tables/part/PartTable.tsx:339
 msgid "Import from Supplier"
 msgstr "استيراد من مورد"
 
-#: src/tables/part/PartTable.tsx:454
+#: src/tables/part/PartTable.tsx:341
 msgid "Import parts from a supplier plugin"
 msgstr "استيراد أصناف من مورد إضافة"
 
