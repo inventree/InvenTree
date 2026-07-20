@@ -354,7 +354,10 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
   await page.getByText('Item Created').waitFor();
 
   await page.getByText(partName).first().click();
-  await page.getByRole('tab', { name: 'Stock', exact: true }).click();
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
   await page.getByText('25').first().waitFor();
 
   await deletePart(partName);
