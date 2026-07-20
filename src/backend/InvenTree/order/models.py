@@ -1256,7 +1256,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.run_plugin_validation()
 
             # Bulk create the stock items and fetch the newly created instances
-            new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            new_items = list(
+                bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            )
 
             stock_items.extend(new_items)
 
@@ -2864,8 +2866,10 @@ class SalesOrderShipment(
         # which the tracking entries below need
         new_stock_item_data = [new_item for _, new_item, _ in split_items]
 
-        new_stock_items = bulk_create_and_fetch(
-            stock.models.StockItem, new_stock_item_data
+        # Evaluate the queryset immediately (into a list) - otherwise, indexing into it
+        # below would re-query the database once per split item
+        new_stock_items = list(
+            bulk_create_and_fetch(stock.models.StockItem, new_stock_item_data)
         )
 
         # Backfill the newly created StockItem objects into the split_items list
