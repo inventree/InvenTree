@@ -4,12 +4,13 @@ import uuid
 from typing import Optional
 
 from django.db import transaction
+from django.db.models import QuerySet
 
 
 @transaction.atomic
 def bulk_create_and_fetch(
     model, items, id_field: str = 'pk', filters: Optional[dict] = None
-) -> list:
+) -> QuerySet:
     """Bulk create items in the database, and return a list of the created items.
 
     Arguments:
@@ -19,7 +20,7 @@ def bulk_create_and_fetch(
         filters: Optional dictionary of filters to apply when fetching the created items.
 
     Returns:
-        A list containing the created items.
+        A QuerySet containing the created items.
 
     This helper method is required because the Django bulk_create() method
     does not guarantee that the ID values of the created items will be populated in the returned objects.
@@ -62,6 +63,4 @@ def bulk_create_and_fetch(
     instances.update(metadata=None)
 
     # Fetch the newly created items (by primary key, as the metadata filter no longer matches)
-    items = model.objects.filter(**{f'{id_field or "pk"}__in': pks})
-
-    return list(items)
+    return model.objects.filter(**{f'{id_field or "pk"}__in': pks})
