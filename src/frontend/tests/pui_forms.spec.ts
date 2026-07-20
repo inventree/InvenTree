@@ -2,7 +2,13 @@ import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
 import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { clickOnRowMenu, deletePart, loadTab, navigate, openDetailAction } from './helpers';
+import {
+  clickOnRowMenu,
+  deletePart,
+  loadTab,
+  navigate,
+  openDetailAction
+} from './helpers';
 import { doCachedLogin } from './login';
 import { setSettingState } from './settings';
 
@@ -356,7 +362,9 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
 });
 
-test('Forms - Initial Stock hidden when setting disabled', async ({ browser }) => {
+test('Forms - Initial Stock hidden when setting disabled', async ({
+  browser
+}) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
 
   const page = await doCachedLogin(browser, {
@@ -370,7 +378,9 @@ test('Forms - Initial Stock hidden when setting disabled', async ({ browser }) =
     .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
     .click();
 
-  await page.getByLabel('text-field-name', { exact: true }).fill('No Initial Stock');
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill('No Initial Stock');
 
   await expect(page.getByText('Initial Stock')).toBeHidden();
   await expect(
