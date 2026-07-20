@@ -13,7 +13,6 @@ import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
 import {
   type ReactNode,
   useCallback,
@@ -22,6 +21,12 @@ import {
   useRef,
   useState
 } from 'react';
+import {
+  IconFileUpload,
+  IconPackageImport,
+  IconPlus,
+  IconShoppingCart
+} from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PartCreationMenu } from '../../components/items/PartCreationMenu';
 import {
@@ -35,8 +40,10 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
 import { DuplicateField } from '../../forms/CommonFields';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -83,119 +90,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       sortable: true,
       filter: ['has_stock', 'low_stock', 'high_stock'],
-      render: (record) => {
-        if (record.virtual) {
-          return (
-            <Text size='sm' c='dimmed' fs='italic'>
-              {t`Virtual part`}
-            </Text>
-          );
-        }
-
-        const extra: ReactNode[] = [];
-
-        const stock = record?.total_in_stock ?? 0;
-        const allocated =
-          (record?.allocated_to_build_orders ?? 0) +
-          (record?.allocated_to_sales_orders ?? 0);
-        const available = Math.max(0, stock - allocated);
-        const min_stock = record?.minimum_stock ?? 0;
-        const max_stock = record?.maximum_stock ?? 0;
-
-        let text = String(formatDecimal(stock));
-
-        let color: string | undefined = undefined;
-
-        if (min_stock > stock) {
-          extra.push(
-            <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
-            </Text>
-          );
-
-          color = 'orange';
-        }
-
-        if (max_stock > 0 && stock > max_stock) {
-          extra.push(
-            <Text key='max-stock' c='teal'>
-              {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
-            </Text>
-          );
-        }
-
-        if (record.ordering > 0) {
-          extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
-          );
-        }
-
-        if (record.building) {
-          extra.push(
-            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
-          );
-        }
-
-        if (record.allocated_to_build_orders > 0) {
-          extra.push(
-            <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
-            </Text>
-          );
-        }
-
-        if (record.allocated_to_sales_orders > 0) {
-          extra.push(
-            <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
-            </Text>
-          );
-        }
-
-        if (available != stock) {
-          extra.push(
-            <Text key='available'>
-              {t`Available`}: {formatDecimal(available)}
-            </Text>
-          );
-        }
-
-        if (record.external_stock > 0) {
-          extra.push(
-            <Text key='external'>
-              {t`External stock`}: {formatDecimal(record.external_stock)}
-            </Text>
-          );
-        }
-
-        if (stock <= 0) {
-          color = 'red';
-          text = t`No stock`;
-        } else if (available <= 0) {
-          color = 'orange';
-        } else if (available < min_stock) {
-          color = 'yellow';
-        }
-
-        return (
-          <TableHoverCard
-            value={
-              <Group gap='xs' justify='left' wrap='nowrap'>
-                <Text c={color} size='sm'>
-                  {text}
-                </Text>
-                {record.units && (
-                  <Text size='xs' c={color}>
-                    [{record.units}]
-                  </Text>
-                )}
-              </Group>
-            }
-            title={t`Stock Information`}
-            extra={extra}
-          />
-        );
-      }
+      render: renderPartStockCell
     },
     {
       accessor: 'price_range',
