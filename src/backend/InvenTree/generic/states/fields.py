@@ -5,7 +5,6 @@ from typing import Any, Optional
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.migrations.state import StateApps
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
@@ -118,22 +117,11 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
         return name, path, args, kwargs
 
     def contribute_to_class(self, cls, name):
-        """Add the _custom_key field to the model.
-
-        Historical model states (rendered by the migration framework) already
-        declare the '{name}_custom_key' field explicitly, as it was captured as
-        an AddField operation when the migration was generated. Auto-adding it
-        here too would create a duplicate field on those historical models, so
-        skip it for anything other than the 'live' application registry.
-        """
+        """Add the _custom_key field to the model."""
         cls._meta.supports_custom_status = True
 
-        is_historical = isinstance(cls._meta.apps, StateApps)
-
-        if (
-            not is_historical
-            and not hasattr(self, '_custom_key_field')
-            and not hasattr(cls, f'{name}_custom_key')
+        if not hasattr(self, '_custom_key_field') and not hasattr(
+            cls, f'{name}_custom_key'
         ):
             self.add_field(cls, name)
 
