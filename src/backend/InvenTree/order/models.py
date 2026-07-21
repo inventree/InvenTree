@@ -5,7 +5,7 @@ from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
@@ -157,7 +157,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
@@ -171,7 +175,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 # Record the error, try to press on
 
@@ -843,6 +851,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -864,6 +878,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PLACED.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe status=PLACED, and each would run the completion side effects
+        # (duplicate events and pricing-update scheduling).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
@@ -945,6 +965,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
@@ -970,6 +996,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this purchase order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = PurchaseOrderStatus.ON_HOLD.value
             self.save()
@@ -1799,6 +1831,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -1825,6 +1863,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this sales order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = SalesOrderStatus.ON_HOLD.value
             self.save()
@@ -1835,6 +1879,13 @@ class SalesOrder(TotalPriceMixin, Order):
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
+
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe an "open" status, and each would run the completion
+        # side effects (duplicate events, pricing updates, and shipped quantity
+        # updates against the virtual line items).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
 
         if not self.can_complete(**kwargs):
             return False
@@ -1880,6 +1931,13 @@ class SalesOrder(TotalPriceMixin, Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 
@@ -2109,11 +2167,20 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         validators=[MinValueValidator(0)],
     )
 
+    discount = models.DecimalField(
+        verbose_name=_('Discount'),
+        help_text=_('Discount percentage applied to this line item (0-100)'),
+        default=0,
+        max_digits=5,
+        decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+
     @property
     def total_line_price(self):
-        """Return the total price for this line item."""
+        """Return the total price for this line item, after any discount is applied."""
         if self.price:
-            return self.quantity * self.price
+            return self.quantity * self.price * (1 - self.discount / 100)
 
     line = models.CharField(
         max_length=20,
@@ -3159,6 +3226,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this order as 'on hold' (if allowed)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = ReturnOrderStatus.ON_HOLD.value
             self.save()
@@ -3172,6 +3245,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
@@ -3216,6 +3295,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3687,6 +3772,12 @@ class TransferOrder(Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = TransferOrderStatus.ISSUED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3713,6 +3804,12 @@ class TransferOrder(Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this transfer order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = TransferOrderStatus.ON_HOLD.value
             self.save()
@@ -3792,6 +3889,13 @@ class TransferOrder(Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 
@@ -4059,6 +4163,12 @@ class TransferOrderAllocation(models.Model):
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
         self.line: TransferOrderLineItem  # for type hints
+
+        # Lock the stock item's row and refresh its quantity, so the branch
+        # selected below (consume / split / move) is chosen using the current
+        # committed quantity rather than a stale in-memory copy
+        if not self.item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
 
         # The allocation is the only thing linking this stock item to the transfer
         # As a result, we must keep the allocation present even after completion
