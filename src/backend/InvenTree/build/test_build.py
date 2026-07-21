@@ -4,6 +4,7 @@ import threading
 import time
 import uuid
 from datetime import datetime, timedelta
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -589,6 +590,39 @@ class BuildTest(BuildTestBase):
             self.build.build_outputs.filter(is_building=True).count(),
             initial_output_count,
         )
+
+    def test_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale build instance must be a no-op.
+
+        Regression test: _action_cancel() offloaded the cancellation task
+        unconditionally, using no idempotency check at all, so two concurrent
+        cancellation requests (each holding its own instance of the build) could
+        both offload the cancellation task (duplicate events and notifications).
+        The status is now re-read (under lock) from the database, and a build
+        which is already cancelled is skipped.
+        """
+        self.build.issue_build()
+        self.allocate_stock(None, {self.stock_1_2: 50})
+
+        # Two "concurrent" requests each hold their own instance of the build
+        build_a = Build.objects.get(pk=self.build.pk)
+        build_b = Build.objects.get(pk=self.build.pk)
+
+        build_a.cancel_build(None)
+
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.status, status.BuildStatus.CANCELLED)
+
+        # The second (stale) instance still believes the build is in production -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(build_b.status, status.BuildStatus.PRODUCTION)
+
+        with mock.patch('build.models.trigger_event') as trigger:
+            build_b.cancel_build(None)
+            trigger.assert_not_called()
+
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.status, status.BuildStatus.CANCELLED)
 
     def test_complete(self):
         """Test completion of a build output."""
@@ -1838,3 +1872,93 @@ class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
         # would instead leave 15 (the trim's reduction discarded) or 1 (the
         # concurrent increase discarded).
         self.assertEqual(self.build_item.quantity, 6)
+
+
+class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for Build.subtract_allocated_stock().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    duplicated/overlapping execution - e.g. a redelivered 'complete_build' or
+    'cancel_build' background task - which cannot be reproduced with a single
+    stale Python instance, since this method always re-queries the BuildItem
+    rows fresh.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a minimal build/allocation setup for the concurrency test."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        self.assembly = Part.objects.create(
+            name='Concurrency assembly 2',
+            description='Assembly for subtract_allocated_stock concurrency test',
+            assembly=True,
+        )
+        self.sub_part = Part.objects.create(
+            name='Concurrency component 2',
+            description='Component for subtract_allocated_stock concurrency test',
+            component=True,
+        )
+
+        BomItem.objects.create(part=self.assembly, sub_part=self.sub_part, quantity=1)
+
+        self.build = Build.objects.create(
+            reference=generate_next_build_reference(),
+            part=self.assembly,
+            quantity=1,
+            issued_by=self.user,
+        )
+
+        self.build_line = BuildLine.objects.get(build=self.build)
+
+        self.stock_item = StockItem.objects.create(part=self.sub_part, quantity=10)
+
+        self.build_item = BuildItem.objects.create(
+            build_line=self.build_line, stock_item=self.stock_item, quantity=10
+        )
+
+    def test_subtract_allocated_stock_is_not_processed_twice(self):
+        """A duplicated/concurrent call to subtract_allocated_stock() must not double-consume.
+
+        Regression test: BuildItem allocation rows were read via a plain (unlocked)
+        queryset before being consumed and deleted. Two overlapping calls to this
+        method (e.g. a redelivered completion/cancellation background task) could
+        each read the same still-existing allocation and both call
+        complete_allocation() on it - double-counting the BuildLine's 'consumed'
+        quantity. The BuildItem rows are now locked (select_for_update) before
+        being processed, so a duplicate call finds nothing left to do.
+        """
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+
+        def run_subtract():
+            try:
+                start_barrier.wait()
+                self.build.subtract_allocated_stock(self.user)
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=run_subtract)
+        thread_b = threading.Thread(target=run_subtract)
+
+        thread_a.start()
+        thread_b.start()
+
+        thread_a.join(timeout=5)
+        thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        self.build_line.refresh_from_db()
+
+        # The allocation must only have been consumed once, no matter which
+        # thread "won" the race for the row lock
+        self.assertEqual(self.build_line.consumed, 10)
+        self.assertFalse(BuildItem.objects.filter(pk=self.build_item.pk).exists())

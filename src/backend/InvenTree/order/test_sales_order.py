@@ -280,6 +280,39 @@ class SalesOrderTest(InvenTreeAPITestCase):
         result = self.order.ship_order(None)
         self.assertFalse(result)
 
+    def test_order_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_cancel() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent cancellation requests
+        could both run the cancellation side effects (duplicate CANCELLED
+        events). The status is now re-read (under lock) from the database
+        before the check.
+        """
+        self.allocate_stock(True)
+        self.assertEqual(SalesOrderAllocation.objects.count(), 2)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        order_a = SalesOrder.objects.get(pk=self.order.pk)
+        order_b = SalesOrder.objects.get(pk=self.order.pk)
+
+        order_a.cancel_order()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
+        self.assertEqual(SalesOrderAllocation.objects.count(), 0)
+
+        # The second (stale) instance still believes the order is PENDING -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(order_b.status, status.SalesOrderStatus.PENDING)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            order_b.cancel_order()
+            trigger.assert_not_called()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
+
     def test_complete_order(self):
         """Allocate line items, then ship the order."""
         # Assert some stuff before we run the test

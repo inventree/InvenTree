@@ -851,6 +851,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -872,6 +878,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PLACED.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe status=PLACED, and each would run the completion side effects
+        # (duplicate events and pricing-update scheduling).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
@@ -953,6 +965,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
@@ -978,6 +996,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this purchase order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = PurchaseOrderStatus.ON_HOLD.value
             self.save()
@@ -1807,6 +1831,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -1833,6 +1863,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this sales order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = SalesOrderStatus.ON_HOLD.value
             self.save()
@@ -1895,6 +1931,13 @@ class SalesOrder(TotalPriceMixin, Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 
@@ -3183,6 +3226,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this order as 'on hold' (if allowed)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = ReturnOrderStatus.ON_HOLD.value
             self.save()
@@ -3196,6 +3245,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
@@ -3240,6 +3295,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3711,6 +3772,12 @@ class TransferOrder(Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = TransferOrderStatus.ISSUED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3737,6 +3804,12 @@ class TransferOrder(Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this transfer order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = TransferOrderStatus.ON_HOLD.value
             self.save()
@@ -3816,6 +3889,13 @@ class TransferOrder(Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 

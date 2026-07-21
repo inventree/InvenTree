@@ -675,6 +675,38 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
+    def test_po_complete_stale_instance_is_noop(self):
+        """A second completion attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests could
+        both run the completion side effects (duplicate COMPLETED events and
+        duplicate pricing-update scheduling). The status is now re-read (under
+        lock) from the database before the check.
+        """
+        po = models.PurchaseOrder.objects.get(pk=3)
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        po_a = models.PurchaseOrder.objects.get(pk=po.pk)
+        po_b = models.PurchaseOrder.objects.get(pk=po.pk)
+
+        po_a.complete_order()
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+        # The second (stale) instance still believes the order is PLACED -
+        # completion must be skipped based on the database state
+        self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            po_b.complete_order()
+            trigger.assert_not_called()
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=2)
@@ -3826,6 +3858,38 @@ class TransferOrderTest(OrderTest):
 
         to.refresh_from_db()
 
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+    def test_transfer_order_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_cancel() checked 'can_cancel' (derived from
+        'status') on the caller's (potentially stale) instance, so two concurrent
+        cancellation requests could both run the cancellation side effects
+        (duplicate CANCELLED events). The status is now re-read (under lock)
+        from the database before the check.
+        """
+        to = models.TransferOrder.objects.get(pk=1)
+        self.assertEqual(to.status, TransferOrderStatus.PENDING)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        instance_a = models.TransferOrder.objects.get(pk=to.pk)
+        instance_b = models.TransferOrder.objects.get(pk=to.pk)
+
+        instance_a.cancel_order()
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+        # The second (stale) instance still believes the order is PENDING -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            instance_b.cancel_order()
+            trigger.assert_not_called()
+
+        to.refresh_from_db()
         self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
 
     def test_transfer_order_hold(self):
