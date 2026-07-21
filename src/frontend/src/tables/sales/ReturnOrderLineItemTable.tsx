@@ -23,6 +23,7 @@ import {
   LinkColumn,
   NoteColumn,
   PartColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   StatusColumn,
@@ -148,6 +149,11 @@ export default function ReturnOrderLineItemTable({
         render: (record: any) =>
           formatCurrency(record.price, { currency: record.price_currency })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       DateColumn({
         accessor: 'target_date',
         title: t`Target Date`
