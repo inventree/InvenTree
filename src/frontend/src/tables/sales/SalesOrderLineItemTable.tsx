@@ -36,9 +36,11 @@ import {
   IPNColumn,
   LineItemColumn,
   LinkColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
-  RenderPartColumn
+  RenderPartColumn,
+  RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
@@ -103,6 +105,7 @@ export default function SalesOrderLineItemTable({
         }
       },
       IPNColumn({}),
+      RevisionColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -119,13 +122,18 @@ export default function SalesOrderLineItemTable({
             currency: record.sale_price_currency
           })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
           formatCurrency(record.sale_price, {
             currency: record.sale_price_currency,
-            multiplier: record.quantity
+            multiplier: record.quantity * (1 - (record.discount ?? 0) / 100)
           })
       },
       DateColumn({
@@ -607,6 +615,9 @@ export default function SalesOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.sales_order),
+          afterBulkDelete: orderDetailRefresh,
           params: {
             order: orderId,
             part_detail: true

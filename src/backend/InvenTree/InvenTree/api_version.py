@@ -1,12 +1,26 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 520
+INVENTREE_API_VERSION = 524
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/xxxx
+v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
+    - Adds "discount" field to order line items (and extra line items)
+
+v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
+    - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)
+    - Adds "bulk delete" support for order extra line item API endpoints
+    - Completed TransferOrder objects are now "locked" (controlled by the new TRANSFERORDER_EDIT_COMPLETED_ORDERS global setting)
+
+v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12388
+    - Adds "unique" field to the ParameterTemplate model
+
+v521 -> 2026-07-12 : https://github.com/inventree/InvenTree/pull/12360
+    - Removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database.
+
+v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/12310
     - Adds new "disassemble" API endpoint for stock items
     - Allows a stock item to be broken down into component parts, based on its Bill of Materials
 

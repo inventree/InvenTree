@@ -681,6 +681,16 @@ class Build(
         """Action to be taken when a build is completed."""
         import build.tasks
 
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # could both offload the completion task (duplicate events and
+        # notifications; the stock-consuming side effects are themselves
+        # guarded against double-processing - see Build.subtract_allocated_stock()).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
+        if self.status == BuildStatus.COMPLETE.value:
+            return
+
         trim_allocated_stock = kwargs.pop('trim_allocated_stock', False)
         user = kwargs.pop('user', None)
 
@@ -730,6 +740,12 @@ class Build(
 
     def _action_issue(self, *args, **kwargs):
         """Perform the action to mark this order as PRODUCTION."""
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and offloaded stock-check tasks).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
@@ -757,6 +773,12 @@ class Build(
 
     def _action_hold(self, *args, **kwargs):
         """Action to be taken when a build is placed on hold."""
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = BuildStatus.ON_HOLD.value
             self.save()
@@ -783,6 +805,16 @@ class Build(
     def _action_cancel(self, *args, **kwargs):
         """Action to be taken when a build is cancelled."""
         import build.tasks
+
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous cancellation requests
+        # could both offload the cancellation task (duplicate events and
+        # notifications; the stock-consuming side effects are themselves
+        # guarded against double-processing - see Build.subtract_allocated_stock()).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
+        if self.status == BuildStatus.CANCELLED.value:
+            return
 
         user = kwargs.pop('user', None)
 
@@ -986,7 +1018,17 @@ class Build(
                 continue
 
             # Find BuildItem objects to trim
-            for item in BuildItem.objects.filter(build_line=build_line):
+            # Lock these rows (in pk order, to avoid deadlocks against other
+            # allocation operations) so a concurrent allocation update cannot
+            # be silently overwritten by the quantity decrement below
+            items = (
+                BuildItem.objects
+                .select_for_update()
+                .filter(build_line=build_line)
+                .order_by('pk')
+            )
+
+            for item in items:
                 # Previous item completed the job
                 if reduce_by <= 0:
                     break
@@ -1013,11 +1055,20 @@ class Build(
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
+    @transaction.atomic
     def subtract_allocated_stock(self, user) -> None:
         """Removes the allocated untracked items from stock."""
         # Find all BuildItem objects which point to this build
-        items = self.allocated_stock.filter(
-            build_line__bom_item__sub_part__trackable=False
+        # Lock these rows (in pk order, to avoid deadlocks against other
+        # allocation operations), so a duplicated call to this method (e.g. a
+        # redelivered background task, or a completion and cancellation racing
+        # against each other) cannot process - and double-consume - the same
+        # allocations
+        items = list(
+            self.allocated_stock
+            .filter(build_line__bom_item__sub_part__trackable=False)
+            .select_for_update()
+            .order_by('pk')
         )
 
         # Remove stock
@@ -1025,7 +1076,7 @@ class Build(
             item.complete_allocation(user=user)
 
         # Delete allocation
-        items.all().delete()
+        BuildItem.objects.filter(pk__in=[item.pk for item in items]).delete()
 
     @transaction.atomic
     def scrap_build_output(
@@ -1040,6 +1091,15 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # Re-check the state of the output itself:
+        # It may have changed since the scrap request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
 
         # If quantity is not specified, assume the entire output quantity
         if quantity is None:
@@ -1111,6 +1171,15 @@ class Build(
         Raises:
             ValidationError: If the build output cannot be completed, with an appropriate message
         """
+        # Re-check the state of the output itself:
+        # It may have changed since the completion request was validated
+        # (e.g. a duplicated background task, or a concurrent request)
+        if not output.is_building:
+            raise ValidationError(_('Build output has already been completed'))
+
+        if output.build != self:
+            raise ValidationError(_('Build output does not match Build Order'))
+
         prevent_incomplete = get_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
         )
@@ -1219,9 +1288,11 @@ class Build(
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
-        self.completed += output.quantity
-
-        self.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple outputs may be completed concurrently)
+        self.completed = F('completed') + output.quantity
+        self.save(update_fields=['completed'])
+        self.refresh_from_db(fields=['completed'])
 
     @transaction.atomic
     def auto_allocate_stock(
@@ -2023,9 +2094,24 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         item = self.stock_item
 
+        # Lock the stock item's row and refresh its quantity, so the clamp and
+        # split decision below operate on the current committed quantity rather
+        # than a stale in-memory copy (concurrent allocations may have consumed
+        # stock from this same item in the meantime)
+        if not item.lock_quantity():
+            # The stock item no longer exists - remove this (now invalid) allocation
+            self.delete()
+            return
+
         # Ensure we are not allocating more than available
         if quantity > item.quantity:
             quantity = item.quantity
+
+        if quantity <= 0:
+            # There is nothing to consume or install:
+            # simply remove this (empty) allocation
+            self.delete()
+            return
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:
@@ -2056,8 +2142,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             )
 
         # Increase the "consumed" count for the associated BuildLine
-        self.build_line.consumed += quantity
-        self.build_line.save()
+        # Increment at the database level to prevent lost updates
+        # (multiple allocations against the same BuildLine may complete concurrently)
+        self.build_line.consumed = F('consumed') + quantity
+        self.build_line.save(update_fields=['consumed'])
+        self.build_line.refresh_from_db(fields=['consumed'])
 
         # Decrease the allocated quantity
         self.quantity = max(0, self.quantity - quantity)

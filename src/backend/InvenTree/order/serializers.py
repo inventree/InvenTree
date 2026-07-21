@@ -305,6 +305,8 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         required=False, allow_null=True, label=_('Target Date')
     )
 
+    discount = InvenTreeDecimalField(required=False)
+
     project_code_label = common.filters.enable_project_label_filter()
 
     project_code_detail = common.filters.enable_project_code_filter()
@@ -322,6 +324,7 @@ class AbstractExtraLineSerializer(
             'pk',
             'line',
             'description',
+            'discount',
             'link',
             'notes',
             'order',
@@ -331,6 +334,7 @@ class AbstractExtraLineSerializer(
             'quantity',
             'reference',
             'target_date',
+            'total_price',
             # Filterable detail fields
             'order_detail',
             'project_code_label',
@@ -340,9 +344,15 @@ class AbstractExtraLineSerializer(
 
     quantity = serializers.FloatField()
 
+    discount = InvenTreeDecimalField(required=False)
+
     price = InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTreeCurrencySerializer()
+
+    total_price = InvenTreeMoneySerializer(
+        source='total_line_price', allow_null=True, read_only=True
+    )
 
     project_code_label = common.filters.enable_project_label_filter()
 
@@ -355,6 +365,7 @@ class AbstractExtraLineMeta:
     fields = [
         'pk',
         'description',
+        'discount',
         'quantity',
         'reference',
         'notes',
@@ -363,6 +374,7 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
+        'total_price',
         'link',
     ]
 
@@ -558,6 +570,7 @@ class PurchaseOrderLineItemSerializer(
         fields = AbstractLineItemSerializer.line_fields([
             'part',
             'build_order',
+            'discount',
             'overdue',
             'received',
             'purchase_price',
@@ -586,7 +599,6 @@ class PurchaseOrderLineItemSerializer(
     def annotate_queryset(queryset):
         """Add some extra annotations to this queryset.
 
-        - "total_price" = purchase_price * quantity
         - "overdue" status (boolean field)
         """
         queryset = queryset.prefetch_related(
@@ -600,12 +612,6 @@ class PurchaseOrderLineItemSerializer(
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
-        )
-
-        queryset = queryset.annotate(
-            total_price=ExpressionWrapper(
-                F('purchase_price') * F('quantity'), output_field=models.DecimalField()
-            )
         )
 
         queryset = queryset.annotate(
@@ -648,7 +654,9 @@ class PurchaseOrderLineItemSerializer(
 
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
-    total_price = serializers.FloatField(read_only=True)
+    total_price = InvenTreeMoneySerializer(
+        source='total_line_price', allow_null=True, read_only=True
+    )
 
     part_detail = OptionalField(
         serializer_class=PartBriefSerializer,
@@ -1010,6 +1018,13 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Ensure barcodes are unique
         unique_barcodes = set()
 
+        # Ensure serial numbers are unique across all line items in this request
+        # (each line is only validated against the *database* individually)
+        unique_serials = set()
+        serials_globally_unique = get_global_setting(
+            'SERIAL_NUMBER_GLOBALLY_UNIQUE', False
+        )
+
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
@@ -1034,6 +1049,25 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(_('Supplied barcode values must be unique'))
                 else:
                     unique_barcodes.add(barcode)
+
+            if serials := item.get('serials'):
+                if line.part:
+                    # Scope uniqueness the same way as the database check:
+                    # per part tree, or globally (if so configured)
+                    for serial in serials:
+                        key = (
+                            str(serial)
+                            if serials_globally_unique
+                            else (line.part.part.tree_id, str(serial))
+                        )
+
+                        if key in unique_serials:
+                            raise ValidationError(
+                                _('Supplied serial numbers must be unique')
+                                + f': {serial}'
+                            )
+
+                        unique_serials.add(key)
 
         return data
 
@@ -1208,6 +1242,7 @@ class SalesOrderLineItemSerializer(
         fields = AbstractLineItemSerializer.line_fields([
             'allocated',
             'customer_detail',
+            'discount',
             'overdue',
             'part',
             'part_detail',
@@ -1871,104 +1906,23 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         return shipment
 
-    def validate(self, data):
-        """Validation for the serializer.
+    def save(self):
+        """Allocate stock items against the sales order, by serial number."""
+        data = self.validated_data
 
-        - Ensure the serial_numbers and quantity fields match
-        - Check that all serial numbers exist
-        - Check that the serial numbers are not yet allocated
-        """
-        data = super().validate(data)
-
+        sales_order = self.context['order']
         line_item = data['line_item']
         quantity = data['quantity']
         serial_numbers = data['serial_numbers']
-
-        part = line_item.part
-
-        try:
-            data['serials'] = extract_serial_numbers(
-                serial_numbers, quantity, part.get_latest_serial_number(), part=part
-            )
-        except DjangoValidationError as e:
-            raise ValidationError({'serial_numbers': e.messages})
-
-        serials_not_exist = set()
-        serials_unavailable = set()
-        stock_items_to_allocate = []
-
-        for serial in data['serials']:
-            serial = str(serial).strip()
-
-            items = stock.models.StockItem.objects.filter(
-                part=part, serial=serial, quantity=1
-            )
-
-            if not items.exists():
-                serials_not_exist.add(str(serial))
-                continue
-
-            stock_item = items[0]
-
-            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serials_unavailable.add(str(serial))
-                    continue
-
-            if not stock_item.in_stock:
-                serials_unavailable.add(str(serial))
-                continue
-
-            if stock_item.unallocated_quantity() < 1:
-                serials_unavailable.add(str(serial))
-                continue
-
-            # At this point, the serial number is valid, and can be added to the list
-            stock_items_to_allocate.append(stock_item)
-
-        if len(serials_not_exist) > 0:
-            error_msg = _('No match found for the following serial numbers')
-            error_msg += ': '
-            error_msg += ','.join(sorted(serials_not_exist))
-
-            raise ValidationError({'serial_numbers': error_msg})
-
-        if len(serials_unavailable) > 0:
-            error_msg = _('The following serial numbers are unavailable')
-            error_msg += ': '
-            error_msg += ','.join(sorted(serials_unavailable))
-
-            raise ValidationError({'serial_numbers': error_msg})
-
-        data['stock_items'] = stock_items_to_allocate
-
-        return data
-
-    def save(self):
-        """Allocate stock items against the sales order."""
-        data = self.validated_data
-
-        line_item = data['line_item']
-        stock_items = data['stock_items']
         shipment = data.get('shipment', None)
 
-        allocations = []
-
-        for stock_item in stock_items:
-            # Create a new SalesOrderAllocation
-            allocations.append(
-                order.models.SalesOrderAllocation(
-                    line=line_item, item=stock_item, quantity=1, shipment=shipment
-                )
+        try:
+            return sales_order.allocate_serial_numbers(
+                line_item, quantity, serial_numbers, shipment=shipment
             )
-
-        with transaction.atomic():
-            order.models.SalesOrderAllocation.objects.bulk_create(
-                allocations, batch_size=250
-            )
+        except (ValidationError, DjangoValidationError) as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
@@ -2386,6 +2340,7 @@ class ReturnOrderLineItemSerializer(
             'item',
             'received_date',
             'outcome',
+            'discount',
             'price',
             'price_currency',
             # Filterable detail fields
