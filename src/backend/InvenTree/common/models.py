@@ -3118,8 +3118,10 @@ class Note(
             super().save(*args, **kwargs)
 
             # Mark other notes as non-primary
+            # Note: re-exclude on self.pk here, as it was None (and thus a no-op
+            # exclusion) when the 'siblings' queryset was built above for a new note
             if self.primary:
-                siblings.update(primary=False)
+                siblings.exclude(pk=self.pk).update(primary=False)
         else:
             # Templates skip primary-flag logic entirely
             self.primary = False

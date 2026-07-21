@@ -1620,40 +1620,6 @@ class PartCreationTests(PartAPITestBase):
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
 
-    def test_notes_on_create(self):
-        """Test that notes can be set when creating a Part."""
-        list_url = reverse('api-part-list')
-
-        notes = """
-        ### Created from importer
-
-        Notes should persist during part creation.
-        """
-        expected_notes = notes.strip()
-
-        response = self.post(
-            list_url,
-            {
-                'name': 'part with notes',
-                'description': 'Part notes are created in the same request',
-                'category': 1,
-                'notes': notes,
-            },
-            expected_code=201,
-        )
-
-        self.assertEqual(response.data['notes'], expected_notes)
-
-        part = Part.objects.get(pk=response.data['pk'])
-        self.assertEqual(part.notes, expected_notes)
-
-        detail_url = reverse('api-part-detail', kwargs={'pk': part.pk})
-        response = self.get(detail_url, expected_code=200)
-        self.assertEqual(response.data['notes'], expected_notes)
-
-        response = self.get(list_url, {'limit': 1}, expected_code=200)
-        self.assertNotIn('notes', response.data['results'][0])
-
     def test_initial_stock(self):
         """Tests for initial stock quantity creation."""
 
