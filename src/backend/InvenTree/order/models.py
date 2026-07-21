@@ -5,7 +5,7 @@ from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
@@ -157,7 +157,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
@@ -171,7 +175,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 # Record the error, try to press on
 
@@ -2109,11 +2117,20 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         validators=[MinValueValidator(0)],
     )
 
+    discount = models.DecimalField(
+        verbose_name=_('Discount'),
+        help_text=_('Discount percentage applied to this line item (0-100)'),
+        default=0,
+        max_digits=5,
+        decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+
     @property
     def total_line_price(self):
-        """Return the total price for this line item."""
+        """Return the total price for this line item, after any discount is applied."""
         if self.price:
-            return self.quantity * self.price
+            return self.quantity * self.price * (1 - self.discount / 100)
 
     line = models.CharField(
         max_length=20,
@@ -3478,7 +3495,7 @@ class TransferOrder(Order):
     REFERENCE_PATTERN_SETTING = 'TRANSFERORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'TRANSFERORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = TransferOrderStatus
-    # UNLOCK_SETTING = 'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
+    UNLOCK_SETTING = 'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""

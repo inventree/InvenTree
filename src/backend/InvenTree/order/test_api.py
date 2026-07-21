@@ -900,15 +900,45 @@ class PurchaseOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple PurchaseOrderLineItems via the API."""
         n = models.PurchaseOrderLineItem.objects.count()
 
-        self.assignRole('purchase_order.delete')
-
         url = reverse('api-po-line-list')
+
+        # Deletion should fail without the correct role
+        self.delete(url, {'items': [1, 2]}, expected_code=403)
+
+        self.assignRole('purchase_order.delete')
 
         # Try to delete a set of line items via their IDs
         self.delete(url, {'items': [1, 2]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deleting them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
+    def test_po_extra_line_bulk_delete(self):
+        """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        models.PurchaseOrderExtraLine.objects.bulk_create([
+            models.PurchaseOrderExtraLine(
+                order=po, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
+
+        n = models.PurchaseOrderExtraLine.objects.count()
+        items = list(
+            models.PurchaseOrderExtraLine.objects.values_list('pk', flat=True)[:2]
+        )
+
+        url = reverse('api-po-extra-line-list')
+
+        # Deletion should fail without the correct role
+        self.delete(url, {'items': items}, expected_code=403)
+
+        self.assignRole('purchase_order.delete')
+
+        self.delete(url, {'items': items}, expected_code=200)
+
+        self.assertEqual(models.PurchaseOrderExtraLine.objects.count(), n - 2)
 
     def test_po_line_merge_pricing(self):
         """Test that we can create a new PurchaseOrderLineItem via the API."""
@@ -2245,6 +2275,49 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'allocated': 'true'}, 1)
         self.filter({'allocated': 'false'}, n - 1)
 
+    def test_so_line_bulk_delete(self):
+        """Test that we can bulk delete multiple SalesOrderLineItems via the API."""
+        n = models.SalesOrderLineItem.objects.count()
+
+        items = list(models.SalesOrderLineItem.objects.values_list('pk', flat=True)[:2])
+
+        # Deletion should fail without the correct role
+        self.delete(self.url, {'items': items}, expected_code=403)
+
+        self.assignRole('sales_order.delete')
+
+        self.delete(self.url, {'items': items}, expected_code=200)
+
+        # We should have 2 less SalesOrderLineItems after deleting them
+        self.assertEqual(models.SalesOrderLineItem.objects.count(), n - 2)
+
+    def test_so_extra_line_bulk_delete(self):
+        """Test that we can bulk delete multiple SalesOrderExtraLine items via the API."""
+        so = models.SalesOrder.objects.first()
+
+        models.SalesOrderExtraLine.objects.bulk_create([
+            models.SalesOrderExtraLine(
+                order=so, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
+
+        n = models.SalesOrderExtraLine.objects.count()
+        items = list(
+            models.SalesOrderExtraLine.objects.values_list('pk', flat=True)[:2]
+        )
+
+        url = reverse('api-so-extra-line-list')
+
+        # Deletion should fail without the correct role
+        self.delete(url, {'items': items}, expected_code=403)
+
+        self.assignRole('sales_order.delete')
+
+        self.delete(url, {'items': items}, expected_code=200)
+
+        self.assertEqual(models.SalesOrderExtraLine.objects.count(), n - 2)
+
     def test_so_line_allocated_filters(self):
         """Test filtering by allocation status for a SalesOrderLineItem."""
         self.assignRole('sales_order.add')
@@ -3458,6 +3531,126 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         line = models.ReturnOrderLineItem.objects.get(pk=1)
         self.assertEqual(float(line.price.amount), 15.75)
 
+    def test_bulk_delete(self):
+        """Test that we can bulk delete multiple ReturnOrderLineItems via the API."""
+        n = models.ReturnOrderLineItem.objects.count()
+        self.assertGreater(n, 0)
+
+        items = list(
+            models.ReturnOrderLineItem.objects.values_list('pk', flat=True)[:1]
+        )
+
+        url = reverse('api-return-order-line-list')
+
+        # Deletion should fail without the correct role
+        self.delete(url, {'items': items}, expected_code=403)
+
+        self.assignRole('return_order.delete')
+
+        self.delete(url, {'items': items}, expected_code=200)
+
+        self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
+
+    def test_extra_line_bulk_delete(self):
+        """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
+        ro = models.ReturnOrder.objects.first()
+
+        models.ReturnOrderExtraLine.objects.bulk_create([
+            models.ReturnOrderExtraLine(
+                order=ro, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
+
+        n = models.ReturnOrderExtraLine.objects.count()
+        items = list(
+            models.ReturnOrderExtraLine.objects.values_list('pk', flat=True)[:2]
+        )
+
+        url = reverse('api-return-order-extra-line-list')
+
+        # Deletion should fail without the correct role
+        self.delete(url, {'items': items}, expected_code=403)
+
+        self.assignRole('return_order.delete')
+
+        self.delete(url, {'items': items}, expected_code=200)
+
+        self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
+
+
+class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
+    """Unit tests for the 'total_price' field on ExtraLine API endpoints.
+
+    Covers PurchaseOrderExtraLine, SalesOrderExtraLine and ReturnOrderExtraLine,
+    which all share the same 'total_price' field via AbstractExtraLineSerializer.
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+    ]
+
+    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
+
+    def check_total_price(
+        self, order, extra_line_model, list_url_name, detail_url_name
+    ):
+        """Create an ExtraLine with a known price/quantity/discount, and check total_price."""
+        line = extra_line_model.objects.create(
+            order=order, quantity=5, price=Money(10, 'USD'), discount=20
+        )
+
+        # 5 * 10 = 50, less 20% discount = 40
+        expected = 40
+
+        # List endpoint
+        response = self.get(
+            reverse(list_url_name), {'order': order.pk}, expected_code=200
+        )
+        result = next(r for r in response.data if r['pk'] == line.pk)
+        self.assertEqual(float(result['total_price']), expected)
+
+        # Detail endpoint
+        response = self.get(
+            reverse(detail_url_name, kwargs={'pk': line.pk}), expected_code=200
+        )
+        self.assertEqual(float(response.data['total_price']), expected)
+
+    def test_po_extra_line_total_price(self):
+        """Check 'total_price' for a PurchaseOrderExtraLine."""
+        self.check_total_price(
+            models.PurchaseOrder.objects.get(pk=1),
+            models.PurchaseOrderExtraLine,
+            'api-po-extra-line-list',
+            'api-po-extra-line-detail',
+        )
+
+    def test_so_extra_line_total_price(self):
+        """Check 'total_price' for a SalesOrderExtraLine."""
+        self.check_total_price(
+            models.SalesOrder.objects.get(pk=1),
+            models.SalesOrderExtraLine,
+            'api-so-extra-line-list',
+            'api-so-extra-line-detail',
+        )
+
+    def test_return_order_extra_line_total_price(self):
+        """Check 'total_price' for a ReturnOrderExtraLine."""
+        self.check_total_price(
+            models.ReturnOrder.objects.get(pk=1),
+            models.ReturnOrderExtraLine,
+            'api-return-order-extra-line-list',
+            'api-return-order-extra-line-detail',
+        )
+
 
 class TransferOrderTest(OrderTest):
     """Tests for the TransferOrder API."""
@@ -4097,6 +4290,63 @@ class TransferOrderLineItemTest(OrderTest):
         # Filter by 'allocated' status
         self.filter({'allocated': 'true'}, 2)
         self.filter({'allocated': 'false'}, n - 2)
+
+    def test_transfer_order_line_bulk_delete(self):
+        """Test that we can bulk delete multiple TransferOrderLineItems via the API."""
+        n = models.TransferOrderLineItem.objects.count()
+
+        # Select lines from orders which are not completed (and thus not locked)
+        items = list(
+            models.TransferOrderLineItem.objects.exclude(
+                order__status__in=TransferOrderStatusGroups.COMPLETE
+            ).values_list('pk', flat=True)[:2]
+        )
+
+        # Deletion should fail without the correct role
+        self.delete(self.url, {'items': items}, expected_code=403)
+
+        self.assignRole('transfer_order.delete')
+
+        self.delete(self.url, {'items': items}, expected_code=200)
+
+        # We should have 2 less TransferOrderLineItems after deleting them
+        self.assertEqual(models.TransferOrderLineItem.objects.count(), n - 2)
+
+    def test_completed_order_locked(self):
+        """Test that line items cannot be deleted from a completed TransferOrder."""
+        self.assignRole('transfer_order.delete')
+
+        set_global_setting(models.TransferOrder.UNLOCK_SETTING, False)
+
+        order = models.TransferOrder.objects.filter(
+            status=TransferOrderStatus.PENDING.value, lines__isnull=False
+        ).first()
+        assert order
+
+        # Mark the order as complete
+        order.status = TransferOrderStatus.COMPLETE.value
+        order.save()
+
+        n = order.lines.count()
+        self.assertGreater(n, 1)
+
+        line = order.lines.first()
+        detail_url = reverse('api-transfer-order-line-detail', kwargs={'pk': line.pk})
+
+        # Single deletion of a line item should fail
+        self.delete(detail_url, expected_code=400)
+
+        # Bulk deletion should also fail (and roll back atomically)
+        items = list(order.lines.values_list('pk', flat=True))
+        self.delete(self.url, {'items': items}, expected_code=400)
+
+        self.assertEqual(order.lines.count(), n)
+
+        # Unlocking completed orders should allow deletion again
+        set_global_setting(models.TransferOrder.UNLOCK_SETTING, True)
+
+        self.delete(detail_url, expected_code=204)
+        self.assertEqual(order.lines.count(), n - 1)
 
     def test_transfer_order_line_allocated_filters(self):
         """Test filtering by allocation status for a TransferOrderLineItem."""

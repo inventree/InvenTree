@@ -2,6 +2,7 @@
 
 import os
 from datetime import timedelta
+from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -11,6 +12,7 @@ from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
+import requests_mock
 from django_q.models import OrmQ, Schedule, Task
 from error_report.models import Error
 
@@ -168,19 +170,57 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         errors = Error.objects.filter(when__lte=threshold)
         self.assertEqual(len(errors), 0)
 
-    def test_task_check_for_updates(self):
-        """Test the task check_for_updates."""
-        # Check that setting should be empty
+    @requests_mock.Mocker()
+    def test_task_check_for_updates(self, requests_mocker):
+        """Test update notification creation and deduplication."""
+        from common.models import NotificationEntry, NotificationMessage
+        from common.serializers import NotificationMessageSerializer
+
+        self.ensurePluginsLoaded(force=True)
+
+        user = User.objects.create_superuser(
+            username='update_admin',
+            email='update@example.com',
+            password='test-password',
+        )
+
+        release_url = 'https://github.com/InvenTree/InvenTree/releases/tag/99.99.99'
+
+        requests_mocker.get(
+            'https://api.github.com/repos/inventree/inventree/releases/latest',
+            json={'tag_name': '99.99.99', 'html_url': release_url},
+        )
+
         InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION', '')
-        self.assertEqual(InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '')
 
-        # Get new version
-        InvenTree.tasks.offload_task(InvenTree.tasks.check_for_updates)
+        with (
+            patch(
+                'InvenTree.tasks.isInvenTreeUpToDate', return_value=False
+            ) as mock_up_to_date,
+            patch('InvenTree.tasks.check_daily_holdoff', return_value=True),
+        ):
+            InvenTree.tasks.check_for_updates()
 
-        # Check that setting is not empty
-        response = InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION')
-        self.assertNotEqual(response, '')
-        self.assertTrue(bool(response))
+            self.assertEqual(
+                InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '99.99.99'
+            )
+            self.assertEqual(NotificationMessage.objects.count(), 1)
+            self.assertEqual(NotificationEntry.objects.count(), 1)
+
+            message = NotificationMessage.objects.get(user=user)
+            entry = NotificationEntry.objects.get()
+
+            self.assertEqual(message.link, release_url)
+            self.assertEqual(entry.uid, 0)
+
+            serialized = NotificationMessageSerializer(message).data
+            self.assertEqual(serialized['target']['link'], release_url)
+
+            InvenTree.tasks.check_for_updates()
+
+            self.assertEqual(NotificationMessage.objects.count(), 1)
+            self.assertEqual(NotificationEntry.objects.count(), 1)
+            mock_up_to_date.assert_called()
 
     def test_task_check_for_migrations(self):
         """Test the task check_for_migrations."""

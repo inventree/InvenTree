@@ -951,6 +951,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'TRANSFERORDER_EDIT_COMPLETED_ORDERS': {
+        'name': _('Edit Completed Transfer Orders'),
+        'description': _(
+            'Allow editing of transfer orders after they have been completed'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
         'name': _('Block Incomplete Item Tests'),
         'description': _(
