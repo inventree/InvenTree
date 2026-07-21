@@ -818,7 +818,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         icon: <IconArrowRight />,
         onClick: (event: any) => {
           cancelEvent(event);
-          if (eventModified(event as any)) {
+          if (!showPreviewPanel || eventModified(event as any)) {
             navigateToLink(url, navigate, event);
           } else {
             showRowPreview(pk);
