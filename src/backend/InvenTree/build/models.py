@@ -986,7 +986,17 @@ class Build(
                 continue
 
             # Find BuildItem objects to trim
-            for item in BuildItem.objects.filter(build_line=build_line):
+            # Lock these rows (in pk order, to avoid deadlocks against other
+            # allocation operations) so a concurrent allocation update cannot
+            # be silently overwritten by the quantity decrement below
+            items = (
+                BuildItem.objects
+                .select_for_update()
+                .filter(build_line=build_line)
+                .order_by('pk')
+            )
+
+            for item in items:
                 # Previous item completed the job
                 if reduce_by <= 0:
                     break
@@ -2042,6 +2052,15 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             quantity = self.quantity
 
         item = self.stock_item
+
+        # Lock the stock item's row and refresh its quantity, so the clamp and
+        # split decision below operate on the current committed quantity rather
+        # than a stale in-memory copy (concurrent allocations may have consumed
+        # stock from this same item in the meantime)
+        if not item.lock_quantity():
+            # The stock item no longer exists - remove this (now invalid) allocation
+            self.delete()
+            return
 
         # Ensure we are not allocating more than available
         if quantity > item.quantity:
