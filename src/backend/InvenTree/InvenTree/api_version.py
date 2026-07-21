@@ -1,15 +1,23 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 523
+INVENTREE_API_VERSION = 525
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v523 -> 2026-07-06 : https://github.com/inventree/InvenTree/pull/11971
+v525 -> 2026-07-21 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
+    - Adds "discount" field to order line items (and extra line items)
+
+v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
+    - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)
+    - Adds "bulk delete" support for order extra line item API endpoints
+    - Completed TransferOrder objects are now "locked" (controlled by the new TRANSFERORDER_EDIT_COMPLETED_ORDERS global setting)
 
 v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12388
     - Adds "unique" field to the ParameterTemplate model

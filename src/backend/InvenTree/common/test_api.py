@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from PIL import Image
@@ -13,7 +14,8 @@ from taggit.models import Tag
 
 import common.models
 from common.models import SelectionList, SelectionListEntry
-from InvenTree.unit_test import InvenTreeAPITestCase
+from common.settings import set_global_setting
+from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
 
 
 class DataOutputAPITests(InvenTreeAPITestCase):
@@ -568,6 +570,96 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
+
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
+    def test_bulk_create_parameters(self):
+        """Test bulk creation of parameters via the API.
+
+        Test that:
+            - The correct number of items are created
+            - Instance creation events are offloaded to the background worker
+        """
+        from django_q.models import OrmQ
+
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        OrmQ.objects.all().delete()
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Test Parameter',
+            description='A parameter template for testing bulk creation',
+            model_type=None,
+        )
+
+        # Generate a set of parts
+        parts = [
+            Part.objects.create(
+                name=f'Test Part {ii}', description='A part for testing'
+            )
+            for ii in range(50)
+        ]
+
+        N = common.models.Parameter.objects.count()
+
+        # Bulk-create parameters
+        response = self.post(
+            reverse('api-parameter-list'),
+            data=[
+                {
+                    'template': template.pk,
+                    'model_type': 'part.part',
+                    'model_id': part.pk,
+                    'data': f'Test data {part.pk}',
+                }
+                for part in parts
+            ],
+            benchmark=True,
+            max_query_count=500,
+            max_query_time=2.0,
+        )
+
+        self.assertEqual(len(response.data), 50)
+
+        # Check that the parameters have been created
+        self.assertEqual(common.models.Parameter.objects.count(), N + len(parts))
+
+        # We expect that 50 events have been offloaded to the background worker
+        self.assertGreaterEqual(OrmQ.objects.count(), len(parts))
+
+        # There should be a parameter for each part
+        for part in parts:
+            self.assertEqual(part.parameters.count(), 1)
+            parameter = part.parameters.first()
+            self.assertIsNotNone(parameter)
+            self.assertIsNotNone(parameter.updated)
+            self.assertIsNotNone(parameter.updated_by)
+            self.assertEqual(parameter.updated_by, self.user)
+
+            # Check that an associated event has been offloaded
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'part_partparameter.created', matching_kwargs={'id': parameter.pk}
+                ),
+                f'No created event found for parameter {parameter.pk}',
+            )
+
+            # Check that an extra 'saved' event is *NOT* generated
+            self.assertIsNone(
+                findOffloadedEvent(
+                    'part_partparameter.saved', matching_kwargs={'id': parameter.pk}
+                ),
+                f'Unexpected saved event found for parameter {parameter.pk}',
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_parameter_uniqueness(self):
         """Test the uniqueness options which can be applied to a ParameterTemplate."""

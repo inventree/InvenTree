@@ -186,6 +186,7 @@ export function usePurchaseOrderLineItemFields({
         value: purchasePriceCurrency,
         onValueChange: setPurchasePriceCurrency
       },
+      discount: {},
       auto_pricing: {
         default: create !== false,
         value: autoPricing,

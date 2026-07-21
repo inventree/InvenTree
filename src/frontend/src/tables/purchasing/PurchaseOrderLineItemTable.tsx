@@ -30,6 +30,7 @@ import {
   LocationColumn,
   NoteColumn,
   PartColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   TargetDateColumn
@@ -254,13 +255,17 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
-          formatCurrency(record.purchase_price, {
-            currency: record.purchase_price_currency,
-            multiplier: record.quantity
+          formatCurrency(record.total_price, {
+            currency: record.purchase_price_currency
           })
       },
       TargetDateColumn({}),
@@ -435,6 +440,9 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.purchase_order),
+          afterBulkDelete: orderDetailRefresh,
           defaultSortColumn: 'line',
           params: {
             ...params,

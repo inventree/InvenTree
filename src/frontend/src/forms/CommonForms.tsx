@@ -92,6 +92,7 @@ export function extraLineItemFields(): ApiFormFieldSet {
     quantity: {},
     price: {},
     price_currency: {},
+    discount: {},
     project_code: ProjectCodeField(),
     notes: {},
     link: {}

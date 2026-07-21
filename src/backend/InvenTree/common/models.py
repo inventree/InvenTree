@@ -1726,6 +1726,13 @@ class NotificationMessage(models.Model):
 
     message = models.CharField(max_length=250, blank=True, null=True)
 
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text=_('Optional explicit URL associated with this notification'),
+    )
+
     creation = models.DateTimeField(auto_now_add=True)
 
     read = models.BooleanField(default=False)
