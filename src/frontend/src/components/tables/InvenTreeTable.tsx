@@ -766,69 +766,82 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   }, [props.onCellContextMenu, props.rowActions, props.modelType]);
 
   // Callback when a cell is right-clicked
-  const handleCellContextMenu = ({
-    record,
-    column,
-    event
-  }: {
-    record: any;
-    column: any;
-    event: any;
-  }) => {
-    if (column?.noContext === true) {
-      return;
-    }
-    if (props.onCellContextMenu) {
-      return props.onCellContextMenu(record, event);
-    }
-
-    const empty = () => {};
-    let items: ContextMenuItemOptions[] = [];
-
-    if (!!props.rowActions) {
-      items = props.rowActions(record).map((action) => ({
-        key: action.title ?? '',
-        title: action.title ?? '',
-        color: action.color,
-        icon: action.icon,
-        onClick: action.onClick ?? empty,
-        hidden: action.hidden,
-        disabled: action.disabled
-      }));
-    }
-
-    if (props.modelType && props.detailAction !== false) {
-      // Add action to navigate to the detail view
-      const accessor = props.modelField ?? 'pk';
-      const pk = resolveItem(record, accessor);
-      const url = getDetailUrl(props.modelType, pk);
-
-      const model: string | undefined =
-        ModelInformationDict[props.modelType]?.label?.();
-
-      let detailsText: string = t`View details`;
-
-      if (!!model) {
-        detailsText = t`View ${model}`;
+  const handleCellContextMenu = useCallback(
+    ({
+      record,
+      column,
+      event
+    }: {
+      record: any;
+      column: any;
+      event: any;
+    }) => {
+      if (column?.noContext === true) {
+        return;
+      }
+      if (props.onCellContextMenu) {
+        return props.onCellContextMenu(record, event);
       }
 
-      items.push({
-        key: 'detail',
-        title: detailsText,
-        icon: <IconArrowRight />,
-        onClick: (event: any) => {
-          cancelEvent(event);
-          if (!showPreviewPanel || eventModified(event as any)) {
-            navigateToLink(url, navigate, event);
-          } else {
-            showRowPreview(pk);
-          }
-        }
-      });
-    }
+      const empty = () => {};
+      let items: ContextMenuItemOptions[] = [];
 
-    return showContextMenu?.(items)(event);
-  };
+      if (!!props.rowActions) {
+        items = props.rowActions(record).map((action) => ({
+          key: action.title ?? '',
+          title: action.title ?? '',
+          color: action.color,
+          icon: action.icon,
+          onClick: action.onClick ?? empty,
+          hidden: action.hidden,
+          disabled: action.disabled
+        }));
+      }
+
+      if (props.modelType && props.detailAction !== false) {
+        // Add action to navigate to the detail view
+        const accessor = props.modelField ?? 'pk';
+        const pk = resolveItem(record, accessor);
+        const url = getDetailUrl(props.modelType, pk);
+
+        const model: string | undefined =
+          ModelInformationDict[props.modelType]?.label?.();
+
+        let detailsText: string = t`View details`;
+
+        if (!!model) {
+          detailsText = t`View ${model}`;
+        }
+
+        items.push({
+          key: 'detail',
+          title: detailsText,
+          icon: <IconArrowRight />,
+          onClick: (event: any) => {
+            cancelEvent(event);
+            if (!showPreviewPanel || eventModified(event as any)) {
+              navigateToLink(url, navigate, event);
+            } else {
+              showRowPreview(pk);
+            }
+          }
+        });
+      }
+
+      return showContextMenu?.(items)(event);
+    },
+    [
+      props.onCellContextMenu,
+      props.rowActions,
+      props.modelType,
+      props.detailAction,
+      props.modelField,
+      showPreviewPanel,
+      showRowPreview,
+      showContextMenu,
+      navigate
+    ]
+  );
 
   // Pagination refresh table if pageSize changes
   const updatePageSize = useCallback((size: number) => {
