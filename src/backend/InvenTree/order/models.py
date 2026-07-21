@@ -1844,6 +1844,13 @@ class SalesOrder(TotalPriceMixin, Order):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
 
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe an "open" status, and each would run the completion
+        # side effects (duplicate events, pricing updates, and shipped quantity
+        # updates against the virtual line items).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_complete(**kwargs):
             return False
 
@@ -4076,6 +4083,12 @@ class TransferOrderAllocation(models.Model):
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
         self.line: TransferOrderLineItem  # for type hints
+
+        # Lock the stock item's row and refresh its quantity, so the branch
+        # selected below (consume / split / move) is chosen using the current
+        # committed quantity rather than a stale in-memory copy
+        if not self.item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
 
         # The allocation is the only thing linking this stock item to the transfer
         # As a result, we must keep the allocation present even after completion
