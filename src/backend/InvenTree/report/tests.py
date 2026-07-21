@@ -1,7 +1,9 @@
 """Unit testing for the various report models."""
 
 import os
+import tempfile
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 from django.apps import apps
@@ -1091,3 +1093,49 @@ class DefaultTemplateFileTest(TestCase):
         content_file = config.file_from_template('report', filename)
         path = get_base_dir().joinpath('report', 'templates', 'report', filename)
         self.assertEqual(content_file.size, path.stat().st_size)
+
+    def test_file_from_template_is_encoding_agnostic(self):
+        """file_from_template must preserve the exact bytes for any encoding.
+
+        A text-mode read sizes the ContentFile by character count and needs the
+        correct decoder, so non-English content is both mis-sized and at risk of
+        corruption. Reading the raw bytes keeps the file identical to what is on
+        disk, so the size always matches the Content-Length used for S3 uploads.
+        The samples below cover non-ASCII text in a few encodings, including
+        multi-byte content where a character count would not equal the byte
+        length.
+        """
+        config = apps.get_app_config('report')
+
+        # (encoding, text, whether the encoding uses multi-byte characters).
+        # The utf cases hold characters that span more than one byte, so a
+        # character count would not equal the byte length; latin-1 stays
+        # single-byte and is included to show the read is not utf-8 specific.
+        cases = [
+            ('utf-8', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('utf-16', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('latin-1', 'Système de café àéîõü', False),
+        ]
+
+        for encoding, text, multibyte in cases:
+            with self.subTest(encoding=encoding):
+                body = f'<html><body>{text}</body></html>'
+                raw = body.encode(encoding)
+
+                if multibyte:
+                    # A character count would differ from the byte length here
+                    self.assertNotEqual(len(raw), len(body))
+
+                with tempfile.TemporaryDirectory() as tmp:
+                    base = Path(tmp)
+                    template_dir = base.joinpath('report', 'templates', 'report')
+                    template_dir.mkdir(parents=True)
+                    filename = f'encoding_{encoding}.html'
+                    template_dir.joinpath(filename).write_bytes(raw)
+
+                    with patch('report.apps.get_base_dir', return_value=base):
+                        content_file = config.file_from_template('report', filename)
+
+                # Size and content must match the raw bytes exactly
+                self.assertEqual(content_file.size, len(raw))
+                self.assertEqual(content_file.read(), raw)
