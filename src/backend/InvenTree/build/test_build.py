@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 from django.db.models import Sum
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -1751,6 +1751,7 @@ class BuildTaskTests(BuildTestBase):
         self.assertEqual(output.status, StockStatus.OK.value)
 
 
+@skipUnlessDBFeature('has_select_for_update')
 class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
     """Genuine cross-transaction regression test for Build.trim_allocated_stock().
 
@@ -1874,6 +1875,7 @@ class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
         self.assertEqual(self.build_item.quantity, 6)
 
 
+@skipUnlessDBFeature('has_select_for_update')
 class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
     """Genuine cross-transaction regression test for Build.subtract_allocated_stock().
 
