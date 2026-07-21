@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("stock", "0125_remove_mptt_fields"),
-        ("common", "0050_remove_notesimage_model_id_and_more")
+        ("common", "0051_remove_notesimage_model_id_and_more")
     ]
 
     operations = [

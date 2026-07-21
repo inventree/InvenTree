@@ -308,7 +308,7 @@ class TestNoteMigrations(MigratorTestCase):
         ('part', '0150_part_maximum_stock'),
         ('stock', '0123_remove_stockitem_review_needed'),
     ]
-    migrate_to = ('common', '0050_remove_notesimage_model_id_and_more')
+    migrate_to = ('common', '0051_remove_notesimage_model_id_and_more')
 
     def generate_image(self, name: str):
         """Generate a dummy image file for upload."""

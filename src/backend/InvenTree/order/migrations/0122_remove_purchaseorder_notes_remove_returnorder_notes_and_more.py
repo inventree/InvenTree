@@ -6,8 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("order", "0120_purchaseorder_tags_returnorder_tags_salesorder_tags_and_more"),
-        ("common", "0050_remove_notesimage_model_id_and_more")
+        ("order", "0121_add_line_item_discount"),
+        ("common", "0051_remove_notesimage_model_id_and_more")
     ]
 
     operations = [
