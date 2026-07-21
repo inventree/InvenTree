@@ -3114,14 +3114,14 @@ class Note(
             if not siblings.exists():
                 self.primary = True
 
+            # Demote sibling notes *before* saving self, so that the partial unique
+            # constraint on (model_type, model_id, primary=True) is never briefly
+            # violated by two rows with primary=True existing at once
+            if self.primary:
+                siblings.update(primary=False)
+
             self.clean()
             super().save(*args, **kwargs)
-
-            # Mark other notes as non-primary
-            # Note: re-exclude on self.pk here, as it was None (and thus a no-op
-            # exclusion) when the 'siblings' queryset was built above for a new note
-            if self.primary:
-                siblings.exclude(pk=self.pk).update(primary=False)
         else:
             # Templates skip primary-flag logic entirely
             self.primary = False
