@@ -675,6 +675,38 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
+    def test_po_complete_stale_instance_is_noop(self):
+        """A second completion attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests could
+        both run the completion side effects (duplicate COMPLETED events and
+        duplicate pricing-update scheduling). The status is now re-read (under
+        lock) from the database before the check.
+        """
+        po = models.PurchaseOrder.objects.get(pk=3)
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        po_a = models.PurchaseOrder.objects.get(pk=po.pk)
+        po_b = models.PurchaseOrder.objects.get(pk=po.pk)
+
+        po_a.complete_order()
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+        # The second (stale) instance still believes the order is PLACED -
+        # completion must be skipped based on the database state
+        self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            po_b.complete_order()
+            trigger.assert_not_called()
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=2)
@@ -3579,6 +3611,79 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
 
 
+class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
+    """Unit tests for the 'total_price' field on ExtraLine API endpoints.
+
+    Covers PurchaseOrderExtraLine, SalesOrderExtraLine and ReturnOrderExtraLine,
+    which all share the same 'total_price' field via AbstractExtraLineSerializer.
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+    ]
+
+    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
+
+    def check_total_price(
+        self, order, extra_line_model, list_url_name, detail_url_name
+    ):
+        """Create an ExtraLine with a known price/quantity/discount, and check total_price."""
+        line = extra_line_model.objects.create(
+            order=order, quantity=5, price=Money(10, 'USD'), discount=20
+        )
+
+        # 5 * 10 = 50, less 20% discount = 40
+        expected = 40
+
+        # List endpoint
+        response = self.get(
+            reverse(list_url_name), {'order': order.pk}, expected_code=200
+        )
+        result = next(r for r in response.data if r['pk'] == line.pk)
+        self.assertEqual(float(result['total_price']), expected)
+
+        # Detail endpoint
+        response = self.get(
+            reverse(detail_url_name, kwargs={'pk': line.pk}), expected_code=200
+        )
+        self.assertEqual(float(response.data['total_price']), expected)
+
+    def test_po_extra_line_total_price(self):
+        """Check 'total_price' for a PurchaseOrderExtraLine."""
+        self.check_total_price(
+            models.PurchaseOrder.objects.get(pk=1),
+            models.PurchaseOrderExtraLine,
+            'api-po-extra-line-list',
+            'api-po-extra-line-detail',
+        )
+
+    def test_so_extra_line_total_price(self):
+        """Check 'total_price' for a SalesOrderExtraLine."""
+        self.check_total_price(
+            models.SalesOrder.objects.get(pk=1),
+            models.SalesOrderExtraLine,
+            'api-so-extra-line-list',
+            'api-so-extra-line-detail',
+        )
+
+    def test_return_order_extra_line_total_price(self):
+        """Check 'total_price' for a ReturnOrderExtraLine."""
+        self.check_total_price(
+            models.ReturnOrder.objects.get(pk=1),
+            models.ReturnOrderExtraLine,
+            'api-return-order-extra-line-list',
+            'api-return-order-extra-line-detail',
+        )
+
+
 class TransferOrderTest(OrderTest):
     """Tests for the TransferOrder API."""
 
@@ -3753,6 +3858,38 @@ class TransferOrderTest(OrderTest):
 
         to.refresh_from_db()
 
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+    def test_transfer_order_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_cancel() checked 'can_cancel' (derived from
+        'status') on the caller's (potentially stale) instance, so two concurrent
+        cancellation requests could both run the cancellation side effects
+        (duplicate CANCELLED events). The status is now re-read (under lock)
+        from the database before the check.
+        """
+        to = models.TransferOrder.objects.get(pk=1)
+        self.assertEqual(to.status, TransferOrderStatus.PENDING)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        instance_a = models.TransferOrder.objects.get(pk=to.pk)
+        instance_b = models.TransferOrder.objects.get(pk=to.pk)
+
+        instance_a.cancel_order()
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+        # The second (stale) instance still believes the order is PENDING -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            instance_b.cancel_order()
+            trigger.assert_not_called()
+
+        to.refresh_from_db()
         self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
 
     def test_transfer_order_hold(self):
@@ -4081,6 +4218,60 @@ class TransferOrderTest(OrderTest):
         item.refresh_from_db()
         self.assertEqual(line.transferred, 4)
         self.assertEqual(item.quantity, 0)
+
+    def test_transfer_order_partial_allocation_stale_item_instance(self):
+        """A partial allocation must not fail completion if stock is reduced concurrently.
+
+        Regression test: transfer_quantity (and the choice between the "move" and
+        "split" branches) was computed from self.item.quantity as cached in memory
+        on the allocation instance. If the stock item's quantity was reduced by a
+        concurrent operation after the allocation was loaded, the stale value could
+        select the "split" branch when only a "move" of the entire (now-reduced)
+        item is actually possible - causing splitStock() to reject the now-oversized
+        split, and the whole order completion to fail. The stock item's row is now
+        locked and its quantity refreshed before the branch is chosen.
+        """
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+
+        to = models.TransferOrder.objects.create(
+            reference='TO-STALE-ITEM', description='Test TO', destination=destination
+        )
+
+        part = Part.objects.exclude(virtual=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=6
+        )
+
+        to.issue_order()
+
+        item = StockItem.objects.create(part=part, quantity=10, batch='to-stale-item')
+
+        # A partial allocation - less than the full stock item quantity
+        allocation = models.TransferOrderAllocation.objects.create(
+            quantity=6, line=line, item=item
+        )
+
+        # Load a second copy of the allocation, caching the item's original quantity
+        stale_allocation = models.TransferOrderAllocation.objects.get(pk=allocation.pk)
+        self.assertEqual(stale_allocation.item.quantity, 10)
+
+        # Reduce the available stock *after* the stale copy was loaded
+        # (simulating a concurrent stock adjustment)
+        item.quantity = 4
+        item.save()
+
+        # Completing the (stale) allocation must not raise, and must transfer
+        # only the quantity which is actually available
+        stale_allocation.complete_allocation(None)
+
+        item.refresh_from_db()
+        line.refresh_from_db()
+
+        self.assertEqual(item.location, destination)
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(line.transferred, 4)
 
     def test_transfer_order_complete_stale_instance(self):
         """A second completion attempt with a stale instance must be rejected.
