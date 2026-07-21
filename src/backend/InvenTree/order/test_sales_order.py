@@ -1,6 +1,7 @@
 """Unit tests for the SalesOrder models."""
 
 from datetime import datetime, timedelta
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -367,6 +368,44 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
+
+    def test_complete_order_stale_instance_is_noop(self):
+        """A second completion attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests could
+        both run the completion side effects (duplicate COMPLETED events and
+        duplicate pricing-update scheduling). The status is now re-read (under
+        lock) from the database before the check.
+        """
+        self.allocate_stock(True)
+        self.shipment.complete_shipment(None)
+
+        # Ship the order (PENDING -> SHIPPED)
+        self.assertTrue(self.order.ship_order(None))
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
+
+        # Two "concurrent" requests each hold their own instance of the order,
+        # both about to transition SHIPPED -> COMPLETE
+        order_a = SalesOrder.objects.get(pk=self.order.pk)
+        order_b = SalesOrder.objects.get(pk=self.order.pk)
+
+        self.assertTrue(order_a.complete_order(None))
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)
+
+        # The second (stale) instance still believes the order is SHIPPED -
+        # completion must be skipped based on the database state
+        self.assertEqual(order_b.status, status.SalesOrderStatus.SHIPPED)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            self.assertFalse(order_b.complete_order(None))
+            trigger.assert_not_called()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)
 
     def test_complete_shipment_task_is_idempotent(self):
         """Duplicate execution of the shipment completion task must not double-ship.

@@ -1,12 +1,16 @@
 """Unit tests for the 'build' models."""
 
+import threading
+import time
 import uuid
 from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db import connection, transaction
 from django.db.models import Sum
+from django.test import TransactionTestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -762,6 +766,46 @@ class BuildTest(BuildTestBase):
 
         self.line_1.refresh_from_db()
         self.assertEqual(self.line_1.consumed, 0)
+
+    def test_complete_allocation_stale_item_instance(self):
+        """complete_allocation() must not clamp/split using a stale stock_item.quantity.
+
+        Regression test: the allocated quantity was clamped, and the choice between
+        consuming the item directly versus splitting off a portion of it, was made
+        using self.stock_item.quantity as cached in memory on the BuildItem. If a
+        concurrent operation reduced the stock item's quantity after the BuildItem
+        was loaded, the stale value could select the "split" branch when only the
+        entire (now-reduced) item is actually available - causing splitStock() to
+        reject the now-oversized split. The stock item's row is now locked and its
+        quantity refreshed before the clamp/split decision is made.
+        """
+        self.build.issue_build()
+
+        # A partial allocation - less than the full stock item quantity
+        alloc = BuildItem.objects.create(
+            build_line=self.line_1, stock_item=self.stock_1_2, quantity=60
+        )
+
+        # Load a second copy of the allocation, caching the stock item's original quantity
+        stale_alloc = BuildItem.objects.get(pk=alloc.pk)
+        self.assertEqual(stale_alloc.stock_item.quantity, 100)
+
+        # Reduce the available stock *after* the stale copy was loaded
+        # (simulating a concurrent stock adjustment elsewhere)
+        self.stock_1_2.quantity = 40
+        self.stock_1_2.save()
+
+        # Completing the (stale) allocation must not raise, and must consume only
+        # the quantity which is actually available
+        stale_alloc.complete_allocation(user=self.user)
+
+        self.stock_1_2.refresh_from_db()
+        self.line_1.refresh_from_db()
+
+        # The entire (now-reduced) item is consumed directly - no split occurs
+        self.assertEqual(self.stock_1_2.quantity, 40)
+        self.assertEqual(self.stock_1_2.consumed_by, self.build)
+        self.assertEqual(self.line_1.consumed, 40)
 
     def test_complete_with_required_tests(self):
         """Test the prevention completion when a required test is missing feature."""
@@ -1671,3 +1715,126 @@ class BuildTaskTests(BuildTestBase):
         self.assertFalse(output.is_building)
         # status=None should resolve to StockStatus.OK (the model default)
         self.assertEqual(output.status, StockStatus.OK.value)
+
+
+class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for Build.trim_allocated_stock().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    an actual overlapping-transaction race, rather than the "stale in-memory
+    instance" trick used elsewhere - trim_allocated_stock() always re-queries the
+    BuildItem rows fresh, so a stale Python object cannot reproduce this bug.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a minimal build/allocation setup for the concurrency test."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        self.assembly = Part.objects.create(
+            name='Concurrency assembly',
+            description='Assembly for trim_allocated_stock concurrency test',
+            assembly=True,
+        )
+        self.sub_part = Part.objects.create(
+            name='Concurrency component',
+            description='Component for trim_allocated_stock concurrency test',
+            component=True,
+        )
+
+        BomItem.objects.create(part=self.assembly, sub_part=self.sub_part, quantity=1)
+
+        self.build = Build.objects.create(
+            reference=generate_next_build_reference(),
+            part=self.assembly,
+            quantity=1,
+            issued_by=self.user,
+        )
+
+        self.build_line = BuildLine.objects.get(build=self.build)
+
+        self.stock_item = StockItem.objects.create(part=self.sub_part, quantity=100)
+
+        # Over-allocate: only 1 is required, but 10 have been allocated
+        self.build_item = BuildItem.objects.create(
+            build_line=self.build_line, stock_item=self.stock_item, quantity=10
+        )
+
+    def test_trim_allocated_stock_does_not_lose_concurrent_allocation(self):
+        """trim_allocated_stock() must not lose a concurrent allocation update.
+
+        Regression test: BuildItem rows were read via a plain (unlocked) queryset,
+        reduced in Python, and written back with bulk_update(). A concurrent request
+        that increased the same BuildItem's quantity (e.g. a new allocation, which
+        locks the row via select_for_update while saving - see
+        BuildAllocationSerializer) could commit in between the read and the write,
+        and would be silently discarded by the stale trim calculation. The
+        BuildItem rows are now locked (select_for_update) before being read, so
+        the trim always operates on the latest committed quantity.
+        """
+        lock_acquired = threading.Event()
+        release_lock = threading.Event()
+        errors = []
+
+        def concurrent_allocation_increase():
+            """Simulate a second request increasing the allocation.
+
+            Holds a row-level lock on the BuildItem (as the real allocation
+            endpoint does) until told to proceed, so the trim thread below is
+            forced to block on the same row.
+            """
+            try:
+                with transaction.atomic():
+                    item = BuildItem.objects.select_for_update().get(
+                        pk=self.build_item.pk
+                    )
+                    lock_acquired.set()
+                    release_lock.wait(timeout=5)
+                    item.quantity += 5
+                    item.save()
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        def run_trim():
+            try:
+                self.build.trim_allocated_stock()
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        alloc_thread = threading.Thread(target=concurrent_allocation_increase)
+        alloc_thread.start()
+
+        # Wait until the other thread holds the row lock
+        self.assertTrue(lock_acquired.wait(timeout=5))
+
+        trim_thread = threading.Thread(target=run_trim)
+        trim_thread.start()
+
+        # Give the trim thread a moment to reach (and block on) the row lock
+        time.sleep(0.5)
+
+        # Release the lock - the concurrent allocation increase commits first
+        release_lock.set()
+
+        alloc_thread.join(timeout=5)
+        trim_thread.join(timeout=5)
+
+        self.assertFalse(alloc_thread.is_alive())
+        self.assertFalse(trim_thread.is_alive())
+        self.assertEqual(errors, [])
+
+        self.build_item.refresh_from_db()
+
+        # The concurrent increase (+5, giving 15) must not have been lost: the
+        # trim reduces by 9 (10 originally allocated - 1 actually needed) from
+        # whatever is actually committed, leaving 15 - 9 = 6. A lost update
+        # would instead leave 15 (the trim's reduction discarded) or 1 (the
+        # concurrent increase discarded).
+        self.assertEqual(self.build_item.quantity, 6)
