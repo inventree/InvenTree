@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 export function RenderNoteTemplate({
   instance
-}: Readonly<{
-  instance: any;
-}>): ReactNode {
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return (
-    <RenderInlineModel primary={instance.title} suffix={instance.description} />
+    instance && (
+      <RenderInlineModel
+        primary={instance.title}
+        suffix={instance.description}
+      />
+    )
   );
 }
