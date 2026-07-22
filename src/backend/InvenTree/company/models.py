@@ -2,7 +2,7 @@
 
 import os
 from decimal import Decimal
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -230,7 +230,7 @@ class Company(
 
     @property
     @report.mixins.report_attribute()
-    def address(self):
+    def address(self) -> Optional[str]:
         """Return the string representation for the primary address.
 
         This property exists for backwards compatibility
@@ -241,7 +241,7 @@ class Company(
 
     @property
     @report.mixins.report_attribute()
-    def primary_address(self):
+    def primary_address(self) -> Optional['Address']:
         """Returns address object of primary address for this Company."""
         # We may have a pre-fetched primary address list
         if hasattr(self, 'primary_address_list'):
@@ -257,7 +257,7 @@ class Company(
 
     @property
     @report.mixins.report_attribute()
-    def currency_code(self):
+    def currency_code(self) -> str:
         """Return the currency code associated with this company.
 
         - If the currency code is invalid, use the default currency
@@ -280,7 +280,7 @@ class Company(
 
     @property
     @report.mixins.report_attribute()
-    def parts(self):
+    def parts(self) -> report.mixins.QuerySet['SupplierPart']:
         """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(
             Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)

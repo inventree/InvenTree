@@ -66,11 +66,17 @@ def get_report_attributes(model):
     mixins (e.g. `InvenTreeBarcodeMixin.barcode`) are discovered too, regardless
     of whether they are also explicitly included in `report_context()`.
 
-    Returns a dict of {name: {"description": ..., "type": ...}}, ordered so that
-    attributes redefined further down the MRO (i.e. on the model itself) take
-    precedence over the same name defined on a base/mixin class.
+    Returns a tuple of:
+
+    - A dict of {name: {"description": ..., "type": ...}}, ordered so that
+      attributes redefined further down the MRO (i.e. on the model itself) take
+      precedence over the same name defined on a base/mixin class.
+    - A list of qualified names (e.g. "Part.default_supplier") for any
+      @report_attribute-marked property/method which is missing a return type
+      annotation.
     """
     found = {}
+    errors = []
 
     for klass in reversed(model.__mro__):
         for name, member in vars(klass).items():
@@ -82,12 +88,15 @@ def get_report_attributes(model):
 
             return_type = get_type_hints(target).get('return', None)
 
+            if return_type is None:
+                errors.append(f'{klass.__name__}.{name}')
+
             found[name] = {
                 'description': description,
                 'type': get_type_str(return_type) if return_type is not None else '',
             }
 
-    return found
+    return found, errors
 
 
 def get_model_field_attributes(model):
@@ -145,6 +154,7 @@ class Command(BaseCommand):
 
         context = {'models': {}, 'base': {}}
         is_error = False
+        is_attribute_error = False
 
         # Base context models
         for key, model in [
@@ -175,12 +185,20 @@ class Command(BaseCommand):
                 is_error = True
                 continue
 
+            properties, property_errors = get_report_attributes(model)
+
+            for qualified_name in property_errors:
+                print(
+                    f'Error: {qualified_name} is marked with @report_attribute but does not have a return type annotation'
+                )
+                is_attribute_error = True
+
             context['models'][model_key] = {
                 'key': model_key,
                 'name': model_name,
                 'context': {},
                 'fields': get_model_field_attributes(model),
-                'properties': get_report_attributes(model),
+                'properties': properties,
             }
 
             attributes = parse_docstring(ctx_type.__doc__).get('Attributes', {})
@@ -193,6 +211,11 @@ class Command(BaseCommand):
         if is_error:
             raise CommandError(
                 'INVE-E4 - Some models associated with the `InvenTreeReportMixin` do not have a valid `report_context` return type annotation.'
+            )
+
+        if is_attribute_error:
+            raise CommandError(
+                'INVE-E5 - Some properties/methods marked with `@report_attribute` do not have a valid return type annotation.'
             )
 
         filename = kwargs.get('filename', 'inventree_report_context.json')

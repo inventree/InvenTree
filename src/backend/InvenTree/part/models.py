@@ -9,7 +9,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
-from typing import TypedDict, cast
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -35,6 +35,7 @@ from mptt.models import TreeForeignKey
 
 import common.currency
 import common.models
+import company.models
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
@@ -1216,7 +1217,7 @@ class Part(
 
     @property
     @report.mixins.report_attribute()
-    def default_supplier(self):
+    def default_supplier(self) -> Optional[company.models.SupplierPart]:
         """Return the default (primary) SupplierPart for this Part.
 
         This function is included for backwards compatibility,
