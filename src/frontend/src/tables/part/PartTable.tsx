@@ -12,21 +12,14 @@ import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { IconShoppingCart } from '@tabler/icons-react';
 import {
-  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState
 } from 'react';
-import {
-  IconFileUpload,
-  IconPackageImport,
-  IconPlus,
-  IconShoppingCart
-} from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PartCreationMenu } from '../../components/items/PartCreationMenu';
 import {
@@ -39,9 +32,7 @@ import {
   PartColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { renderPartStockCell } from '../../components/tables/PartStockCell';
-import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { DuplicateField } from '../../forms/CommonFields';
