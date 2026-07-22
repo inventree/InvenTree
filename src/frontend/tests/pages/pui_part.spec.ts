@@ -1235,7 +1235,7 @@ test('Parts - Add button opens Create Part form in Parametric View', async ({
     .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
     .click();
 
-  await expect(page.getByText('Add Part')).toBeVisible();
+  await expect(page.getByText('Add Part', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
