@@ -878,14 +878,6 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
         read_only_fields = ['updated', 'updated_by']
 
-    def get_unique_together_validators(self):
-        """Skip the auto-generated 'unique_primary_note_per_model' validator.
-
-        That constraint is deliberately enforced by Note.save() by demoting
-        sibling notes, rather than rejecting requests that set 'primary'.
-        """
-        return []
-
     def validate(self, data):
         """Validate note data — templates need no model_id; regular notes require both."""
         data = super().validate(data)
