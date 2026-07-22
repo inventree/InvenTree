@@ -560,6 +560,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         )
 
     @property
+    @report.mixins.report_attribute()
     def parameters(self) -> QuerySet:
         """Return a QuerySet containing all the Parameter instances for this model.
 
@@ -693,6 +694,7 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
         super().delete(*args, **kwargs)
 
     @property
+    @report.mixins.report_attribute()
     def attachments(self) -> QuerySet:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
@@ -1270,8 +1272,9 @@ class PathStringMixin(models.Model):
             )
 
     @property
+    @report.mixins.report_attribute()
     def parentpath(self) -> list:
-        """Get the parent path of this category.
+        """Construct the parent path of this tree node.
 
         Returns:
             List of category names from the top level to the parent of this category
@@ -1279,8 +1282,9 @@ class PathStringMixin(models.Model):
         return list(self.get_ancestors())
 
     @property
+    @report.mixins.report_attribute()
     def path(self) -> list:
-        """Get the complete part of this category.
+        """Construct the complete part of this tree node.
 
         e.g. ["Top", "Second", "Third", "This"]
 
