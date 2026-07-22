@@ -15,112 +15,57 @@ Not every attribute or method available on a model instance is listed here - onl
 
 ### Company
 
-#### Fields
-
 {{ model_fields("company") }}
-
-#### Properties
-
 {{ model_properties("company") }}
 
 ### Build Order
 
-#### Fields
-
 {{ model_fields("build") }}
-
-#### Properties
-
 {{ model_properties("build") }}
 
 ### Build Line
 
-#### Fields
-
 {{ model_fields("buildline") }}
-
-#### Properties
-
 {{ model_properties("buildline") }}
 
 ### Sales Order
 
-#### Fields
-
 {{ model_fields("salesorder") }}
-
-#### Properties
-
 {{ model_properties("salesorder") }}
 
 ### Sales Order Shipment
 
-#### Fields
-
 {{ model_fields("salesordershipment") }}
-
-#### Properties
-
 {{ model_properties("salesordershipment") }}
 
 ### Return Order
 
-#### Fields
-
 {{ model_fields("returnorder") }}
-
-#### Properties
-
 {{ model_properties("returnorder") }}
 
 ### Purchase Order
 
-#### Fields
-
 {{ model_fields("purchaseorder") }}
-
-#### Properties
-
 {{ model_properties("purchaseorder") }}
 
 ### Transfer Order
 
-#### Fields
-
 {{ model_fields("transferorder") }}
-
-#### Properties
-
 {{ model_properties("transferorder") }}
 
 ### Stock Item
 
-#### Fields
-
 {{ model_fields("stockitem") }}
-
-#### Properties
-
 {{ model_properties("stockitem") }}
 
 ### Stock Location
 
-#### Fields
-
 {{ model_fields("stocklocation") }}
-
-#### Properties
-
 {{ model_properties("stocklocation") }}
 
 ### Part
 
-#### Fields
-
 {{ model_fields("part") }}
-
-#### Properties
-
 {{ model_properties("part") }}
 
 The following `Part` methods accept optional arguments, and so are not included in the automatically-generated properties table above:

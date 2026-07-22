@@ -13,9 +13,6 @@ In addition to the model-specific context variables, the following global contex
 
 {{ report_context("base", "global") }}
 
-::: report.models.ReportTemplateBase.base_context
-    options:
-        show_source: True
 
 ### Report Context
 
@@ -89,9 +86,6 @@ When printing a report or label against a Company instance, the following contex
 
 For the fields and properties available on the underlying `Company` instance, refer to the [Model Context](model_context.md#company) page.
 
-::: company.models.Company.report_context
-    options:
-        show_source: True
 
 ### Build Order
 
@@ -101,9 +95,6 @@ When printing a report or label against a [Build Order](../manufacturing/build.m
 
 For the fields and properties available on the underlying `Build` instance, refer to the [Model Context](model_context.md#build-order) page.
 
-::: build.models.Build.report_context
-    options:
-        show_source: True
 
 ### Build Line
 
@@ -113,10 +104,6 @@ When printing a report or label against a [BuildOrderLineItem](../manufacturing/
 
 For the fields and properties available on the underlying `BuildLine` instance, refer to the [Model Context](model_context.md#build-line) page.
 
-::: build.models.BuildLine.report_context
-    options:
-        show_source: True
-
 ### Sales Order
 
 When printing a report or label against a [SalesOrder](../sales/sales_order.md) object, the following context variables are available:
@@ -125,10 +112,6 @@ When printing a report or label against a [SalesOrder](../sales/sales_order.md) 
 
 For the fields and properties available on the underlying `SalesOrder` instance, refer to the [Model Context](model_context.md#sales-order) page.
 
-::: order.models.Order.report_context
-    options:
-        show_source: True
-
 ### Sales Order Shipment
 
 When printing a report or label against a [SalesOrderShipment](../sales/sales_order.md#sales-order-shipments) object, the following context variables are available:
@@ -136,10 +119,6 @@ When printing a report or label against a [SalesOrderShipment](../sales/sales_or
 {{ report_context("models", "salesordershipment") }}
 
 For the fields and properties available on the underlying `SalesOrderShipment` instance, refer to the [Model Context](model_context.md#sales-order-shipment) page.
-
-::: order.models.SalesOrderShipment.report_context
-    options:
-        show_source: True
 
 ### Return Order
 
@@ -165,10 +144,6 @@ When printing a report or label against a [TransferOrder](../stock/transfer_orde
 
 For the fields and properties available on the underlying `TransferOrder` instance, refer to the [Model Context](model_context.md#transfer-order) page.
 
-::: order.models.TransferOrder.report_context
-    options:
-        show_source: True
-
 ### Stock Item
 
 When printing a report or label against a [StockItem](../stock/index.md#stock-item) object, the following context variables are available:
@@ -176,10 +151,6 @@ When printing a report or label against a [StockItem](../stock/index.md#stock-it
 {{ report_context("models", "stockitem") }}
 
 For the fields and properties available on the underlying `StockItem` instance, refer to the [Model Context](model_context.md#stock-item) page.
-
-::: stock.models.StockItem.report_context
-    options:
-        show_source: True
 
 ### Stock Location
 
@@ -189,10 +160,6 @@ When printing a report or label against a [StockLocation](../stock/index.md#stoc
 
 For the fields and properties available on the underlying `StockLocation` instance, refer to the [Model Context](model_context.md#stock-location) page.
 
-::: stock.models.StockLocation.report_context
-    options:
-        show_source: True
-
 ### Part
 
 When printing a report or label against a [Part](../part/index.md) object, the following context variables are available:
@@ -201,9 +168,6 @@ When printing a report or label against a [Part](../part/index.md) object, the f
 
 For the fields and properties available on the underlying `Part` instance, refer to the [Model Context](model_context.md#part) page.
 
-::: part.models.Part.report_context
-    options:
-        show_source: True
 
 ## Model Context
 

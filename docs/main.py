@@ -442,23 +442,31 @@ def define_env(env):
 
         return ret_data
 
-    def render_model_attributes(model: str, key: Literal['fields', 'properties']):
-        """Render a table of discoverable field/property information for a particular report model."""
+    def render_model_attributes(
+        model: str, key: Literal['fields', 'properties'], title: str
+    ):
+        """Render a table (including its own heading) of discoverable field/property information for a particular report model.
+
+        Returns an empty string (including no heading) if there is nothing to display.
+        """
         global REPORT_CONTEXT
 
         context = REPORT_CONTEXT.get('models', {}).get(model)
         attributes = context.get(key, {}) if context else {}
 
         if not attributes:
-            return '*No entries found.*'
+            return ''
 
-        ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
+        ret_data = f'#### {title}\n\n'
+        ret_data += '| Variable | Type | Description |\n| --- | --- | --- |\n'
 
         for k, v in sorted(attributes.items()):
             description = ' '.join(v['description'].split())
             ret_data += f'| {k} | `{v["type"]}` | {description} |\n'
 
-        return ret_data
+        # Trailing blank line, so consecutive macro calls (e.g. fields followed by
+        # properties) don't run together when the template places them on adjacent lines
+        return ret_data + '\n'
 
     @env.macro
     def model_fields(model: str):
@@ -468,7 +476,7 @@ def define_env(env):
         any mixins/abstract base classes), and are available on the underlying model
         instance exposed to the template (e.g. `order`, `part`, `item`).
         """
-        return render_model_attributes(model, 'fields')
+        return render_model_attributes(model, 'fields', 'Fields')
 
     @env.macro
     def model_properties(model: str):
@@ -479,7 +487,7 @@ def define_env(env):
         decorator. They are available on the underlying model instance exposed to the
         template (e.g. `order`, `part`, `item`).
         """
-        return render_model_attributes(model, 'properties')
+        return render_model_attributes(model, 'properties', 'Properties')
 
     @env.macro
     def icon(
