@@ -443,6 +443,32 @@ def define_env(env):
         return ret_data
 
     @env.macro
+    def report_attributes(model: str):
+        """Extract information on discoverable attributes for a particular report model.
+
+        These are properties or methods - potentially defined on a mixin shared by
+        multiple models - which have been explicitly marked with the `@report_attribute`
+        decorator. They are available on the underlying model instance exposed to the
+        template (e.g. `order`, `part`, `item`), in addition to the context variables
+        listed above.
+        """
+        global REPORT_CONTEXT
+
+        context = REPORT_CONTEXT.get('models', {}).get(model)
+        attributes = context.get('attributes', {}) if context else {}
+
+        if not attributes:
+            return ''
+
+        ret_data = 'In addition to the context variables listed above, the following attributes are available directly on the model instance:\n\n'
+        ret_data += '| Attribute | Type | Description |\n| --- | --- | --- |\n'
+
+        for k, v in sorted(attributes.items()):
+            ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
+
+        return ret_data
+
+    @env.macro
     def icon(
         source: str,
         size: str = '20px',

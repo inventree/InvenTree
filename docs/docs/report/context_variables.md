@@ -87,6 +87,8 @@ When printing a report or label against a Company instance, the following contex
 
 {{ report_context("models", "company") }}
 
+{{ report_attributes("company") }}
+
 ::: company.models.Company.report_context
     options:
         show_source: True
@@ -96,6 +98,8 @@ When printing a report or label against a Company instance, the following contex
 When printing a report or label against a [Build Order](../manufacturing/build.md) object, the following context variables are available:
 
 {{ report_context("models", "build") }}
+
+{{ report_attributes("build") }}
 
 ::: build.models.Build.report_context
     options:
@@ -107,6 +111,8 @@ When printing a report or label against a [BuildOrderLineItem](../manufacturing/
 
 {{ report_context("models", "buildline") }}
 
+{{ report_attributes("buildline") }}
+
 ::: build.models.BuildLine.report_context
     options:
         show_source: True
@@ -116,6 +122,8 @@ When printing a report or label against a [BuildOrderLineItem](../manufacturing/
 When printing a report or label against a [SalesOrder](../sales/sales_order.md) object, the following context variables are available:
 
 {{ report_context("models", "salesorder") }}
+
+{{ report_attributes("salesorder") }}
 
 ::: order.models.Order.report_context
     options:
@@ -127,6 +135,8 @@ When printing a report or label against a [SalesOrderShipment](../sales/sales_or
 
 {{ report_context("models", "salesordershipment") }}
 
+{{ report_attributes("salesordershipment") }}
+
 ::: order.models.SalesOrderShipment.report_context
     options:
         show_source: True
@@ -137,17 +147,23 @@ When printing a report or label against a [ReturnOrder](../sales/return_order.md
 
 {{ report_context("models", "returnorder") }}
 
+{{ report_attributes("returnorder") }}
+
 ### Purchase Order
 
 When printing a report or label against a [PurchaseOrder](../purchasing/purchase_order.md) object, the following context variables are available:
 
 {{ report_context("models", "purchaseorder") }}
 
+{{ report_attributes("purchaseorder") }}
+
 ### Transfer Order
 
 When printing a report or label against a [TransferOrder](../stock/transfer_order.md) object, the following context variables are available:
 
 {{ report_context("models", "transferorder") }}
+
+{{ report_attributes("transferorder") }}
 
 ::: order.models.TransferOrder.report_context
     options:
@@ -159,6 +175,8 @@ When printing a report or label against a [StockItem](../stock/index.md#stock-it
 
 {{ report_context("models", "stockitem") }}
 
+{{ report_attributes("stockitem") }}
+
 ::: stock.models.StockItem.report_context
     options:
         show_source: True
@@ -169,6 +187,8 @@ When printing a report or label against a [StockLocation](../stock/index.md#stoc
 
 {{ report_context("models", "stocklocation") }}
 
+{{ report_attributes("stocklocation") }}
+
 ::: stock.models.StockLocation.report_context
     options:
         show_source: True
@@ -178,6 +198,8 @@ When printing a report or label against a [StockLocation](../stock/index.md#stoc
 When printing a report or label against a [Part](../part/index.md) object, the following context variables are available:
 
 {{ report_context("models", "part") }}
+
+{{ report_attributes("part") }}
 
 ::: part.models.Part.report_context
     options:
