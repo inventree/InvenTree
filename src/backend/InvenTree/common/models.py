@@ -3094,6 +3094,28 @@ class Note(
         """Return the API URL associated with the Parameter model."""
         return reverse('api-note-list')
 
+    def validate_constraints(self, exclude=None):
+        """Validate model constraints, skipping 'unique_primary_note_per_model'.
+
+        That constraint is actively maintained by save() (which demotes any
+        sibling primary note before saving self), so checking it here against
+        pre-save DB state would incorrectly reject legitimate primary-flag
+        promotions that save() would otherwise handle correctly.
+        """
+        constraints = [
+            c
+            for c in self._meta.constraints
+            if c.name != 'unique_primary_note_per_model'
+        ]
+        errors = {}
+        for constraint in constraints:
+            try:
+                constraint.validate(self.__class__, self, exclude=exclude)
+            except ValidationError as e:
+                errors = e.update_error_dict(errors)
+        if errors:
+            raise ValidationError(errors)
+
     @transaction.atomic
     def save(self, *args, **kwargs):
         """Perform custom save checks before saving a Note instance."""
