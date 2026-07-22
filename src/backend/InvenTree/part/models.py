@@ -1003,6 +1003,7 @@ class Part(
         return InvenTree.helpers.increment_serial_number(sn, self)
 
     @property
+    @report.mixins.report_attribute()
     def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""
         return part_helpers.render_part_full_name(self)
@@ -1214,6 +1215,7 @@ class Part(
         return None
 
     @property
+    @report.mixins.report_attribute()
     def default_supplier(self):
         """Return the default (primary) SupplierPart for this Part.
 
@@ -1376,7 +1378,8 @@ class Part(
         return ''
 
     @property
-    def available_stock(self):
+    @report.mixins.report_attribute()
+    def available_stock(self) -> Decimal:
         """Return the total available stock.
 
         - This subtracts stock which is already allocated to builds
@@ -1654,11 +1657,9 @@ class Part(
         return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
-    def quantity_being_built(self, include_variants: bool = True):
+    @report.mixins.report_attribute()
+    def quantity_being_built(self) -> Decimal:
         """Return the current number of parts currently being built.
-
-        Arguments:
-            include_variants: If True, include variants of this part in the calculation
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
@@ -1667,12 +1668,8 @@ class Part(
             status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
-        if include_variants:
-            # If we are including variants, get all parts in the variant tree
-            builds = builds.filter(part__in=self.get_descendants(include_self=True))
-        else:
-            # Only look at this part
-            builds = builds.filter(part=self)
+        # We are including variants, get all parts in the variant tree
+        builds = builds.filter(part__in=self.get_descendants(include_self=True))
 
         quantity = 0
 
@@ -1877,7 +1874,8 @@ class Part(
         return query['t']
 
     @property
-    def total_stock(self):
+    @report.mixins.report_attribute()
+    def total_stock(self) -> Decimal:
         """Return the total stock quantity for this part.
 
         - Part may be stored in multiple locations
@@ -2444,7 +2442,8 @@ class Part(
         return orders
 
     @property
-    def on_order(self):
+    @report.mixins.report_attribute()
+    def on_order(self) -> Decimal:
         """Return the total number of items on order for this part.
 
         Note that some supplier parts may have a different pack_quantity attribute,

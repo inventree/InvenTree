@@ -229,6 +229,7 @@ class Company(
     )
 
     @property
+    @report.mixins.report_attribute()
     def address(self):
         """Return the string representation for the primary address.
 
@@ -239,6 +240,7 @@ class Company(
         return str(addr) if addr is not None else None
 
     @property
+    @report.mixins.report_attribute()
     def primary_address(self):
         """Returns address object of primary address for this Company."""
         # We may have a pre-fetched primary address list
@@ -254,6 +256,7 @@ class Company(
         return self.addresses.filter(primary=True).first()
 
     @property
+    @report.mixins.report_attribute()
     def currency_code(self):
         """Return the currency code associated with this company.
 
@@ -276,6 +279,7 @@ class Company(
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
     @property
+    @report.mixins.report_attribute()
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(

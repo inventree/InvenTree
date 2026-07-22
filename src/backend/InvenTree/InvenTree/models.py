@@ -561,7 +561,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
     @property
     @report.mixins.report_attribute()
-    def parameters(self) -> QuerySet:
+    def parameters(self) -> report.mixins.QuerySet:
         """Return a QuerySet containing all the Parameter instances for this model.
 
         This will return pre-fetched data if available (i.e. in a serializer context).
@@ -695,7 +695,7 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
 
     @property
     @report.mixins.report_attribute()
-    def attachments(self) -> QuerySet:
+    def attachments(self) -> report.mixins.QuerySet:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
 
