@@ -1076,7 +1076,7 @@ test('Parts - Notes', async ({ browser }) => {
     .getByRole('option', { name: 'Manufacturing Instructions' })
     .click();
   await page.getByText('Manufacturing Instructions').waitFor();
-  await page.getByText('Manufacturing notes specific to this part').waitFor();
+  await page.getByText('How to build this part').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Enable editing for this note
