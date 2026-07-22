@@ -1652,14 +1652,26 @@ class InvenTreeImageMixin(models.Model):
         verbose_name=_('Image'),
     )
 
-    def get_image_url(self):
+    def get_image_url(self) -> str:
         """Return the URL of the image for this object."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image)
         return InvenTree.helpers.getBlankImage()
+
+    @property
+    @report.mixins.report_attribute()
+    def image_url(self) -> str:
+        """Return the URL of the image for this object."""
+        return self.get_image_url()
 
     def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this object."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
         return InvenTree.helpers.getBlankThumbnail()
+
+    @property
+    @report.mixins.report_attribute()
+    def thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this object."""
+        return self.get_thumbnail_url()
