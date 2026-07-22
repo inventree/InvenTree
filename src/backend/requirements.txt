@@ -645,9 +645,9 @@ docutils==0.23 \
     --hash=sha256:25d013af9bf23bc1c7b2b093dff4208166c53a94786c9e447808335ef1185fea \
     --hash=sha256:746f5060322511280a1e50eb76846ed6bf2342984b2ac04dc42caa1a8d78799e
     # via -r src/backend/requirements.in
-drf-spectacular==0.30.0 \
-    --hash=sha256:006cf5921ebe20a9bd24f7c846261ebbf78780be5961b0d6e87afaa82afd62ff \
-    --hash=sha256:53e79e7ba00e240441b63c32273754a5368e4c2ab44a19f2595277cc1cd559c9
+drf-spectacular==0.29.0 \
+    --hash=sha256:0a069339ea390ce7f14a75e8b5af4a0860a46e833fd4af027411a3e94fc1a0cc \
+    --hash=sha256:d1ee7c9535d89848affb4427347f7c4a22c5d22530b8842ef133d7b72e19b41a
     # via -r src/backend/requirements.in
 dulwich==1.2.10 \
     --hash=sha256:07f81ec4773c89d5989d173a077ed54b400719b4990b2f46a7b5604f16da46d1 \
