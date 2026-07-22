@@ -181,6 +181,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             label=_('Options'),
             depends_on=['machine'],
             field_serializer='get_driver_options',
+            default={},
             required=False,
         )
 
