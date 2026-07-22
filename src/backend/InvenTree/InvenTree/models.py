@@ -34,6 +34,7 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
+import report.mixins
 
 logger = structlog.get_logger('inventree')
 
@@ -1468,6 +1469,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
+    @report.mixins.report_attribute()
     def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()

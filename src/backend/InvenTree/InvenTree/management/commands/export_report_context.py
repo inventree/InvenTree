@@ -13,7 +13,7 @@ from typing import get_args, get_origin, get_type_hints
 import django.db.models
 from django.core.management.base import BaseCommand, CommandError
 
-from report.mixins import QuerySet
+from report.mixins import REPORT_ATTRIBUTE_MARKER, QuerySet
 
 
 def get_type_str(type_obj):
@@ -57,6 +57,37 @@ def parse_docstring(docstring: str):
             sections[current_section][name.strip()] = doc.strip()
 
     return sections
+
+
+def get_report_attributes(model):
+    """Find all properties/methods on a model marked with @report_attribute.
+
+    This walks the full MRO of the model class, so attributes contributed by
+    mixins (e.g. `InvenTreeBarcodeMixin.barcode`) are discovered too, regardless
+    of whether they are also explicitly included in `report_context()`.
+
+    Returns a dict of {name: {"description": ..., "type": ...}}, ordered so that
+    attributes redefined further down the MRO (i.e. on the model itself) take
+    precedence over the same name defined on a base/mixin class.
+    """
+    found = {}
+
+    for klass in reversed(model.__mro__):
+        for name, member in vars(klass).items():
+            target = member.fget if isinstance(member, property) else member
+            description = getattr(target, REPORT_ATTRIBUTE_MARKER, None)
+
+            if description is None:
+                continue
+
+            return_type = get_type_hints(target).get('return', None)
+
+            found[name] = {
+                'description': description,
+                'type': get_type_str(return_type) if return_type is not None else '',
+            }
+
+    return found
 
 
 class Command(BaseCommand):
@@ -115,6 +146,7 @@ class Command(BaseCommand):
                 'key': model_key,
                 'name': model_name,
                 'context': {},
+                'attributes': get_report_attributes(model),
             }
 
             attributes = parse_docstring(ctx_type.__doc__).get('Attributes', {})
