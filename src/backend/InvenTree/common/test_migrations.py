@@ -293,15 +293,15 @@ class TestAttachmentThumbnailMigration(MigratorTestCase):
 class TestNoteMigrations(MigratorTestCase):
     """Test data migration of legacy 'notes' fields to the new Note model.
 
-    - Migration common.0047 copies existing 'notes' field data into the Note model,
+    - Migration common.0050 copies existing 'notes' field data into the Note model,
       converting the markdown content to HTML, and links any associated NotesImage objects.
-    - Migration common.0048 removes the legacy 'model_type' and 'model_id' fields from NotesImage.
+    - Migration common.0051 removes the legacy 'model_type' and 'model_id' fields from NotesImage.
     """
 
-    # Note: these targets must match the dependencies of the data migration (common.0047),
+    # Note: these targets must match the dependencies of the data migration (common.0050),
     # to ensure that the migration plan is truncated *before* the data migration is applied
     migrate_from = [
-        ('common', '0046_note'),
+        ('common', '0049_note'),
         ('build', '0059_build_tags'),
         ('company', '0079_auto_20260212_1054'),
         ('order', '0119_transferorderlineitem_line_int'),
