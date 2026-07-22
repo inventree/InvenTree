@@ -179,10 +179,8 @@ class Command(BaseCommand):
                 'key': model_key,
                 'name': model_name,
                 'context': {},
-                'attributes': {
-                    **get_model_field_attributes(model),
-                    **get_report_attributes(model),
-                },
+                'fields': get_model_field_attributes(model),
+                'properties': get_report_attributes(model),
             }
 
             attributes = parse_docstring(ctx_type.__doc__).get('Attributes', {})

@@ -31,7 +31,7 @@ The barcode is tested as follows, in decreasing order of priority:
 
 InvenTree comes with a few builtin supplier plugins, which handle their respective barcode formats.
 
-Scanning a supplier barcode for a supplied part will link to the corresponding supplier part if the [SKU](../report/context_variables.md#supplierpart) from the barcode could be matched.
+Scanning a supplier barcode for a supplied part will link to the corresponding supplier part if the [SKU](../report/model_context.md#supplierpart) from the barcode could be matched.
 
 The following suppliers (and barcode formats) are currently supported:
 

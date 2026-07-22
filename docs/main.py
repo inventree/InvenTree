@@ -442,32 +442,44 @@ def define_env(env):
 
         return ret_data
 
-    @env.macro
-    def report_attributes(model: str):
-        """Extract information on discoverable attributes for a particular report model.
-
-        These are properties or methods - potentially defined on a mixin shared by
-        multiple models - which have been explicitly marked with the `@report_attribute`
-        decorator. They are available on the underlying model instance exposed to the
-        template (e.g. `order`, `part`, `item`), in addition to the context variables
-        listed above.
-        """
+    def render_model_attributes(model: str, key: Literal['fields', 'properties']):
+        """Render a table of discoverable field/property information for a particular report model."""
         global REPORT_CONTEXT
 
         context = REPORT_CONTEXT.get('models', {}).get(model)
-        attributes = context.get('attributes', {}) if context else {}
+        attributes = context.get(key, {}) if context else {}
 
         if not attributes:
-            return ''
+            return '*No entries found.*'
 
-        ret_data = 'In addition to the context variables listed above, the following attributes are available directly on the model instance:\n\n'
-        ret_data += '| Attribute | Type | Description |\n| --- | --- | --- |\n'
+        ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
 
         for k, v in sorted(attributes.items()):
             description = ' '.join(v['description'].split())
             ret_data += f'| {k} | `{v["type"]}` | {description} |\n'
 
         return ret_data
+
+    @env.macro
+    def model_fields(model: str):
+        """Extract information on the database fields for a particular reportable model.
+
+        These fields are discovered automatically from the model definition (including
+        any mixins/abstract base classes), and are available on the underlying model
+        instance exposed to the template (e.g. `order`, `part`, `item`).
+        """
+        return render_model_attributes(model, 'fields')
+
+    @env.macro
+    def model_properties(model: str):
+        """Extract information on discoverable properties for a particular reportable model.
+
+        These are `@property` attributes - potentially defined on a mixin shared by
+        multiple models - which have been explicitly marked with the `@report_attribute`
+        decorator. They are available on the underlying model instance exposed to the
+        template (e.g. `order`, `part`, `item`).
+        """
+        return render_model_attributes(model, 'properties')
 
     @env.macro
     def icon(
