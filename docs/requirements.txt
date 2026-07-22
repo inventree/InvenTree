@@ -394,9 +394,9 @@ mkdocs-simple-hooks==0.1.5 \
     --hash=sha256:dddbdf151a18723c9302a133e5cf79538be8eb9d274e8e07d2ac3ac34890837c \
     --hash=sha256:efeabdbb98b0850a909adee285f3404535117159d5cb3a34f541d6eaa644d50a
     # via -r docs/requirements.in
-mkdocstrings[python]==1.0.4 \
-    --hash=sha256:3969a6515b77db65fd097b53c1b7aa4ae840bd71a2ee62a6a3e89503446d7172 \
-    --hash=sha256:63464b4b29053514f32a1dbbf604e52876d5e638111b0c295ab7ed3cac73ca9b
+mkdocstrings[python]==1.0.5 \
+    --hash=sha256:150eff6e8c370cc8d2ba4e452ece1275fe83ad34d8cc5884a89a0ed141618c49 \
+    --hash=sha256:3a9528223afd6bf459ea85541b600ef3542826bbeb4ab534553f4b3c4e6e5e48
     # via
     #   -r docs/requirements.in
     #   mkdocstrings-python
