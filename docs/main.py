@@ -464,7 +464,8 @@ def define_env(env):
         ret_data += '| Attribute | Type | Description |\n| --- | --- | --- |\n'
 
         for k, v in sorted(attributes.items()):
-            ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
+            description = ' '.join(v['description'].split())
+            ret_data += f'| {k} | `{v["type"]}` | {description} |\n'
 
         return ret_data
 

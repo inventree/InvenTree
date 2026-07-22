@@ -90,6 +90,39 @@ def get_report_attributes(model):
     return found
 
 
+def get_model_field_attributes(model):
+    """Find all concrete database fields defined on a model.
+
+    This includes fields inherited from mixins/abstract base classes, so (for
+    example) `barcode_data` and `barcode_hash` are discovered for any model
+    which uses `InvenTreeBarcodeMixin`, without needing to be documented by hand.
+
+    Reverse relations (e.g. the 'lines' accessor on a linked order) are excluded,
+    as they are not actual fields on this model's table but related querysets -
+    these are documented (where relevant) via `report_context()` or `@report_attribute` instead.
+
+    Returns a dict of {name: {"description": ..., "type": ...}}.
+    """
+    found = {}
+
+    for field in model._meta.get_fields():
+        if not field.concrete:
+            continue
+
+        description = str(getattr(field, 'help_text', '') or '') or str(
+            getattr(field, 'verbose_name', field.name)
+        )
+
+        type_str = type(field).__name__
+
+        if field.is_relation and field.related_model is not None:
+            type_str = f'{type_str}[{get_type_str(field.related_model)}]'
+
+        found[field.name] = {'description': description, 'type': type_str}
+
+    return found
+
+
 class Command(BaseCommand):
     """Extract report context information, and export to a JSON file."""
 
@@ -146,7 +179,10 @@ class Command(BaseCommand):
                 'key': model_key,
                 'name': model_name,
                 'context': {},
-                'attributes': get_report_attributes(model),
+                'attributes': {
+                    **get_model_field_attributes(model),
+                    **get_report_attributes(model),
+                },
             }
 
             attributes = parse_docstring(ctx_type.__doc__).get('Attributes', {})
