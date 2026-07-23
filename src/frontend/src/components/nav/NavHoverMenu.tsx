@@ -8,7 +8,11 @@ export function NavHoverMenu({
   openDrawer: () => void;
 }>) {
   return (
-    <UnstyledButton onClick={() => openDrawer()} aria-label='navigation-menu'>
+    <UnstyledButton
+      onClick={() => openDrawer()}
+      aria-label='navigation-menu'
+      style={{ display: 'flex', alignItems: 'center', height: 38 }}
+    >
       <InvenTreeLogo />
     </UnstyledButton>
   );
