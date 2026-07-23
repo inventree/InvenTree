@@ -3247,6 +3247,19 @@ class SalesOrderAllocation(models.Model):
         """Return the PurchaseOrder associated with this allocation."""
         return self.item.purchase_order
 
+    def complete_allocation(self, user=None):
+        """Complete this allocation (called when the parent SalesOrder is marked as "shipped").
+
+        Retained for backwards compatibility with external callers (e.g. plugins) which
+        complete allocations one at a time - delegates to the bulk
+        SalesOrderShipment.complete_allocations() implementation.
+        """
+        self.shipment.complete_allocations(
+            SalesOrderAllocation.objects.filter(pk=self.pk), user=user
+        )
+
+        self.refresh_from_db()
+
 
 class ReturnOrder(TotalPriceMixin, Order):
     """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty.

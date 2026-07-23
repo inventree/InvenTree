@@ -192,6 +192,24 @@ class SalesOrderTest(InvenTreeAPITestCase):
             quantity=25 if full else 20,
         )
 
+    def test_scratch_complete_allocation_single(self):
+        """Scratch check: SalesOrderAllocation.complete_allocation() backwards-compat shim."""
+        self.allocate_stock(True)
+
+        allocations = list(self.shipment.allocations.all())
+        self.assertEqual(len(allocations), 2)
+
+        for allocation in allocations:
+            allocation.complete_allocation(self.user)
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 50)
+
+        for allocation in allocations:
+            allocation.item.refresh_from_db()
+            self.assertEqual(allocation.item.sales_order, self.order)
+            self.assertEqual(allocation.item.customer, self.order.customer)
+
     def test_over_allocate(self):
         """Test that over allocation logic works."""
         SA = StockItem.objects.create(part=self.part, quantity=9)
