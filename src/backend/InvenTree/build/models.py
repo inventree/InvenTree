@@ -2444,6 +2444,27 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         """Return the BomItem associated with this BuildItem."""
         return self.build_line.bom_item if self.build_line else None
 
+    def complete_allocation(
+        self, quantity: Optional[decimal.Decimal] = None, notes: str = '', user=None
+    ) -> None:
+        """Complete the allocation of this BuildItem into the output stock item.
+
+        A thin wrapper around Build.complete_allocations(), for completing a single BuildItem.
+
+        Arguments:
+            quantity: The quantity to allocate (default is the full quantity)
+            notes: Additional notes to add to the transaction
+            user: The user completing the allocation
+        """
+        quantities = {self.pk: quantity} if quantity is not None else None
+
+        self.build.complete_allocations(
+            BuildItem.objects.filter(pk=self.pk),
+            quantities=quantities,
+            notes=notes,
+            user=user,
+        )
+
     build_line = models.ForeignKey(
         BuildLine, on_delete=models.CASCADE, null=True, related_name='allocations'
     )

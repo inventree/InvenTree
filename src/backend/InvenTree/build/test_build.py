@@ -746,6 +746,26 @@ class BuildTest(BuildTestBase):
         self.line_1.refresh_from_db()
         self.assertEqual(self.line_1.consumed, 8)
 
+    def test_complete_allocation_wrapper(self):
+        """BuildItem.complete_allocation() is a thin wrapper around Build.complete_allocations().
+
+        Regression test: complete_allocation() was removed when complete_allocations() was
+        introduced, but some call sites still complete a single BuildItem at a time.
+        """
+        self.build.issue_build()
+
+        self.allocate_stock(None, {self.stock_1_1: 3})
+        alloc = BuildItem.objects.get(build_line=self.line_1, stock_item=self.stock_1_1)
+
+        alloc.complete_allocation(user=self.user)
+
+        self.stock_1_1.refresh_from_db()
+        self.line_1.refresh_from_db()
+
+        self.assertEqual(self.stock_1_1.consumed_by, self.build)
+        self.assertEqual(self.line_1.consumed, 3)
+        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
+
     def test_complete_zero_quantity_allocation(self):
         """A zero-quantity allocation is skipped cleanly on completion.
 
