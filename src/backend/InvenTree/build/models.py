@@ -975,6 +975,16 @@ class Build(
         """Action to be taken when a build is completed."""
         import build.tasks
 
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # could both offload the completion task (duplicate events and
+        # notifications; the stock-consuming side effects are themselves
+        # guarded against double-processing
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
+        if self.status == BuildStatus.COMPLETE.value:
+            return
+
         trim_allocated_stock = kwargs.pop('trim_allocated_stock', False)
         user = kwargs.pop('user', None)
 
@@ -1019,6 +1029,12 @@ class Build(
 
     def _action_issue(self, *args, **kwargs):
         """Perform the action to mark this order as PRODUCTION."""
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and offloaded stock-check tasks).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
@@ -1046,6 +1062,12 @@ class Build(
 
     def _action_hold(self, *args, **kwargs):
         """Action to be taken when a build is placed on hold."""
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = BuildStatus.ON_HOLD.value
             self.save()
@@ -1072,6 +1094,16 @@ class Build(
     def _action_cancel(self, *args, **kwargs):
         """Action to be taken when a build is cancelled."""
         import build.tasks
+
+        # Lock this build against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous cancellation requests
+        # could both offload the cancellation task (duplicate events and
+        # notifications; the stock-consuming side effects are themselves
+        # guarded against double-processing
+        self.status = Build.objects.select_for_update().get(pk=self.pk).status
+
+        if self.status == BuildStatus.CANCELLED.value:
+            return
 
         user = kwargs.pop('user', None)
 
@@ -1275,7 +1307,17 @@ class Build(
                 continue
 
             # Find BuildItem objects to trim
-            for item in BuildItem.objects.filter(build_line=build_line):
+            # Lock these rows (in pk order, to avoid deadlocks against other
+            # allocation operations) so a concurrent allocation update cannot
+            # be silently overwritten by the quantity decrement below
+            items = (
+                BuildItem.objects
+                .select_for_update()
+                .filter(build_line=build_line)
+                .order_by('pk')
+            )
+
+            for item in items:
                 # Previous item completed the job
                 if reduce_by <= 0:
                     break

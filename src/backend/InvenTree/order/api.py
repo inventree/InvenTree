@@ -744,7 +744,6 @@ class PurchaseOrderLineItemList(
         'reference',
         'SKU',
         'IPN',
-        'total_price',
         'target_date',
         'order',
         'status',

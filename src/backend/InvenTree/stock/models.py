@@ -227,6 +227,7 @@ class StockLocation(
     )
 
     @property
+    @report.mixins.report_attribute()
     def icon(self) -> str:
         """Get the current icon used for this location.
 
@@ -325,7 +326,8 @@ class StockLocation(
         return self.get_stock_items(cascade).count()
 
     @property
-    def item_count(self):
+    @report.mixins.report_attribute()
+    def item_count(self) -> int:
         """Simply returns the number of stock items in this location.
 
         Required for tree view serializer.
@@ -865,7 +867,8 @@ class StockItem(
         return self.get_next_serialized_item(reverse=True)
 
     @property
-    def status_label(self):
+    @report.mixins.report_attribute()
+    def status_label(self) -> str:
         """Return label."""
         return StockStatus.label(self.status)
 

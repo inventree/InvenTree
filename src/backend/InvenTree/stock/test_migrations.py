@@ -599,6 +599,8 @@ class TestRemoveMpttFieldsMigration(MigratorTestCase):
 
     def prepare(self):
         """Create a tree of StockItem objects with parent-child relationships."""
+        from django.db import connection
+
         Part = self.old_state.apps.get_model('part', 'part')
         StockItem = self.old_state.apps.get_model('stock', 'stockitem')
 
@@ -606,33 +608,38 @@ class TestRemoveMpttFieldsMigration(MigratorTestCase):
             name='Migration Test Part', level=0, tree_id=0, lft=0, rght=0
         )
 
+        def make_item(quantity, parent_id=None):
+            """Insert via raw SQL to avoid duplicate status_custom_key ORM bug."""
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO stock_stockitem
+                        (part_id, quantity, level, tree_id, lft, rght,
+                         status, delete_on_deplete, is_building,
+                         link, serial_int, barcode_data, barcode_hash, parent_id)
+                    VALUES (%s, %s, 0, 0, 0, 0, 10, false, false, '', 0, '', '', %s)
+                    RETURNING id
+                    """,
+                    [part.pk, quantity, parent_id],
+                )
+                return cursor.fetchone()[0]
+
         # Root stock item, with no parent
-        root = StockItem.objects.create(
-            part=part, quantity=100, level=0, tree_id=0, lft=0, rght=0
-        )
+        root_pk = make_item(100)
 
         # A set of child items, parented to the root item
-        children = [
-            StockItem.objects.create(
-                part=part, quantity=10, parent=root, level=1, tree_id=0, lft=0, rght=0
-            )
-            for _ in range(3)
-        ]
+        child_pks = [make_item(10, root_pk) for _ in range(3)]
 
         # A grandchild item, parented to the first child item
-        grandchild = StockItem.objects.create(
-            part=part, quantity=1, parent=children[0], level=2, tree_id=0, lft=0, rght=0
-        )
+        grandchild_pk = make_item(1, child_pks[0])
 
         # An unrelated top-level item, with no parent
-        orphan = StockItem.objects.create(
-            part=part, quantity=5, level=0, tree_id=0, lft=0, rght=0
-        )
+        orphan_pk = make_item(5)
 
-        self.root_pk = root.pk
-        self.child_pks = [child.pk for child in children]
-        self.grandchild_pk = grandchild.pk
-        self.orphan_pk = orphan.pk
+        self.root_pk = root_pk
+        self.child_pks = child_pks
+        self.grandchild_pk = grandchild_pk
+        self.orphan_pk = orphan_pk
 
         self.assertEqual(StockItem.objects.count(), 6)
 
