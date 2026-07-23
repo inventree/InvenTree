@@ -26,6 +26,7 @@ from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.status_codes import (
     PurchaseOrderStatus,
+    RepairOrderStatus,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatus,
@@ -3681,6 +3682,331 @@ class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
             models.ReturnOrderExtraLine,
             'api-return-order-extra-line-list',
             'api-return-order-extra-line-detail',
+        )
+
+
+class RepairOrderTests(InvenTreeAPITestCase):
+    """Unit tests for RepairOrder API endpoints."""
+
+    fixtures = [
+        'category',
+        'company',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+    roles = ['repair_order.view']
+
+    def test_options(self):
+        """Test the OPTIONS endpoint."""
+        self.assignRole('repair_order.add')
+        data = self.options(reverse('api-repair-order-list'), expected_code=200).data
+
+        self.assertEqual(data['name'], 'Repair Order List')
+
+        reference = data['actions']['POST']['reference']
+
+        self.assertEqual(reference['default'], 'REP-0001')
+        self.assertEqual(reference['label'], 'Reference')
+        self.assertEqual(reference['help_text'], 'Repair Order reference')
+        self.assertTrue(reference['required'])
+
+    def test_model_validation(self):
+        """Test RepairOrder model validation rules."""
+        customer = Company.objects.get(pk=4)
+
+        order = models.RepairOrder(customer=customer)
+        with self.assertRaises(ValidationError):
+            order.full_clean()
+
+        order.description = 'Intermittent fault'
+        order.full_clean()
+        order.save()
+
+        self.assertEqual(order.reference, 'REP-0001')
+        self.assertEqual(order.status, RepairOrderStatus.PENDING)
+
+        other_customer = Company.objects.get(pk=5)
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=25),
+            customer=other_customer,
+            quantity=1,
+            serial='REPAIR-001',
+        )
+
+        order = models.RepairOrder(
+            customer=customer,
+            item=item,
+            description='Mismatched customer item',
+        )
+
+        with self.assertRaises(ValidationError):
+            order.full_clean()
+
+    def test_create_list_update(self):
+        """Test create, list, detail and update API operations."""
+        url = reverse('api-repair-order-list')
+
+        self.post(
+            url,
+            {'customer': 4, 'description': 'Repair order'},
+            expected_code=403,
+        )
+
+        self.assignRole('repair_order.add')
+
+        data = self.post(
+            url,
+            {
+                'customer': 4,
+                'customer_reference': 'RO-123',
+                'description': 'Repair order',
+                'serial': 'SN-123',
+            },
+            expected_code=201,
+        ).data
+
+        self.assertEqual(data['reference'], 'REP-0001')
+        self.assertEqual(data['customer_reference'], 'RO-123')
+        self.assertEqual(data['serial'], 'SN-123')
+
+        response = self.get(url, {'customer': 4}, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        detail_url = reverse('api-repair-order-detail', kwargs={'pk': data['pk']})
+        detail = self.get(detail_url, expected_code=200).data
+        self.assertEqual(detail['reference'], 'REP-0001')
+
+        self.assignRole('repair_order.change')
+        self.patch(detail_url, {'customer_reference': 'RO-456'}, expected_code=200)
+
+        order = models.RepairOrder.objects.get(pk=data['pk'])
+        self.assertEqual(order.customer_reference, 'RO-456')
+
+    def test_status_transitions(self):
+        """Test RepairOrder status transition endpoints."""
+        order = models.RepairOrder.objects.create(
+            customer=Company.objects.get(pk=4),
+            description='Repair order',
+        )
+
+        self.assertEqual(order.status, RepairOrderStatus.PENDING)
+        self.assertIsNone(order.issue_date)
+
+        issue_url = reverse('api-repair-order-issue', kwargs={'pk': order.pk})
+        hold_url = reverse('api-repair-order-hold', kwargs={'pk': order.pk})
+        complete_url = reverse('api-repair-order-complete', kwargs={'pk': order.pk})
+
+        self.post(issue_url, expected_code=403)
+
+        self.assignRole('repair_order.add')
+
+        self.post(issue_url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.IN_PROGRESS)
+        self.assertIsNotNone(order.issue_date)
+
+        self.post(hold_url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.ON_HOLD)
+
+        self.post(issue_url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.IN_PROGRESS)
+
+        self.post(complete_url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.COMPLETE)
+        self.assertIsNotNone(order.complete_date)
+
+    def test_cancel_transition(self):
+        """Test cancelling a RepairOrder."""
+        order = models.RepairOrder.objects.create(
+            customer=Company.objects.get(pk=4),
+            description='Repair order',
+        )
+
+        self.assignRole('repair_order.add')
+        self.post(
+            reverse('api-repair-order-cancel', kwargs={'pk': order.pk}),
+            expected_code=201,
+        )
+
+        order.refresh_from_db()
+        self.assertEqual(order.status, RepairOrderStatus.CANCELLED)
+
+    def test_completed_order_edit_behavior(self):
+        """Test completed RepairOrder edit locking behavior."""
+        order = models.RepairOrder.objects.create(
+            customer=Company.objects.get(pk=4),
+            description='Repair order',
+        )
+        order.issue_order()
+        order.complete_order()
+
+        self.assignRole('repair_order.change')
+        url = reverse('api-repair-order-detail', kwargs={'pk': order.pk})
+
+        self.patch(url, {'description': 'Updated'}, expected_code=400)
+
+        set_global_setting('REPAIRORDER_EDIT_COMPLETED_ORDERS', True)
+
+        self.patch(url, {'description': 'Updated'}, expected_code=200)
+
+        order.refresh_from_db()
+        self.assertEqual(order.description, 'Updated')
+
+    def test_output_options(self):
+        """Test output options for RepairOrder detail endpoint."""
+        order = models.RepairOrder.objects.create(
+            customer=Company.objects.get(pk=4),
+            part=Part.objects.get(pk=25),
+            serial='SN-123',
+        )
+
+        self.run_output_test(
+            reverse('api-repair-order-detail', kwargs={'pk': order.pk}),
+            ['customer_detail', 'part_detail', 'item_detail'],
+        )
+
+
+class RepairOrderLineTests(InvenTreeAPITestCase):
+    """Unit tests for RepairOrderLine API endpoints."""
+
+    fixtures = [
+        'category',
+        'company',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+    roles = ['repair_order.view']
+
+    def setUp(self):
+        """Create a RepairOrder for line item tests."""
+        super().setUp()
+
+        self.order = models.RepairOrder.objects.create(
+            customer=Company.objects.get(pk=4),
+            description='Repair order',
+        )
+
+    def test_model_validation(self):
+        """Test RepairOrderLine model validation rules."""
+        line = models.RepairOrderLine(order=self.order, quantity=1)
+
+        with self.assertRaises(ValidationError):
+            line.full_clean()
+
+        part = Part.objects.get(pk=25)
+        line.part = part
+        line.quantity = 0
+
+        with self.assertRaises(ValidationError):
+            line.full_clean()
+
+        line.quantity = 1
+        line.full_clean()
+
+    def test_stock_quantity_validation(self):
+        """Test stock quantity validation without mutating stock."""
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=25),
+            quantity=2,
+        )
+
+        line = models.RepairOrderLine(
+            order=self.order,
+            stock_item=item,
+            quantity=3,
+        )
+
+        with self.assertRaises(ValidationError):
+            line.full_clean()
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 2)
+
+    def test_create_list_update(self):
+        """Test create, list, detail and update API operations."""
+        url = reverse('api-repair-order-line-list')
+
+        self.post(
+            url,
+            {'order': self.order.pk, 'part': 25, 'quantity': 1},
+            expected_code=403,
+        )
+
+        self.assignRole('repair_order.add')
+
+        data = self.post(
+            url,
+            {
+                'order': self.order.pk,
+                'part': 25,
+                'quantity': 2,
+                'reference': 'line-ref',
+            },
+            expected_code=201,
+        ).data
+
+        self.assertEqual(data['order'], self.order.pk)
+        self.assertEqual(data['part'], 25)
+        self.assertEqual(data['reference'], 'line-ref')
+
+        response = self.get(url, {'order': self.order.pk}, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        detail_url = reverse('api-repair-order-line-detail', kwargs={'pk': data['pk']})
+        detail = self.get(detail_url, expected_code=200).data
+        self.assertEqual(detail['quantity'], 2.0)
+
+        self.assignRole('repair_order.change')
+        self.patch(detail_url, {'quantity': 3}, expected_code=200)
+
+        line = models.RepairOrderLine.objects.get(pk=data['pk'])
+        self.assertEqual(line.quantity, 3)
+
+    def test_api_validation(self):
+        """Test RepairOrderLine API validation."""
+        self.assignRole('repair_order.add')
+        url = reverse('api-repair-order-line-list')
+
+        data = self.post(
+            url,
+            {'order': self.order.pk, 'quantity': 1},
+            expected_code=400,
+        ).data
+        self.assertIn('part', data)
+
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=25),
+            quantity=2,
+        )
+
+        data = self.post(
+            url,
+            {'order': self.order.pk, 'stock_item': item.pk, 'quantity': 3},
+            expected_code=400,
+        ).data
+        self.assertIn('quantity', data)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 2)
+
+    def test_output_options(self):
+        """Test output options for RepairOrderLine detail endpoint."""
+        line = models.RepairOrderLine.objects.create(
+            order=self.order,
+            part=Part.objects.get(pk=25),
+            quantity=1,
+        )
+
+        self.run_output_test(
+            reverse('api-repair-order-line-detail', kwargs={'pk': line.pk}),
+            ['part_detail', 'stock_item_detail', 'order_detail'],
         )
 
 
