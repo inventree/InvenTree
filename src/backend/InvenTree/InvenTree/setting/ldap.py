@@ -68,6 +68,33 @@ def get_ldap_config(debug: bool = False) -> dict:
         str,
     )
 
+    group_search_dn = get_setting(
+        'INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'
+    )
+
+    find_group_perms = get_boolean_setting(
+        'INVENTREE_LDAP_FIND_GROUP_PERMS', 'ldap.find_group_perms', True
+    )
+
+    # If group search DN is not configured, group-based features cannot
+    # work.  Disable them gracefully with a warning instead of letting
+    # django-auth-ldap crash at runtime with a TypeError (see #12225).
+    if group_search_dn is None:
+        if find_group_perms or get_setting(
+            'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups'
+        ) or get_setting(
+            'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
+        ) or get_setting(
+            'INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group'
+        ):
+            print(
+                '[LDAP] ldap.group_search is not configured; '
+                'disabling group-based features (find_group_perms, '
+                'mirror_groups, require_group, deny_group). '
+                'Set ldap.group_search to enable them.'
+            )
+        find_group_perms = False
+
     ldap_config = {
         'AUTH_LDAP_GLOBAL_OPTIONS': global_options,
         'AUTH_LDAP_SERVER_URI': get_setting(
@@ -108,13 +135,13 @@ def get_ldap_config(debug: bool = False) -> dict:
         ),
         'AUTH_LDAP_MIRROR_GROUPS': get_boolean_setting(
             'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
-        ),
+        ) if group_search_dn is not None else False,
         'AUTH_LDAP_GROUP_OBJECT_CLASS': group_object_class,
         'AUTH_LDAP_GROUP_SEARCH': django_auth_ldap.config.LDAPSearch(
-            get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
+            group_search_dn,
             ldap.SCOPE_SUBTREE,
             f'(objectClass={group_object_class})',
-        ),
+        ) if group_search_dn is not None else None,
         'AUTH_LDAP_GROUP_TYPE_CLASS': group_type_class,
         'AUTH_LDAP_GROUP_TYPE_CLASS_ARGS': [*group_type_class_args],
         'AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS': {**group_type_class_kwargs},
@@ -123,17 +150,17 @@ def get_ldap_config(debug: bool = False) -> dict:
         ),
         'AUTH_LDAP_REQUIRE_GROUP': get_setting(
             'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
-        ),
+        ) if group_search_dn is not None else None,
         'AUTH_LDAP_DENY_GROUP': get_setting(
             'INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group'
-        ),
+        ) if group_search_dn is not None else None,
         'AUTH_LDAP_USER_FLAGS_BY_GROUP': get_setting(
             'INVENTREE_LDAP_USER_FLAGS_BY_GROUP',
             'ldap.user_flags_by_group',
             default_value=None,
             typecast=dict,
-        ),
-        'AUTH_LDAP_FIND_GROUP_PERMS': True,
+        ) if group_search_dn is not None else None,
+        'AUTH_LDAP_FIND_GROUP_PERMS': find_group_perms,
     }
 
     return ldap_config
