@@ -301,13 +301,14 @@ class TestNoteMigrations(MigratorTestCase):
     # Note: these targets must match the dependencies of the data migration (common.0050),
     # to ensure that the migration plan is truncated *before* the data migration is applied
     migrate_from = [
-        ('common', '0049_note'),
+        ('common', '0048_notificationmessage_link'),
         ('build', '0059_build_tags'),
         ('company', '0080_company_tags'),
         ('order', '0121_add_line_item_discount'),
         ('part', '0152_alter_partpricing_currency'),
         ('stock', '0125_remove_mptt_fields'),
     ]
+
     migrate_to = ('common', '0051_remove_notesimage_model_id_and_more')
 
     def generate_image(self, name: str):
