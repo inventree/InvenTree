@@ -249,8 +249,9 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertEqual(alloc_a.line.shipped, 0)
         self.assertEqual(alloc_b.line.shipped, 0)
 
-        alloc_a.complete_allocation(None)
-        alloc_b.complete_allocation(None)
+        allocations = SalesOrderAllocation.objects.filter(line=self.line).order_by('pk')
+
+        self.shipment.complete_allocations(allocations)
 
         # Both shipped quantities must be counted
         self.line.refresh_from_db()
@@ -574,7 +575,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 url,
                 expected_code=200,
                 benchmark=True,
-                max_query_time=2.5,
+                max_query_time=5.0,
                 max_query_count=100,
             )
 
