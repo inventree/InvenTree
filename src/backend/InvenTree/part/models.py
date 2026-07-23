@@ -2061,7 +2061,14 @@ class Part(
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
-        bom_items = self.get_bom_items().all().prefetch_related('part', 'sub_part')
+        # Note: We must order the BOM items in a consistent way, otherwise the hash will change if the order of the items changes
+        bom_items = (
+            self
+            .get_bom_items()
+            .all()
+            .prefetch_related('part', 'sub_part')
+            .order_by('pk')
+        )
 
         for item in bom_items:
             result_hash.update(str(item.get_item_hash()).encode())
@@ -2134,7 +2141,7 @@ class Part(
         if parts is None:
             parts = set()
 
-        bom_items = self.get_bom_items()
+        bom_items = self.get_bom_items().prefetch_related('sub_part')
 
         for bom_item in bom_items:
             sub_part = bom_item.sub_part
