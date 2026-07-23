@@ -1040,6 +1040,40 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
 
 @receiver(
+    post_save, sender=SupplierPart, dispatch_uid='post_save_supplier_part'
+)
+def after_save_supplier_part(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPart is created or updated.
+
+    Triggers a pricing update for the linked Part, so that changes to
+    pack_quantity are reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=True)
+
+
+@receiver(
+    post_delete, sender=SupplierPart, dispatch_uid='post_delete_supplier_part'
+)
+def after_delete_supplier_part(sender, instance, **kwargs):
+    """Callback function when a SupplierPart is deleted.
+
+    Triggers a pricing update for the linked Part, so that removal of a
+    supplier part is reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=False)
+
+
+@receiver(
     post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
