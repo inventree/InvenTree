@@ -1,6 +1,7 @@
 """Plugins for testing label machines."""
 
 import structlog
+from rest_framework import serializers
 
 from machine.machine_type import BaseDriver
 from plugin import InvenTreePlugin
@@ -44,6 +45,52 @@ class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
     def custom_func(self, *args, x=0, y=0):
         """A custom function for the driver."""
         return x * y
+
+
+class TestingLabelPrinterDriverOptions(LabelPrinterBaseDriver):
+    """Test driver for label printing."""
+
+    SLUG = 'test-label-printer-options'
+    NAME = 'Test label printer options'
+    DESCRIPTION = 'This is a test label printer driver for testing.'
+
+    MACHINE_SETTINGS = {
+        'LABEL': {
+            'name': 'Label Media',
+            'description': 'Select label media type',
+            'choices': [('12', '12mm'), ('18', '18mm'), ('24', '24mm')],
+            'default': '12',
+            'required': True,
+        }
+    }
+
+    def print_label(self, machine, label, item, **kwargs) -> None:
+        """Override print_label."""
+        # Simply output some warning messages,
+        # which we can check for in the unit test
+        logger.warn('Printing Label: TestingLabelPrinterDriverOptions')
+        logger.warn(f'machine: {machine.pk}')
+        logger.warn(f'label: {label.pk}')
+        logger.warn(f'item: {item.pk}')
+
+        for k, v in kwargs['printing_options'].items():
+            logger.warn(f'options: {k}: {v}')
+
+    class PrintingOptionsSerializer(LabelPrinterBaseDriver.PrintingOptionsSerializer):
+        """Printing options serializer for print driver testing."""
+
+        def __init__(self, machine=None, *args, **kwargs):
+            """Initialize the printing options serializer."""
+            super().__init__(*args, **kwargs)
+
+            self.fields['label'].default = machine.get_setting('LABEL', 'D')
+
+        label = serializers.ChoiceField(
+            label='Label Media',
+            help_text='Select label media type',
+            choices=[('12', '12mm'), ('18', '18mm'), ('24', '24mm')],
+            default='12',
+        )
 
 
 class TestingLabelPrinterDriverError1(LabelPrinterBaseDriver):
@@ -93,6 +140,7 @@ class LabelPrinterMachineTest(MachineDriverMixin, SettingsMixin, InvenTreePlugin
         """Return a list of drivers registered by this plugin."""
         return [
             TestingLabelPrinterDriver,
+            TestingLabelPrinterDriverOptions,
             TestingLabelPrinterDriverError1,
             TestingLabelPrinterDriverError2,
             TestingLabelPrinterDriverNotImplemented,
