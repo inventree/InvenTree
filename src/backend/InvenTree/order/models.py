@@ -2939,9 +2939,24 @@ class SalesOrderShipment(
             bulk_create_and_fetch(stock.models.StockItem, new_stock_item_data)
         )
 
-        # Backfill the newly created StockItem objects into the split_items list
-        for i, (source, _item, quantity) in enumerate(split_items):
-            split_items[i] = (source, new_stock_items[i], quantity)
+        # Backfill the newly created StockItem objects into the split_items list,
+        # then repoint every other reference to a placeholder (pk=None) copy at the
+        # newly persisted instance instead - shipped_items and allocations_to_update
+        # were populated with the pre-creation copies, which never gain a primary key
+        split_item_map = {}
+
+        for i, (source, placeholder, quantity) in enumerate(split_items):
+            persisted = new_stock_items[i]
+            split_item_map[id(placeholder)] = persisted
+            split_items[i] = (source, persisted, quantity)
+
+        shipped_items = [
+            (split_item_map.get(id(item), item), quantity)
+            for item, quantity in shipped_items
+        ]
+
+        for allocation in allocations_to_update:
+            allocation.item = split_item_map[id(allocation.item)]
 
         tracking_entries = []
         split_events = []
