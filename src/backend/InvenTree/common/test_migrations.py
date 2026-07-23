@@ -303,10 +303,10 @@ class TestNoteMigrations(MigratorTestCase):
     migrate_from = [
         ('common', '0049_note'),
         ('build', '0059_build_tags'),
-        ('company', '0079_auto_20260212_1054'),
-        ('order', '0119_transferorderlineitem_line_int'),
-        ('part', '0150_part_maximum_stock'),
-        ('stock', '0123_remove_stockitem_review_needed'),
+        ('company', '0080_company_tags'),
+        ('order', '0121_add_line_item_discount'),
+        ('part', '0152_alter_partpricing_currency'),
+        ('stock', '0125_remove_mptt_fields'),
     ]
     migrate_to = ('common', '0051_remove_notesimage_model_id_and_more')
 
@@ -440,10 +440,7 @@ class TestNoteMigrations(MigratorTestCase):
             (
                 'stockitem',
                 StockItem.objects.create(
-                    part=part,
-                    quantity=10,
-                    notes='Some **bold** stock item notes',
-                    **tree,
+                    part=part, quantity=10, notes='Some **bold** stock item notes'
                 ),
             ),
             (
