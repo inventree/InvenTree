@@ -530,6 +530,10 @@ class SalesOrderTest(InvenTreeAPITestCase):
 
         StockItem.objects.bulk_create(stock_items)
 
+        # Re-fetch the created items, as bulk_create() does not guarantee that the
+        # pk values of the passed-in objects are populated (e.g. on MySQL)
+        stock_items = list(StockItem.objects.filter(part=part))
+
         # Original quantity of each stock item, keyed by pk (used for verification below)
         original_quantities = {item.pk: item.quantity for item in stock_items}
         split_pks = {pk for pk, qty in original_quantities.items() if qty > 1}
