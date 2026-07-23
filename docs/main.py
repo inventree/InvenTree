@@ -442,18 +442,11 @@ def define_env(env):
 
         return ret_data
 
-    def render_model_attributes(
-        model: str, key: Literal['fields', 'properties'], title: str
-    ):
-        """Render a table (including its own heading) of discoverable field/property information for a particular report model.
+    def render_attribute_table(attributes: dict, title: str) -> str:
+        """Render a table (including its own heading) of field/property information.
 
         Returns an empty string (including no heading) if there is nothing to display.
         """
-        global REPORT_CONTEXT
-
-        context = REPORT_CONTEXT.get('models', {}).get(model)
-        attributes = context.get(key, {}) if context else {}
-
         if not attributes:
             return ''
 
@@ -476,7 +469,12 @@ def define_env(env):
         any mixins/abstract base classes), and are available on the underlying model
         instance exposed to the template (e.g. `order`, `part`, `item`).
         """
-        return render_model_attributes(model, 'fields', 'Fields')
+        global REPORT_CONTEXT
+
+        context = REPORT_CONTEXT.get('models', {}).get(model)
+        return render_attribute_table(
+            context.get('fields', {}) if context else {}, 'Fields'
+        )
 
     @env.macro
     def model_properties(model: str):
@@ -487,7 +485,37 @@ def define_env(env):
         decorator. They are available on the underlying model instance exposed to the
         template (e.g. `order`, `part`, `item`).
         """
-        return render_model_attributes(model, 'properties', 'Properties')
+        global REPORT_CONTEXT
+
+        context = REPORT_CONTEXT.get('models', {}).get(model)
+        return render_attribute_table(
+            context.get('properties', {}) if context else {}, 'Properties'
+        )
+
+    @env.macro
+    def related_model_context():
+        """Render the full 'related model types' section.
+
+        A "related" model is one which is not itself reportable, but which is
+        referenced by a field or `@report_attribute` property on a reportable model
+        (e.g. `PartCategory` via `Part.category`, `SupplierPart` via `Part.default_supplier`).
+
+        These are discovered automatically (one hop out from the reportable models) by
+        the `export_report_context` management command, so there is no manually-maintained
+        list of related models to keep in sync here.
+        """
+        global REPORT_CONTEXT
+
+        related = REPORT_CONTEXT.get('related_models', {})
+
+        ret_data = ''
+
+        for info in sorted(related.values(), key=lambda item: item['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
+
+        return ret_data
 
     @env.macro
     def icon(

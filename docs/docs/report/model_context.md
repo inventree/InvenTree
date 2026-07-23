@@ -82,71 +82,8 @@ The following `Part` methods accept optional arguments, and so are not included 
 
 ## Related Model Types
 
-Some *related* model types are not themselves directly reportable, but are commonly accessed as nested attributes from a reportable model (e.g. `part.category`, `company.primary_address`, `stockitem.supplier_part`). These are documented by hand below, as they are not yet covered by the automatic discovery process.
+Some *related* model types are not themselves directly reportable, but are referenced by a field or `@report_attribute` property on a reportable model (e.g. `PartCategory` via `part.category`, `SupplierPart` via `part.default_supplier` or `stockitem.supplier_part`).
 
-### Part Category
+These are discovered automatically - there is no manually-maintained list of related models here. If a reportable model gains a new field or `@report_attribute` property pointing at another model, that model will automatically appear in this section.
 
-`PartCategory` is not itself a reportable model, but is commonly accessed via `part.category`:
-
-| Variable | Description |
-|----------|-------------|
-| name | Name of this category |
-| parent | Parent category |
-| default_location | Default [StockLocation](#stock-location) object for parts in this category or child categories |
-| default_keywords | Default keywords for parts created in this category |
-
-### Address
-
-`Address` is commonly accessed via `company.primary_address`, or by iterating over a `Company`'s associated addresses:
-
-| Variable | Description |
-|----------|-------------|
-| line1 | First line of the postal address |
-| line2 | Second line of the postal address |
-| postal_code | ZIP code of the city |
-| postal_city | City name |
-| country | Country name |
-
-### Contact
-
-| Variable | Description |
-|----------|-------------|
-| company | Company object where the contact belongs to |
-| name | First and second name of the contact |
-| phone | Phone number |
-| email | Email address |
-| role | Role of the contact |
-
-### SupplierPart
-
-`SupplierPart` is commonly accessed via `stockitem.supplier_part`, or `part.default_supplier`:
-
-| Variable | Description |
-|----------|-------------|
-| part | Link to the master Part (Obsolete) |
-| source_item | The sourcing [StockItem](#stock-item) linked to this [SupplierPart](#supplierpart) instance |
-| supplier | [Company](#company) that supplies this part |
-| SKU | Stock keeping unit (supplier part number) |
-| link | Link to external website for this supplier part |
-| description | Descriptive notes field |
-| note | Longer form note field |
-| base_cost | Base charge added to order independent of quantity e.g. "Reeling Fee" |
-| multiple | Multiple that the part is provided in |
-| packaging | packaging that the part is supplied in, e.g. "Reel" |
-| pretty_name | The IPN, supplier name, supplier SKU and (if not null) manufacturer string joined by `|`. Ex. `P00037 | Company | 000021` |
-| unit_pricing | The price for one unit. |
-| price_breaks | Return the associated price breaks in the correct order |
-| has_price_breaks | Whether this [SupplierPart](#supplierpart) has price breaks |
-| manufacturer_string | Format a MPN string for this [SupplierPart](#supplierpart). Concatenates manufacture name and part number. |
-
-### User
-
-`User` is commonly accessed via fields such as `order.created_by` or `stockitem.stocktake_user`:
-
-| Variable | Description |
-|----------|-------------|
-| username | the username of the user |
-| first_name | The first name of the user |
-| last_name | The last name of the user |
-| email | The email address of the user |
-| pk | The primary key of the user |
+{{ related_model_context() }}

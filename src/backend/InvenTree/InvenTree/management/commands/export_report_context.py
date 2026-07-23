@@ -7,6 +7,7 @@ This in turn allows report context to be documented in the InvenTree documentati
 without having to manually duplicate the information in multiple places.
 """
 
+import inspect
 import json
 from typing import get_args, get_origin, get_type_hints
 
@@ -36,6 +37,29 @@ def get_type_str(type_obj):
         return type_obj.__name__
 
     return f'{type_obj.__module__}.{type_obj.__name__}'
+
+
+def find_related_models(type_obj) -> set:
+    """Recursively find any Django Model subclasses referenced by a type annotation.
+
+    Handles plain model classes, `Optional[Model]`, and `report.mixins.QuerySet[Model]`
+    (and any nesting thereof), so that models referenced from a field/property type
+    can be discovered for the "related model" documentation, without needing to be
+    manually curated.
+    """
+    found = set()
+
+    if type_obj is None or type_obj is type(None):
+        return found
+
+    if inspect.isclass(type_obj) and issubclass(type_obj, django.db.models.Model):
+        found.add(type_obj)
+        return found
+
+    for arg in get_args(type_obj):
+        found |= find_related_models(arg)
+
+    return found
 
 
 def parse_docstring(docstring: str):
@@ -74,9 +98,13 @@ def get_report_attributes(model):
     - A list of qualified names (e.g. "Part.default_supplier") for any
       @report_attribute-marked property/method which is missing a return type
       annotation.
+    - A set of any Django Model subclasses referenced by the return type of a
+      discovered property (e.g. `SupplierPart` for `Part.default_supplier`), used
+      to auto-discover "related" models which are not themselves reportable.
     """
     found = {}
     errors = []
+    related_models = set()
 
     for klass in reversed(model.__mro__):
         for name, member in vars(klass).items():
@@ -90,13 +118,15 @@ def get_report_attributes(model):
 
             if return_type is None:
                 errors.append(f'{klass.__name__}.{name}')
+            else:
+                related_models |= find_related_models(return_type)
 
             found[name] = {
                 'description': description,
                 'type': get_type_str(return_type) if return_type is not None else '',
             }
 
-    return found, errors
+    return found, errors, related_models
 
 
 def get_model_field_attributes(model):
@@ -110,9 +140,15 @@ def get_model_field_attributes(model):
     as they are not actual fields on this model's table but related querysets -
     these are documented (where relevant) via `report_context()` or `@report_attribute` instead.
 
-    Returns a dict of {name: {"description": ..., "type": ...}}.
+    Returns a tuple of:
+
+    - A dict of {name: {"description": ..., "type": ...}}.
+    - A set of any Django Model subclasses referenced by a relation field (e.g.
+      `PartCategory` for `Part.category`), used to auto-discover "related" models
+      which are not themselves reportable.
     """
     found = {}
+    related_models = set()
 
     for field in model._meta.get_fields():
         if not field.concrete:
@@ -126,10 +162,11 @@ def get_model_field_attributes(model):
 
         if field.is_relation and field.related_model is not None:
             type_str = f'{type_str}[{get_type_str(field.related_model)}]'
+            related_models.add(field.related_model)
 
         found[field.name] = {'description': description, 'type': type_str}
 
-    return found
+    return found, related_models
 
 
 class Command(BaseCommand):
@@ -152,9 +189,10 @@ class Command(BaseCommand):
             ReportContextExtension,
         )
 
-        context = {'models': {}, 'base': {}}
+        context = {'models': {}, 'related_models': {}, 'base': {}}
         is_error = False
         is_attribute_error = False
+        related_model_classes = set()
 
         # Base context models
         for key, model in [
@@ -185,7 +223,10 @@ class Command(BaseCommand):
                 is_error = True
                 continue
 
-            properties, property_errors = get_report_attributes(model)
+            fields, field_related = get_model_field_attributes(model)
+            properties, property_errors, property_related = get_report_attributes(model)
+
+            related_model_classes |= field_related | property_related
 
             for qualified_name in property_errors:
                 print(
@@ -197,7 +238,7 @@ class Command(BaseCommand):
                 'key': model_key,
                 'name': model_name,
                 'context': {},
-                'fields': get_model_field_attributes(model),
+                'fields': fields,
                 'properties': properties,
             }
 
@@ -212,6 +253,33 @@ class Command(BaseCommand):
             raise CommandError(
                 'INVE-E4 - Some models associated with the `InvenTreeReportMixin` do not have a valid `report_context` return type annotation.'
             )
+
+        # Related models: models which are not themselves reportable, but which are
+        # referenced by a field or @report_attribute property on a reportable model.
+        # Discovered automatically (one hop) from the fields/properties collected above,
+        # so no manual list of "related" models needs to be maintained.
+        reportable_models = set(report_model_types())
+
+        for model in sorted(
+            related_model_classes - reportable_models, key=lambda m: m.__name__
+        ):
+            model_key = model.__name__.lower()
+
+            fields, _ = get_model_field_attributes(model)
+            properties, property_errors, _ = get_report_attributes(model)
+
+            for qualified_name in property_errors:
+                print(
+                    f'Error: {qualified_name} is marked with @report_attribute but does not have a return type annotation'
+                )
+                is_attribute_error = True
+
+            context['related_models'][model_key] = {
+                'key': model_key,
+                'name': str(model._meta.verbose_name).title(),
+                'fields': fields,
+                'properties': properties,
+            }
 
         if is_attribute_error:
             raise CommandError(
