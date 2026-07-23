@@ -443,19 +443,21 @@ def define_env(env):
         return ret_data
 
     def render_attribute_table(attributes: dict, title: str) -> str:
-        """Render a table (including its own heading) of field/property information.
+        """Render a table of field/property information, in a collapsible (collapsed by default) block.
 
-        Returns an empty string (including no heading) if there is nothing to display.
+        Returns an empty string (including no block) if there is nothing to display.
         """
         if not attributes:
             return ''
 
-        ret_data = f'#### {title}\n\n'
-        ret_data += '| Variable | Type | Description |\n| --- | --- | --- |\n'
+        table = '| Variable | Type | Description |\n| --- | --- | --- |\n'
 
         for k, v in sorted(attributes.items()):
             description = ' '.join(v['description'].split())
-            ret_data += f'| {k} | `{v["type"]}` | {description} |\n'
+            table += f'| {k} | `{v["type"]}` | {description} |\n'
+
+        ret_data = f'??? note "{title}"\n\n'
+        ret_data += textwrap.indent(table, '    ')
 
         # Trailing blank line, so consecutive macro calls (e.g. fields followed by
         # properties) don't run together when the template places them on adjacent lines
