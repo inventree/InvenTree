@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 526
 
 INVENTREE_API_TEXT = """
 
-v526 -> 2026-07-22 : xxx
+v526 -> 2026-07-22 : https://github.com/inventree/InvenTree/pull/12454
     - Extend API with dedicated login-by-code re-send endpoint
 
 v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
