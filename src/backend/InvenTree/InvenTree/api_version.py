@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 524
+INVENTREE_API_VERSION = 525
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
+    - Type clarifications for some fields; no functional changes
 
 v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
     - Adds "discount" field to order line items (and extra line items)

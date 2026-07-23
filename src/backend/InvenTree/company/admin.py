@@ -70,7 +70,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     list_display = ('company', 'line1', 'postal_code', 'country')
 
-    search_fields = ['company', 'country', 'postal_code']
+    search_fields = ['company__name', 'country', 'postal_code']
 
     autocomplete_fields = ['company']
 
@@ -81,6 +81,6 @@ class ContactAdmin(admin.ModelAdmin):
 
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
-    search_fields = ['company', 'name', 'email']
+    search_fields = ['company__name', 'name', 'email']
 
     autocomplete_fields = ['company']
