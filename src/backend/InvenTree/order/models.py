@@ -481,8 +481,9 @@ class Order(
         )
 
     @property
-    def is_overdue(self):
-        """Method to determine if this order is overdue.
+    @report.mixins.report_attribute()
+    def is_overdue(self) -> bool:
+        """Determine if this order is overdue.
 
         Makes use of the overdue_filter() method to avoid code duplication
         """
@@ -590,20 +591,23 @@ class Order(
     )
 
     @property
-    def company(self):
-        """Return the company associated with this order.
+    @report.mixins.report_attribute()
+    def company(self) -> Optional[Company]:
+        """The company associated with this order.
 
         This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
         """
         raise NotImplementedError(f'company() method not implemented for {__class__}')
 
     @property
-    def order_address(self):
-        """Return the Address associated with this order."""
+    @report.mixins.report_attribute()
+    def order_address(self) -> Optional[Address]:
+        """The Address associated with this order."""
         return self.address or self.company.primary_address
 
     @property
-    def status_text(self):
+    @report.mixins.report_attribute()
+    def status_text(self) -> str:
         """Return the text representation of the current status. This will consider any custom status."""
         if self.get_custom_status() is not None:
             from generic.states.custom import (
