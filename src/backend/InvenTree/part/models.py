@@ -2583,6 +2583,94 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         )
 
 
+class PartRequirements(common.models.MetaMixin):
+    """Model for caching the various "requirements" associated with a Part.
+
+    This information is cached because it is expensive to calculate "on the fly",
+    and does not change very often (compared to the number of times it is accessed).
+
+    The following attributes are cached against each part:
+
+    - in_stock: The total quantity of items in stock for this part
+    - on_order: The total quantity of items on order for this part
+    - building: The total quantity of items currently being built for this part
+    - build_order_requirements: The total quantity of items required for all open build orders
+    - sales_order_requirements: The total quantity of items required for all open sales orders
+    - build_order_allocations: The total quantity of items allocated to open build orders
+    - sales_order_allocations: The total quantity of items allocated to open sales orders
+
+    Note that each of these fields includes the quantity for any active variants of this part, if they exist.
+    """
+
+    part = models.OneToOneField(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='requirements_data',
+        verbose_name=_('part'),
+    )
+
+    in_stock = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('In Stock'),
+        help_text=_('Total quantity of items in stock for this part'),
+    )
+
+    on_order = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('On Order'),
+        help_text=_('Total quantity of items on order for this part'),
+    )
+
+    building = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('Building'),
+        help_text=_('Total quantity of items currently being built for this part'),
+    )
+
+    build_order_requirements = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('Build Order Requirements'),
+        help_text=_('Total quantity of this part required for all open build orders'),
+    )
+
+    sales_order_requirements = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('Sales Order Requirements'),
+        help_text=_('Total quantity of this part required for all open sales orders'),
+    )
+
+    build_order_allocations = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('Build Order Allocations'),
+        help_text=_('Total quantity of this part allocated to open build orders'),
+    )
+
+    sales_order_allocations = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        default=0,
+        verbose_name=_('Sales Order Allocations'),
+        help_text=_('Total quantity of this part allocated to open sales orders'),
+    )
+
+    @property
+    def is_valid(self):
+        """Return True if the cached requirements data is valid."""
+        return self.updated is not None
+
+
 class PartPricing(common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part.
 
