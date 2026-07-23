@@ -20,7 +20,7 @@ In addition to the [global context](#global-context), all *report* templates hav
 
 {{ report_context("base", "report") }}
 
-When using the `merge` context variable, the selected items are available in the `instances` list. {{ templatefile("report/inventree_stock_report_merge.html") }} shows a complete example. To access individual item attributes, you can either loop through the `instances` or access them by index like `instance.0.name`.
+When using the `merge` context variable, the selected items are available in the `instances` list. To access individual item attributes, you can either loop through the `instances` or access them by index like `instance.0.name`.
 
 Below is an example template that generates a single report for some selected parts. Each part occupies a row in the table
 
