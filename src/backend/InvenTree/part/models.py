@@ -1372,7 +1372,7 @@ class Part(
     )
 
     @property
-    def category_path(self):
+    def category_path(self) -> str:
         """Return the category path of this Part instance."""
         if self.category:
             return self.category.pathstring
@@ -1618,7 +1618,8 @@ class Part(
             PartStar.objects.filter(part=self, user=user).delete()
 
     @property
-    def can_build(self):
+    @report.mixins.report_attribute()
+    def can_build(self) -> Decimal:
         """Return the number of units that can be build with available stock."""
         import part.filters
 
@@ -1650,7 +1651,7 @@ class Part(
         return int(max(can_build_quantity, 0))
 
     @property
-    def active_builds(self):
+    def active_builds(self) -> int:
         """Return a list of outstanding builds.
 
         Builds marked as 'complete' or 'cancelled' are ignored
@@ -1681,7 +1682,7 @@ class Part(
         return quantity
 
     @property
-    def quantity_in_production(self, include_variants: bool = True):
+    def quantity_in_production(self, include_variants: bool = True) -> Decimal:
         """Quantity of this part currently actively in production.
 
         Arguments:
@@ -2029,7 +2030,7 @@ class Part(
         return list(parts)
 
     @property
-    def has_bom(self):
+    def has_bom(self) -> bool:
         """Return True if this Part instance has any BOM items."""
         return self.get_bom_items().exists()
 
@@ -2041,7 +2042,7 @@ class Part(
         return queryset
 
     @property
-    def has_trackable_parts(self):
+    def has_trackable_parts(self) -> bool:
         """Return True if any parts linked in the Bill of Materials are trackable.
 
         This is important when building the part.
@@ -2049,16 +2050,16 @@ class Part(
         return self.get_trackable_parts().exists()
 
     @property
-    def bom_count(self):
+    def bom_count(self) -> int:
         """Return the number of items contained in the BOM for this part."""
         return self.get_bom_items().count()
 
     @property
-    def used_in_count(self):
+    def used_in_count(self) -> int:
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self):
+    def get_bom_hash(self) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
