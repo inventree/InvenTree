@@ -68,18 +68,6 @@ Not every attribute or method available on a model instance is listed here - onl
 {{ model_fields("part") }}
 {{ model_properties("part") }}
 
-The following `Part` methods accept optional arguments, and so are not included in the automatically-generated properties table above:
-
-| Variable | Description |
-|----------|-------------|
-| required_build_order_quantity | The amount required for build orders |
-| build_order_allocations | Query set with all build order allocations for that part |
-| build_order_allocation_count | The amount allocated for build orders |
-| required_sales_order_quantity | The amount required for sales orders |
-| sales_order_allocation_count | The amount allocated for sales orders |
-| required_order_quantity | The total amount required for build orders and sales orders |
-| allocation_count | The total amount allocated for build orders and sales orders |
-
 ## Related Model Types
 
 Some *related* model types are not themselves directly reportable, but are referenced by a field or `@report_attribute` property on a reportable model (e.g. `PartCategory` via `part.category`, `SupplierPart` via `part.default_supplier` or `stockitem.supplier_part`).
