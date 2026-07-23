@@ -2148,7 +2148,7 @@ class Part(
         if parts is None:
             parts = set()
 
-        bom_items = self.get_bom_items()
+        bom_items = self.get_bom_items().prefetch_related('sub_part')
 
         for bom_item in bom_items:
             sub_part = bom_item.sub_part
