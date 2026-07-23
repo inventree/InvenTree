@@ -464,35 +464,66 @@ def define_env(env):
         return ret_data + '\n'
 
     @env.macro
-    def model_fields(model: str):
-        """Extract information on the database fields for a particular reportable model.
+    def reportable_model_context():
+        """Render the full 'reportable model types' section.
 
-        These fields are discovered automatically from the model definition (including
-        any mixins/abstract base classes), and are available on the underlying model
-        instance exposed to the template (e.g. `order`, `part`, `item`).
+        One heading plus fields/properties tables per model which templates can be
+        rendered against (e.g. `Part`, `SalesOrder`, `StockItem`). The list of models
+        comes directly from what `export_report_context` discovered via the
+        `InvenTreeReportMixin`, so there is no manually-maintained per-model heading
+        list to keep in sync here.
         """
         global REPORT_CONTEXT
 
-        context = REPORT_CONTEXT.get('models', {}).get(model)
-        return render_attribute_table(
-            context.get('fields', {}) if context else {}, 'Fields'
-        )
+        # Methods which accept optional arguments, and so are not picked up by the
+        # automatic @report_attribute discovery (which only covers plain @property
+        # attributes). Keyed by model key, since (at present) only Part has any.
+        method_attributes = {
+            'part': {
+                'required_build_order_quantity': {
+                    'description': 'The amount required for build orders',
+                    'type': 'method',
+                },
+                'build_order_allocations': {
+                    'description': 'Query set with all build order allocations for that part',
+                    'type': 'method',
+                },
+                'build_order_allocation_count': {
+                    'description': 'The amount allocated for build orders',
+                    'type': 'method',
+                },
+                'required_sales_order_quantity': {
+                    'description': 'The amount required for sales orders',
+                    'type': 'method',
+                },
+                'sales_order_allocation_count': {
+                    'description': 'The amount allocated for sales orders',
+                    'type': 'method',
+                },
+                'required_order_quantity': {
+                    'description': 'The total amount required for build orders and sales orders',
+                    'type': 'method',
+                },
+                'allocation_count': {
+                    'description': 'The total amount allocated for build orders and sales orders',
+                    'type': 'method',
+                },
+            }
+        }
 
-    @env.macro
-    def model_properties(model: str):
-        """Extract information on discoverable properties for a particular reportable model.
+        models = REPORT_CONTEXT.get('models', {})
 
-        These are `@property` attributes - potentially defined on a mixin shared by
-        multiple models - which have been explicitly marked with the `@report_attribute`
-        decorator. They are available on the underlying model instance exposed to the
-        template (e.g. `order`, `part`, `item`).
-        """
-        global REPORT_CONTEXT
+        ret_data = ''
 
-        context = REPORT_CONTEXT.get('models', {}).get(model)
-        return render_attribute_table(
-            context.get('properties', {}) if context else {}, 'Properties'
-        )
+        for key, info in sorted(models.items(), key=lambda item: item[1]['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
+            ret_data += render_attribute_table(
+                method_attributes.get(key, {}), 'Methods (require arguments)'
+            )
+
+        return ret_data
 
     @env.macro
     def related_model_context():

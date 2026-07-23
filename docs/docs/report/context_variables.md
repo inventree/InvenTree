@@ -102,7 +102,7 @@ When printing a report or label against a [BuildOrderLineItem](../manufacturing/
 
 {{ report_context("models", "buildline") }}
 
-For the fields and properties available on the underlying `BuildLine` instance, refer to the [Model Context](model_context.md#build-line) page.
+For the fields and properties available on the underlying `BuildLine` instance, refer to the [Model Context](model_context.md#build-order-line-item) page.
 
 ### Sales Order
 
