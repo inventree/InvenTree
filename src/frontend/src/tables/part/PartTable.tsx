@@ -12,14 +12,16 @@ import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
+import { IconShoppingCart } from '@tabler/icons-react';
 import {
-  IconFileUpload,
-  IconPackageImport,
-  IconPlus,
-  IconShoppingCart
-} from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import { PartCreationMenu } from '../../components/items/PartCreationMenu';
 import {
   BooleanColumn,
   CategoryColumn,
@@ -31,11 +33,9 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { renderPartStockCell } from '../../components/tables/PartStockCell';
-import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { DuplicateField } from '../../forms/CommonFields';
-import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -43,8 +43,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartTableFilters } from './PartTableFilters';
@@ -143,51 +141,15 @@ export function PartListTable({
   });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
-  const openImporter = useImporterState((state) => state.openImporter);
+  const refreshRef = useRef<() => void>(null!);
 
-  const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields({
-      modelType: ModelType.part
-    });
-
-    // Override default field values with provided fields
-    fields.field_defaults.value = {
-      ...props?.params,
-      ...defaultPartData
-    };
-
-    return fields;
-  }, [defaultPartData, props?.params]);
-
-  const importParts = useCreateApiFormModal({
-    url: ApiEndpoints.import_session_list,
-    title: t`Import Parts`,
-    fields: importSessionFields,
-    onFormSuccess: (response: any) => {
-      openImporter(response.pk, {
-        onClose: table.refreshTable
-      });
-    }
-  });
+  useEffect(() => {
+    refreshRef.current = table.refreshTable;
+  }, [table.refreshTable]);
 
   const initialPartData = useMemo(() => {
     return defaultPartData ?? props?.params ?? {};
   }, [defaultPartData, props?.params]);
-
-  const newPartFields = usePartFields({
-    create: true,
-    duplicatePartInstance: basePartInstance
-  });
-
-  const newPart = useCreateApiFormModal({
-    url: ApiEndpoints.part_list,
-    title: t`Add Part`,
-    fields: newPartFields,
-    initialData: initialPartData,
-    follow: true,
-    modelType: ModelType.part,
-    keepOpenOption: true
-  });
 
   const [selectedPart, setSelectedPart] = useState<any>({});
 
@@ -256,11 +218,6 @@ export function PartListTable({
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
 
-  const supplierPlugins = usePluginsWithMixin('supplier');
-  const importPartWizard = ImportPartWizard({
-    categoryId: initialPartData.category
-  });
-
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const can_edit = user.hasChangePermission(ModelType.part);
@@ -315,47 +272,22 @@ export function PartListTable({
           }
         ]}
       />,
-      <ActionDropdown
-        key='add-parts-actions'
-        tooltip={t`Add Parts`}
-        position='bottom-start'
-        icon={<IconPlus />}
-        hidden={!user.hasAddRole(UserRoles.part)}
-        actions={[
-          {
-            name: t`Create Part`,
-            icon: <IconPlus />,
-            tooltip: t`Create a new part`,
-            onClick: () => newPart.open()
-          },
-          {
-            name: t`Import from File`,
-            icon: <IconFileUpload />,
-            tooltip: t`Import parts from a file`,
-            onClick: () => importParts.open(),
-            hidden: !enableImport
-          },
-          {
-            name: t`Import from Supplier`,
-            icon: <IconPackageImport />,
-            tooltip: t`Import parts from a supplier plugin`,
-            hidden: !enableImport || supplierPlugins.length === 0,
-            onClick: () => importPartWizard.openWizard()
-          }
-        ]}
+      <PartCreationMenu
+        key='part-creation-menu'
+        initialData={initialPartData}
+        basePartInstance={basePartInstance}
+        enableImport={enableImport}
+        refreshRef={refreshRef}
       />
     ];
-  }, [user, enableImport, table.hasSelectedRecords, supplierPlugins]);
+  }, [user, enableImport, table.hasSelectedRecords]);
 
   return (
     <>
-      {newPart.modal}
       {duplicatePart.modal}
       {editPart.modal}
       {setCategory.modal}
-      {importParts.modal}
       {orderPartsWizard.wizard}
-      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
