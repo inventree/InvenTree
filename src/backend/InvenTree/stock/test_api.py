@@ -3125,7 +3125,12 @@ class StocktakeTest(StockAPITestCase):
         ):
             # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2500, benchmark=True, format='json'
+                url,
+                data,
+                max_query_count=2500,
+                max_query_time=3.0,
+                benchmark=True,
+                format='json',
             )
 
         self.assertEqual(response.status_code, 201)
