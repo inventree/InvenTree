@@ -2841,6 +2841,36 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.post(self.url, data, expected_code=201)
 
 
+class SalesOrderAllocationDownloadTest(OrderTest):
+    """Unit tests for downloading SalesOrderAllocation data via the API endpoint."""
+
+    def test_download_csv(self):
+        """Test that SalesOrderAllocation data can be downloaded as a .csv file.
+
+        Regression test for a bug where the SalesOrderAllocation list endpoint
+        did not support data export.
+        """
+        url = reverse('api-so-allocation-list')
+
+        required_cols = ['ID', 'Item', 'Quantity', 'Shipment', 'Line', 'Part', 'Order']
+
+        with self.export_data(url, export_format='csv', expected_code=200) as file:
+            data = self.process_csv(
+                file,
+                required_cols=required_cols,
+                required_rows=SalesOrderAllocation.objects.count(),
+            )
+
+            for row in data:
+                allocation = SalesOrderAllocation.objects.get(pk=row['ID'])
+
+                self.assertEqual(row['Item'], str(allocation.item.pk))
+                self.assertEqual(float(row['Quantity']), float(allocation.quantity))
+                self.assertEqual(row['Line'], str(allocation.line.pk))
+                self.assertEqual(row['Part'], str(allocation.item.part.pk))
+                self.assertEqual(row['Order'], str(allocation.line.order.pk))
+
+
 class SalesOrderAllocateSerialsTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder, by serial number."""
 

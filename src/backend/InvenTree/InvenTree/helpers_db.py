@@ -11,7 +11,7 @@ from django.db.models import QuerySet
 def bulk_create_and_fetch(
     model, items, id_field: str = 'pk', filters: Optional[dict] = None
 ) -> QuerySet:
-    """Bulk create items in the database, and return a queryset of the created items.
+    """Bulk create items in the database, and return a list of the created items.
 
     Arguments:
         model: The Django model class to create instances of.
@@ -20,7 +20,7 @@ def bulk_create_and_fetch(
         filters: Optional dictionary of filters to apply when fetching the created items.
 
     Returns:
-        A Django QuerySet containing the created items.
+        A QuerySet containing the created items.
 
     This helper method is required because the Django bulk_create() method
     does not guarantee that the ID values of the created items will be populated in the returned objects.
