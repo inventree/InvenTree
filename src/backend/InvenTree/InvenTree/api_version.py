@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 527
+INVENTREE_API_VERSION = 528
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v528 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12072
+    - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
 
 v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
     - Extend API with dedicated login-by-code re-send endpoint

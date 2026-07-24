@@ -4538,6 +4538,11 @@ class RepairOrder(
         """Return the API URL associated with the RepairOrder model."""
         return reverse('api-repair-order-list')
 
+    @classmethod
+    def barcode_model_type_code(cls) -> str:
+        """Return the associated barcode model type code for this model."""
+        return 'RP'
+
 
 class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     """Model for a repair order line item."""
