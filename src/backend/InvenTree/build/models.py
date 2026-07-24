@@ -807,9 +807,14 @@ class Build(
             stock.models.StockItem, new_stock_item_data
         )
 
-        # Back-populate the newly created stock items into the split_items list, so that the tracking entries can be created
-        for i, (stock_item, _split_item, quantity) in enumerate(split_items):
-            split_items[i] = (stock_item, new_stock_items[i], quantity)
+        # Back-populate the resolved primary keys onto the original 'new_item' objects
+        # (in-place, not via replacement) since 'install_items' / 'consume_items' hold
+        # references to these same objects (as 'target_item') and must see the
+        # resolved pk too. On backends that can't return pks from bulk_create (MySQL),
+        # 'new_stock_items' are freshly-fetched, distinct objects, so a plain list
+        # replacement here would leave those other references with pk=None.
+        for i, (_stock_item, new_item, _quantity) in enumerate(split_items):
+            new_item.pk = new_stock_items[i].pk
 
         tracking_entries = []
         split_events = []
