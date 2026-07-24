@@ -29,6 +29,13 @@ def generate_next_transfer_order_reference():
     return TransferOrder.generate_reference()
 
 
+def generate_next_repair_order_reference():
+    """Generate the next available RepairOrder reference."""
+    from order.models import RepairOrder
+
+    return RepairOrder.generate_reference()
+
+
 def validate_sales_order_reference_pattern(pattern):
     """Validate the SalesOrder reference 'pattern' setting."""
     from order.models import SalesOrder
@@ -50,6 +57,13 @@ def validate_return_order_reference_pattern(pattern):
     ReturnOrder.validate_reference_pattern(pattern)
 
 
+def validate_repair_order_reference_pattern(pattern):
+    """Validate the RepairOrder reference 'pattern' setting."""
+    from order.models import RepairOrder
+
+    RepairOrder.validate_reference_pattern(pattern)
+
+
 def validate_sales_order_reference(value):
     """Validate that the SalesOrder reference field matches the required pattern."""
     from order.models import SalesOrder
@@ -69,6 +83,13 @@ def validate_return_order_reference(value):
     from order.models import ReturnOrder
 
     ReturnOrder.validate_reference_field(value)
+
+
+def validate_repair_order_reference(value):
+    """Validate that the RepairOrder reference field matches the required pattern."""
+    from order.models import RepairOrder
+
+    RepairOrder.validate_reference_field(value)
 
 
 def validate_transfer_order_reference_pattern(pattern):

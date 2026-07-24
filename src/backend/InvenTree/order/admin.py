@@ -172,6 +172,55 @@ class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the ReturnOrderExtraLine model."""
 
 
+class RepairOrderLineInlineAdmin(admin.StackedInline):
+    """Inline admin class for the RepairOrderLine model."""
+
+    model = models.RepairOrderLine
+    extra = 0
+
+    autocomplete_fields = ['part', 'stock_item']
+
+
+@admin.register(models.RepairOrder)
+class RepairOrderAdmin(admin.ModelAdmin):
+    """Admin class for the RepairOrder model."""
+
+    exclude = ['reference_int']
+
+    list_display = ['reference', 'customer', 'status', 'description', 'creation_date']
+
+    search_fields = ['reference', 'customer__name', 'description', 'serial']
+
+    inlines = [RepairOrderLineInlineAdmin]
+
+    autocomplete_fields = [
+        'address',
+        'contact',
+        'created_by',
+        'customer',
+        'item',
+        'part',
+        'project_code',
+        'responsible',
+    ]
+
+
+@admin.register(models.RepairOrderLine)
+class RepairOrderLineAdmin(admin.ModelAdmin):
+    """Admin class for RepairOrderLine model."""
+
+    list_display = ['order', 'part', 'stock_item', 'quantity', 'reference']
+
+    search_fields = [
+        'order__reference',
+        'part__name',
+        'stock_item__serial',
+        'reference',
+    ]
+
+    autocomplete_fields = ['order', 'part', 'stock_item']
+
+
 class TransferOrderLineItemInlineAdmin(admin.StackedInline):
     """Inline admin class for the TransferOrderLineItem model."""
 
