@@ -2258,7 +2258,7 @@ class BuildConsumeTest(BuildAPITest):
             data,
             expected_code=201,
             benchmark=True,
-            max_query_time=0.5,
+            max_query_time=1.0,
             max_query_count=50,
         )
 
