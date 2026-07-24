@@ -20,7 +20,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
-from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
@@ -810,30 +809,6 @@ class CustomStatusSerializerMixin(serializers.Serializer):
         )
 
 
-class NotesFieldMixin:
-    """Serializer mixin for handling 'notes' fields.
-
-    The 'notes' field will be hidden in a LIST serializer,
-    but available in a DETAIL serializer.
-    """
-
-    def __init__(self, *args, **kwargs):
-        """Remove 'notes' field from list views."""
-        super().__init__(*args, **kwargs)
-
-        if hasattr(self, 'context'):
-            request = self.context.get('request', None)
-            method = getattr(request, 'method', None)
-
-            if view := self.context.get('view', None):
-                if (
-                    issubclass(view.__class__, ListModelMixin)
-                    and method in SAFE_METHODS
-                    and not InvenTree.ready.isGeneratingSchema()
-                ):
-                    self.fields.pop('notes', None)
-
-
 class ContentTypeField(serializers.ChoiceField):
     """Serializer field which represents a ContentType as 'app_label.model_name'.
 
@@ -940,19 +915,13 @@ class DuplicateOptionsSerializer(serializers.Serializer):
             'copy_parameters',
             _('Copy Parameters'),
             _('Copy parameters from the original item'),
-            False,
         ),
-        (
-            'copy_lines',
-            _('Copy Lines'),
-            _('Copy line items from the original order'),
-            False,
-        ),
+        ('copy_notes', _('Copy Notes'), _('Copy notes from the original item')),
+        ('copy_lines', _('Copy Lines'), _('Copy line items from the original order')),
         (
             'copy_extra_lines',
             _('Copy Extra Lines'),
             _('Copy extra line items from the original order'),
-            False,
         ),
     ]
 
@@ -986,8 +955,8 @@ class DuplicateOptionsSerializer(serializers.Serializer):
         copy_field_names = [spec['name'] for spec in copy_fields]
 
         # Apply "default" fields
-        for name, label, help_text, default_value in self.DEFAULT_FIELDS:
-            popped_value = kwargs.pop(name, default_value)
+        for name, label, help_text in self.DEFAULT_FIELDS:
+            popped_value = kwargs.pop(name, False)
 
             if name in copy_field_names:
                 # Manually supplied field, continue

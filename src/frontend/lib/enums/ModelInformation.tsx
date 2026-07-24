@@ -368,5 +368,12 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Tags`,
     api_endpoint: ApiEndpoints.tag_list,
     icon: 'tag'
+  },
+  notetemplate: {
+    label: () => t`Note Template`,
+    label_multiple: () => t`Note Templates`,
+    url_overview: '/settings/admin/notes',
+    api_endpoint: ApiEndpoints.note_list,
+    icon: 'notes'
   }
 };

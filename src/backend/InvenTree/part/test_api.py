@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from random import randint
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.test.utils import CaptureQueriesContext, override_settings
@@ -18,7 +19,7 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting, ParameterTemplate
+from common.models import InvenTreeSetting, Note, ParameterTemplate
 from common.settings import set_global_setting
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
@@ -1434,23 +1435,6 @@ class PartAPITest(PartAPITestBase):
             date = datetime.fromisoformat(item['creation_date'])
             self.assertGreaterEqual(date, date_compare)
 
-    def test_part_notes(self):
-        """Test the 'notes' field."""
-        # First test the 'LIST' endpoint - no notes information provided
-        url = reverse('api-part-list')
-
-        response = self.get(url, {'limit': 1}, expected_code=200)
-        data = response.data['results'][0]
-
-        self.assertNotIn('notes', data)
-
-        # Second, test the 'DETAIL' endpoint - notes information provided
-        url = reverse('api-part-detail', kwargs={'pk': data['pk']})
-
-        response = self.get(url, expected_code=200)
-
-        self.assertIn('notes', response.data)
-
     def test_output_options(self):
         """Test the output options for PartList list."""
         self.run_output_test(
@@ -1636,40 +1620,6 @@ class PartCreationTests(PartAPITestBase):
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
 
-    def test_notes_on_create(self):
-        """Test that notes can be set when creating a Part."""
-        list_url = reverse('api-part-list')
-
-        notes = """
-        ### Created from importer
-
-        Notes should persist during part creation.
-        """
-        expected_notes = notes.strip()
-
-        response = self.post(
-            list_url,
-            {
-                'name': 'part with notes',
-                'description': 'Part notes are created in the same request',
-                'category': 1,
-                'notes': notes,
-            },
-            expected_code=201,
-        )
-
-        self.assertEqual(response.data['notes'], expected_notes)
-
-        part = Part.objects.get(pk=response.data['pk'])
-        self.assertEqual(part.notes, expected_notes)
-
-        detail_url = reverse('api-part-detail', kwargs={'pk': part.pk})
-        response = self.get(detail_url, expected_code=200)
-        self.assertEqual(response.data['notes'], expected_notes)
-
-        response = self.get(list_url, {'limit': 1}, expected_code=200)
-        self.assertNotIn('notes', response.data['results'][0])
-
     def test_initial_stock(self):
         """Tests for initial stock quantity creation."""
 
@@ -1814,6 +1764,14 @@ class PartCreationTests(PartAPITestBase):
                 description=f'Test template {key} for duplication',
             )
 
+        # Attach a note to the base part
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Part),
+            model_id=base_part.pk,
+            title='Duplication test note',
+            content='Some note content',
+        )
+
         for do_copy in [True, False]:
             response = self.post(
                 reverse('api-part-list'),
@@ -1839,7 +1797,7 @@ class PartCreationTests(PartAPITestBase):
 
             # Check new part
             self.assertEqual(part.bom_items.count(), 4 if do_copy else 0)
-            self.assertEqual(part.notes, base_part.notes if do_copy else None)
+            self.assertEqual(part.notes.count(), 1 if do_copy else 0)
             self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
             self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
 
@@ -2406,20 +2364,33 @@ class PartNotesTests(InvenTreeAPITestCase):
     roles = ['part.change', 'part.add']
 
     def test_long_notes(self):
-        """Test that very long notes field is rejected."""
-        # Ensure that we cannot upload a very long piece of text
-        url = reverse('api-part-detail', kwargs={'pk': 1})
+        """Test that a very long note content field is rejected.
 
-        response = self.patch(url, {'notes': 'abcde' * 10001}, expected_code=400)
+        Notes are no longer stored directly on the Part model - they are stored
+        as generic 'Note' instances, linked via a generic foreign key.
+        """
+        # Ensure that we cannot upload a very long piece of text
+        url = reverse('api-note-list')
+
+        response = self.post(
+            url,
+            {
+                'model_type': 'part',
+                'model_id': 1,
+                'title': 'Test Note',
+                'content': 'abcde' * 10001,
+            },
+            expected_code=400,
+        )
 
         self.assertIn(
             'Ensure this field has no more than 50000 characters',
-            str(response.data['notes']),
+            str(response.data['content']),
         )
 
     def test_multiline_formatting(self):
-        """Ensure that markdown formatting is retained."""
-        url = reverse('api-part-detail', kwargs={'pk': 1})
+        """Ensure that markdown formatting is retained in a note's content."""
+        url = reverse('api-note-list')
 
         notes = """
         ### Title
@@ -2432,13 +2403,22 @@ class PartNotesTests(InvenTreeAPITestCase):
 
         """
 
-        response = self.patch(url, {'notes': notes}, expected_code=200)
+        response = self.post(
+            url,
+            {
+                'model_type': 'part',
+                'model_id': 1,
+                'title': 'Test Note',
+                'content': notes,
+            },
+            expected_code=201,
+        )
 
         # Ensure that newline chars have not been removed
-        self.assertIn('\n', response.data['notes'])
+        self.assertIn('\n', response.data['content'])
 
-        # Entire notes field should match original value
-        self.assertEqual(response.data['notes'], notes.strip())
+        # Entire note content should match original value
+        self.assertEqual(response.data['content'], notes.strip())
 
 
 class PartPricingDetailTests(InvenTreeAPITestCase):

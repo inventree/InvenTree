@@ -308,7 +308,7 @@ class Order(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
@@ -1206,7 +1206,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
                 'expiry_date': item.get('expiry_date', None),
-                'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
 
@@ -1265,8 +1264,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     )
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
+
                     # run validation for serialized items plugin.validate_model_instance
                     new_item.run_plugin_validation()
+
                     stock_items.append(new_item)
 
             else:
@@ -2655,8 +2656,8 @@ class SalesOrderShipment(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
@@ -2673,7 +2674,6 @@ class SalesOrderShipment(
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
-        notes: Custom notes field for this shipment
     """
 
     @classmethod

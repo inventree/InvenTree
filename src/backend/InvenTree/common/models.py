@@ -4,11 +4,13 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
+import copy
 import hashlib
 import hmac
 import json
 import math
 import os
+import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -42,6 +44,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import nh3
 import structlog
 from anymail.signals import inbound, tracking
 from django_q.signals import post_spawn
@@ -1784,42 +1787,6 @@ class NewsFeedEntry(models.Model):
     )
 
 
-def rename_notes_image(instance, filename):
-    """Function for renaming uploading image file. Will store in the 'notes' directory."""
-    fname = os.path.basename(filename)
-    return os.path.join('notes', fname)
-
-
-class NotesImage(models.Model):
-    """Model for storing uploading images for the 'notes' fields of various models.
-
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
-    """
-
-    image = models.ImageField(
-        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
-    )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-
-    date = models.DateTimeField(auto_now_add=True)
-
-    model_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        validators=[common.validators.validate_notes_model_type],
-        help_text=_('Target model type for this image'),
-    )
-
-    model_id = models.IntegerField(
-        help_text=_('Target model ID for this image'),
-        blank=True,
-        null=True,
-        default=None,
-    )
-
-
 class CustomUnit(models.Model):
     """Model for storing custom physical unit definitions.
 
@@ -3042,7 +3009,6 @@ class Parameter(
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_delete(self)
 
-    # TODO: Reintroduce validator for model_type
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField(
@@ -3090,6 +3056,303 @@ class Parameter(
     def description(self):
         """Return the description of the template."""
         return self.template.description
+
+
+class Note(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a note assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this note is linked
+        model_id: The ID of the model to which this note is linked
+        user: The user who created the note
+        title: The title of the note
+        description: A description of the note (optional)
+        content: The content of the note
+        created: Date/time that the note was created
+    """
+
+    NOTES_MAX_LENGTH = 50000
+
+    class Meta:
+        """Meta options for Note model."""
+
+        verbose_name = _('Note')
+        verbose_name_plural = _('Notes')
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['model_type', 'model_id'],
+                condition=models.Q(primary=True, template=False),
+                name='unique_primary_note_per_model',
+            )
+        ]
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-note-list')
+
+    def validate_constraints(self, exclude=None):
+        """Validate model constraints, skipping 'unique_primary_note_per_model'.
+
+        That constraint is actively maintained by save() (which demotes any
+        sibling primary note before saving self), so checking it here against
+        pre-save DB state would incorrectly reject legitimate primary-flag
+        promotions that save() would otherwise handle correctly.
+        """
+        constraints = [
+            c
+            for c in self._meta.constraints
+            if c.name != 'unique_primary_note_per_model'
+        ]
+        errors = {}
+        for constraint in constraints:
+            try:
+                constraint.validate(self.__class__, self, exclude=exclude)
+            except ValidationError as e:
+                errors = e.update_error_dict(errors)
+        if errors:
+            raise ValidationError(errors)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Perform custom save checks before saving a Note instance."""
+        self.check_save()
+
+        if not self.template:
+            # Lock sibling notes to serialize concurrent primary-flag updates
+            siblings = (
+                Note.objects
+                .select_for_update()
+                .filter(
+                    model_type=self.model_type, model_id=self.model_id, template=False
+                )
+                .exclude(pk=self.pk)
+            )
+
+            # If this is the *only* note for this model instance, set it as primary
+            if not siblings.exists():
+                self.primary = True
+
+            # Demote sibling notes *before* saving self, so that the partial unique
+            # constraint on (model_type, model_id, primary=True) is never briefly
+            # violated by two rows with primary=True existing at once
+            if self.primary:
+                siblings.update(primary=False)
+
+            self.clean()
+            super().save(*args, **kwargs)
+        else:
+            # Templates skip primary-flag logic entirely
+            self.primary = False
+            self.clean()
+            super().save(*args, **kwargs)
+
+        self.cleanup_images()
+
+    def clean(self):
+        """Clean / validate the note before saving to the database."""
+        from django.core.exceptions import ValidationError
+
+        if not self.template:
+            if not self.model_type:
+                raise ValidationError({'model_type': _('This field is required.')})
+            if self.model_id is None:
+                raise ValidationError({'model_id': _('This field is required.')})
+
+        if self.content:
+            attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
+
+            for tag in (
+                'span',
+                'p',
+                'div',
+                'img',
+                'a',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+                'ul',
+                'ol',
+                'li',
+                'blockquote',
+                'pre',
+                'table',
+                'thead',
+                'tbody',
+                'tr',
+                'td',
+                'th',
+                'colgroup',
+                'col',
+            ):
+                attrs.setdefault(tag, set()).update({'style'})
+
+            # Allow class on structural tags used by the rich-text editor
+            for tag in ('div', 'span', 'img', 'table', 'td', 'th', 'col'):
+                attrs.setdefault(tag, set()).add('class')
+
+            # Allow image attributes used by tiptap-extension-resizable-image
+            attrs.setdefault('img', set()).update({'data-keep-ratio', 'colwidth'})
+
+            self.content = nh3.clean(
+                self.content.strip(),
+                attributes=attrs,
+                filter_style_properties={
+                    'color',
+                    'background-color',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'font-family',
+                    'text-decoration',
+                    'text-align',
+                    'border',
+                    'border-color',
+                    'border-style',
+                    'border-width',
+                    'margin',
+                    'padding',
+                    'column-width',
+                    'column-height',
+                    'min-width',
+                    'max-width',
+                    'min-height',
+                    'max-height',
+                    'width',
+                    'height',
+                },
+            )
+
+            # nh3 does not recognise legacy IE-only CSS expression() calls as
+            # unsafe, so they survive style attribute filtering - strip them explicitly
+            self.content = re.sub(
+                r'expression\s*\(', '', self.content, flags=re.IGNORECASE
+            )
+
+    def check_save(self):
+        """Check if this note can be saved."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template or not self.model_type:
+            return
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_save(self)
+
+    def check_delete(self):
+        """Check if this note can be deleted."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template or not self.model_type:
+            return
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_delete(self)
+
+    def delete(self, *args, **kwargs):
+        """Perform custom delete checks before deleting a Note instance."""
+        self.check_delete()
+        super().delete(*args, **kwargs)
+
+    def cleanup_images(self):
+        """Remove any images which are no longer referenced in the note content."""
+        for image in self.images.all():
+            if image.image and image.image.url not in self.content:
+                image.delete()
+
+    template = models.BooleanField(
+        default=False,
+        verbose_name=_('Template'),
+        help_text=_(
+            'Is this note a template (not linked to a specific model instance)?'
+        ),
+    )
+
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text=_('Target model type for this note'),
+    )
+
+    model_id = models.PositiveIntegerField(
+        null=True, blank=True, help_text=_('Target model instance ID for this note')
+    )
+
+    content_object = GenericForeignKey('model_type', 'model_id')
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary note for the associated model?'),
+    )
+
+    title = models.CharField(
+        max_length=100, verbose_name=_('Title'), help_text=_('Note title')
+    )
+
+    description = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Optional description field'),
+    )
+
+    content = models.TextField(
+        blank=True,
+        verbose_name=_('Content'),
+        help_text=_('Note content'),
+        max_length=NOTES_MAX_LENGTH,
+    )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
+    """
+
+    def delete(self, *args, **kwargs):
+        """Ensure that the image file is deleted from storage when the NotesImage instance is deleted."""
+        if self.image:
+            self.image.delete(save=False)
+
+        super().delete(*args, **kwargs)
+
+    image = models.ImageField(
+        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)
+
+    note = models.ForeignKey(
+        Note, on_delete=models.CASCADE, null=False, blank=False, related_name='images'
+    )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):

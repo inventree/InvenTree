@@ -192,6 +192,7 @@ def get_ruleset_ignore() -> list[str]:
         'common_inventreeusersetting',
         'common_notificationentry',
         'common_notificationmessage',
+        'common_note',
         'common_notesimage',
         'common_projectcode',
         'common_webhookendpoint',

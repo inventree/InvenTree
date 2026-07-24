@@ -11,8 +11,27 @@ import common.icons
 from common.settings import get_global_setting
 
 
+def note_model_types():
+    """Return a list of valid note model choices."""
+    import InvenTree.helpers_model
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNoteMixin)
+    )
+
+
+def note_model_options():
+    """Return a list of options for models which support notes."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in note_model_types()
+    ]
+
+
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
+    import InvenTree.helpers_model
     import InvenTree.models
 
     return list(
@@ -42,6 +61,7 @@ def parameter_template_model_options():
 
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
+    import InvenTree.helpers_model
     import InvenTree.models
 
     return list(
@@ -91,28 +111,6 @@ def validate_attachment_file(attachment):
         default_storage.generate_filename(attachment.name)
     except SuspiciousFileOperation:  # pragma: no cover
         raise ValidationError(_('Invalid file name'))
-
-
-def validate_notes_model_type(value):
-    """Ensure that the provided model type is valid.
-
-    The provided value must map to a model which implements the 'InvenTreeNotesMixin'.
-    """
-    import InvenTree.helpers_model
-    import InvenTree.models
-
-    if not value:
-        # Empty values are allowed
-        return
-
-    model_types = list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNotesMixin)
-    )
-
-    model_names = [model.__name__.lower() for model in model_types]
-
-    if value.lower() not in model_names:
-        raise ValidationError(f"Invalid model type '{value}'")
 
 
 def validate_decimal_places_min(value):

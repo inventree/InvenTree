@@ -535,7 +535,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -577,7 +576,6 @@ class PartSerializer(
             'minimum_stock',
             'maximum_stock',
             'name',
-            'notes',
             'parameters',
             'pk',
             'purchaseable',
@@ -1054,8 +1052,7 @@ class PartSerializer(
                 instance.copy_bom_from(original)
 
             if duplicate.get('copy_notes', False):
-                instance.notes = original.notes
-                instance.save()
+                instance.copy_notes_from(original)
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image

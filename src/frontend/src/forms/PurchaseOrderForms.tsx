@@ -323,7 +323,8 @@ export function usePurchaseOrderFields({
           },
           copy_lines: {},
           copy_extra_lines: {},
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }

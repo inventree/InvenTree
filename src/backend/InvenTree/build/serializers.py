@@ -39,7 +39,6 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
 )
 from stock.generators import generate_batch_code
@@ -60,7 +59,6 @@ from .validators import check_build_output
 class BuildSerializer(
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
-    NotesFieldMixin,
     InvenTreeTaggitSerializer,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -102,7 +100,6 @@ class BuildSerializer(
             'status_custom_key',
             'target_date',
             'take_from',
-            'notes',
             'link',
             'issued_by',
             'issued_by_detail',
@@ -194,7 +191,9 @@ class BuildSerializer(
 
         return queryset
 
-    duplicate = DuplicateOptionsSerializer(Build.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Build.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
@@ -214,6 +213,9 @@ class BuildSerializer(
 
             if duplicate.get('copy_parameters', True):
                 instance.copy_parameters_from(original)
+
+            if duplicate.get('copy_notes', True):
+                instance.copy_notes_from(original)
 
         return instance
 
@@ -1544,12 +1546,9 @@ class BuildLineSerializer(
         # Defer expensive fields which we do not need for this serializer
 
         queryset = queryset.defer(
-            'build__notes',
             'build__metadata',
             'bom_item__metadata',
-            'bom_item__part__notes',
             'bom_item__part__metadata',
-            'bom_item__sub_part__notes',
             'bom_item__sub_part__metadata',
         )
 
