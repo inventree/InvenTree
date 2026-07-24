@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-20 10:47\n"
+"PO-Revision-Date: 2026-07-21 06:16\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2231,7 +2231,7 @@ msgstr "Új sor hozzáadása"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:809
+#: src/components/tables/InvenTreeTable.tsx:810
 msgid "View details"
 msgstr "Részletek megtekintése"
 
@@ -4343,7 +4343,7 @@ msgstr "A szerver hibás adattípust küldött vissza"
 msgid "Error loading table data"
 msgstr "Hiba a táblázat adatok betöltésekor"
 
-#: src/components/tables/InvenTreeTable.tsx:812
+#: src/components/tables/InvenTreeTable.tsx:813
 msgid "View {model}"
 msgstr "{model} megtekintése"
 
