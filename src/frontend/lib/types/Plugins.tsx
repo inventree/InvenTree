@@ -151,13 +151,13 @@ export type InvenTreePluginContext = {
  * This number should be incremented if the interface changes.
  */
 
-// @ts-expect-error
+// @ts-ignore
 export const INVENTREE_PLUGIN_VERSION: string = __INVENTREE_LIB_VERSION__;
-// @ts-expect-error
+// @ts-ignore
 export const INVENTREE_REACT_VERSION: string = __INVENTREE_REACT_VERSION__;
-// @ts-expect-error
+// @ts-ignore
 export const INVENTREE_REACT_DOM_VERSION: string =
-  // @ts-expect-error
+  // @ts-ignore
   __INVENTREE_REACT_DOM_VERSION__;
-// @ts-expect-error
+// @ts-ignore
 export const INVENTREE_MANTINE_VERSION: string = __INVENTREE_MANTINE_VERSION__;
