@@ -2,6 +2,7 @@
 
 import io
 import json
+import os
 import time
 from datetime import timedelta
 from http import HTTPStatus
@@ -221,6 +222,46 @@ class AttachmentTest(InvenTreeAPITestCase):
         url = attachment.fully_qualified_url()
         self.assertIs(type(url), str)
         self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
+    def test_str_representation(self):
+        """Test the __str__ method of the Attachment model.
+
+        - If a file is attached, the string representation should be the file basename.
+        - If only a link is provided (no file), the string representation should be the link.
+        - If neither is set, fall back to the default django representation.
+        """
+        part = Part.objects.first()
+
+        # Case 1: Attachment has an uploaded file - string is the file basename
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='File attachment',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        self.assertTrue(str(attachment).startswith('test'))
+        self.assertTrue(str(attachment).endswith('.txt'))
+        self.assertEqual(str(attachment), os.path.basename(attachment.attachment.name))
+
+        # Case 2: Attachment has only a link (no uploaded file) - string is the link
+        link = 'https://www.example.org'
+        attachment = Attachment.objects.create(
+            link=link, comment='Link attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertEqual(str(attachment), link)
+
+        # Case 3: Attachment has neither a file nor a link set
+        # (bypass 'save' to skip the validation which requires one of these fields)
+        attachment = Attachment(
+            comment='Empty attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertFalse(attachment.attachment)
+        self.assertFalse(attachment.link)
+        self.assertEqual(str(attachment), super(Attachment, attachment).__str__())
+        self.assertEqual(str(attachment), f'Attachment object ({attachment.pk})')
 
 
 class SettingsTest(InvenTreeTestCase):
