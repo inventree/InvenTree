@@ -1,14 +1,13 @@
-import { t } from '@lingui/core/macro';
-import { Alert, FileInput, Stack } from '@mantine/core';
-import { useId } from '@mantine/hooks';
-import { useCallback, useEffect, useMemo } from 'react';
-import { type Control, type FieldValues, useController } from 'react-hook-form';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
+import { Alert, FileInput, Stack } from '@mantine/core';
+import { useId } from '@mantine/hooks';
 import { IconFileUpload } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { type Control, type FieldValues, useController } from 'react-hook-form';
 import type { NavigateFunction } from 'react-router-dom';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
@@ -20,7 +19,6 @@ import { NestedObjectField } from './NestedObjectField';
 import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
-import TagsField from './TagsField';
 import TextField from './TextField';
 import { TreeField } from './TreeField';
 
@@ -290,10 +288,6 @@ export function ApiFormField({
             onChange={field.onChange}
             error={error}
           />
-        );
-      case 'tags':
-        return (
-          <TagsField controller={controller} definition={fieldDefinition} />
         );
       default:
         return (

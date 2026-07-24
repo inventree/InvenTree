@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -11,6 +8,8 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import {
   DateColumn,
   DescriptionColumn,
@@ -34,7 +33,6 @@ import {
   SerialLTEFilter,
   StatusFilterOptions,
   SupplierFilter,
-  TagsFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
 } from '../../components/tables/Filter';
@@ -319,8 +317,7 @@ function stockItemTableFilters({
       name: 'external',
       label: t`External Location`,
       description: t`Show items in an external location`
-    },
-    TagsFilter({ modelType: ModelType.stockitem })
+    }
   ];
 }
 

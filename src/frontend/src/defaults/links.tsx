@@ -1,11 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { openContextModal } from '@mantine/modals';
-
 import { StylishText } from '@lib/components/StylishText';
 import { UserRoles } from '@lib/enums/Roles';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { openContextModal } from '@mantine/modals';
 import {
   IconBox,
   IconBuildingFactory2,
@@ -71,7 +70,9 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       visible:
         user.hasViewRole(UserRoles.sales_order) ||
         (globalSettings.isSet('RETURNORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.return_order))
+          user.hasViewRole(UserRoles.return_order)) ||
+        (globalSettings.isSet('REPAIRORDER_ENABLED') &&
+          user.hasViewRole(UserRoles.repair_order))
     }
   ];
 

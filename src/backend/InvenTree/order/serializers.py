@@ -3040,3 +3040,33 @@ class TransferOrderSerialAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             order.models.TransferOrderAllocation.objects.bulk_create(allocations)
+
+
+class RepairOrderSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+    """Serializer for a RepairOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.RepairOrder
+        fields = ['pk', 'reference', 'customer', 'description', 'symptoms', 'status']
+
+
+class RepairOrderLineItemSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.RepairOrderLineItem
+        fields = ['pk', 'order', 'part', 'quantity']
+
+
+class RepairOrderAllocationSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderAllocation object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.RepairOrderAllocation
+        fields = ['pk', 'line', 'item', 'quantity']

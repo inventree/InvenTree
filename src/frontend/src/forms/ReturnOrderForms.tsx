@@ -1,3 +1,10 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Flex, Table } from '@mantine/core';
 import {
@@ -7,23 +14,14 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { apiUrl } from '@lib/functions/Api';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StatusFilterOptions } from '../components/tables/Filter';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { ProjectCodeField, TagsField } from './CommonFields';
+import { ProjectCodeField } from './CommonFields';
 
 export function useReturnOrderFields({
   duplicateOrderId
@@ -53,7 +51,6 @@ export function useReturnOrderFields({
         icon: <IconCalendar />
       },
       link: {},
-      tags: TagsField({}),
       contact: {
         icon: <IconUser />,
         adjustFilters: (value: ApiFormAdjustFilterType) => {

@@ -1,3 +1,8 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
@@ -15,13 +20,6 @@ import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import { useInvenTreeHotkeys } from '@lib/functions/Events';
-import { getBaseUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';

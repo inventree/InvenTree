@@ -1,3 +1,10 @@
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -18,14 +25,6 @@ import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import type { NavigateFunction } from 'react-router-dom';
-
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
 import {
   useGlobalSettingsState,

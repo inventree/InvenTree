@@ -1,5 +1,5 @@
-import { useHotkeys } from '@mantine/hooks';
 import type { HotkeyItemOptions } from '@mantine/hooks';
+import { useHotkeys } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useLocalLibState } from '..';
 

@@ -13,11 +13,7 @@ import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useUserSettingsState } from '../../states/SettingsStates';
 
-export function subassemblyRowExpansion({
-  table
-}: {
-  table: TableState;
-}) {
+export function subassemblyRowExpansion({ table }: { table: TableState }) {
   const userSettings = useUserSettingsState();
 
   return useMemo(() => {
@@ -43,11 +39,7 @@ export function subassemblyRowExpansion({
 /**
  * Display a sub-table of the BOM, for displaying sub-assemblies within the main BOM table.
  */
-export default function BomSubassemblyTable({
-  partId
-}: {
-  partId: number;
-}) {
+export default function BomSubassemblyTable({ partId }: { partId: number }) {
   const table = useTable('bom-subassembly');
 
   const rowExpansion = subassemblyRowExpansion({ table: table });

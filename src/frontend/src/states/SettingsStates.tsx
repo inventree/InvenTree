@@ -1,7 +1,6 @@
 /**
  * State management for remote (server side) settings
  */
-import { create, createStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -12,6 +11,7 @@ import type {
   SettingsLookup,
   SettingsStateProps
 } from '@lib/types/Settings';
+import { create, createStore } from 'zustand';
 import { api } from '../App';
 import { useUserState } from './UserState';
 

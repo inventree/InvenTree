@@ -1,3 +1,10 @@
+import { StylishText } from '@lib/components/StylishText';
+import type {
+  FilterSetState,
+  TableFilter,
+  TableFilterChoice,
+  TableFilterType
+} from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -17,23 +24,15 @@ import {
   Tooltip
 } from '@mantine/core';
 import { DateInput, type DateValue } from '@mantine/dates';
-import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
-import type {
-  FilterSetState,
-  TableFilter,
-  TableFilterChoice,
-  TableFilterType
-} from '@lib/types/Filters';
 import {
   IconCheck,
   IconFilterStar,
   IconReload,
   IconX
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { StandaloneField } from '../forms/StandaloneField';
 import {
@@ -211,14 +210,6 @@ export function FilterElement({
 
   switch (filterProps.type) {
     case 'api':
-      if (filterProps.multi) {
-        return (
-          <MultiApiFilterElement
-            filterProps={filterProps}
-            onValueChange={onValueChange}
-          />
-        );
-      }
       return (
         <StandaloneField
           fieldName={`filter-${filterName}`}
@@ -230,15 +221,7 @@ export function FilterElement({
             model: filterProps.model,
             label: brief ? undefined : t`Select filter value`,
             onValueChange: (value: any, instance: any) => {
-              if (filterProps.transform) {
-                const choice = filterProps.transform(instance);
-                onValueChange(choice.value, choice.label);
-              } else {
-                onValueChange(
-                  value,
-                  filterProps.modelRenderer?.(instance) ?? value
-                );
-              }
+              onValueChange(value, filterProps.modelRenderer?.(instance));
             }
           }}
         />

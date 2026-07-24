@@ -1,3 +1,4 @@
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { t } from '@lingui/core/macro';
 import {
   Divider,
@@ -8,8 +9,6 @@ import {
   Text
 } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
-
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
 
 /*

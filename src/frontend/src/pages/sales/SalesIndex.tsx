@@ -1,21 +1,21 @@
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconBuildingStore,
   IconCalendar,
   IconCubeSend,
   IconListDetails,
   IconTable,
+  IconTool,
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-
-import type { EventContentArg } from '@fullcalendar/core';
-import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { TableFilter } from '@lib/index';
-import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -25,6 +25,9 @@ import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
+import RepairOrderFilters from '../../tables/sales/RepairOrderFilters';
+import RepairOrderParametricTable from '../../tables/sales/RepairOrderParametricTable';
+import { RepairOrderTable } from '../../tables/sales/RepairOrderTable';
 import ReturnOrderParametricTable from '../../tables/sales/ReturnOrderParametricTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderFilters from '../../tables/sales/SalesOrderFilters';
@@ -82,6 +85,30 @@ const ReturnOrderCalendar = () => {
   );
 };
 
+const RepairOrderCalendar = () => {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return RepairOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'customer_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.repairorder}
+      role={UserRoles.repair_order}
+      params={{ outstanding: true, customer_detail: true }}
+      filters={calendarFilters}
+      tooltip={renderTooltip}
+    />
+  );
+};
+
 export default function SalesIndex() {
   const user = useUserState();
 
@@ -97,6 +124,11 @@ export default function SalesIndex() {
 
   const [returnOrderView, setReturnOrderView] = useLocalStorage<string>({
     key: 'return-order-view',
+    defaultValue: 'table'
+  });
+
+  const [repairOrderView, setRepairOrderView] = useLocalStorage<string>({
+    key: 'repair-order-view',
     defaultValue: 'table'
   });
 
@@ -171,6 +203,34 @@ export default function SalesIndex() {
         ]
       }),
       SegmentedControlPanel({
+        name: 'repairorders',
+        label: t`Repair Orders`,
+        icon: <IconTool />,
+        hidden: !user.hasViewRole(UserRoles.repair_order),
+        selection: repairOrderView,
+        onChange: setRepairOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <RepairOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: <RepairOrderCalendar />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <RepairOrderParametricTable />
+          }
+        ]
+      }),
+      SegmentedControlPanel({
         name: 'customers',
         label: t`Customers`,
         icon: <IconBuildingStore />,
@@ -200,7 +260,7 @@ export default function SalesIndex() {
         ]
       })
     ];
-  }, [user, customersView, salesOrderView, returnOrderView]);
+  }, [user, customersView, salesOrderView, returnOrderView, repairOrderView]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
     return <PermissionDenied />;

@@ -1,3 +1,10 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
@@ -15,14 +22,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -223,8 +222,7 @@ export default function BuildDetail() {
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
-      part_detail: true,
-      tags: true
+      part_detail: true
     },
     hasPrimaryKey: true,
     defaultValue: {},
@@ -393,7 +391,6 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

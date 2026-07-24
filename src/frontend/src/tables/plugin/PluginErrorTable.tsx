@@ -1,11 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { Code } from '@mantine/core';
-import { useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Code } from '@mantine/core';
+import { useMemo } from 'react';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 export interface PluginRegistryErrorI {

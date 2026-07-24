@@ -1,12 +1,3 @@
-import { t } from '@lingui/core/macro';
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconTruckDelivery
-} from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -21,6 +12,15 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconTruckDelivery
+} from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   CompanyColumn,
   DateColumn,
@@ -29,8 +29,6 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { TagsFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,

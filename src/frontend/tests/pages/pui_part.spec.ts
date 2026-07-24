@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { adminuser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -14,8 +15,6 @@ import {
   showParametricView,
   showTableView
 } from '../helpers';
-
-import { adminuser } from '../defaults';
 
 import { doCachedLogin } from '../login';
 import { setPluginState, setSettingState } from '../settings';

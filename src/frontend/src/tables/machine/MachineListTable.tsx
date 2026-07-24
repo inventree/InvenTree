@@ -1,4 +1,22 @@
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import {
+  DetailDrawer,
+  DetailDrawerLink
+} from '@lib/components/nav/DetailDrawer';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import { formatDecimal } from '@lib/index';
+import type {
+  InvenTreeTableProps,
+  RowAction,
+  TableColumn
+} from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
@@ -21,22 +39,6 @@ import { IconCheck, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { AddItemButton } from '@lib/components/AddItemButton';
-import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import {
-  DetailDrawer,
-  DetailDrawerLink
-} from '@lib/components/nav/DetailDrawer';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import { formatDecimal } from '@lib/index';
-import type { RowAction, TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
-import { Trans } from '@lingui/react/macro';
 import { api } from '../../App';
 import {
   DeleteItemAction,
@@ -142,7 +144,10 @@ function restartMachine({
 export function useMachineTypeDriver({
   includeTypes = true,
   includeDrivers = true
-}: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+}: {
+  includeTypes?: boolean;
+  includeDrivers?: boolean;
+} = {}) {
   const api = useApi();
 
   const {

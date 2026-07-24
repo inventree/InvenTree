@@ -1,3 +1,16 @@
+import { CopyButton } from '@lib/components/CopyButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { t } from '@lingui/core/macro';
 import {
   Anchor,
@@ -16,17 +29,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { CopyButton } from '@lib/components/CopyButton';
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -407,7 +409,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   let make_link = props.field_data?.link ?? true;
 
   // Construct the "return value" for the fetched data
-  let value = undefined;
+  let value: any;
 
   if (props.field_data.model_formatter) {
     value = props.field_data.model_formatter(data) ?? value;
@@ -417,7 +419,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     value = data?.name;
   }
 
-  let color: MantineColor | undefined = undefined;
+  let color: MantineColor | undefined;
 
   if (value === undefined) {
     value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;

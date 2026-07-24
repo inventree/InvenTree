@@ -8,8 +8,8 @@ import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
-import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
@@ -45,10 +45,7 @@ function post(path: string, params: any, method = 'post') {
   form.action = path;
 
   for (const key in params) {
-    if (
-      params.hasOwn?.(key) ||
-      Object.prototype.hasOwnProperty.call(params, key)
-    ) {
+    if (params.hasOwn?.(key) || Object.hasOwn(params, key)) {
       const hiddenField = document.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = key;

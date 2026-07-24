@@ -84,7 +84,6 @@ import {
 } from '../hooks/UseGenerator';
 import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { TagsField } from './CommonFields';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -296,7 +295,6 @@ export function useStockFields({
       packaging: {
         icon: <IconPackage />
       },
-      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },

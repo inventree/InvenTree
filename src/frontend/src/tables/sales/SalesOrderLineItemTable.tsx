@@ -1,17 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Text } from '@mantine/core';
-import {
-  IconArrowRight,
-  IconHash,
-  IconShoppingCart,
-  IconSquareArrowRight,
-  IconTools,
-  IconWand
-} from '@tabler/icons-react';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
@@ -28,7 +14,21 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Alert, Group, Paper, Text } from '@mantine/core';
+import {
+  IconArrowRight,
+  IconHash,
+  IconShoppingCart,
+  IconSquareArrowRight,
+  IconTools,
+  IconWand
+} from '@tabler/icons-react';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RenderPart } from '../../components/render/Part';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   DateColumn,
   DecimalColumn,
@@ -43,8 +43,6 @@ import {
   RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';

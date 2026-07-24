@@ -1,8 +1,7 @@
+import { useLocalLibState } from '@lib/states/LocalLibState';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { IconCommand } from '@tabler/icons-react';
-
-import { useLocalLibState } from '@lib/states/LocalLibState';
 import { firstSpotlight, searchShortcutKey } from '../nav/Layout';
 
 /**

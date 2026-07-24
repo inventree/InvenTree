@@ -1,3 +1,14 @@
+import { StylishText } from '@lib/components/StylishText';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { resolveItem } from '@lib/functions/Conversion';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
@@ -29,18 +40,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { StylishText } from '@lib/components/StylishText';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { resolveItem } from '@lib/functions/Conversion';
-import {
-  eventModified,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
-import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
 import { ApiIcon } from '../items/ApiIcon';
 

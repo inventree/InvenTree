@@ -1,8 +1,7 @@
-import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
-
 import { ModelType } from '@lib/enums/ModelType';
 import { TagsList } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 
 import {
   type DetailsField,

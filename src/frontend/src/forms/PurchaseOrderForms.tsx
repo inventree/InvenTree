@@ -1,3 +1,14 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -15,6 +26,7 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCalendarExclamation,
   IconCoins,
   IconCurrencyDollar,
   IconHash,
@@ -25,24 +37,10 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { apiUrl } from '@lib/functions/Api';
-import { toNumber } from '@lib/functions/Conversion';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
   TableFieldQuantityInput,
@@ -57,7 +55,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { ProjectCodeField, TagsField } from './CommonFields';
+import { ProjectCodeField } from './CommonFields';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -285,7 +283,6 @@ export function usePurchaseOrderFields({
           structural: false
         }
       },
-      tags: TagsField({}),
       link: {},
       contact: {
         icon: <IconUser />,

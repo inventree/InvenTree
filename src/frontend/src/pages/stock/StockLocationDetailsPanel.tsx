@@ -1,7 +1,6 @@
+import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton } from '@mantine/core';
-
-import { ModelType } from '@lib/enums/ModelType';
 
 import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';

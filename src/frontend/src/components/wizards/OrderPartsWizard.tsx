@@ -458,11 +458,7 @@ function SelectPartsStep({
   );
 }
 
-export default function OrderPartsWizard({
-  parts
-}: {
-  parts: any[];
-}) {
+export default function OrderPartsWizard({ parts }: { parts: any[] }) {
   // Track a list of selected parts
   const [selectedParts, setSelectedParts] = useState<PartOrderRecord[]>([]);
 
