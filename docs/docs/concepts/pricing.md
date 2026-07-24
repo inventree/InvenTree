@@ -23,6 +23,36 @@ Throughout this documentation (and within InvenTree) the concepts of *cost* and 
 | Price | The theoretical amount of money required to pay for something. |
 | Cost | The actual amount of money paid. |
 
+## Line Items
+
+Orders (Purchase Orders, Sales Orders, and Return Orders) are made up of *line items*, each linking a *Quantity* to a *Unit Price*. A line item's *Line Total* is calculated as follows:
+
+```
+Line Total = Quantity * Unit Price
+```
+
+An order's overall *Total Price* is calculated by summing the *Line Total* of every line item and [extra line item](#extra-line-items) associated with the order.
+
+### Extra Line Items
+
+*Extra Line Items* provide a way to add itemized costs to an order which are not tied to a specific part or stock item - for example freight charges, service fees, or other miscellaneous costs. Extra line items support the same *Quantity* and *Unit Price* fields as regular line items, and are included in the order's *Total Price* calculation.
+
+### Line Item Discount
+
+Line items - and their associated [extra line items](#extra-line-items) - support an optional *Discount* field, expressed as a percentage between 0% and 100%. This is available on:
+
+- [Purchase Order](../purchasing/purchase_order.md#add-line-items) line items and [extra line items](../purchasing/purchase_order.md#extra-line-items)
+- [Sales Order](../sales/sales_order.md#add-line-items) line items and [extra line items](../sales/sales_order.md#extra-line-items)
+- [Return Order](../sales/return_order.md#line-items) line items and [extra line items](../sales/return_order.md#extra-line-items)
+
+If specified, the discount is applied to the *Line Total*, using the following formula:
+
+```
+Line Total = Quantity * Unit Price * (1 - Discount / 100)
+```
+
+!!! info "Optional"
+    The discount percentage is optional, and defaults to 0% (no discount) if not specified.
 
 ## Currency Support
 

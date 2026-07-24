@@ -94,9 +94,22 @@ If the *Attach to Model on Print* option is enabled, a copy of the generated rep
 
 The filename pattern used to generate the output `.pdf` file. Defaults to "report.pdf".
 
-The filename pattern allows custom rendering with any context variables which are available to the report. For example, a test report for a particular [Stock Item](../stock/index.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
+The filename pattern is rendered using the same Django template syntax (`{% raw %}{{ ... }}{% endraw %}`) as the report body, using the same context data - see the [context variables](./context_variables.md) and [model context](./model_context.md) documentation for the full list of variables available to a particular template type.
+
+!!! info "Filename Pattern Context"
+    The filename pattern has access to the *entire* context available to the report or label being generated - not a reduced subset.
+
+For example, a test report for a particular [Stock Item](../stock/index.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
 
 {{ image("report/filename_pattern.png", "Report filename pattern") }}
+
+Some further examples:
+
+| Filename Pattern | Description |
+| --- | --- |
+| `{% raw %}{{ part.full_name }}-{{ serial }}.pdf{% endraw %}` | Combines the [Part](./model_context.md#part) name with the stock item serial number |
+| `{% raw %}PurchaseOrder-{{ reference }}.pdf{% endraw %}` | Uses the purchase order reference (this is the default pattern for the built-in Purchase Order report) |
+| `{% raw %}SalesOrder-{{ reference }}-{{ date }}.pdf{% endraw %}` | Combines the sales order reference with the current date |
 
 
 ### Template Filters
