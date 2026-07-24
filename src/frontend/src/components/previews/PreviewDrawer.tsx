@@ -1,0 +1,194 @@
+import { StylishText } from '@lib/components/StylishText';
+import { cancelEvent } from '@lib/functions/Events';
+import {
+  eventModified,
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import type { ModelType } from '@lib/index';
+import type { PreviewType } from '@lib/types/Preview';
+import { t } from '@lingui/core/macro';
+import {
+  ActionIcon,
+  Anchor,
+  Divider,
+  Drawer,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Tooltip
+} from '@mantine/core';
+import { IconArrowRight } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useInstance } from '../../hooks/UseInstance';
+import { getModelInfo } from '../render/ModelType';
+import './ModelPreviewShim';
+import { FallbackPreviewComponent } from './models/Fallback';
+
+export default function PreviewDrawer({
+  modelType,
+  id,
+  instance: providedInstance,
+  filters,
+  preview: providedPreview,
+  targetUrl,
+  opened,
+  onClose
+}: Readonly<{
+  modelType?: ModelType;
+  id?: number | string;
+  instance?: any;
+  filters?: Record<string, any>;
+  preview?: PreviewType;
+  targetUrl?: string;
+  opened: boolean;
+  onClose: () => void;
+}>) {
+  const navigate = useNavigate();
+
+  const modelInfo = useMemo(() => {
+    return modelType ? getModelInfo(modelType) : null;
+  }, [modelType]);
+
+  const apiEndpoint = modelInfo?.api_endpoint ?? undefined;
+
+  // Combine the default query params for the model type with any filters
+  // explicitly provided by the caller which opened the preview (which take
+  // precedence over the defaults).
+  const queryParams = useMemo(() => {
+    return {
+      ...modelInfo?.default_query_params,
+      ...filters
+    };
+  }, [modelInfo, filters]);
+
+  const { instance: fetchedInstance, instanceQuery } = useInstance({
+    endpoint: apiEndpoint!,
+    pk: id,
+    hasPrimaryKey: true,
+    defaultValue: {},
+    params: queryParams,
+    disabled: !!providedInstance || !modelType || !id
+  });
+
+  const instance = useMemo(() => {
+    return providedInstance ?? fetchedInstance;
+  }, [providedInstance, fetchedInstance]);
+
+  const previewComponent: PreviewType | null = useMemo(() => {
+    if (providedPreview) return providedPreview;
+    if (!modelType || !modelInfo || id == null) return null;
+
+    const component = modelInfo?.preview?.({
+      instance,
+      modelId: typeof id === 'string' ? Number(id) : id
+    });
+
+    if (component == null) {
+      return FallbackPreviewComponent({
+        modelInfo,
+        modelType,
+        modelId: id,
+        instance
+      });
+    }
+
+    return component;
+  }, [providedPreview, modelType, id, instance, modelInfo]);
+
+  useEffect(() => {
+    if (!opened) return;
+    const handler = (event: MouseEvent) => {
+      const anchor = (event.target as HTMLElement).closest('a');
+      if (anchor && !eventModified(event as any)) {
+        if (anchor.origin === window.location.origin) {
+          // Same-origin: prevent browser navigation and route internally
+          const href = anchor.pathname + anchor.search + anchor.hash;
+          cancelEvent(event);
+          onClose();
+          navigateToLink(href, navigate, event as any);
+        } else {
+          // External link: let browser open it, just close the drawer
+          onClose();
+        }
+      }
+    };
+    document.addEventListener('click', handler, true);
+    return () => document.removeEventListener('click', handler, true);
+  }, [onClose, opened]);
+
+  const primaryUrl = useMemo(() => {
+    if (targetUrl) return targetUrl;
+    if (modelType && id) return getDetailUrl(modelType, id);
+    return undefined;
+  }, [targetUrl, modelType, id]);
+
+  const primaryHref = useMemo(() => {
+    if (!primaryUrl) return undefined;
+    const base = `/${getBaseUrl()}`;
+    return primaryUrl.startsWith(base) ? primaryUrl : `${base}${primaryUrl}`;
+  }, [primaryUrl]);
+
+  const clickTitle = useCallback(
+    (event: any) => {
+      if (!primaryUrl) return;
+
+      if (!eventModified(event as any)) {
+        onClose();
+      }
+      navigateToLink(primaryUrl, navigate, event as any);
+    },
+    [primaryUrl, navigate]
+  );
+
+  const drawerTitle = useMemo(() => {
+    if (!previewComponent) return null;
+
+    const titleText = (
+      <StylishText size='lg'>{previewComponent.title}</StylishText>
+    );
+
+    if (!primaryHref) return titleText;
+
+    return (
+      <Anchor href={primaryHref} onClick={(e) => clickTitle(e)}>
+        <Group aria-label={`details-${modelType}-${id}`} gap='xs'>
+          <Tooltip label={t`View Details`} position='left'>
+            <ActionIcon variant='transparent' size='lg'>
+              <IconArrowRight />
+            </ActionIcon>
+          </Tooltip>
+          {titleText}
+        </Group>
+      </Anchor>
+    );
+  }, [previewComponent, primaryHref, modelType, id, clickTitle]);
+
+  return (
+    <Drawer
+      position='right'
+      size='xl'
+      title={drawerTitle}
+      opened={opened}
+      onClose={onClose}
+      withCloseButton
+      transitionProps={{
+        transition: 'slide-left',
+        duration: 300,
+        timingFunction: 'ease'
+      }}
+    >
+      <Stack gap='xs'>
+        {previewComponent && (
+          <>
+            <Divider />
+            <LoadingOverlay visible={instanceQuery.isFetching} />
+            {previewComponent.preview}
+          </>
+        )}
+      </Stack>
+    </Drawer>
+  );
+}

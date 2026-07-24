@@ -38,3 +38,8 @@ export const noaccessuser: UserType = {
   username: 'noaccess',
   testcred: 'youshallnotpass'
 };
+
+export const engineeruser: UserType = {
+  username: 'engineer',
+  testcred: 'partsonly'
+};

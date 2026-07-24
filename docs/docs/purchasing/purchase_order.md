@@ -92,12 +92,22 @@ Once the "Add Line Item" form opens, select a supplier part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Auto Pricing"
+    Enable the *Auto Pricing* option to automatically calculate the line item's *Unit Price* from the [supplier part pricing data](../part/pricing.md#supplier-pricing), based on the line item quantity. While enabled, the *Unit Price* field is calculated automatically and cannot be edited manually. This option is disabled by default.
+
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
 #### Upload File
 
 It is possible to upload an exported purchase order from the supplier instead of manually entering each line item. To start the process, click on <span class="badge inventree confirm">{{ icon("upload") }} Upload File</span> button next to the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button and follow the steps.
 
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular supplier part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
 
 ## Issue Order
 
@@ -134,6 +144,22 @@ To see the list of stock items created from the purchase order, click on the <sp
 The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
 
 However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
+
+## Bundled Items
+
+Some suppliers only sell a group of components as a single bundled or "kit" product, rather than as individual purchasable line items - for example, a fastener kit containing an assortment of different screws, or a "starter kit" containing several components required for a particular use case.
+
+Rather than receiving the bundle as a single opaque stock quantity, InvenTree allows the bundle to be modelled as an assembly, so that it can be broken apart into its individual components once required:
+
+1. Create a part to represent the bundle itself, and mark it as an [assembly](../part/index.md#assembly)
+2. Link a [supplier part](./supplier.md#supplier-parts) to the bundle part, representing how it is purchased from the supplier
+3. Define a [Bill of Materials](../manufacturing/bom.md) for the bundle part, listing each of the individual components and the quantity contained within a single bundle
+4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase price and source purchase order of the order as a whole
+
+Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The purchase price and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
+
+!!! tip "Pack Size vs Bundled Items"
+    A supplier part with a [pack size](./supplier.md#supplier-part-pack-size) greater than one still represents multiple units of the *same* part - the pack size simply determines how many physical units are added to stock per unit ordered. A *bundled* item is different: a single supplier part represents an assortment of *different* components, which must be disassembled before the individual components can be used or sold separately.
 
 ## Complete Order
 

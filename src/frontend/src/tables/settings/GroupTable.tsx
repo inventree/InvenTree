@@ -1,8 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -15,20 +10,25 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
-import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
+import type { ApiFormModalProps } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconUsersGroup } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface GroupDetailI {
   pk: number;

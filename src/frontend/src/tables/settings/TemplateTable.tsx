@@ -1,10 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
-import { IconFileCode } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -18,8 +11,14 @@ import { apiUrl } from '@lib/functions/Api';
 import { identifierString } from '@lib/functions/Conversion';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import type { TableColumn, TableColumnFilterType } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { IconFileCode } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CodeEditor,
   PdfPreview,
@@ -39,6 +38,13 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatDate } from '../../defaults/formatters';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -49,13 +55,6 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  DescriptionColumn,
-  UserColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 export type TemplateI = {
   pk: number;
@@ -68,11 +67,21 @@ export type TemplateI = {
   template: string;
 };
 
+// Additional field props to control the column behaviour in the template table
+interface TemplateFormFieldType extends ApiFormFieldType {
+  sortable?: boolean;
+  switchable?: boolean;
+  filter?: TableColumnFilterType;
+}
+
+type TemplateFormFieldSet = Record<string, TemplateFormFieldType>;
+
 export interface TemplateProps {
   modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
-  additionalFormFields?: ApiFormFieldSet;
+  additionalFilters?: TableFilter[];
+  additionalFormFields?: TemplateFormFieldSet;
 }
 
 export function TemplateDrawer({
@@ -233,6 +242,7 @@ export function TemplateTable({
       },
       {
         accessor: 'model_type',
+        filter: 'model_type',
         sortable: true,
         switchable: false
       },
@@ -276,10 +286,10 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
-        ...field,
-        title: field.label,
         sortable: false,
         switchable: true,
+        title: field.label,
+        ...field,
         render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
@@ -391,6 +401,7 @@ export function TemplateTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
+      ...(templateProps.additionalFilters || []),
       {
         name: 'enabled',
         label: t`Enabled`,
@@ -404,7 +415,7 @@ export function TemplateTable({
         choices: modelTypeFilters.choices
       }
     ];
-  }, [modelTypeFilters.choices]);
+  }, [templateProps.additionalFilters, modelTypeFilters.choices]);
 
   return (
     <>

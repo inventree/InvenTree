@@ -1,3 +1,10 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '@lib/enums/ModelInformation';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   Group,
@@ -7,9 +14,11 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { useDebouncedValue, useId } from '@mantine/hooks';
+import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -22,17 +31,8 @@ import {
   type UseFormReturn,
   useFormContext
 } from 'react-hook-form';
-import Select from 'react-select';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import {
-  ModelInformationDict,
-  type TranslatableModelInformationInterface
-} from '@lib/enums/ModelInformation';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldType } from '@lib/types/Forms';
-import { IconPlus } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
+import Select from 'react-select';
 import { useApi } from '../../../contexts/ApiContext';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
@@ -47,7 +47,7 @@ import { RenderInstance } from '../../render/Instance';
 /**
  * Render a 'select' field for searching the database against a particular model type
  */
-export function RelatedModelField({
+function RelatedModelFieldComponent({
   controller,
   fieldName,
   definition,
@@ -285,6 +285,13 @@ export function RelatedModelField({
     field.value
   ]);
 
+  // Track which id we've already requested (or are currently requesting),
+  // so that if this effect re-fires for an unrelated reason - e.g. a new
+  // `definition.filters`/`definition.api_url` reference - before the
+  // in-flight request for the same id resolves and updates `pk`, it doesn't
+  // issue a duplicate API call for that same id.
+  const requestedIdRef = useRef<number | string | null>(null);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
@@ -293,8 +300,11 @@ export function RelatedModelField({
     const id = pk || field.value;
 
     if (id !== null && id !== undefined && id !== '') {
+      if (requestedIdRef.current === id) return;
+      requestedIdRef.current = id;
       fetchSingleField(id);
     } else {
+      requestedIdRef.current = null;
       setPk(null);
     }
   }, [
@@ -419,6 +429,7 @@ export function RelatedModelField({
       ...definition,
       addCreateFields: undefined,
       autoFill: undefined,
+      autoFillFilters: undefined,
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
@@ -569,6 +580,8 @@ export function RelatedModelField({
     </Input.Wrapper>
   );
 }
+
+export const RelatedModelField = memo(RelatedModelFieldComponent);
 
 function InlineCreateButton({
   definition,

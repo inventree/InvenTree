@@ -1,15 +1,14 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Alert, Divider, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useStore } from 'zustand';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Alert, Divider, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useStore } from 'zustand';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
@@ -28,20 +27,33 @@ export function SettingList({
   settingsState,
   keys,
   onChange,
-  onLoaded
+  onLoaded,
+  doGet
 }: Readonly<{
   heading?: string;
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
   onLoaded?: (settings: SettingsStateProps) => void;
+  doGet?: boolean;
 }>) {
   useEffect(() => {
-    if (settingsState.loaded) {
+    if (settingsState.loaded === true) {
       // Call the onLoaded callback if provided
       onLoaded?.(settingsState);
     }
   }, [settingsState.loaded, settingsState.settings]);
+
+  // get data if doGet is true to break memos leading to hidden group panels
+  useMemo(() => {
+    if (doGet && !settingsState.loaded) {
+      settingsState.fetchSettings().then((success) => {
+        if (success) {
+          onLoaded?.(settingsState);
+        }
+      });
+    }
+  }, [doGet, settingsState]);
 
   const api = useApi();
 
@@ -226,9 +238,11 @@ export function GlobalSettingList({
 
 export function PluginSettingList({
   pluginKey,
+  doGet,
   onLoaded
 }: Readonly<{
   pluginKey: string;
+  doGet?: boolean;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   const store = useMemo(
@@ -246,14 +260,22 @@ export function PluginSettingList({
     pluginSettings.fetchSettings();
   }, [pluginSettings.fetchSettings]);
 
-  return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
+  return (
+    <SettingList
+      settingsState={pluginSettings}
+      onLoaded={onLoaded}
+      doGet={doGet}
+    />
+  );
 }
 
 export function PluginUserSettingList({
   pluginKey,
+  doGet,
   onLoaded
 }: Readonly<{
   pluginKey: string;
+  doGet?: boolean;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   const store = useMemo(
@@ -271,7 +293,13 @@ export function PluginUserSettingList({
     pluginUserSettings.fetchSettings();
   }, [pluginUserSettings.fetchSettings]);
 
-  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
+  return (
+    <SettingList
+      settingsState={pluginUserSettings}
+      onLoaded={onLoaded}
+      doGet={doGet}
+    />
+  );
 }
 
 export function MachineSettingList({

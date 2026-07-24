@@ -14,9 +14,8 @@ import { resolve } from 'node:path';
 import { defineConfig, mergeConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { viteExternalsPlugin } from 'vite-plugin-externals';
-import viteConfig from './vite.config';
-
 import { __INVENTREE_VERSION_INFO__ } from './version-info';
+import viteConfig from './vite.config';
 
 export default defineConfig((cfg) =>
   mergeConfig(
@@ -52,7 +51,11 @@ export default defineConfig((cfg) =>
         },
         lib: {
           entry: {
-            index: resolve(__dirname, 'lib/index.ts')
+            index: resolve(__dirname, 'lib/index.ts'),
+            'plugin/InventreeHmrPlugin': resolve(
+              __dirname,
+              'lib/plugin/InventreeHmrPlugin.tsx'
+            )
           },
           name: 'InvenTree',
           formats: ['es']

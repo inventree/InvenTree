@@ -1,9 +1,8 @@
-import { Trans } from '@lingui/react/macro';
-import { forwardRef, useImperativeHandle, useState } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { api } from '../../../../App';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
@@ -33,7 +32,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         let preview = await api.post(
-          printingUrl,
+          printingUrl!,
           {
             items: [previewItem],
             template: template.pk
@@ -68,9 +67,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
               api
                 .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
                 .then((response) => {
-                  if (response.data.error) {
+                  if (response.data.errors || response.data.error) {
                     clearInterval(interval);
-                    rej(response.data.error);
+                    rej(
+                      response.data.error ??
+                        response.data.errors?.error ??
+                        t`Process failed`
+                    );
                   }
 
                   if (response.data.complete) {

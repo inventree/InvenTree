@@ -8,7 +8,7 @@ import {
   CompanyColumn,
   DescriptionColumn,
   ReferenceColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 import RepairOrderFilters from './RepairOrderFilters';
 

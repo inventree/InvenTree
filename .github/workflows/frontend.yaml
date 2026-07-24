@@ -8,13 +8,14 @@ name: Frontend
 
 on:
   push:
-    branches-ignore: ["l10*"]
+    branches-ignore: ["l10*", "dependabot/**", "backport/**"]
   pull_request:
     branches-ignore: ["l10*"]
 
 env:
-  python_version: 3.11
+  python_version: 3.12
   node_version: 24
+  plugin_creator_version: 1.20.0
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -45,10 +46,10 @@ jobs:
       force: ${{ steps.force.outputs.force }}
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
+      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         id: filter
         with:
           filters: |
@@ -68,7 +69,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -85,7 +86,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
@@ -115,12 +116,14 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    permissions:
+      contents: read # Required for actions/checkout
+      id-token: write # Required for GitHub OIDC
     env:
       VITE_COVERAGE: false
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -138,7 +141,7 @@ jobs:
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
       - name: Cache Playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # pin@v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
@@ -151,7 +154,7 @@ jobs:
         run: cd src/frontend && npx playwright install-deps
       - name: Install Sample Plugin
         run: |
-          pip install -U inventree-plugin-creator
+          pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
           create-inventree-plugin --default
           cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Run Playwright tests
@@ -162,7 +165,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
           env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox --shard=${{ matrix.shard }}/2
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report-firefox-${{ matrix.shard }}
@@ -193,13 +196,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    permissions:
+      contents: read # Required for actions/checkout
+      id-token: write # Required for GitHub OIDC
 
     env:
       COVERAGE: true
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -217,7 +223,7 @@ jobs:
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
       - name: Cache Playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # pin@v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
@@ -230,7 +236,7 @@ jobs:
         run: cd src/frontend && npx playwright install-deps
       - name: Install Sample Plugin
         run: |
-          pip install -U inventree-plugin-creator
+          pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
           create-inventree-plugin --default
           cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Playwright [${{ matrix.shard }} / 4]
@@ -239,7 +245,7 @@ jobs:
           cd src/frontend
           npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
       - name: Playwright Report [${{ matrix.shard }} / 4]
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report-chromium-${{ matrix.shard }}
@@ -247,7 +253,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # pin@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         id: coverage-upload
         if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
         with:
@@ -267,7 +273,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -279,7 +285,7 @@ jobs:
           update: false
 
       - name: Download Coverage Artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # pin@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: coverage-*
           path: all-coverage/
@@ -298,7 +304,7 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # pin@v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree

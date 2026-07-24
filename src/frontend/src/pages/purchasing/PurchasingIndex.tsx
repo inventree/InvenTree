@@ -1,5 +1,10 @@
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconBuildingFactory2,
   IconBuildingStore,
@@ -11,12 +16,6 @@ import {
   IconTable
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-
-import type { EventContentArg } from '@fullcalendar/core';
-import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { TableFilter } from '@lib/index';
-import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -51,8 +50,9 @@ function PurchaseOrderCalendar() {
     <OrderCalendar
       model={ModelType.purchaseorder}
       role={UserRoles.purchase_order}
-      params={{ outstanding: true, supplier_detail: true }}
+      params={{ supplier_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );

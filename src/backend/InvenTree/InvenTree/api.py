@@ -6,6 +6,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
@@ -15,7 +16,7 @@ from django.views.generic.base import RedirectView
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers, viewsets
+from rest_framework import permissions, serializers, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -23,12 +24,15 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.filters
 import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.tasks import batch_offload_tasks
+from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
@@ -356,7 +360,10 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.AllowAnyOrReadScope,
+    ]
 
     def not_found(self, request):
         """Return a 404 error."""
@@ -490,7 +497,7 @@ class BulkCreateMixin:
             if unique_create_fields := getattr(self, 'unique_create_fields', None):
                 existing = collections.defaultdict(list)
                 for idx, item in enumerate(data):
-                    key = tuple(item[v] for v in list(unique_create_fields))  # type: ignore[not-subscriptable]
+                    key = tuple(item[v] for v in list(unique_create_fields))  # ty: ignore[not-subscriptable]
                     existing[key].append(idx)
 
                 unique_errors = [[] for _ in range(len(data))]
@@ -506,7 +513,7 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic():
+            with transaction.atomic(), batch_events(), batch_offload_tasks():
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():
@@ -530,7 +537,11 @@ class BulkUpdateMixin(BulkOperationMixin):
 
     Bulk update allows for multiple items to be updated in a single API query,
     rather than using multiple API calls to the various detail endpoints.
+
+    Each instance is validated and saved individually, so that any custom save methods are triggered.
     """
+
+    BULK_ID_FIELD: str = 'pk'
 
     def validate_update(self, queryset, request) -> None:
         """Perform validation right before updating.
@@ -575,17 +586,35 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Perform the update operation
         data = request.data
 
-        n = queryset.count()
+        # Extract the primary key values up-front:
+        # Each instance is re-fetched from the database immediately before it is
+        # updated, as saving one instance may alter database state which other
+        # instances in the queryset depend on (e.g. MPTT tree structure fields).
+        # Saving a stale instance can result in database corruption (and it must
+        # be the *instance* that is fresh - refresh_from_db is not sufficient here,
+        # as MPTT caches original field values when the instance is loaded).
+        pk_values = sorted(queryset.values_list(self.BULK_ID_FIELD, flat=True))
 
         instance_data = []
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
 
             # Run validation first
-            for instance in queryset:
+            for pk in pk_values:
+                try:
+                    instance = queryset.select_for_update(of=('self',)).get(**{
+                        self.BULK_ID_FIELD: pk
+                    })
+                except ObjectDoesNotExist:
+                    raise ValidationError({
+                        'non_field_errors': _(
+                            'Item no longer matches the provided criteria'
+                        )
+                    })
+
                 serializer = self.get_serializer(instance, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
@@ -593,7 +622,7 @@ class BulkUpdateMixin(BulkOperationMixin):
                 instance_data.append(serializer.data)
 
         return Response(
-            {'success': f'Updated {n} items', 'items': instance_data}, status=200
+            {'success': 'Updated multiple items', 'items': instance_data}, status=200
         )
 
 
@@ -665,7 +694,7 @@ class CommonBulkDeleteMixin(BulkOperationMixin):
         # Keep track of how many items we deleted
         n_deleted = queryset.count()
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object deletion
             # Note that we do not perform a bulk-delete operation here,
             # as we want to trigger any custom post_delete methods on the model
@@ -960,3 +989,43 @@ def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):
             lookup_field_ref=lookup_field_ref,
         ),
     )
+
+
+class TreeMixin:
+    """A mixin class for supporting tree-structured data in the API."""
+
+    # Any API view which inherits from this mixin must define a 'model_class' attribute
+    model_class = None
+
+    filter_backends = InvenTree.filters.SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['level', 'name', 'subcategories']
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
+    ordering = ['level']
+
+    def filter_queryset(self, queryset):
+        """Filter the queryset, and provide extra support for tree-structured data."""
+        queryset = super().filter_queryset(queryset)
+
+        # If a search term is provided, include all ancestors of matched items in the results
+        if self.request.query_params.get('search', '').strip():
+            ancestors = self.model_class.objects.get_queryset_ancestors(
+                queryset, include_self=True
+            )
+            queryset = queryset | ancestors
+
+        # If a specific ID is provided to "expand_to", include all ancestors and siblings
+        if expand_to := self.request.query_params.get('expand_to'):
+            try:
+                target = self.model_class.objects.get(pk=int(expand_to))
+                target_ancestors = target.get_ancestors(include_self=True)
+                queryset = queryset | target_ancestors
+
+                # We also want to include the "sibling" nodes of the expanded item
+                siblings = target.get_siblings(include_self=True)
+                queryset = queryset | siblings
+
+            except (self.model_class.DoesNotExist, ValueError):
+                pass
+
+        return queryset.distinct()

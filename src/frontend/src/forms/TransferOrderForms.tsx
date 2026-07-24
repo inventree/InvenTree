@@ -6,10 +6,14 @@ import { IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldQuantityInput,
+  type TableFieldRowProps
+} from '../components/forms/fields/TableField';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { ProjectCodeField } from './CommonFields';
 
 export function useTransferOrderFields({
   duplicateOrderId
@@ -22,7 +26,7 @@ export function useTransferOrderFields({
     const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
-      project_code: {},
+      project_code: ProjectCodeField(),
       start_date: {
         icon: <IconCalendar />
       },
@@ -49,13 +53,12 @@ export function useTransferOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
           copy_lines: {},
-          // Transfer Orders don't have extra lines for now...
-          copy_extra_lines: { hidden: true, value: false }
+          copy_parameters: {}
         }
       };
     }
@@ -89,9 +92,7 @@ export function useTransferOrderLineItemFields({
       },
       reference: {},
       quantity: {},
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
       link: {}
@@ -110,6 +111,10 @@ function TransferOrderAllocateLineRow({
   record: any;
   sourceLocation?: number | null;
 }>) {
+  const [quantity, setQuantity] = useState<number | ''>(
+    props.item?.quantity ?? ''
+  );
+
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {
@@ -128,41 +133,27 @@ function TransferOrderAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
           const available = instance.quantity - instance.allocated;
           const required = record.quantity - record.allocated;
 
-          let quantity = props.item?.quantity ?? 0;
+          let q = props.item?.quantity ?? 0;
 
-          quantity = Math.max(quantity, required);
-          quantity = Math.min(quantity, available);
+          q = Math.max(q, required);
+          q = Math.min(q, available);
 
-          if (quantity != props.item.quantity) {
-            props.changeFn(props.idx, 'quantity', quantity);
-          }
+          setQuantity(q);
+          props.changeFn(props.rowId, 'quantity', q);
         }
       }
     };
-  }, [sourceLocation, record, props]);
-
-  // Statically defined field for selecting the allocation quantity
-  const quantityField: ApiFormFieldType = useMemo(() => {
-    return {
-      field_type: 'number',
-      name: 'quantity',
-      required: true,
-      value: props.item.quantity,
-      onValueChange: (value: any) => {
-        props.changeFn(props.idx, 'quantity', value);
-      }
-    };
-  }, [props]);
+  }, [sourceLocation, record, quantity, props.changeFn]);
 
   return (
-    <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
+    <Table.Tr key={`table-row-${props.rowId}`}>
       <Table.Td>
         <RenderPartColumn part={record.part_detail} />
       </Table.Td>
@@ -181,14 +172,18 @@ function TransferOrderAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={quantityField}
+        <TableFieldQuantityInput
+          min={0}
+          value={quantity}
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
+          }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -208,6 +203,16 @@ export function useAllocateToTransferOrderForm({
   const [sourceLocation, setSourceLocation] = useState<number | null>(
     sourceLocationId || null
   );
+
+  // Memoize the line items to prevent re-rendering
+  const lines = useMemo(() => {
+    return lineItems.map((item) => {
+      return {
+        id: item.pk,
+        ...item
+      };
+    });
+  }, [lineItems]);
 
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -237,11 +242,11 @@ export function useAllocateToTransferOrderForm({
         ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =
-            lineItems.find((item) => item.pk == row.item.line_item) ?? {};
+            lines.find((item) => item.pk == row.item.line_item) ?? {};
 
           return (
             <TransferOrderAllocateLineRow
-              key={`table-row-${row.idx}-${record.pk}`}
+              key={row.rowId}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -263,6 +268,7 @@ export function useAllocateToTransferOrderForm({
     initialData: {
       items: lineItems.map((item) => {
         return {
+          id: item.pk,
           line_item: item.pk,
           quantity: 0,
           stock_item: null

@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
@@ -10,22 +7,34 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import {
+  DateColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  StatusFilterOptions,
+  UserFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useImporterState } from '../../states/ImporterState';
-import { DateColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');
   const openImporter = useImporterState((state) => state.openImporter);
+  const importSessionStatus = useStatusCodes({
+    modelType: ModelType.importsession
+  });
 
   const [selectedSession, setSelectedSession] = useState<number | undefined>(
     undefined
@@ -82,13 +91,20 @@ export default function ImportSessionTable() {
         sortable: false,
         accessor: 'row_count',
         title: t`Imported Rows`,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.completed_row_count}
-            maximum={record.row_count}
-          />
-        )
+        render: (record: any) =>
+          record.status == importSessionStatus.COMPLETE ? (
+            <ProgressBar
+              progressLabel={true}
+              value={record.completed_row_count_history}
+              maximum={record.row_count_history}
+            />
+          ) : (
+            <ProgressBar
+              progressLabel={true}
+              value={record.completed_row_count}
+              maximum={record.row_count}
+            />
+          )
       }
     ];
   }, []);

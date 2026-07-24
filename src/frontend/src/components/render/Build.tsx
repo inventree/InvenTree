@@ -1,7 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ReactNode } from 'react';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
@@ -19,7 +18,7 @@ export function RenderBuildOrder(
       primary={instance.reference}
       secondary={instance.title}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.build
       })}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}

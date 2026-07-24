@@ -1,10 +1,9 @@
-import { t } from '@lingui/core/macro';
-import { Skeleton } from '@mantine/core';
-import { IconPaperclip } from '@tabler/icons-react';
-
 import type { ModelType } from '@lib/enums/ModelType';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import type { PanelType } from '@lib/types/Panel';
+import { t } from '@lingui/core/macro';
+import { Skeleton } from '@mantine/core';
+import { IconPaperclip } from '@tabler/icons-react';
 import { api } from '../../App';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
@@ -19,6 +18,7 @@ export default function AttachmentPanel({
     name: 'attachments',
     label: t`Attachments`,
     icon: <IconPaperclip />,
+    hotkey: 'mod+Shift+A',
     notification_dot: async () => {
       if (!model_type || !model_id) {
         return null;

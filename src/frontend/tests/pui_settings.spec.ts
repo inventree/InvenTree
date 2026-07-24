@@ -254,6 +254,37 @@ test('Settings - Admin', async ({ browser }) => {
   await loadTab(page, 'Category Parameters');
   await loadTab(page, 'Label Templates');
   await loadTab(page, 'Report Templates');
+
+  // Check the "report snippets" panel
+  await loadTab(page, 'Report Snippets');
+  await page
+    .getByText(
+      'Snippets are reusable pieces of HTML content that can be inserted into reports and labels.'
+    )
+    .waitFor();
+
+  // Launch the dialog to upload a new snippet
+  await page.getByLabel('action-button-add-snippet').click();
+  await page.getByText('Add Snippet', { exact: true }).waitFor();
+  await page.locator('input[type="file"]').waitFor({ state: 'attached' });
+  await page.getByLabel('text-field-description').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Check the "report assets" panel
+  await loadTab(page, 'Report Assets');
+  await page
+    .getByText(
+      'Assets are files (such as images) which can be used when rendering reports and labels.'
+    )
+    .waitFor();
+
+  // Launch the dialog to upload a new asset
+  await page.getByLabel('action-button-add-asset').click();
+  await page.getByText('Add Asset', { exact: true }).waitFor();
+  await page.locator('input[type="file"]').waitFor({ state: 'attached' });
+  await page.getByLabel('text-field-description').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
   await loadTab(page, 'Plugins');
 
   // Adjust some "location type" items
@@ -408,29 +439,8 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
 
-  await loadTab(page, 'Parameters', true);
-
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(500);
-
-  // Clean old template data if exists
-  await page
-    .getByRole('cell', { name: 'my custom parameter', exact: true })
-    .waitFor({ timeout: 500 })
-    .then(async (cell) => {
-      await page
-        .getByRole('cell', { name: 'my custom parameter' })
-        .locator('..')
-        .getByLabel('row-action-menu-')
-        .click();
-      await page.getByRole('menuitem', { name: 'Delete' }).click();
-      await page.getByRole('button', { name: 'Delete' }).click();
-    })
-    .catch(() => {});
-
   // Allow time for the table to load
-  await page.getByRole('button', { name: 'Selection Lists' }).click();
-  await page.waitForLoadState('networkidle');
+  await loadTab(page, 'Selection Lists');
 
   // Check for expected entry
   await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
@@ -456,38 +466,65 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
   await page.getByLabel('text-field-description').fill('Listdescription');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Select the new list to edit entries
+  await page.getByRole('cell', { name: 'some list' }).click();
+  await page.getByRole('button', { name: 'Selection List Entries' }).waitFor();
+  await page.getByRole('button', { name: 'Selection List Details' }).click();
 
   // Add an entry to the selection list
-  await page.getByRole('button', { name: 'action-button-add-new-row' }).click();
+  await page.getByRole('button', { name: 'action-button-add-entry' }).click();
   await page.getByRole('textbox', { name: 'text-field-value' }).fill('HW');
   await page
     .getByRole('textbox', { name: 'text-field-label' })
     .fill('Hardwood');
+
   await page
-    .getByRole('row', { name: 'boolean-field-active action-' })
-    .getByLabel('text-field-description')
+    .getByRole('textbox', { name: 'text-field-description' })
     .fill('Hardwood materials');
-  await page.getByRole('cell', { name: 'boolean-field-active' }).click();
-
+  await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('cell', { name: 'some list' }).waitFor();
 
-  await page.getByLabel('action-button-add-parameter').waitFor();
-  await page.getByLabel('action-button-add-parameter').click();
-  await page.getByLabel('text-field-name').fill('my custom parameter');
-  await page.getByLabel('text-field-description').fill('description');
+  await page.getByRole('cell', { name: 'HW' }).waitFor();
+
+  // Next, navigate to the "Parameters" tab
+  await navigate(page, 'settings/admin/parameters/');
+
+  await loadTab(page, 'Parameters', true);
+
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(500);
+
+  // Clean old template data if exists
   await page
-    .locator('div')
-    .filter({ hasText: /^Search\.\.\.$/ })
-    .nth(2)
+    .getByRole('cell', { name: 'my custom parameter', exact: true })
+    .waitFor({ timeout: 500 })
+    .then(async (cell) => {
+      await page
+        .getByRole('cell', { name: 'my custom parameter' })
+        .locator('..')
+        .getByLabel('row-action-menu-')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    })
+    .catch(() => {});
+
+  // Create a new parameter, using the "Hardwood" selection list entry as the value
+  await page
+    .getByRole('button', { name: 'action-button-add-parameter-' })
     .click();
   await page
-    .getByRole('option', { name: 'some list' })
-    .locator('div')
-    .first()
-    .click();
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('my custom parameter');
+  await page
+    .getByRole('combobox', { name: 'related-field-selectionlist' })
+    .fill('some');
+  await page.getByRole('option', { name: 'some list' }).click();
+
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('cell', { name: 'my custom parameter' }).click();
+  await page.waitForLoadState('networkidle');
 
   // Fill parameter
   await navigate(page, 'part/104/parameters/');

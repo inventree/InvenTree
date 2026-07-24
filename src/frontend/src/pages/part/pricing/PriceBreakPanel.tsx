@@ -1,8 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { BarChart } from '@mantine/charts';
-import { SimpleGrid } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -15,7 +10,12 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { BarChart } from '@mantine/charts';
+import { SimpleGrid } from '@mantine/core';
+import { useCallback, useMemo, useState } from 'react';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../../defaults/formatters';
 import {
   useCreateApiFormModal,
@@ -23,7 +23,6 @@ import {
   useEditApiFormModal
 } from '../../../hooks/UseForm';
 import { useUserState } from '../../../states/UserState';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
@@ -161,7 +160,8 @@ export default function PriceBreakPanel({
               part: part.pk
             },
             tableActions: tableActions,
-            rowActions: rowActions
+            rowActions: rowActions,
+            enableDownload: true
           }}
         />
         {table.records.length > 0 ? (

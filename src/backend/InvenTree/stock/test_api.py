@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.test.utils import override_settings
 from django.urls import reverse
 
 import pytest
@@ -14,10 +15,15 @@ from rest_framework import status
 
 import build.models
 import company.models
+import order.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
+from InvenTree.unit_test import (
+    InvenTreeAPIPerformanceTestCase,
+    InvenTreeAPITestCase,
+    findOffloadedEvent,
+)
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -71,6 +77,71 @@ class StockLocationTest(StockAPITestCase):
         """Test ordering options for the StockLocation list endpoint."""
         for ordering in ['name', 'pathstring', 'level', 'tree_id']:
             self.run_ordering_test(self.list_url, ordering)
+
+    def test_bulk_set_parent(self):
+        """Test that bulk re-parenting of locations correctly rebuilds the tree.
+
+        Re-parenting multiple locations in a single 'bulk update' API call must
+        leave the tree structure and the 'pathstring' values fully consistent.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12394
+        """
+        parent_a = StockLocation.objects.create(name='Parent A')
+        parent_b = StockLocation.objects.create(name='Parent B')
+
+        # Create a number of sub-locations under 'Parent A',
+        # some of which have their own child locations
+        locations = []
+
+        for i in range(25):
+            location = StockLocation.objects.create(name=f'Sub{i:02d}', parent=parent_a)
+            locations.append(location)
+
+            if i % 5 == 0:
+                child = StockLocation.objects.create(
+                    name=f'Sub{i:02d}-child', parent=location
+                )
+                StockLocation.objects.create(
+                    name=f'Sub{i:02d}-grandchild', parent=child
+                )
+
+        # Move all sub-locations to 'Parent B' in a single bulk update.
+        # The query count must scale linearly with the number of items.
+        # Note: when the background worker is not running (e.g. in tests), each
+        # item save runs the (de-duplicated) tree rebuild task synchronously
+        self.patch(
+            self.list_url,
+            {'items': [location.pk for location in locations], 'parent': parent_b.pk},
+            expected_code=200,
+            max_query_count=60 * len(locations),
+        )
+
+        for location in locations:
+            location.refresh_from_db()
+            self.assertEqual(location.parent, parent_b)
+
+        parent_a.refresh_from_db()
+        parent_b.refresh_from_db()
+
+        # Check *all* locations in the affected trees
+        # (fixture data outside these trees does not have pathstring values set)
+        affected_trees = StockLocation.objects.filter(
+            tree_id__in=[parent_a.tree_id, parent_b.tree_id]
+        )
+
+        for location in affected_trees:
+            # The stored pathstring must match the 'parent' chain for the node
+            chain = []
+            node = location
+
+            while node is not None:
+                chain.insert(0, node)
+                node = node.parent
+
+            self.assertEqual(location.pathstring, '/'.join(node.name for node in chain))
+
+            # The MPTT tree data must match the 'parent' chain, too
+            self.assertEqual(list(location.get_ancestors()), chain[:-1])
 
     def test_list(self):
         """Test the StockLocationList API endpoint."""
@@ -616,17 +687,7 @@ class StockItemListTest(StockAPITestCase):
             item.delete()
 
         for idx in range(1000):
-            items.append(
-                StockItem(
-                    part=part,
-                    location=location,
-                    quantity=idx % 10,
-                    level=0,
-                    lft=0,
-                    rght=0,
-                    tree_id=0,
-                )
-            )
+            items.append(StockItem(part=part, location=location, quantity=idx % 10))
 
         StockItem.objects.bulk_create(items, batch_size=250)
 
@@ -736,13 +797,6 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(location=7)
         self.assertEqual(len(response), 18)
-
-    def test_filter_by_exclude_tree(self):
-        """Filter StockItem by excluding a StockItem tree."""
-        response = self.get_stock(exclude_tree=1000)
-        for item in response:
-            self.assertNotEqual(item['pk'], 1000)
-            self.assertNotEqual(item['parent'], 1000)
 
     def test_filter_by_depleted(self):
         """Filter StockItem by depleted status."""
@@ -1043,15 +1097,7 @@ class StockItemListTest(StockAPITestCase):
             part = parts[idx % N_PARTS]
             location = locations[idx % N_LOCATIONS]
 
-            item = StockItem(
-                part=part,
-                location=location,
-                quantity=10,
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
-            )
+            item = StockItem(part=part, location=location, quantity=10)
             stock_items.append(item)
             idx += 1
 
@@ -1167,8 +1213,7 @@ class StockItemListTest(StockAPITestCase):
         prt = Part.objects.first()
 
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1, level=0, tree_id=0, lft=0, rght=0)
-            for _ in range(100)
+            StockItem(part=prt, quantity=1) for _ in range(100)
         ])
 
         # List *all* stock items
@@ -1248,7 +1293,7 @@ class StockItemListTest(StockAPITestCase):
         parent_item.refresh_from_db()
 
         # Check that the parent item has 5 child items
-        self.assertEqual(parent_item.get_descendants(include_self=False).count(), 5)
+        self.assertEqual(parent_item.get_children().count(), 5)
         self.assertEqual(my_part.stock_items.count(), 6)
 
         # Fetch stock list via API
@@ -1453,10 +1498,6 @@ class CustomStockItemStatusTest(StockAPITestCase):
             StockItem(
                 part=part,
                 quantity=1,
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
                 status=custom_statuses[i % 10].logical_key,
                 status_custom_key=custom_statuses[i % 10].key,
             )
@@ -1553,7 +1594,12 @@ class StockItemTest(StockAPITestCase):
         """Test creation of a StockItem via the API."""
         # POST with an empty part reference
 
-        response = self.client.post(self.list_url, data={'quantity': 10, 'location': 1})
+        response = self.post(
+            self.list_url,
+            data={'quantity': 10, 'location': 1},
+            max_query_count=2250,
+            expected_code=400,
+        )
 
         self.assertContains(
             response,
@@ -1563,8 +1609,11 @@ class StockItemTest(StockAPITestCase):
 
         # POST with an invalid part reference
 
-        response = self.client.post(
-            self.list_url, data={'quantity': 10, 'location': 1, 'part': 10000000}
+        response = self.post(
+            self.list_url,
+            data={'quantity': 10, 'location': 1, 'part': 10000000},
+            max_query_count=2250,
+            expected_code=400,
         )
 
         self.assertContains(
@@ -1629,6 +1678,37 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(new_items.count(), 3)
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
+
+    def test_bulk_serialize_benchmark(self):
+        """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk serialize benchmark part',
+            description='Created for the stock serialize query-count benchmark',
+            trackable=True,
+        )
+
+        location = StockLocation.objects.create(
+            name='Bulk serialize benchmark location'
+        )
+
+        item = StockItem.objects.create(part=part, location=location, quantity=100)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        data = {'quantity': 100, 'serial_numbers': '1-100', 'destination': location.pk}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1300, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data), 100)
 
     def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
@@ -1967,6 +2047,20 @@ class StockItemTest(StockAPITestCase):
 
         url = reverse('api-stock-item-uninstall', kwargs={'pk': sub_item.pk})
 
+        # An uninstalled item cannot be moved into a structural location
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        response = self.post(url, {'location': structural.pk}, expected_code=400)
+
+        self.assertIn(
+            'Structural locations cannot be assigned stock items', str(response.data)
+        )
+
+        sub_item.refresh_from_db()
+        self.assertEqual(sub_item.belongs_to, item)
+
         self.post(url, {'location': 1}, expected_code=201)
 
         sub_item.refresh_from_db()
@@ -2203,7 +2297,7 @@ class StockItemTest(StockAPITestCase):
 
         data = response.data
 
-        self.assertEqual(data['success'], 'Updated 10 items')
+        self.assertEqual(data['success'], 'Updated multiple items')
         self.assertEqual(len(data['items']), 10)
 
         for item in data['items']:
@@ -2213,6 +2307,487 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
+
+class StockItemDisassembleTest(StockAPITestCase):
+    """Series of API tests for the StockItem disassembly endpoint."""
+
+    def setUp(self):
+        """Create a stock item of an assembly part, ready for disassembly."""
+        super().setUp()
+
+        # Part 100 ("Bob") is an assembly with 4 BOM lines
+        self.assembly = part.models.Part.objects.get(pk=100)
+
+        self.item = StockItem.objects.create(
+            part=self.assembly,
+            quantity=10,
+            location=StockLocation.objects.get(pk=1),
+            purchase_price=Money(100, 'USD'),
+        )
+
+        self.url = reverse('api-stock-item-disassemble', kwargs={'pk': self.item.pk})
+
+    def test_validation(self):
+        """Test validation checks for the disassembly endpoint."""
+        # Empty request
+        response = self.post(self.url, {}, expected_code=400)
+
+        self.assertIn('This field is required', str(response.data['items']))
+        self.assertIn('This field is required', str(response.data['quantity']))
+
+        # No line items provided
+        response = self.post(self.url, {'items': [], 'quantity': 1}, expected_code=400)
+
+        self.assertIn('Line items must be provided', str(response.data))
+
+        # Quantity exceeds available stock
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 100},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Quantity must not exceed available stock quantity', str(response.data)
+        )
+
+        # BOM item which points to a different part (BomItem pk=5 -> part 1)
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 5, 'quantity': 1}], 'quantity': 1},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'BOM item is not valid for the selected stock item', str(response.data)
+        )
+
+        # Duplicated BOM items
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 10},
+                    {'bom_item': 1, 'quantity': 5},
+                ],
+                'quantity': 1,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Duplicate BOM items provided', str(response.data))
+
+    def test_consumable_and_virtual_excluded(self):
+        """Consumable BOM lines, and lines pointing to a virtual part, cannot be disassembled."""
+        # BOM line marked as consumable directly
+        consumable_line = part.models.BomItem.objects.create(
+            part=self.assembly,
+            sub_part=part.models.Part.objects.get(pk=2),
+            quantity=1,
+            consumable=True,
+        )
+
+        # BOM line whose sub_part is marked as consumable
+        consumable_part = part.models.Part.objects.get(pk=3)
+        consumable_part.consumable = True
+        consumable_part.save()
+
+        # BOM line whose sub_part is marked as virtual
+        virtual_part = part.models.Part.objects.get(pk=5)
+        virtual_part.virtual = True
+        virtual_part.save()
+
+        for bom_item_pk in [consumable_line.pk, 2, 3]:
+            response = self.post(
+                self.url,
+                {'items': [{'bom_item': bom_item_pk, 'quantity': 1}], 'quantity': 1},
+                expected_code=400,
+            )
+
+            self.assertIn(
+                'BOM item is not valid for the selected stock item', str(response.data)
+            )
+
+    def test_disassemble(self):
+        """Test a valid disassembly operation, using a subset of the BOM lines."""
+        n = StockItem.objects.count()
+
+        # Disassemble 4 assemblies, but only break out 2 of the 4 BOM lines
+        # The second line specifies a custom location and status
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 40},
+                    {
+                        'bom_item': 4,
+                        'quantity': 12,
+                        'location': 2,
+                        'status': StockStatus.DAMAGED.value,
+                    },
+                ],
+                'quantity': 4,
+                'notes': 'Breaking apart',
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(StockItem.objects.count(), n + 2)
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 6)
+
+        items = {entry['part']: entry for entry in response.data}
+
+        # Check the generated component items
+        item_1 = StockItem.objects.get(pk=items[1]['pk'])
+        item_50 = StockItem.objects.get(pk=items[50]['pk'])
+
+        self.assertEqual(item_1.quantity, 40)
+        self.assertEqual(item_50.quantity, 12)
+
+        # Components inherit the location of the disassembled item by default
+        self.assertEqual(item_1.location, self.item.location)
+        self.assertEqual(item_1.status, StockStatus.OK.value)
+
+        # A custom location and status can be specified per line
+        self.assertEqual(item_50.location.pk, 2)
+        self.assertEqual(item_50.status, StockStatus.DAMAGED.value)
+
+        # Components are linked to the disassembled item
+        self.assertEqual(item_1.parent.pk, self.item.pk)
+        self.assertEqual(item_50.parent.pk, self.item.pk)
+
+        # Total cost (4 x 100 USD) is allocated evenly across 52 units
+        self.assertAlmostEqual(float(item_1.purchase_price.amount), 400 / 52, places=4)
+        self.assertAlmostEqual(float(item_50.purchase_price.amount), 400 / 52, places=4)
+        self.assertEqual(str(item_1.purchase_price.currency), 'USD')
+
+        # Check stock tracking entries have been created
+        self.assertTrue(
+            self.item.tracking_info.filter(
+                tracking_type=StockHistoryCode.DISASSEMBLED.value
+            ).exists()
+        )
+
+        for item in [item_1, item_50]:
+            entry = item.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).first()
+
+            self.assertIsNotNone(entry)
+            self.assertEqual(entry.deltas['stockitem'], self.item.pk)
+
+    def test_full_disassembly(self):
+        """Test that a fully disassembled item is retained at zero quantity."""
+        self.post(
+            self.url,
+            {'items': [{'bom_item': 2, 'quantity': 400}], 'quantity': 10},
+            expected_code=201,
+        )
+
+        self.item.refresh_from_db()
+
+        self.assertEqual(self.item.quantity, 0)
+        self.assertFalse(self.item.in_stock)
+
+    def test_traceability_inheritance(self):
+        """Test that traceability data is passed down to the generated components."""
+        po = order.models.PurchaseOrder.objects.create(
+            supplier=company.models.Company.objects.get(pk=1), reference='PO-9999'
+        )
+
+        bo = build.models.Build.objects.create(
+            part=self.assembly, quantity=10, reference='BO-9999'
+        )
+
+        self.item.batch = 'ABC-123'
+        self.item.purchase_order = po
+        self.item.build = bo
+        self.item.save()
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 1},
+            expected_code=201,
+        )
+
+        component = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        # Batch code and source purchase order are inherited directly
+        self.assertEqual(component.batch, 'ABC-123')
+        self.assertEqual(component.purchase_order, po)
+
+        # The source build order cannot be copied across (the component is not
+        # an output of the build) - instead it is recorded in the stock history
+        self.assertIsNone(component.build)
+
+        entry = component.tracking_info.filter(
+            tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+        ).first()
+
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.deltas['buildorder'], bo.pk)
+        self.assertEqual(entry.deltas['purchaseorder'], po.pk)
+
+    def test_explicit_pricing(self):
+        """Test that automatic cost allocation is skipped if explicit pricing is provided."""
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'bom_item': 1,
+                        'quantity': 10,
+                        'purchase_price': 5,
+                        'purchase_price_currency': 'NZD',
+                    },
+                    {'bom_item': 4, 'quantity': 3},
+                ],
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+
+        prices = {entry['part']: entry['purchase_price'] for entry in response.data}
+
+        self.assertAlmostEqual(prices[1], 5, places=3)
+        self.assertIsNone(prices[50])
+
+    def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
+        """Install a new stock item into the assembly under test."""
+        return StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=part_pk),
+            quantity=quantity,
+            belongs_to=self.item,
+            location=None,
+            **kwargs,
+        )
+
+    def test_installed_items_partial(self):
+        """Installed items are uninstalled, and only the remainder is created afresh."""
+        sub_1 = self.install_item(1, 12)
+        sub_2 = self.install_item(1, 8)
+
+        n = StockItem.objects.count()
+
+        # Disassemble all 10 assemblies - the line requires 100 units in total
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 100}], 'quantity': 10},
+            expected_code=201,
+        )
+
+        # Two uninstalled items, plus a single new item for the remainder
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(StockItem.objects.count(), n + 1)
+
+        pks = {entry['pk'] for entry in response.data}
+        self.assertIn(sub_1.pk, pks)
+        self.assertIn(sub_2.pk, pks)
+
+        for sub in [sub_1, sub_2]:
+            sub.refresh_from_db()
+            self.assertIsNone(sub.belongs_to)
+            self.assertEqual(sub.location, self.item.location)
+
+        new_item = StockItem.objects.get(pk=(pks - {sub_1.pk, sub_2.pk}).pop())
+        self.assertEqual(new_item.part.pk, 1)
+        self.assertEqual(new_item.quantity, 80)
+
+        # Uninstalled items are updated, not created afresh
+        self.assertTrue(
+            sub_1.tracking_info.filter(
+                tracking_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY.value
+            ).exists()
+        )
+        self.assertFalse(
+            sub_1.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).exists()
+        )
+        self.assertTrue(
+            self.item.tracking_info.filter(
+                tracking_type=StockHistoryCode.REMOVED_CHILD_ITEM.value
+            ).exists()
+        )
+        self.assertTrue(
+            new_item.tracking_info.filter(
+                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            ).exists()
+        )
+
+    def test_installed_items_full_coverage(self):
+        """No new stock item is created for a line fully covered by installed items."""
+        sub = self.install_item(1, 120, purchase_price=Money(3, 'USD'))
+
+        n = StockItem.objects.count()
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 100},
+                    {'bom_item': 4, 'quantity': 30},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        # The first line is fully covered by the uninstalled item
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(StockItem.objects.count(), n + 1)
+
+        sub.refresh_from_db()
+        self.assertIsNone(sub.belongs_to)
+
+        # The uninstalled item retains its own purchase price
+        self.assertEqual(sub.purchase_price, Money(3, 'USD'))
+
+        # The total cost (10 x 100 USD) is spread only across newly created units
+        new_item = StockItem.objects.get(part=50, parent=self.item)
+        self.assertEqual(new_item.quantity, 30)
+        self.assertAlmostEqual(
+            float(new_item.purchase_price.amount), 1000 / 30, places=4
+        )
+
+    def test_installed_items_leftover(self):
+        """Installed items which do not match a BOM line are still uninstalled."""
+        # Part 2 is not a component of the assembly
+        sub = self.install_item(2, 5, status=StockStatus.ATTENTION.value)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [{'bom_item': 2, 'quantity': 400}],
+                'quantity': 10,
+                'location': 2,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+        sub.refresh_from_db()
+        self.assertIsNone(sub.belongs_to)
+
+        # Uninstalled to the top-level destination, retaining its own status
+        self.assertEqual(sub.location.pk, 2)
+        self.assertEqual(sub.status, StockStatus.ATTENTION.value)
+
+        # The BOM line quantity is not reduced by the unmatched item
+        new_item = StockItem.objects.get(part=3, parent=self.item)
+        self.assertEqual(new_item.quantity, 400)
+
+    def test_installed_items_require_full_disassembly(self):
+        """Partial disassembly is rejected while items are installed."""
+        self.install_item(1, 1)
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 50}], 'quantity': 5},
+            expected_code=400,
+        )
+
+        self.assertIn('must be disassembled in its entirety', str(response.data))
+
+    def test_installed_items_status_and_location(self):
+        """Explicit per-line status and location values are applied to uninstalled items."""
+        sub_1 = self.install_item(1, 10)
+        sub_2 = self.install_item(50, 4, status=StockStatus.ATTENTION.value)
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'bom_item': 1,
+                        'quantity': 100,
+                        'location': 2,
+                        'status': StockStatus.DAMAGED.value,
+                    },
+                    {'bom_item': 4, 'quantity': 30},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        sub_1.refresh_from_db()
+        self.assertEqual(sub_1.location.pk, 2)
+        self.assertEqual(sub_1.status, StockStatus.DAMAGED.value)
+
+        # No explicit status provided for the second line - item status is retained
+        sub_2.refresh_from_db()
+        self.assertEqual(sub_2.location, self.item.location)
+        self.assertEqual(sub_2.status, StockStatus.ATTENTION.value)
+
+    def test_installed_items_variants_and_substitutes(self):
+        """Installed variant and substitute parts are matched against BOM lines."""
+        # Designate part 2 as a substitute for BOM line 4
+        part.models.BomItemSubstitute.objects.create(
+            bom_item=part.models.BomItem.objects.get(pk=4),
+            part=part.models.Part.objects.get(pk=2),
+        )
+
+        # New BOM line against a template part, allowing variants
+        bom_line = part.models.BomItem.objects.create(
+            part=self.assembly,
+            sub_part=part.models.Part.objects.get(pk=10000),
+            quantity=5,
+            allow_variants=True,
+        )
+
+        substitute_item = self.install_item(2, 10)
+        variant_item = self.install_item(10001, 20)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 4, 'quantity': 30},
+                    {'bom_item': bom_line.pk, 'quantity': 50},
+                ],
+                'quantity': 10,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 4)
+
+        for sub in [substitute_item, variant_item]:
+            sub.refresh_from_db()
+            self.assertIsNone(sub.belongs_to)
+
+        # Line quantities are reduced by the matched installed items
+        new_50 = StockItem.objects.get(part=50, parent=self.item)
+        self.assertEqual(new_50.quantity, 20)
+
+        new_chair = StockItem.objects.get(part=10000, parent=self.item)
+        self.assertEqual(new_chair.quantity, 30)
+
+    def test_serialized(self):
+        """Test disassembly of a serialized stock item."""
+        item = StockItem.objects.create(
+            part=self.assembly, quantity=1, serial='SN-DISASSEMBLE-1'
+        )
+
+        url = reverse('api-stock-item-disassemble', kwargs={'pk': item.pk})
+
+        self.post(
+            url,
+            {'items': [{'bom_item': 1, 'quantity': 10}], 'quantity': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # A serialized item cannot be "depleted" - it is marked as destroyed instead
+        self.assertEqual(item.status, StockStatus.DESTROYED.value)
+        self.assertFalse(item.in_stock)
 
 
 class StocktakeTest(StockAPITestCase):
@@ -2288,6 +2863,32 @@ class StocktakeTest(StockAPITestCase):
             response = self.post(url, data, expected_code=201)
             self.assertEqual(response.data['items'][0]['pk'], 1234)
             self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
+
+    def test_count_serialized(self):
+        """Test that counting a serialized stock item correctly updates stocktake_date."""
+        import datetime
+
+        # Fixture item pk=501 is a serialized item (serial=1)
+        item = StockItem.objects.get(pk=501)
+        self.assertTrue(item.serialized)
+        self.assertEqual(item.quantity, 1)
+
+        # Clear any existing stocktake date so we can verify it gets set
+        item.stocktake_date = None
+        item.save()
+
+        url = reverse('api-stock-count')
+
+        # Count the serialized item — quantity must be 1
+        data = {'items': [{'pk': item.pk, 'quantity': 1}]}
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['items'][0]['pk'], item.pk)
+        self.assertEqual(response.data['items'][0]['quantity'], '1.00000')
+
+        # stocktake_date must have been set to today
+        item.refresh_from_db()
+        self.assertEqual(item.stocktake_date, datetime.date.today())
 
     def test_transfer(self):
         """Test stock transfers."""
@@ -2409,7 +3010,431 @@ class StocktakeTest(StockAPITestCase):
             {'items': [{'pk': item_a.pk, 'quantity': 1}], 'location': structural.pk},
             expected_code=400,
         )
-        self.assertIn('does not exist', str(response.data['location']))
+        self.assertIn(
+            'Structural locations cannot be assigned stock items',
+            str(response.data['location']),
+        )
+
+    def test_count_unchanged_quantity_saves_field_changes(self):
+        """Location / status changes are saved even if the counted quantity is unchanged.
+
+        Regression test: counting an item to its *existing* quantity used to skip
+        the model save entirely, losing any location / status change while still
+        recording the change in stock history.
+        """
+        item = StockItem.objects.get(pk=1234)
+
+        quantity = item.quantity
+        self.assertEqual(item.location.pk, 5)
+        self.assertEqual(item.status, StockStatus.OK.value)
+
+        # Clear any existing stocktake date so we can verify it gets set
+        item.stocktake_date = None
+        item.save()
+
+        self.post(
+            reverse('api-stock-count'),
+            {
+                'items': [
+                    {
+                        'pk': item.pk,
+                        'quantity': float(quantity),
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # Quantity is unchanged, but the location and status changes must be saved
+        self.assertEqual(item.quantity, quantity)
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.status, StockStatus.DAMAGED.value)
+        self.assertIsNotNone(item.stocktake_date)
+
+        # The stock history entry must agree with the saved state
+        entry = StockItemTracking.objects.filter(
+            item=item, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).latest('date')
+        self.assertEqual(entry.deltas.get('quantity'), float(quantity))
+        self.assertEqual(entry.deltas.get('location'), 1)
+        self.assertEqual(entry.deltas.get('old_location'), 5)
+        self.assertEqual(entry.deltas.get('status'), StockStatus.DAMAGED.value)
+        self.assertEqual(entry.deltas.get('old_status'), StockStatus.OK.value)
+
+    def test_bulk_count_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk count benchmark part',
+            description='Created for the stock count query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk count benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-count')
+
+        data = {
+            'items': [
+                {'pk': item.pk, 'quantity': idx + 100} for idx, item in enumerate(items)
+            ]
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_add_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to add stock to 100 items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk add benchmark part',
+            description='Created for the stock add query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk add benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-add')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2500, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_remove_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to remove stock from 100 items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk remove benchmark part',
+            description='Created for the stock remove query-count benchmark',
+        )
+
+        location = StockLocation.objects.create(name='Bulk remove benchmark location')
+
+        items = [
+            StockItem.objects.create(part=part, location=location, quantity=idx + 100)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-remove')
+
+        data = {'items': [{'pk': item.pk, 'quantity': 5} for item in items]}
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=2250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+    def test_bulk_move_query_benchmark(self):
+        """Benchmark: measure the number of DB queries required to move 100 stock items at once."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Bulk move benchmark part',
+            description='Created for the stock move query-count benchmark',
+        )
+
+        source = StockLocation.objects.create(name='Bulk move benchmark source')
+        destination = StockLocation.objects.create(
+            name='Bulk move benchmark destination'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=source, quantity=idx + 1)
+            for idx in range(100)
+        ]
+
+        url = reverse('api-stock-transfer')
+
+        data = {
+            'items': [{'pk': item.pk, 'quantity': item.quantity} for item in items],
+            'location': destination.pk,
+        }
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # TODO: 2026-07-12 : Refactor this API call
+            response = self.post(
+                url, data, max_query_count=1250, benchmark=True, format='json'
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(len(response.data['items']), 100)
+
+
+class StockTransferMergeTest(StockAPITestCase):
+    """Tests for optional merge-on-transfer behavior."""
+
+    def setUp(self):
+        """Set up stock items for merge transfer tests."""
+        super().setUp()
+
+        self.part = Part.objects.get(pk=1)
+        self.dest = StockLocation.objects.get(pk=2)
+        self.source_loc = StockLocation.objects.get(pk=5)
+        self.url = reverse('api-stock-transfer')
+
+        # Remove fixture stock at the destination so merge targets are deterministic
+        StockItem.objects.filter(part=self.part, location=self.dest).delete()
+
+    def test_transfer_without_merge_creates_separate_lot(self):
+        """Transfer without merge leaves multiple stock rows at destination."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': False}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
+
+    def test_transfer_with_merge_combines_lots(self):
+        """Transfer with merge combines into an existing compatible lot."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 1
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 150)
+        self.assertFalse(StockItem.objects.filter(pk=incoming.pk).exists())
+
+    def test_transfer_mixed_merge_per_item(self):
+        """Each transfer line can merge or move independently."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        merge_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=30
+        )
+        separate_incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=20
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': merge_incoming.pk, 'quantity': 30, 'merge': True},
+                    {'pk': separate_incoming.pk, 'quantity': 20, 'merge': False},
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 130)
+        self.assertFalse(StockItem.objects.filter(pk=merge_incoming.pk).exists())
+        self.assertTrue(StockItem.objects.filter(pk=separate_incoming.pk).exists())
+
+    def test_transfer_merge_does_not_copy_source_tracking(self):
+        """Transfer merge keeps destination history and adds a single merge entry."""
+        # Track total number of tracking entries created
+        N_TRACKING_ENTRIES = StockItemTracking.objects.count()
+
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=50
+        )
+
+        incoming.add_tracking_entry(
+            StockHistoryCode.STOCK_UPDATE, self.user, notes='Source tracking entry'
+        )
+
+        incoming_pk = incoming.pk
+        tracking_count = existing.tracking_info.count()
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+
+        self.assertFalse(
+            existing.tracking_info.filter(notes='Source tracking entry').exists()
+        )
+        self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 150.0)
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+        self.assertEqual(StockItemTracking.objects.count(), N_TRACKING_ENTRIES + 4)
+
+        # Ensure tracking entries were bulk created in the correct order
+        entries = list(StockItemTracking.objects.order_by('-pk')[:4])[::-1]
+
+        for idx, tt in enumerate([
+            StockHistoryCode.CREATED,
+            StockHistoryCode.CREATED,
+            StockHistoryCode.STOCK_UPDATE,
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+        ]):
+            self.assertEqual(
+                entries[idx].tracking_type,
+                tt,
+                f'Entry {idx} has unexpected tracking type {entries[idx].tracking_type}',
+            )
+
+    def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
+        """Partial merge reuses split transfer deltas on the merge tracking entry."""
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=100
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': incoming.pk, 'quantity': 30, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 70)
+
+        merge_entry = existing.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertEqual(merge_entry.deltas['stockitem'], incoming.pk)
+        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+        self.assertFalse(
+            incoming.tracking_info.filter(
+                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
+            ).exists()
+        )
+
+    def test_transfer_merge_skips_protected_source(self):
+        """Merge-on-transfer must not absorb items in a protected state.
+
+        Regression test: only the *target* item used to be validated, so a
+        transfer with merge=True could absorb (and delete) an in-production
+        build output. Such items must be moved as a separate lot instead.
+        """
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=100
+        )
+
+        # An "in production" build output
+        self.part.assembly = True
+        self.part.save()
+
+        bo = build.models.Build.objects.create(
+            reference='BO-9999', part=self.part, title='Merge test build', quantity=50
+        )
+
+        building = StockItem.objects.create(
+            part=self.part,
+            location=self.source_loc,
+            quantity=50,
+            build=bo,
+            is_building=True,
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [{'pk': building.pk, 'quantity': 50, 'merge': True}],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        # The build output must survive - transferred as a separate lot instead
+        building.refresh_from_db()
+        self.assertTrue(building.is_building)
+        self.assertEqual(building.location, self.dest)
+        self.assertEqual(building.quantity, 50)
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 100)
 
 
 class StockItemDeletionTest(StockAPITestCase):
@@ -2675,11 +3700,20 @@ class StockTestResultTest(StockAPITestCase):
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
     def test_bulk_delete(self):
         """Test that the BulkDelete endpoint works for this model."""
+        from django_q.models import OrmQ
+
         n = StockItemTestResult.objects.count()
 
         tests = []
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
         url = reverse('api-stock-test-result-list')
 
@@ -2720,10 +3754,31 @@ class StockTestResultTest(StockAPITestCase):
         # Attempt a delete without providing items
         self.delete(url, {}, expected_code=400)
 
+        OrmQ.objects.all().delete()
+
         # Now, let's delete all the newly created items with a single API request
-        response = self.delete(url, {'items': tests}, expected_code=200)
+        response = self.delete(
+            url,
+            {'items': tests},
+            expected_code=200,
+            max_query_count=100,
+            benchmark=True,
+            max_query_time=0.5,
+        )
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
+
+        self.assertGreaterEqual(OrmQ.objects.count(), len(tests))
+
+        # Ensure that an associated 'deleted' event has been offloaded
+        for test in tests:
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'stock_stockitemtestresult.deleted', matching_kwargs={'id': test}
+                )
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_value_choices(self):
         """Test that the 'value' field is correctly validated."""

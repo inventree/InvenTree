@@ -1,9 +1,8 @@
+import type { ModelType } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
-
-import type { ModelType } from '@lib/enums/ModelType';
-import type { PanelType } from '@lib/types/Panel';
 import { lazy } from 'react';
 import { useUserState } from '../../states/UserState';
 
@@ -26,6 +25,7 @@ export default function NotesPanel({
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
+    hotkey: 'mod+Shift+N',
     notification_dot: has_note ? 'info' : null,
     content:
       model_type && model_id ? (

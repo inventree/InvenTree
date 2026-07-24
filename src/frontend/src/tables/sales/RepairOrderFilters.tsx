@@ -9,7 +9,7 @@ import {
   OutstandingFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 export default function RepairOrderFilters({
   includeDateFilters = true

@@ -1,5 +1,11 @@
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/types/Filters';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconCalendar,
   IconListDetails,
@@ -7,13 +13,6 @@ import {
   IconTools
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-
-import type { EventContentArg } from '@fullcalendar/core';
-import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { TableFilter } from '@lib/types/Filters';
-import type { PanelType } from '@lib/types/Panel';
-import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -37,10 +36,23 @@ function BuildOrderCalendar() {
   }, [globalSettings]);
 
   const renderTooltip = useCallback((event: EventContentArg) => {
+    const order = event?.event?._def?.extendedProps?.order;
+
+    const extraEntries: { label: string; value: string | React.ReactNode }[] =
+      [];
+
+    if (order?.quantity) {
+      extraEntries.push({
+        label: t`Quantity`,
+        value: order.quantity
+      });
+    }
+
     return OrderCalendarToolTip({
       event: event,
       modelType: ModelType.part,
-      instanceLookup: 'part_detail'
+      instanceLookup: 'part_detail',
+      extraEntries: extraEntries
     });
   }, []);
 
@@ -48,8 +60,9 @@ function BuildOrderCalendar() {
     <OrderCalendar
       model={ModelType.build}
       role={UserRoles.build}
-      params={{ outstanding: true, part_detail: true }}
+      params={{ part_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );

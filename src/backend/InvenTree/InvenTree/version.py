@@ -15,10 +15,10 @@ from datetime import timedelta as td
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.4.0 dev'
+INVENTREE_SW_VERSION = '1.5.0 dev'
 
 # Minimum supported Python version
-MIN_PYTHON_VERSION = (3, 11)
+MIN_PYTHON_VERSION = (3, 12)
 
 logger = logging.getLogger('inventree')
 
@@ -55,6 +55,10 @@ try:
     except (KeyError, IndexError):
         logger.warning('INVE-W1: Current branch could not be detected.')
         main_branch = None
+
+    if main_repo is not None:
+        main_repo.close()
+        main_repo = None
 except ImportError:
     logger.warning(
         'INVE-W2: Dulwich module not found, git information will not be available.'
@@ -129,27 +133,14 @@ def isInvenTreeDevelopmentVersion() -> bool:
     return inventreeVersion().endswith('dev')
 
 
-def inventreeDocsVersion() -> str:
-    """Return the version string matching the latest documentation.
-
-    Development -> "latest"
-    Release -> "major.minor.sub" e.g. "0.5.2"
-    """
-    if isInvenTreeDevelopmentVersion():
-        return 'latest'
-
-    return INVENTREE_SW_VERSION
-
-
 def inventreeDocUrl() -> str:
     """Return URL for InvenTree documentation site."""
-    tag = inventreeDocsVersion()
-    return f'https://docs.inventree.org/en/{tag}'
+    return 'https://docs.inventree.org'
 
 
 def inventreeAppUrl() -> str:
     """Return URL for InvenTree app site."""
-    return 'https://docs.inventree.org/en/stable/app/'
+    return 'https://docs.inventree.org/en/latest/app/'
 
 
 def inventreeGithubUrl() -> str:

@@ -1,18 +1,26 @@
 """Unit tests for the SalesOrder models."""
 
 from datetime import datetime, timedelta
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.urls import reverse
+
+from django_q.models import OrmQ
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from common.settings import set_global_setting
 from company.models import Address, Company
 from InvenTree import status_codes as status
-from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    addUserPermission,
+)
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -21,18 +29,23 @@ from order.models import (
     SalesOrderShipment,
 )
 from part.models import Part
-from stock.models import StockItem, StockLocation
+from stock.events import StockEvents
+from stock.models import StockItem, StockItemTracking, StockLocation
+from stock.status_codes import StockHistoryCode
 from users.models import Owner
 
 
-class SalesOrderTest(InvenTreeTestCase):
+class SalesOrderTest(InvenTreeAPITestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
     fixtures = ['company', 'users']
+    roles = ['sales_order.add']
 
     @classmethod
     def setUpTestData(cls):
         """Initial setup for this set of unit tests."""
+        super().setUpTestData()
+
         # Create a Company to ship the goods to
         cls.customer = Company.objects.create(
             name='ABC Co', description='My customer', is_customer=True
@@ -179,6 +192,24 @@ class SalesOrderTest(InvenTreeTestCase):
             quantity=25 if full else 20,
         )
 
+    def test_scratch_complete_allocation_single(self):
+        """Scratch check: SalesOrderAllocation.complete_allocation() backwards-compat shim."""
+        self.allocate_stock(True)
+
+        allocations = list(self.shipment.allocations.all())
+        self.assertEqual(len(allocations), 2)
+
+        for allocation in allocations:
+            allocation.complete_allocation(self.user)
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 50)
+
+        for allocation in allocations:
+            allocation.item.refresh_from_db()
+            self.assertEqual(allocation.item.sales_order, self.order)
+            self.assertEqual(allocation.item.customer, self.order.customer)
+
     def test_over_allocate(self):
         """Test that over allocation logic works."""
         SA = StockItem.objects.create(part=self.part, quantity=9)
@@ -220,6 +251,30 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_complete_allocation_stale_line_instance(self):
+        """The 'shipped' count is incremented atomically at the database level.
+
+        Simulates two concurrent workers completing different allocations
+        against the same order line, each holding its own (stale) copy of the line.
+        """
+        self.allocate_stock(True)
+
+        alloc_a, alloc_b = SalesOrderAllocation.objects.filter(line=self.line).order_by(
+            'pk'
+        )
+
+        # Cache a separate copy of the line on each allocation
+        self.assertEqual(alloc_a.line.shipped, 0)
+        self.assertEqual(alloc_b.line.shipped, 0)
+
+        allocations = SalesOrderAllocation.objects.filter(line=self.line).order_by('pk')
+
+        self.shipment.complete_allocations(allocations)
+
+        # Both shipped quantities must be counted
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 50)
+
     def test_allocate_variant(self):
         """Allocate a variant of the designated item."""
         SalesOrderAllocation.objects.create(
@@ -247,6 +302,39 @@ class SalesOrderTest(InvenTreeTestCase):
         # Now try to ship it - should fail
         result = self.order.ship_order(None)
         self.assertFalse(result)
+
+    def test_order_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_cancel() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent cancellation requests
+        could both run the cancellation side effects (duplicate CANCELLED
+        events). The status is now re-read (under lock) from the database
+        before the check.
+        """
+        self.allocate_stock(True)
+        self.assertEqual(SalesOrderAllocation.objects.count(), 2)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        order_a = SalesOrder.objects.get(pk=self.order.pk)
+        order_b = SalesOrder.objects.get(pk=self.order.pk)
+
+        order_a.cancel_order()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
+        self.assertEqual(SalesOrderAllocation.objects.count(), 0)
+
+        # The second (stale) instance still believes the order is PENDING -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(order_b.status, status.SalesOrderStatus.PENDING)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            order_b.cancel_order()
+            trigger.assert_not_called()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
 
     def test_complete_order(self):
         """Allocate line items, then ship the order."""
@@ -337,6 +425,81 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_complete_order_stale_instance_is_noop(self):
+        """A second completion attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests could
+        both run the completion side effects (duplicate COMPLETED events and
+        duplicate pricing-update scheduling). The status is now re-read (under
+        lock) from the database before the check.
+        """
+        self.allocate_stock(True)
+        self.shipment.complete_shipment(None)
+
+        # Ship the order (PENDING -> SHIPPED)
+        self.assertTrue(self.order.ship_order(None))
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
+
+        # Two "concurrent" requests each hold their own instance of the order,
+        # both about to transition SHIPPED -> COMPLETE
+        order_a = SalesOrder.objects.get(pk=self.order.pk)
+        order_b = SalesOrder.objects.get(pk=self.order.pk)
+
+        self.assertTrue(order_a.complete_order(None))
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)
+
+        # The second (stale) instance still believes the order is SHIPPED -
+        # completion must be skipped based on the database state
+        self.assertEqual(order_b.status, status.SalesOrderStatus.SHIPPED)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            self.assertFalse(order_b.complete_order(None))
+            trigger.assert_not_called()
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)
+
+    def test_complete_shipment_task_is_idempotent(self):
+        """Duplicate execution of the shipment completion task must not double-ship.
+
+        Regression test: two rapid completion requests could enqueue the background
+        completion task twice - each execution then completed every allocation again,
+        double-counting the 'shipped' quantity and re-assigning stock to the customer.
+        """
+        self.allocate_stock(True)
+
+        # Complete the shipment (the task runs inline during testing)
+        self.shipment.complete_shipment(None)
+
+        self.shipment.refresh_from_db()
+        self.line.refresh_from_db()
+
+        self.assertTrue(self.shipment.is_complete())
+        self.assertEqual(self.line.shipped, 50)
+
+        # A second completion request is rejected outright
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        n_items = StockItem.objects.count()
+        n_tracking = StockItemTracking.objects.count()
+
+        # Simulate a duplicated task execution
+        # (e.g. a second completion request submitted before the first task ran)
+        order.tasks.complete_sales_order_shipment(self.shipment.pk, None, None)
+
+        self.line.refresh_from_db()
+
+        # The 'shipped' quantity must not be double-counted
+        self.assertEqual(self.line.shipped, 50)
+
+        # No additional stock items or tracking entries have been created
+        self.assertEqual(StockItem.objects.count(), n_items)
+        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+
     def test_shipment_many_items(self):
         """Test completion of a shipment with many items.
 
@@ -345,6 +508,13 @@ class SalesOrderTest(InvenTreeTestCase):
 
         This test is designed to test that the database does not error out,
         even when a large number of items are assigned to a shipment.
+
+        It also checks that:
+        - Stock items are split (or fully consumed) correctly
+        - The correct stock tracking entries are created for each item
+        - The associated ITEM_SPLIT / ITEM_ASSIGNED_TO_CUSTOMER events are queued
+        - A low-stock check is queued for the (single) affected part
+        - Line 'shipped' quantities and allocation->item references are updated correctly
 
         Ref: https://github.com/inventree/InvenTree/pull/11500
         """
@@ -368,26 +538,26 @@ class SalesOrderTest(InvenTreeTestCase):
         line = SalesOrderLineItem.objects.create(part=part, order=so, quantity=N_ITEMS)
 
         # Create stock items, and assign to shipment
+        # Every 5th item has exactly the allocated quantity (no split required);
+        # the rest have excess quantity (requiring a split)
         allocations = []
         stock_items = []
 
-        tree_id = StockItem.objects.all().order_by('-tree_id').first().tree_id
-
         for idx in range(N_ITEMS):
-            tree_id += 1
-
-            stock_items.append(
-                StockItem(
-                    part=part,
-                    quantity=1 + idx % 5,
-                    level=0,
-                    lft=0,
-                    rght=0,
-                    tree_id=tree_id,
-                )
-            )
+            stock_items.append(StockItem(part=part, quantity=1 + idx % 5))
 
         StockItem.objects.bulk_create(stock_items)
+
+        # Re-fetch the created items, as bulk_create() does not guarantee that the
+        # pk values of the passed-in objects are populated (e.g. on MySQL)
+        stock_items = list(StockItem.objects.filter(part=part))
+
+        # Original quantity of each stock item, keyed by pk (used for verification below)
+        original_quantities = {item.pk: item.quantity for item in stock_items}
+        split_pks = {pk for pk, qty in original_quantities.items() if qty > 1}
+        exact_pks = {pk for pk, qty in original_quantities.items() if qty == 1}
+        self.assertEqual(len(split_pks), N_ITEMS * 4 // 5)
+        self.assertEqual(len(exact_pks), N_ITEMS // 5)
 
         # Check expected available quantity
         self.assertEqual(part.total_stock, 2250)
@@ -408,8 +578,30 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertFalse(shipment.is_complete())
         self.assertTrue(shipment.check_can_complete(raise_error=False))
 
-        # Complete the shipment
-        shipment.complete_shipment(None)
+        # Complete the shipment via the API
+        self.assignRole('sales_order.add')
+
+        # Enable plugin events, and queue them (rather than firing synchronously),
+        # so we can inspect exactly what was queued once the shipment is completed
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        # Start with a fresh slate for the OrmQ queue
+        OrmQ.objects.all().delete()
+
+        url = reverse('api-so-shipment-ship', kwargs={'pk': shipment.pk})
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            response = self.post(
+                url,
+                expected_code=200,
+                benchmark=True,
+                max_query_time=5.0,
+                max_query_count=100,
+            )
+
+        self.assertEqual(response.status_code, 200)
 
         shipment.refresh_from_db()
         self.assertIsNotNone(shipment.shipment_date)
@@ -418,6 +610,143 @@ class SalesOrderTest(InvenTreeTestCase):
         # Part stock quantity should have reduced by 1 for each allocated item
         part.refresh_from_db()
         self.assertEqual(part.total_stock, 2250 - N_ITEMS)
+
+        # The line item should now show the full quantity as 'shipped'
+        line.refresh_from_db()
+        self.assertEqual(line.shipped, N_ITEMS)
+
+        # Every allocation should now point to a StockItem which has been assigned to the customer
+        self.assertEqual(
+            shipment.allocations.filter(
+                item__sales_order=so, item__customer=customer
+            ).count(),
+            N_ITEMS,
+        )
+
+        queued_tasks = list(OrmQ.objects.all())
+
+        # register_event tasks queued for StockEvents.ITEM_SPLIT, one per split item
+        split_event_tasks = [
+            task
+            for task in queued_tasks
+            if task.func() == 'plugin.base.event.events.register_event'
+            and task.args() == (StockEvents.ITEM_SPLIT,)
+        ]
+        self.assertEqual(len(split_event_tasks), len(split_pks))
+
+        # register_event tasks queued for StockEvents.ITEM_ASSIGNED_TO_CUSTOMER, one per item
+        customer_event_tasks = [
+            task
+            for task in queued_tasks
+            if task.func() == 'plugin.base.event.events.register_event'
+            and task.args() == (StockEvents.ITEM_ASSIGNED_TO_CUSTOMER,)
+        ]
+        self.assertEqual(len(customer_event_tasks), N_ITEMS)
+
+        # 'notify_low_stock_if_required' should be queued exactly once - there is only
+        # a single distinct part involved, despite the large number of stock items
+        low_stock_tasks = [
+            task
+            for task in queued_tasks
+            if task.func() == 'part.tasks.notify_low_stock_if_required'
+        ]
+        self.assertEqual(len(low_stock_tasks), 1)
+        self.assertEqual(low_stock_tasks[0].args(), (part.pk,))
+
+        # Exactly one StockItemTracking entry should exist per split, per side
+        self.assertEqual(
+            StockItemTracking.objects.filter(
+                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value
+            ).count(),
+            len(split_pks),
+        )
+        self.assertEqual(
+            StockItemTracking.objects.filter(
+                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+            ).count(),
+            len(split_pks),
+        )
+
+        # Exactly one 'shipped' tracking entry should exist per allocated item
+        self.assertEqual(
+            StockItemTracking.objects.filter(
+                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value
+            ).count(),
+            N_ITEMS,
+        )
+
+        # Check the original (exact-quantity) stock items were consumed directly, with no split
+        for pk in exact_pks:
+            item = StockItem.objects.get(pk=pk)
+            self.assertEqual(item.quantity, 1)
+            self.assertEqual(item.sales_order, so)
+            self.assertEqual(item.customer, customer)
+
+            self.assertFalse(
+                StockItemTracking.objects.filter(
+                    item=item, tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+                ).exists()
+            )
+            self.assertTrue(
+                StockItemTracking.objects.filter(
+                    item=item,
+                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+                    deltas__salesorder=so.pk,
+                ).exists()
+            )
+
+        # Check that the split (excess-quantity) stock items were correctly split
+        for pk in split_pks:
+            original_item = StockItem.objects.get(pk=pk)
+            original_quantity = original_quantities[pk]
+
+            # The original item should retain the remainder, and *not* be shipped
+            self.assertEqual(original_item.quantity, original_quantity - 1)
+            self.assertIsNone(original_item.sales_order)
+            self.assertIsNone(original_item.customer)
+
+        # Spot-check a single split item for the exact linkage between tracking entries
+        # (aggregate counts above already confirm this holds for every split item)
+        sample_pk = next(iter(split_pks))
+        sample_original = StockItem.objects.get(pk=sample_pk)
+        sample_new_item = StockItem.objects.get(
+            part=part, quantity=1, sales_order=so, parent=sample_original
+        )
+
+        self.assertEqual(sample_new_item.quantity, 1)
+        self.assertTrue(
+            StockItemTracking.objects.filter(
+                item=sample_new_item,
+                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
+                deltas__stockitem=sample_original.pk,
+            ).exists()
+        )
+        self.assertTrue(
+            StockItemTracking.objects.filter(
+                item=sample_original,
+                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+            ).exists()
+        )
+        self.assertTrue(
+            StockItemTracking.objects.filter(
+                item=sample_new_item,
+                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+                deltas__salesorder=so.pk,
+            ).exists()
+        )
+        self.assertTrue(
+            any(
+                task.kwargs()
+                == {'id': sample_new_item.pk, 'parent': sample_original.pk}
+                for task in split_event_tasks
+            )
+        )
+
+        # The allocation for the split item should now point at the new (split-off) item
+        allocation = SalesOrderAllocation.objects.get(
+            line=line, shipment=shipment, item=sample_new_item
+        )
+        self.assertNotEqual(allocation.item_id, sample_pk)
 
     def test_default_shipment(self):
         """Test sales order default shipment creation."""

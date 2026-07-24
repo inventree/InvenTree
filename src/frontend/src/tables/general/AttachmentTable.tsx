@@ -1,17 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { notifications } from '@mantine/notifications';
-import {
-  IconCircleCheck,
-  IconExclamationCircle,
-  IconExternalLink,
-  IconFileUpload,
-  IconUpload,
-  IconX
-} from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
@@ -26,7 +12,21 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
+import { notifications } from '@mantine/notifications';
+import {
+  IconCircleCheck,
+  IconExclamationCircle,
+  IconExternalLink,
+  IconFileUpload,
+  IconUpload,
+  IconX
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
 import {
@@ -35,7 +35,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Define set of columns to display for the attachment table

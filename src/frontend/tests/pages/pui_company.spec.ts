@@ -5,12 +5,13 @@ import {
   clickOnParamFilter,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showParametricView
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
-test('Company', async ({ browser }) => {
+test('Company - Basic Tests', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'company/1/details');
@@ -42,8 +43,7 @@ test('Company', async ({ browser }) => {
   await loadTab(page, 'Notes');
 
   // Let's edit the company details
-  await page.getByLabel('action-menu-company-actions').click();
-  await page.getByLabel('action-menu-company-actions-edit').click();
+  await openDetailAction(page, 'company', 'edit');
 
   await page.getByLabel('text-field-name', { exact: true }).fill('');
   await page
@@ -70,7 +70,43 @@ test('Company - Parameters', async ({ browser }) => {
   await page.getByRole('option', { name: 'NET-30' }).click();
 
   await page.getByRole('cell', { name: 'Arrow Electronics' }).waitFor();
-  await page.getByRole('cell', { name: 'PCB assembly house' }).waitFor();
+  await page.getByRole('cell', { name: 'SUP-012' }).waitFor();
+
+  await page.getByRole('cell', { name: 'PCBA+' }).click();
+  await page.getByRole('link', { name: 'details-company-45' }).click();
+
+  // Let's duplicate this company
+  await openDetailAction(page, 'company', 'duplicate');
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill(`PCBA Duplicate ${Math.floor(Math.random() * 1000)}`);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.waitForLoadState('networkidle');
+  await loadTab(page, 'Parameters');
+
+  // Only one parameter should be visible (unique parameters not copied)
+  await page.getByRole('cell', { name: 'NET-30' }).waitFor();
+  await page.getByText('1 - 1 / 1').waitFor();
+
+  // Try to create a duplicate parameter
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-template' })
+    .fill('supplier');
+  await page.getByRole('option', { name: 'Supplier ID' }).click();
+
+  await page.getByRole('textbox', { name: 'text-field-data' }).fill('SUP-012');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Parameter value must be unique').waitFor();
 });
 
 test('Company - Supplier Parts', async ({ browser }) => {
@@ -81,14 +117,12 @@ test('Company - Supplier Parts', async ({ browser }) => {
 
   await loadTab(page, 'Supplier Parts');
   await clearTableFilters(page);
-
-  await page.getByText(/1 \- 25 \/ 77\d/).waitFor();
+  await page.getByText(/1 - 25 \/ 7\d\d/).waitFor();
 
   await setTableChoiceFilter(page, 'Primary', 'Yes');
-  await page.getByText(/1 \- 25 \/ 31\d/).waitFor();
+  await page.getByText(/1 - 25 \/ 3\d\d/).waitFor();
 
   await clearTableFilters(page);
-
   await setTableChoiceFilter(page, 'Primary', 'No');
-  await page.getByText(/1 \- 25 \/ 45\d/).waitFor();
+  await page.getByText(/1 - 25 \/ 4\d\d/).waitFor();
 });

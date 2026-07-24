@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -15,6 +12,17 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -22,14 +30,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  CompanyColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LinkColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Construct a table listing manufacturer parts
@@ -85,12 +85,14 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: !!partId
+        switchable: !!partId,
+        filter: 'part_active'
       }),
       IPNColumn({}),
       {
         accessor: 'manufacturer',
         sortable: true,
+        filter: 'manufacturer_active',
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
         )
@@ -130,10 +132,14 @@ export function ManufacturerPartTable({
     table: table
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: selectedPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    fields: duplicateManufacturerPartFields,
     table: table,
     initialData: {
       ...selectedPart
@@ -161,7 +167,8 @@ export function ManufacturerPartTable({
         active: !manufacturerId,
         description: t`Show manufacturer parts for active manufacturers.`,
         type: 'boolean'
-      }
+      },
+      TagsFilter({ modelType: ModelType.manufacturerpart })
     ];
   }, [manufacturerId]);
 

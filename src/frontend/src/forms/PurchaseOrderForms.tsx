@@ -1,3 +1,14 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -15,37 +26,24 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCalendarExclamation,
   IconCoins,
   IconCurrencyDollar,
   IconHash,
   IconInfoCircle,
   IconLink,
-  IconList,
   IconNotes,
   IconSitemap,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { apiUrl } from '@lib/functions/Api';
-import { toNumber } from '@lib/functions/Conversion';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet
-} from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -57,6 +55,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { ProjectCodeField } from './CommonFields';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -185,14 +184,13 @@ export function usePurchaseOrderLineItemFields({
         value: purchasePriceCurrency,
         onValueChange: setPurchasePriceCurrency
       },
+      discount: {},
       auto_pricing: {
         default: create !== false,
         value: autoPricing,
         onValueChange: setAutoPricing
       },
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      project_code: ProjectCodeField(),
       target_date: {
         icon: <IconCalendar />
       },
@@ -270,9 +268,7 @@ export function usePurchaseOrderFields({
         }
       },
       supplier_reference: {},
-      project_code: {
-        icon: <IconList />
-      },
+      project_code: ProjectCodeField(),
       order_currency: {
         icon: <IconCoins />
       },
@@ -318,7 +314,7 @@ export function usePurchaseOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
@@ -351,11 +347,11 @@ function LineItemFormRow({
 }>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'barcode', undefined)
+    onClose: () => props.changeFn(props.rowId, 'barcode', undefined)
   });
 
   const [locationOpen, locationHandlers] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'location', undefined)
+    onClose: () => props.changeFn(props.rowId, 'location', undefined)
   });
 
   // Is this a trackable part?
@@ -368,7 +364,7 @@ function LineItemFormRow({
 
   useEffect(() => {
     if (!!record.destination) {
-      props.changeFn(props.idx, 'location', record.destination);
+      props.changeFn(props.rowId, 'location', record.destination);
       locationHandlers.open();
     }
   }, [record.destination]);
@@ -378,7 +374,7 @@ function LineItemFormRow({
     isEnabled: () => batchOpen,
     onGenerate: (value: any) => {
       if (value) {
-        props.changeFn(props.idx, 'batch_code', value);
+        props.changeFn(props.rowId, 'batch_code', value);
       }
     }
   });
@@ -390,19 +386,19 @@ function LineItemFormRow({
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'packaging', undefined);
+      props.changeFn(props.rowId, 'packaging', undefined);
     }
   });
 
   const [noteOpen, noteHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'note', undefined);
+      props.changeFn(props.rowId, 'note', undefined);
     }
   });
 
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'batch_code', undefined);
+      props.changeFn(props.rowId, 'batch_code', undefined);
     },
     onOpen: () => {
       // Generate a new batch code
@@ -415,7 +411,7 @@ function LineItemFormRow({
 
   const [serialOpen, serialHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'serial_numbers', undefined);
+      props.changeFn(props.rowId, 'serial_numbers', undefined);
     },
     onOpen: () => {
       // Generate new serial numbers
@@ -425,7 +421,7 @@ function LineItemFormRow({
           quantity: props.item.quantity
         });
       } else {
-        props.changeFn(props.idx, 'serial_numbers', undefined);
+        props.changeFn(props.rowId, 'serial_numbers', undefined);
       }
     }
   });
@@ -436,20 +432,20 @@ function LineItemFormRow({
       const defaultExpiry = record.part_detail?.default_expiry;
       if (defaultExpiry !== undefined && defaultExpiry > 0) {
         props.changeFn(
-          props.idx,
+          props.rowId,
           'expiry_date',
           dayjs().add(defaultExpiry, 'day').format('YYYY-MM-DD')
         );
       }
     },
     onClose: () => {
-      props.changeFn(props.idx, 'expiry_date', undefined);
+      props.changeFn(props.rowId, 'expiry_date', undefined);
     }
   });
 
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'status', undefined)
+    onClose: () => props.changeFn(props.rowId, 'status', undefined)
   });
 
   // Barcode value
@@ -458,7 +454,7 @@ function LineItemFormRow({
 
   // Change form value when state is altered
   useEffect(() => {
-    props.changeFn(props.idx, 'barcode', barcode);
+    props.changeFn(props.rowId, 'barcode', barcode);
   }, [barcode]);
 
   // Update location field description on state change
@@ -577,15 +573,14 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
-          <StandaloneField
-            fieldName='quantity'
-            fieldDefinition={{
-              field_type: 'number',
-              value: props.item.quantity,
-              onValueChange: (value) => {
-                props.changeFn(props.idx, 'quantity', value);
-                serialNumberGenerator.update({ quantity: value });
-              }
+          <TableFieldQuantityInput
+            min={0}
+            value={props.item.quantity ?? ''}
+            onChange={(value) => {
+              props.changeFn(props.rowId, 'quantity', value);
+              serialNumberGenerator.update({
+                quantity: value === '' ? undefined : value
+              });
             }}
             error={props.rowErrors?.quantity?.message}
           />
@@ -681,7 +676,7 @@ function LineItemFormRow({
           </Flex>
         </Table.Td>
         <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
         </Table.Td>
       </Table.Tr>
       {locationOpen && (
@@ -700,7 +695,7 @@ function LineItemFormRow({
                     structural: false
                   },
                   onValueChange: (value) => {
-                    props.changeFn(props.idx, 'location', value);
+                    props.changeFn(props.rowId, 'location', value);
                   },
                   description: locationDescription,
                   value: props.item.location,
@@ -722,7 +717,7 @@ function LineItemFormRow({
                     tooltip={t`Store at default location`}
                     onClick={() =>
                       props.changeFn(
-                        props.idx,
+                        props.rowId,
                         'location',
                         record.part_detail?.default_location ??
                           record.part_detail?.category_default_location
@@ -736,7 +731,11 @@ function LineItemFormRow({
                     icon={<InvenTreeIcon icon='destination' />}
                     tooltip={t`Store at line item destination `}
                     onClick={() =>
-                      props.changeFn(props.idx, 'location', record.destination)
+                      props.changeFn(
+                        props.rowId,
+                        'location',
+                        record.destination
+                      )
                     }
                     tooltipAlignment='top'
                   />
@@ -749,7 +748,7 @@ function LineItemFormRow({
                       tooltip={t`Store with already received stock`}
                       onClick={() =>
                         props.changeFn(
-                          props.idx,
+                          props.rowId,
                           'location',
                           record.destination_detail.pk
                         )
@@ -765,7 +764,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={batchOpen}
         onValueChange={(value) => {
-          props.changeFn(props.idx, 'batch_code', value);
+          props.changeFn(props.rowId, 'batch_code', value);
         }}
         fieldName='batch_code'
         fieldDefinition={{
@@ -779,7 +778,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={serialOpen}
         onValueChange={(value) =>
-          props.changeFn(props.idx, 'serial_numbers', value)
+          props.changeFn(props.rowId, 'serial_numbers', value)
         }
         fieldName='serial_numbers'
         fieldDefinition={{
@@ -797,7 +796,7 @@ function LineItemFormRow({
         <TableFieldExtraRow
           visible={expiryDateOpen}
           onValueChange={(value) =>
-            props.changeFn(props.idx, 'expiry_date', value)
+            props.changeFn(props.rowId, 'expiry_date', value)
           }
           fieldName='expiry_date'
           fieldDefinition={{
@@ -811,7 +810,9 @@ function LineItemFormRow({
       )}
       <TableFieldExtraRow
         visible={packagingOpen}
-        onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
+        onValueChange={(value) =>
+          props.changeFn(props.rowId, 'packaging', value)
+        }
         fieldName='packaging'
         fieldDefinition={{
           field_type: 'string',
@@ -824,7 +825,7 @@ function LineItemFormRow({
         visible={statusOpen}
         defaultValue={10}
         fieldName='status'
-        onValueChange={(value) => props.changeFn(props.idx, 'status', value)}
+        onValueChange={(value) => props.changeFn(props.rowId, 'status', value)}
         fieldDefinition={{
           field_type: 'choice',
           api_url: apiUrl(ApiEndpoints.stock_status),
@@ -836,7 +837,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={noteOpen}
         fieldName='note'
-        onValueChange={(value) => props.changeFn(props.idx, 'note', value)}
+        onValueChange={(value) => props.changeFn(props.rowId, 'note', value)}
         fieldDefinition={{
           field_type: 'string',
           label: t`Note`
@@ -865,13 +866,20 @@ export function useReceiveLineItems(props: LineItemsForm) {
     []
   );
 
-  const records = Object.fromEntries(
-    props.items.map((item) => [item.pk, item])
-  );
+  const records = useMemo(() => {
+    return Object.fromEntries(props.items.map((item) => [item.pk, item]));
+  }, [props.items]);
 
-  const filteredItems = props.items.filter(
-    (elem) => elem.quantity !== elem.received
-  );
+  const filteredItems = useMemo(() => {
+    return props.items
+      .filter((elem) => elem.quantity !== elem.received)
+      .map((elem) => {
+        return {
+          id: elem.pk,
+          ...elem
+        };
+      });
+  }, [props.items]);
 
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -881,8 +889,9 @@ export function useReceiveLineItems(props: LineItemsForm) {
       },
       items: {
         field_type: 'table',
-        value: filteredItems.map((elem, idx) => {
+        value: filteredItems.map((elem) => {
           return {
+            id: elem.pk,
             line_item: elem.pk,
             location: elem.destination ?? elem.destination_detail?.pk ?? null,
             quantity: elem.quantity - elem.received,
@@ -905,7 +914,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
               props={row}
               record={record}
               statuses={stockStatusCodes}
-              key={record.pk}
+              key={row.rowId}
             />
           );
         },
@@ -924,7 +933,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }
       }
     };
-  }, [filteredItems, props, stockStatusCodes]);
+  }, [filteredItems, records, props, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,

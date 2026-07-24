@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -12,6 +9,9 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { useCallback, useMemo, useState } from 'react';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { customUnitsFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -19,7 +19,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom physical units

@@ -1,15 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Badge, Group, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import {
-  IconCircleCheck,
-  IconCirclePlus,
-  IconInfoCircle
-} from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -25,7 +13,26 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Badge, Group, Text, Tooltip } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import {
+  IconCircleCheck,
+  IconCirclePlus,
+  IconInfoCircle
+} from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import {
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
@@ -36,14 +43,6 @@ import {
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DescriptionColumn,
-  NoteColumn,
-  UserColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({
   partId,
@@ -144,6 +143,7 @@ export default function StockItemTestResultTable({
           title: t`Test`,
           switchable: false,
           sortable: true,
+          filter: ['enabled', 'required'],
           render: (record: any) => {
             const enabled = record.enabled ?? record.template_detail?.enabled;
             const installed =

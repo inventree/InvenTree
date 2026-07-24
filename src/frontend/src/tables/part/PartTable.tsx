@@ -9,21 +9,31 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
+import type { InvenTreeTableProps, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
 import {
   IconFileUpload,
   IconPackageImport,
   IconPlus,
   IconShoppingCart
 } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DefaultLocationColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
+import { DuplicateField } from '../../forms/CommonFields';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -36,16 +46,6 @@ import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  CategoryColumn,
-  DefaultLocationColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LinkColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import { PartTableFilters } from './PartTableFilters';
 
 /**
@@ -55,7 +55,8 @@ function partTableColumns(): TableColumn[] {
   return [
     PartColumn({
       part: '',
-      accessor: 'name'
+      accessor: 'name',
+      filter: ['active', 'locked', 'starred']
     }),
     IPNColumn({
       accessor: 'IPN'
@@ -67,7 +68,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'units',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: 'has_units'
     },
     DescriptionColumn({}),
     CategoryColumn({
@@ -79,128 +81,31 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'total_in_stock',
       sortable: true,
-
-      render: (record) => {
-        if (record.virtual) {
-          return (
-            <Text size='sm' c='dimmed' fs='italic'>
-              {t`Virtual part`}
-            </Text>
-          );
-        }
-
-        const extra: ReactNode[] = [];
-
-        const stock = record?.total_in_stock ?? 0;
-        const allocated =
-          (record?.allocated_to_build_orders ?? 0) +
-          (record?.allocated_to_sales_orders ?? 0);
-        const available = Math.max(0, stock - allocated);
-        const min_stock = record?.minimum_stock ?? 0;
-        const max_stock = record?.maximum_stock ?? 0;
-
-        let text = String(formatDecimal(stock));
-
-        let color: string | undefined = undefined;
-
-        if (min_stock > stock) {
-          extra.push(
-            <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
-            </Text>
-          );
-
-          color = 'orange';
-        }
-
-        if (max_stock > 0 && stock > max_stock) {
-          extra.push(
-            <Text key='max-stock' c='teal'>
-              {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
-            </Text>
-          );
-        }
-
-        if (record.ordering > 0) {
-          extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
-          );
-        }
-
-        if (record.building) {
-          extra.push(
-            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
-          );
-        }
-
-        if (record.allocated_to_build_orders > 0) {
-          extra.push(
-            <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
-            </Text>
-          );
-        }
-
-        if (record.allocated_to_sales_orders > 0) {
-          extra.push(
-            <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
-            </Text>
-          );
-        }
-
-        if (available != stock) {
-          extra.push(
-            <Text key='available'>
-              {t`Available`}: {formatDecimal(available)}
-            </Text>
-          );
-        }
-
-        if (record.external_stock > 0) {
-          extra.push(
-            <Text key='external'>
-              {t`External stock`}: {formatDecimal(record.external_stock)}
-            </Text>
-          );
-        }
-
-        if (stock <= 0) {
-          color = 'red';
-          text = t`No stock`;
-        } else if (available <= 0) {
-          color = 'orange';
-        } else if (available < min_stock) {
-          color = 'yellow';
-        }
-
-        return (
-          <TableHoverCard
-            value={
-              <Group gap='xs' justify='left' wrap='nowrap'>
-                <Text c={color}>{text}</Text>
-                {record.units && (
-                  <Text size='xs' c={color}>
-                    [{record.units}]
-                  </Text>
-                )}
-              </Group>
-            }
-            title={t`Stock Information`}
-            extra={extra}
-          />
-        );
-      }
+      filter: ['has_stock', 'low_stock', 'high_stock'],
+      render: renderPartStockCell
     },
     {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      filter: 'has_pricing',
       defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
+    BooleanColumn({
+      accessor: 'assembly',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'virtual',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'consumable',
+      defaultVisible: false
+    }),
     LinkColumn({})
   ];
 }
@@ -298,12 +203,9 @@ export function PartListTable({
   const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
     return {
       ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: selectedPart.pk,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: selectedPart.pk,
+        extraFields: {
           copy_image: {
             value: true
           },
@@ -323,7 +225,7 @@ export function PartListTable({
             hidden: !selectedPart.testable
           }
         }
-      }
+      })
     };
   }, [createPartFields, globalSettings, selectedPart]);
 

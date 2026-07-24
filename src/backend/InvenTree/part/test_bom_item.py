@@ -1,6 +1,7 @@
 """Unit tests for the BomItem model."""
 
-from decimal import Decimal
+import hashlib
+from unittest import mock
 
 import django.core.exceptions as django_exceptions
 from django.db import transaction
@@ -171,20 +172,6 @@ class BomItemTest(TestCase):
 
         self.assertNotEqual(h1, h2)
 
-    def test_pricing(self):
-        """Test BOM pricing."""
-        self.bob.get_price(1)
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(29.5), Decimal(89.5)),
-        )
-        # remove internal price for R_2K2_0805
-        self.r1.internal_price_breaks.delete()
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(27.5), Decimal(87.5)),
-        )
-
     def test_substitutes(self):
         """Tests for BOM item substitutes."""
         # We will make some substitute parts for the "orphan" part
@@ -276,6 +263,52 @@ class BomItemTest(TestCase):
         BomItem.objects.create(part=assembly, sub_part=c3, quantity=50)
 
         self.assertEqual(assembly.can_build, 20)
+
+        # Mark 'c4' as consumable at the *part* level (not the BOM line itself)
+        c4.consumable = True
+        c4.save()
+
+        bom_item_c4 = BomItem.objects.create(part=assembly, sub_part=c4, quantity=200)
+
+        # The raw BomItem field is unset, but the part is marked as consumable
+        self.assertFalse(bom_item_c4.consumable)
+        self.assertTrue(bom_item_c4.is_consumable)
+
+        # A BomItem which is consumable via its part does not alter the can_build calculation
+        self.assertEqual(assembly.can_build, 20)
+
+    def test_consumable_filter(self):
+        """Tests for the BomItem.consumable_filter() helper method."""
+        assembly = Part.objects.create(
+            name='Another assembly', description='Made with parts', assembly=True
+        )
+
+        c1 = Part.objects.create(name='D1', description='Not consumable')
+        c2 = Part.objects.create(name='D2', description='Consumable BOM line')
+        c3 = Part.objects.create(
+            name='D3', description='Consumable part', consumable=True
+        )
+
+        bom_item_1 = BomItem.objects.create(part=assembly, sub_part=c1, quantity=1)
+        bom_item_2 = BomItem.objects.create(
+            part=assembly, sub_part=c2, quantity=1, consumable=True
+        )
+        bom_item_3 = BomItem.objects.create(part=assembly, sub_part=c3, quantity=1)
+
+        consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=True))
+        )
+        non_consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=False))
+        )
+
+        self.assertIn(bom_item_2, consumable_items)
+        self.assertIn(bom_item_3, consumable_items)
+        self.assertNotIn(bom_item_1, consumable_items)
+
+        self.assertIn(bom_item_1, non_consumable_items)
+        self.assertNotIn(bom_item_2, non_consumable_items)
+        self.assertNotIn(bom_item_3, non_consumable_items)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
@@ -429,6 +462,59 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             bom_item2.quantity = 99
             bom_item2.save()
+
+    def test_bom_hash_order_consistency(self):
+        """Regression test for BOM checksum instability due to non-deterministic item ordering.
+
+        See: https://github.com/inventree/InvenTree/issues/12445
+
+        get_bom_hash() must apply an explicit, stable ordering when iterating the BOM
+        items - otherwise the resulting hash can differ purely because the underlying
+        query returned rows in a different order (e.g. Postgres provides no ordering
+        guarantee unless an ORDER BY clause is specified).
+        """
+        assembly = Part.objects.create(
+            name='HashOrderAssembly', description='An assembly part', assembly=True
+        )
+
+        for ii in range(5):
+            sub_part = Part.objects.create(
+                name=f'HashOrderPart{ii}',
+                description='A sub-part for hash ordering test',
+                component=True,
+            )
+            BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=ii + 1)
+
+        # Calling get_bom_hash() repeatedly must always return the same value
+        h1 = assembly.get_bom_hash()
+        h2 = assembly.get_bom_hash()
+        self.assertEqual(h1, h2)
+
+        def hash_items(items) -> str:
+            """Replicate the hashing logic of get_bom_hash(), for a given item order."""
+            result_hash = hashlib.md5(str(assembly.id).encode())
+
+            for item in items:
+                result_hash.update(str(item.get_item_hash()).encode())
+
+            return str(result_hash.digest())
+
+        items_forward = list(assembly.get_bom_items().order_by('pk'))
+        items_reverse = list(assembly.get_bom_items().order_by('-pk'))
+        self.assertEqual(items_forward, list(reversed(items_reverse)))
+
+        # Sanity check: hashing the *same* items in a different order produces a
+        # different result - so ordering genuinely matters here
+        self.assertNotEqual(hash_items(items_forward), hash_items(items_reverse))
+
+        # Simulate the underlying queryset returning BOM items in a non pk-ascending
+        # order (as could occur against a real database with no ORDER BY applied).
+        # get_bom_hash() must be unaffected, always normalizing to the same order.
+        reversed_queryset = assembly.get_bom_items().order_by('-pk')
+        with mock.patch.object(Part, 'get_bom_items', return_value=reversed_queryset):
+            hash_from_reversed_source = assembly.get_bom_hash()
+
+        self.assertEqual(hash_from_reversed_source, hash_items(items_forward))
 
     def test_bom_validated(self):
         """Test for caching of 'bom_validated' property."""

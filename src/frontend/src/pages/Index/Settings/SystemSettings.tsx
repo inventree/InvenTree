@@ -1,3 +1,5 @@
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
@@ -18,9 +20,6 @@ import {
   IconTruckDelivery
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
-import { PluginPanelKey } from '@lib/enums/ModelType';
-import type { PanelType } from '@lib/types/Panel';
 import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -199,6 +198,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
+              'REPORT_FETCH_URLS',
               'REPORT_LOG_ERRORS',
               'LABEL_ENABLE',
               'LABEL_DPI'
@@ -272,6 +272,7 @@ export default function SystemSettings() {
                 'STOCK_SHOW_INSTALLED_ITEMS',
                 'STOCK_ENFORCE_BOM_INSTALLATION',
                 'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
+                'STOCK_MERGE_ON_TRANSFER',
                 'TEST_STATION_DATA'
               ]}
             />
@@ -388,7 +389,8 @@ export default function SystemSettings() {
             keys={[
               'TRANSFERORDER_ENABLED',
               'TRANSFERORDER_REFERENCE_PATTERN',
-              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE',
+              'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />
         )

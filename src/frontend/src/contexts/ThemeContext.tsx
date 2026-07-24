@@ -11,6 +11,7 @@ import { ContextMenuProvider } from 'mantine-contextmenu';
 import type { JSX } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
+import { HotkeyModal } from '../components/modals/HotkeyModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
@@ -23,7 +24,7 @@ export function ThemeContext({
 }: Readonly<{ children: JSX.Element }>) {
   const [userTheme] = useLocalState(useShallow((state) => [state.userTheme]));
 
-  let customUserTheme: MantineThemeOverride | undefined = undefined;
+  let customUserTheme: MantineThemeOverride | undefined;
 
   // Theme
   try {
@@ -59,7 +60,8 @@ export function ThemeContext({
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
               license: LicenseModal,
-              qr: QrModal
+              qr: QrModal,
+              hotkey: HotkeyModal
             }}
           >
             <Notifications />

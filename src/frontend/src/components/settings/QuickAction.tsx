@@ -1,3 +1,4 @@
+import { ApiEndpoints } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
@@ -8,8 +9,7 @@ import {
   IconUsersGroup,
   type ReactNode
 } from '@tabler/icons-react';
-
-import { ApiEndpoints } from '@lib/index';
+import { docLinks } from '../../defaults/links';
 import {
   projectCodeFields,
   useCustomStateFields
@@ -86,11 +86,7 @@ export const QuickAction = () => {
       description: t`Report a bug or request a feature on GitHub`,
       icon: <IconBrandGithub />,
       buttonText: t`Open Issue`,
-      action: () =>
-        window.open(
-          'https://github.com/inventree/inventree/issues/new',
-          '_blank'
-        )
+      action: () => window.open(`${docLinks.bug}/new`, '_blank')
     },
     {
       id: '1',

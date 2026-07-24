@@ -1,14 +1,13 @@
-import { t } from '@lingui/core/macro';
-import { BarChart } from '@mantine/charts';
-import { SimpleGrid } from '@mantine/core';
-import { useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { BarChart } from '@mantine/charts';
+import { SimpleGrid } from '@mantine/core';
+import { useMemo } from 'react';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import {
   SupplierPriceBreakColumns,
   calculateSupplierPartUnitPrice
@@ -55,7 +54,8 @@ export default function SupplierPricingPanel({
             base_part: part.pk,
             supplier_detail: true,
             part_detail: true
-          }
+          },
+          enableDownload: true
         }}
       />
       {supplierPricingData.length > 0 ? (

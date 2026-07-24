@@ -1,17 +1,16 @@
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import { IconTrashXFilled, IconX } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import { api } from '../../App';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PendingTasksTable({
   onRecordsUpdated

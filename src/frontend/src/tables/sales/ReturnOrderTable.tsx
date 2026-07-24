@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -8,10 +5,8 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { formatCurrency } from '../../defaults/formatters';
-import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
+import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import {
   CompanyColumn,
   CompletionDateColumn,
@@ -27,8 +22,12 @@ import {
   StatusColumn,
   TargetDateColumn,
   UpdatedAtColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { formatCurrency } from '../../defaults/formatters';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import ReturnOrderFilters from './ReturnOrderFilters';
 
 export function ReturnOrderTable({

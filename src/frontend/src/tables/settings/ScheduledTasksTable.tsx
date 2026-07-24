@@ -1,13 +1,12 @@
-import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
-import { useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { t } from '@lingui/core/macro';
+import { Group, Text } from '@mantine/core';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
+import { useMemo } from 'react';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 export default function ScheduledTasksTable() {
   const table = useTable('tasks-scheduled');

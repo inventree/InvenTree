@@ -1,18 +1,18 @@
 import { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { Loadable } from './functions/loading';
+import { EagerLoadable, Loadable } from './functions/loading';
+import { onLocaleReady } from './functions/localeReady';
 
 // Lazy loaded pages
-export const LayoutComponent = Loadable(
-  lazy(() => import('./components/nav/Layout')),
-  true,
-  true
+// These two are mutually exclusive and one of them is always needed
+// immediately on initial load, so they're loaded eagerly rather than via
+// Loadable/lazy - see EagerLoadable for why.
+export const LayoutComponent = EagerLoadable(
+  () => import('./components/nav/Layout')
 );
-export const LoginLayoutComponent = Loadable(
-  lazy(() => import('./pages/Auth/Layout')),
-  true,
-  true
+export const LoginLayoutComponent = EagerLoadable(
+  () => import('./pages/Auth/Layout')
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
@@ -131,11 +131,21 @@ export const NotFound = Loadable(
 
 // Auth
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
-export const LoggedIn = Loadable(
-  lazy(() => import('./pages/Auth/LoggedIn')),
-  true,
-  true
-);
+// LoggedIn is the auth-check gateway hit by every fresh, unauthenticated
+// page load (redirected to from ProtectedRoute) - load it eagerly too.
+export const LoggedIn = EagerLoadable(() => import('./pages/Auth/LoggedIn'));
+
+// These three are all needed within the first render pass or two of any
+// fresh page load, so start fetching them as soon as it's safe to (i.e. as
+// soon as the active locale is set) rather than waiting for each to mount
+// in turn - mounting only happens after the previous one in the chain has
+// already rendered and redirected, so waiting for mount compounds several
+// round trips of otherwise-avoidable latency.
+onLocaleReady(() => {
+  LayoutComponent.preload();
+  LoginLayoutComponent.preload();
+  LoggedIn.preload();
+});
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
 export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));

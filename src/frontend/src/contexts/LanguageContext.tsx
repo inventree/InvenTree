@@ -1,11 +1,11 @@
+import { useStoredTableState } from '@lib/states/StoredTableState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
-
-import { useStoredTableState } from '@lib/states/StoredTableState';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
+import { markLocaleReady } from '../functions/localeReady';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
@@ -140,8 +140,11 @@ export function LanguageContext({
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = new_locales;
 
-        // Reload server state (and refresh status codes)
-        fetchGlobalStates();
+        // Reload server state (and refresh status codes). Forced: the
+        // Accept-Language header actually changed (initial set, or a real
+        // locale change), so this must not be skipped by the "already
+        // fetched" guard even if another caller already fetched once.
+        fetchGlobalStates(true);
 
         // Clear out cached table column names
         useStoredTableState.getState().clearTableColumnNames();
@@ -195,6 +198,7 @@ export async function activateLocale(locale: string | null) {
     const { messages } = await import(`../locales/${localeDir}/messages.ts`);
     i18n.load(locale, messages);
     i18n.activate(locale);
+    markLocaleReady();
   } catch (err) {
     console.error(`Failed to load locale ${locale}:`, err);
   }

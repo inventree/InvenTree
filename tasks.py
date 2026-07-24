@@ -5,6 +5,7 @@ import json
 import os
 import pathlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -17,7 +18,7 @@ from typing import Optional
 
 import invoke
 from invoke import Collection, task
-from invoke.exceptions import UnexpectedExit
+from invoke.exceptions import Exit, UnexpectedExit
 
 
 def safe_value(fnc):
@@ -497,6 +498,43 @@ def manage(c, cmd, pty: bool = False, env=None, verbose: bool = False, **kwargs)
     )
 
 
+def manage_interactive(cmd: str, env=None, verbose: bool = False):
+    """Run a Django management command with inherited stdio.
+
+    This bypasses Invoke PTY mediation and mirrors direct shell usage, which is
+    required for some interactive commands in Docker environments.
+
+    Args:
+        cmd: Django management command and arguments.
+        env: Optional environment variables to add for command execution.
+        verbose: If True, print the resolved command before execution.
+
+    Raises:
+        Exit: If the subprocess returns a non-zero exit code.
+    """
+    args = ['python3', 'manage.py', *shlex.split(cmd)]
+
+    # Keep behavior aligned with `manage`: default to quiet output.
+    if '-v' not in cmd and '--verbosity' not in cmd:
+        args.extend(['-v', '1' if verbose else '0'])
+
+    if verbose:
+        info(f'Running interactive command: {" ".join(args)}')
+
+    cmd_env = dict(os.environ)
+    if env:
+        cmd_env.update(env)
+
+    # Avoid Invoke's PTY stdin mediation for interactive commands; run with
+    # inherited stdio to match direct `manage.py` behavior in Docker TTYs.
+    result = subprocess.run(args, cwd=manage_py_dir(), env=cmd_env, check=False)
+
+    if result.returncode != 0:
+        error(f"ERROR: InvenTree command failed: '{' '.join(args)}'")
+        warning('- Refer to the error messages in the log above for more information')
+        raise Exit(code=result.returncode)
+
+
 def installed_apps(c) -> list[str]:
     """Returns a list of all installed apps, including plugins."""
     result = manage(c, 'list_apps', pty=False, hide=True)
@@ -762,7 +800,7 @@ def shell(c):
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
-    manage(c, 'createsuperuser', pty=True)
+    manage_interactive('createsuperuser')
 
 
 @task
@@ -865,6 +903,23 @@ def backend_trans(c, verbose: bool = False):
     """Compile backend Django translation files."""
     info('Compiling backend translations...')
     manage(c, 'compilemessages', verbose=verbose)
+    success('Backend translations compiled successfully')
+
+
+@task(help={'verbose': 'Print verbose output'})
+@state_logger('backend_compilemessages')
+def backend_compilemessages(c, verbose: bool = False):
+    """Compile backend Django translation files without loading InvenTree settings."""
+    info('Compiling backend translations...')
+
+    cmd = 'python3 -m django compilemessages'
+
+    if verbose:
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
+    run(c, cmd, manage_py_dir())
     success('Backend translations compiled successfully')
 
 
@@ -1015,10 +1070,13 @@ def listbackups(c):
     },
 )
 @state_logger
-def migrate(c, detect: bool = True, verbose: bool = False):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
@@ -1456,7 +1514,10 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     if migrate:
         manage(c, 'migrate --run-syncdb', verbose=verbose)
 
-    manage(c, f'flush{" --noinput" if force else ""}', verbose=verbose)
+    if force:
+        manage(c, 'flush --noinput', verbose=verbose)
+    else:
+        manage_interactive('flush', verbose=verbose)
 
     success('Existing data deleted')
 
@@ -1560,6 +1621,67 @@ def worker(c, verbose: bool = False):
     Ref: https://django-q2.readthedocs.io
     """
     manage(c, 'qcluster', pty=True, verbose=verbose)
+
+
+@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 3)'})
+def worker_health(c, timeout: int = 3):
+    """Check if the background worker is healthy by reading the heartbeat file.
+
+    Exits 0 if the worker has run within the last TIMEOUT minutes, 1 otherwise.
+    No Django startup or database access is required.
+    """
+    heartbeat_file = Path(tempfile.gettempdir()) / 'inventree_worker_heartbeat'
+
+    if heartbeat_file.exists():
+        try:
+            age_seconds = time.time() - float(heartbeat_file.read_text().strip())
+            if age_seconds < timeout * 60:
+                success(
+                    f'Worker is healthy (last heartbeat {int(age_seconds) // 60}m {int(age_seconds) % 60}s ago)'
+                )
+                return
+            warning(
+                f'Heartbeat file is stale ({int(age_seconds) // 60}m {int(age_seconds) % 60}s old)'
+            )
+        except Exception as e:
+            warning(f'Could not read heartbeat file: {e}')
+    else:
+        warning(f'Heartbeat file not found: {heartbeat_file}')
+
+    error('Worker health check failed')
+    raise Exit(code=1)
+
+
+@task(
+    help={
+        'address': 'Server address to check (default: http://localhost:8000)',
+        'timeout': 'Request timeout in seconds (default: 5)',
+    }
+)
+def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
+    """Check if the web server is healthy by requesting /api/system/health/.
+
+    Exits 0 on HTTP 200, 1 otherwise.
+    No Django startup required.
+    """
+    import urllib.error
+    import urllib.request
+
+    url = f'{address.rstrip("/")}/api/system/health/'
+
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            if response.status == 200:
+                success(f'Server is healthy ({url})')
+                return
+            warning(f'Unexpected status {response.status} from {url}')
+    except urllib.error.URLError as e:
+        warning(f'Could not reach server at {url}: {e.reason}')
+    except Exception as e:
+        warning(f'Unexpected error checking {url}: {e}')
+
+    error('Server health check failed')
+    raise Exit(code=1)
 
 
 @task(post=[static, server])
@@ -1721,6 +1843,7 @@ def test(
 @task(
     help={
         'dev': 'Set up development environment at the end',
+        'keep': 'Keep existing demo dataset (do not re-clone)',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone (default = main)',
@@ -1729,12 +1852,13 @@ def test(
 )
 def setup_test(
     c,
-    ignore_update=False,
-    dev=False,
-    validate_files=False,
-    use_ssh=False,
-    verbose=False,
-    path='inventree-demo-dataset',
+    ignore_update: bool = False,
+    dev: bool = False,
+    keep: bool = False,
+    validate_files: bool = False,
+    use_ssh: bool = False,
+    verbose: bool = False,
+    path: str = 'inventree-demo-dataset',
     branch='main',
 ):
     """Setup a testing environment."""
@@ -1747,19 +1871,20 @@ def setup_test(
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
-    if template_dir.exists():
-        run(c, f'rm {template_dir} -r')
+    if not keep:
+        # Remove old data directory
+        if template_dir.exists():
+            run(c, f'rm {template_dir} -r')
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+        # Get test data
+        info('Cloning demo dataset ...')
+        run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1771,6 +1896,7 @@ def setup_test(
         c,
         filename=template_dir.joinpath('inventree_data.json'),
         clear=True,
+        ignore_nonexistent=True,
         verbose=verbose,
     )
 
@@ -2388,6 +2514,7 @@ internal = Collection(
     clear_generated,
     export_settings_definitions,
     export_definitions,
+    backend_compilemessages,
     frontend_build,
     frontend_check,
     frontend_compile,
@@ -2416,6 +2543,8 @@ ns = Collection(
     version,
     wait,
     worker,
+    worker_health,
+    server_health,
     monitor,
     build_docs,
 )

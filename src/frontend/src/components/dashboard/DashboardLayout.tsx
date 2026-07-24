@@ -1,3 +1,4 @@
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -8,11 +9,10 @@ import {
   Space,
   Text
 } from '@mantine/core';
-import { useDisclosure, useHotkeys } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
-
 import { useShallow } from 'zustand/react/shallow';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useLocalState } from '../../states/LocalState';
@@ -61,9 +61,10 @@ export default function DashboardLayout() {
   const [loaded, setLoaded] = useState(false);
 
   // Keyboard shortcut for editing the dashboard layout
-  useHotkeys([
+  useInvenTreeHotkeys([
     [
       'mod+E',
+      t`Toggle dashboard edit mode`,
       () => {
         setEditing.toggle();
       }

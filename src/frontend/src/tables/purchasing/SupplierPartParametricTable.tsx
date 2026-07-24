@@ -3,7 +3,10 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
-import { CompanyColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 
 export default function SupplierPartParametricTable({

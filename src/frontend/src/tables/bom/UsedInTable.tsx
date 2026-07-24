@@ -1,15 +1,23 @@
-import { t } from '@lingui/core/macro';
-import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
+import { RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { ActionButton, RowEditAction, UserRoles } from '@lib/index';
+import { ActionButton, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle, IconReplace } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  ReferenceColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDecimal } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
 import {
@@ -17,14 +25,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  PartColumn,
-  ReferenceColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * For a given part, render a table showing all the assemblies the part is used in
@@ -44,7 +44,8 @@ export function UsedInTable({
     return [
       PartColumn({
         title: t`Assembly`,
-        part: 'part_detail'
+        part: 'part_detail',
+        filter: ['part_active', 'part_locked']
       }),
       IPNColumn({
         sortable: true

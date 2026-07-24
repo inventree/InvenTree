@@ -1,5 +1,7 @@
+import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
+import { TagsFilter } from '../../components/tables/Filter';
 
 /**
  * Construct a set of filters for the part table
@@ -103,6 +105,12 @@ export function PartTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'consumable',
+      label: t`Consumable`,
+      description: t`Filter by parts which are consumable`,
+      type: 'boolean'
+    },
+    {
       name: 'is_template',
       label: t`Is Template`,
       description: t`Filter by parts which are templates`,
@@ -141,6 +149,9 @@ export function PartTableFilters(): TableFilter[] {
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
       type: 'boolean'
-    }
+    },
+    TagsFilter({
+      modelType: ModelType.part
+    })
   ];
 }

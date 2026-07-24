@@ -52,6 +52,7 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
                     category=category,
                     name=ctx.get('name'),
                     message=ctx.get('message'),
+                    link=ctx.get('link'),
                 )
             )
 

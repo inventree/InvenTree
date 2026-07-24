@@ -1,26 +1,20 @@
-import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { type PanelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconInfoCircle,
   IconList,
   IconListCheck
 } from '@tabler/icons-react';
+import { type ReactNode, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -47,6 +41,7 @@ import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import TransferOrderLineItemTable from '../../tables/stock/TransferOrderLineItemTable';
+import { TransferOrderDetailsPanel } from './TransferOrderDetailsPanel';
 
 export default function TransferOrderDetail() {
   const { id } = useParams();
@@ -62,7 +57,9 @@ export default function TransferOrderDetail() {
   } = useInstance({
     endpoint: ApiEndpoints.transfer_order_list,
     pk: id,
-    params: {}
+    params: {
+      tags: true
+    }
   });
 
   const toStatus = useStatusCodes({ modelType: ModelType.transferorder });
@@ -71,13 +68,11 @@ export default function TransferOrderDetail() {
     const orderOpen: boolean =
       order.status != toStatus.COMPLETE && order.status != toStatus.CANCELLED;
 
-    return orderOpen;
-    // TODO: does this setting make any sense for Transfer Orders???
-    // if (orderOpen) {
-    //     return true;
-    // } else {
-    //     return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
-    // }
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
+    }
   }, [globalSettings, order.status, toStatus]);
 
   // for now, only permit editing allocations when line items can be edited
@@ -91,166 +86,11 @@ export default function TransferOrderDetail() {
     );
   }, [order, toStatus]);
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'reference',
-        label: t`Reference`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'take_from',
-        icon: 'location',
-        label: t`Source Location`,
-        model: ModelType.stocklocation
-      },
-      {
-        type: 'link',
-        name: 'destination',
-        icon: 'location',
-        label: t`Destination Location`,
-        model: ModelType.stocklocation
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'status',
-        name: 'status',
-        label: t`Status`,
-        model: ModelType.transferorder
-      },
-      {
-        type: 'status',
-        name: 'status_custom_key',
-        label: t`Custom Status`,
-        model: ModelType.transferorder,
-        icon: 'status',
-        hidden:
-          !order.status_custom_key || order.status_custom_key == order.status
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'boolean',
-        name: 'consume',
-        icon: 'consume',
-        label: t`Consume Stock`
-      },
-      {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      },
-      {
-        type: 'progressbar',
-        name: 'completed',
-        icon: 'progress',
-        label: t`Completed Line Items`,
-        total: order.line_items,
-        progress: order.completed_lines
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !order.link
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !order.project_code
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Creation Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.creation_date
-      },
-      {
-        type: 'date',
-        name: 'issue_date',
-        label: t`Issue Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.issue_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.start_date
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        copy: true,
-        hidden: !order.target_date
-      },
-      {
-        type: 'date',
-        name: 'complete_date',
-        icon: 'calendar_check',
-        label: t`Completion Date`,
-        copy: true,
-        hidden: !order.complete_date
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Grid grow>
-          {/* TODO: what image do we show for a Transfer Order? */}
-          {/* <DetailsImage
-                        appRole={UserRoles.transfer_order}
-                        apiPath={ApiEndpoints.transfer_order_list}
-                        src="/static/img/blank_image.png"
-                        pk={order.pk}
-                    /> */}
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={order} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
-      </ItemDetailsGrid>
-    );
-  }, [order, instanceQuery]);
+  const detailsPanel = instanceQuery.isFetching ? (
+    <Skeleton />
+  ) : (
+    <TransferOrderDetailsPanel instance={order} />
+  );
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -351,7 +191,7 @@ export default function TransferOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status_custom_key}
+            status={order.status_custom_key || order.status}
             type={ModelType.transferorder}
             options={{ size: 'lg' }}
           />
@@ -369,6 +209,7 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

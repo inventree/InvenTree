@@ -1,15 +1,14 @@
-import { TagsInput } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { FieldValues, UseControllerReturn } from 'react-hook-form';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { TagsInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { api } from '../../../App';
 
-export default function TagsField({
+function TagsField({
   controller,
   definition
 }: Readonly<{
@@ -79,3 +78,5 @@ export default function TagsField({
     />
   );
 }
+
+export default memo(TagsField);

@@ -14,6 +14,13 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     """Tests barcode parsing for all suppliers."""
 
     SCAN_URL = reverse('api-barcode-scan')
+    roles = [
+        'stock.view',
+        'stock_location.view',
+        'part.view',
+        'company.view',
+        'order.view',
+    ]
 
     @classmethod
     def setUpTestData(cls):
@@ -175,6 +182,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
 class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
     """Tests barcode scanning to receive a purchase order item."""
+
+    roles = ['stock.view', 'stock_location.view']
 
     def setUp(self):
         """Create supplier part and purchase_order."""
@@ -517,6 +526,75 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         self.assertIn('error', result.data)
         self.assertNotIn('supplier_matches', result.data)
 
+    def test_no_matching_line_item_in_po(self):
+        """Supplier part matches globally, but is not a line item on the resolved PO.
+
+        Regression test: previously line_item stayed None in this case and
+        scan_receive_item raised an unhandled AttributeError, which was swallowed
+        by the calling code and surfaced as a misleading 'No plugin match' error.
+        """
+        digikey_supplier = Company.objects.get(name='Supplier')
+        part = Part.objects.get(name='Test Part')
+
+        # Supplier part matches the barcode SKU, but is not attached to purchase_order1
+        SupplierPart.objects.create(
+            SKU='ORPHAN-SKU-NOT-ON-PO', part=part, supplier=digikey_supplier
+        )
+
+        url = reverse('api-barcode-po-receive')
+        result = self.post(
+            url, data={'barcode': DIGIKEY_BARCODE_PART_NOT_ON_PO}, expected_code=400
+        )
+
+        self.assertEqual(result.data['error'], 'No matching line item found')
+
+    def test_multiple_matching_line_items_in_po(self):
+        """Same supplier part appears on two line items of the same PO.
+
+        line_item auto-detection requires a *unique* match; with two line items
+        referencing the same supplier part, it should fail cleanly instead of crashing.
+        """
+        supplier_part = SupplierPart.objects.get(SKU='296-LM358BIDDFRCT-ND')
+
+        # Add a second, separate line item for the same supplier part
+        self.purchase_order1.add_line_item(
+            supplier_part, 4, group=False, destination=self.loc_2
+        )
+
+        url = reverse('api-barcode-po-receive')
+        result = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=400)
+
+        self.assertEqual(result.data['error'], 'No matching line item found')
+
+    def test_explicit_line_item_missing_supplier_part(self):
+        """Explicitly-provided line item whose supplier part has been deleted.
+
+        SupplierPart.part uses on_delete=SET_NULL, so a line item can end up with
+        part=None if its supplier part is deleted after the line item was created.
+        """
+        digikey_supplier = Company.objects.get(name='Supplier')
+        part = Part.objects.get(name='Test Part')
+
+        orphan_supplier_part = SupplierPart.objects.create(
+            SKU='TO-BE-DELETED', part=part, supplier=digikey_supplier
+        )
+        line_item = self.purchase_order1.add_line_item(
+            orphan_supplier_part, 2, destination=self.loc_2
+        )
+
+        orphan_supplier_part.delete()
+        line_item.refresh_from_db()
+        self.assertIsNone(line_item.part)
+
+        url = reverse('api-barcode-po-receive')
+        result = self.post(
+            url,
+            data={'barcode': DIGIKEY_BARCODE, 'line_item': line_item.pk},
+            expected_code=400,
+        )
+
+        self.assertEqual(result.data['error'], 'No matching line item found')
+
 
 DIGIKEY_BARCODE = (
     '[)>\x1e06\x1dP296-LM358BIDDFRCT-ND\x1d1PLM358BIDDFR\x1dK\x1d1K72991337\x1d'
@@ -577,5 +655,13 @@ DIGIKEY_BARCODE_PO_NO_PART = (
 # but '1KBADORDER-XXXXX' matches no purchase order in the test database.
 DIGIKEY_BARCODE_PART_NO_PO = (
     '[)>\x1e06\x1dP296-LM358BIDDFRCT-ND\x1d1PLM358BIDDFR\x1dK\x1d1KBADORDER-XXXXX\x1d'
+    '10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK'
+)
+
+# DigiKey barcode: '1K72991337' matches purchase_order1 via supplier_reference,
+# and 'PORPHAN-SKU-NOT-ON-PO' matches a real supplier part in the test database,
+# but that supplier part is not attached to any line item of purchase_order1.
+DIGIKEY_BARCODE_PART_NOT_ON_PO = (
+    '[)>\x1e06\x1dPORPHAN-SKU-NOT-ON-PO\x1d1PORPHAN-MPN\x1dK\x1d1K72991337\x1d'
     '10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK'
 )

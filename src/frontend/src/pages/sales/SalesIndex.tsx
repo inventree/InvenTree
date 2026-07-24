@@ -1,5 +1,10 @@
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconBuildingStore,
   IconCalendar,
@@ -11,12 +16,6 @@ import {
   IconTruckReturn
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-
-import type { EventContentArg } from '@fullcalendar/core';
-import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { TableFilter } from '@lib/index';
-import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
@@ -53,8 +52,9 @@ function SalesOrderCalendar() {
     <OrderCalendar
       model={ModelType.salesorder}
       role={UserRoles.sales_order}
-      params={{ outstanding: true, customer_detail: true }}
+      params={{ customer_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );
@@ -77,8 +77,9 @@ const ReturnOrderCalendar = () => {
     <OrderCalendar
       model={ModelType.returnorder}
       role={UserRoles.return_order}
-      params={{ outstanding: true, customer_detail: true }}
+      params={{ customer_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );

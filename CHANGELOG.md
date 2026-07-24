@@ -5,15 +5,46 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - YYYY-MM-DD
+## Unreleased - xxxx.xx.xx
 
 ### Breaking Changes
 
-- [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user API endpoint to be less ambiguous
+- [#12360](https://github.com/inventree/InvenTree/pull/12360) removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database. This change was made to simplify the StockItem model and improve performance, as the MPTT tree structure was causing significant overhead in certain operations. Any external client applications which made use of the MPTT functionality will need to be updated to account for this change.
+- [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
+- [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
+
+### Added
+
+- [#12393](https://github.com/inventree/InvenTree/pull/12393) adds "discount" attribute to order line items, allowing users to specify a discount for each line item on an order. The discount can be specified as either a percentage or a fixed amount, and is applied to the line item total when calculating the order total.
+- [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders
+- [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
+- [#12310](https://github.com/inventree/InvenTree/pull/12310) adds the ability to disassemble (or break apart) assembled stock items into their component parts, based on the Bill of Materials (BOM) associated with the stock item. This allows users to easily break down assembled items into their constituent parts, which can be useful for inventory management and tracking purposes.
+- [#12117](https://github.com/inventree/InvenTree/pull/12117) adds a "preview" drawer to the InvenTree table component, allowing users to preview the details of a selected row without navigating away from the table view. This feature is optional and can be enabled or disabled via the `PREVIEW_DRAWER_ENABLED` system setting.
+- [#12341](https://github.com/inventree/InvenTree/pull/12341) adds support for importing internal part prices.
+- [#12295](https://github.com/inventree/InvenTree/pull/12295) adds "consumable" field to the Part model and API endpoints
+- [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
+
+### Changed
+
+- [#12274](https://github.com/inventree/InvenTree/pull/12274) fixes a bug in rendering the "table field" component in frontend forms. Any plugins which make use of the "table field" component in their forms may be affected by this change, and will need to update their form definitions accordingly.
+
+### Removed
+
+## 1.4.0 - 2026-06-24
+
+### Breaking Changes
+
+- [#12160](https://github.com/inventree/InvenTree/pull/12160) changes the way that remote URIs are loaded into the PDF report generator. Remote URIs (e.g. `http://` and `https://`) are now blocked by default, and can be enabled via the `REPORT_FETCH_URLS` system setting. This change was made to improve the security of the report generation process, as allowing remote URL fetching can potentially expose internal network services to SSRF attacks. Additionally, file URIs (e.g. `file://`) are now always blocked, and assets must be embedded as `data:` URIs before reaching the PDF generator.
+- [#12107](https://github.com/inventree/InvenTree/pull/12107) makes a breaking change to the `SalesOrderStatusGroups` enum, fixing a bug where the "shipped" status was not included in the "active" group. This change may affect any external client applications which make use of the `SalesOrderStatusGroups` enum, as the "shipped" status will now be included in the "active" group instead of the "complete" group. If you are using this enum in an external client application, you will need to update your application to account for this change.
+- [#9604](https://github.com/inventree/InvenTree/pull/9604) refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
 
 ### Added
 
+- [#12208](https://github.com/inventree/InvenTree/pull/12208) adds custom locale support for rendering currencies, dates and numbers within reports. This allows users to specify a custom locale for report rendering, which can be used to control the formatting of dates, numbers and currency values in the generated reports.
+- [#12204](https://github.com/inventree/InvenTree/pull/12204) adds new filtering options to PartCategoryTree and StockLocationTree API endpoints, allowing tree data to be fetched dynamically
+- [#12165](https://github.com/inventree/InvenTree/pull/12165) adds support for parameters against the PartCategory model
+- [#12103](https://github.com/inventree/InvenTree/pull/12103) adds column-based filtering to table views in the user interface. This extends the existing table filtering functionality by allowing users to apply filters directly to individual columns.
 - [#12093](https://github.com/inventree/InvenTree/pull/12093) adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
 - [#12079](https://github.com/inventree/InvenTree/pull/12079) adds the ability to save filter groups for table and calendar views in the user interface. This allows users to save and reuse commonly used filter configurations, improving the usability and efficiency of the interface.
 - [#12077](https://github.com/inventree/InvenTree/pull/12077) adds "tags" fields to multiple new model types and a /api/tag/ endpoint for fetching tags. Also adds the ability to filter various model types by tags.
@@ -34,6 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#12197](https://github.com/inventree/InvenTree/pull/12197) requires staff permissions to restart machines via the API.
+- [#12142](https://github.com/inventree/InvenTree/pull/12142) prevents users from printing reports or labels against models for which they do not have adequate permissions. This change improves the security of the system by ensuring that users cannot access or print reports or labels for models they do not have permission to view.
 - [#11990](https://github.com/inventree/InvenTree/pull/11990) build output operations performed via the API now offload the work to a background task, and now return a task ID which can be used to monitor the progress of the task. This allows for better performance and responsiveness when performing build output operations, as the work is performed asynchronously in the background.
 - [#11825](https://github.com/inventree/InvenTree/pull/11825) adds a new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management. This allows for more granular control over user permissions, allowing users to have different levels of access to part management and BOM management functionality.
 - [#11816](https://github.com/inventree/InvenTree/pull/11816) makes the `issued_by` field on the `Build` API read only, and instead sets the `issued_by` field to the current user when a build is created. This change was made to ensure that the `issued_by` field accurately reflects the user who created the build, and to prevent users from setting this field to an arbitrary value when creating or updating a build.

@@ -1,10 +1,9 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { UserTheme } from '@lib/types/Core';
 import type { HostList } from '@lib/types/Server';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { api } from '../App';
 import { useUserState } from './UserState';
 
@@ -33,6 +32,12 @@ interface LocalStateProps {
   setLayouts: (layouts: any, noPatch?: boolean) => void;
   showSampleDashboard: boolean;
   setShowSampleDashboard: (value: boolean) => void;
+  // printing
+  lastUsedPrinting: Record<string, { plugin?: string; template?: number }>;
+  setLastUsedPrinting: (
+    modelType: string,
+    values: { plugin?: string; template?: number }
+  ) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
@@ -122,6 +127,25 @@ export const useLocalState = create<LocalStateProps>()(
       setShowSampleDashboard: (value) => {
         set({ showSampleDashboard: value });
       },
+      // printing
+      lastUsedPrinting: {},
+      setLastUsedPrinting: (modelType, values) => {
+        const current = get().lastUsedPrinting[modelType] || {};
+        if (
+          current.plugin !== values.plugin ||
+          current.template !== values.template
+        ) {
+          set({
+            lastUsedPrinting: {
+              ...get().lastUsedPrinting,
+              [modelType]: {
+                ...current,
+                ...values
+              }
+            }
+          });
+        }
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {
@@ -156,6 +180,6 @@ export function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   if (uid) {
     api.patch(apiUrl(ApiEndpoints.user_me_profile), { [key]: val });
   } else {
-    console.log('user not logged in, not patching');
+    console.warn('user not logged in, not patching');
   }
 }

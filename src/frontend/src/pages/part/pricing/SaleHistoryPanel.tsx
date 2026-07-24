@@ -1,15 +1,15 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import type { TableColumn } from '@lib/types/Tables';
+import { DateColumn } from '../../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../../defaults/formatters';
-import { DateColumn } from '../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function SaleHistoryPanel({
@@ -76,7 +76,9 @@ export default function SaleHistoryPanel({
             customer_detail: true,
             has_pricing: true,
             order_complete: true
-          }
+          },
+          modelType: ModelType.salesorder,
+          modelField: 'order'
         }}
       />
       {saleHistoryData.length > 0 ? (

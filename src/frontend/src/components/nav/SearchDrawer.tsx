@@ -1,3 +1,15 @@
+import { Boundary } from '@lib/components/Boundary';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -19,6 +31,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconBackspace,
@@ -32,20 +45,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
-
-import { Boundary } from '@lib/components/Boundary';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { cancelEvent } from '@lib/functions/Events';
-import {
-  eventModified,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
-import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -564,9 +563,9 @@ export function SearchDrawer({
               multiple
               defaultValue={searchQueries.map((q) => q.model)}
             >
-              {queryResults.map((query, idx) => (
+              {queryResults.map((query) => (
                 <QueryResultGroup
-                  key={idx}
+                  key={query.model}
                   searchText={searchText}
                   query={query}
                   navigate={navigate}

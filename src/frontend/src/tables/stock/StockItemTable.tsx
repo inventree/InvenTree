@@ -1,26 +1,15 @@
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
-import { useStockFields } from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import {
   DateColumn,
   DescriptionColumn,
@@ -29,7 +18,7 @@ import {
   PartColumn,
   StatusColumn,
   StockColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
 import {
   BatchFilter,
   CreatedAfterFilter,
@@ -46,8 +35,16 @@ import {
   SupplierFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { useStockFields } from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Construct a list of columns for the stock item table
@@ -62,7 +59,8 @@ function stockItemTableColumns({
   return [
     PartColumn({
       accessor: 'part',
-      part: 'part_detail'
+      part: 'part_detail',
+      filter: ['active']
     }),
     IPNColumn({}),
     {
@@ -78,13 +76,22 @@ function stockItemTableColumns({
       accessor: '',
       title: t`Stock`,
       sortable: true,
-      ordering: 'stock'
+      ordering: 'stock',
+      filter: [
+        'available',
+        'allocated',
+        'consumed',
+        'installed',
+        'in_stock',
+        'sent_to_customer'
+      ]
     }),
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: ['has_batch_code', 'batch']
     },
     LocationColumn({
       hidden: !showLocation,
@@ -150,22 +157,26 @@ function stockItemTableColumns({
     DateColumn({
       title: t`Created`,
       accessor: 'creation_date',
-      sortable: true
+      sortable: true,
+      filter: ['created_before', 'created_after']
     }),
     DateColumn({
       title: t`Last Updated`,
-      accessor: 'updated'
+      accessor: 'updated',
+      filter: ['updated_before', 'updated_after']
     }),
     DateColumn({
       title: t`Expiry Date`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
-      defaultVisible: false
+      defaultVisible: false,
+      filter: ['stale', 'expiry_before', 'expiry_after']
     }),
     DateColumn({
       accessor: 'stocktake_date',
       title: t`Stocktake Date`,
-      sortable: true
+      sortable: true,
+      filter: ['has_stocktake', 'stocktake_before', 'stocktake_after']
     })
   ];
 }
@@ -365,8 +376,6 @@ export function StockItemTable({
     [settings]
   );
 
-  const navigate = useNavigate();
-
   const tableColumns = useMemo(
     () =>
       stockItemTableColumns({
@@ -387,7 +396,6 @@ export function StockItemTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: () => {
         table.clearSelectedRecords();
         table.refreshTable();
@@ -417,11 +425,7 @@ export function StockItemTable({
     },
     follow: params.openNewStockItem ?? true,
     table: table,
-    onFormSuccess: (response: any) => {
-      // Returns a list that may contain multiple serialized stock items
-      // Navigate to the first result
-      navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
-    },
+    modelType: ModelType.stockitem,
     successMessage: t`Stock item created`,
     keepOpenOption: true
   });

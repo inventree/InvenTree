@@ -1,3 +1,13 @@
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Table, Text } from '@mantine/core';
 import {
@@ -9,28 +19,20 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { apiUrl } from '@lib/functions/Api';
-import { toNumber } from '@lib/functions/Conversion';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '@lib/types/Forms';
-import dayjs from 'dayjs';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldQuantityInput,
+  type TableFieldRowProps
+} from '../components/forms/fields/TableField';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { ProjectCodeField } from './CommonFields';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -56,7 +58,7 @@ export function useSalesOrderFields({
         }
       },
       customer_reference: {},
-      project_code: {},
+      project_code: ProjectCodeField(),
       order_currency: {},
       start_date: {
         icon: <IconCalendar />
@@ -92,7 +94,7 @@ export function useSalesOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
@@ -192,9 +194,8 @@ export function useSalesOrderLineItemFields({
         value: partCurrency,
         onValueChange: setPartCurrency
       },
-      project_code: {
-        description: t`Select project code for this line item`
-      },
+      discount: {},
+      project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
       link: {}
@@ -328,41 +329,33 @@ function SalesOrderAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
           const available = instance.quantity - instance.allocated;
           const required = record.quantity - record.allocated;
 
-          let quantity = props.item?.quantity ?? 0;
+          let q = props.item?.quantity ?? 0;
 
-          quantity = Math.max(quantity, required);
-          quantity = Math.min(quantity, available);
+          q = Math.max(q, required);
+          q = Math.min(q, available);
 
-          if (quantity != props.item.quantity) {
-            props.changeFn(props.idx, 'quantity', quantity);
+          if (q != props.item?.quantity) {
+            setQuantity(q);
+            props.changeFn(props.rowId, 'quantity', q);
           }
         }
       }
     };
   }, [sourceLocation, record, props]);
 
-  // Statically defined field for selecting the allocation quantity
-  const quantityField: ApiFormFieldType = useMemo(() => {
-    return {
-      field_type: 'number',
-      name: 'quantity',
-      required: true,
-      value: props.item.quantity,
-      onValueChange: (value: any) => {
-        props.changeFn(props.idx, 'quantity', value);
-      }
-    };
-  }, [props]);
+  const [quantity, setQuantity] = useState<number | ''>(
+    props.item?.quantity ?? ''
+  );
 
   return (
-    <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
+    <Table.Tr key={`table-row-${props.rowId}-${record.pk}`}>
       <Table.Td>
         <RenderPartColumn part={record.part_detail} />
       </Table.Td>
@@ -381,14 +374,18 @@ function SalesOrderAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={quantityField}
+        <TableFieldQuantityInput
+          min={0}
+          value={quantity}
+          onChange={(value) => {
+            setQuantity(value);
+            props.changeFn(props.rowId, 'quantity', value);
+          }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -443,7 +440,7 @@ export function useAllocateToSalesOrderForm({
 
           return (
             <SalesOrderAllocateLineRow
-              key={`table-row-${row.idx}-${record.pk}`}
+              key={row.rowId}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -474,6 +471,7 @@ export function useAllocateToSalesOrderForm({
     initialData: {
       items: lineItems.map((item) => {
         return {
+          id: item.pk,
           line_item: item.pk,
           quantity: 0,
           stock_item: null

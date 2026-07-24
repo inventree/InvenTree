@@ -1,9 +1,8 @@
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
-
-import { ModelType } from '@lib/enums/ModelType';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
@@ -22,7 +21,7 @@ export function RenderPurchaseOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.purchaseorder
       })}
       image={supplier.thumbnail || supplier.image}
@@ -50,7 +49,7 @@ export function RenderReturnOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.returnorder
       })}
       image={customer.thumbnail || customer.image}
@@ -155,7 +154,7 @@ export function RenderSalesOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.salesorder
       })}
       image={customer.thumbnail || customer.image}
@@ -198,7 +197,7 @@ export function RenderTransferOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.transferorder
       })}
       url={

@@ -1,11 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { openContextModal } from '@mantine/modals';
-
 import { StylishText } from '@lib/components/StylishText';
 import { UserRoles } from '@lib/enums/Roles';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { openContextModal } from '@mantine/modals';
 import {
   IconBox,
   IconBuildingFactory2,
@@ -83,19 +82,22 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
 }
 
 export const docLinks = {
+  docs: 'https://docs.inventree.org/',
   app: 'https://docs.inventree.org/en/latest/app/',
   getting_started: 'https://docs.inventree.org/en/latest/start/',
   api: 'https://docs.inventree.org/en/latest/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
   github: 'https://github.com/inventree/inventree',
+  bug: 'https://github.com/inventree/inventree/issues',
+  releases: 'https://github.com/inventree/inventree/releases',
   errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
   return [
     {
-      id: 'gettin-started',
+      id: 'getting-started',
       title: t`Getting Started`,
       link: docLinks.getting_started,
       external: true,
@@ -176,6 +178,13 @@ export function AboutLinks(
   user: UserStateProps
 ): MenuLinkItem[] {
   const base_items: MenuLinkItem[] = [
+    {
+      id: 'documentation',
+      title: t`Documentation`,
+      description: t`InvenTree documentation`,
+      link: docLinks.docs,
+      external: true
+    },
     {
       id: 'instance',
       title: t`System Information`,

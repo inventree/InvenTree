@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -11,7 +8,16 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
+import type { TableFilter } from '@lib/index';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  ResponsibleColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { projectCodeFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -19,8 +25,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of project codes
@@ -37,6 +41,9 @@ export default function ProjectCodeTable() {
         sortable: true
       },
       DescriptionColumn({}),
+      BooleanColumn({
+        accessor: 'active'
+      }),
       ResponsibleColumn({})
     ];
   }, []);
@@ -89,6 +96,17 @@ export default function ProjectCodeTable() {
     [user]
   );
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active items`,
+        type: 'boolean'
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -111,6 +129,7 @@ export default function ProjectCodeTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           enableDownload: true
         }}
       />

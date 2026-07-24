@@ -32,10 +32,10 @@ import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
-import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Render the "requirements" info for a part
@@ -306,12 +306,17 @@ function SelectPartsStep({
                   placeholder: t`Select supplier part`,
                   required: true,
                   autoFill: true,
+                  autoFillFilters: {
+                    active: true,
+                    primary: true
+                  },
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
                     part: record.part.pk,
+                    ordering: '-primary',
                     active: true,
                     part_detail: true,
                     supplier_detail: true
@@ -453,11 +458,7 @@ function SelectPartsStep({
   );
 }
 
-export default function OrderPartsWizard({
-  parts
-}: {
-  parts: any[];
-}) {
+export default function OrderPartsWizard({ parts }: { parts: any[] }) {
   // Track a list of selected parts
   const [selectedParts, setSelectedParts] = useState<PartOrderRecord[]>([]);
 

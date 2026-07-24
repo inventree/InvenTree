@@ -74,7 +74,7 @@ npm install
 npm run build
 ```
 
-Copy the built `attachment_carousel` directory to the `inventree-data/plugins` directory and enable it via the admin interface.
+Copy the built `attachment_carousel` directory to the `inventree-data/plugins` directory and enable it via the [Admin Center](../settings/admin.md#admin-center).
 
 ![Attachment Carousel in Inventree panel screenshot](../assets/images/plugin/plugin_walkthrough_default.png "Attachment Carousel in Inventree panel screenshot")
 

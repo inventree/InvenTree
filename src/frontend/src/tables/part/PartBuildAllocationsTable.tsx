@@ -1,11 +1,4 @@
-import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -13,17 +6,23 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Group, Text } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
-import { useUserState } from '../../states/UserState';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   DescriptionColumn,
   PartColumn,
   ProjectCodeColumn,
   StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
+} from '../../components/tables/ColumnRenderers';
+import { IncludeVariantsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { useUserState } from '../../states/UserState';
 import { BuildLineSubTable } from '../build/BuildLineTable';
 
 /**
@@ -120,7 +119,7 @@ export default function PartBuildAllocationsTable({
   const rowActions = useCallback(
     (record: any) => {
       return [
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Build Order`,
           modelType: ModelType.build,
           modelId: record.build,

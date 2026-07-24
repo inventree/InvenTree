@@ -7,19 +7,15 @@ import { t } from '@lingui/core/macro';
 import { ActionIcon, Alert, Badge, Group, HoverCard } from '@mantine/core';
 import { IconExclamationCircle, IconTestPipe } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { DateColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { DateColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
-function EmailStatusBadge({
-  status
-}: {
-  status: any;
-}): ReactNode {
+function EmailStatusBadge({ status }: { status: any }): ReactNode {
   switch (status) {
     case 'A':
       return <Badge color='blue'>{t`Announced`}</Badge>;

@@ -1,3 +1,16 @@
+import { CopyButton } from '@lib/components/CopyButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import {
+  getBaseUrl,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import type { InvenTreeIconType } from '@lib/types/Icons';
 import { t } from '@lingui/core/macro';
 import {
   Anchor,
@@ -16,17 +29,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { CopyButton } from '@lib/components/CopyButton';
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { StylishText } from '@lib/components/StylishText';
-import { YesNoButton } from '@lib/components/YesNoButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import { getBaseUrl, getDetailUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
-import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -280,7 +282,7 @@ function NumberValue(props: Readonly<FieldProps>) {
   const value = props?.field_value;
 
   // Convert to double
-  const numberValue = Number.parseFloat(value.toString());
+  const numberValue = Number.parseFloat(value?.toString() ?? '');
 
   if (value === null || value === undefined) {
     return <Text size='sm'>'---'</Text>;
@@ -417,7 +419,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     value = data?.name;
   }
 
-  let color: MantineColor | undefined = undefined;
+  let color: MantineColor | undefined;
 
   if (value === undefined) {
     value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;
@@ -465,10 +467,12 @@ function CopyField({ value }: Readonly<{ value: string }>) {
 
 export function DetailsTableField({
   item,
-  field
+  field,
+  showIcons = true
 }: Readonly<{
   item: any;
   field: DetailsField;
+  showIcons?: boolean;
 }>) {
   function getFieldType(type: string) {
     switch (type) {
@@ -502,10 +506,12 @@ export function DetailsTableField({
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Group gap='xs' wrap='nowrap'>
-          <InvenTreeIcon
-            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
-          />
-          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+          {showIcons && (
+            <InvenTreeIcon
+              icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
+            />
+          )}
+          <Text style={{ paddingLeft: showIcons ? 10 : 0 }}>{field.label}</Text>
         </Group>
       </Table.Td>
       <Table.Td
@@ -525,15 +531,19 @@ export function DetailsTableField({
   );
 }
 
-export function DetailsTable({
-  item,
-  fields,
-  title
-}: Readonly<{
+export interface DetailsTableProps {
   item: any;
   fields: DetailsField[];
   title?: string;
-}>) {
+  showIcons?: boolean;
+}
+
+export function DetailsTable({
+  item,
+  fields,
+  title,
+  showIcons = true
+}: Readonly<DetailsTableProps>) {
   const visibleFields = useMemo(() => {
     return fields.filter((field) => !field.hidden);
   }, [fields]);
@@ -552,8 +562,13 @@ export function DetailsTable({
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
-            {visibleFields.map((field: DetailsField, index: number) => (
-              <DetailsTableField field={field} item={item} key={index} />
+            {visibleFields.map((field: DetailsField) => (
+              <DetailsTableField
+                field={field}
+                item={item}
+                showIcons={showIcons}
+                key={field.name}
+              />
             ))}
           </Table.Tbody>
         </Table>

@@ -1,18 +1,17 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { t } from '@lingui/core/macro';
 import { Divider, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
 import { api } from '../../../../App';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*
  * Table for displaying available currencies

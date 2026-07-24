@@ -1,11 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { memo, useEffect, useMemo } from 'react';
 import {
   type Control,
   type FieldValues,
   useFormContext
 } from 'react-hook-form';
-
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
 import {
   constructField,
@@ -13,7 +12,7 @@ import {
 } from '../../../functions/forms';
 import { ApiFormField } from './ApiFormField';
 
-export function DependentField({
+function DependentFieldComponent({
   control,
   fieldName,
   definition,
@@ -51,14 +50,15 @@ export function DependentField({
         extractAvailableFields(res, 'POST');
 
       // update the fields in the form state with the new fields
+      // (preserve the reference for any field that did not actually change,
+      // so unrelated fields don't re-render on every dependent-field update)
       setFields((prevFields) => {
-        const newFields: Record<string, ReturnType<typeof constructField>> = {};
+        const newFields: ApiFormFieldSet = {};
 
         for (const [k, v] of Object.entries(prevFields)) {
-          newFields[k] = constructField({
-            field: v,
-            definition: fields?.[k]
-          });
+          newFields[k] = fields?.[k]
+            ? constructField({ field: v, definition: fields[k] })
+            : v;
         }
 
         return newFields;
@@ -89,3 +89,5 @@ export function DependentField({
     />
   );
 }
+
+export const DependentField = memo(DependentFieldComponent);
