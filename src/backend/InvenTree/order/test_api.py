@@ -2865,7 +2865,7 @@ class SalesOrderAllocationDownloadTest(OrderTest):
                 allocation = SalesOrderAllocation.objects.get(pk=row['ID'])
 
                 self.assertEqual(row['Item'], str(allocation.item.pk))
-                self.assertEqual(row['Quantity'], str(allocation.quantity))
+                self.assertEqual(float(row['Quantity']), float(allocation.quantity))
                 self.assertEqual(row['Line'], str(allocation.line.pk))
                 self.assertEqual(row['Part'], str(allocation.item.part.pk))
                 self.assertEqual(row['Order'], str(allocation.line.order.pk))
