@@ -6,5 +6,5 @@ mkdocs-redirects
 mkdocs-simple-hooks>=0.1,<1.0
 mkdocs-include-markdown-plugin
 neoteroi-mkdocs
-mkdocstrings[python]<=1.0.6,>=1.0.6
+mkdocstrings[python]
 mkdocs-mermaid2-plugin
