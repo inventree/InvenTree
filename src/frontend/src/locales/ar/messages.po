@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-20 10:46\n"
+"PO-Revision-Date: 2026-07-21 06:16\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -2231,7 +2231,7 @@ msgstr "إضافة صف جديد"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:809
+#: src/components/tables/InvenTreeTable.tsx:810
 msgid "View details"
 msgstr "عرض تفاصيل"
 
@@ -4343,7 +4343,7 @@ msgstr "خادم مرتجع incorrect بيانات نوع"
 msgid "Error loading table data"
 msgstr "خطأ في جارٍ التحميل جدول بيانات"
 
-#: src/components/tables/InvenTreeTable.tsx:812
+#: src/components/tables/InvenTreeTable.tsx:813
 msgid "View {model}"
 msgstr "عرض {model}"
 
