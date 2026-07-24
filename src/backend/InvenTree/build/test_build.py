@@ -1959,7 +1959,7 @@ class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
 
 @skipUnlessDBFeature('has_select_for_update')
 class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
-    """Genuine cross-transaction regression test for Build.subtract_allocated_stock().
+    """Genuine cross-transaction regression test for Build.complete_outstanding_allocations().
 
     Uses two real threads (each with its own database connection) to reproduce
     duplicated/overlapping execution - e.g. a redelivered 'complete_build' or
@@ -2005,7 +2005,7 @@ class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
         )
 
     def test_subtract_allocated_stock_is_not_processed_twice(self):
-        """A duplicated/concurrent call to subtract_allocated_stock() must not double-consume.
+        """A duplicated/concurrent call to complete_outstanding_allocations() must not double-consume.
 
         Regression test: BuildItem allocation rows were read via a plain (unlocked)
         queryset before being consumed and deleted. Two overlapping calls to this
@@ -2021,7 +2021,7 @@ class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
         def run_subtract():
             try:
                 start_barrier.wait()
-                self.build.subtract_allocated_stock(self.user)
+                self.build.complete_outstanding_allocations(self.user)
             except Exception as exc:  # pragma: no cover - surfaced via errors list
                 errors.append(exc)
             finally:
