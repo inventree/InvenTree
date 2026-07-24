@@ -937,8 +937,15 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         # build = self.context['build']
 
-        # TODO: Check that the "stock item" is valid for the referenced "sub_part"
-        # Note: Because of allow_variants options, it may not be a direct match!
+        # Check that the "stock item" is valid for the referenced "sub_part"
+        # Fast path: direct part match, avoids querying substitutes / variants below
+        # (which would otherwise cost extra queries per line for bulk allocations)
+        if stock_item.part_id != build_line.bom_item.sub_part_id and (
+            not build_line.bom_item.is_stock_item_valid(stock_item)
+        ):
+            raise ValidationError({
+                'stock_item': _('Selected stock item does not match BOM line')
+            })
 
         # Check that the quantity does not exceed the available amount from the stock item
         allocated = self.context.get('_stock_item_allocated')
