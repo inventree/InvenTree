@@ -22,7 +22,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(Contact, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result), 10)
 
         pks = [c.pk for c in result]
 
@@ -55,8 +55,8 @@ class BulkCreateAndFetchTest(TestCase):
             Contact, items_b, filters={'company': company_b}
         )
 
-        self.assertEqual(result_a.count(), 3)
-        self.assertEqual(result_b.count(), 4)
+        self.assertEqual(len(result_a), 3)
+        self.assertEqual(len(result_b), 4)
 
         self.assertTrue(all(c.company_id == company_a.pk for c in result_a))
         self.assertTrue(all(c.company_id == company_b.pk for c in result_b))
@@ -71,13 +71,13 @@ class BulkCreateAndFetchTest(TestCase):
         items = [Contact(company=company, name=f'New {i}') for i in range(2)]
         result = bulk_create_and_fetch(Contact, items)
 
-        self.assertEqual(result.count(), 2)
+        self.assertEqual(len(result), 2)
         self.assertNotIn('Existing', [c.name for c in result])
 
     def test_empty_list(self):
         """Calling with an empty list of items should not raise, and return no items."""
         result = bulk_create_and_fetch(Contact, [])
-        self.assertEqual(result.count(), 0)
+        self.assertEqual(len(result), 0)
 
     def test_does_not_mutate_caller_filters(self):
         """The caller-provided 'filters' dict should not be mutated as a side effect."""
@@ -100,7 +100,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(PurchaseOrder, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result), 10)
 
         pks = [o.pk for o in result]
         self.assertTrue(all(pk is not None for pk in pks))
@@ -121,7 +121,7 @@ class BulkCreateAndFetchTest(TestCase):
 
         result = bulk_create_and_fetch(StockItem, items)
 
-        self.assertEqual(result.count(), 10)
+        self.assertEqual(len(result), 10)
 
         pks = [si.pk for si in result]
         self.assertTrue(all(pk is not None for pk in pks))
@@ -144,7 +144,7 @@ class BulkCreateAndFetchTest(TestCase):
         with CaptureQueriesContext(connection) as ctx:
             result = bulk_create_and_fetch(Contact, items)
 
-        self.assertEqual(result.count(), n)
+        self.assertEqual(len(result), n)
 
         MAX_QUERIES = 25 if n > 100 else 10
 
