@@ -1,10 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 525
+INVENTREE_API_VERSION = 527
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
+    - Extend API with dedicated login-by-code re-send endpoint
+
+v526 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12463
+    - Fix for data export on SalesOrderAllocation API endpoint
 
 v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
     - Type clarifications for some fields; no functional changes
