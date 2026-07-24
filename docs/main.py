@@ -442,6 +442,75 @@ def define_env(env):
 
         return ret_data
 
+    def render_attribute_table(attributes: dict, title: str) -> str:
+        """Render a table of field/property information, in a collapsible (collapsed by default) block.
+
+        Returns an empty string (including no block) if there is nothing to display.
+        """
+        if not attributes:
+            return ''
+
+        table = '| Variable | Type | Description |\n| --- | --- | --- |\n'
+
+        for k, v in sorted(attributes.items()):
+            description = ' '.join(v['description'].split())
+            table += f'| {k} | `{v["type"]}` | {description} |\n'
+
+        ret_data = f'??? note "{title}"\n\n'
+        ret_data += textwrap.indent(table, '    ')
+
+        # Trailing blank line, so consecutive macro calls (e.g. fields followed by
+        # properties) don't run together when the template places them on adjacent lines
+        return ret_data + '\n'
+
+    @env.macro
+    def reportable_model_context():
+        """Render the full 'reportable model types' section.
+
+        One heading plus fields/properties tables per model which templates can be
+        rendered against (e.g. `Part`, `SalesOrder`, `StockItem`). The list of models
+        comes directly from what `export_report_context` discovered via the
+        `InvenTreeReportMixin`, so there is no manually-maintained per-model heading
+        list to keep in sync here.
+        """
+        global REPORT_CONTEXT
+
+        models = REPORT_CONTEXT.get('models', {})
+
+        ret_data = ''
+
+        for info in sorted(models.values(), key=lambda item: item['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
+
+        return ret_data
+
+    @env.macro
+    def related_model_context():
+        """Render the full 'related model types' section.
+
+        A "related" model is one which is not itself reportable, but which is
+        referenced by a field or `@report_attribute` property on a reportable model
+        (e.g. `PartCategory` via `Part.category`, `SupplierPart` via `Part.default_supplier`).
+
+        These are discovered automatically (one hop out from the reportable models) by
+        the `export_report_context` management command, so there is no manually-maintained
+        list of related models to keep in sync here.
+        """
+        global REPORT_CONTEXT
+
+        related = REPORT_CONTEXT.get('related_models', {})
+
+        ret_data = ''
+
+        for info in sorted(related.values(), key=lambda item: item['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
+
+        return ret_data
+
     @env.macro
     def icon(
         source: str,
