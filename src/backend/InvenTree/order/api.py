@@ -19,6 +19,7 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
@@ -34,6 +35,7 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -42,6 +44,11 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import current_date, str2bool
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -64,6 +71,8 @@ from order.status_codes import (
 )
 from part.models import Part
 from users.models import Owner
+
+order_router = InvenTreeApiRouter()
 
 
 class GeneralExtraLineListOutputOptions(OutputConfiguration):
@@ -372,40 +381,23 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
-class PurchaseOrderMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrder endpoints."""
-
-    queryset = models.PurchaseOrder.objects.all().prefetch_related(
-        'supplier', 'created_by'
-    )
-    serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-
-class PurchaseOrderList(
-    PurchaseOrderMixin,
-    OrderCreateMixin,
+class PurchaseOrderViewSet(
+    SerializerContextMixin,
+    OrderCreateMixin,  #
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
-    ListCreateAPI,
+    RetrieveUpdateDestroyModelViewSet,
 ):
-    """API endpoint for accessing a list of PurchaseOrder objects.
-
-    - GET: Return list of PurchaseOrder objects (with filters)
-    - POST: Create a new PurchaseOrder object
-    """
+    """Dummy 3."""
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
+    serializer_class = serializers.PurchaseOrderSerializer
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -438,19 +430,11 @@ class PurchaseOrderList(
 
     ordering = '-reference'
 
-
-class PurchaseOrderDetail(
-    PurchaseOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
-):
-    """API endpoint for detail view of a PurchaseOrder object."""
-
-    output_options = PurchaseOrderOutputOptions
-
-
-class PurchaseOrderContextMixin:
-    """Mixin to add purchase order object as serializer context variable."""
-
-    queryset = models.PurchaseOrder.objects.all()
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+        return queryset
 
     def get_serializer_context(self):
         """Add the PurchaseOrder object to the serializer context."""
@@ -468,64 +452,103 @@ class PurchaseOrderContextMixin:
 
         return context
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderHoldSerializer,
+        output_options=None,
+    )
+    def hold(self, request, pk=None):
+        """API endpoint to place a PurchaseOrder on hold."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to place a PurchaseOrder on hold."""
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCancelSerializer,
+        output_options=None,
+    )
+    def cancel(self, request, pk=None):
+        """API endpoint to 'cancel' a purchase order.
 
-    serializer_class = serializers.PurchaseOrderHoldSerializer
+        The purchase order must be in a state which can be cancelled
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCompleteSerializer,
+        output_options=None,
+    )
+    def complete(self, request, pk=None):
+        """API endpoint to 'complete' a purchase order."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'cancel' a purchase order.
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderIssueSerializer,
+        output_options=None,
+    )
+    def issue(self, request, pk=None):
+        """API endpoint to 'issue' (place) a PurchaseOrder."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    The purchase order must be in a state which can be cancelled
-    """
+    @extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderReceiveSerializer,
+        pagination_class=None,
+        filter_backends=[],
+        output_options=None,
+    )
+    def receive(self, request, pk=None):
+        """API endpoint to receive stock items against a PurchaseOrder.
 
-    serializer_class = serializers.PurchaseOrderCancelSerializer
-
-
-class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'complete' a purchase order."""
-
-    serializer_class = serializers.PurchaseOrderCompleteSerializer
-
-
-class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
-
-    serializer_class = serializers.PurchaseOrderIssueSerializer
-
-
-@extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
-class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to receive stock items against a PurchaseOrder.
-
-    - The purchase order is specified in the URL.
-    - Items to receive are specified as a list called "items" with the following options:
-        - line_item: pk of the PO Line item
-        - supplier_part: pk value of the supplier part
-        - quantity: quantity to receive
-        - status: stock item status
-        - expiry_date: stock item expiry date (optional)
-        - location: destination for stock item (optional)
-        - batch_code: the batch code for this stock item
-        - serial_numbers: serial numbers for this stock item
-    - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
-    """
-
-    queryset = models.PurchaseOrderLineItem.objects.none()
-    serializer_class = serializers.PurchaseOrderReceiveSerializer
-    pagination_class = None
-
-    def create(self, request, *args, **kwargs):
-        """Override the create method to handle stock item creation."""
+        - The purchase order is specified in the URL.
+        - Items to receive are specified as a list called "items" with the following options:
+            - line_item: pk of the PO Line item
+            - supplier_part: pk value of the supplier part
+            - quantity: quantity to receive
+            - status: stock item status
+            - expiry_date: stock item expiry date (optional)
+            - location: destination for stock item (optional)
+            - batch_code: the batch code for this stock item
+            - serial_numbers: serial numbers for this stock item
+        - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
-        response = stock_serializers.StockItemSerializer(queryset, many=True)
 
+        response = stock_serializers.StockItemSerializer(queryset, many=True)
         return Response(response.data, status=status.HTTP_201_CREATED)
+
+
+order_router.register('po', PurchaseOrderViewSet, basename='api-po')
 
 
 class PurchaseOrderLineItemFilter(LineItemFilter):
@@ -636,42 +659,17 @@ class PurchaseOrderLineItemOutputOptions(OutputConfiguration):
     ]
 
 
-class PurchaseOrderLineItemMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrderLineItem endpoints."""
+class PurchaseOrderLineItemViewSet(
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteViewsetMixin,
+    RetrieveUpdateDestroyModelViewSet,
+):
+    """Dummy 2."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
-
-    def perform_update(self, serializer):
-        """Override the perform_update method to auto-update pricing if required."""
-        super().perform_update(serializer)
-
-        # possibly auto-update pricing based on the supplier part pricing data
-        if serializer.validated_data.get('auto_pricing', True):
-            serializer.instance.update_pricing()
-
-
-class PurchaseOrderLineItemList(
-    PurchaseOrderLineItemMixin,
-    DataExportViewMixin,
-    OutputOptionsMixin,
-    ListCreateDestroyAPIView,
-):
-    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
-
-    - GET: Return a list of PurchaseOrder Line Item objects
-    - POST: Create a new PurchaseOrderLineItem object
-    """
 
     filterset_class = PurchaseOrderLineItemFilter
     output_options = PurchaseOrderLineItemOutputOptions
@@ -759,29 +757,43 @@ class PurchaseOrderLineItemList(
         'reference',
     ]
 
+    def get_queryset(self):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+        return queryset
 
-class PurchaseOrderLineItemDetail(
-    PurchaseOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+    def perform_update(self, serializer):
+        """Override the perform_update method to auto-update pricing if required."""
+        super().perform_update(serializer)
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if serializer.validated_data.get('auto_pricing', True):
+            serializer.instance.update_pricing()
+
+
+order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-line')
+
+
+class PurchaseOrderExtraLineViewSet(
+    GeneralExtraLineList, OutputOptionsMixin, CleanModelViewSet
 ):
-    """Detail API endpoint for PurchaseOrderLineItem object."""
-
-    output_options = PurchaseOrderLineItemOutputOptions
-
-
-class PurchaseOrderExtraLineList(
-    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
-):
-    """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
+    """Dummy 1."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
+    def get_queryset(self):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('order')
 
-class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
-    queryset = models.PurchaseOrderExtraLine.objects.all()
-    serializer_class = serializers.PurchaseOrderExtraLineSerializer
+order_router.register(
+    'po-extra-line', PurchaseOrderExtraLineViewSet, basename='api-po-extra-line'
+)
 
 
 class SalesOrderFilter(OrderFilter):
@@ -2538,82 +2550,14 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
-    # API endpoints for purchase orders
+    # Purchase Order, Line Item, and Extra Line API endpoints via ViewSet router
+    path('', include(order_router.urls)),
+    # Purchase order status code information (requires custom kwargs)
     path(
-        'po/',
-        include([
-            # Individual purchase order detail URLs
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
-                    ),
-                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
-                    path(
-                        'complete/',
-                        PurchaseOrderComplete.as_view(),
-                        name='api-po-complete',
-                    ),
-                    path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    meta_path(models.PurchaseOrder),
-                    path(
-                        'receive/',
-                        PurchaseOrderReceive.as_view(),
-                        name='api-po-receive',
-                    ),
-                    # PurchaseOrder detail API endpoint
-                    path('', PurchaseOrderDetail.as_view(), name='api-po-detail'),
-                ]),
-            ),
-            # Purchase order status code information
-            path(
-                'status/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: PurchaseOrderStatus},
-                name='api-po-status-codes',
-            ),
-            # Purchase order list
-            path('', PurchaseOrderList.as_view(), name='api-po-list'),
-        ]),
-    ),
-    # API endpoints for purchase order line items
-    path(
-        'po-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderLineItem),
-                    path(
-                        '',
-                        PurchaseOrderLineItemDetail.as_view(),
-                        name='api-po-line-detail',
-                    ),
-                ]),
-            ),
-            path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
-        ]),
-    ),
-    # API endpoints for purchase order extra line
-    path(
-        'po-extra-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderExtraLine),
-                    path(
-                        '',
-                        PurchaseOrderExtraLineDetail.as_view(),
-                        name='api-po-extra-line-detail',
-                    ),
-                ]),
-            ),
-            path(
-                '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
-            ),
-        ]),
+        'po/status/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: PurchaseOrderStatus},
+        name='api-po-status-codes',
     ),
     # API endpoints for sales orders
     path(
