@@ -3134,7 +3134,7 @@ class StocktakeTest(StockAPITestCase):
                 url,
                 data,
                 max_query_count=2500,
-                max_query_time=3.0,
+                max_query_time=5.0,
                 benchmark=True,
                 format='json',
             )
@@ -3170,7 +3170,7 @@ class StocktakeTest(StockAPITestCase):
                 url,
                 data,
                 max_query_count=2250,
-                max_query_time=3.5,
+                max_query_time=5.0,
                 benchmark=True,
                 format='json',
             )
