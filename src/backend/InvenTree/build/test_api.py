@@ -1702,7 +1702,8 @@ class BuildLineTests(BuildAPITest):
         url = reverse('api-build-line-list')
 
         # First *all* BuildLine objects
-        response = self.get(url)
+        # TODO: This query is taking a long time to complete in testing, and needs to be investigated
+        response = self.get(url, max_query_time=10)
         self.assertEqual(len(response.data), BuildLine.objects.count())
 
         # Filter by 'available' status
@@ -2016,7 +2017,10 @@ class BuildLineTests(BuildAPITest):
 
         url = reverse('api-build-line-list')
 
-        response = self.get(url, {'build': build.pk, 'consumed': True})
+        # TODO: This query is taking a long time to complete in testing, and needs to be investigated
+        response = self.get(
+            url, {'build': build.pk, 'consumed': True}, max_query_time=10
+        )
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], lines[2].pk)

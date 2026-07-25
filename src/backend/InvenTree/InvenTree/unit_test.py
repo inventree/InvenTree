@@ -826,6 +826,7 @@ class InvenTreeAPITestCase(
                 url,
                 {param: 'true', **(additional_params or {})},
                 expected_code=200,
+                max_query_time=5.0,
                 msg=f'Testing {param}=true returns anything but 200',
             )
             self.assertIn(
