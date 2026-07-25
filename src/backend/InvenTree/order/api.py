@@ -744,7 +744,6 @@ class PurchaseOrderLineItemList(
         'reference',
         'SKU',
         'IPN',
-        'total_price',
         'target_date',
         'order',
         'status',
@@ -1363,6 +1362,7 @@ class SalesOrderAllocationList(
     SalesOrderAllocationMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
+    DataExportViewMixin,
     OutputOptionsMixin,
     ListAPI,
 ):

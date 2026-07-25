@@ -197,6 +197,7 @@ export function useSalesOrderLineItemFields({
         value: partCurrency,
         onValueChange: setPartCurrency
       },
+      discount: {},
       project_code: ProjectCodeField(),
       target_date: {},
       notes: {},
