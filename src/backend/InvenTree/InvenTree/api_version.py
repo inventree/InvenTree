@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 526
+INVENTREE_API_VERSION = 528
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v526 -> 2026-07-21 : https://github.com/inventree/InvenTree/pull/11971
+v528 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
+    - Extend API with dedicated login-by-code re-send endpoint
+
+v526 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12463
+    - Fix for data export on SalesOrderAllocation API endpoint
 
 v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
     - Type clarifications for some fields; no functional changes

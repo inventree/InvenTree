@@ -483,6 +483,8 @@ class BuildTest(BuildTestBase):
 
         self.build.complete_build(None)
 
+        # The status is updated by the (synchronous, in tests) background task
+        self.build.refresh_from_db()
         self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
 
         # Check stock items are in expected state.
@@ -664,6 +666,8 @@ class BuildTest(BuildTestBase):
 
         self.build.complete_build(None)
 
+        # The status is updated by the (synchronous, in tests) background task
+        self.build.refresh_from_db()
         self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
 
         # the original BuildItem objects should have been deleted!
@@ -724,37 +728,50 @@ class BuildTest(BuildTestBase):
         self.build.refresh_from_db()
         self.assertEqual(self.build.completed, 10)
 
-    def test_complete_allocation_stale_build_line(self):
-        """The 'consumed' count is incremented atomically at the database level.
+    def test_complete_allocations_sums_consumed(self):
+        """Completing multiple allocations against one BuildLine sums the consumed count.
 
-        Simulates two concurrent workers completing different allocations
-        against the same BuildLine, each holding its own (stale) copy of the line.
+        (Concurrent completions are serialized by the Build row lock inside
+        complete_allocations, so only the sequential arithmetic is tested here.)
         """
         self.build.issue_build()
 
         self.allocate_stock(None, {self.stock_1_1: 3, self.stock_1_2: 5})
 
-        alloc_a, alloc_b = BuildItem.objects.filter(build_line=self.line_1).order_by(
-            'pk'
+        self.build.complete_allocations(
+            BuildItem.objects.filter(build_line=self.line_1), user=self.user
         )
-
-        # Cache a separate copy of the BuildLine on each allocation
-        self.assertEqual(alloc_a.build_line.consumed, 0)
-        self.assertEqual(alloc_b.build_line.consumed, 0)
-
-        alloc_a.complete_allocation(user=self.user)
-        alloc_b.complete_allocation(user=self.user)
 
         # Both consumed quantities must be counted
         self.line_1.refresh_from_db()
         self.assertEqual(self.line_1.consumed, 8)
 
+    def test_complete_allocation_wrapper(self):
+        """BuildItem.complete_allocation() is a thin wrapper around Build.complete_allocations().
+
+        Regression test: complete_allocation() was removed when complete_allocations() was
+        introduced, but some call sites still complete a single BuildItem at a time.
+        """
+        self.build.issue_build()
+
+        self.allocate_stock(None, {self.stock_1_1: 3})
+        alloc = BuildItem.objects.get(build_line=self.line_1, stock_item=self.stock_1_1)
+
+        alloc.complete_allocation(user=self.user)
+
+        self.stock_1_1.refresh_from_db()
+        self.line_1.refresh_from_db()
+
+        self.assertEqual(self.stock_1_1.consumed_by, self.build)
+        self.assertEqual(self.line_1.consumed, 3)
+        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
+
     def test_complete_zero_quantity_allocation(self):
-        """A zero-quantity allocation is removed cleanly on completion.
+        """A zero-quantity allocation is skipped cleanly on completion.
 
         Regression test: completing a BuildItem with quantity=0 (permitted by
-        the model validators) crashed with an AttributeError, blocking build
-        completion until the empty allocation was manually removed.
+        the model validators) crashed, blocking build completion until the
+        empty allocation was manually removed.
         """
         self.build.issue_build()
 
@@ -765,10 +782,11 @@ class BuildTest(BuildTestBase):
 
         n_items = StockItem.objects.count()
 
-        alloc.complete_allocation(user=self.user)
+        # Completing the allocation must not crash, and performs no stock operations
+        self.build.complete_allocations(
+            BuildItem.objects.filter(pk=alloc.pk), user=self.user
+        )
 
-        # The empty allocation is deleted, with no stock operations performed
-        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
         self.assertEqual(StockItem.objects.count(), n_items)
 
         self.stock_1_2.refresh_from_db()
@@ -778,8 +796,10 @@ class BuildTest(BuildTestBase):
         self.line_1.refresh_from_db()
         self.assertEqual(self.line_1.consumed, 0)
 
+        alloc.delete()
+
         # An allocation whose stock item has been depleted elsewhere
-        # is also removed cleanly (allocated quantity clamps to zero)
+        # is also skipped cleanly (allocated quantity clamps to zero)
         depleted = StockItem.objects.create(
             part=self.sub_part_1, quantity=5, delete_on_deplete=False
         )
@@ -791,9 +811,9 @@ class BuildTest(BuildTestBase):
         depleted.refresh_from_db()
         self.assertEqual(depleted.quantity, 0)
 
-        alloc.complete_allocation(user=self.user)
-
-        self.assertFalse(BuildItem.objects.filter(pk=alloc.pk).exists())
+        self.build.complete_allocations(
+            BuildItem.objects.filter(pk=alloc.pk), user=self.user
+        )
 
         depleted.refresh_from_db()
         self.assertIsNone(depleted.consumed_by)
@@ -1159,11 +1179,8 @@ class AutoAllocationTests(BuildTestBase):
         self.assertEqual(self.line_1.allocations.count(), 2)
         self.assertEqual(self.line_2.allocations.count(), 6)
 
-        for item in self.line_1.allocations.all():
-            item.complete_allocation()
-
-        for item in self.line_2.allocations.all():
-            item.complete_allocation()
+        self.build.complete_allocations(self.line_1.allocations.all())
+        self.build.complete_allocations(self.line_2.allocations.all())
 
         self.line_1.refresh_from_db()
         self.line_2.refresh_from_db()
@@ -1360,6 +1377,9 @@ class ExternalBuildTest(InvenTreeAPITestCase):
 
         # Mark the build order as completed
         build.complete_build(self.user)
+
+        # The status is updated by the (synchronous, in tests) background task
+        build.refresh_from_db()
         self.assertEqual(build.status, BuildStatus.COMPLETE)
 
         # Receive the rest of the line item
@@ -1460,6 +1480,68 @@ class BuildTaskTests(BuildTestBase):
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)
+
+    def test_complete_build_task_is_idempotent(self):
+        """A duplicated completion task run must be a no-op.
+
+        Regression test: the completion task had no build lock and no status
+        re-check, so a redelivered (or double-enqueued) task re-ran the
+        completion side effects (duplicate COMPLETED event and notifications).
+        """
+        from build.tasks import complete_build
+
+        self._setup_complete_build()
+        self.build.complete_build(self.user)
+
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.status, BuildStatus.COMPLETE)
+
+        n_consumed = StockItem.objects.filter(consumed_by=self.build).count()
+        n_tracking = StockItemTracking.objects.count()
+
+        # A redelivered task run must skip based on the (locked) database state
+        with mock.patch('build.tasks.trigger_event') as trigger:
+            complete_build(self.build.pk, self.user.pk)
+            trigger.assert_not_called()
+
+        self.assertEqual(
+            StockItem.objects.filter(consumed_by=self.build).count(), n_consumed
+        )
+        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+
+    def test_allocate_stock_merges_quantities(self):
+        """Repeated allocations against the same (line, stock item) accumulate.
+
+        Regression test: allocate_stock() never added merged BuildItems to its
+        'to_update' set, so allocating against an existing allocation silently
+        discarded the requested quantity. Duplicate entries within a single
+        request also overwrote (rather than summed) each other.
+        """
+        self.build.issue_build()
+
+        items = [
+            {'build_line': self.line_1, 'stock_item': self.stock_1_2, 'quantity': 10}
+        ]
+
+        self.build.allocate_stock(items)
+
+        alloc = BuildItem.objects.get(build_line=self.line_1, stock_item=self.stock_1_2)
+        self.assertEqual(alloc.quantity, 10)
+
+        # A second allocation against the same (line, stock item) merges quantities
+        self.build.allocate_stock(items)
+
+        alloc.refresh_from_db()
+        self.assertEqual(alloc.quantity, 20)
+
+        # Duplicate entries within a single request are also merged
+        self.build.allocate_stock([
+            {'build_line': self.line_1, 'stock_item': self.stock_1_1, 'quantity': 1},
+            {'build_line': self.line_1, 'stock_item': self.stock_1_1, 'quantity': 2},
+        ])
+
+        alloc = BuildItem.objects.get(build_line=self.line_1, stock_item=self.stock_1_1)
+        self.assertEqual(alloc.quantity, 3)
 
     # -----------------------------------------------------------------------
     # complete_build_outputs / scrap_build_outputs tasks
@@ -1877,7 +1959,7 @@ class BuildTrimAllocatedStockConcurrencyTest(TransactionTestCase):
 
 @skipUnlessDBFeature('has_select_for_update')
 class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
-    """Genuine cross-transaction regression test for Build.subtract_allocated_stock().
+    """Genuine cross-transaction regression test for Build.complete_outstanding_allocations().
 
     Uses two real threads (each with its own database connection) to reproduce
     duplicated/overlapping execution - e.g. a redelivered 'complete_build' or
@@ -1923,7 +2005,7 @@ class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
         )
 
     def test_subtract_allocated_stock_is_not_processed_twice(self):
-        """A duplicated/concurrent call to subtract_allocated_stock() must not double-consume.
+        """A duplicated/concurrent call to complete_outstanding_allocations() must not double-consume.
 
         Regression test: BuildItem allocation rows were read via a plain (unlocked)
         queryset before being consumed and deleted. Two overlapping calls to this
@@ -1939,7 +2021,7 @@ class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
         def run_subtract():
             try:
                 start_barrier.wait()
-                self.build.subtract_allocated_stock(self.user)
+                self.build.complete_outstanding_allocations(self.user)
             except Exception as exc:  # pragma: no cover - surfaced via errors list
                 errors.append(exc)
             finally:

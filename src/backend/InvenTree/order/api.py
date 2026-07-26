@@ -1362,6 +1362,7 @@ class SalesOrderAllocationList(
     SalesOrderAllocationMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
+    DataExportViewMixin,
     OutputOptionsMixin,
     ListAPI,
 ):
