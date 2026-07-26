@@ -28,6 +28,7 @@ import {
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -195,6 +196,7 @@ function SelectPartsStep({
   const [selectedRecord, setSelectedRecord] = useState<PartOrderRecord | null>(
     null
   );
+  const globalSettings = useGlobalSettingsState();
 
   const purchaseOrderFields = usePurchaseOrderFields({
     supplierId: selectedRecord?.supplier_part?.supplier
@@ -240,9 +242,11 @@ function SelectPartsStep({
       },
       purchase_price: {},
       purchase_price_currency: {},
-      merge_items: {}
+      merge_items: {
+        default: globalSettings.isSet('PURCHASEORDER_MERGE_LINE_ITEMS', true)
+      }
     };
-  }, [selectedRecord]);
+  }, [selectedRecord, globalSettings]);
 
   const addToOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_line_list),

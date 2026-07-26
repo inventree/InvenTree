@@ -684,7 +684,14 @@ class PurchaseOrderLineItemList(
 
         # possibly merge duplicate items
         line_item = None
-        if data.get('merge_items', True):
+        merge_items = data.get(
+            'merge_items',
+            common.settings.get_global_setting(
+                'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+            ),
+        )
+
+        if merge_items:
             with transaction.atomic():
                 # Lock the matching row, so concurrent line creations cannot
                 # both read the same starting quantity (lost update)
