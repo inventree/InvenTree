@@ -1074,21 +1074,13 @@ class PurchaseOrderLineItemTest(OrderTest):
 
         li1 = self.post(
             reverse('api-po-line-list'),
-            {
-                'order': po.pk,
-                'part': sp.pk,
-                'quantity': 1,
-            },
+            {'order': po.pk, 'part': sp.pk, 'quantity': 1},
             expected_code=201,
         ).json()
 
         li2 = self.post(
             reverse('api-po-line-list'),
-            {
-                'order': po.pk,
-                'part': sp.pk,
-                'quantity': 2,
-            },
+            {'order': po.pk, 'part': sp.pk, 'quantity': 2},
             expected_code=201,
         ).json()
 
@@ -1098,11 +1090,7 @@ class PurchaseOrderLineItemTest(OrderTest):
 
         li3 = self.post(
             reverse('api-po-line-list'),
-            {
-                'order': po.pk,
-                'part': sp.pk,
-                'quantity': 3,
-            },
+            {'order': po.pk, 'part': sp.pk, 'quantity': 3},
             expected_code=201,
         ).json()
 

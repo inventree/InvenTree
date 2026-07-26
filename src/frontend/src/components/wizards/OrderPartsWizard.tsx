@@ -28,11 +28,11 @@ import {
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
