@@ -1105,6 +1105,7 @@ class PartList(
         'name',
         'creation_date',
         'IPN',
+        'ordering',
         'in_stock',
         'total_in_stock',
         'unallocated_stock',

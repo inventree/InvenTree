@@ -90,6 +90,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'ordering',
       title: t`On Order`,
       filter: 'on_order',
+      sortable: true,
       defaultVisible: false
     }),
     {

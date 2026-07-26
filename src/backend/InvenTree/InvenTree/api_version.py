@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
     - Adds "on_order" filter to the Part API
+    - Enable sorting by "on_order" quantity on the Part API endpoint
 
 v528 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12469
     - Additional ordering options for SalesOrderAllocation API endpoint
