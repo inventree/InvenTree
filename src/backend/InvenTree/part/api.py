@@ -784,6 +784,15 @@ class PartFilter(FilterSet):
             return queryset.filter(Q(unallocated_stock__gt=0))
         return queryset.filter(Q(unallocated_stock__lte=0))
 
+    # on_order filter
+    on_order = rest_filters.BooleanFilter(label='On order', method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether the Part has any stock on order."""
+        if str2bool(value):
+            return queryset.filter(Q(ordering__gt=0))
+        return queryset.filter(Q(ordering__lte=0))
+
     convert_from = rest_filters.ModelChoiceFilter(
         label='Can convert from',
         queryset=Part.objects.all(),
