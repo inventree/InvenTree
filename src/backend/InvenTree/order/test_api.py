@@ -2307,6 +2307,60 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'allocated': 'true'}, 1)
         self.filter({'allocated': 'false'}, n - 1)
 
+    def test_so_line_ordering(self):
+        """Test that the SalesOrderLineItem list can be ordered by order-related fields.
+
+        Regression test for aliased ordering fields ('status', 'shipment_date')
+        which are not present directly on the SalesOrderLineItem model,
+        but rather on the linked SalesOrder.
+        """
+        # Orders 1-3 are 'pending' (status=10), order 4 is 'shipped' (status=20),
+        # order 5 is 'returned' (status=60), order 6 is 'complete' (status=30)
+        # (refer to the 'sales_order' fixture data)
+
+        # Order by 'status' (aliased to 'order__status')
+        response = self.get(
+            self.url, {'ordering': 'status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses))
+        self.assertEqual(statuses[0], SalesOrderStatus.PENDING.value)
+        self.assertEqual(statuses[-1], SalesOrderStatus.RETURNED.value)
+
+        # Reverse the ordering
+        response = self.get(
+            self.url, {'ordering': '-status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses, reverse=True))
+        self.assertEqual(statuses[0], SalesOrderStatus.RETURNED.value)
+
+        # Order by 'shipment_date' (aliased to 'order__shipment_date')
+        order_a = models.SalesOrder.objects.get(pk=4)
+        order_b = models.SalesOrder.objects.get(pk=5)
+
+        order_a.shipment_date = date(2020, 1, 1)
+        order_a.save()
+
+        order_b.shipment_date = date(2024, 1, 1)
+        order_b.save()
+
+        response = self.get(self.url, {'ordering': 'shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        # Lines for 'order_a' (earlier shipment date) should sort before 'order_b'
+        self.assertLess(order_ids.index(order_a.pk), order_ids.index(order_b.pk))
+
+        # Reverse the ordering - 'order_b' should now come first
+        response = self.get(self.url, {'ordering': '-shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        self.assertLess(order_ids.index(order_b.pk), order_ids.index(order_a.pk))
+
     def test_so_line_bulk_delete(self):
         """Test that we can bulk delete multiple SalesOrderLineItems via the API."""
         n = models.SalesOrderLineItem.objects.count()
