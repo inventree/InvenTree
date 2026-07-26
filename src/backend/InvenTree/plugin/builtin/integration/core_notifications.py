@@ -109,7 +109,7 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
         if recipients:
             InvenTree.helpers_email.send_email(
-                subject, '', recipients, html_message=html_message
+                subject, '', recipients, html_message=html_message, force_async=True
             )
             return True
 
