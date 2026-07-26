@@ -1087,6 +1087,8 @@ class SalesOrderLineItemList(
         'sale_price',
         'target_date',
         'line',
+        'status',
+        'shipment_date',
     ]
 
     ordering_field_aliases = {
@@ -1095,6 +1097,8 @@ class SalesOrderLineItemList(
         'IPN': 'part__IPN',
         'order': 'order__reference',
         'line': ['line_int', 'line', 'part__name'],
+        'status': 'order__status',
+        'shipment_date': 'order__shipment_date',
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
