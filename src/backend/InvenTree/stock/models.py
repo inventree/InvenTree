@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, QuerySet, Sum
+from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
@@ -423,6 +423,39 @@ STOCK_SORT_CHOICES = [
 STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
+class SerialNumberLock(models.Model):
+    """A lightweight, keyed mutex used to serialize concurrent serial number creation.
+
+    Serial number uniqueness is scoped by the SERIAL_NUMBER_GLOBALLY_UNIQUE
+    setting - either across an entire Part variant tree (the default), or
+    globally. That scope depends on Part.tree_id, which is not a field on
+    StockItem, so it cannot be expressed as a database-level UniqueConstraint
+    on StockItem directly (a UniqueConstraint cannot reference a joined
+    field). This model provides an alternative: a row that concurrent
+    creation attempts for the same (scope, serial) pair can select_for_update()
+    to serialize against each other - see StockItem._lock_serial_numbers().
+
+    Rows are never deleted - a stale row is harmless, since it does not itself
+    represent "this serial is taken" (that is always determined by a fresh
+    query against StockItem, taken while holding the row's lock). It is only
+    ever used as a lock target, so a freed serial number (e.g. after its
+    StockItem is deleted) remains reusable exactly as it is today.
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        constraints = [
+            UniqueConstraint(fields=['scope', 'serial'], name='unique_serial_lock')
+        ]
+
+    # Either a Part.tree_id value (per-tree uniqueness) or a fixed sentinel
+    # value representing "globally unique" - see StockItem._lock_serial_numbers()
+    scope = models.IntegerField()
+
+    serial = models.CharField(max_length=100)
+
+
 class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -468,6 +501,23 @@ class StockItem(
         """Model meta options."""
 
         verbose_name = _('Stock Item')
+        constraints = [
+            # Baseline, database-enforced duplicate-serial guard: a given Part
+            # can never have two StockItem rows sharing the same serial number.
+            # This alone does not cover the "unique across a Part variant tree"
+            # (or globally-unique) semantics controlled by the
+            # SERIAL_NUMBER_GLOBALLY_UNIQUE setting - see
+            # StockItem._lock_serial_numbers() for that; a UniqueConstraint
+            # cannot reference the joined Part.tree_id field.
+            UniqueConstraint(
+                fields=['part', 'serial'],
+                # Non-serialized StockItems may store serial as either NULL or
+                # '' depending on the creation path - exclude both, since
+                # "no serial" is not a value this constraint should govern
+                condition=Q(serial__isnull=False) & ~Q(serial=''),
+                name='stock_item_unique_part_serial',
+            )
+        ]
 
     class MPTTMeta:
         """MPTT metaclass options."""
@@ -655,7 +705,53 @@ class StockItem(
             & Q(expiry_date__lt=InvenTree.helpers.current_date())
         )
 
+    # Sentinel scope value used by _lock_serial_numbers() when serial numbers
+    # are configured to be globally unique (rather than unique per Part variant
+    # tree) - Part.tree_id values are always >= 1, so this can never collide
+    GLOBAL_SERIAL_LOCK_SCOPE = 0
+
+    @staticmethod
+    def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
+        """Serialize concurrent serial number creation, and re-validate under the lock.
+
+        Must be called from within an atomic transaction. Acquires a
+        select_for_update() lock (via SerialNumberLock) for each requested
+        serial number, scoped to match the SERIAL_NUMBER_GLOBALLY_UNIQUE
+        setting, then re-checks for conflicts against StockItem while holding
+        those locks. This closes the race where two concurrent requests both
+        read "no conflict" before either has committed its creation.
+
+        Raises:
+            ValidationError: If any of the provided serial numbers now conflict
+        """
+        scope = (
+            StockItem.GLOBAL_SERIAL_LOCK_SCOPE
+            if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False)
+            else part.tree_id
+        )
+
+        # Lock in a consistent order, to avoid deadlocks against other
+        # concurrent creation requests touching an overlapping set of serials
+        for serial in sorted({str(serial) for serial in serials}):
+            lock, _created = SerialNumberLock.objects.get_or_create(
+                scope=scope, serial=serial
+            )
+            SerialNumberLock.objects.select_for_update().get(pk=lock.pk)
+
+        # Re-validate for conflicts now that the locks are held - any
+        # concurrent request for the same (scope, serial) pair has either
+        # already committed (and will now show up here) or is blocked behind
+        # this lock (and will see this request's result once it releases)
+        conflicts = part.find_conflicting_serial_numbers(serials)
+
+        if conflicts:
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join(str(x) for x in conflicts)
+            raise ValidationError({'serial_numbers': msg})
+
     @classmethod
+    @transaction.atomic
     def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
         """Create multiple stock items with the provided serial numbers.
 
@@ -672,8 +768,11 @@ class StockItem(
         This method uses bulk_create to create multiple StockItem objects in a single query,
         which is much more efficient than creating them one-by-one.
 
-        However, it does not perform any validation checks on the provided serial numbers,
-        and also does not generate any "stock tracking entries".
+        Concurrent calls for an overlapping set of serial numbers are
+        serialized against each other (see _lock_serial_numbers()), so unlike
+        other validation checks, this method's duplicate-serial protection is
+        safe even when the caller's own pre-check raced against another
+        request. It does not generate any "stock tracking entries".
 
         Note: This is an 'internal' function and should not be used by external code / plugins.
         """
@@ -722,6 +821,10 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
+        # Serialize against any other concurrent request creating an
+        # overlapping set of serial numbers, and re-validate under that lock
+        cls._lock_serial_numbers(data['part'], serials)
+
         parent = kwargs.pop('parent', None) or data.get('parent')
 
         data['parent'] = parent
@@ -741,7 +844,13 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        items = bulk_create_and_fetch(StockItem, items)
+        # (the IntegrityError catch is a defense-in-depth backstop against
+        # the database-level UniqueConstraint - _lock_serial_numbers() above
+        # should already have ruled out any conflict)
+        try:
+            items = bulk_create_and_fetch(StockItem, items)
+        except IntegrityError as exc:
+            raise ValidationError({'serial_numbers': str(exc)}) from exc
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,

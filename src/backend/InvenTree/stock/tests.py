@@ -1,11 +1,13 @@
 """Tests for stock app."""
 
 import datetime
+import threading
+from unittest import mock
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import connection, transaction
 from django.db.models import Sum
-from django.test import override_settings
+from django.test import TransactionTestCase, override_settings, skipUnlessDBFeature
 
 from django_q.models import OrmQ
 from djmoney.money import Money
@@ -1966,3 +1968,202 @@ class AdminTest(AdminTestCase):
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=StockLocationType)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for StockItem._create_serial_numbers().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent requests to create a StockItem with the
+    *same* serial number for the same Part could both check for conflicts
+    before either had committed its bulk_create - producing two StockItem rows
+    sharing one (part, serial) pair.
+
+    _create_serial_numbers() now locks (select_for_update, via a
+    SerialNumberLock row - see StockItem._lock_serial_numbers()) and
+    re-validates for conflicts under that lock before creating anything, and
+    a database-level UniqueConstraint on (part, serial) backstops it, so only
+    one of two concurrent requests for the same serial number may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a single trackable Part to create serialized stock against."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency serial part',
+            description='Part for serial creation concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_creation_does_not_duplicate_serial(self):
+        """Two concurrent requests for the same serial number must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem._lock_serial_numbers() so both threads reach the
+        # (real, database-level) row lock at the same time - one wins the
+        # lock and proceeds, the other blocks until the winner's transaction
+        # completes.
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=5)
+            return original_lock_serial_numbers(part, serials)
+
+        def create():
+            try:
+                StockItem._create_serial_numbers(['SN-RACE'], part=self.part)
+                results.append('ok')
+            except ValidationError:
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=create)
+        thread_b = threading.Thread(target=create)
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as a duplicate
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        # The serial number must only have been created once
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, serial='SN-RACE').count(), 1
+        )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialBatchConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for overlapping batch serial creation.
+
+    Extends the single-serial race in StockItemSerialConcurrencyTest to the
+    more realistic case of *bulk* serial number creation: three concurrent
+    requests, each creating 10 serial numbers, with the requested ranges
+    overlapping pairwise (but not all three sharing any single serial):
+
+        A: 1-10
+        B: 6-15   (overlaps A on 6-10, and C on 11-15)
+        C: 11-20
+
+    Since _create_serial_numbers() creates its whole batch atomically (a
+    conflict anywhere in the batch aborts the batch entirely), and A and C do
+    not share any serial with each other, exactly one of the following must
+    occur:
+
+        - B is rejected, and A and C both succeed in full, or
+        - B succeeds in full, and both A and C are rejected
+
+    In neither case can two of the three batches both succeed, and in neither
+    case can any serial number be created more than once. This also exercises
+    the requirement that locks are acquired in a globally consistent order
+    (StockItem._lock_serial_numbers() sorts the requested serials before
+    locking) - without that, three threads locking overlapping-but-not-
+    identical sets of rows could deadlock.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a single trackable Part to create serialized stock against."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency batch serial part',
+            description='Part for batch serial creation concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_overlapping_batches_do_not_duplicate_serials(self):
+        """Three concurrent, partially-overlapping batch creation requests must stay consistent."""
+        start_barrier = threading.Barrier(3, timeout=10)
+        errors = []
+        results = {}
+        results_lock = threading.Lock()
+
+        # Wrap StockItem._lock_serial_numbers() so all three threads reach the
+        # (real, database-level) row locks at the same time, maximising
+        # contention across the overlapping sets of serial numbers.
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=10)
+            return original_lock_serial_numbers(part, serials)
+
+        batches = {
+            'a': [str(i) for i in range(1, 11)],  # 1-10
+            'b': [str(i) for i in range(6, 16)],  # 6-15
+            'c': [str(i) for i in range(11, 21)],  # 11-20
+        }
+
+        def create(name, serials):
+            try:
+                StockItem._create_serial_numbers(serials, part=self.part)
+                with results_lock:
+                    results[name] = 'ok'
+            except ValidationError:
+                with results_lock:
+                    results[name] = 'rejected'
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                with results_lock:
+                    errors.append(exc)
+            finally:
+                connection.close()
+
+        threads = [
+            threading.Thread(target=create, args=(name, serials))
+            for name, serials in batches.items()
+        ]
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join(timeout=10)
+
+        for thread in threads:
+            self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual(set(results.keys()), {'a', 'b', 'c'})
+
+        # Batch 'b' overlaps both 'a' and 'c', which do not overlap each
+        # other - so either 'b' alone wins, or both 'a' and 'c' win, never
+        # any other combination
+        ok = {name for name, outcome in results.items() if outcome == 'ok'}
+        self.assertIn(ok, [{'b'}, {'a', 'c'}])
+
+        # No serial number was created more than once
+        created_serials = list(
+            StockItem.objects.filter(part=self.part).values_list('serial', flat=True)
+        )
+        self.assertEqual(len(created_serials), len(set(created_serials)))
+
+        # The created serials are exactly the union of the winning batches -
+        # each successful batch's serials all exist, and (since a rejected
+        # batch creates nothing at all) nothing beyond that union exists
+        expected_serials = set()
+        for name in ok:
+            expected_serials.update(batches[name])
+
+        self.assertEqual(set(created_serials), expected_serials)
