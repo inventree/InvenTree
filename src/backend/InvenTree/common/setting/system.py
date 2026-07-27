@@ -1003,6 +1003,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'PURCHASEORDER_MERGE_LINE_ITEMS': {
+        'name': _('Merge Purchase Order Line Items'),
+        'description': _(
+            'Merge new purchase order line items with existing lines that share the same part, destination, and target date'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     # login / SSO
     'LOGIN_ENABLE_PWD_FORGOT': {
         'name': _('Enable password forgot'),
