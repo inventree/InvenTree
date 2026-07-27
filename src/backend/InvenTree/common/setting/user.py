@@ -159,6 +159,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 10,
         'validator': [int, MinValueValidator(1)],
     },
+    'SEARCH_RESULTS_PREVIEW_PANEL': {
+        'name': _('Search Results Preview Panel'),
+        'description': _(
+            'Open search results in the preview panel, rather than navigating directly to the result'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SEARCH_REGEX': {
         'name': _('Regex Search'),
         'description': _('Enable regular expressions in search queries'),

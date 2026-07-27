@@ -60,12 +60,15 @@ services:
     inventree-cache:
         image: redis:7-alpine
         container_name: inventree-cache
-        # Disable disk persistence — avoids permission issues on Windows bind mounts
+        # Disable disk persistence to avoid permission errors on Windows bind mounts.
+        # The /data volume is retained for layout consistency (#11100); cache data is ephemeral.
         command: redis-server --save "" --appendonly no
         env_file:
             - .env
         expose:
             - ${INVENTREE_CACHE_PORT:-6379}
+        volumes:
+            - ${INVENTREE_EXT_VOLUME}/redis:/data
         restart: always
 
     # InvenTree web server service
