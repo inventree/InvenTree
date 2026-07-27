@@ -1675,7 +1675,6 @@ class SalesOrder(TotalPriceMixin, Order):
         SalesOrderAllocation.objects.bulk_create(new_allocations, batch_size=250)
 
     @transaction.atomic
-    @transaction.atomic
     def allocate_serial_numbers(
         self,
         line_item: 'SalesOrderLineItem',
