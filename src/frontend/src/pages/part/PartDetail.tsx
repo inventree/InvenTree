@@ -89,12 +89,12 @@ import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
+import PartSalesOrdersTable from '../../tables/part/PartSalesOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
-import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 import PartAllocationPanel from './PartAllocationPanel';
@@ -398,7 +398,11 @@ export default function PartDetail() {
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
-        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
+        content: part.pk ? (
+          <PartSalesOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'return_orders',
