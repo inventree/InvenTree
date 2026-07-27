@@ -745,6 +745,14 @@ class PurchaseOrderLineItemSerializer(
         write_only=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        """Set dynamic defaults for create-only fields."""
+        super().__init__(*args, **kwargs)
+
+        self.fields['merge_items'].default = get_global_setting(
+            'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+        )
+
     sku = serializers.CharField(
         source='part.SKU', read_only=True, allow_null=True, label=_('SKU')
     )

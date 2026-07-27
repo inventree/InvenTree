@@ -1060,6 +1060,42 @@ class PurchaseOrderLineItemTest(OrderTest):
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
 
+    def test_po_line_merge_default_setting(self):
+        """Test that merge_items defaults to the global setting value."""
+        self.assignRole('purchase_order.add')
+
+        su = Company.objects.get(pk=1)
+        sp = SupplierPart.objects.get(pk=1)
+        po = models.PurchaseOrder.objects.create(
+            supplier=su, reference='PO-MERGE-DEFAULT'
+        )
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', False)
+
+        li1 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 1},
+            expected_code=201,
+        ).json()
+
+        li2 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 2},
+            expected_code=201,
+        ).json()
+
+        self.assertNotEqual(li1['pk'], li2['pk'])
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', True)
+
+        li3 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 3},
+            expected_code=201,
+        ).json()
+
+        self.assertEqual(li1['pk'], li3['pk'])
+
     def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
         self.run_output_test(
