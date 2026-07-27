@@ -26,6 +26,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from data_exporter.mixins import DataExportSerializerMixin
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
@@ -743,6 +744,14 @@ class PurchaseOrderLineItemSerializer(
         default=True,
         write_only=True,
     )
+
+    def __init__(self, *args, **kwargs):
+        """Set dynamic defaults for create-only fields."""
+        super().__init__(*args, **kwargs)
+
+        self.fields['merge_items'].default = get_global_setting(
+            'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+        )
 
     sku = serializers.CharField(
         source='part.SKU', read_only=True, allow_null=True, label=_('SKU')
@@ -1543,7 +1552,7 @@ class SalesOrderShipmentSerializer(
 
 
 class SalesOrderAllocationSerializer(
-    FilterableSerializerMixin, InvenTreeModelSerializer
+    DataExportSerializerMixin, FilterableSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrderAllocation model.
 

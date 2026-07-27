@@ -2053,9 +2053,12 @@ class Attachment(
 
     def __str__(self):
         """Human name for attachment."""
-        if self.attachment is not None:
+        if self.attachment and self.attachment.name:
             return os.path.basename(self.attachment.name)
-        return str(self.link)
+        elif self.link:
+            return str(self.link)
+        else:
+            return super().__str__()
 
     def validate_rename(self, filename: str):
         """Validate that the provided filename is valid, for renaming an attachment."""

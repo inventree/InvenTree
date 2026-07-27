@@ -1060,6 +1060,42 @@ class PurchaseOrderLineItemTest(OrderTest):
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
 
+    def test_po_line_merge_default_setting(self):
+        """Test that merge_items defaults to the global setting value."""
+        self.assignRole('purchase_order.add')
+
+        su = Company.objects.get(pk=1)
+        sp = SupplierPart.objects.get(pk=1)
+        po = models.PurchaseOrder.objects.create(
+            supplier=su, reference='PO-MERGE-DEFAULT'
+        )
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', False)
+
+        li1 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 1},
+            expected_code=201,
+        ).json()
+
+        li2 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 2},
+            expected_code=201,
+        ).json()
+
+        self.assertNotEqual(li1['pk'], li2['pk'])
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', True)
+
+        li3 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 3},
+            expected_code=201,
+        ).json()
+
+        self.assertEqual(li1['pk'], li3['pk'])
+
     def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
         self.run_output_test(
@@ -2307,6 +2343,60 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'allocated': 'true'}, 1)
         self.filter({'allocated': 'false'}, n - 1)
 
+    def test_so_line_ordering(self):
+        """Test that the SalesOrderLineItem list can be ordered by order-related fields.
+
+        Regression test for aliased ordering fields ('status', 'shipment_date')
+        which are not present directly on the SalesOrderLineItem model,
+        but rather on the linked SalesOrder.
+        """
+        # Orders 1-3 are 'pending' (status=10), order 4 is 'shipped' (status=20),
+        # order 5 is 'returned' (status=60), order 6 is 'complete' (status=30)
+        # (refer to the 'sales_order' fixture data)
+
+        # Order by 'status' (aliased to 'order__status')
+        response = self.get(
+            self.url, {'ordering': 'status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses))
+        self.assertEqual(statuses[0], SalesOrderStatus.PENDING.value)
+        self.assertEqual(statuses[-1], SalesOrderStatus.RETURNED.value)
+
+        # Reverse the ordering
+        response = self.get(
+            self.url, {'ordering': '-status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses, reverse=True))
+        self.assertEqual(statuses[0], SalesOrderStatus.RETURNED.value)
+
+        # Order by 'shipment_date' (aliased to 'order__shipment_date')
+        order_a = models.SalesOrder.objects.get(pk=4)
+        order_b = models.SalesOrder.objects.get(pk=5)
+
+        order_a.shipment_date = date(2020, 1, 1)
+        order_a.save()
+
+        order_b.shipment_date = date(2024, 1, 1)
+        order_b.save()
+
+        response = self.get(self.url, {'ordering': 'shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        # Lines for 'order_a' (earlier shipment date) should sort before 'order_b'
+        self.assertLess(order_ids.index(order_a.pk), order_ids.index(order_b.pk))
+
+        # Reverse the ordering - 'order_b' should now come first
+        response = self.get(self.url, {'ordering': '-shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        self.assertLess(order_ids.index(order_b.pk), order_ids.index(order_a.pk))
+
     def test_so_line_bulk_delete(self):
         """Test that we can bulk delete multiple SalesOrderLineItems via the API."""
         n = models.SalesOrderLineItem.objects.count()
@@ -2839,6 +2929,36 @@ class SalesOrderAllocateTest(OrderTest):
         set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', False)
 
         response = self.post(self.url, data, expected_code=201)
+
+
+class SalesOrderAllocationDownloadTest(OrderTest):
+    """Unit tests for downloading SalesOrderAllocation data via the API endpoint."""
+
+    def test_download_csv(self):
+        """Test that SalesOrderAllocation data can be downloaded as a .csv file.
+
+        Regression test for a bug where the SalesOrderAllocation list endpoint
+        did not support data export.
+        """
+        url = reverse('api-so-allocation-list')
+
+        required_cols = ['ID', 'Item', 'Quantity', 'Shipment', 'Line', 'Part', 'Order']
+
+        with self.export_data(url, export_format='csv', expected_code=200) as file:
+            data = self.process_csv(
+                file,
+                required_cols=required_cols,
+                required_rows=SalesOrderAllocation.objects.count(),
+            )
+
+            for row in data:
+                allocation = SalesOrderAllocation.objects.get(pk=row['ID'])
+
+                self.assertEqual(row['Item'], str(allocation.item.pk))
+                self.assertEqual(float(row['Quantity']), float(allocation.quantity))
+                self.assertEqual(row['Line'], str(allocation.line.pk))
+                self.assertEqual(row['Part'], str(allocation.item.part.pk))
+                self.assertEqual(row['Order'], str(allocation.line.order.pk))
 
 
 class SalesOrderAllocateSerialsTest(OrderTest):
