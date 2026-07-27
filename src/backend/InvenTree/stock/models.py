@@ -1725,11 +1725,25 @@ class StockItem(
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
         - It has been assigned to a BuildOrder
+        - It has active allocations against a SalesOrder or TransferOrder
+        - It is referenced by a ReturnOrder line item
         """
         if self.installed_item_count() > 0:
             return False
 
-        return self.sales_order is None
+        if self.sales_order is not None:
+            return False
+
+        if self.allocations.exists():
+            return False
+
+        if self.get_sales_order_allocations(active=True).exists():
+            return False
+
+        if self.get_transfer_order_allocations(active=True).exists():
+            return False
+
+        return not self.return_order_lines.exists()
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
