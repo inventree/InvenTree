@@ -105,7 +105,7 @@ services:
             test:
                 [
                     'CMD-SHELL',
-                    'curl --silent --show-error --fail "http://localhost:$${INVENTREE_WEB_PORT:-8000}/api/system/health/" > /dev/null',
+                    'invoke server-health --address "http://localhost:$${INVENTREE_WEB_PORT:-8000}"',
                 ]
             interval: 20s
             timeout: 5s
@@ -128,11 +128,7 @@ services:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         healthcheck:
-            test:
-                [
-                    'CMD-SHELL',
-                    'python -c "import os; os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"InvenTree.settings\"); os.chdir(\"/home/inventree/src/backend/InvenTree\"); import django; django.setup(); from InvenTree.status import is_worker_running; raise SystemExit(0 if is_worker_running() else 1)"',
-                ]
+            test: ['CMD-SHELL', 'invoke worker-health']
             interval: 60s
             timeout: 10s
             retries: 3
