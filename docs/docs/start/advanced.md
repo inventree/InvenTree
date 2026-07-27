@@ -98,8 +98,6 @@ After changing LDAP settings, restart the InvenTree server and worker containers
 !!! tip "Debugging"
     Set `INVENTREE_LDAP_DEBUG=True` while troubleshooting, then disable it again once authentication works.
 
-Fixes [#12224](https://github.com/inventree/InvenTree/issues/12224).
-
 ## Tracing support
 
 Starting with 0.14.0 InvenTree supports sending traces, logs and metrics to OpenTelemetry compatible endpoints (both HTTP and gRPC). A [list of vendors](https://opentelemetry.io/ecosystem/vendors) is available on the project site.
