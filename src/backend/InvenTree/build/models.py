@@ -1599,6 +1599,11 @@ class Build(
             )
         }
 
+        # Net additional quantity being requested against each StockItem by this call
+        # (regardless of whether it lands in a new or an existing BuildItem row)
+        requested = {}
+        stock_items = {}
+
         for item in items:
             build_line = item['build_line']
             stock_item = item['stock_item']
@@ -1627,6 +1632,27 @@ class Build(
             else:
                 # This is a new BuildItem
                 to_create[key] = BuildItem(quantity=quantity, **filters)
+
+            stock_items[stock_item.pk] = stock_item
+            requested[stock_item.pk] = requested.get(stock_item.pk, 0) + quantity
+
+        # Lock each referenced StockItem (in a consistent order, to avoid deadlocks
+        # against other allocation requests touching an overlapping set of items),
+        # and re-validate that the requested allocation still fits within the
+        # (now-locked, now-current) unallocated quantity of each item.
+        for pk in sorted(requested.keys()):
+            stock_item = stock_items[pk]
+
+            if not stock_item.lock_quantity():
+                raise ValidationError({'stock_item': _('Stock item no longer exists')})
+
+            available = stock_item.unallocated_quantity()
+
+            if requested[pk] > available:
+                q = InvenTree.helpers.clean_decimal(available)
+                raise ValidationError({
+                    'quantity': _(f'Available quantity ({q}) exceeded')
+                })
 
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)

@@ -1675,6 +1675,7 @@ class SalesOrder(TotalPriceMixin, Order):
         SalesOrderAllocation.objects.bulk_create(new_allocations, batch_size=250)
 
     @transaction.atomic
+    @transaction.atomic
     def allocate_serial_numbers(
         self,
         line_item: 'SalesOrderLineItem',
@@ -1730,6 +1731,13 @@ class SalesOrder(TotalPriceMixin, Order):
                     continue
 
             if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            # Lock the StockItem row, so that concurrent allocation requests are
+            # serialized against each other, and re-validate the unallocated
+            # quantity against the now-current (and now-locked) state
+            if not stock_item.lock_quantity():
                 serials_unavailable.add(serial)
                 continue
 
@@ -3182,9 +3190,13 @@ class SalesOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count()
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
@@ -4284,9 +4296,15 @@ class TransferOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count(
+            exclude_allocations={'pk': self.pk}
+        )
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
