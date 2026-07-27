@@ -1794,9 +1794,13 @@ class BuildLineTests(BuildAPITest):
 
         url = reverse('api-build-line-list')
 
-        response_true = self.get(url, {'build': build.pk, 'available': True})
+        response_true = self.get(
+            url, {'build': build.pk, 'available': True}, max_query_time=10
+        )
 
-        response_false = self.get(url, {'build': build.pk, 'available': False})
+        response_false = self.get(
+            url, {'build': build.pk, 'available': False}, max_query_time=10
+        )
 
         true_ids = {item['pk'] for item in response_true.data}
         false_ids = {item['pk'] for item in response_false.data}
@@ -1869,9 +1873,13 @@ class BuildLineTests(BuildAPITest):
 
         url = reverse('api-build-line-list')
 
-        response_true = self.get(url, {'build': build.pk, 'available': True})
+        response_true = self.get(
+            url, {'build': build.pk, 'available': True}, max_query_time=10
+        )
 
-        response_false = self.get(url, {'build': build.pk, 'available': False})
+        response_false = self.get(
+            url, {'build': build.pk, 'available': False}, max_query_time=10
+        )
 
         pk_by_bom = {line.bom_item_id: line.pk for line in lines}
 
