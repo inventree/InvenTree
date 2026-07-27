@@ -26,6 +26,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from data_exporter.mixins import DataExportSerializerMixin
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
@@ -1543,7 +1544,7 @@ class SalesOrderShipmentSerializer(
 
 
 class SalesOrderAllocationSerializer(
-    FilterableSerializerMixin, InvenTreeModelSerializer
+    DataExportSerializerMixin, FilterableSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrderAllocation model.
 
