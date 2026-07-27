@@ -40,6 +40,8 @@ export default function PartSalesAllocationsTable({
         accessor: 'order',
         title: t`Sales Order`,
         switchable: false,
+        sortable: true,
+        ordering: 'order',
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon

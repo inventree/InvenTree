@@ -108,6 +108,7 @@ export default function SalesOrderAllocationTable({
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
+        ordering: 'order',
         title: t`Sales Order`,
         switchable: false,
         sortable: true,
