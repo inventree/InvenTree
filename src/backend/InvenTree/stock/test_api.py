@@ -3092,9 +3092,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2250, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3123,9 +3122,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2500, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3154,9 +3152,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2250, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3191,9 +3188,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=1250, benchmark=True, format='json'
+                url, data, max_query_count=850, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
